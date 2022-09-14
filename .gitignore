@@ -1,4 +1,8 @@
 
+
+# user ignores
+grf/
+
 # Godot-specific ignores
 .import/
 export.cfg
