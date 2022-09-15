@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://common/ldtk/gravity_bonanza.ldtk" type="PackedScene" id=3]
+
+[node name="Arena" type="Node2D"]
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+visible = false
+margin_left = 247.0
+margin_top = 158.0
+margin_right = 312.0
+margin_bottom = 198.0
+text = "Hej Svet!"
+
+[node name="gravity_bonanza" parent="." instance=ExtResource( 3 )]
+position = Vector2( -3, 1 )

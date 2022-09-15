@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://common/ldtk/gravity_bonanza.ldtk" type="PackedScene" id=1]
+
+[node name="gravity_bonanza" instance=ExtResource( 1 )]
