@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tileset_mecha.png-a105bf68215d63deec0f22f6d29f1b05.stex"
+path="res://.import/tileset_level.png-0dde01da052c98c017c6a77079fc03e4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://common/ldtk/tileset_mecha.png"
-dest_files=[ "res://.import/tileset_mecha.png-a105bf68215d63deec0f22f6d29f1b05.stex" ]
+source_file="res://resources/graphics/tileset_level.png"
+dest_files=[ "res://.import/tileset_level.png-0dde01da052c98c017c6a77079fc03e4.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://common/ldtk/gravity_bonanza.ldtk" type="PackedScene" id=3]
+[ext_resource path="res://arena/Level_00.tscn" type="PackedScene" id=1]
 
 [node name="Arena" type="Node2D"]
 
@@ -12,5 +12,13 @@ margin_right = 312.0
 margin_bottom = 198.0
 text = "Hej Svet!"
 
-[node name="gravity_bonanza" parent="." instance=ExtResource( 3 )]
-position = Vector2( -3, 1 )
+[node name="Level_00" parent="." instance=ExtResource( 1 )]
+position = Vector2( 0, -1560 )
+
+[node name="StartPostitionP1" type="Position2D" parent="."]
+position = Vector2( 386, 321 )
+
+[node name="StartPositionP2" type="Position2D" parent="."]
+position = Vector2( 280, 318 )
+
+[editable path="Level_00"]

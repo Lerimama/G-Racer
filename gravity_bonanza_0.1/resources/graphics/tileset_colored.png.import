@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tile_proga_lcd.png-aaa6bcd45ac839094e68b02d1a043e0b.stex"
+path="res://.import/tileset_colored.png-a6a73046fce4600d170e3cc649839874.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://common/ldtk/tile_proga_lcd.png"
-dest_files=[ "res://.import/tile_proga_lcd.png-aaa6bcd45ac839094e68b02d1a043e0b.stex" ]
+source_file="res://resources/graphics/tileset_colored.png"
+dest_files=[ "res://.import/tileset_colored.png-a6a73046fce4600d170e3cc649839874.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

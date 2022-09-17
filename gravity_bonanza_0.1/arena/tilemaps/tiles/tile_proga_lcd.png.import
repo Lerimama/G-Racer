@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tileset_okolica_zamaknjen.png-bc5f77026306fccf824e63291575a2d1.stex"
+path="res://.import/tile_proga_lcd.png-c1ed4ed6b118a223b54f4d5e65819bd4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://common/ldtk/tileset_okolica_zamaknjen.png"
-dest_files=[ "res://.import/tileset_okolica_zamaknjen.png-bc5f77026306fccf824e63291575a2d1.stex" ]
+source_file="res://arena/tilemaps/tiles/tile_proga_lcd.png"
+dest_files=[ "res://.import/tile_proga_lcd.png-c1ed4ed6b118a223b54f4d5e65819bd4.stex" ]
 
 [params]
 

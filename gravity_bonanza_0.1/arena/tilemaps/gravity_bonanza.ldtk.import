@@ -1,0 +1,18 @@
+[remap]
+
+importer="LDtk.import"
+type="PackedScene"
+path="res://.import/gravity_bonanza.ldtk-f62c2583cb540b603a9d6fdfee397306.tscn"
+
+[deps]
+
+source_file="res://arena/tilemaps/gravity_bonanza.ldtk"
+dest_files=[ "res://.import/gravity_bonanza.ldtk-f62c2583cb540b603a9d6fdfee397306.tscn" ]
+
+[params]
+
+Import_Collisions=false
+Import_Custom_Entities=true
+Import_Metadata=true
+Import_YSort_Entities_Layer=false
+Post_Import_Script=""
