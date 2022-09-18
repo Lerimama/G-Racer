@@ -14,13 +14,15 @@ margin_bottom = 198.0
 text = "Hej Svet!"
 
 [node name="RigidBody2D" type="RigidBody2D" parent="."]
-position = Vector2( 162, 116 )
+position = Vector2( 287, 19 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="RigidBody2D"]
 polygon = PoolVector2Array( -7, -7, -7, 2, -8, 6, 5, 7, 6, -6 )
 
 [node name="TileRaketa" type="Sprite" parent="RigidBody2D"]
-position = Vector2( 0, 1 )
 texture = ExtResource( 2 )
 
 [node name="Level_00" parent="." instance=ExtResource( 1 )]
