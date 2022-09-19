@@ -1,0 +1,22 @@
+šortkati v godotu
+- delete line
+- duplicate line
+
+- tilemap risanje šortiz
+- open script editor
+- open scene editor
+
+
+CAMERA
+grid container
+- container 1
+	- Viewport
+		- camera
+		- level
+
+- viewport mora biti znotraj kontejnerja da se prikaže (ker je viewport popolnoma prazen)
+
+Game view
+	Stats and screen adons 
+	Grid cont - > viwport grid
+	Viewport  -> arena player level
