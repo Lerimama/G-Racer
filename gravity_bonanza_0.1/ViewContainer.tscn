@@ -5,7 +5,7 @@
 [ext_resource path="res://Camera2D.gd" type="Script" id=3]
 
 [node name="ViewContainer" type="ViewportContainer"]
-margin_right = 320.0
+margin_right = 640.0
 margin_bottom = 360.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -13,12 +13,11 @@ stretch = true
 script = ExtResource( 1 )
 
 [node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 320, 360 )
+size = Vector2( 640, 360 )
 handle_input_locally = false
 render_target_update_mode = 3
 
 [node name="Camera2D" type="Camera2D" parent="Viewport"]
-current = true
 script = ExtResource( 3 )
 
 [node name="Arena" parent="Viewport" instance=ExtResource( 2 )]
