@@ -15,8 +15,13 @@ margin_right = 312.0
 margin_bottom = 198.0
 text = "Hej Svet!"
 
+[node name="Level_00" parent="." instance=ExtResource( 3 )]
+
 [node name="Player1" type="RigidBody2D" parent="."]
-position = Vector2( 309, 12 )
+position = Vector2( 280, 27 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="TileRaketa" type="Sprite" parent="Player1"]
 texture = ExtResource( 2 )
@@ -38,5 +43,3 @@ position = Vector2( 386, 321 )
 
 [node name="StartPositionP2" type="Position2D" parent="."]
 position = Vector2( 280, 318 )
-
-[node name="Level_00" parent="." instance=ExtResource( 3 )]

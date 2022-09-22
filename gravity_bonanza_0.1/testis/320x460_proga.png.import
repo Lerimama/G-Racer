@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/320x460_proga.png-0ace5b114cd3ddb97527d4a440a1629d.stex"
+path="res://.import/320x460_proga.png-92a9810a66390a8300d9c8999ba45ac1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/320x460_proga.png"
-dest_files=[ "res://.import/320x460_proga.png-0ace5b114cd3ddb97527d4a440a1629d.stex" ]
+source_file="res://testis/320x460_proga.png"
+dest_files=[ "res://.import/320x460_proga.png-92a9810a66390a8300d9c8999ba45ac1.stex" ]
 
 [params]
 

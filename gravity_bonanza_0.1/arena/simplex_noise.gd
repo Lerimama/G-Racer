@@ -1,6 +1,6 @@
 extends Node2D
 
-
+#from simplex noise
 func _ready() -> void:
 	var noise = OpenSimplexNoise.new()
 
@@ -10,7 +10,6 @@ func _ready() -> void:
 	noise.period = 20.0
 	noise.persistence = 0.8
 
-	# Sample
 	print(noise.get_noise_2d(1.0, 1.0))
 	print(noise.get_noise_3d(0.5, 3.0, 15.0))
 	print(noise.get_noise_4d(0.5, 1.9, 4.7, 0.0))
