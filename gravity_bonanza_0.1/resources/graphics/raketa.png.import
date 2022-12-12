@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tileset_arena.png-ca38ef2eb330561de6215c1896fde072.stex"
+path="res://.import/raketa.png-a206599f0f498ebf9849826dcaca2854.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/graphics/tileset_arena.png"
-dest_files=[ "res://.import/tileset_arena.png-ca38ef2eb330561de6215c1896fde072.stex" ]
+source_file="res://resources/graphics/raketa.png"
+dest_files=[ "res://.import/raketa.png-a206599f0f498ebf9849826dcaca2854.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2
@@ -31,5 +31,5 @@ process/invert_color=false
 process/normal_map_invert_y=false
 stream=false
 size_limit=0
-detect_3d=false
+detect_3d=true
 svg/scale=1.0
