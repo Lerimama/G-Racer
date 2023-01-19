@@ -1,4 +1,15 @@
-extends Node2D
+extends Node
 
-onready var Player_1 = $Player1
-#onready var Player_2 = $Player2
+#export var st: Texture = $Bolt.texture
+
+# shadows
+#onready var st = $Player/Bolt.texture
+
+func _ready() -> void:
+	
+	Global.node_creation_parent = self
+	pass
+	
+func _process(delta: float) -> void:
+#	print (st)
+	pass

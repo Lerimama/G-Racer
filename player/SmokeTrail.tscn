@@ -25,6 +25,7 @@ colors = PoolColorArray( 0, 0, 0, 0, 0, 0, 0, 1, 1, 0.5, 0.3, 1, 4, 2, 1, 1 )
 [node name="SmokeTrail" type="Line2D"]
 show_behind_parent = true
 z_index = -1
+points = PoolVector2Array( -37, -174 )
 width = 20.0
 width_curve = SubResource( 1 )
 default_color = Color( 1, 1, 1, 1 )

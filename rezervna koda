@@ -1,0 +1,73 @@
+
+# -------------------------------------------------------------------------------------
+
+
+# BOUNCE ---------------------------------------------------------------------------------------
+
+velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
+bounce_angle = collision.normal.angle_to(velocity)	
+
+
+# RIGID BODY KOZIJA -------------------------------------------------------------------------------------
+
+if collision.collider.is_class("RigidBody2D"):
+
+	# vztrajnost telesa
+	var collider_mass: float = collision.collider.get("mass")
+	var collider_velocity: Vector2 = collision.collider.get("linear_velocity")
+	var collider_inertia: Vector2 = collider_velocity * collider_mass
+
+	# vztrajnost plejerja
+	var player_inertia: Vector2 = velocity * mass
+	collision.collider.apply_central_impulse(-collision.normal * player_inertia) # odboj telesa glede na inercijo
+	velocity = velocity + collider_inertia # odboj plejerja
+
+
+
+# DROP SHADOW -------------------------------------------------------------------------------------
+
+
+#func _draw():
+
+	var shadow_position: Vector2 = Vector2(-1,2)
+	shadow_position = global_position - light_position
+
+	draw_set_transform(shadow_position, deg2rad(90), Vector2.ONE)
+	draw_texture(sprite_texture, sprite_center, Color( 0, 0, 0, 0.2 ))
+	print (global_rotation)
+	
+	
+# TRAIL -------------------------------------------------------------------------------------	
+
+func new_trail():
+
+	var bolt_trail = Bolt_trail.instance()
+	bolt_trail.position = global_position
+	bolt_trail.rotation = global_rotation
+	add_child(bolt_trail)
+	bolt_trail.add_point(global_position, -1)
+
+	print(bolt_trail.get_point_count() )
+
+		if Input.is_action_just_pressed("ui_up"):
+			var bolt_trail = Bolt_trail.instance()
+			bolt_trail.position = Vector2(100,100)
+			bolt_trail.rotation = global_rotation
+			add_child(bolt_trail)
+
+			bolt_trail.add_points(global_position)
+			bolt_trail.add_point(global_position, -1)
+			print("get_point_count()" )
+		print(bolt_trail.get_point_count() )
+
+			var bolt_trail = Bolt_trail.instance()
+			bolt_trail.position = global_position
+			bolt_trail.rotation = global_rotation
+			add_child(bolt_trail)
+
+			bolt_trail.add_point(global_position, -1)
+			print("get_point_count()" )
+			print(bolt_trail.get_point_count() )
+
+			
+

@@ -2,194 +2,201 @@ extends KinematicBody2D
 
 
 # osnovno gibanje
-export var axis_distance: int = 32  # medosna razdalja
-export (int, 0, 1000) var engine_power = 800
-export (int, 0, 180) var turn_angle = 15  # kot obrata per frame (stopinje)
-export var free_rotation_multiplier = 10 # omogoča dovolj hitro rotacijo kadar je gas na 0
-export (float, 0, 100) var mass = 10.0
-export (float, 0, 1) var bounce_size = 0.3		
-#export var max_speed_reverse : int = 300
-var collision: KinematicCollision2D
-var bounce_angle
+export var axis_distance: int = 9 # medosna razdalja
+export (int, 0, 1000) var engine_power = 500
+export (int, 0, 180) var turn_angle = 15 # kot obrata per frame (stopinje)
+export var free_rotation_multiplier = 20 # omogoča dovolj hitro rotacijo kadar je pri miru
+export var max_speed_reverse = 70
 
-# vpliv okolja
+var max_speed = 100 # _temp
+
+# interakcija z okoljem
 export (float, 0, 1.5) var friction = -1.0 # vpliv trenja s podlago (raste linearno s hitrostjo in vpliva na pospešek)
-export (float, 0, 0.0010) var drag = -0.0001 # vpliv upora zraka (raste kvadratno s hitrostjo in vpliva na končno hitrost)
-export (float, 0, 1) var side_traction = 0.2
+export (float, 0, 0.0010) var drag = -0.003 # vpliv upora zraka (raste kvadratno s hitrostjo in vpliva na končno hitrost)
+export (float, 0, 0.1) var side_traction = 0.01 # vpliv na slajdanje ob zavoju ... manjši je, več je slajdanja
+export (float, 0, 100) var mass = 10.0 # masa vpliva na vztrajnost plejerja
+export (float, 0, 1) var bounce_size = 0.3 # velikost odboja		
 
-# driftanje
-#var slip_speed : int = 700 # hitrost nad katero začne driftat
-#var traction_fast : float = 0.1 # ko drsi
-#var traction_slow : float = 0.5 # ko ne drsi
-
-# state machine
-var test_state : bool = false
+# states
 var fwd_motion: bool = false
 var rev_motion: bool = false
-var motion_enabled: bool = true #old
+var motion_enabled: bool = true
+var weapon_reloaded: bool = true
+var weapon_reload_time: float = 0.2
 
 # notranje
-var rotation_angle: float # "kot obrata per frame" v določeni smeri (levo ali desno)
+var rotation_angle: float # obrat per frame v izbrani smeri
 var rotation_dir: float
 var velocity: Vector2 = Vector2.ZERO
 var acceleration: Vector2 = Vector2.ZERO
+var collision: KinematicCollision2D
+var bounce_angle: float
 
-onready var smoketrail = $SmokeTrail
-onready var basictrail = $BasicTrail
+# adons
+#var engine_particles = preload("res://player/EngineParticles.tscn") 
+var engine_particles = preload("res://player/EngineParticles.tscn") 
+var engine_particles_rear : CPUParticles2D
+var engine_particles_frontL : CPUParticles2D
+var engine_particles_frontR : CPUParticles2D
+var bullet = preload("res://player/weapons/Bullet.tscn")
+var misile = preload("res://player/weapons/Misile.tscn")
+var misile_loading_time: int = 120 # 60 je 1 sek
+var loading_time: int = 0
 
+# shadows
+onready var sprite_texture = $Bolt.texture
+var sprite_center: Vector2 = Vector2(-4.5,-5) # sprite offset
+var shadow_offset: float = 2.0
 
-"""
-# --------------------------------------------------------------------------------------
-"""
 
 func _ready() -> void:
 	
-	# smer ob štartu
-	rotation = deg2rad(-90)
 #	modulate = player_color
-#	add_to_group("players")
+	add_to_group("Players")
+	name = "P1"
+	
+	$Bolt.rotation_degrees = 90 # drugače je malo rotiran ... čudno?!
 	
 	
-func _process(delta: float) -> void:
-#	$Particles2D.emitting = true
-#	$Particles2D.emitting = false
+	# ENGINES ON
+	
+	engine_particles_rear = engine_particles.instance()
+	engine_particles_rear.set_as_toplevel(true)
+	add_child(engine_particles_rear)
+	
+	engine_particles_frontL = engine_particles.instance()
+	engine_particles_frontL.set_as_toplevel(true)
+	engine_particles_frontL.emission_rect_extents = Vector2.ZERO
+	engine_particles_frontL.initial_velocity = 20
+	engine_particles_frontL.lifetime = 0.2
+	add_child(engine_particles_frontL)
+	
+	engine_particles_frontR = engine_particles.instance()
+	engine_particles_frontR.set_as_toplevel(true)
+	engine_particles_frontR.emission_rect_extents = Vector2.ZERO
+	engine_particles_frontR.initial_velocity = 20
+	engine_particles_frontR.lifetime = 0.2
+	add_child(engine_particles_frontR)
 
-	if fwd_motion:
-#		smoketrail.stopped = false
-#		smoketrail.add_points(global_position)
-		basictrail.add_points(global_position)
-		
+
+func _process(delta: float) -> void:
+
+	#shadows draw
+#	update()
+	pass
+
 func _physics_process(delta):
+
+	# GIBANJE
+	
+	# partliki sledijo raketi
+	engine_particles_rear.position = $RearEnginePosition.global_position
+	engine_particles_frontL.position = $FrontEnginePositionL.global_position
+	engine_particles_frontR.position = $FrontEnginePositionR.global_position
+	engine_particles_rear.rotation = global_rotation
+	engine_particles_frontL.rotation = global_rotation - deg2rad(180)
+	engine_particles_frontR.rotation = global_rotation - deg2rad(180)	
 	
 	acceleration = Vector2.ZERO # ko spustim gumb se resetira
 	
-	if motion_enabled == true:
+	if motion_enabled:
 		if Input.is_action_pressed("ui_up"):
 			acceleration = transform.x * engine_power # transform.x je (-0, -1)
+			engine_particles_rear.set_emitting(true)
 			fwd_motion = true
-#			smoketrail.start()
-			
 		elif Input.is_action_just_released("ui_up"):
+			engine_particles_rear.set_emitting(false)
 			fwd_motion = false
-#			smoketrail.stopped = true
-#			smoketrail.stop()
-			
-			
 		if Input.is_action_pressed("ui_down"):
-			acceleration = transform.x * -engine_power
 			rev_motion = true
+			acceleration = transform.x * -engine_power
+			engine_particles_frontL.set_emitting(true)
+			engine_particles_frontR.set_emitting(true)
 		elif Input.is_action_just_released("ui_down"):
 			rev_motion = false
-#			$Particles2D.emitting = true
-		
-		
-	rotation_dir = 1 # ko spustim gumb se resetira ... neki ne  vpliva?
-	rotation_dir = Input.get_axis("ui_left", "ui_right") # +1 ali -1
+			engine_particles_frontR.set_emitting(false)
+			engine_particles_frontL.set_emitting(false)
 	
-	# animacija obračanja
-	if fwd_motion == true:
-		if rotation_dir == 1:
-			$AnimatedSprite.play("Desno", false) # animacija desno, rewind false
-		elif rotation_dir == -1:
-			$AnimatedSprite.play("Levo", false) # animacija levo, rewind false
-		elif rotation_dir == 0:
-			$AnimatedSprite.stop() # animacija desno, rewind false
-			$AnimatedSprite.set_frame(0) # animacija desno, rewind false
-	elif fwd_motion == false:
-		$AnimatedSprite.stop() # animacija desno, rewind false
-		$AnimatedSprite.set_frame(0) # animacija desno, rewind false
-		
+	rotation_dir = Input.get_axis("ui_left", "ui_right") # +1, -1 ali 0
 	rotation_angle = rotation_dir * deg2rad(turn_angle) # vsak frejm se obrne za toliko
 	
-	
-	# GIBANJE -------------------------------------------------------------------------------------
-	
-	apply_friction(delta)
-	calculate_steering(delta)
+	apply_friction(delta) # preračunam "acceleration"
+	calculate_steering(delta) # preračunam "rotacijo"
 	
 	velocity += acceleration * delta
+#	velocity.x = clamp(velocity.x, -max_speed, max_speed)
+#	velocity.y = clamp(velocity.y, -max_speed, max_speed)
 	collision = move_and_collide(velocity * delta, false) # infinite_inertia = false
 
 	# rotacija
-	if rev_motion == false && fwd_motion == false: # ko pogon ne deluje in na mestu
+	if Input.is_action_pressed("ui_down") == false && Input.is_action_pressed("ui_up") == false: # ko pogon ne deluje in je na mestu
 		rotate(delta * rotation_angle * free_rotation_multiplier)
-	else:	# ko pogon ne deluje
-		rotate(delta * rotation_angle)	
-	
-			
-#	if test_state:
-#		rotate(delta)	
-#		print(rotation_angle)
+	else:
+		rotate(delta * rotation_angle) # v gibanju	
 	
 	
-	
-	# KOLIZIJE -------------------------------------------------------------------------------------
+	# KOLIZIJE
 	
 	if collision:
-		test_state = true
 		velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 		bounce_angle = collision.normal.angle_to(velocity)	
-#		$redline.global_position = collision.collider.get_collision_pos()
-#		$greenline.global_position = global_position
 		
-#		var n = $RayCast2D.get_collision_normal()
-#		var v = $RayCast2D.get_collision_point()
-#		print (n)
-#		print (v)
-#		$greenline.global_position = v
-#		$redline.global_position = n
+	
+	# ŠUTING
+	
+	if Input.is_action_just_pressed("space") && weapon_reloaded == true:
+#		var new_misile = misile.instance()
+#		new_misile.position = $GunPosition.global_position
+#		new_misile.rotation = global_rotation
+#		add_child(new_misile)
+#		new_misile.owner = self
+#		new_misile.connect("get_hit", self, "on_got_hit")		
+		var new_bullet = bullet.instance()
+		new_bullet.position = $GunPosition.global_position
+		new_bullet.rotation = global_rotation
+		add_child(new_bullet)
+		new_bullet.owner = self
+		new_bullet.connect("Get_hit", self, "on_got_hit")		
+		
+		# reload weapon
+		weapon_reloaded = false
+		yield(get_tree().create_timer(weapon_reload_time), "timeout")
+		weapon_reloaded= true
 		
 		
-		# rigid body
-		if collision.collider.is_class("RigidBody2D"):
+	if Input.is_action_pressed("space"):
+		
+		loading_time += 1
+		
+		if loading_time == misile_loading_time:
 
-			# vztrajnost telesa
-			var collider_mass: float = collision.collider.get("mass")
-			var collider_velocity: Vector2 = collision.collider.get("linear_velocity")
-			var collider_inertia: Vector2 = collider_velocity * collider_mass
-
-			#vztrajnost plejerja
-			var player_inertia: Vector2 = velocity * mass
-
-			# odboj telesa
-			collision.collider.apply_central_impulse(-collision.normal * player_inertia) # odboj rigidnega telesa glede na našo inercijo
-
-			# odboj plejerja
-			velocity = velocity + collider_inertia
-
-	if test_state:
-#		if rad2deg(bounce_angle) < 0:
-#			rotate(delta*-bounce_angle*10)	
-#		elif rad2deg(bounce_angle) > 0:
-#			rotate(delta*bounce_angle)
+			var new_misile = misile.instance()
+			new_misile.position = $GunPosition.global_position
+			new_misile.rotation = global_rotation
+			add_child(new_misile)
+			new_misile.owner = self
+			new_misile.connect("get_hit", self, "on_got_hit")		
+	
+	if Input.is_action_just_released("space"):
+			loading_time = 0
 		
-		
-		
-#		$redline.rotation_degrees = rad2deg(bounce_angle) + 90
-#		$greenline.rotation_degrees = rad2deg(rotation_angle)
-		pass
+
+
 
 		
 		
-# vplivi okolja	
+	
 func apply_friction(delta):
 	
-	# če je hitrost res majhna naj se kar ustavi, da ne bo neskončno računal
-	if velocity.length() < 5: 
+	if velocity.length() < 5: # če je hitrost res majhna naj se kar ustavi, da ne bo neskončno računal
 		velocity = Vector2.ZERO
 	
-	# trenje in upor	
 	var friction_force = velocity * friction # linearna rast s hitrostjo
 	var drag_force = velocity * velocity.length() * drag # ekspotencialno naraščanje, zato je velocity na kvadrat
-	
-	# pri nižjih hitrostih je trenje bolj očitno ... počasen štart 
-#	if velocity.length() < 100:
-#		friction_force *= 5 # do 6.6 še deluje
 	
 	acceleration += drag_force + friction_force
 
 	
-# adaptcija za zavijanje po tirnici 
 func calculate_steering(delta):
 	
 	# lokacija sprednje in zadnje osi
@@ -203,28 +210,20 @@ func calculate_steering(delta):
 	# nova smer je seštevek smeri obeh osi
 	var new_heading = (front_axis_position - rear_axis_position).normalized()
 	
-	# driftanje
-#	var traction = traction_slow
-#	if velocity.length() > slip_speed: # ko presežemo določeno hitrost začne drset
-#		traction = traction_fast
-#	if velocity.length() == 0: # ko presežemo določeno hitrost začne drset
-#		traction = no_taction
-#	print (traction)
-	
-	if fwd_motion == true: # gremo naprej
-		velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction) # željeno smer gibanja doseže z zamikom (ker slajda) glede na "traction"
-	elif rev_motion == true:
-		velocity = velocity.linear_interpolate(-new_heading * velocity.length(), side_traction)
-#		velocity = -new_heading * min(velocity.length(), max_speed_reverse) # omejitev hitrosti
-	
+	# smer gibanja
+	if fwd_motion:
+		velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction) # željeno smer gibanja doseže z zamikom "side-traction"
+		print (velocity.length())
+	elif rev_motion:
+#		velocity = velocity.linear_interpolate(-new_heading * velocity.length(), side_traction) # brez omejitve
+		velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.1)
+		print (velocity.length())
+		
 	rotation = new_heading.angle() # sprite se obrne v smeri
 	
-#	# dot produkt, da ugotovimo ali se gibamo rikverc ali naprej
-#	var d = new_heading.dot(velocity.normalized()) # ugotavljamo ali gre rikverc al naprej
-#	if engine_on:
-#		if d > 0: # gremo naprej
-##			velocity = new_heading * velocity.length() # moč gibanja pomnožimo z smerjo gibanja
-#			velocity = velocity.linear_interpolate(new_heading * velocity.length(), traction) # željeno smer gibanja doseže z zamikom (ker slajda) glede na "traction"
-#		if d < 0: # gremo v rikverc
-#			velocity = -new_heading * min(velocity.length(), max_speed_reverse) # moč gibanja pomnožimo z smerjo
-#		rotation = new_heading.angle() # sprite se obrne v smeri
+func on_got_hit(collision_location, bullet_velocity):
+#	queue_free()
+	
+	print ("plejer šot")
+	
+	pass

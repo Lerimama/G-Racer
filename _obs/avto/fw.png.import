@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/fw.png-71f26b402590c1b2fc7d9ea4785e5622.stex"
+path="res://.import/fw.png-7e5eeb45d3fe624155f6abae15aa1c0e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://player/avto/fw.png"
-dest_files=[ "res://.import/fw.png-71f26b402590c1b2fc7d9ea4785e5622.stex" ]
+source_file="res://_obs/avto/fw.png"
+dest_files=[ "res://.import/fw.png-7e5eeb45d3fe624155f6abae15aa1c0e.stex" ]
 
 [params]
 

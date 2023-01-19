@@ -8,7 +8,7 @@ export var gradient_col: Gradient = Gradient.new()
 
 
 var lifetime: Array = [1.0, 2.0]
-var tick_speed: = 0.05	
+var tick_speed: = 0.5	
 var tick: = 0.0
 var wild_speed: = 0.1
 var point_age: = [0.0]
@@ -39,13 +39,13 @@ func start():
 	gradient = gradient_col
 	modulate.a = 1.0
 	
-#	tween.interpolate_property(self, "modulate:a", 1.0, 0.0, rand_range(lifetime[0], lifetime[1]), Tween.TRANS_CIRC, Tween.EASE_OUT) 
-#	tween.start()
+	tween.interpolate_property(self, "modulate:a", 1.0, 0.0, rand_range(lifetime[0], lifetime[1]), Tween.TRANS_CIRC, Tween.EASE_OUT) 
+	tween.start()
 
 
 func _process(delta: float) -> void:
 	
-	print(stopped)
+#	print(stopped)
 	
 	if tick > tick_speed: # če je tik večji od hitrosti tika
 		tick = 0 
@@ -82,5 +82,6 @@ func add_points (point_pos: Vector2, at_pos: = -1): # za kontrolo dodajanja pik
 		
 		
 func _on_Decay_tween_all_completed() -> void:
-	print("zbrisano")
-#	queue_free()
+#	print("zbrisano")
+	queue_free()
+	pass

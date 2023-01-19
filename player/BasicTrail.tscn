@@ -1,8 +1,37 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://player/BasicTrail.gd" type="Script" id=1]
 
+[sub_resource type="ParticlesMaterial" id=2]
+emission_shape = 2
+emission_box_extents = Vector3( 1, 0, 1 )
+flag_disable_z = true
+spread = 120.31
+gravity = Vector3( 0, 98, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 26.48
+damping_random = 0.44
+scale = 3.0
+scale_random = 1.0
+
 [node name="BasicTrail" type="Line2D"]
+width = 200.0
 script = ExtResource( 1 )
+min_spawn_distance = 5.0
 
 [node name="Decay" type="Tween" parent="."]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PoolVector2Array( -2, -1, 0, 2, 2, 0, 1, -2 )
+
+[node name="engine_particles" type="Particles2D" parent="."]
+position = Vector2( -5, 0 )
+rotation = 1.5708
+amount = 1
+lifetime = 3.94
+one_shot = true
+speed_scale = 5.0
+explosiveness = 0.35
+randomness = 1.0
+process_material = SubResource( 2 )
