@@ -25,6 +25,8 @@ var homming_precision: float = 0.01 # natančnost sledenja, lerp weight ... manj
 var is_dead: = false # zadetek ali domet
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
 
+onready var MisileTrail = $MisileTrail
+onready var TrailPosition = $TrailPosition
 
 
 func _ready() -> void:
@@ -64,7 +66,7 @@ func _process(delta: float) -> void:
 		if is_homming:
 			start_direction = lerp(start_direction, global_position.direction_to(target_location), homming_precision) 
 		
-		$MisileTrail.add_points($TrailPosition.global_position)
+		MisileTrail.add_points(TrailPosition.global_position)
 		
 		if time > domet:
 			die()
@@ -82,7 +84,7 @@ func die():
 #	queue_free()
 #	body.queue_free()
 #	modulate.a = 0
-	$MisileTrail.stop()
+	MisileTrail.stop()
 	speed = 0.0
 	
 #	$AnimationPlayer.play("explosion")
@@ -90,6 +92,6 @@ func die():
 	#kill the bullet but check for existance
 #	if is_dead == false:
 #		is_dead = true
-#		$MisileTrail.stop()
+#		MisileTrail.stop()
 #		speed = 0.0
 ##		$AnimationPlayer.play("explosion")

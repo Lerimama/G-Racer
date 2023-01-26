@@ -46,7 +46,7 @@ var loading_time: int = 0
 # shadows
 onready var sprite_texture = $Bolt.texture
 var sprite_center: Vector2 = Vector2(-4.5,-5) # sprite offset
-var shadow_offset: float = 2.0
+var shadow_offset: float = 5.0
 
 
 func _ready() -> void:
@@ -54,39 +54,28 @@ func _ready() -> void:
 #	modulate = player_color
 	add_to_group("Players")
 	name = "P1"
-	
 	$Bolt.rotation_degrees = 90 # drugače je malo rotiran ... čudno?!
 	
-	
-	# ENGINES ON
-	
-	engine_particles_rear = engine_particles.instance()
-	engine_particles_rear.set_as_toplevel(true)
-	add_child(engine_particles_rear)
-	
-	engine_particles_frontL = engine_particles.instance()
-	engine_particles_frontL.set_as_toplevel(true)
-	engine_particles_frontL.emission_rect_extents = Vector2.ZERO
-	engine_particles_frontL.initial_velocity = 20
-	engine_particles_frontL.lifetime = 0.2
-	add_child(engine_particles_frontL)
-	
-	engine_particles_frontR = engine_particles.instance()
-	engine_particles_frontR.set_as_toplevel(true)
-	engine_particles_frontR.emission_rect_extents = Vector2.ZERO
-	engine_particles_frontR.initial_velocity = 20
-	engine_particles_frontR.lifetime = 0.2
-	add_child(engine_particles_frontR)
+	engines_on()
 
-
+	
 func _process(delta: float) -> void:
-
-	#shadows draw
+	
+	# partliki sledijo raketi
+	engine_particles_rear.global_position = $RearEnginePosition.global_position
+	engine_particles_frontL.global_position = $FrontEnginePositionL.global_position
+	engine_particles_frontR.global_position = $FrontEnginePositionR.global_position
+	engine_particles_rear.global_rotation = global_rotation
+	engine_particles_frontL.global_rotation = global_rotation - deg2rad(180)
+	engine_particles_frontR.global_rotation = global_rotation - deg2rad(180)	
+	
+	# for shadows
 #	update()
 	pass
 
+	
 func _physics_process(delta):
-
+	
 	# GIBANJE
 	
 	# partliki sledijo raketi
@@ -143,8 +132,17 @@ func _physics_process(delta):
 		
 	
 	# ŠUTING
-	
+	if Input.is_action_just_pressed("pavza"):
+		$CPUParticles2D.global_position = $Bolt.global_position
+		$CPUParticles2D.global_rotation = $Bolt.global_rotation
+		$CPUParticles2D.set_one_shot(true)
+		$CPUParticles2D.set_emitting(true)
+		$Bolt.modulate.a = 0
+#		$CPUParticles2D.set_emitting(false)
+		
+		
 	if Input.is_action_just_pressed("space") && weapon_reloaded == true:
+		$Bolt.modulate.a = 1
 #		var new_misile = misile.instance()
 #		new_misile.position = $GunPosition.global_position
 #		new_misile.rotation = global_rotation
@@ -179,13 +177,8 @@ func _physics_process(delta):
 	
 	if Input.is_action_just_released("space"):
 			loading_time = 0
-		
 
 
-
-		
-		
-	
 func apply_friction(delta):
 	
 	if velocity.length() < 5: # če je hitrost res majhna naj se kar ustavi, da ne bo neskončno računal
@@ -196,7 +189,7 @@ func apply_friction(delta):
 	
 	acceleration += drag_force + friction_force
 
-	
+
 func calculate_steering(delta):
 	
 	# lokacija sprednje in zadnje osi
@@ -213,13 +206,36 @@ func calculate_steering(delta):
 	# smer gibanja
 	if fwd_motion:
 		velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction) # željeno smer gibanja doseže z zamikom "side-traction"
-		print (velocity.length())
+#		print (velocity.length())
 	elif rev_motion:
 #		velocity = velocity.linear_interpolate(-new_heading * velocity.length(), side_traction) # brez omejitve
 		velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.1)
-		print (velocity.length())
+#		print (velocity.length())
 		
 	rotation = new_heading.angle() # sprite se obrne v smeri
+	
+	
+func engines_on():
+	# ENGINES ON
+	
+	engine_particles_rear = engine_particles.instance()
+	engine_particles_rear.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
+	add_child(engine_particles_rear)
+	
+	engine_particles_frontL = engine_particles.instance()
+	engine_particles_frontL.set_as_toplevel(true)
+	engine_particles_frontL.emission_rect_extents = Vector2.ZERO
+	engine_particles_frontL.initial_velocity = 20
+	engine_particles_frontL.lifetime = 0.2
+	add_child(engine_particles_frontL)
+	
+	engine_particles_frontR = engine_particles.instance()
+	engine_particles_frontR.set_as_toplevel(true)
+	engine_particles_frontR.emission_rect_extents = Vector2.ZERO
+	engine_particles_frontR.initial_velocity = 20
+	engine_particles_frontR.lifetime = 0.2
+	add_child(engine_particles_frontR)
+
 	
 func on_got_hit(collision_location, bullet_velocity):
 #	queue_free()
@@ -227,3 +243,17 @@ func on_got_hit(collision_location, bullet_velocity):
 	print ("plejer šot")
 	
 	pass
+
+
+# for shadow
+#func _draw():
+#
+#	var shadow_position: Vector2
+#	var sprite_angle: float
+#
+#	sprite_angle = rotation + rad2deg(90) # z dodatkom 90 stopinj dobimo vetikalni zamik 
+#	shadow_position.x = sprite_center.x - (shadow_offset * sin(sprite_angle)) # seštevanje ali odštevanje določa gor ali dol
+#	shadow_position.y = sprite_center.y - ((shadow_offset) * cos(sprite_angle))
+#
+#	draw_set_transform(Vector2.ZERO, deg2rad(90), Vector2.ONE)
+#	draw_texture(sprite_texture, shadow_position, Color( 0, 0, 0, 0.3 ))

@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://_obs/tuji resursi/jm_pp_outlines/post_process_outlines_2D.shader" type="Shader" id=1]
+[ext_resource path="res://testis/320x460_proga.png" type="Texture" id=2]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/color_outline_scale = 2.0
+shader_param/edge_threshold = 0.388
+shader_param/max_edge_alpha = 0.16
+shader_param/edge_alpha_multiplier = 1.0
+shader_param/edge_color = Color( 0.294118, 1, 0.635294, 1 )
+shader_param/color_use_laplace = false
+shader_param/use_bg_texture = false
+shader_param/bgTex = ExtResource( 2 )
