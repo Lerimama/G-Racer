@@ -1,11 +1,15 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://resources/graphics/weapon_misile.png" type="Texture" id=1]
+[ext_resource path="res://resources/graphics/tileset_arena.png" type="Texture" id=1]
 [ext_resource path="res://player/weapons/Misile.gd" type="Script" id=2]
 [ext_resource path="res://player/weapons/MisileTrail.tscn" type="PackedScene" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 2.5, 0.5 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 1 )
+region = Rect2( 57, 59, 6, 3 )
 
 [sub_resource type="Curve" id=2]
 _data = [ Vector2( 0, 0.727273 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.154545 ), 0.0, 0.0, 0, 0 ]
@@ -26,8 +30,8 @@ position = Vector2( -1.5, 0 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -5, -1.5 )
-texture = ExtResource( 1 )
+position = Vector2( -3, -1.5 )
+texture = SubResource( 4 )
 centered = false
 
 [node name="MisileTrail" parent="." instance=ExtResource( 3 )]

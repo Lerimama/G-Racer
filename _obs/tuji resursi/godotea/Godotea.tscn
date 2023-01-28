@@ -6,7 +6,7 @@
 [sub_resource type="ShaderMaterial" id=8]
 shader = ExtResource( 2 )
 shader_param/intensity = 50
-shader_param/precision = 0.017
+shader_param/precision = 0.02
 shader_param/flipColors = true
 shader_param/outline_color = Color( 0.933333, 0, 0, 1 )
 shader_param/outline_color_2 = Color( 0.054902, 0.447059, 0.709804, 1 )

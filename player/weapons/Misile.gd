@@ -5,7 +5,7 @@ signal Get_hit (hit_location, misile_velocity, misile_owner)
 
 const MASS: = 10
 
-var speed: float = 100.00
+var speed: float = 140.00
 var accelaration: float = 0.8 # pospešek
 var time: float
 export var domet: float = 3

@@ -649,4 +649,5 @@ common/enable_pause_aware_picking=true
 2d/snapping/use_gpu_pixel_snap=true
 limits/buffers/canvas_polygon_buffer_size_kb=256
 limits/buffers/canvas_polygon_index_buffer_size_kb=256
+environment/default_clear_color=Color( 0.439216, 0.439216, 0.439216, 1 )
 environment/default_environment="res://resources/default_env.tres"

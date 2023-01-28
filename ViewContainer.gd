@@ -19,7 +19,7 @@ func _ready() -> void:
 
 	# This gives us the ViewportTexture.
 #	var rtt = get_viewport().get_texture()
-#	$ViewCanvas.texture = rtt
+
 
 
 ##	# Retrieve the captured Image using get_data().
