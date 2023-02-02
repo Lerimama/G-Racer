@@ -1,21 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://player/weapons/Bullet.gd" type="Script" id=1]
 [ext_resource path="res://resources/graphics/weapon_bullet.png" type="Texture" id=2]
-[ext_resource path="res://player/weapons/BulletTrail.gd" type="Script" id=3]
+[ext_resource path="res://player/weapons/BulletTrail.tscn" type="PackedScene" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 1.5, 1.5 )
-
-[sub_resource type="CanvasItemMaterial" id=2]
-
-[sub_resource type="Curve" id=4]
-_data = [ Vector2( 0, 0.727273 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.154545 ), 0.0, 0.0, 0, 0 ]
-
-[sub_resource type="Gradient" id=3]
-resource_local_to_scene = true
-offsets = PoolRealArray( 0.16707, 0.653753, 0.910412, 1 )
-colors = PoolColorArray( 0, 0, 0, 0, 0, 0, 0, 1, 0.454545, 0.454545, 0.454545, 1, 1, 1, 1, 1 )
 
 [node name="Bullet" type="Node2D"]
 script = ExtResource( 1 )
@@ -36,19 +26,11 @@ exclude_parent = false
 cast_to = Vector2( 15, 0 )
 collide_with_areas = true
 
-[node name="BulletTrail" type="Line2D" parent="."]
-show_behind_parent = true
-material = SubResource( 2 )
-z_index = -1
-points = PoolVector2Array( -2, 0 )
-width_curve = SubResource( 4 )
-default_color = Color( 1, 1, 1, 1 )
-gradient = SubResource( 3 )
-texture_mode = 2
-joint_mode = 2
-script = ExtResource( 3 )
+[node name="BulletTrail" parent="." instance=ExtResource( 3 )]
+visible = false
+modulate = Color( 1, 1, 1, 0.27451 )
 
-[node name="Decay" type="Tween" parent="BulletTrail"]
+[node name="TrailPosition" type="Position2D" parent="."]
+position = Vector2( -1.5, 0 )
 
 [connection signal="body_entered" from="BulletArea" to="." method="_on_BulletArea_body_entered"]
-[connection signal="tween_all_completed" from="BulletTrail/Decay" to="BulletTrail" method="_on_Decay_tween_all_completed"]

@@ -44,6 +44,7 @@ func _ready() -> void:
 	
 func _process(delta: float) -> void:
 	
+	
 	# This gives us the ViewportTexture.
 #	var rtt = get_viewport().get_texture()
 #	$ViewCanvas.texture = rtt

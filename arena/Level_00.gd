@@ -1,7 +1,39 @@
 extends Node2D
 
 
-#func _ready() -> void:
+
+func _ready() -> void:
+		
+	var local_position = $Edge.map_to_world($Edge.position)
+	var global_position = $Edge.to_global(local_position)
+	
+#	$EdgeLight.set_as_toplevel(true)
+#	$EdgeLight.clear_points()
+##	var celiceV = $Edge.get_cellv()
+##	var celice = $Edge.get_used_cells()
+###	print(celice)
+##	print($Edge.get_used_cells())
+#
+#
+#	var cell_id = 0 
+#	print($Edge.get_used_cells_by_id(2))
+#	for cell in $Edge.get_used_cells():
+#		var tile_id = $Edge.get_cellv(cell) # index tileta
+##		print(cell)
+##		var kolizije = $Edge.get_collision_mask_bit(2)
+#		$EdgeLight.add_point(cell, -1)
+##		print(cell_id)
+#		cell_id += 1
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 #	var noise = OpenSimplexNoise.new()
 #
 #	# Configure

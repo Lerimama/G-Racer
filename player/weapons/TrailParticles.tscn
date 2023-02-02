@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="CanvasItemMaterial" id=7]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=6]
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[node name="TrailParticles" type="CPUParticles2D"]
+show_behind_parent = true
+material = SubResource( 7 )
+position = Vector2( -2, 0 )
+scale = Vector2( 2, 2 )
+amount = 100
+lifetime = 0.5
+local_coords = false
+spread = 0.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 100.0
+linear_accel = -100.0
+damping = 37.65
+color_ramp = SubResource( 6 )

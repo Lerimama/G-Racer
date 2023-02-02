@@ -81,7 +81,7 @@ func _on_MisileArea_body_entered(body: Node) -> void:
 func die():
 
 	is_dead = true
-#	queue_free()
+	queue_free()
 #	body.queue_free()
 #	modulate.a = 0
 	MisileTrail.stop()

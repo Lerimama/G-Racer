@@ -48,6 +48,9 @@ onready var sprite_texture = $Bolt.texture
 var sprite_center: Vector2 = Vector2(-4.5,-5) # sprite offset
 var shadow_offset: float = 5.0
 
+var engines_alpha: float = 0.4
+# trail
+onready var BoltTrail = preload("res://player/BoltTrail2.tscn")
 
 func _ready() -> void:
 	
@@ -62,12 +65,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	# partliki sledijo raketi
-	engine_particles_rear.global_position = $RearEnginePosition.global_position
-	engine_particles_frontL.global_position = $FrontEnginePositionL.global_position
-	engine_particles_frontR.global_position = $FrontEnginePositionR.global_position
-	engine_particles_rear.global_rotation = global_rotation
-	engine_particles_frontL.global_rotation = global_rotation - deg2rad(180)
-	engine_particles_frontR.global_rotation = global_rotation - deg2rad(180)	
+#	engine_particles_rear.global_position = $RearEnginePosition.global_position
+#	engine_particles_frontL.global_position = $FrontEnginePositionL.global_position
+#	engine_particles_frontR.global_position = $FrontEnginePositionR.global_position
+#	engine_particles_rear.global_rotation = global_rotation
+#	engine_particles_frontL.global_rotation = global_rotation - deg2rad(180)
+#	engine_particles_frontR.global_rotation = global_rotation - deg2rad(180)	
 	
 	# for shadows
 #	update()
@@ -79,20 +82,29 @@ func _physics_process(delta):
 	# GIBANJE
 	
 	# partliki sledijo raketi
+#	engine_particles_rear.position = $Bolt/RearEnginePosition_alt.position
 	engine_particles_rear.position = $RearEnginePosition.global_position
 	engine_particles_frontL.position = $FrontEnginePositionL.global_position
 	engine_particles_frontR.position = $FrontEnginePositionR.global_position
+#	engine_particles_rear.rotation = $Bolt/RearEnginePosition_alt.global_rotation
+#	engine_particles_rear.rotation = $Bolt.global_rotation
 	engine_particles_rear.rotation = global_rotation
 	engine_particles_frontL.rotation = global_rotation - deg2rad(180)
 	engine_particles_frontR.rotation = global_rotation - deg2rad(180)	
 	
 	acceleration = Vector2.ZERO # ko spustim gumb se resetira
+
 	
 	if motion_enabled:
 		if Input.is_action_pressed("ui_up"):
 			acceleration = transform.x * engine_power # transform.x je (-0, -1)
 			engine_particles_rear.set_emitting(true)
 			fwd_motion = true
+			
+			var bolt_trail = BoltTrail.instance()
+			Global.node_creation_parent.add_child(bolt_trail)
+			$BoltTrail.add_points(global_position)
+			
 		elif Input.is_action_just_released("ui_up"):
 			engine_particles_rear.set_emitting(false)
 			fwd_motion = false
@@ -220,20 +232,25 @@ func engines_on():
 	
 	engine_particles_rear = engine_particles.instance()
 	engine_particles_rear.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
+	engine_particles_rear.modulate.a = engines_alpha
 	add_child(engine_particles_rear)
 	
 	engine_particles_frontL = engine_particles.instance()
 	engine_particles_frontL.set_as_toplevel(true)
 	engine_particles_frontL.emission_rect_extents = Vector2.ZERO
-	engine_particles_frontL.initial_velocity = 20
-	engine_particles_frontL.lifetime = 0.2
+	engine_particles_frontL.amount = 20
+	engine_particles_frontL.initial_velocity = 50
+	engine_particles_frontL.lifetime = 0.05
+	engine_particles_frontL.modulate.a = engines_alpha
 	add_child(engine_particles_frontL)
 	
 	engine_particles_frontR = engine_particles.instance()
 	engine_particles_frontR.set_as_toplevel(true)
 	engine_particles_frontR.emission_rect_extents = Vector2.ZERO
-	engine_particles_frontR.initial_velocity = 20
-	engine_particles_frontR.lifetime = 0.2
+	engine_particles_frontR.amount = 20
+	engine_particles_frontR.initial_velocity = 50
+	engine_particles_frontR.lifetime = 0.05
+	engine_particles_frontR.modulate.a = engines_alpha
 	add_child(engine_particles_frontR)
 
 	

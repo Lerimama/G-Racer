@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://resources/lerimama_dropshadow.tres" type="Shader" id=1]
+[ext_resource path="res://_obs/old_shaders/lerimama_dropshadow.tres" type="Shader" id=1]
 
 [sub_resource type="ShaderMaterial" id=15]
 shader = ExtResource( 1 )

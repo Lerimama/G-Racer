@@ -2,11 +2,11 @@
 
 [ext_resource path="res://ViewContainer.gd" type="Script" id=1]
 [ext_resource path="res://arena/Arena.tscn" type="PackedScene" id=2]
-[ext_resource path="res://resources/lerimama_dropshadow.tres" type="Shader" id=3]
+[ext_resource path="res://_obs/old_shaders/lerimama_dropshadow.tres" type="Shader" id=3]
 [ext_resource path="res://Camera2D.gd" type="Script" id=4]
 [ext_resource path="res://resources/graphics/light.png" type="Texture" id=5]
 [ext_resource path="res://resources/graphics/tile_raketa.png" type="Texture" id=6]
-[ext_resource path="res://resources/dropshadow.gdshader" type="Shader" id=7]
+[ext_resource path="res://_obs/old_shaders/dropshadow.gdshader" type="Shader" id=7]
 [ext_resource path="res://_obs/tuji resursi/godotea/Godotea.tscn" type="PackedScene" id=8]
 
 [sub_resource type="ViewportTexture" id=11]
