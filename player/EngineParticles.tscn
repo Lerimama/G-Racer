@@ -1,26 +1,23 @@
 [gd_scene load_steps=4 format=2]
 
-[sub_resource type="CanvasItemMaterial" id=7]
-blend_mode = 4
+[sub_resource type="CanvasItemMaterial" id=57]
 
 [sub_resource type="Curve" id=5]
 max_value = 5.0
 _data = [ Vector2( 0, 0 ), 0.0, 4.14464, 0, 0, Vector2( 1, 1.56198 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="Gradient" id=6]
+[sub_resource type="Gradient" id=58]
 offsets = PoolRealArray( 0.0326409, 0.0949555, 1 )
 colors = PoolColorArray( 1, 1, 1, 0.921569, 1, 1, 1, 0.208589, 1, 1, 1, 0 )
 
 [node name="EngineParticles" type="CPUParticles2D"]
 show_behind_parent = true
-material = SubResource( 7 )
+material = SubResource( 57 )
 position = Vector2( -1, -1 )
 rotation = 1.5708
 scale = Vector2( 2, 2 )
-emitting = false
 amount = 50
 lifetime = 0.05
-one_shot = true
 randomness = 0.5
 lifetime_randomness = 0.5
 local_coords = false
@@ -34,4 +31,4 @@ initial_velocity_random = 0.5
 linear_accel = -20.0
 linear_accel_random = 1.0
 damping_curve = SubResource( 5 )
-color_ramp = SubResource( 6 )
+color_ramp = SubResource( 58 )

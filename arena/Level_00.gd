@@ -6,6 +6,7 @@ func _ready() -> void:
 		
 	var local_position = $Edge.map_to_world($Edge.position)
 	var global_position = $Edge.to_global(local_position)
+
 	
 #	$EdgeLight.set_as_toplevel(true)
 #	$EdgeLight.clear_points()

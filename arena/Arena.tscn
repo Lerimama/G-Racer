@@ -1,11 +1,13 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://arena/Arena.gd" type="Script" id=1]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://arena/Level_00.tscn" type="PackedScene" id=3]
 [ext_resource path="res://arena/tempbody.gd" type="Script" id=4]
+[ext_resource path="res://resources/graphics/light.png" type="Texture" id=5]
 [ext_resource path="res://resources/graphics/pixel.png" type="Texture" id=6]
 [ext_resource path="res://resources/graphics/bolt.png" type="Texture" id=7]
+[ext_resource path="res://arena/Effects.gd" type="Script" id=8]
 
 [sub_resource type="Shader" id=13]
 code = "// NOTE: Shader automatically converted from Godot Engine 3.5.1.stable's ParticlesMaterial.
@@ -536,8 +538,102 @@ _data = [ Vector2( 0.08, 146.818 ), 0.0, 57.8063, 0, 1, Vector2( 1, 200 ), 57.80
 offsets = PoolRealArray( 0, 0.129199, 1 )
 colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0.0775194, 1, 1, 1, 0 )
 
-[sub_resource type="Shader" id=15]
+[sub_resource type="Shader" id=61]
 code = "shader_type canvas_item;
+
+// šejder v1 - prepoznava 100% transparenco in aplicira novo barvo na te pixle
+// šejder v2 - prepoznava tudi cutout barvo, ki jo potem manipulira
+// šejder v3 - prepoznava barvo, ki ji mora dodat senco
+// šejder v4 - prepoznava različne barve, ki jim dodaj različne sence
+// šejder v5 - dodaja sence za prizemljene objekte
+
+//... simple nadgradnja je če dodam več barv za manipulirat ... al pa celo gradient
+
+// barve
+uniform vec4 manipulate_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
+uniform bool manipulate_other_colors = true;
+uniform vec4 transparent_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+uniform vec4 transparent_new_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+
+// shadow
+uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float shadow_offset_x = 1.0; // smer offseta ... to niso texli ampak pixli
+uniform float shadow_offset_y = 1.0; // smer offseta ... to niso texli ampak pixli
+uniform float texture_altitude = 5.0; // količina offseta ... višin texture
+
+// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
+uniform float texture_width = 640.0;
+uniform float texture_height = 360.0;
+
+
+
+void fragment(){
+
+	// preračun pravge offseta sence ... pixle konvertamo v texle
+	vec2 shadow_offset = vec2(shadow_offset_x / texture_width, shadow_offset_y / texture_height);
+	vec2 uvs = SCREEN_UV + shadow_offset * texture_altitude;
+	
+	// poberemo prikaz texture in apliciramo samo offset še predno apliciramo barvo 
+	vec4 color = texture(SCREEN_TEXTURE, uvs);
+
+	
+	// manipuliramo izbrano barvo
+	if (manipulate_other_colors == false){
+		
+		// če je barva texture enaka izbrani apliciramo efekt
+		if (color == manipulate_color){
+			color = shadow_color * color.a;
+		}
+		// druge barve so brez efekta
+		else {
+			color.a = 0.0; // 100% transparenca
+			color = texture(SCREEN_TEXTURE, SCREEN_UV); // original barva in pozicija
+		}
+	}
+	
+	// manipuliramo vse razen izbrane barve
+	else if (manipulate_other_colors == true){
+		
+		// če barva texture ni transparenta apliciramo efekt
+		if (color == transparent_color){
+//		if (color.a > 0.0){
+			
+			// barva enaka izbrani barvi je brez efekta
+			if (color == manipulate_color){
+				color.a = 0.0;
+				color = texture(SCREEN_TEXTURE, SCREEN_UV);
+			}
+			// aplciramo efekt na vse druge barve
+			else {
+				color = shadow_color * color.a;
+			}
+		}
+		// barva transparentnega dela tekture
+		else {
+			color = transparent_new_color;
+		}
+		
+	}
+	
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=52]
+shader = SubResource( 61 )
+shader_param/manipulate_color = Color( 1, 1, 1, 1 )
+shader_param/manipulate_other_colors = false
+shader_param/transparent_color = Color( 0, 0, 0, 0 )
+shader_param/transparent_new_color = Color( 0, 0, 0, 0 )
+shader_param/shadow_color = Color( 0, 0, 0, 0.27451 )
+shader_param/shadow_offset_x = 0.0
+shader_param/shadow_offset_y = 1.0
+shader_param/texture_altitude = 10.0
+shader_param/texture_width = 640.0
+shader_param/texture_height = 360.0
+
+[sub_resource type="Shader" id=59]
+code = "shader_type canvas_item;
+render_mode blend_mix;
 
 // šejder v1 - prepoznava 100% transparenco in aplicira novo barvo na te pixle
 // šejder v2 - prepoznava tudi cutout barvo, ki jo potem manipulira
@@ -574,8 +670,13 @@ void fragment(){
 		if (color == manipulate_color_1 ){
 			color = new_color_1 * color.a;
 		}
-		else if (color == manipulate_color_2){
-			color = new_color_2 * color.a;
+		else if (color.rgb == manipulate_color_2.rgb){
+			color.rgb = new_color_2.bgr;
+			
+			float white_level = 0.5; 
+			color.rgb = vec3(white_level);
+			color.a = white_level
+		
 		}
 		else if (color == manipulate_color_3){
 			color = new_color_3 * color.a;
@@ -621,12 +722,47 @@ void fragment(){
 }"
 
 [sub_resource type="ShaderMaterial" id=16]
-shader = SubResource( 15 )
-shader_param/manipulate_color_1 = Color( 1, 0, 0, 1 )
+shader = SubResource( 59 )
+shader_param/manipulate_color_1 = Color( 1, 1, 1, 1 )
+shader_param/new_color_1 = Color( 1, 0, 0, 0.32549 )
+shader_param/manipulate_color_2 = Color( 0, 1, 1, 1 )
+shader_param/new_color_2 = Color( 0.898039, 0, 1, 1 )
+shader_param/manipulate_color_3 = Color( 0.25098, 0.105882, 0.294118, 0 )
+shader_param/new_color_3 = Color( 0.415686, 0.203922, 1, 1 )
+shader_param/manipulate_other = false
+shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
+shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
+
+[sub_resource type="CanvasItemMaterial" id=57]
+
+[sub_resource type="Curve" id=5]
+max_value = 5.0
+_data = [ Vector2( 0, 0 ), 0.0, 4.14464, 0, 0, Vector2( 1, 1.56198 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=58]
+offsets = PoolRealArray( 0.0326409, 0.0949555, 1 )
+colors = PoolColorArray( 1, 1, 1, 0.921569, 1, 1, 1, 0.208589, 1, 1, 1, 0 )
+
+[sub_resource type="ShaderMaterial" id=62]
+shader = SubResource( 61 )
+shader_param/manipulate_color = Color( 1, 1, 1, 1 )
+shader_param/manipulate_other_colors = false
+shader_param/transparent_color = Color( 0, 0, 0, 0 )
+shader_param/transparent_new_color = Color( 0, 0, 0, 0 )
+shader_param/shadow_color = Color( 1, 0, 0, 1 )
+shader_param/shadow_offset_x = 0.0
+shader_param/shadow_offset_y = 1.0
+shader_param/texture_altitude = 5.0
+shader_param/texture_width = 640.0
+shader_param/texture_height = 360.0
+
+[sub_resource type="ShaderMaterial" id=60]
+shader = SubResource( 59 )
+shader_param/manipulate_color_1 = Color( 0.74902, 0.74902, 0.74902, 1 )
 shader_param/new_color_1 = Color( 1, 1, 0, 1 )
-shader_param/manipulate_color_2 = Color( 0, 1, 0, 1 )
-shader_param/new_color_2 = Color( 1, 0.960784, 0, 1 )
-shader_param/manipulate_color_3 = Color( 1, 1, 1, 1 )
+shader_param/manipulate_color_2 = Color( 1, 1, 1, 1 )
+shader_param/new_color_2 = Color( 0.898039, 0, 1, 1 )
+shader_param/manipulate_color_3 = Color( 0.25098, 0.105882, 0.294118, 0 )
 shader_param/new_color_3 = Color( 0.415686, 0.203922, 1, 1 )
 shader_param/manipulate_other = false
 shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
@@ -634,28 +770,26 @@ shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
 
 [node name="Arena" type="Node2D"]
 script = ExtResource( 1 )
-
-[node name="Background" type="Node2D" parent="."]
-z_index = -2
-
-[node name="ColorRect" type="ColorRect" parent="Background"]
-margin_right = 640.0
-margin_bottom = 360.0
-rect_min_size = Vector2( 640, 360 )
-color = Color( 0.172549, 0.27451, 0.282353, 1 )
+__meta__ = {
+"_edit_horizontal_guides_": [ -64.0 ]
+}
 
 [node name="Particles2D_eksplozija" type="Particles2D" parent="."]
+visible = false
 position = Vector2( 85, 30 )
 z_index = -2
+emitting = false
 amount = 1000
 explosiveness = 1.0
 process_material = SubResource( 7 )
 texture = ExtResource( 6 )
 
 [node name="Particles2D_implozija" type="Particles2D" parent="."]
+visible = false
 position = Vector2( 219, 76 )
 scale = Vector2( 1.00686, 0.559279 )
 z_index = -2
+emitting = false
 amount = 1000
 explosiveness = 0.61
 process_material = SubResource( 14 )
@@ -679,18 +813,44 @@ linear_accel_random = 0.53
 linear_accel_curve = SubResource( 9 )
 color_ramp = SubResource( 10 )
 
+[node name="Light2D" type="Light2D" parent="."]
+visible = false
+position = Vector2( 360, 144 )
+scale = Vector2( 3.42503, 2.21825 )
+texture = ExtResource( 5 )
+
+[node name="Background" type="Node2D" parent="."]
+modulate = Color( 0.054902, 0.709804, 0.498039, 1 )
+z_index = -1
+
+[node name="ColorRect" type="ColorRect" parent="Background"]
+margin_right = 640.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 640, 360 )
+
 [node name="Level_00" parent="." instance=ExtResource( 3 )]
+
+[node name="CanvasLayer Bodies" type="CanvasLayer" parent="."]
+layer = 2
 visible = false
 
-[node name="Light2D" parent="Level_00" index="3"]
+[node name="Shadow_Level Z-1" type="ColorRect" parent="CanvasLayer Bodies"]
 visible = false
-position = Vector2( 357, 172 )
+material = SubResource( 52 )
+margin_right = 640.0
+margin_bottom = 360.0
+
+[node name="NeonDust" type="ColorRect" parent="CanvasLayer Bodies"]
+visible = false
+margin_right = 640.0
+margin_bottom = 360.0
 
 [node name="obsticles" type="Node2D" parent="."]
+visible = false
 modulate = Color( 2, 21, 2, 1 )
+z_index = 2
 
 [node name="Target" type="StaticBody2D" parent="obsticles"]
-modulate = Color( 0, 1, 0, 1 )
 position = Vector2( 417, 235 )
 script = ExtResource( 4 )
 __meta__ = {
@@ -752,19 +912,66 @@ disabled = true
 [node name="CollisionPolygon2D2" type="Polygon2D" parent="obsticles/Obsticle2"]
 polygon = PoolVector2Array( -18, -19, -8, 20, 19, 15, 21, -18 )
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -1
+[node name="CanvasLayer Effects" type="CanvasLayer" parent="."]
+layer = 2
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
-material = SubResource( 16 )
+[node name="Shadow_Level Z-1" type="ColorRect" parent="CanvasLayer Effects"]
+material = SubResource( 52 )
 margin_right = 640.0
 margin_bottom = 360.0
 
+[node name="ManipulateColors" type="ColorRect" parent="CanvasLayer Effects"]
+material = SubResource( 16 )
+margin_top = -3.0
+margin_right = 640.0
+margin_bottom = 357.0
+
+[node name="Effects" type="Node2D" parent="."]
+material = SubResource( 57 )
+script = ExtResource( 8 )
+
+[node name="EngineParticles" type="CPUParticles2D" parent="Effects"]
+show_behind_parent = true
+material = SubResource( 57 )
+position = Vector2( 181, 222 )
+rotation = 1.5708
+scale = Vector2( 2, 2 )
+amount = 500
+lifetime = 0.5
+randomness = 0.5
+lifetime_randomness = 0.5
+local_coords = false
+emission_shape = 2
+emission_rect_extents = Vector2( 0.7, 0.7 )
+direction = Vector2( -1, -1 )
+spread = 0.0
+gravity = Vector2( 0, 10 )
+initial_velocity = 80.0
+initial_velocity_random = 0.5
+linear_accel = -20.0
+linear_accel_random = 1.0
+damping_curve = SubResource( 5 )
+color_ramp = SubResource( 58 )
+
+[node name="CanvasLayer Other" type="CanvasLayer" parent="."]
+layer = 2
+visible = false
+
+[node name="Shadow_Level Z-1" type="ColorRect" parent="CanvasLayer Other"]
+material = SubResource( 62 )
+margin_right = 640.0
+margin_bottom = 360.0
+
+[node name="ManipulateColors" type="ColorRect" parent="CanvasLayer Other"]
+material = SubResource( 60 )
+margin_top = -3.0
+margin_right = 640.0
+margin_bottom = 357.0
+
 [node name="Player" parent="." instance=ExtResource( 2 )]
-modulate = Color( 1, 1, 2, 1 )
 position = Vector2( 385, 126 )
-z_index = 3
-z_as_relative = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
 [editable path="Level_00"]
 [editable path="Player"]

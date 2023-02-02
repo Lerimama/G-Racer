@@ -9,24 +9,28 @@ script = ExtResource( 6 )
 max_speed_reverse = 32
 
 [node name="RearEnginePosition" type="Position2D" parent="."]
+visible = false
 position = Vector2( -3, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="FrontEnginePositionL" type="Position2D" parent="."]
+visible = false
 position = Vector2( 2, -3.5 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="FrontEnginePositionR" type="Position2D" parent="."]
+visible = false
 position = Vector2( 2, 3.5 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="GunPosition" type="Position2D" parent="."]
+visible = false
 position = Vector2( 2, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
@@ -51,3 +55,4 @@ rotation = 1.57079
 polygon = PoolVector2Array( -1.99997, -4.00001, -5, -3.13719e-05, -5.00001, 1.99997, -4.00002, 2.99997, 2.99998, 3.00002, 3.99999, 2.00003, 4, 2.50975e-05, 1.00003, -3.99999 )
 
 [node name="BoltTrail" parent="." instance=ExtResource( 2 )]
+modulate = Color( 1, 1, 1, 0.403922 )

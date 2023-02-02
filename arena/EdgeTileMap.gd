@@ -1,8 +1,9 @@
 extends TileMap
 
 
-onready var lucka: PackedScene = preload("res://pixel.tscn")
-onready var neonka: PackedScene = preload("res://EdgeLight.tscn")
+#onready var lucka: PackedScene = preload("res://pixel.tscn")
+#onready var neonka: PackedScene = preload("res://EdgeLight.tscn")
+
 
 
 func _ready() -> void:
@@ -35,9 +36,9 @@ func create_point(celica):
 	# convert position
 	
 #	$Edge.set_cell(coord.x, coord.y, -1 )	# zbrišeš trenutni tile tako da ga zamenjaš z indexom -1 (prazen tile)
-	var pikica = lucka.instance()
-	pikica.position = map_to_world(celica)
-	add_child(pikica)
+#	var pikica = lucka.instance()
+#	pikica.position = map_to_world(celica)
+#	add_child(pikica)
 	
 	
 #	var pikica = lucka.instance()
