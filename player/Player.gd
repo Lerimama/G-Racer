@@ -74,7 +74,7 @@ func _process(delta: float) -> void:
 #	engine_particles_frontR.global_rotation = global_rotation - deg2rad(180)	
 	
 	# for shadows
-	update()
+#	update()
 	pass
 
 	
@@ -92,9 +92,8 @@ func _physics_process(delta):
 	engine_particles_rear.rotation = global_rotation
 	engine_particles_frontL.rotation = global_rotation - deg2rad(180)
 	engine_particles_frontR.rotation = global_rotation - deg2rad(180)	
-	engine_particles_rear_shadow.global_position = $RearEnginePosition.global_position + Vector2(0,10)
-#	engine_particles_rear_shadow.position = $RearEnginePosition.position + Vector2(5,-10)
-	engine_particles_rear_shadow.global_rotation = $RearEnginePosition.global_rotation
+#	engine_particles_rear_shadow.global_position = $RearEnginePosition.global_position + Vector2(0,10)
+#	engine_particles_rear_shadow.global_rotation = $RearEnginePosition.global_rotation
 	acceleration = Vector2.ZERO # ko spustim gumb se resetira
 
 	
@@ -104,11 +103,11 @@ func _physics_process(delta):
 			
 #			engine_particles_rear.global_position = $RearEnginePosition.global_position
 			engine_particles_rear.set_emitting(true)
-			engine_particles_rear_shadow.set_emitting(true)
+#			engine_particles_rear_shadow.set_emitting(true)
 			fwd_motion = true
 			
 			var bolt_trail = BoltTrail.instance()
-			Global.effects_creation_parent.add_child(bolt_trail)
+			AutoGlobal.effects_creation_parent.add_child(bolt_trail)
 #			$BoltTrail.z_index(2)
 			bolt_trail.add_points(global_position)
 #			$BoltTrail.add_points(global_position)
@@ -116,7 +115,7 @@ func _physics_process(delta):
 			
 		elif Input.is_action_just_released("ui_up"):
 			engine_particles_rear.set_emitting(false)
-			engine_particles_rear_shadow.set_emitting(false)
+#			engine_particles_rear_shadow.set_emitting(false)
 			fwd_motion = false
 			$BoltTrail.clear_points()
 		if Input.is_action_pressed("ui_down"):
@@ -245,15 +244,15 @@ func engines_on():
 #	engine_particles_rear.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
 	engine_particles_rear.modulate.a = engines_alpha
 	engine_particles_rear.global_position = $RearEnginePosition.global_position
-	Global.effects_creation_parent.add_child(engine_particles_rear)
+	AutoGlobal.effects_creation_parent.add_child(engine_particles_rear)
 	
 	# senca partiklov
-	engine_particles_rear_shadow = engine_particles.instance()
-	engine_particles_rear_shadow.modulate = Color.black
-	engine_particles_rear_shadow.global_position = $RearEnginePosition.global_position
-	engine_particles_rear_shadow.set_as_toplevel(true)
-#	engine_particles_rear_shadow.modulate.a = engines_alpha - 0.2
-	Global.effects_creation_parent.add_child(engine_particles_rear_shadow)
+#	engine_particles_rear_shadow = engine_particles.instance()
+#	engine_particles_rear_shadow.modulate = Color.black
+#	engine_particles_rear_shadow.global_position = $RearEnginePosition.global_position
+#	engine_particles_rear_shadow.set_as_toplevel(true)
+##	engine_particles_rear_shadow.modulate.a = engines_alpha - 0.2
+#	AutoGlobal.effects_creation_parent.add_child(engine_particles_rear_shadow)
 	
 	engine_particles_frontL = engine_particles.instance()
 	engine_particles_frontL.set_as_toplevel(true)
@@ -283,14 +282,14 @@ func on_got_hit(collision_location, bullet_velocity):
 
 
 # for shadow
-func _draw():
-
-	var shadow_position: Vector2
-	var sprite_angle: float
-
-	sprite_angle = rotation + rad2deg(90) # z dodatkom 90 stopinj dobimo vetikalni zamik 
-	shadow_position.x = sprite_center.x - (shadow_offset * sin(sprite_angle)) # seštevanje ali odštevanje določa gor ali dol
-	shadow_position.y = sprite_center.y - ((shadow_offset) * cos(sprite_angle))
-
-	draw_set_transform(Vector2.ZERO, deg2rad(90), Vector2.ONE)
-	draw_texture(sprite_texture, shadow_position, Color( 0, 0, 0, 0.3 ))
+#func _draw():
+#
+#	var shadow_position: Vector2
+#	var sprite_angle: float
+#
+#	sprite_angle = rotation + rad2deg(90) # z dodatkom 90 stopinj dobimo vetikalni zamik 
+#	shadow_position.x = sprite_center.x - (shadow_offset * sin(sprite_angle)) # seštevanje ali odštevanje določa gor ali dol
+#	shadow_position.y = sprite_center.y - ((shadow_offset) * cos(sprite_angle))
+#
+#	draw_set_transform(Vector2.ZERO, deg2rad(90), Vector2.ONE)
+#	draw_texture(sprite_texture, shadow_position, Color( 0, 0, 0, 0.3 ))

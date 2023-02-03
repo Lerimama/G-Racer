@@ -34,7 +34,7 @@ func _ready() -> void:
 	add_to_group("Misiles")
 	set_as_toplevel(true)
 	
-	target = Global.node_creation_parent.get_node("Target")
+	target = AutoGlobal.node_creation_parent.get_node("Target")
 	
 	# random shoot direction 
 	var random_range = rand_range(start_direction_range[0],start_direction_range[1]) # oblika variable zato, da isto rotiramo tudi misilo

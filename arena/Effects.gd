@@ -1,6 +1,8 @@
 extends Node2D
 
 
+
+
 # Declare member variables here. Examples:
 # var a: int = 2
 # var b: String = "text"
@@ -11,18 +13,18 @@ var particles_test
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
-	Global.effects_creation_parent = self
+	AutoGlobal.effects_creation_parent = self
+	print("AutoGlobal.effects_creation_parent = self")
 	
-	
-	particles_test = partikli.instance()
-#	particles_test.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
-#	particles_test.modulate.a = engines_alpha
-#	Global.effects_creation_parent.add_child(particles_test)
-	particles_test.global_position = get_local_mouse_position()
-	add_child(particles_test)
-	particles_test.set_one_shot(false)
-	particles_test.set_emitting(true)
-#	particles_test.modulate = Global.effects_creation_parent.modulate
+#	particles_test = partikli.instance()
+##	particles_test.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
+##	particles_test.modulate.a = engines_alpha
+##	AutoGlobal.effects_creation_parent.add_child(particles_test)
+#	particles_test.global_position = get_local_mouse_position()
+#	add_child(particles_test)
+#	particles_test.set_one_shot(false)
+#	particles_test.set_emitting(true)
+#	particles_test.modulate = AutoGlobal.effects_creation_parent.modulate
 
 	pass # Replace with function body.
 

@@ -1,13 +1,144 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://arena/Arena.gd" type="Script" id=1]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
-[ext_resource path="res://arena/Level_00.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/tileset_arena.tres" type="TileSet" id=3]
 [ext_resource path="res://arena/tempbody.gd" type="Script" id=4]
 [ext_resource path="res://resources/graphics/light.png" type="Texture" id=5]
 [ext_resource path="res://resources/graphics/pixel.png" type="Texture" id=6]
 [ext_resource path="res://resources/graphics/bolt.png" type="Texture" id=7]
-[ext_resource path="res://arena/Effects.gd" type="Script" id=8]
+[ext_resource path="res://arena/Effects.gd" type="Script" id=9]
+
+[sub_resource type="Shader" id=87]
+code = "shader_type canvas_item;
+//render_mode blend_premul_alpha; // nč bolš
+
+//blend_mix - Mix blend mode (alpha is transparency), default.
+//blend_add - Additive blend mode.
+//blend_sub - Subtractive blend mode.
+//blend_mul - Multiplicative blend mode.
+//blend_premul_alpha - Pre-multiplied alpha blend mode.
+//blend_disabled - Disable blending, values (including alpha) are written as-is.
+//unshaded - Result is just albedo. No lighting/shading happens in material.
+//light_only - Only draw on light pass
+//skip_vertex_transform - VERTEX/NORMAL/etc need to be transformed manually in vertex function.
+
+
+
+// šejder v1 - prepoznava 100% transparenco in aplicira novo barvo na te pixle
+// šejder v2 - prepoznava tudi cutout barvo, ki jo potem manipulira
+// šejder v3 - prepoznava barvo, ki ji mora dodat senco
+// šejder v4 - prepoznava različne barve, ki jim dodaj različne sence
+// šejder v5 - dodaja sence za prizemljene objekte
+
+//... simple nadgradnja je če dodam več barv za manipulirat ... al pa celo gradient
+
+// barve
+uniform vec4 manipulate_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
+uniform bool manipulate_other_colors = true;
+uniform vec4 transparent_to_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+
+// shadow
+uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float shadow_offset_x = 1.0; // smer offseta ... to niso texli ampak pixli
+uniform float shadow_offset_y = 1.0; // smer offseta ... to niso texli ampak pixli
+uniform float texture_altitude = 5.0; // količina offseta ... višin texture
+
+// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
+uniform float texture_width = 640.0;
+uniform float texture_height = 360.0;
+
+
+
+void fragment(){
+
+	// preračun pravge offseta sence ... pixle konvertamo v texle
+	vec2 shadow_offset = vec2(shadow_offset_x / texture_width, shadow_offset_y / texture_height);
+	vec2 uvs = UV + shadow_offset * texture_altitude;
+	
+	// poberemo prikaz texture in apliciramo samo offset še predno apliciramo barvo 
+	vec4 color = texture(TEXTURE, uvs);
+
+	
+	// manipuliramo izbrano barvo
+	if (manipulate_other_colors == false){
+		
+		// če je barva texture enaka izbrani apliciramo efekt
+		if (color == manipulate_color){
+			color = shadow_color * color.a;
+		}
+		// druge barve so brez efekta
+		else {
+			color.a = 0.0; // 100% transparenca
+			color = texture(TEXTURE, UV); // original barva in pozicija
+		}
+	}
+	
+	// manipuliramo vse razen izbrane barve
+	else if (manipulate_other_colors == true){
+		
+		// če barva texture ni transparenta apliciramo efekt
+		if (color.a > 0.0){
+			
+			// barva enaka izbrani barvi je brez efekta
+			if (color == manipulate_color){
+				color.a = 0.0;
+				color = texture(TEXTURE, UV);
+			}
+			// aplciramo efekt na vse druge barve
+			else {
+				color = shadow_color * color.a;
+			}
+		}
+		// barva transparentnega dela tekture
+		else {
+			color = transparent_to_color;
+		}
+		
+	}
+	
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=88]
+shader = SubResource( 87 )
+shader_param/manipulate_color = Color( 1, 0, 0, 1 )
+shader_param/manipulate_other_colors = true
+shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
+shader_param/shadow_color = Color( 0, 0, 0, 0.27451 )
+shader_param/shadow_offset_x = 0.0
+shader_param/shadow_offset_y = -1.0
+shader_param/texture_altitude = 20.0
+shader_param/texture_width = 640.0
+shader_param/texture_height = 360.0
+
+[sub_resource type="ViewportTexture" id=91]
+viewport_path = NodePath("Effects 1/Viewport")
+
+[sub_resource type="Shader" id=85]
+code = "shader_type canvas_item;
+render_mode blend_premul_alpha;
+
+//blen
+
+
+void fragment(){
+
+	COLOR =  texture(TEXTURE, UV);
+}"
+
+[sub_resource type="ShaderMaterial" id=86]
+shader = SubResource( 85 )
+
+[sub_resource type="ViewportTexture" id=90]
+viewport_path = NodePath("Effects 1/Viewport")
+
+[sub_resource type="Curve" id=5]
+max_value = 5.0
+_data = [ Vector2( 0, 0 ), 0.0, 4.14464, 0, 0, Vector2( 1, 1.56198 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=58]
+colors = PoolColorArray( 1, 0, 0, 0.921569, 1, 0, 0, 0 )
 
 [sub_resource type="Shader" id=13]
 code = "// NOTE: Shader automatically converted from Godot Engine 3.5.1.stable's ParticlesMaterial.
@@ -618,7 +749,7 @@ void fragment(){
 	COLOR = color;
 }"
 
-[sub_resource type="ShaderMaterial" id=52]
+[sub_resource type="ShaderMaterial" id=63]
 shader = SubResource( 61 )
 shader_param/manipulate_color = Color( 1, 1, 1, 1 )
 shader_param/manipulate_other_colors = false
@@ -627,11 +758,11 @@ shader_param/transparent_new_color = Color( 0, 0, 0, 0 )
 shader_param/shadow_color = Color( 0, 0, 0, 0.27451 )
 shader_param/shadow_offset_x = 0.0
 shader_param/shadow_offset_y = 1.0
-shader_param/texture_altitude = 10.0
+shader_param/texture_altitude = 20.0
 shader_param/texture_width = 640.0
 shader_param/texture_height = 360.0
 
-[sub_resource type="Shader" id=59]
+[sub_resource type="Shader" id=74]
 code = "shader_type canvas_item;
 render_mode blend_mix;
 
@@ -655,6 +786,7 @@ uniform bool manipulate_other = false;
 uniform vec4 new_color_other : hint_color = vec4(0.5, 0.5, 0.5, 1.0); // select color to regirster and manipulate
 
 uniform vec4 transparent_to_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+uniform vec4 transparent_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
 
 
 void fragment(){
@@ -722,9 +854,9 @@ void fragment(){
 }"
 
 [sub_resource type="ShaderMaterial" id=16]
-shader = SubResource( 59 )
+shader = SubResource( 74 )
 shader_param/manipulate_color_1 = Color( 1, 1, 1, 1 )
-shader_param/new_color_1 = Color( 1, 0, 0, 0.32549 )
+shader_param/new_color_1 = Color( 0.803922, 0, 1, 1 )
 shader_param/manipulate_color_2 = Color( 0, 1, 1, 1 )
 shader_param/new_color_2 = Color( 0.898039, 0, 1, 1 )
 shader_param/manipulate_color_3 = Color( 0.25098, 0.105882, 0.294118, 0 )
@@ -732,37 +864,198 @@ shader_param/new_color_3 = Color( 0.415686, 0.203922, 1, 1 )
 shader_param/manipulate_other = false
 shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
 shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
+shader_param/transparent_color = Color( 0, 0, 0, 0 )
 
-[sub_resource type="CanvasItemMaterial" id=57]
+[sub_resource type="Shader" id=82]
+code = "shader_type canvas_item;
 
-[sub_resource type="Curve" id=5]
-max_value = 5.0
-_data = [ Vector2( 0, 0 ), 0.0, 4.14464, 0, 0, Vector2( 1, 1.56198 ), 0.0, 0.0, 0, 0 ]
+// šejder v1 - prepoznava 100% transparenco in aplicira novo barvo na te pixle
+// šejder v2 - prepoznava tudi cutout barvo, ki jo potem manipulira
+// šejder v3 - prepoznava barvo, ki ji mora dodat senco
+// šejder v4 - prepoznava različne barve, ki jim dodaj različne sence
+// šejder v5 - dodaja sence za prizemljene objekte
 
-[sub_resource type="Gradient" id=58]
-offsets = PoolRealArray( 0.0326409, 0.0949555, 1 )
-colors = PoolColorArray( 1, 1, 1, 0.921569, 1, 1, 1, 0.208589, 1, 1, 1, 0 )
+//... simple nadgradnja je če dodam več barv za manipulirat ... al pa celo gradient
 
-[sub_resource type="ShaderMaterial" id=62]
-shader = SubResource( 61 )
-shader_param/manipulate_color = Color( 1, 1, 1, 1 )
+// barve
+uniform vec4 manipulate_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
+uniform vec4 manipulate_high_color : hint_color = vec4(1.0, 1.0, 1.0, 1.0); // select color to regirster and manipulate
+uniform bool manipulate_other_colors = true;
+uniform vec4 transparent_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+uniform vec4 transparent_new_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+
+// shadow
+uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float shadow_offset_x = 1.0; // smer offseta ... to niso texli ampak pixli
+uniform float shadow_offset_y = 1.0; // smer offseta ... to niso texli ampak pixli
+uniform float texture_altitude = 5.0; // količina offseta ... višin texture
+
+// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
+uniform float texture_width = 640.0;
+uniform float texture_height = 360.0;
+
+
+
+void fragment(){
+
+	// preračun pravge offseta sence ... pixle konvertamo v texle
+	vec2 shadow_offset = vec2(shadow_offset_x / texture_width, shadow_offset_y / texture_height);
+	vec2 uvs = SCREEN_UV + shadow_offset * texture_altitude;
+	
+	// poberemo prikaz texture in apliciramo samo offset še predno apliciramo barvo 
+	vec4 color = texture(SCREEN_TEXTURE, uvs);
+
+	
+	// manipuliramo izbrano barvo
+	if (manipulate_other_colors == false){
+		
+		// če je barva texture enaka izbrani apliciramo efekt
+		if (color == manipulate_color){
+			color = shadow_color * color.a;
+		}
+		else if (color == manipulate_high_color){
+			color = vec4(1.0, 1.0, 1.0, 1.0) ;
+			
+		}
+		// druge barve so brez efekta
+		else {
+			color.a = 0.0; // 100% transparenca
+			color = texture(SCREEN_TEXTURE, SCREEN_UV); // original barva in pozicija
+		}
+	}
+	
+	// manipuliramo vse razen izbrane barve
+	else if (manipulate_other_colors == true){
+		
+		// če barva texture ni transparenta apliciramo efekt
+		if (color == transparent_color){
+//		if (color.a > 0.0){
+			
+			// barva enaka izbrani barvi je brez efekta
+			if (color == manipulate_color){
+				color.a = 0.0;
+				color = texture(SCREEN_TEXTURE, SCREEN_UV);
+			}
+			// aplciramo efekt na vse druge barve
+			else {
+				color = shadow_color * color.a;
+			}
+		}
+		// barva transparentnega dela tekture
+		else {
+			color = transparent_new_color;
+		}
+		
+	}
+	
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=83]
+shader = SubResource( 82 )
+shader_param/manipulate_color = Color( 0, 0, 0, 1 )
+shader_param/manipulate_high_color = Color( 0.537255, 0.309804, 1, 1 )
 shader_param/manipulate_other_colors = false
 shader_param/transparent_color = Color( 0, 0, 0, 0 )
-shader_param/transparent_new_color = Color( 0, 0, 0, 0 )
-shader_param/shadow_color = Color( 1, 0, 0, 1 )
+shader_param/transparent_new_color = Color( 0, 0, 0, 0.27451 )
+shader_param/shadow_color = Color( 0, 0, 0, 0.27451 )
 shader_param/shadow_offset_x = 0.0
 shader_param/shadow_offset_y = 1.0
-shader_param/texture_altitude = 5.0
+shader_param/texture_altitude = 12.0
 shader_param/texture_width = 640.0
 shader_param/texture_height = 360.0
 
-[sub_resource type="ShaderMaterial" id=60]
-shader = SubResource( 59 )
-shader_param/manipulate_color_1 = Color( 0.74902, 0.74902, 0.74902, 1 )
-shader_param/new_color_1 = Color( 1, 1, 0, 1 )
-shader_param/manipulate_color_2 = Color( 1, 1, 1, 1 )
-shader_param/new_color_2 = Color( 0.898039, 0, 1, 1 )
-shader_param/manipulate_color_3 = Color( 0.25098, 0.105882, 0.294118, 0 )
+[sub_resource type="Shader" id=64]
+code = "shader_type canvas_item;
+
+// šejder v1 - prepoznava 100% transparenco in aplicira novo barvo na te pixle
+// šejder v2 - prepoznava tudi cutout barvo, ki jo potem manipulira
+// šejder v3 - prepoznava barvo, ki ji mora dodat senco
+// šejder v4 - prepoznava različne barve, ki jim dodaj različne sence
+// šejder v5 - dodaja sence za prizemljene objekte
+
+//... simple nadgradnja je če dodam več barv za manipulirat ... al pa celo gradient
+
+// barve
+uniform vec4 manipulate_color_1 : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
+uniform vec4 new_color_1 : hint_color = vec4(1.0, 1.0, 0.0, 1.0); // select color to regirster and manipulate
+uniform vec4 manipulate_color_2 : hint_color = vec4(0.0, 1.0, 0.0, 1.0); // select color to regirster and manipulate
+uniform vec4 new_color_2 : hint_color = vec4(0.0, 1.0, 1.0, 1.0); // select color to regirster and manipulate
+uniform vec4 manipulate_color_3 : hint_color = vec4(0.0, 0.0, 1.0, 1.0); // select color to regirster and manipulate
+uniform vec4 new_color_3 : hint_color = vec4(1.0, 0.0, 1.0, 1.0); // select color to regirster and manipulate
+
+uniform bool manipulate_other = false;
+uniform vec4 new_color_other : hint_color = vec4(0.5, 0.5, 0.5, 1.0); // select color to regirster and manipulate
+
+uniform vec4 transparent_to_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
+
+
+void fragment(){
+
+	// poberemo prikaz texture in apliciramo samo offset še predno apliciramo barvo 
+	vec4 color = texture(SCREEN_TEXTURE, SCREEN_UV);
+
+	
+	// manipuliramo izbrane barve
+	if (manipulate_other == false){
+		
+		// če je barva texture enaka izbrani apliciramo novo (s transparenco)
+		if (color == manipulate_color_1 ){
+			color = new_color_1 * color.a;
+		}
+		else if (color == manipulate_color_2){
+			color = new_color_2 * color.a;
+		}
+		else if (color == manipulate_color_3){
+			color = new_color_3 * color.a;
+		}
+		
+		// druge barve so brez efekta
+		else {
+			color.a = 0.0; // 100% transparenca
+//			color = texture(TEXTURE, UV); // original barva in pozicija
+		}
+	}
+	
+	// manipuliramo vse druge barve
+	else if (manipulate_other == true){
+		
+		// če barva texture ni transparenta apliciramo efekt
+		if (color.a > 0.0){
+			
+			// barva enaka izbrani barvi je brez efekta
+			if (color == manipulate_color_1){
+				color.a = 0.0;
+			}
+			else if (color == manipulate_color_2){
+				color.a = 0.0;
+			}
+			else if (color == manipulate_color_3){
+				color.a = 0.0;
+			}
+			
+			// aplciramo prvo barve efekt na vse druge barve
+			else {
+				color = new_color_other * color.a;
+			}
+		}
+		// barva transparentnega dela tekture
+		else {
+			color = transparent_to_color;
+		}
+		
+	}
+	
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id=65]
+shader = SubResource( 64 )
+shader_param/manipulate_color_1 = Color( 0, 1, 0, 1 )
+shader_param/new_color_1 = Color( 1, 0, 0, 1 )
+shader_param/manipulate_color_2 = Color( 0, 1, 0, 1 )
+shader_param/new_color_2 = Color( 0, 1, 1, 1 )
+shader_param/manipulate_color_3 = Color( 1, 1, 1, 0 )
 shader_param/new_color_3 = Color( 0.415686, 0.203922, 1, 1 )
 shader_param/manipulate_other = false
 shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
@@ -774,29 +1067,80 @@ __meta__ = {
 "_edit_horizontal_guides_": [ -64.0 ]
 }
 
-[node name="Particles2D_eksplozija" type="Particles2D" parent="."]
+[node name="Light2D" type="Light2D" parent="."]
 visible = false
+position = Vector2( 360, 144 )
+scale = Vector2( 3.42503, 2.21825 )
+texture = ExtResource( 5 )
+
+[node name="Background" type="Node2D" parent="."]
+visible = false
+modulate = Color( 0.835294, 1, 0.615686, 1 )
+
+[node name="ColorRect" type="ColorRect" parent="Background"]
+margin_right = 640.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 640, 360 )
+
+[node name="Effects 1" type="CanvasLayer" parent="."]
+
+[node name="Shadows" type="Sprite" parent="Effects 1"]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = SubResource( 88 )
+texture = SubResource( 91 )
+centered = false
+
+[node name="Colors" type="Sprite" parent="Effects 1"]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = SubResource( 86 )
+texture = SubResource( 90 )
+centered = false
+
+[node name="Viewport" type="Viewport" parent="Effects 1"]
+size = Vector2( 640, 360 )
+transparent_bg = true
+render_target_v_flip = true
+
+[node name="Effects" type="Node2D" parent="Effects 1/Viewport"]
+script = ExtResource( 9 )
+
+[node name="EngineParticles" type="CPUParticles2D" parent="Effects 1/Viewport/Effects"]
+position = Vector2( 150, 150 )
+rotation = 0.785398
+scale = Vector2( 2, 2 )
+amount = 500
+lifetime = 0.5
+randomness = 0.5
+lifetime_randomness = 0.5
+local_coords = false
+emission_shape = 2
+emission_rect_extents = Vector2( 0.7, 0.7 )
+direction = Vector2( 0, 1 )
+spread = 0.0
+gravity = Vector2( 0, 10 )
+initial_velocity = 80.0
+initial_velocity_random = 0.5
+linear_accel = -20.0
+linear_accel_random = 1.0
+damping_curve = SubResource( 5 )
+color_ramp = SubResource( 58 )
+
+[node name="Particles2D_eksplozija" type="Particles2D" parent="Effects 1/Viewport/Effects"]
 position = Vector2( 85, 30 )
-z_index = -2
-emitting = false
 amount = 1000
 explosiveness = 1.0
 process_material = SubResource( 7 )
 texture = ExtResource( 6 )
 
-[node name="Particles2D_implozija" type="Particles2D" parent="."]
-visible = false
+[node name="Particles2D_implozija" type="Particles2D" parent="Effects 1/Viewport/Effects"]
 position = Vector2( 219, 76 )
 scale = Vector2( 1.00686, 0.559279 )
-z_index = -2
-emitting = false
 amount = 1000
 explosiveness = 0.61
 process_material = SubResource( 14 )
 texture = ExtResource( 6 )
 
-[node name="dobra eksplozija" type="CPUParticles2D" parent="."]
-visible = false
+[node name="dobra eksplozija" type="CPUParticles2D" parent="Effects 1/Viewport/Effects"]
 position = Vector2( 309, 172 )
 amount = 89
 speed_scale = 0.5
@@ -813,165 +1157,122 @@ linear_accel_random = 0.53
 linear_accel_curve = SubResource( 9 )
 color_ramp = SubResource( 10 )
 
-[node name="Light2D" type="Light2D" parent="."]
+[node name="Bodies 2" type="CanvasLayer" parent="."]
+layer = 2
 visible = false
-position = Vector2( 360, 144 )
-scale = Vector2( 3.42503, 2.21825 )
-texture = ExtResource( 5 )
 
-[node name="Background" type="Node2D" parent="."]
-modulate = Color( 0.054902, 0.709804, 0.498039, 1 )
-z_index = -1
+[node name="Player" parent="Bodies 2" instance=ExtResource( 2 )]
+position = Vector2( 385, 126 )
 
-[node name="ColorRect" type="ColorRect" parent="Background"]
+[node name="Shadows" type="ColorRect" parent="Bodies 2"]
+material = SubResource( 63 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 
-[node name="Level_00" parent="." instance=ExtResource( 3 )]
-
-[node name="CanvasLayer Bodies" type="CanvasLayer" parent="."]
-layer = 2
-visible = false
-
-[node name="Shadow_Level Z-1" type="ColorRect" parent="CanvasLayer Bodies"]
-visible = false
-material = SubResource( 52 )
+[node name="Colors" type="ColorRect" parent="Bodies 2"]
+material = SubResource( 16 )
 margin_right = 640.0
 margin_bottom = 360.0
+rect_min_size = Vector2( 640, 360 )
 
-[node name="NeonDust" type="ColorRect" parent="CanvasLayer Bodies"]
+[node name="Level 3" type="CanvasLayer" parent="."]
+layer = 3
 visible = false
-margin_right = 640.0
-margin_bottom = 360.0
 
-[node name="obsticles" type="Node2D" parent="."]
+[node name="obsticles" type="Node2D" parent="Level 3"]
 visible = false
-modulate = Color( 2, 21, 2, 1 )
-z_index = 2
 
-[node name="Target" type="StaticBody2D" parent="obsticles"]
-position = Vector2( 417, 235 )
-script = ExtResource( 4 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="obsticles/Target"]
-visible = false
-polygon = PoolVector2Array( -19, -14, -17, 15, 32, 20, 16, -11 )
-disabled = true
-
-[node name="Polygon2D" type="Polygon2D" parent="obsticles/Target"]
-position = Vector2( 106, 54 )
-polygon = PoolVector2Array( -125, -67, -123, -39, -75, -34, -89, -66 )
-
-[node name="Target2" type="StaticBody2D" parent="obsticles"]
+[node name="1" type="StaticBody2D" parent="Level 3/obsticles"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( -134, -39 )
+position = Vector2( -230, -39 )
 scale = Vector2( 1.0034, 1 )
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="obsticles/Target2"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Level 3/obsticles/1"]
 visible = false
 polygon = PoolVector2Array( 375, 152, 367, 173, 401, 175, 393, 148 )
 
-[node name="Polygon2D" type="Polygon2D" parent="obsticles/Target2"]
+[node name="Polygon2D" type="Polygon2D" parent="Level 3/obsticles/1"]
 polygon = PoolVector2Array( 375, 152, 367, 173, 401, 175, 393, 148 )
 
-[node name="Obsticle" type="Area2D" parent="obsticles"]
+[node name="2" type="Area2D" parent="Level 3/obsticles"]
 modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 430, 123 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="obsticles/Obsticle"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Level 3/obsticles/2"]
 visible = false
 polygon = PoolVector2Array( -18, -19, -8, 20, 19, 15, 21, -18 )
 disabled = true
 
-[node name="CollisionPolygon2D2" type="Polygon2D" parent="obsticles/Obsticle"]
+[node name="CollisionPolygon2D2" type="Polygon2D" parent="Level 3/obsticles/2"]
 polygon = PoolVector2Array( -18, -19, -8, 20, 19, 15, 21, -18 )
 
-[node name="Obsticle2" type="Area2D" parent="obsticles"]
-modulate = Color( 0, 0, 1, 1 )
-position = Vector2( 256, 235 )
+[node name="3" type="StaticBody2D" parent="Level 3/obsticles"]
+position = Vector2( 369, 267 )
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="obsticles/Obsticle2"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Level 3/obsticles/3"]
+visible = false
+polygon = PoolVector2Array( -19, -14, -17, 15, 32, 20, 16, -11 )
+disabled = true
+
+[node name="Polygon2D" type="Polygon2D" parent="Level 3/obsticles/3"]
+position = Vector2( 106, 54 )
+polygon = PoolVector2Array( -125, -67, -123, -39, -75, -34, -89, -66 )
+
+[node name="4" type="Area2D" parent="Level 3/obsticles"]
+modulate = Color( 0, 0, 1, 1 )
+position = Vector2( 168, 235 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Level 3/obsticles/4"]
 visible = false
 polygon = PoolVector2Array( -18, -19, -8, 20, 19, 15, 21, -18 )
 disabled = true
 
-[node name="CollisionPolygon2D2" type="Polygon2D" parent="obsticles/Obsticle2"]
+[node name="CollisionPolygon2D2" type="Polygon2D" parent="Level 3/obsticles/4"]
 polygon = PoolVector2Array( -18, -19, -8, 20, 19, 15, 21, -18 )
 
-[node name="CanvasLayer Effects" type="CanvasLayer" parent="."]
-layer = 2
+[node name="Level_00" type="Node2D" parent="Level 3"]
 
-[node name="Shadow_Level Z-1" type="ColorRect" parent="CanvasLayer Effects"]
-material = SubResource( 52 )
+[node name="EdgeTilemap" type="TileMap" parent="Level 3/Level_00"]
+modulate = Color( 0, 1, 0, 1 )
+tile_set = ExtResource( 3 )
+cell_size = Vector2( 8, 8 )
+cell_custom_transform = Transform2D( 8, 0, 0, 8, 0, 0 )
+format = 1
+tile_data = PoolIntArray( -655392, 2, 0, -655391, 2, 0, -655390, 2, 0, -655389, 2, 0, -655388, 2, 0, -589851, 2, 0, -524314, 2, 0, -262139, 2, 65536, -262138, 2, 2, -262137, 2, 2, -262136, 2, 2, -262135, 2, 2, -262134, 2, 3, -262133, 2, 2, -262132, 2, 3, -262131, 2, 3, -262130, 2, 2, -262129, 2, 2, -262128, 2, 3, -262127, 2, 4, -262113, 2, 0, -262112, 2, 0, -262111, 2, 0, -262110, 2, 0, -262109, 2, 0, -262108, 2, 0, -262107, 2, 0, -262106, 2, 0, -262105, 2, 0, -262104, 2, 0, -262103, 2, 0, -262102, 2, 0, -262101, 2, 0, -262100, 2, 0, -262099, 2, 0, -262098, 2, 0, -262097, 2, 0, -262096, 2, 0, -262080, 2, 1, -262079, 2, 3, -262078, 2, 4, -196603, 2, 131072, -196602, 2, 131074, -196601, 2, 131074, -196600, 2, 131074, -196599, 2, 131074, -196598, 2, 131074, -196597, 2, 131074, -196596, 2, 131074, -196595, 2, 131074, -196594, 2, 131074, -196593, 2, 131074, -196592, 2, 131074, -196591, 2, 262145, -196590, 2, 3, -196589, 2, 2, -196588, 2, 2, -196587, 2, 2, -196586, 2, 3, -196585, 2, 3, -196584, 2, 3, -196583, 2, 2, -196582, 2, 3, -196581, 2, 3, -196580, 2, 3, -196579, 2, 2, -196578, 2, 4, -196560, 2, 0, -196555, 2, 1, -196554, 2, 2, -196553, 2, 3, -196552, 2, 3, -196551, 2, 3, -196550, 2, 3, -196549, 2, 3, -196548, 2, 2, -196547, 2, 2, -196546, 2, 2, -196545, 2, 3, -196544, 2, 262148, -196543, 2, 131074, -196542, 2, 262145, -196541, 2, 2, -196540, 2, 3, -196539, 2, 2, -196538, 2, 2, -196537, 2, 3, -196536, 2, 2, -196535, 2, 3, -196534, 2, 3, -196533, 2, 2, -196532, 2, 3, -196531, 2, 2, -196530, 2, 3, -196529, 2, 2, -196528, 2, 2, -196527, 2, 65541, -65544, 2, 0, -65543, 2, 0, -65542, 2, 0, -65541, 2, 0, -65540, 2, 0, -65539, 2, 0, -131070, 2, 0, -131067, 2, 131072, -131066, 2, 131074, -131065, 2, 131074, -131064, 2, 131074, -131063, 2, 131074, -131062, 2, 131074, -131061, 2, 131074, -131060, 2, 131074, -131059, 2, 131074, -131058, 2, 131074, -131057, 2, 131074, -131056, 2, 131074, -131055, 2, 131074, -131054, 2, 131074, -131053, 2, 131074, -131052, 2, 131074, -131051, 2, 131074, -131050, 2, 131074, -131049, 2, 131074, -131048, 2, 131074, -131047, 2, 131074, -131046, 2, 131074, -131045, 2, 131074, -131044, 2, 131074, -131043, 2, 131074, -131042, 2, 262145, -131041, 2, 2, -131040, 2, 3, -131039, 2, 3, -131038, 2, 3, -131037, 2, 3, -131036, 2, 2, -131035, 2, 2, -131034, 2, 2, -131033, 2, 3, -131032, 2, 2, -131031, 2, 2, -131030, 2, 2, -131029, 2, 2, -131028, 2, 3, -131027, 2, 2, -131026, 2, 3, -131025, 2, 2, -131024, 2, 3, -131023, 2, 2, -131022, 2, 2, -131021, 2, 3, -131020, 2, 2, -131019, 2, 262148, -131018, 2, 131074, -131017, 2, 131074, -131016, 2, 131074, -131015, 2, 131074, -131014, 2, 131074, -131013, 2, 131074, -131012, 2, 131074, -131011, 2, 131074, -131010, 2, 131074, -131009, 2, 131074, -131008, 2, 131074, -131007, 2, 131074, -131006, 2, 131074, -131005, 2, 131074, -131004, 2, 131074, -131003, 2, 131074, -131002, 2, 131074, -131001, 2, 131074, -131000, 2, 131074, -130999, 2, 131074, -130998, 2, 131074, -130997, 2, 131074, -130996, 2, 131074, -130995, 2, 131074, -130994, 2, 131074, -130993, 2, 131074, -130992, 2, 131074, -130991, 2, 262145, -130990, 2, 4, -2, 2, 0, -65536, 2, 0, -65535, 2, 0, -65533, 2, 0, -65532, 2, 0, -65531, 2, 196608, -65530, 2, 131074, -65529, 2, 131074, -65528, 2, 131074, -65527, 2, 131074, -65526, 2, 131074, -65525, 2, 131074, -65524, 2, 131074, -65523, 2, 131074, -65522, 2, 131074, -65521, 2, 131074, -65520, 2, 131074, -65519, 2, 131074, -65518, 2, 131074, -65517, 2, 131074, -65516, 2, 131074, -65515, 2, 131074, -65514, 2, 131074, -65513, 2, 131074, -65512, 2, 131074, -65511, 2, 131074, -65510, 2, 131074, -65509, 2, 131074, -65508, 2, 131074, -65507, 2, 131074, -65506, 2, 131074, -65505, 2, 131074, -65504, 2, 131074, -65503, 2, 131074, -65502, 2, 131074, -65501, 2, 131074, -65500, 2, 131074, -65499, 2, 131074, -65498, 2, 131074, -65497, 2, 131074, -65496, 2, 131074, -65495, 2, 131074, -65494, 2, 131074, -65493, 2, 131074, -65492, 2, 131074, -65491, 2, 131074, -65490, 2, 131074, -65489, 2, 131074, -65488, 2, 131074, -65487, 2, 131074, -65486, 2, 131074, -65485, 2, 131074, -65484, 2, 131074, -65483, 2, 131074, -65482, 2, 131074, -65481, 2, 131074, -65480, 2, 131074, -65479, 2, 131074, -65478, 2, 131074, -65477, 2, 131074, -65476, 2, 131074, -65475, 2, 131074, -65474, 2, 131074, -65473, 2, 131074, -65472, 2, 131074, -65471, 2, 131074, -65470, 2, 131074, -65469, 2, 131074, -65468, 2, 131074, -65467, 2, 131074, -65466, 2, 131074, -65465, 2, 131074, -65464, 2, 131074, -65463, 2, 131074, -65462, 2, 131074, -65461, 2, 131074, -65460, 2, 131074, -65459, 2, 131074, -65458, 2, 131074, -65457, 2, 131074, -65456, 2, 131074, -65455, 2, 131074, -65454, 2, 196613, 65527, 2, 0, 0, 2, 0, 5, 2, 327681, 6, 2, 327683, 7, 2, 327682, 8, 2, 327682, 9, 2, 327683, 10, 2, 327683, 11, 2, 327683, 12, 2, 327683, 13, 2, 327682, 14, 2, 327682, 15, 2, 327683, 16, 2, 327682, 17, 2, 327683, 18, 2, 327683, 19, 2, 327682, 20, 2, 327682, 21, 2, 327682, 22, 2, 327683, 23, 2, 327682, 24, 2, 65540, 25, 2, 131074, 26, 2, 131074, 27, 2, 131074, 28, 2, 131074, 29, 2, 65537, 30, 2, 327682, 31, 2, 327682, 32, 2, 327683, 33, 2, 327683, 34, 2, 327682, 35, 2, 327682, 36, 2, 327683, 37, 2, 327682, 38, 2, 327682, 39, 2, 327683, 40, 2, 327682, 41, 2, 327682, 42, 2, 327683, 43, 2, 327682, 44, 2, 327683, 45, 2, 327682, 46, 2, 327683, 47, 2, 327683, 48, 2, 327683, 49, 2, 327682, 50, 2, 327682, 51, 2, 327682, 52, 2, 327683, 53, 2, 327682, 54, 2, 327683, 55, 2, 327683, 56, 2, 327683, 57, 2, 327683, 58, 2, 327682, 59, 2, 327682, 60, 2, 327682, 61, 2, 327683, 62, 2, 327683, 63, 2, 65540, 64, 2, 131074, 65, 2, 131074, 66, 2, 131074, 67, 2, 131074, 68, 2, 131074, 69, 2, 131074, 70, 2, 131074, 71, 2, 131074, 72, 2, 131074, 73, 2, 131074, 74, 2, 131074, 75, 2, 131074, 76, 2, 131074, 77, 2, 131074, 78, 2, 131074, 79, 2, 131074, 80, 2, 131074, 81, 2, 131074, 82, 2, 131077, 131064, 2, 0, 131065, 2, 0, 131066, 2, 0, 131067, 2, 0, 131068, 2, 0, 131069, 2, 0, 65539, 2, 0, 65560, 2, 327681, 65561, 2, 327682, 65562, 2, 327683, 65563, 2, 327682, 65564, 2, 327683, 65565, 2, 262149, 65599, 2, 262144, 65600, 2, 327683, 65601, 2, 327682, 65602, 2, 327683, 65603, 2, 327682, 65604, 2, 327683, 65605, 2, 327683, 65606, 2, 65540, 65607, 2, 131074, 65608, 2, 131074, 65609, 2, 131074, 65610, 2, 131074, 65611, 2, 65537, 65612, 2, 327683, 65613, 2, 65540, 65614, 2, 131074, 65615, 2, 131074, 65616, 2, 131074, 65617, 2, 131074, 65618, 2, 196613, 131075, 2, 0, 131100, 2, 0, 131130, 2, 0, 131131, 2, 0, 131132, 2, 0, 131133, 2, 0, 131134, 2, 0, 131142, 2, 327681, 131143, 2, 327683, 131144, 2, 327683, 131145, 2, 327683, 131146, 2, 327683, 131147, 2, 262149, 131149, 2, 262144, 131150, 2, 327682, 131151, 2, 65540, 131152, 2, 131074, 131153, 2, 131074, 131154, 2, 196613, 262139, 2, 1, 262140, 2, 2, 262141, 2, 2, 262142, 2, 3, 262143, 2, 2, 196608, 2, 4, 196609, 2, 0, 196624, 2, 0, 196626, 2, 0, 196637, 2, 0, 196687, 2, 131072, 196688, 2, 131074, 196689, 2, 131074, 196690, 2, 196613, 327675, 2, 131072, 327676, 2, 131074, 327677, 2, 131074, 327678, 2, 131074, 327679, 2, 131074, 262144, 2, 196613, 262160, 2, 0, 262164, 2, 0, 262223, 2, 131072, 262224, 2, 131074, 262225, 2, 65537, 262226, 2, 262149, 393211, 2, 196608, 393212, 2, 131074, 393213, 2, 131074, 393214, 2, 131074, 393215, 2, 131074, 327680, 2, 131077, 327695, 2, 0, 327696, 2, 0, 327698, 2, 0, 327702, 2, 0, 327759, 2, 131072, 327760, 2, 131074, 327761, 2, 131077, 458747, 2, 327681, 458748, 2, 65540, 458749, 2, 131074, 458750, 2, 131074, 458751, 2, 131074, 393216, 2, 196613, 393233, 2, 0, 393295, 2, 196608, 393296, 2, 131074, 393297, 2, 196613, 524284, 2, 131072, 524285, 2, 131074, 524286, 2, 131074, 524287, 2, 131074, 458752, 2, 131077, 458763, 2, 0, 458773, 2, 0, 458809, 2, 1, 458810, 2, 3, 458811, 2, 2, 458812, 2, 65541, 458831, 2, 131072, 458832, 2, 131074, 458833, 2, 131077, 589820, 2, 196608, 589821, 2, 131074, 589822, 2, 131074, 589823, 2, 131074, 524288, 2, 131077, 524289, 2, 0, 524296, 2, 0, 524297, 2, 0, 524301, 2, 0, 524312, 2, 0, 524316, 2, 0, 524321, 2, 0, 524322, 2, 0, 524345, 2, 131072, 524346, 2, 131074, 524347, 2, 131074, 524348, 2, 196613, 524367, 2, 131072, 524368, 2, 131074, 524369, 2, 131077, 655356, 2, 262144, 655357, 2, 65540, 655358, 2, 131074, 655359, 2, 131074, 589824, 2, 131077, 589830, 2, 0, 589834, 2, 0, 589836, 2, 0, 589838, 2, 0, 589839, 2, 0, 589850, 2, 0, 589854, 2, 0, 589855, 2, 0, 589881, 2, 196608, 589882, 2, 131074, 589883, 2, 131074, 589884, 2, 196613, 589903, 2, 196608, 589904, 2, 131074, 589905, 2, 196613, 720893, 2, 196608, 720894, 2, 131074, 720895, 2, 131074, 655360, 2, 131077, 655362, 2, 0, 655365, 2, 0, 655368, 2, 0, 655369, 2, 0, 655370, 2, 0, 655375, 2, 0, 655390, 2, 0, 655417, 2, 262144, 655418, 2, 65540, 655419, 2, 131074, 655420, 2, 196613, 655439, 2, 196608, 655440, 2, 131074, 655441, 2, 131077, 786429, 2, 196608, 786430, 2, 131074, 786431, 2, 131074, 720896, 2, 196613, 720898, 2, 0, 720900, 2, 0, 720903, 2, 0, 720914, 2, 0, 720921, 2, 0, 720928, 2, 0, 720929, 2, 0, 720954, 2, 131072, 720955, 2, 131074, 720956, 2, 131077, 720974, 2, 1, 720975, 2, 262148, 720976, 2, 131074, 720977, 2, 196613, 720980, 5, 0, 851965, 2, 196608, 851966, 2, 131074, 851967, 2, 131074, 786432, 2, 196613, 786438, 2, 0, 786439, 2, 0, 786461, 2, 0, 786462, 2, 0, 786463, 2, 0, 786489, 2, 0, 786490, 2, 131072, 786491, 2, 131074, 786492, 2, 131077, 786510, 2, 196608, 786511, 2, 131074, 786512, 2, 131074, 786513, 2, 131077, 786554, 2, 0, 917501, 2, 196608, 917502, 2, 131074, 917503, 2, 131074, 851968, 2, 131077, 851973, 2, 0, 851983, 2, 0, 852026, 2, 262144, 852027, 2, 327682, 852028, 2, 262149, 852046, 2, 131072, 852047, 2, 131074, 852048, 2, 131074, 852049, 2, 196613, 983036, 2, 65536, 983037, 2, 262148, 983038, 2, 131074, 983039, 2, 131074, 917504, 2, 131077, 917508, 2, 0, 917509, 2, 0, 917520, 2, 0, 917563, 2, 0, 917582, 2, 131072, 917583, 2, 131074, 917584, 2, 131074, 917585, 2, 196613, 917626, 2, 0, 1048572, 2, 262144, 1048573, 2, 65540, 1048574, 2, 131074, 1048575, 2, 131074, 983040, 2, 196613, 983049, 2, 0, 983054, 2, 0, 983055, 2, 0, 983074, 2, 0, 983118, 2, 196608, 983119, 2, 131074, 983120, 2, 131074, 983121, 2, 262145, 983122, 2, 65541, 983162, 2, 0, 1114109, 2, 262144, 1114110, 2, 65540, 1114111, 2, 131074, 1048576, 2, 196613, 1048584, 2, 0, 1048588, 2, 0, 1048610, 2, 0, 1048614, 2, 0, 1048654, 2, 327681, 1048655, 2, 65540, 1048656, 2, 131074, 1048657, 2, 131074, 1048658, 2, 131077, 1048695, 2, 0, 1048700, 2, 0, 1179646, 2, 131072, 1179647, 2, 131074, 1114112, 2, 131077, 1114146, 2, 65536, 1114147, 2, 3, 1114148, 2, 2, 1114149, 2, 4, 1114150, 2, 0, 1114155, 2, 0, 1114156, 2, 0, 1114191, 2, 196608, 1114192, 2, 131074, 1114193, 2, 131074, 1114194, 2, 131077, 1114231, 2, 0, 1114233, 2, 0, 1114238, 2, 0, 1245180, 2, 0, 1245182, 2, 196608, 1245183, 2, 131074, 1179648, 2, 196613, 1179653, 2, 0, 1179656, 2, 0, 1179679, 2, 0, 1179681, 2, 1, 1179682, 2, 262148, 1179683, 2, 131074, 1179684, 2, 131074, 1179685, 2, 131077, 1179691, 2, 0, 1179693, 2, 0, 1179727, 2, 131072, 1179728, 2, 131074, 1179729, 2, 131074, 1179730, 2, 131077, 1179769, 2, 0, 1179770, 2, 0, 1310716, 2, 0, 1310718, 2, 196608, 1310719, 2, 131074, 1245184, 2, 131077, 1245206, 2, 0, 1245216, 2, 1, 1245217, 2, 262148, 1245218, 2, 131074, 1245219, 2, 131074, 1245220, 2, 131074, 1245221, 2, 196613, 1245228, 2, 0, 1245229, 2, 0, 1245262, 2, 65536, 1245263, 2, 262148, 1245264, 2, 131074, 1245265, 2, 65537, 1245266, 2, 262149, 1245304, 2, 0, 1376252, 2, 0, 1376254, 2, 131072, 1376255, 2, 131074, 1310720, 2, 131077, 1310722, 2, 0, 1310752, 2, 131072, 1310753, 2, 131074, 1310754, 2, 131074, 1310755, 2, 131074, 1310756, 2, 131074, 1310757, 2, 131077, 1310763, 2, 0, 1310764, 2, 0, 1310766, 2, 0, 1310798, 2, 196608, 1310799, 2, 131074, 1310800, 2, 131074, 1310801, 2, 131077, 1310840, 2, 0, 1441788, 2, 0, 1441790, 2, 131072, 1441791, 2, 131074, 1376256, 2, 131077, 1376258, 2, 0, 1376273, 2, 0, 1376283, 2, 0, 1376288, 2, 196608, 1376289, 2, 131074, 1376290, 2, 131074, 1376291, 2, 131074, 1376292, 2, 65537, 1376293, 2, 327684, 1376298, 2, 0, 1376300, 2, 0, 1376302, 2, 0, 1376334, 2, 262144, 1376335, 2, 65540, 1376336, 2, 131074, 1376337, 2, 131077, 1376376, 2, 0, 1507324, 2, 0, 1507326, 2, 196608, 1507327, 2, 131074, 1441792, 2, 262145, 1441793, 2, 65541, 1441810, 2, 0, 1441813, 2, 0, 1441814, 2, 0, 1441824, 2, 262144, 1441825, 2, 327682, 1441826, 2, 327682, 1441827, 2, 327683, 1441828, 2, 262149, 1441871, 2, 196608, 1441872, 2, 131074, 1441873, 2, 131077, 1572860, 2, 0, 1572862, 2, 196608, 1572863, 2, 131074, 1507328, 2, 131074, 1507329, 2, 131077, 1507348, 2, 0, 1507350, 2, 0, 1507355, 2, 0, 1507356, 2, 0, 1507407, 2, 131072, 1507408, 2, 131074, 1507409, 2, 196613, 1638396, 2, 0, 1638398, 2, 131072, 1638399, 2, 131074, 1572864, 2, 131074, 1572865, 2, 196613, 1572887, 2, 0, 1572892, 2, 0, 1572943, 2, 196608, 1572944, 2, 131074, 1572945, 2, 196613, 1703934, 2, 131072, 1703935, 2, 131074, 1638400, 2, 131074, 1638401, 2, 196613, 1638423, 2, 0, 1638465, 2, 0, 1638479, 2, 196608, 1638480, 2, 131074, 1638481, 2, 262145, 1638482, 2, 4, 1769469, 2, 1, 1769470, 2, 262148, 1769471, 2, 131074, 1703936, 2, 65537, 1703937, 2, 262149, 1703955, 2, 0, 1703958, 2, 0, 1703959, 2, 0, 1703963, 2, 0, 1703971, 2, 0, 1704000, 2, 0, 1704002, 2, 0, 1704015, 2, 131072, 1704016, 2, 131074, 1704017, 2, 131074, 1704018, 2, 262145, 1704019, 2, 65541, 1835005, 2, 196608, 1835006, 2, 131074, 1835007, 2, 131074, 1769472, 2, 196613, 1769484, 2, 0, 1769494, 2, 0, 1769497, 2, 0, 1769502, 2, 0, 1769528, 2, 0, 1769538, 2, 0, 1769551, 2, 131072, 1769552, 2, 131074, 1769553, 2, 131074, 1769554, 2, 131074, 1769555, 2, 131077, 1900541, 2, 131072, 1900542, 2, 131074, 1900543, 2, 131074, 1835008, 2, 196613, 1835017, 2, 0, 1835020, 2, 0, 1835033, 2, 0, 1835034, 2, 0, 1835064, 2, 0, 1835065, 2, 0, 1835074, 2, 0, 1835087, 2, 196608, 1835088, 2, 131074, 1835089, 2, 131074, 1835090, 2, 131074, 1835091, 2, 262145, 1835092, 2, 4, 1966077, 2, 131072, 1966078, 2, 131074, 1966079, 2, 131074, 1900544, 2, 131077, 1900553, 2, 0, 1900556, 2, 0, 1900570, 2, 0, 1900588, 2, 0, 1900601, 2, 0, 1900604, 2, 1, 1900605, 2, 3, 1900606, 2, 4, 1900610, 2, 0, 1900623, 2, 196608, 1900624, 2, 131074, 1900625, 2, 131074, 1900626, 2, 131074, 1900627, 2, 131074, 1900628, 2, 196613, 2031613, 2, 131072, 2031614, 2, 131074, 2031615, 2, 131074, 1966080, 2, 196613, 1966091, 2, 0, 1966116, 2, 0, 1966118, 2, 0, 1966123, 2, 0, 1966125, 2, 0, 1966137, 2, 0, 1966140, 2, 131072, 1966141, 2, 131074, 1966142, 2, 262145, 1966143, 2, 65541, 1966146, 2, 0, 1966159, 2, 262144, 1966160, 2, 327683, 1966161, 2, 327682, 1966162, 2, 327683, 1966163, 2, 327683, 1966164, 2, 262149, 2097149, 2, 196608, 2097150, 2, 131074, 2097151, 2, 131074, 2031616, 2, 131077, 2031627, 2, 0, 2031649, 2, 0, 2031650, 2, 0, 2031652, 2, 0, 2031654, 2, 0, 2031659, 2, 0, 2031660, 2, 0, 2031661, 2, 0, 2031673, 2, 0, 2031676, 2, 196608, 2031677, 2, 131074, 2031678, 2, 131074, 2031679, 2, 196613, 2031682, 2, 0, 2031683, 2, 0, 2162685, 2, 196608, 2162686, 2, 131074, 2162687, 2, 131074, 2097152, 2, 196613, 2097185, 2, 0, 2097188, 2, 0, 2097190, 2, 0, 2097191, 2, 0, 2097192, 2, 0, 2097210, 2, 0, 2097212, 2, 327681, 2097213, 2, 327683, 2097214, 2, 327682, 2097215, 2, 327684, 2097218, 2, 0, 2228221, 2, 196608, 2228222, 2, 131074, 2228223, 2, 131074, 2162688, 2, 131077, 2162724, 2, 0, 2162746, 2, 0, 2162747, 2, 0, 2162749, 2, 0, 2162751, 2, 0, 2162754, 2, 0, 2293757, 2, 196608, 2293758, 2, 131074, 2293759, 2, 131074, 2228224, 2, 131077, 2228286, 2, 0, 2228301, 2, 0, 2228303, 2, 0, 2228304, 2, 0, 2359293, 2, 131072, 2359294, 2, 131074, 2359295, 2, 131074, 2293760, 2, 196613, 2293778, 2, 0, 2293783, 2, 0, 2293837, 2, 0, 2293840, 2, 0, 2424829, 2, 327681, 2424830, 2, 65540, 2424831, 2, 131074, 2359296, 2, 131077, 2359303, 2, 0, 2359328, 2, 0, 2359376, 2, 0, 2490366, 2, 131072, 2490367, 2, 131074, 2424832, 2, 196613, 2424859, 2, 0, 2424912, 2, 0, 2555901, 2, 0, 2555902, 2, 196608, 2555903, 2, 131074, 2490368, 2, 131077, 2490447, 2, 65536, 2490448, 2, 3, 2490449, 2, 3, 2490450, 2, 2, 2490451, 2, 4, 2621438, 2, 131072, 2621439, 2, 131074, 2555904, 2, 196613, 2555983, 2, 196608, 2555984, 2, 131074, 2555985, 2, 131074, 2555986, 2, 131074, 2555987, 2, 131077, 2686974, 2, 196608, 2686975, 2, 131074, 2621440, 2, 131077, 2621519, 2, 131072, 2621520, 2, 131074, 2621521, 2, 131074, 2621522, 2, 131074, 2621523, 2, 196613, 2752510, 2, 131072, 2752511, 2, 131074, 2686976, 2, 262145, 2686977, 2, 4, 2687055, 2, 196608, 2687056, 2, 131074, 2687057, 2, 131074, 2687058, 2, 131074, 2687059, 2, 131077, 2818045, 2, 1, 2818046, 2, 262148, 2818047, 2, 131074, 2752512, 2, 131074, 2752513, 2, 131077, 2752517, 2, 0, 2752527, 2, 0, 2752528, 2, 0, 2752529, 2, 0, 2752540, 2, 0, 2752543, 2, 0, 2752544, 2, 0, 2752589, 2, 65536, 2752590, 2, 3, 2752591, 2, 262148, 2752592, 2, 131074, 2752593, 2, 131074, 2752594, 2, 131074, 2752595, 2, 131077, 2883581, 2, 327681, 2883582, 2, 65540, 2883583, 2, 131074, 2818048, 2, 131074, 2818049, 2, 131077, 2818054, 2, 65536, 2818055, 2, 3, 2818056, 2, 3, 2818057, 2, 2, 2818058, 2, 2, 2818059, 2, 2, 2818060, 2, 2, 2818061, 2, 2, 2818062, 2, 4, 2818071, 2, 1, 2818072, 2, 2, 2818073, 2, 3, 2818074, 2, 2, 2818075, 2, 3, 2818076, 2, 3, 2818077, 2, 2, 2818078, 2, 65541, 2818081, 2, 65536, 2818082, 2, 3, 2818083, 2, 3, 2818084, 2, 3, 2818085, 2, 2, 2818086, 2, 2, 2818087, 2, 2, 2818088, 2, 2, 2818089, 2, 3, 2818090, 2, 3, 2818091, 2, 65541, 2818122, 2, 1, 2818123, 2, 3, 2818124, 2, 3, 2818125, 2, 262148, 2818126, 2, 131074, 2818127, 2, 131074, 2818128, 2, 131074, 2818129, 2, 131074, 2818130, 2, 131074, 2818131, 2, 131077, 2949118, 2, 196608, 2949119, 2, 131074, 2883584, 2, 131074, 2883585, 2, 262145, 2883586, 2, 3, 2883587, 2, 3, 2883588, 2, 2, 2883589, 2, 2, 2883590, 2, 262148, 2883591, 2, 131074, 2883592, 2, 131074, 2883593, 2, 131074, 2883594, 2, 131074, 2883595, 2, 131074, 2883596, 2, 131074, 2883597, 2, 131074, 2883598, 2, 262145, 2883599, 2, 3, 2883600, 2, 3, 2883601, 2, 3, 2883602, 2, 2, 2883603, 2, 2, 2883604, 2, 3, 2883605, 2, 3, 2883606, 2, 3, 2883607, 2, 262148, 2883608, 2, 131074, 2883609, 2, 131074, 2883610, 2, 131074, 2883611, 2, 131074, 2883612, 2, 131074, 2883613, 2, 131074, 2883614, 2, 262145, 2883615, 2, 3, 2883616, 2, 2, 2883617, 2, 262148, 2883618, 2, 131074, 2883619, 2, 131074, 2883620, 2, 131074, 2883621, 2, 131074, 2883622, 2, 131074, 2883623, 2, 131074, 2883624, 2, 131074, 2883625, 2, 131074, 2883626, 2, 131074, 2883627, 2, 262145, 2883628, 2, 2, 2883629, 2, 2, 2883630, 2, 2, 2883631, 2, 3, 2883632, 2, 2, 2883633, 2, 3, 2883634, 2, 2, 2883635, 2, 3, 2883636, 2, 2, 2883637, 2, 3, 2883638, 2, 2, 2883639, 2, 3, 2883640, 2, 2, 2883641, 2, 2, 2883642, 2, 3, 2883643, 2, 3, 2883644, 2, 3, 2883645, 2, 2, 2883646, 2, 3, 2883647, 2, 3, 2883648, 2, 2, 2883649, 2, 3, 2883650, 2, 3, 2883651, 2, 3, 2883652, 2, 3, 2883653, 2, 2, 2883654, 2, 3, 2883655, 2, 2, 2883656, 2, 2, 2883657, 2, 2, 2883658, 2, 262148, 2883659, 2, 131074, 2883660, 2, 131074, 2883661, 2, 131074, 2883662, 2, 131074, 2883663, 2, 131074, 2883664, 2, 131074, 2883665, 2, 131074, 2883666, 2, 131074, 2883667, 2, 196613, 3014654, 2, 196608, 3014655, 2, 131074, 2949120, 2, 131074, 2949121, 2, 131074, 2949122, 2, 131074, 2949123, 2, 131074, 2949124, 2, 131074, 2949125, 2, 131074, 2949126, 2, 131074, 2949127, 2, 131074, 2949128, 2, 131074, 2949129, 2, 131074, 2949130, 2, 131074, 2949131, 2, 131074, 2949132, 2, 131074, 2949133, 2, 131074, 2949134, 2, 131074, 2949135, 2, 131074, 2949136, 2, 131074, 2949137, 2, 131074, 2949138, 2, 131074, 2949139, 2, 131074, 2949140, 2, 131074, 2949141, 2, 131074, 2949142, 2, 131074, 2949143, 2, 131074, 2949144, 2, 131074, 2949145, 2, 131074, 2949146, 2, 131074, 2949147, 2, 131074, 2949148, 2, 131074, 2949149, 2, 131074, 2949150, 2, 131074, 2949151, 2, 131074, 2949152, 2, 131074, 2949153, 2, 131074, 2949154, 2, 131074, 2949155, 2, 131074, 2949156, 2, 131074, 2949157, 2, 131074, 2949158, 2, 131074, 2949159, 2, 131074, 2949160, 2, 131074, 2949161, 2, 131074, 2949162, 2, 131074, 2949163, 2, 131074, 2949164, 2, 131074, 2949165, 2, 131074, 2949166, 2, 131074, 2949167, 2, 131074, 2949168, 2, 131074, 2949169, 2, 131074, 2949170, 2, 131074, 2949171, 2, 131074, 2949172, 2, 131074, 2949173, 2, 131074, 2949174, 2, 131074, 2949175, 2, 131074, 2949176, 2, 131074, 2949177, 2, 131074, 2949178, 2, 131074, 2949179, 2, 131074, 2949180, 2, 131074, 2949181, 2, 131074, 2949182, 2, 131074, 2949183, 2, 131074, 2949184, 2, 131074, 2949185, 2, 131074, 2949186, 2, 131074, 2949187, 2, 131074, 2949188, 2, 131074, 2949189, 2, 131074, 2949190, 2, 131074, 2949191, 2, 131074, 2949192, 2, 131074, 2949193, 2, 131074, 2949194, 2, 131074, 2949195, 2, 131074, 2949196, 2, 131074, 2949197, 2, 131074, 2949198, 2, 131074, 2949199, 2, 131074, 2949200, 2, 131074, 2949201, 2, 131074, 2949202, 2, 131074, 2949203, 2, 196613, 3080190, 2, 196608, 3080191, 2, 65537, 3014656, 2, 327682, 3014657, 2, 65540, 3014658, 2, 131074, 3014659, 2, 65537, 3014660, 2, 327682, 3014661, 2, 327682, 3014662, 2, 327683, 3014663, 2, 327682, 3014664, 2, 327683, 3014665, 2, 327683, 3014666, 2, 327683, 3014667, 2, 327682, 3014668, 2, 327683, 3014669, 2, 327683, 3014670, 2, 327683, 3014671, 2, 327683, 3014672, 2, 327683, 3014673, 2, 327683, 3014674, 2, 327683, 3014675, 2, 327683, 3014676, 2, 327683, 3014677, 2, 327682, 3014678, 2, 327683, 3014679, 2, 327683, 3014680, 2, 327683, 3014681, 2, 327682, 3014682, 2, 327682, 3014683, 2, 327683, 3014684, 2, 327683, 3014685, 2, 327682, 3014686, 2, 327682, 3014687, 2, 65540, 3014688, 2, 131074, 3014689, 2, 131074, 3014690, 2, 131074, 3014691, 2, 131074, 3014692, 2, 131074, 3014693, 2, 131074, 3014694, 2, 65537, 3014695, 2, 327683, 3014696, 2, 327682, 3014697, 2, 327682, 3014698, 2, 65540, 3014699, 2, 131074, 3014700, 2, 131074, 3014701, 2, 131074, 3014702, 2, 131074, 3014703, 2, 131074, 3014704, 2, 131074, 3014705, 2, 131074, 3014706, 2, 131074, 3014707, 2, 131074, 3014708, 2, 131074, 3014709, 2, 131074, 3014710, 2, 131074, 3014711, 2, 131074, 3014712, 2, 131074, 3014713, 2, 131074, 3014714, 2, 131074, 3014715, 2, 131074, 3014716, 2, 131074, 3014717, 2, 131074, 3014718, 2, 65537, 3014719, 2, 327683, 3014720, 2, 327683, 3014721, 2, 327682, 3014722, 2, 327683, 3014723, 2, 327682, 3014724, 2, 327682, 3014725, 2, 327683, 3014726, 2, 327683, 3014727, 2, 327683, 3014728, 2, 65540, 3014729, 2, 131074, 3014730, 2, 131074, 3014731, 2, 131074, 3014732, 2, 131074, 3014733, 2, 131074, 3014734, 2, 131074, 3014735, 2, 131074, 3014736, 2, 131074, 3014737, 2, 131074, 3014738, 2, 131074, 3014739, 2, 131077, 3014845, 2, 0, 3145726, 2, 262144, 3145727, 2, 327684, 3080193, 2, 262144, 3080194, 2, 327682, 3080195, 2, 262149, 3080221, 2, 0, 3080223, 2, 327681, 3080224, 2, 327683, 3080225, 2, 327682, 3080226, 2, 327683, 3080227, 2, 327682, 3080228, 2, 327682, 3080229, 2, 327682, 3080230, 2, 262149, 3080234, 2, 327681, 3080235, 2, 327683, 3080236, 2, 327682, 3080237, 2, 327682, 3080238, 2, 327683, 3080239, 2, 327682, 3080240, 2, 327683, 3080241, 2, 327683, 3080242, 2, 327683, 3080243, 2, 327683, 3080244, 2, 327683, 3080245, 2, 327682, 3080246, 2, 327682, 3080247, 2, 327682, 3080248, 2, 327682, 3080249, 2, 327682, 3080250, 2, 327683, 3080251, 2, 327683, 3080252, 2, 327682, 3080253, 2, 327683, 3080254, 2, 262149, 3080264, 2, 327681, 3080265, 2, 327683, 3080266, 2, 327682, 3080267, 2, 327683, 3080268, 2, 327683, 3080269, 2, 327682, 3080270, 2, 327682, 3080271, 2, 327683, 3080272, 2, 65540, 3080273, 2, 131074, 3080274, 2, 131074, 3080275, 2, 131077, 3211262, 2, 0, 3145744, 2, 0, 3145752, 2, 0, 3145753, 2, 0, 3145759, 2, 0, 3145762, 2, 0, 3145764, 2, 0, 3145808, 2, 262144, 3145809, 2, 327682, 3145810, 2, 327683, 3145811, 2, 262149, 3211283, 2, 0, 3211298, 2, 0, 3211299, 2, 0, 3211301, 2, 0, 3276819, 2, 0, 3276832, 2, 0, 3342355, 2, 0, 3342370, 2, 0, 3342468, 2, 0, 3407891, 2, 0, 3407898, 2, 0, 3407900, 2, 0, 3407904, 2, 0, 3407907, 2, 0, 3407908, 2, 0, 3473431, 2, 0, 3473434, 2, 0, 3473435, 2, 0, 3473437, 2, 0, 3473439, 2, 0, 3473441, 2, 0, 3538966, 2, 0, 3538971, 2, 0, 3538973, 2, 0, 3538975, 2, 0, 3604502, 2, 0, 3604504, 2, 0, 3604507, 2, 0, 3604509, 2, 0, 3604516, 2, 0, 3670039, 2, 0, 3670049, 2, 0, 3670052, 2, 0, 3670130, 2, 0, 3735588, 2, 0, 3735666, 2, 0, 3801122, 2, 0, 3801137, 2, 0, 3801202, 2, 0, 3801205, 2, 0, 3866658, 2, 0, 3866738, 2, 0, 3866741, 2, 0, 3932274, 2, 0, 4063345, 2, 0, 4128809, 2, 0, 4128881, 2, 0, 4128885, 2, 0, 4194347, 2, 0, 4194356, 2, 0, 4194418, 2, 0, 4259892, 2, 0, 4325420, 2, 0, 4325428, 2, 0, 4390956, 2, 0, 4390957, 2, 0, 16318470, 2, 0, 16318471, 2, 0, 16318472, 2, 0, 16318476, 2, 0, 16318477, 2, 0, 16318478, 2, 0, 16318479, 2, 0, 16318480, 2, 0, 16318481, 2, 0, 16318527, 2, 0, 16318528, 2, 0, 16318529, 2, 0, 16318530, 2, 0, 16318531, 2, 0, 16318534, 2, 0, 16318535, 2, 0, 16318536, 2, 0, 16318537, 2, 0, 16318542, 2, 0, 16318543, 2, 0, 16318544, 2, 0, 16318545, 2, 0, 16318546, 2, 0, 16384066, 2, 0 )
+
+[node name="Shadows" type="ColorRect" parent="Level 3"]
+material = SubResource( 83 )
 margin_right = 640.0
 margin_bottom = 360.0
+rect_min_size = Vector2( 640, 360 )
 
-[node name="ManipulateColors" type="ColorRect" parent="CanvasLayer Effects"]
-material = SubResource( 16 )
-margin_top = -3.0
+[node name="Colors" type="ColorRect" parent="Level 3"]
+material = SubResource( 65 )
 margin_right = 640.0
-margin_bottom = 357.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 640, 360 )
 
-[node name="Effects" type="Node2D" parent="."]
-material = SubResource( 57 )
-script = ExtResource( 8 )
-
-[node name="EngineParticles" type="CPUParticles2D" parent="Effects"]
-show_behind_parent = true
-material = SubResource( 57 )
-position = Vector2( 181, 222 )
-rotation = 1.5708
-scale = Vector2( 2, 2 )
-amount = 500
-lifetime = 0.5
-randomness = 0.5
-lifetime_randomness = 0.5
-local_coords = false
-emission_shape = 2
-emission_rect_extents = Vector2( 0.7, 0.7 )
-direction = Vector2( -1, -1 )
-spread = 0.0
-gravity = Vector2( 0, 10 )
-initial_velocity = 80.0
-initial_velocity_random = 0.5
-linear_accel = -20.0
-linear_accel_random = 1.0
-damping_curve = SubResource( 5 )
-color_ramp = SubResource( 58 )
-
-[node name="CanvasLayer Other" type="CanvasLayer" parent="."]
-layer = 2
+[node name="NeonDust" type="ColorRect" parent="Level 3"]
 visible = false
-
-[node name="Shadow_Level Z-1" type="ColorRect" parent="CanvasLayer Other"]
-material = SubResource( 62 )
 margin_right = 640.0
 margin_bottom = 360.0
-
-[node name="ManipulateColors" type="ColorRect" parent="CanvasLayer Other"]
-material = SubResource( 60 )
-margin_top = -3.0
-margin_right = 640.0
-margin_bottom = 357.0
-
-[node name="Player" parent="." instance=ExtResource( 2 )]
-position = Vector2( 385, 126 )
+rect_min_size = Vector2( 640, 360 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
-[editable path="Level_00"]
-[editable path="Player"]
+[editable path="Bodies 2/Player"]

@@ -20,7 +20,7 @@ func _ready() -> void:
 	set_as_toplevel(true)
 	
 	trail_particles = TrailParticles.instance()
-	Global.node_creation_parent.add_child(trail_particles)
+	AutoGlobal.node_creation_parent.add_child(trail_particles)
 	trail_particles.position = $TrailPosition.global_position
 	trail_particles.rotation = $TrailPosition.global_rotation
 	trail_particles.set_emitting(false)
@@ -29,14 +29,14 @@ func _ready() -> void:
 	trail_particles.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
 	
 	bullet_trail = BulletTrail.instance()
-	Global.node_creation_parent.add_child(bullet_trail)
+	AutoGlobal.node_creation_parent.add_child(bullet_trail)
 	bullet_trail.set_as_toplevel(true)
 #	$TrailParticles.set_emitting(false)
 	
 #	hit_particles.position = part_location
 #	hit_particles.rotation = raycast.get_collision_normal().angle() # rotacija partiklov glede na normalo površine
 #	hit_particles.set_emitting(true)
-#	Global.node_creation_parent.add_child(hit_particles)
+#	AutoGlobal.node_creation_parent.add_child(hit_particles)
 func _process(delta: float) -> void:
 	
 	$BulletTrail.add_points($TrailPosition.global_position)
@@ -77,7 +77,7 @@ func _physics_process(delta: float) -> void:
 		hit_particles.rotation = raycast.get_collision_normal().angle() # rotacija partiklov glede na normalo površine
 #		hit_particles.set_one_shot(true)
 		hit_particles.set_emitting(true)
-		Global.node_creation_parent.add_child(hit_particles)
+		AutoGlobal.node_creation_parent.add_child(hit_particles)
 		
 #		trail_particles.modulate.a = 0.0
 		trail_particles.set_emitting(false)
@@ -102,7 +102,7 @@ func _on_BulletArea_body_entered(collider: Object) -> void:
 #		new_hit_particles.position = global_position
 #		new_hit_particles.rotation = global_rotation - deg2rad(180)
 #		new_hit_particles.set_emitting(true)
-#		Global.node_creation_parent.add_child(new_hit_particles)
+#		AutoGlobal.node_creation_parent.add_child(new_hit_particles)
 		
 #		queue_free()
 		
