@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://arena/Arena.gd" type="Script" id=1]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://resources/graphics/light.png" type="Texture" id=5]
 [ext_resource path="res://resources/graphics/pixel.png" type="Texture" id=6]
 [ext_resource path="res://resources/graphics/bolt.png" type="Texture" id=7]
+[ext_resource path="res://arena/Bodies Z2.gd" type="Script" id=8]
 [ext_resource path="res://arena/Effects.gd" type="Script" id=9]
 
 [sub_resource type="Shader" id=87]
@@ -1169,17 +1170,20 @@ color_ramp = SubResource( 10 )
 
 [node name="Bodies Z2" type="CanvasLayer" parent="."]
 layer = 2
+script = ExtResource( 8 )
 
 [node name="Player" parent="Bodies Z2" instance=ExtResource( 2 )]
 position = Vector2( 385, 126 )
 
 [node name="Shadows" type="ColorRect" parent="Bodies Z2"]
+visible = false
 material = SubResource( 63 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 
 [node name="Colors" type="ColorRect" parent="Bodies Z2"]
+visible = false
 material = SubResource( 16 )
 margin_right = 640.0
 margin_bottom = 360.0

@@ -56,3 +56,4 @@ rotation = 1.57079
 polygon = PoolVector2Array( -1.99997, -4.00001, -5, -3.13719e-05, -5.00001, 1.99997, -4.00002, 2.99997, 2.99998, 3.00002, 3.99999, 2.00003, 4, 2.50975e-05, 1.00003, -3.99999 )
 
 [node name="BoltTrail" parent="." instance=ExtResource( 2 )]
+width_curve = null

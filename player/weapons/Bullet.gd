@@ -29,7 +29,7 @@ func _ready() -> void:
 	trail_particles.set_as_toplevel(true) # načeloma ne rabi, ampak se mi občasno pokaže kar nekje
 	
 	bullet_trail = BulletTrail.instance()
-	AutoGlobal.node_creation_parent.add_child(bullet_trail)
+	AutoGlobal.effects_creation_parent.add_child(bullet_trail)
 	bullet_trail.set_as_toplevel(true)
 #	$TrailParticles.set_emitting(false)
 	
@@ -39,7 +39,7 @@ func _ready() -> void:
 #	AutoGlobal.node_creation_parent.add_child(hit_particles)
 func _process(delta: float) -> void:
 	
-	$BulletTrail.add_points($TrailPosition.global_position)
+#	$BulletTrail.add_points($TrailPosition.global_position)
 	bullet_trail.add_points($TrailPosition.global_position)
 	position += transform.x * speed * delta
 

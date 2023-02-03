@@ -27,10 +27,10 @@ cast_to = Vector2( 15, 0 )
 collide_with_areas = true
 
 [node name="BulletTrail" parent="." instance=ExtResource( 3 )]
-visible = false
-modulate = Color( 1, 1, 1, 0.27451 )
+width = 5.0
 
 [node name="TrailPosition" type="Position2D" parent="."]
+visible = false
 position = Vector2( -1.5, 0 )
 
 [connection signal="body_entered" from="BulletArea" to="." method="_on_BulletArea_body_entered"]

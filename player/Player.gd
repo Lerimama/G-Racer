@@ -96,7 +96,6 @@ func _physics_process(delta):
 #	engine_particles_rear_shadow.global_rotation = $RearEnginePosition.global_rotation
 	acceleration = Vector2.ZERO # ko spustim gumb se resetira
 
-	
 	if motion_enabled:
 		if Input.is_action_pressed("ui_up"):
 			acceleration = transform.x * engine_power # transform.x je (-0, -1)
@@ -110,7 +109,7 @@ func _physics_process(delta):
 			AutoGlobal.effects_creation_parent.add_child(bolt_trail)
 #			$BoltTrail.z_index(2)
 			bolt_trail.add_points(global_position)
-#			$BoltTrail.add_points(global_position)
+			$BoltTrail.add_points(global_position)
 #			$BoltTrail.modulate = Color.rebeccapurple
 			
 		elif Input.is_action_just_released("ui_up"):
@@ -261,7 +260,7 @@ func engines_on():
 	engine_particles_frontL.initial_velocity = 50
 	engine_particles_frontL.lifetime = 0.05
 	engine_particles_frontL.modulate.a = engines_alpha
-	add_child(engine_particles_frontL)
+	AutoGlobal.effects_creation_parent.add_child(engine_particles_frontL)
 	
 	engine_particles_frontR = engine_particles.instance()
 	engine_particles_frontR.set_as_toplevel(true)
@@ -270,7 +269,7 @@ func engines_on():
 	engine_particles_frontR.initial_velocity = 50
 	engine_particles_frontR.lifetime = 0.05
 	engine_particles_frontR.modulate.a = engines_alpha
-	add_child(engine_particles_frontR)
+	AutoGlobal.effects_creation_parent.add_child(engine_particles_frontR)
 
 	
 func on_got_hit(collision_location, bullet_velocity):
