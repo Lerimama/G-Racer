@@ -5,16 +5,18 @@ max_value = 5.0
 _data = [ Vector2( 0, 0 ), 0.0, 4.14464, 0, 0, Vector2( 1, 1.56198 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="Gradient" id=58]
-offsets = PoolRealArray( 0, 0.33887, 1 )
-colors = PoolColorArray( 1, 0.644531, 0, 1, 1, 0.631373, 0.0235294, 1, 1, 0.556641, 0, 0 )
+offsets = PoolRealArray( 0, 0.338583, 1 )
+colors = PoolColorArray( 1, 1, 0.996078, 1, 1, 1, 0.996078, 1, 1, 1, 1, 0 )
 
 [node name="EngineParticles" type="CPUParticles2D"]
 show_behind_parent = true
 position = Vector2( -1, -1 )
 rotation = 1.5708
 scale = Vector2( 2, 2 )
-amount = 20
+emitting = false
+amount = 30
 lifetime = 0.05
+one_shot = true
 randomness = 0.25
 lifetime_randomness = 0.25
 local_coords = false

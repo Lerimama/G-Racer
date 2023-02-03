@@ -24,11 +24,23 @@ rect_min_size = Vector2( 640, 360 )
 texture = ExtResource( 3 )
 expand = true
 
-[node name="Light2D" type="Light2D" parent="."]
+[node name="Light2D maska" type="Light2D" parent="."]
 visible = false
 position = Vector2( 287.5, 196.5 )
 scale = Vector2( 6.51049, 3.72727 )
+z_index = 2
 texture = ExtResource( 5 )
+energy = 1.31
+mode = 3
+
+[node name="TextureRect2" type="TextureRect" parent="Light2D maska"]
+modulate = Color( 1, 0, 0, 1 )
+margin_left = -44.0
+margin_top = -53.0
+margin_right = 55.0
+margin_bottom = 44.0
+texture = ExtResource( 3 )
+expand = true
 
 [node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 640, 360 )
