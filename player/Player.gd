@@ -40,6 +40,7 @@ var engine_particles_rear_shadow : CPUParticles2D
 var engine_particles_frontL : CPUParticles2D
 var engine_particles_frontR : CPUParticles2D
 var bullet = preload("res://player/weapons/Bullet.tscn")
+#var bullet = preload("res://player/weapons/KinBullet.tscn")
 var misile = preload("res://player/weapons/Misile.tscn")
 var misile_loading_time: int = 120 # 60 je 1 sek
 var loading_time: int = 0
@@ -175,7 +176,8 @@ func _physics_process(delta):
 		new_bullet.rotation = global_rotation
 		add_child(new_bullet)
 		new_bullet.owner = self
-		new_bullet.connect("Get_hit", self, "on_got_hit")		
+		print(new_bullet.modulate)
+#		new_bullet.connect("Get_hit", self, "on_got_hit")		
 		
 		# reload weapon
 		weapon_reloaded = false

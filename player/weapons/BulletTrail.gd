@@ -1,7 +1,7 @@
 extends Line2D
 
 
-var lifetime: Array = [4.0, 5.0] # vsaka linija bo imela lajfatjm v tem razponu
+var lifetime: Array = [2.0, 3.0] # vsaka linija bo imela lajfatjm v tem razponu
 var min_spawn_distance: float = 5
 var max_width: Array = [100,70] 
 #export var max_points: int = 1000 # kontroliram z dometom na misili
@@ -42,7 +42,7 @@ func stop():
 	stopped = true
 	var random_lifetime: float = rand_range(lifetime[0], lifetime[1])
 	decay_tween.interpolate_property(self ,"modulate", null, Color("#00000000"), random_lifetime, Tween.TRANS_EXPO, Tween.EASE_OUT )
-	decay_tween.interpolate_property(self ,"width", null, rand_range(max_width[0], max_width[1]), random_lifetime, Tween.TRANS_LINEAR, Tween.EASE_IN )
+#	decay_tween.interpolate_property(self ,"width", null, rand_range(max_width[0], max_width[1]), random_lifetime, Tween.TRANS_LINEAR, Tween.EASE_IN )
 	# decay_tween.interpolate_property(self ,"modulate.a", 1, 0, rand_range(lifetime[0], lifetime[1]), Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.start()
 	
@@ -68,4 +68,5 @@ func add_points(current_misile_position, at_pos: =  -1): # same arguments kot v 
 
 func _on_Decay_tween_all_completed() -> void:
 	queue_free()
-	get_parent().queue_free()
+#	get_parent().queue_free()
+	pass

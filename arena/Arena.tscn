@@ -1069,6 +1069,7 @@ __meta__ = {
 }
 
 [node name="Background" type="Node2D" parent="."]
+visible = false
 modulate = Color( 0.054902, 0.709804, 0.498039, 1 )
 
 [node name="ColorRect" type="ColorRect" parent="Background"]
@@ -1173,17 +1174,16 @@ layer = 2
 script = ExtResource( 8 )
 
 [node name="Player" parent="Bodies Z2" instance=ExtResource( 2 )]
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 385, 126 )
 
 [node name="Shadows" type="ColorRect" parent="Bodies Z2"]
-visible = false
 material = SubResource( 63 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 
 [node name="Colors" type="ColorRect" parent="Bodies Z2"]
-visible = false
 material = SubResource( 16 )
 margin_right = 640.0
 margin_bottom = 360.0
