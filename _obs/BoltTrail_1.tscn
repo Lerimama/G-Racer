@@ -3,6 +3,7 @@
 [ext_resource path="res://player/BoltTrail.gd" type="Script" id=1]
 
 [sub_resource type="CanvasItemMaterial" id=3]
+blend_mode = 4
 
 [sub_resource type="Curve" id=4]
 _data = [ Vector2( 0, 0 ), 0.0, 1.0, 0, 1, Vector2( 1, 1 ), 1.0, 0.0, 1, 0 ]
@@ -14,6 +15,7 @@ colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 1 )
 modulate = Color( 1, 1, 1, 0.403922 )
 show_behind_parent = true
 material = SubResource( 3 )
+z_index = -1
 points = PoolVector2Array( -2, 0 )
 width_curve = SubResource( 4 )
 default_color = Color( 1, 1, 1, 1 )

@@ -1,71 +1,85 @@
 extends Line2D
 
 
-var lifetime: Array = [4.0, 5.0] # vsaka linija bo imela lajfatjm v tem razponu
-var min_spawn_distance: float = 5
-var max_width: Array = [100,70] 
-#export var max_points: int = 1000 # kontroliram z dometom na misili
+var min_spawn_distance: float = 3
 
-var tick_lenght: float = 0.2 # manjša razdalja med tiki pomeni bolj izrazite lastnosti krivulje
-var tick: = 0.0 # tick je dodan za bolj fino kontrolo na obnašanjem linije (ne vpliva na dodajanje pik, samo na njih obnašanje)
-var point_age: Array = [0.0] # v ta array gre za vsako piko nova starost
+# points aging
+var point_age: Array = [0.0] # array v katerega spravljamo starosti ob kreaciji
+var point_aging_speed: int = 5 
+var point_aging_limit: int = 7 # kontrola koliko stare pike odstranimo
 
-var chaos_level: float = 0.0
-var chaos_speed: float = 0.0
-var stopped: bool = false
+# trail decay
+var decay_time: float = 2.0 # time to disapear
+var points_count_before: int
+var points_count_after: int
+var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
 
 onready var decay_tween = $Decay
+
+
 
 
 func _ready() -> void:
 	
 	set_as_toplevel(true)
-	clear_points()
-	
+	clear_points() # da ne bo kakšnega errorja
 	 
+	
 func _process(delta: float) -> void:
-	
-	if tick > tick_lenght:
-		tick = 0 
 		
-		# lastnosti ne dodamo vsaki piki ... kako pogosto je določeno s tikom
-		for p in range (get_point_count()):
-			point_age[p] += 5 * delta # vsaka pika se stara z delto
-			var rand_vector = Vector2(rand_range(-chaos_speed, chaos_speed), rand_range(-chaos_speed, chaos_speed)) # dodam random vektor, ki povzroča kaos
-			points[p] += rand_vector * chaos_level * point_age[p] # veča se s frejmi
+	# POINT AGING
+	
+	# "points" array je array "vec2" pozicij pik, ki nima pripisane "starosti"
+	# "point_age" je array v katerem ob vsaki kreaciji nove pike, na konec dodamo novo "0" starost ... ostale vrednosti povečamo za "faktor staranja"
+	# "point_age" že po diofoltu vsebuje "0" vrednost (če je ni, se pojavlja error ker ni pike) ... to bi lahko zaobšel, pa nima smisla
+	# "point_age" ima tako vedno eno vrednost več kot "points" array (vrednost 0) ... logično, saj 0 starost pomeni, da pika ne obstaja
+	# skrbimo za usklajenost "point_age" s "points" array (difolt array, ki vsebuje vse pike)
+	# "points_age" in "points" sta si obratna ... najstarejša pika je na koncu svojega arraya, najstarejša starost je na začetku svojega arraya
 		
-	else: # če ni večji, ga povečaj
-		tick += delta
+	# polnenje "point_age" arraya
+	for p in range (get_point_count()): # toliko starosti, kot je pik
 	
+		# povečaj vsako vrednost v "points_age" za "stara starost + hitrost staranja * delta"
+		point_age[p] += point_aging_speed * delta
+		
+		# odstranjevanje najstarejših pik
+		if point_age[p] >= point_aging_limit:
+			
+			points_count_before = get_point_count()
+			remove_point(0) # odstrani prvo nastalo piko (najstarejša)
+			point_age.pop_front() # odstranimo sprednjo vrednost v arrayu ... zadnja dodana, torej "najstarejša" ... pop_front removes and returns the first element of the array.
+			points_count_after = get_point_count()
+					
+			# dodajanje kaosa na pike
+			# points[p] = points[p] + rand_vector * chaos_level * point_age[p]
+		
+			return # ta return je pomemben ... prepreči error ... nisem ziher zakaj ...
+			# Exits a function and returns an optional value.
+			# Ends the execution of a function and returns control to the calling function. Optionally, it can return a Variant value.
+
+
+	# ko se število točk zmanjšuje in je količina točk manjša od ... in 			
+	if points_count_after < points_count_before &&  get_point_count() < points_count_decay_start:
+		stop()
 	
+
 func stop():
-	stopped = true
-	var random_lifetime: float = rand_range(lifetime[0], lifetime[1])
-	decay_tween.interpolate_property(self ,"modulate", null, Color("#00000000"), random_lifetime, Tween.TRANS_EXPO, Tween.EASE_OUT )
-	decay_tween.interpolate_property(self ,"width", null, rand_range(max_width[0], max_width[1]), random_lifetime, Tween.TRANS_LINEAR, Tween.EASE_IN )
-	# decay_tween.interpolate_property(self ,"modulate.a", 1, 0, rand_range(lifetime[0], lifetime[1]), Tween.TRANS_EXPO, Tween.EASE_OUT )
+	decay_tween.interpolate_property(self ,"modulate:a", null, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.start()
 	
 	
-func add_points(current_misile_position, at_pos: =  -1): # same arguments kot v originalni add_point funkciji
 	
-	# minimalni razmak med pikami
-	# če je razdalja med trenutno piko in eno piko nazaj (-1) manjša od minimalne željene ... 
-	if get_point_count() > 0 and current_misile_position.distance_to(points[get_point_count() - 1]) < min_spawn_distance: 
-		return
+func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta in na začetek arraya
 	
-	# maksimalno število pik
-#	if get_point_count() > max_points:
-#		remove_point(0) # odstranimo pravo (tisto, ki je najbolj stara)
-#		point_age.pop_front() # potem premaknem starosti pik ... ne štekam najbolje
-#		return 
+	# minimalni razmak med pikami ... če je razdalja med trenutno piko in eno piko nazaj (-1) manjša od minimalne željene
+	if get_point_count() > 0 and current_position.distance_to(points[get_point_count() - 1]) < min_spawn_distance: 
+		return # vrni se na začetek fuinkcije ... posledično ne pride do add point kode
 		
-	
-	point_age.append(0.0) # if we add a point we also append a new 0.0 point age array
-	
-	add_point(current_misile_position, at_pos)
+	point_age.append(0.0) # ob vsaki dodani piki, dodamo tudi novo starost "0" na konec "points_age"
+	add_point(current_position, at_pos)
 
 
 func _on_Decay_tween_all_completed() -> void:
+	
 	queue_free()
-	get_parent().queue_free()
+#	get_parent().queue_free()

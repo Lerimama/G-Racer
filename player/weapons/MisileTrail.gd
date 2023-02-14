@@ -6,13 +6,13 @@ var min_spawn_distance: float = 5
 var max_width: Array = [100,70] 
 #export var max_points: int = 1000 # kontroliram z dometom na misili
 
-var tick_lenght: float = 0.2 # manjša razdalja med tiki pomeni bolj izrazite lastnosti krivulje
+var tick_lenght: float = 0.2 # za nadzor hitrosti dodajanja lastnosti na pike ... manjša razdalja med tiki pomeni bolj izrazite lastnosti krivulje
 var tick: = 0.0 # tick je dodan za bolj fino kontrolo na obnašanjem linije (ne vpliva na dodajanje pik, samo na njih obnašanje)
 var point_age: Array = [0.0] # v ta array gre za vsako piko nova starost
 
 var chaos_level: float = 5.0
 var chaos_speed: float = 0.3
-var stopped: bool = false
+var trail_active: bool
 
 onready var decay_tween = $Decay
 
@@ -20,6 +20,7 @@ onready var decay_tween = $Decay
 
 func _ready() -> void:
 	
+	trail_active = true
 	set_as_toplevel(true)
 	clear_points()
 	
@@ -40,11 +41,12 @@ func _process(delta: float) -> void:
 	
 	
 func stop():
-	stopped = true
+	
+	trail_active = false
+#	stopped = true
 	var random_lifetime: float = rand_range(lifetime[0], lifetime[1])
-	decay_tween.interpolate_property(self ,"modulate", null, Color("#00000000"), random_lifetime, Tween.TRANS_EXPO, Tween.EASE_OUT )
+	decay_tween.interpolate_property(self ,"modulate:a", null, 0, random_lifetime, Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.interpolate_property(self ,"width", null, rand_range(max_width[0], max_width[1]), random_lifetime, Tween.TRANS_LINEAR, Tween.EASE_IN )
-	# decay_tween.interpolate_property(self ,"modulate.a", 1, 0, rand_range(lifetime[0], lifetime[1]), Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.start()
 	
 	

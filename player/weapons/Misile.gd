@@ -90,8 +90,8 @@ func die():
 #	$AnimationPlayer.play("explosion")
 
 	#kill the bullet but check for existance
-#	if is_dead == false:
-#		is_dead = true
-#		MisileTrail.stop()
-#		speed = 0.0
-##		$AnimationPlayer.play("explosion")
+	if is_dead == false:
+		is_dead = true
+		MisileTrail.stop()
+		speed = 0.0
+#		$AnimationPlayer.play("explosion")

@@ -1069,7 +1069,6 @@ __meta__ = {
 }
 
 [node name="Background" type="Node2D" parent="."]
-visible = false
 modulate = Color( 0.054902, 0.709804, 0.498039, 1 )
 
 [node name="ColorRect" type="ColorRect" parent="Background"]
@@ -1261,7 +1260,6 @@ polygon = PoolVector2Array( -18, -19, -8, 20, 19, 15, 21, -18 )
 [node name="Level_00" type="Node2D" parent="Level Z3"]
 
 [node name="EdgeTilemap" type="TileMap" parent="Level Z3/Level_00"]
-modulate = Color( 0, 1, 0, 1 )
 tile_set = ExtResource( 3 )
 cell_size = Vector2( 8, 8 )
 cell_custom_transform = Transform2D( 8, 0, 0, 8, 0, 0 )

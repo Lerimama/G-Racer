@@ -1,22 +1,18 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://player/BoltTrail.gd" type="Script" id=1]
 
-[sub_resource type="CanvasItemMaterial" id=3]
-blend_mode = 4
-
 [sub_resource type="Curve" id=4]
-_data = [ Vector2( 0, 0 ), 0.0, 1.0, 0, 1, Vector2( 1, 1 ), 1.0, 0.0, 1, 0 ]
+_data = [ Vector2( 0, 0.818182 ), 0.0, 0.181818, 0, 1, Vector2( 1, 1 ), 0.181818, 0.0, 1, 0 ]
 
 [sub_resource type="Gradient" id=2]
 colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 1 )
 
 [node name="BoltTrail" type="Line2D"]
-modulate = Color( 1, 1, 1, 0.403922 )
+modulate = Color( 2, 2, 2, 0.196078 )
 show_behind_parent = true
-material = SubResource( 3 )
-z_index = -1
 points = PoolVector2Array( -2, 0 )
+width = 8.0
 width_curve = SubResource( 4 )
 default_color = Color( 1, 1, 1, 1 )
 gradient = SubResource( 2 )
