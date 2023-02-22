@@ -3,95 +3,120 @@ extends Node2D
 
 signal Get_hit (hit_location, misile_velocity, misile_owner)
 
-const MASS: = 10
+# gibanje
+export var speed: float = 140.00
+export var accelaration: float # pospešek
+export var max_accelaration: float = 10.0 # pospešek
 
-var speed: float = 140.00
-var accelaration: float = 0.8 # pospešek
+var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
+var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
+
+var wiggle_direction_range: Array = [-2, 2] # uporaba ob deaktivaciji
+var wiggle_freq: float = 0.6
+
+# domet
+export var is_active_time: float = 2.0 # zadetek ali domet
+var is_active: bool# zadetek ali domet
 var time: float
-export var domet: float = 3
+var deactivated_speed_drop_factor: float = 50
 
-var start_direction_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
-var start_direction: Vector2 # variacija smeri ob izstrelitvi
-
-var wiggle: Vector2 # variacija smeri med letom
-var wiggle_range: Array = [-0.3, 0.3] 
-var wiggle_freq: float = 0.5
-
-var target: Object = null # null je zato ker je še nenastavljen
-var target_location: Vector2 = Vector2(400,170)
-var homming_precision: float = 0.01 # natančnost sledenja, lerp weight ... manjša ko je, manj je natančna
-
-# states
-var is_dead: = false # zadetek ali domet
+#homming
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
+var homming_precision: float = 0.01 # lerp utež ... manjša ko je, manj je natančna
+var homming_target: Object = null # null je zato ker je še nenastavljen
+var target_location: Vector2 = Vector2(400,170)
+#var target: Object = null # null je zato ker je še nenastavljen
 
-onready var MisileTrail = $MisileTrail
+var new_misile_trail: Object
+
+# import
 onready var TrailPosition = $TrailPosition
+onready var DropPosition = $DropPosition
+onready var accelaration_tween = $AccelarationTween
+onready var MisileTrail = preload("res://player/weapons/fx/MisileTrail.tscn")
+onready var DropParticles = preload("res://player/weapons/fx/MisileDropParticles.tscn")
 
 
 func _ready() -> void:
 	
 	add_to_group("Misiles")
-	set_as_toplevel(true)
+	is_active = true
+	randomize()
 	
-	target = AutoGlobal.node_creation_parent.get_node("Target")
+	# spawn trail
+	new_misile_trail = MisileTrail.instance()
+	AutoGlobal.effects_creation_parent.add_child(new_misile_trail)
+#	new_misile_trail.position = TrailPosition.position # ne dela kot bi prićakoval
 	
-	# random shoot direction 
-	var random_range = rand_range(start_direction_range[0],start_direction_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
-	start_direction = transform.x.rotated(random_range) # rotacija smeri
+	# random start dir
+	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
+	direction = transform.x.rotated(random_range) # rotacija smeri ob štartu
 	rotation = random_range # rotacija misile
 	
+	accelaration_tween.interpolate_property(self ,"accelaration", 0.0, max_accelaration, is_active_time, Tween.TRANS_SINE, Tween.EASE_IN )
+	accelaration_tween.start()
 		
 func _process(delta: float) -> void:
 	
-	
-	time += 1 * delta
-	
-	# če je raketa živa 
-	if is_dead == false:
+	time += 1.5 * delta # prirejeno, da je cirka sekunda na frejm
 		
-		transform.x = start_direction # misila gre smeri štartne smeri
+	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
+	
+	# pospeševanje ko je aktivna 
+	if time < is_active_time:
 		speed += 1 * accelaration
-		position += transform.x * speed * delta
+	
+	# zaviranje ko ni aktivna 
+	elif time >= is_active_time:
 		
-		# wiggle on
-#		wiggle = transform.x.rotated(rand_range(wiggle_range[0],wiggle_range[1])) # izračun 
-#		transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq) # aplikacija v let
+		is_active = false
 		
-		# _temp za sprožanje homing efekta
-		if Input.is_action_just_pressed("ui_down"):
-			is_homming = true
+		# Wigle
+		var wiggle: Vector2  
+		wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
+		transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq)
+
+		# upočasnitev
+		speed -= 0.05 * deactivated_speed_drop_factor
+		speed = clamp(speed, 0.0, speed)
 		
-		# homming on
-		if is_homming:
-			start_direction = lerp(start_direction, global_position.direction_to(target_location), homming_precision) 
+		# pri kateri hitrosti izgine
+		if speed <= 100:
+			destroy()
+
+	position += direction * speed * delta# * accelaration
+	
+	# homming
+	if is_homming == true:
+		direction = lerp(direction, global_position.direction_to(target_location), homming_precision) 
+	
+	if Input.is_action_just_pressed("shoot_misile") && is_active == true:
+		is_homming = true
 		
-		MisileTrail.add_points(TrailPosition.global_position)
-		
-		if time > domet:
-			die()
+	# add points to trail
+	new_misile_trail.add_points(TrailPosition.global_position)
 
 
 func _on_MisileArea_body_entered(body: Node) -> void:
 	
 	return
-	if body != owner and is_dead == false: # če telo ni od avtorja 
-		die()
-		
-func die():
-
-	is_dead = true
-	queue_free()
-#	body.queue_free()
-#	modulate.a = 0
-	MisileTrail.stop()
-	speed = 0.0
+#	if body != owner and is_dead == false: # če telo ni od avtorja 
+#		die()
+	pass
 	
-#	$AnimationPlayer.play("explosion")
+func destroy(): 
+		
+	# spawn particles
+	var new_drop_particles: CPUParticles2D = DropParticles.instance()
+	new_drop_particles.global_position = DropPosition.global_position
+	new_drop_particles.set_emitting(true)
+	AutoGlobal.effects_creation_parent.add_child(new_drop_particles)
+	
+	new_misile_trail.start_decay()
+	
+	print ("KUEFRI - Misile")
+	queue_free()
 
-	#kill the bullet but check for existance
-	if is_dead == false:
-		is_dead = true
-		MisileTrail.stop()
-		speed = 0.0
-#		$AnimationPlayer.play("explosion")
+	
+func find_target(homming_target_location):
+	pass

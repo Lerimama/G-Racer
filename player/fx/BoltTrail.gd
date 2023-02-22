@@ -1,6 +1,8 @@
 extends Line2D
 
 
+signal BoltTrail_is_gone
+
 var min_spawn_distance: float = 3
 
 # points aging
@@ -9,7 +11,7 @@ var point_aging_speed: int = 5
 var point_aging_limit: int = 7 # kontrola koliko stare pike odstranimo
 
 # trail decay
-var decay_time: float = 2.0 # time to disapear
+var decay_time: float = 0.5 # time to disapear
 var points_count_before: int
 var points_count_after: int
 var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
@@ -21,9 +23,9 @@ onready var decay_tween = $Decay
 
 func _ready() -> void:
 	
-	set_as_toplevel(true)
+#	set_as_toplevel(true)
 	clear_points() # da ne bo kakšnega errorja
-	 
+	print(name)
 	
 func _process(delta: float) -> void:
 		
@@ -57,16 +59,15 @@ func _process(delta: float) -> void:
 			# Exits a function and returns an optional value.
 			# Ends the execution of a function and returns control to the calling function. Optionally, it can return a Variant value.
 
-
-	# ko se število točk zmanjšuje in je količina točk manjša od ... in 			
-	if points_count_after < points_count_before &&  get_point_count() < points_count_decay_start:
-		stop()
+#	# ko se število točk zmanjšuje in je količina točk manjša od ... in 			
+#	if points_count_after < points_count_before &&  get_point_count() < points_count_decay_start:
+#		start_decay()
 	
 
-func stop():
+func start_decay():
+#	modulate = Color.red
 	decay_tween.interpolate_property(self ,"modulate:a", null, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.start()
-	
 	
 	
 func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta in na začetek arraya
@@ -80,6 +81,8 @@ func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta
 
 
 func _on_Decay_tween_all_completed() -> void:
+#	emit_signal("BoltTrail_is_gone")
 	
+	print ("KUEFRI - Bolt Trail")
 	queue_free()
-#	get_parent().queue_free()
+	

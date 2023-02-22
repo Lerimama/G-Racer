@@ -44,7 +44,7 @@ var effects_creation_parent = null	# variabla setana na NULL pomeni, da trenutno
 ## RANDOM POSITION ----------------------------------------------------------------------------------
 #
 #func get_random_position(): # to funkcijo napišemo, da bo vrnila naključno pozicijo na ekranu
-#
+# 
 #	randomize() # vedno če hočeš randomizirat
 #	var random_position = Vector2(rand_range(50, get_viewport().size.x - 100), rand_range(50, get_viewport().size.y - 100))
 #	return random_position

@@ -6,28 +6,28 @@ var min_spawn_distance: float = 2
 var max_width: Array = [2,2] 
 var max_points: int = 20
 
-var stopped: bool = false
+var trail_active: bool
 
 onready var decay_tween = $Decay
 
 
+
+
 func _ready() -> void:
 	
-	set_as_toplevel(true)
 	clear_points()
-	
+	trail_active = true
+	randomize()
 	 
 func _process(delta: float) -> void:
 	
 	pass
 	
 	
-func stop():
-	stopped = true
+func start_decay():
+	trail_active = false
 	var random_lifetime: float = rand_range(lifetime[0], lifetime[1])
-	decay_tween.interpolate_property(self ,"modulate", null, Color("#00000000"), random_lifetime, Tween.TRANS_EXPO, Tween.EASE_OUT )
-#	decay_tween.interpolate_property(self ,"width", null, rand_range(max_width[0], max_width[1]), random_lifetime, Tween.TRANS_LINEAR, Tween.EASE_IN )
-#	decay_tween.interpolate_property(self ,"modulate.a", 1, 0, rand_range(lifetime[0], lifetime[1]), Tween.TRANS_EXPO, Tween.EASE_OUT )
+	decay_tween.interpolate_property(self ,"modulate:a", null, 0, random_lifetime, Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.start()
 	
 	
@@ -40,11 +40,12 @@ func add_points(current_bullet_position, at_pos: =  -1): # same arguments kot v 
 	
 	# maksimalno število pik
 	if get_point_count() > max_points:
-		remove_point(0) # odstranimo pravo (tisto, ki je najbolj stara)
+		remove_point(0) # odstranimo prvo narejeno piklo (tisto, ki je najbolj stara)
 #		return 
 		
 	add_point(current_bullet_position, at_pos)
 
 
 func _on_Decay_tween_all_completed() -> void:
+	print ("KUEFRI - Bullet trail")
 	queue_free()

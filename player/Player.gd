@@ -17,38 +17,39 @@ export (float, 0, 0.1) var side_traction = 0.01 # vpliv na slajdanje ob zavoju .
 export (float, 0, 100) var mass = 10.0 # masa vpliva na vztrajnost plejerja
 export (float, 0, 1) var bounce_size = 0.3 # velikost odboja		
 
-# notranje
-var rotation_angle: float # obrat per frame v izbrani smeri
-var rotation_dir: float
 var velocity: Vector2 = Vector2.ZERO
 var acceleration: Vector2 = Vector2.ZERO
-var collision: KinematicCollision2D
+
+var rotation_angle: float # obrat per frame v izbrani smeri
+var rotation_dir: float
 var bounce_angle: float
+var collision: KinematicCollision2D
 
 # motion states
 var fwd_motion: bool = false # za ločitev ali gre v rikverc ali naprej
 var rev_motion: bool = false
-var motion_enabled: bool = true # za nedelovanje ... input disable bilo bolje
+var motion_enabled: bool = true # za nedelovanje naprej/nazaj ... input disable bilo bolje
+
 # partikli pogona
-var engine_particles = preload("res://player/EngineParticles.tscn") 
 var engine_particles_rear : CPUParticles2D
 var engine_particles_frontL : CPUParticles2D
 var engine_particles_frontR : CPUParticles2D
 
 # trail
-onready var BoltTrail = preload("res://player/BoltTrail.tscn")
-var bolt_trail: Object
-var trail_active: bool # če je je aktivna, je ravno spawnana, če ni , potem je "odklopljena"
+var bolt_trail_active: bool = false # če je je aktivna, je ravno spawnana, če ni , potem je "odklopljena"
+var new_bolt_trail: Object
+var bolt_trail_stop_velocity: int = 80
 
 # weapons
-var weapon_reloaded: bool = true
-var weapon_reload_time: float = 0.2
-var bullet = preload("res://player/weapons/Bullet.tscn")
-var misile = preload("res://player/weapons/Misile.tscn")
-#var misile_loading_time: int = 120 # 60 je 1 sek
-#var loading_time: int = 0
-var new_misile: Node2D 
+var bullet_reloaded: bool = true
+var bullet_reload_time: float = 0.2
+var misile_reloaded: bool = true
+var misile_reload_time: float = 1.0
+var new_misile: Node2D
+#var new_blast: Node2D
 
+# shield
+var shields_on = false
 
 # shadows
 var sprite_center: Vector2 = Vector2(-4.5,-5) # sprite offset
@@ -56,28 +57,39 @@ var shadow_offset: float = 5.0
 var engines_alpha: float = 1.0
 onready var BoltTexture = $Bolt.texture
 
+
+# import
 onready var BoltSprite: Sprite = $Bolt # za korekcijo kota
 onready var RearEnginePos: Position2D = $RearEnginePosition
 onready var FrontEnginePosL: Position2D = $FrontEnginePositionL
 onready var FrontEnginePosR: Position2D = $FrontEnginePositionR
 onready var GunPosition: Position2D = $GunPosition
 
-
+onready var ExplodingBolt: PackedScene = preload("res://player/ExplodingBolt.tscn")
+onready var CollisionParticles: PackedScene = preload("res://player/fx/BoltCollisionParticles.tscn")
+onready var EngineParticles: PackedScene = preload("res://player/fx/EngineParticles.tscn") 
+onready var BoltTrail: PackedScene = preload("res://player/fx/BoltTrail.tscn")
+onready var Bullet: PackedScene = preload("res://player/weapons/Bullet.tscn")
+onready var Misile: PackedScene = preload("res://player/weapons/Misile.tscn")
+onready var Blast: PackedScene = preload("res://player/weapons/Blast.tscn")
 
 
 func _ready() -> void:
 	
-#	modulate = player_color
 	add_to_group("Players")
 	name = "P1"
 	BoltSprite.rotation_degrees = 90 # drugače je malo rotiran ... čudno?!
 	
+	$shield.modulate.a = 0
 	
 	engines_setup() # postavi partikle za pogon
-		
+	
 	
 func _process(delta: float) -> void:
 	
+	# za senčke
+#	update()
+
 	# updejt položaja pogona 
 	engine_particles_rear.position = RearEnginePos.global_position
 	engine_particles_frontL.position = FrontEnginePosL.global_position
@@ -86,149 +98,202 @@ func _process(delta: float) -> void:
 	engine_particles_frontL.rotation = FrontEnginePosL.global_rotation - deg2rad(180)
 	engine_particles_frontR.rotation = FrontEnginePosR.global_rotation - deg2rad(180)	
 	
-	# za senčke
-#	update()
-
 	
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	
-	# NAPREJ IN NAZAJ
-	
-	acceleration = Vector2.ZERO # ko spustim gumb se resetira
-	
-	if motion_enabled:
-		if Input.is_action_pressed("ui_up"):
-			acceleration = transform.x * engine_power # transform.x je (-0, -1)
-			fwd_motion = true
-			engine_particles_rear.set_emitting(true)
-			# spawn trail
-			if trail_active == false:
-				bolt_trail = BoltTrail.instance()
-				AutoGlobal.effects_creation_parent.add_child(bolt_trail)
-				trail_active = true 
-		elif Input.is_action_just_released("ui_up"):
-			fwd_motion = false
-			engine_particles_rear.set_emitting(false)
-				
-		if Input.is_action_pressed("ui_down"):
-			acceleration = transform.x * -engine_power
-			rev_motion = true
-			engine_particles_frontL.set_emitting(true)
-			engine_particles_frontR.set_emitting(true)
-			# spawn trail
-			if trail_active == false: # če ni traila, spawnaj novega
-				bolt_trail = BoltTrail.instance()
-				AutoGlobal.effects_creation_parent.add_child(bolt_trail)
-				trail_active = true 
-		elif Input.is_action_just_released("ui_down"):
-			rev_motion = false
-			engine_particles_frontR.set_emitting(false)
-			engine_particles_frontL.set_emitting(false)
-	
-	
-	# ZAVIJANJE
-	
-	rotation_dir = Input.get_axis("ui_left", "ui_right") # +1, -1 ali 0
-	rotation_angle = rotation_dir * deg2rad(turn_angle) # vsak frejm se obrne za toliko
-	
-	# prosto vrtenje
-	if Input.is_action_pressed("ui_down") == false && Input.is_action_pressed("ui_up") == false: # ko ni gasa niti bremze
-		rotate(delta * rotation_angle * free_rotation_multiplier)
-	else: # v gibanju
-		rotate(delta * rotation_angle) 
-	
-	
+	# reset accelaration
+	acceleration = Vector2.ZERO
+		
 	# force stop
 	if velocity.length() < force_stop_velocity: # če je hitrost res majhna ... 
 		velocity = Vector2.ZERO # ...naj se kar ustavi, da ne bo neskončno računal pozicije
 	
-	# add trail points
-#	if trail_active == true && velocity != Vector2.ZERO: # javlja error, ki je zabeleže nižje
-	if bolt_trail != null && velocity != Vector2.ZERO: # preverjamo, da ni errorja
-		bolt_trail.add_points(global_position) # tukaj se pojavi error ... Attempt to call function 'add_points' in base 'previously freed instance' on a null instance.
-	elif trail_active == true && velocity == Vector2.ZERO: # ko se čisto ustavi spustimo obstoječi trail ... potem bo spawnan novi
-		trail_active = false
-		
-		print ("bolt_trail")
-		print (bolt_trail)
-	
+	if motion_enabled:
+		input_motion(delta)
+			
+	rotation_angle = rotation_dir * deg2rad(turn_angle) # vsak frejm se obrne za toliko
 	
 	
 	apply_friction(delta) # adaptacija "acceleration"
 	calculate_steering(delta) # adaptacija "rotacijo"
 	
 	velocity += acceleration * delta
+	
+	
 	collision = move_and_collide(velocity * delta, false) # infinite_inertia = false
-	
-	
-	# KOLIZIJE
 	
 	if collision:
 		velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 		bounce_angle = collision.normal.angle_to(velocity)	
-		
 	
-	# ŠUTING
+		# odbojni partikli
+		if velocity.length() > 10: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
+			var new_collision_particles = CollisionParticles.instance()
+			new_collision_particles.position = collision.position
+			new_collision_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
+			new_collision_particles.set_emitting(true)
+			AutoGlobal.effects_creation_parent.add_child(new_collision_particles)
+		
+	input_shooting(delta)
+	add_trail_points()
+
+
+func input_motion(delta: float) -> void:
+	
+	if Input.is_action_pressed("up"):
+		acceleration = transform.x * engine_power # transform.x je (-0, -1)
+		fwd_motion = true
+		engine_particles_rear.set_emitting(true)
+	
+		# spawn trail
+		if bolt_trail_active == false && velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+			new_bolt_trail = BoltTrail.instance()
+			AutoGlobal.effects_creation_parent.add_child(new_bolt_trail)
+			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
+			bolt_trail_active = true 
+		
+		
+	elif Input.is_action_just_released("up"):
+		fwd_motion = false
+		engine_particles_rear.set_emitting(false)
+			
+	if Input.is_action_pressed("down"):
+		acceleration = transform.x * -engine_power
+		rev_motion = true
+		engine_particles_frontL.set_emitting(true)
+		engine_particles_frontR.set_emitting(true)
+	
+		# spawn trail
+		if bolt_trail_active == false && velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+			new_bolt_trail = BoltTrail.instance()
+			AutoGlobal.effects_creation_parent.add_child(new_bolt_trail)
+			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
+			bolt_trail_active = true 
+	
+	elif Input.is_action_just_released("down"):
+		rev_motion = false
+		engine_particles_frontR.set_emitting(false)
+		engine_particles_frontL.set_emitting(false)
+	
+	rotation_dir = Input.get_axis("left", "right") # +1, -1 ali 0
+
+	# prosto vrtenje
+	if Input.is_action_pressed("down") == false && Input.is_action_pressed("up") == false: # ko ni gasa niti bremze
+		rotate(delta * rotation_angle * free_rotation_multiplier)
+	else: # v gibanju
+		rotate(delta * rotation_angle) 
+	
+	
+func input_shooting(delta: float) -> void:
 	
 	# bullet	
-	if Input.is_action_just_pressed("ctrl") && weapon_reloaded == true:
+	if Input.is_action_just_pressed("shoot_bullet") && bullet_reloaded == true:
 
-		var new_bullet = bullet.instance()
+#		velocity -= velocity/1.3 # ...naj se kar ustavi, da ne bo neskončno računal pozicije
+
+		
+		var new_bullet = Bullet.instance()
 		new_bullet.position = GunPosition.global_position
 		new_bullet.rotation = global_rotation
-		add_child(new_bullet)
-		new_bullet.owner = self
+		AutoGlobal.node_creation_parent.add_child(new_bullet)
+#		new_bullet.owner = self
 #		new_bullet.connect("Get_hit", self, "on_got_hit")		
 		
 		# reload weapon
-		weapon_reloaded = false
-		yield(get_tree().create_timer(weapon_reload_time), "timeout")
-		weapon_reloaded= true
-		
-	# misile
-	if Input.is_action_just_pressed("ins"):	
-		
-		new_misile = misile.instance()
-		new_misile.position = GunPosition.global_position
-		new_misile.rotation = global_rotation
-		add_child(new_misile)
-#		new_misile.connect("get_hit", self, "on_got_hit")		
-		new_misile.owner = self
-		
-		
-	if Input.is_action_just_pressed("ins") && new_misile != null:
-		new_misile.is_homming = true
-#		is_homming = true
-			
-	# bomb
-	if Input.is_action_just_pressed("shift"):
-		
-		var new_misile = misile.instance()
-		new_misile.position = GunPosition.global_position
-		new_misile.rotation = global_rotation
-		add_child(new_misile)
-
-		new_misile.owner = self
-#			new_misile.connect("get_hit", self, "on_got_hit")	
-
-#	# old misile
-	if Input.is_action_pressed("ctrl"):
-#
-#		loading_time += 1
-#		if loading_time == misile_loading_time:
-#			var new_misile = misile.instance()
-#			new_misile.position = GunPosition.global_position
-#			new_misile.rotation = global_rotation
-#			add_child(new_misile)
-##			new_misile.connect("get_hit", self, "on_got_hit")		
-#			new_misile.owner = self
-#
-#	if Input.is_action_just_released("ctrl"):
-#		loading_time = 0
-		pass
-
+		bullet_reloaded = false
+		yield(get_tree().create_timer(bullet_reload_time), "timeout")
+		bullet_reloaded= true
 	
-func apply_friction(delta):
+	# misile
+	if Input.is_action_just_released("shoot_misile") && misile_reloaded == true:	
+#	if Input.is_action_just_pressed("shoot_misile") && misile_reloaded == true:	
+		
+		# pushback
+#		velocity -= velocity/0.7 # ...naj se kar ustavi, da ne bo neskončno računal pozicije
+		
+		new_misile = Misile.instance()
+		new_misile.position = GunPosition.global_position
+		new_misile.rotation = global_rotation
+		AutoGlobal.node_creation_parent.add_child(new_misile)
+#		new_misile.connect("get_hit", self, "on_got_hit")		
+#		new_misile.owner = self
+#		new_misile.is_homming = false
+		
+		# reload weapon
+		misile_reloaded = false
+		yield(get_tree().create_timer(misile_reload_time), "timeout")
+		misile_reloaded= true	
+	
+	# blast
+	if Input.is_action_just_released("shoot_bomb"):	
+		
+		# pushback
+#		velocity -= velocity/0.7 # ...naj se kar ustavi, da ne bo neskončno računal pozicije
+		
+		var new_blast = Blast.instance()
+		new_blast.position = GunPosition.global_position
+		new_blast.rotation = global_rotation
+		AutoGlobal.node_creation_parent.add_child(new_blast)
+#		new_misile.connect("get_hit", self, "on_got_hit")		
+#		new_misile.owner = self
+#		new_misile.is_homming = false
+		
+		# reload weapon
+		misile_reloaded = false
+		yield(get_tree().create_timer(misile_reload_time), "timeout")
+		misile_reloaded= true		
+	
+	# explode
+	if Input.is_action_just_pressed("bolt_explode"):
+		explode()
+	
+	if Input.is_action_just_pressed("bolt_reset"):
+		reset_player()
+		
+	if Input.is_action_just_pressed("shield_toggle"):
+		
+		if shields_on == false:
+			$AnimationPlayer.play("shield_on")
+			shields_on = true
+		else:
+			$AnimationPlayer.play_backwards("shield_on")
+#			$shield.visible = false
+			shields_on = false
+		
+			
+func engines_setup(): # spawnamo paritkle pogona
+	
+	# naprej
+	engine_particles_rear = EngineParticles.instance()
+	engine_particles_rear.position = RearEnginePos.global_position
+	engine_particles_rear.rotation = RearEnginePos.global_rotation
+	engine_particles_rear.modulate.a = engines_alpha
+	AutoGlobal.effects_creation_parent.add_child(engine_particles_rear)
+	
+	# rikverc levo
+	engine_particles_frontL = EngineParticles.instance()
+	engine_particles_frontL.emission_rect_extents = Vector2.ZERO
+	engine_particles_frontL.amount = 20
+	engine_particles_frontL.initial_velocity = 50
+	engine_particles_frontL.lifetime = 0.05
+	engine_particles_frontL.position = FrontEnginePosL.global_position
+	engine_particles_frontL.rotation = FrontEnginePosL.global_rotation - deg2rad(180)
+	engine_particles_frontL.modulate.a = engines_alpha
+	AutoGlobal.effects_creation_parent.add_child(engine_particles_frontL)
+	
+	# rikverc desno
+	engine_particles_frontR = EngineParticles.instance()
+	engine_particles_frontR.emission_rect_extents = Vector2.ZERO
+	engine_particles_frontR.amount = 20
+	engine_particles_frontR.initial_velocity = 50
+	engine_particles_frontR.lifetime = 0.05
+	engine_particles_frontR.position = FrontEnginePosR.global_position
+	engine_particles_frontR.rotation = FrontEnginePosR.global_rotation - deg2rad(180)	
+	engine_particles_frontR.modulate.a = engines_alpha
+	AutoGlobal.effects_creation_parent.add_child(engine_particles_frontR)
+
+		
+func apply_friction(delta: float) -> void:
 	
 	var friction_force = velocity * friction # linearna rast s hitrostjo
 	var drag_force = velocity * velocity.length() * drag # ekspotencialno naraščanje, zato je velocity na kvadrat
@@ -236,7 +301,7 @@ func apply_friction(delta):
 	acceleration += drag_force + friction_force
 
 
-func calculate_steering(delta):
+func calculate_steering(delta: float) -> void:
 	
 	# lokacija sprednje in zadnje osi
 	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
@@ -258,48 +323,47 @@ func calculate_steering(delta):
 		
 	rotation = new_heading.angle() # sprite se obrne v smeri
 	
-			
-func engines_setup(): # spawnamo paritkle pogona
+		
+func add_trail_points():
 	
-	# naprej
-	engine_particles_rear = engine_particles.instance()
-	engine_particles_rear.position = RearEnginePos.global_position
-	engine_particles_rear.rotation = RearEnginePos.global_rotation
-	engine_particles_rear.modulate.a = engines_alpha
-	AutoGlobal.effects_creation_parent.add_child(engine_particles_rear)
-	
-	# rikverc levo
-	engine_particles_frontL = engine_particles.instance()
-	engine_particles_frontL.emission_rect_extents = Vector2.ZERO
-	engine_particles_frontL.amount = 20
-	engine_particles_frontL.initial_velocity = 50
-	engine_particles_frontL.lifetime = 0.05
-	engine_particles_frontL.position = FrontEnginePosL.global_position
-	engine_particles_frontL.rotation = FrontEnginePosL.global_rotation - deg2rad(180)
-	engine_particles_frontL.modulate.a = engines_alpha
-	AutoGlobal.effects_creation_parent.add_child(engine_particles_frontL)
-	
-	# rikverc desno
-	engine_particles_frontR = engine_particles.instance()
-	engine_particles_frontR.emission_rect_extents = Vector2.ZERO
-	engine_particles_frontR.amount = 20
-	engine_particles_frontR.initial_velocity = 50
-	engine_particles_frontR.lifetime = 0.05
-	engine_particles_frontR.position = FrontEnginePosR.global_position
-	engine_particles_frontR.rotation = FrontEnginePosR.global_rotation - deg2rad(180)	
-	engine_particles_frontR.modulate.a = engines_alpha
-	AutoGlobal.effects_creation_parent.add_child(engine_particles_frontR)
+	if bolt_trail_active == true:
+		if velocity.length() > 0:
+			new_bolt_trail.add_points(global_position)
+		elif velocity.length() == 0 && Input.is_action_pressed("ui_up") == false && Input.is_action_pressed("ui_down") == false: # "input" je, da izločim za hitre prehode med naprej nazaj
+			new_bolt_trail.start_decay() # trail decay tween start
+			bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
 
+
+func explode():
 	
-func on_got_hit(collision_location, bullet_velocity):
+	var new_exploding_bolt = ExplodingBolt.instance()
+	new_exploding_bolt.global_position = global_position
+	new_exploding_bolt.global_rotation = BoltSprite.global_rotation
+#	new_exploding_bolt.modulate = Color.red
+	new_exploding_bolt.modulate = modulate
+	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
+	AutoGlobal.node_creation_parent.add_child(new_exploding_bolt)
+	
+	print ("DISAPEAR - Player")
+#	queue_free()
+	visible = false
+
+
+func reset_player():
+	visible = true
+
+# SIGNALI
+
+func on_got_hit(collision_location: Vector2, bullet_velocity: Vector2):
+	
+
+#	print ("DISAPEAR - Player")
 #	queue_free()
 	print ("plejer šot")
 	pass
 
 
-### --------------------------------------------------------------
-
-# for shadow
+# SHADOWS
 #func _draw():
 #
 #	var shadow_position: Vector2

@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="CanvasItemMaterial" id=3]
+blend_mode = 4
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0.504931, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[node name="BoltCollisionParticles" type="CPUParticles2D"]
+material = SubResource( 3 )
+rotation = -3.14159
+emitting = false
+amount = 3
+lifetime = 0.5
+one_shot = true
+speed_scale = 2.0
+explosiveness = 0.7
+lifetime_randomness = 0.63
+local_coords = false
+spread = 90.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 20.0
+initial_velocity_random = 0.55
+color_ramp = SubResource( 2 )
