@@ -47,5 +47,5 @@ func add_points(current_bullet_position, at_pos: =  -1): # same arguments kot v 
 
 
 func _on_Decay_tween_all_completed() -> void:
-	print ("KUEFRI - Bullet trail")
+#	print ("KUFRI - Bullet trail")
 	queue_free()

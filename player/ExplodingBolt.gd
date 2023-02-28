@@ -8,7 +8,7 @@ export var shard_gravity_factor: float = 0
 #export var shard_speed_factor: float = 200.0
 #export var shard_rotation_factor: float = 0.1
 
-var shard_speed_random: Array = [20, 40] # če je eksplozija je hitro, če razpade je počasno
+var shard_speed_random: Array = [20, 30] # če je eksplozija je hitro, če razpade je počasno
 var shard_rotation_random: Array = [0.5, 1.0]
 
 
@@ -20,35 +20,35 @@ var shard_direction_map = {} # slovar za shranjevanje pozicije sredine trikotnik
 				# ključ je podatek o lokaciji sredinske točke trikotnika
 				# ključ izračunam s povprečjem vseh treh točk (vec2)
 
-var shard_scale: Vector2 = Vector2(2, 2)
+var shard_scale: Vector2 = Vector2(1, 1)
 var shard_decay_random_time: Array = [1.0, 2.0] # najvišja vrednost je tudi za queue timer
 var decay_time: float = 2.0
 
-onready var decay_tween: Tween = $Decay
-onready var decay_timer: Timer = $Timer
-
 var velocity: Vector2
-var globalna_poz: Vector2
+
+onready var decay_timer: Timer = $Timer
+onready var debris_particles: CPUParticles2D = $DebrisParticles
+onready var explosion_particles: Particles2D = $ExplosionParticles
+
+var decay_done: bool = false # za preverjanje ali je stvar že končana (usklajeno med partilci in shardi
 
 
 func _ready() -> void:
 	
 	randomize()
+	debris_particles.set_emitting(true)
+	explosion_particles.set_emitting(true)
+	# "kulski zamik razpada rakete
+	yield(get_tree().create_timer(0.2), "timeout")
 	explode()
-	
-#	global_position = global_position + texture_offset 
 
-func _input(event: InputEvent) -> void:
-	
-#	if Input.is_action_just_pressed("space"):
-#		explode()
-#	if Input.is_action_just_pressed("pavza"):
-#		reset()
-	pass
-	
+
 func _process(delta: float) -> void:
 	
 	global_position += velocity/2 * delta
+	
+	# pojemek
+	velocity *= 0.9985 
 	
 	# dodaj hitrost vsakemu od trikotnikov (kolikor je ključev)
 	for child in shard_direction_map.keys():
@@ -60,15 +60,17 @@ func _process(delta: float) -> void:
 #		shard_direction_map[child].x -= delta * shard_gravity_factor # tukaj grejo vsi trikotniki istočasno dol
 		
 		# random
-		randomize()
+#		randomize()
 		child.position -= shard_direction_map[child] * delta * 10#* rand_range(shard_speed_random[0], shard_speed_random[1])
-		child.rotation -= shard_direction_map[child].y * delta * rand_range(shard_rotation_random[0], shard_rotation_random[1])
-		child.scale.x -= delta * rand_range(shard_decay_random_time[0], shard_decay_random_time[1])
-		child.scale.y -= delta * rand_range(shard_decay_random_time[0], shard_decay_random_time[1])
+#		child.rotation -= shard_direction_map[child].y * delta * rand_range(shard_rotation_random[0], shard_rotation_random[1])
+		child.scale.x -= delta #* rand_range(shard_decay_random_time[0], shard_decay_random_time[1])
+		child.scale.y -= delta #* rand_range(shard_decay_random_time[0], shard_decay_random_time[1])
 		child.scale.x = clamp(child.scale.x, 0.0, 1.2)
 		child.scale.y = clamp(child.scale.y, 0.0, 1.2)
 		
+		
 func explode():
+
 		
 	# zabeležimo točke v trenutnem poligonu (vec2 pozicija)
 	var points = polygon
@@ -125,9 +127,8 @@ func explode():
 		
 		add_child(shard)
 	 
-	$CPUParticles2D.set_emitting(true)
 		
-		
+	# fejk štoparica za queue free		
 	decay_timer.wait_time = shard_decay_random_time[1] # uporabimo najvišjo možno vrednost
 	decay_timer.start()
 	
@@ -142,13 +143,8 @@ func reset():
 		remove_child(child)
 
 
-
-func _on_Decay_tween_completed(object: Object, key: NodePath) -> void:
-	
-	pass
-
-
 func _on_Timer_timeout() -> void:
+	print ("KONEC------------------------	")
 	
-	print ("KUEFRI - Exploding Bolt")
+#	print ("KUFRI - Exploding Bolt")
 	queue_free()

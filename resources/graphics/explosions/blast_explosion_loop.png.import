@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bomb_sprite.png-ce1fece9ddb314580a729ae2c8f4ab09.stex"
+path="res://.import/blast_explosion_loop.png-ebac17965eeb0e9264f0315939b5dd13.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/graphics/bomb_sprite.png"
-dest_files=[ "res://.import/bomb_sprite.png-ce1fece9ddb314580a729ae2c8f4ab09.stex" ]
+source_file="res://resources/graphics/explosions/blast_explosion_loop.png"
+dest_files=[ "res://.import/blast_explosion_loop.png-ebac17965eeb0e9264f0315939b5dd13.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

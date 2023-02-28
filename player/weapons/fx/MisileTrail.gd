@@ -69,5 +69,5 @@ func add_points(current_misile_position, at_pos: =  -1): # same arguments kot v 
 
 func _on_Decay_tween_all_completed() -> void:
 	
-	print ("KUEFRI - Misile trail")
+#	print ("KUFRI - Misile trail")
 	queue_free()

@@ -1,11 +1,11 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://resources/graphics/bolt.png" type="Texture" id=1]
 [ext_resource path="res://player/Player.gd" type="Script" id=6]
 
-[sub_resource type="Shader" id=27]
+[sub_resource type="Shader" id=111]
 code = "shader_type canvas_item;
-render_mode blend_mix ;
+render_mode blend_mix;
 
 uniform float intensity = 0.5f;
 uniform float layers = 5.0f;
@@ -13,6 +13,7 @@ uniform float speed = 4.0f;
 
 uniform vec4 color_to_cut = vec4(1.0, 1.0, 1.0, 1.0);
 
+uniform vec4 paleta = vec4(1.0);
 
 float gradient(vec2 uv){
 	
@@ -25,11 +26,11 @@ vec4 colorize (float col, float a) {
 	vec4 pallete;
 	
 //	// grayscale
-//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
 
 //	// monochrome
-	pallete = vec4(col, col, col, a);  // col je podan red kanal
-	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
 	
 //	// darken vse kar ni belo
 //	pallete = vec4(col, col, col, a);  // col je podan red kanal
@@ -76,11 +77,12 @@ void fragment(){
 }"
 
 [sub_resource type="ShaderMaterial" id=28]
-shader = SubResource( 27 )
+shader = SubResource( 111 )
 shader_param/intensity = 1.5
-shader_param/layers = 4.0
-shader_param/speed = 2.0
+shader_param/layers = 5.0
+shader_param/speed = 5.0
 shader_param/color_to_cut = Plane( 1, 1, 1, 1 )
+shader_param/paleta = Plane( 0.5, 0.5, 0.5, 0.5 )
 
 [sub_resource type="OpenSimplexNoise" id=25]
 seed = 2
@@ -88,7 +90,7 @@ period = 8.6
 persistence = 0.084
 lacunarity = 1.6
 
-[sub_resource type="NoiseTexture" id=7]
+[sub_resource type="NoiseTexture" id=109]
 width = 48
 height = 48
 seamless = true
@@ -99,6 +101,7 @@ radius = 20.051
 
 [sub_resource type="Animation" id=29]
 resource_name = "shield_on"
+length = 1.4
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
@@ -106,10 +109,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.5, 0.8 ),
-"transitions": PoolRealArray( 1, 0.435275, -2 ),
+"times": PoolRealArray( 0, 0.8, 1.4 ),
+"transitions": PoolRealArray( 0.5, -2, -2 ),
 "update": 0,
-"values": [ Vector2( 0, 0 ), Vector2( 0.7, 0.7 ), Vector2( 0.5, 0.5 ) ]
+"values": [ Vector2( 0, 0 ), Vector2( 0.6, 0.6 ), Vector2( 0.5, 0.5 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath(".:modulate")
@@ -118,10 +121,27 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.2, 0.8 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0.1, 1.4 ),
+"transitions": PoolRealArray( 1, -2 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=110]
+resource_name = "shielding"
+length = 1.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.7, 1.4 ),
+"transitions": PoolRealArray( -2, -2, -2 ),
+"update": 0,
+"values": [ Vector2( 0.5, 0.5 ), Vector2( 0.6, 0.6 ), Vector2( 0.5, 0.5 ) ]
 }
 
 [node name="Player" type="KinematicBody2D"]
@@ -147,7 +167,7 @@ __meta__ = {
 }
 
 [node name="GunPosition" type="Position2D" parent="."]
-position = Vector2( 6, 0 )
+position = Vector2( 4, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
@@ -163,15 +183,14 @@ position = Vector2( 0, 0.5 )
 rotation = 1.57079
 polygon = PoolVector2Array( -1.99997, -4.00001, -5, -3.13719e-05, -5.00001, 1.99997, -4.00002, 2.99997, 2.99998, 3.00002, 3.99999, 2.00003, 4, 2.50975e-05, 1.00003, -3.99999 )
 
-[node name="shield" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0 )
+[node name="Shield" type="Sprite" parent="."]
 material = SubResource( 28 )
-scale = Vector2( 0.7, 0.7 )
-texture = SubResource( 7 )
+scale = Vector2( 1e-05, 1e-05 )
+texture = SubResource( 109 )
 
-[node name="Area2D" type="Area2D" parent="shield"]
+[node name="Area2D" type="Area2D" parent="Shield"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="shield/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shield/Area2D"]
 shape = SubResource( 30 )
 disabled = true
 
@@ -184,13 +203,15 @@ texture = ExtResource( 1 )
 visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerArea"]
-position = Vector2( -1, 0.5 )
+position = Vector2( 0, 0.5 )
 rotation = 1.57079
 polygon = PoolVector2Array( -1.99997, -4.00001, -5, -3.13719e-05, -5.00001, 1.99997, -4.00002, 2.99997, 2.99998, 3.00002, 3.99999, 2.00003, 4, 2.50975e-05, 1.00003, -3.99999 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../shield")
+root_node = NodePath("../Shield")
 anims/shield_on = SubResource( 29 )
+anims/shielding = SubResource( 110 )
 
 [connection signal="area_exited" from="PlayerArea" to="." method="_on_PlayerArea_area_exited"]
 [connection signal="body_exited" from="PlayerArea" to="." method="_on_PlayerArea_body_exited"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

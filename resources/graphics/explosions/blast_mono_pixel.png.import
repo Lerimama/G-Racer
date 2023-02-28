@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/nov_poskus.png-703ef4bd113a214bbefb516f7772f813.stex"
+path="res://.import/blast_mono_pixel.png-87c4d90ee40d0555135e55d87ad31cda.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/graphics/nov_poskus.png"
-dest_files=[ "res://.import/nov_poskus.png-703ef4bd113a214bbefb516f7772f813.stex" ]
+source_file="res://resources/graphics/explosions/blast_mono_pixel.png"
+dest_files=[ "res://.import/blast_mono_pixel.png-87c4d90ee40d0555135e55d87ad31cda.stex" ]
 
 [params]
 

@@ -83,6 +83,6 @@ func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta
 func _on_Decay_tween_all_completed() -> void:
 #	emit_signal("BoltTrail_is_gone")
 	
-	print ("KUEFRI - Bolt Trail")
+#	print ("KUFRI - Bolt Trail")
 	queue_free()
 	

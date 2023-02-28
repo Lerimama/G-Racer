@@ -3,93 +3,116 @@ extends Node2D
 
 #signal Get_hit (hit_location, misile_velocity, misile_owner)
 
-var speed: float = 0 # regulacija v animaciji
+var spawned_by: String
+
+var speed: float = -32 # regulacija v animaciji
 var direction: Vector2
 
-# domet
-var is_active: bool# zadetek ali domet
-export var is_active_time: float = 2 # zadetek ali domet
+var flight_time: float = 0.8
 
-#animacije
-var animation_loop_counter: int = 0 # resetiraš po vsakem maxu
-var max_activated_loops: int = 5
-var max_blink_loops: int = 10
+var detect_size: Vector2 = Vector2.ZERO
+var detect_max_size: Vector2 = Vector2(5, 5) # max velikost ob letu
+var detect_explode_size: Vector2 = Vector2(7.5, 7.5) # doseg partiklov
 
-var new_blast_trail: Object
+var explosion_time: float = 0.5 # fps/f tween čas eksplozije uskladi s partikli (da ne bo kufri prezgodaj
 
-onready var explosion_particles: Particles2D = $ExplosionParticles
+# animacije
+var tween_name: String
+var animation_loop_counter: int = 0 
+var max_explosion_loop: int = 3 # kolk cajta je igralec zaklenjen
+
+#onready var explosion_particles: Particles2D = $ExplosionParticles
 onready var blast_sprite: AnimatedSprite = $BlastSprite
-onready var BlastTrail: PackedScene = preload("res://player/weapons/fx/BlastTrail.tscn") 
+onready var tween: Tween = $Tween
+onready var detect_area_poly: CollisionPolygon2D = $DetectArea/CollisionPolygon2D
 
 
 func _ready() -> void:
 	
 	add_to_group("Blasts")
 	
-	is_active = true
-	randomize()
-	blast_sprite.play("flight_loop")
-	
 	direction = transform.x # rotacija smeri ob štartu
-	$AnimationPlayer.play("flight")
-
-#	explosion_particles.emitting = true
 	
-		
-	# spawn trail
-	new_blast_trail = BlastTrail.instance()
-	AutoGlobal.effects_creation_parent.add_child(new_blast_trail)
-	new_blast_trail.set_as_toplevel(true)
+	# scale detect area
+	detect_area_poly.scale = detect_size
 	
+	# relase
+	tween_name = "flight_tween"
+	tween.interpolate_property(self ,"speed", null, 0, flight_time, Tween.TRANS_LINEAR, Tween.EASE_OUT )
+	tween.start()
+	
+	detect_area_poly.disabled = true # tako se ne zgodi prezgodnja interakcij in poruši vse animacije
 	
 	
 func _process(delta: float) -> void:
 	
-	if speed > 5: # da konča že dolj pred kuefri nodeta
-		new_blast_trail.add_points(global_position)
+	# scale detect area
+	detect_area_poly.scale = detect_size
 	
-	position += direction * speed * delta # * accelaration
+	# motion
+	position += direction * speed * delta
+	 
 
-
+# kontrola animacij
 func _on_BlastSprite_animation_finished() -> void: # prvič klicano iz animacije
 	
-	animation_loop_counter += 1
-	
-	# prehodi animacij
+	# po določeni animaciji naredi ...
 	match blast_sprite.animation:
-		# flight
-		"flight_loop":
-			blast_sprite.play("expand")
-			new_blast_trail.start_decay()
-		# expand
+		
 		"expand":
-			blast_sprite.play("activated_loop")
-		# activate
-		"activated_loop":
-			if animation_loop_counter >= max_activated_loops && animation_loop_counter < max_blink_loops:	
-				blast_sprite.play("blink_loop")
-		# explode
-		"blink_loop":
-			if animation_loop_counter >= max_blink_loops:	
-#				blast_sprite.stop() # true je za reverse 
-				explode()
+			blast_sprite.play("warning")
+			# povečanje detect area
+			tween.interpolate_property(self ,"detect_size", null, detect_max_size, explosion_time, Tween.TRANS_LINEAR, Tween.EASE_OUT )
+			tween.start()
+		"warning":
+			detect_area_poly.disabled = false
+		"explosion": # kličem iz area signala
+			blast_sprite.play("explosion_loop")
+		"explosion_loop":
+			animation_loop_counter += 1 
+			if animation_loop_counter > max_explosion_loop:
+				blast_sprite.play("close")
+				
+				# pomanjšanje detect area
+				tween_name = "close_tween"
+				tween.interpolate_property(self ,"detect_size", null, Vector2.ZERO, explosion_time, Tween.TRANS_QUAD, Tween.EASE_IN )
+				tween.start()	
+							
+		"close":
+			detect_area_poly.disabled = true # tako se ne zgodi prezgodnja interakcij in poruši vse animacije
+			animation_loop_counter = 0
+#			print("KUFRI - Blast")
+			queue_free()	
+		
+
+# ko se ustavi po flight
+func _on_Tween_tween_completed(object: Object, key: NodePath) -> void:
 	
-	print (blast_sprite.animation)
-	print(animation_loop_counter)
+	# preverjamo ime tweena
+	if tween_name == "flight_tween":
+		tween_name = "nn_tween" # sam da ni isto kot zgoraj ... izločim signale ostalih tweenov
+		blast_sprite.play("expand")
 
 
-#func expand_animation_start(): # klicano iz animacije
-#
-#	blast_sprite.play("expand")
-#	new_blast_trail.start_decay()
+# detect in aktivacija
+func _on_DetectArea_body_entered(body: Node) -> void:
 	
-	
-func explode(): 
-	
-	$AnimationPlayer.play("explode")	
-	explosion_particles.emitting = true
+	# preverjam, da ni avtor in ima metodo ...
+	if body.has_method("on_hit_by_blast"): # && body.name != spawned_by:
+		
+		blast_sprite.play("explosion")
+		# povečanje detect area
+		tween.interpolate_property(self ,"detect_size", null, detect_explode_size, explosion_time, Tween.TRANS_LINEAR, Tween.EASE_OUT )
+		tween.start()
+		# reset counter to 0
+		animation_loop_counter = 0
+
+		body.on_hit_by_blast() # na plejerju se izbira ali je motion true ali false
 
 
-func kuefri():
-	print ("KUEFRI - Blast")
-	queue_free()
+# release prisoner
+func _on_DetectArea_body_exited(body: Node) -> void:
+		# preverjam, da ni avtor in ima metodo ...
+	if body.has_method("on_hit_by_blast") :#&& body.name != spawned_by:
+		
+		body.on_hit_by_blast() # na plejerju se izbira ali je motion true ali false

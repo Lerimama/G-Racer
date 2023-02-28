@@ -15,3 +15,10 @@ shape = SubResource( 1 )
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
+
+[node name="DetectArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource( 1 )
+
+[connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]

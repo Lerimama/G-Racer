@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/smoke_text_hor.png-9d82994cad09cf1e8deb235cee2a6618.stex"
+path="res://.import/bolt_spider.png-ea6072391d2c961690cbf8aa3905d165.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/graphics/smoke_text_hor.png"
-dest_files=[ "res://.import/smoke_text_hor.png-9d82994cad09cf1e8deb235cee2a6618.stex" ]
+source_file="res://resources/graphics/_zaloga/bolt_spider.png"
+dest_files=[ "res://.import/bolt_spider.png-ea6072391d2c961690cbf8aa3905d165.stex" ]
 
 [params]
 
