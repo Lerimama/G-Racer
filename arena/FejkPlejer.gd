@@ -12,6 +12,9 @@ func _ready() -> void:
 	pass # Replace with function body.
 	direction = transform.x # rotacija smeri ob štartu
 
+	print ("Fejkplayer")
+
+
 func _process(delta: float) -> void:
 
 	position += direction * speed * delta
@@ -23,5 +26,4 @@ func on_hit_by_blast():
 #	motion_enabled == false
 	modulate = Color.red
 	speed = 0
-	print("HOPLA CEFIZELJ_______-")
 	

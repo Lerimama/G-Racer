@@ -1,0 +1,192 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://player/weapons/Shockwave.gd" type="Script" id=1]
+[ext_resource path="res://resources/graphics/explosions/animation_sprites_bomb.png" type="Texture" id=2]
+[ext_resource path="res://resources/graphics/explosions/blast_mono_pixel.png" type="Texture" id=6]
+
+[sub_resource type="RectangleShape2D" id=139]
+extents = Vector2( 1, 1 )
+
+[sub_resource type="AtlasTexture" id=71]
+atlas = ExtResource( 2 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=61]
+atlas = ExtResource( 2 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=59]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=72]
+atlas = ExtResource( 2 )
+region = Rect2( 64, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=73]
+atlas = ExtResource( 2 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=74]
+atlas = ExtResource( 2 )
+region = Rect2( 96, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=75]
+atlas = ExtResource( 2 )
+region = Rect2( 112, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=76]
+atlas = ExtResource( 2 )
+region = Rect2( 128, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=77]
+atlas = ExtResource( 2 )
+region = Rect2( 144, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=78]
+atlas = ExtResource( 2 )
+region = Rect2( 160, 0, 16, 16 )
+
+[sub_resource type="SpriteFrames" id=135]
+animations = [ {
+"frames": [ SubResource( 71 ), SubResource( 61 ), SubResource( 59 ), null ],
+"loop": false,
+"name": "deactivate",
+"speed": 20.0
+}, {
+"frames": [ SubResource( 59 ), SubResource( 61 ) ],
+"loop": false,
+"name": "drop",
+"speed": 10.0
+}, {
+"frames": [ SubResource( 59 ), SubResource( 59 ), SubResource( 59 ), SubResource( 61 ), SubResource( 71 ), SubResource( 72 ), SubResource( 73 ), SubResource( 74 ), SubResource( 75 ), SubResource( 76 ), SubResource( 77 ), SubResource( 78 ), ExtResource( 6 ), SubResource( 78 ), SubResource( 77 ), SubResource( 76 ), SubResource( 74 ), SubResource( 73 ), SubResource( 72 ), SubResource( 71 ), SubResource( 61 ), SubResource( 61 ), SubResource( 59 ) ],
+"loop": false,
+"name": "expand",
+"speed": 20.0
+}, {
+"frames": [ SubResource( 71 ), SubResource( 72 ), SubResource( 73 ), SubResource( 74 ), SubResource( 76 ), SubResource( 77 ), SubResource( 76 ), SubResource( 74 ), SubResource( 73 ), SubResource( 72 ), SubResource( 71 ) ],
+"loop": true,
+"name": "loop_active",
+"speed": 20.0
+}, {
+"frames": [ SubResource( 59 ), SubResource( 59 ), SubResource( 59 ), SubResource( 61 ), SubResource( 71 ), SubResource( 71 ), SubResource( 61 ) ],
+"loop": true,
+"name": "loop_mini",
+"speed": 20.0
+} ]
+
+[sub_resource type="Shader" id=140]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform bool mask_on = true;// = vec2(0.5, 0.5);
+uniform vec2 center;// = vec2(0.5, 0.5);
+uniform float force = 0.5; // displacement vector ... globina podomače
+uniform float size = 0.2; 
+uniform float hole_thickness = 0.2;
+uniform float inside_trans = 0.2;
+uniform float outside_trans = 0.2;
+
+
+void fragment() {
+	
+	// razmerje ekrana, da ni elipsaste oblike (pixel size x = 1/text oz. screen width)
+	float screen_ratio = SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y;
+	// (1/640) / (1/360) = 0,5625
+
+	// korektura centra, ker je x = y
+	
+	vec2 center_corrected = vec2((center.x - (1.0 - screen_ratio)/2.0)/screen_ratio, center.y);
+	// od original x pozicije odštejem polovico od nezasedene x dolžine (
+	// zasedena dolžine je screen_ratio -> nezasedena je 1 - screen_ratio)
+	// zamaknjeno x pozicijo potem delimo z screen_ratio, da se 1.0 x vektor raztegne na širino ekrana
+	// delimo s šrino in višino ekrana, da enote iz texlov spremenimo v pixle
+	
+	// aplikacija razmerja ekrana
+	vec2 scale_uv = (SCREEN_UV - vec2(0.5, 0.0)) / vec2 (screen_ratio, 1.0) + vec2 (0.5, 0.0);
+	// scale_uv = (skrin uv - offset x, da ga premaknemo v origin, da ga lahko pravilno skejlamo) / ratio x osi, ker je popačeno samo v eno smer + offset x, da ga popravimo s tistim, ki smo ga želeli
+	
+	// gradient masked circle 
+//	float mask = length(scale_uv - center);
+	
+	// sharp masked circle 
+//	float mask = step(mask_size, length(scale_uv - center)); 
+	// step funkcija vse vrednosti pripne na zapisani vrednosti ... izbrana, ki prestavlja size, in dolžina od našega centra
+	
+	// smooth masked circle 
+//	float mask = smoothstep(mask_size - 0.05, mask_size, length(scale_uv - center)); 
+//	float mask = 1.0 - smoothstep(mask_size - 0.05, mask_size, length(scale_uv - center)); // odštejemo od 1.0 in je inverted
+	// smoothstep funkcija naredi prehod med zapisanima vrednostima ... smoothstep(vrednosti pas 1, vrednosti pas 2, vrednosti pas 3)
+	
+	// masked donut
+//	float mask = (1.0 - smoothstep(mask_size - 0.05, mask_size, length(scale_uv - center))) *
+//		smoothstep(mask_size - 0.12, mask_size - 0.05, length(scale_uv - center));
+	// multiply oba koraka (smoothstepa) med sabo, da videz dveh prehodov ... drugi je manjši in ni invertan
+	// dodamo debelino
+	float mask = (1.0 - smoothstep(size - outside_trans, size, length(scale_uv - center_corrected))) *
+		smoothstep(hole_thickness - inside_trans, hole_thickness, length(scale_uv - center_corrected));
+	
+	
+	
+	// mavrični stožec
+//	vec2 disp = normalize(SCREEN_UV - center) * force; 
+//	vec2 disp = normalize(scale_uv - center) * force; // namesto skrin_uv damo popravljeno razmerje \"scale_uv\"
+	vec2 disp = normalize(scale_uv - center_corrected) * force * mask; // apliciramo masko (multiply pomeni, da je vidna samo, kjer je bele barve ... kot prava maska)
+	
+	// tukaj grebamo teksturo in jo vmešamo s šejpom
+	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV - disp);
+	
+	// čb test maske
+	if (mask_on == true){
+		COLOR.rgb = vec3(mask);
+	}
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=137]
+resource_local_to_scene = true
+shader = SubResource( 140 )
+shader_param/mask_on = false
+shader_param/center = Vector2( 0.5, 0.5 )
+shader_param/force = 0.5
+shader_param/size = 0.2
+shader_param/hole_thickness = 0.2
+shader_param/inside_trans = 0.2
+shader_param/outside_trans = 0.2
+
+[sub_resource type="CircleShape2D" id=138]
+radius = 7.0
+
+[node name="Shockwave" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="CollisionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
+shape = SubResource( 139 )
+
+[node name="MineSprite" type="AnimatedSprite" parent="."]
+z_index = 1
+frames = SubResource( 135 )
+animation = "drop"
+
+[node name="ShockwaveNode" type="Node2D" parent="."]
+
+[node name="Shockwave" type="ColorRect" parent="ShockwaveNode"]
+material = SubResource( 137 )
+margin_right = 130.0
+margin_bottom = 129.0
+rect_min_size = Vector2( 640, 360 )
+
+[node name="BackBuffer" type="BackBufferCopy" parent="ShockwaveNode"]
+copy_mode = 2
+
+[node name="DetectArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource( 138 )
+
+[connection signal="body_entered" from="CollisionArea" to="." method="_on_CollisionArea_body_entered"]
+[connection signal="animation_finished" from="MineSprite" to="." method="_on_BlastSprite_animation_finished"]
+[connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
+[connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]

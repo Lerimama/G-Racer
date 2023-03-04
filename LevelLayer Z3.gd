@@ -1,4 +1,4 @@
-extends Camera2D
+extends CanvasLayer
 
 
 # Declare member variables here. Examples:
@@ -8,15 +8,10 @@ extends Camera2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-	print ("Camera")
-	print ("----------------------")
+	print ("Level Lejer Z3")
+pass # Replace with function body.
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
 #	pass
-
-
-func _on_TimeSlider_value_changed(value: float) -> void:
-	Engine.time_scale = value # nedela
-	print("time changed")

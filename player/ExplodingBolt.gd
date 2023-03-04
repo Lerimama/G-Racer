@@ -36,11 +36,10 @@ var decay_done: bool = false # za preverjanje ali je stvar že končana (usklaje
 func _ready() -> void:
 	
 	randomize()
+	explode()
+#	yield(get_tree().create_timer(0.05), "timeout")
 	debris_particles.set_emitting(true)
 	explosion_particles.set_emitting(true)
-	# "kulski zamik razpada rakete
-	yield(get_tree().create_timer(0.2), "timeout")
-	explode()
 
 
 func _process(delta: float) -> void:
@@ -134,6 +133,7 @@ func explode():
 	
 	
 	# base sprite alfa 0
+	yield(get_tree().create_timer(0.1), "timeout") # zamik
 	color.a = 0 
 
 	
@@ -144,7 +144,6 @@ func reset():
 
 
 func _on_Timer_timeout() -> void:
-	print ("KONEC------------------------	")
 	
 #	print ("KUFRI - Exploding Bolt")
 	queue_free()

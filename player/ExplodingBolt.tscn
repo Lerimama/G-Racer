@@ -16,7 +16,7 @@ colors = PoolColorArray( 1, 1, 1, 1, 1, 0.921783, 0.0898438, 1, 1, 0.5625, 0, 1,
 gradient = SubResource( 17 )
 
 [sub_resource type="Curve" id=18]
-_data = [ Vector2( 0, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 0.522388, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 0.463636 ), 0.0, 0.0, 0, 0, Vector2( 0.384956, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="CurveTexture" id=10]
 curve = SubResource( 18 )
@@ -29,7 +29,7 @@ flag_disable_z = true
 direction = Vector3( 1, 1, 0 )
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
-initial_velocity = 43.7
+initial_velocity = 70.0
 initial_velocity_random = 0.46
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
@@ -72,9 +72,9 @@ color_ramp = SubResource( 1 )
 [node name="ExplosionParticles" type="Particles2D" parent="."]
 show_behind_parent = true
 emitting = false
-amount = 18
+amount = 24
 one_shot = true
-explosiveness = 0.78
+explosiveness = 0.85
 randomness = 1.0
 draw_order = 1
 process_material = SubResource( 110 )

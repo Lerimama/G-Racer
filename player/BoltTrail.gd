@@ -19,14 +19,12 @@ var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
 onready var decay_tween = $Decay
 
 
-
-
 func _ready() -> void:
 	
 #	set_as_toplevel(true)
 	clear_points() # da ne bo kakšnega errorja
-	print(name)
-	
+
+
 func _process(delta: float) -> void:
 		
 	# POINT AGING
@@ -62,6 +60,7 @@ func _process(delta: float) -> void:
 #	# ko se število točk zmanjšuje in je količina točk manjša od ... in 			
 #	if points_count_after < points_count_before &&  get_point_count() < points_count_decay_start:
 #		start_decay()
+	pass
 	
 
 func start_decay():

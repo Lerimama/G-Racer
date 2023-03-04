@@ -26,9 +26,9 @@ var playerstats_w = 500
 var playerstats_h = 32
 #
 #var anchor_L = odmik_od_roba
-#var anchor_R = get_viewport().size.x - odmik_od_roba - playerstats_w
+#var anchor_R = get_viewport_rect().size.x - odmik_od_roba - playerstats_w
 #var anchor_U = odmik_od_roba
-#var anchor_D = get_viewport().size.y - odmik_od_roba - playerstats_h
+#var anchor_D = get_viewport_rect().size.y - odmik_od_roba - playerstats_h
 #
 #var playerstats_positions : Dictionary = {
 #	"playerstats_position_1" : Vector2 (anchor_L,anchor_U),

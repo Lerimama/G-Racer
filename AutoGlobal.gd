@@ -4,6 +4,7 @@ extends Node
 
 var node_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
 var effects_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var effects_creation_layer = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
 # uporaba -> Global.node_creation_parent = self # na ready funkciji se določi, da je dotična scena node_creation_parent
 
 
@@ -46,7 +47,7 @@ var effects_creation_parent = null	# variabla setana na NULL pomeni, da trenutno
 #func get_random_position(): # to funkcijo napišemo, da bo vrnila naključno pozicijo na ekranu
 # 
 #	randomize() # vedno če hočeš randomizirat
-#	var random_position = Vector2(rand_range(50, get_viewport().size.x - 100), rand_range(50, get_viewport().size.y - 100))
+#	var random_position = Vector2(rand_range(50, get_viewport_rect().size.x - 100), rand_range(50, get_viewport_rect().size.y - 100))
 #	return random_position
 #
 ## uporaba -> object.global_position = Global.get_random_position()

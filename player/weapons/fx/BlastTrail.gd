@@ -11,18 +11,12 @@ var trail_active: bool
 onready var decay_tween = $Decay
 
 
-
-
 func _ready() -> void:
 	
 	clear_points()
 	trail_active = true
 	randomize()
 	 
-func _process(delta: float) -> void:
-	
-	pass
-	
 	
 func start_decay():
 	trail_active = false
