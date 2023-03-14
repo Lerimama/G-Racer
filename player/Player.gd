@@ -116,6 +116,7 @@ func _process(delta: float) -> void:
 #	engine_particles_rear.rotation = RearEnginePos.global_rotation
 #	engine_particles_frontL.rotation = FrontEnginePosL.global_rotation - deg2rad(180)
 	pass
+	update()
 
 
 func _physics_process(delta: float) -> void:
@@ -385,7 +386,6 @@ func explode():
 	var new_exploding_bolt = ExplodingBolt.instance()
 	new_exploding_bolt.global_position = global_position
 	new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
-#	new_exploding_bolt.modulate = Color.red
 	new_exploding_bolt.modulate = modulate
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
 	AutoGlobal.node_creation_parent.add_child(new_exploding_bolt)
@@ -441,11 +441,13 @@ func on_hit_by_blast(): # kliče se iz blast detect area
 		motion_enabled = false
 		velocity = lerp(velocity, Vector2.ZERO, 0.8)
 		bolt_sprite.material.set_shader_param("noise_factor", 2)
+		bolt_sprite.material.set_shader_param("speed", 0.7)
 		
 	# release
 	elif motion_enabled != true: # || shields_on != true :
 		motion_enabled = true
 		bolt_sprite.material.set_shader_param("noise_factor", 0)
+		bolt_sprite.material.set_shader_param("speed", 0)
 	
 	
 func on_got_hit(collision_location: Vector2, bullet_velocity: Vector2):
@@ -502,5 +504,5 @@ func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 #	shadow_position.y = sprite_center.y - ((shadow_offset) * cos(sprite_angle))
 #
 #	draw_set_transform(Vector2.ZERO, deg2rad(90), Vector2.ONE)
-#	draw_texture(sprite_texture, shadow_position, Color( 0, 0, 0, 0.3 ))
-
+#	draw_texture(bolt_sprite.texture, shadow_position, Color( 0, 0, 0, 0.3 ))
+#
