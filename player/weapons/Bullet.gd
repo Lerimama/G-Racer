@@ -38,7 +38,7 @@ func _ready() -> void:
 	new_bullet_trail = BulletTrail.instance()
 #	new_bullet_trail.global_position = position
 #	new_bullet_trail.rotation = global_rotation
-	AutoGlobal.effects_creation_parent.add_child(new_bullet_trail)
+	Global.effects_creation_parent.add_child(new_bullet_trail)
 #	new_bullet_trail.set_as_toplevel(true)
 	
 	
@@ -77,7 +77,7 @@ func destroy_bullet():
 	new_hit_particles.position = collision.position
 	new_hit_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
 	new_hit_particles.set_emitting(true)
-	AutoGlobal.effects_creation_parent.add_child(new_hit_particles)
+	Global.effects_creation_parent.add_child(new_hit_particles)
 	
 	new_bullet_trail.global_position = collision.position
 	new_bullet_trail.start_decay()

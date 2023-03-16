@@ -91,6 +91,7 @@ func _ready() -> void:
 	add_to_group("Players")
 	name = player_name
 	bolt_sprite.rotation_degrees = 90 # drugače je malo rotiran ... čudno?!
+	modulate = Config.color_blue
 	
 	engines_setup() # postavi partikle za pogon
 	
@@ -166,7 +167,7 @@ func on_collision():
 		new_collision_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
 		new_collision_particles.amount = velocity.length()/15 # količnik je korektor	
 		new_collision_particles.set_emitting(true)
-		AutoGlobal.effects_creation_parent.add_child(new_collision_particles)
+		Global.effects_creation_parent.add_child(new_collision_particles)
 		print(new_collision_particles.amount)
 		
 		
@@ -179,7 +180,7 @@ func input_motion(delta: float) -> void:
 		# spawn trail
 		if bolt_trail_active == false && velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 			new_bolt_trail = BoltTrail.instance()
-			AutoGlobal.effects_creation_parent.add_child(new_bolt_trail)
+			Global.effects_creation_parent.add_child(new_bolt_trail)
 			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
 			bolt_trail_active = true 
 		
@@ -196,7 +197,7 @@ func input_motion(delta: float) -> void:
 		# spawn trail
 		if bolt_trail_active == false && velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 			new_bolt_trail = BoltTrail.instance()
-			AutoGlobal.effects_creation_parent.add_child(new_bolt_trail)
+			Global.effects_creation_parent.add_child(new_bolt_trail)
 			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
 			bolt_trail_active = true 
 	
@@ -224,7 +225,7 @@ func input_shooting(delta: float) -> void:
 		new_bullet.position = gun_position.global_position
 		new_bullet.rotation = gun_position.global_rotation
 		new_bullet.spawned_by = name # ime avtorja izstrelka
-		AutoGlobal.node_creation_parent.add_child(new_bullet)
+		Global.node_creation_parent.add_child(new_bullet)
 #		new_bullet.connect("Get_hit", self, "on_got_hit")		
 		
 		# reload weapon
@@ -243,7 +244,7 @@ func input_shooting(delta: float) -> void:
 		new_misile.position = gun_position.global_position
 		new_misile.rotation = gun_position.global_rotation
 		new_misile.spawned_by = name # ime avtorja izstrelka
-		AutoGlobal.node_creation_parent.add_child(new_misile)
+		Global.node_creation_parent.add_child(new_misile)
 #		new_misile.connect("get_hit", self, "on_got_hit")		
 #		new_misile.owner = self
 #		new_misile.is_homming = false
@@ -263,7 +264,7 @@ func input_shooting(delta: float) -> void:
 		new_shockwave.global_position = gun_position.global_position
 #		new_shockwave.global_position.y = gun_position.global_position.y
 		new_shockwave.spawned_by = name # ime avtorja izstrelka
-		AutoGlobal.effects_creation_layer.add_child(new_shockwave)
+		Global.effects_creation_layer.add_child(new_shockwave)
 
 		# reload weapon
 		misile_reloaded = false
@@ -334,7 +335,7 @@ func engines_setup(): # spawnamo paritkle pogona
 	engine_particles_rear.position = rear_engine_pos.global_position
 	engine_particles_rear.rotation = rear_engine_pos.global_rotation
 	engine_particles_rear.modulate.a = engines_alpha
-	AutoGlobal.effects_creation_parent.add_child(engine_particles_rear)
+	Global.effects_creation_parent.add_child(engine_particles_rear)
 	
 	# rikverc levo
 	engine_particles_front_left = EngineParticles.instance()
@@ -345,7 +346,7 @@ func engines_setup(): # spawnamo paritkle pogona
 	engine_particles_front_left.position = front_engine_pos_left.global_position
 	engine_particles_front_left.rotation = front_engine_pos_left.global_rotation - deg2rad(180)
 	engine_particles_front_left.modulate.a = engines_alpha
-	AutoGlobal.effects_creation_parent.add_child(engine_particles_front_left)
+	Global.effects_creation_parent.add_child(engine_particles_front_left)
 	
 	# rikverc desno
 	engine_particles_front_right = EngineParticles.instance()
@@ -356,7 +357,7 @@ func engines_setup(): # spawnamo paritkle pogona
 	engine_particles_front_right.position = front_engine_pos_right.global_position
 	engine_particles_front_right.rotation = front_engine_pos_right.global_rotation - deg2rad(180)	
 	engine_particles_front_right.modulate.a = engines_alpha
-	AutoGlobal.effects_creation_parent.add_child(engine_particles_front_right)
+	Global.effects_creation_parent.add_child(engine_particles_front_right)
 
 
 func update_engine_position():
@@ -388,7 +389,7 @@ func explode():
 	new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
 	new_exploding_bolt.modulate = modulate
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
-	AutoGlobal.node_creation_parent.add_child(new_exploding_bolt)
+	Global.node_creation_parent.add_child(new_exploding_bolt)
 	
 #	queue_free()
 	visible = false
@@ -429,7 +430,7 @@ func on_hit_by_misile():
 		new_exploding_bolt.modulate = modulate
 		new_exploding_bolt.modulate.a = 1
 		new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
-		AutoGlobal.node_creation_parent.add_child(new_exploding_bolt)
+		Global.node_creation_parent.add_child(new_exploding_bolt)
 		
 		queue_free()
 		

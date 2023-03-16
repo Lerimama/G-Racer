@@ -59,7 +59,7 @@ func _ready() -> void:
 	# spawn trail
 	new_blast_trail = BlastTrail.instance()
 	new_blast_trail.position = $TrailPosition.position
-	AutoGlobal.effects_creation_parent.add_child(new_blast_trail)
+	Global.effects_creation_parent.add_child(new_blast_trail)
 	new_blast_trail.set_as_toplevel(true)
 	
 	# speed up

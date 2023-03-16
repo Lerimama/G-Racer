@@ -52,7 +52,7 @@ func _ready() -> void:
 	
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
-	AutoGlobal.effects_creation_parent.add_child(new_misile_trail)
+	Global.effects_creation_parent.add_child(new_misile_trail)
 #	new_misile_trail.position = TrailPosition.position # ne dela kot bi prićakoval
 	
 	# random start dir
@@ -108,7 +108,7 @@ func dissarm(): # po pretečenem dometu
 	var new_drop_particles: CPUParticles2D = DropParticles.instance()
 	new_drop_particles.global_position = drop_position.global_position
 	new_drop_particles.set_emitting(true)
-	AutoGlobal.effects_creation_parent.add_child(new_drop_particles)
+	Global.effects_creation_parent.add_child(new_drop_particles)
 	
 	
 func explode(): 
@@ -118,7 +118,7 @@ func explode():
 	new_misile_explosion.global_position = global_position
 	new_misile_explosion.set_one_shot(true)
 	new_misile_explosion.set_emitting(true)
-	AutoGlobal.effects_creation_parent.add_child(new_misile_explosion)
+	Global.effects_creation_parent.add_child(new_misile_explosion)
 		
 		
 func _on_DetectArea_body_entered(body: Node) -> void:

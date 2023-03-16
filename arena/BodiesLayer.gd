@@ -5,4 +5,4 @@ extends CanvasLayer
 # "colors" dodaja barvo orignal objekta prek senčke
 func _ready() -> void:
 	print ("Plejer Lejer Z2")
-	AutoGlobal.node_creation_parent = self
+	Global.node_creation_parent = self
