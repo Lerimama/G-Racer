@@ -2,7 +2,7 @@
 
 [ext_resource path="res://_obs/KinPLayer2.gd" type="Script" id=1]
 [ext_resource path="res://resources/graphics/tile_raketa.png" type="Texture" id=2]
-[ext_resource path="res://resources/graphics/light.png" type="Texture" id=3]
+[ext_resource path="res://assets/light.png" type="Texture" id=3]
 
 [node name="KinPLayer2" type="KinematicBody2D"]
 position = Vector2( 321, 110 )

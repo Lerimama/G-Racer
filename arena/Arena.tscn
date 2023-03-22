@@ -1,25 +1,27 @@
-[gd_scene load_steps=371 format=2]
+[gd_scene load_steps=394 format=2]
 
 [ext_resource path="res://arena/Arena.gd" type="Script" id=1]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=2]
-[ext_resource path="res://resources/shaders/tilemap_color_manipulator.gdshader" type="Shader" id=3]
-[ext_resource path="res://resources/shaders/screen_color_manipulator.gdshader" type="Shader" id=4]
-[ext_resource path="res://resources/graphics/light.png" type="Texture" id=5]
-[ext_resource path="res://resources/graphics/_zaloga/nov_poskus.png" type="Texture" id=6]
-[ext_resource path="res://resources/graphics/bolt.png" type="Texture" id=7]
+[ext_resource path="res://assets/arena/arena_colors_texture.gdshader" type="Shader" id=3]
+[ext_resource path="res://assets/shaders/screen_color_manipulator.gdshader" type="Shader" id=4]
+[ext_resource path="res://assets/light.png" type="Texture" id=5]
+[ext_resource path="res://assets/weapons/blast.png" type="Texture" id=6]
+[ext_resource path="res://assets/player/bolt.png" type="Texture" id=7]
 [ext_resource path="res://arena/BodiesLayer.gd" type="Script" id=8]
 [ext_resource path="res://arena/Effects.gd" type="Script" id=9]
-[ext_resource path="res://resources/graphics/tileset_arena.png" type="Texture" id=10]
+[ext_resource path="res://assets/arena/tileset_arena_off.png" type="Texture" id=10]
 [ext_resource path="res://gameview/JuicyCamera.tscn" type="PackedScene" id=11]
-[ext_resource path="res://resources/graphics/tileset_arena_old.png" type="Texture" id=12]
+[ext_resource path="res://assets/shaders/screen_outline_prefekten_hmmm.gdshader" type="Shader" id=12]
 [ext_resource path="res://arena/FejkPlejer.gd" type="Script" id=13]
-[ext_resource path="res://resources/shaders/duplicirano in shranjeno/texture_dropshadow_manipulator_v2.gdshader" type="Shader" id=14]
+[ext_resource path="res://assets/arena/arena_shadows_screen.gdshader" type="Shader" id=14]
 [ext_resource path="res://LevelLayer Z3.gd" type="Script" id=15]
-[ext_resource path="res://resources/graphics/tileset_mecha.png" type="Texture" id=16]
+[ext_resource path="res://assets/_rezerva/eksplozija.png" type="Texture" id=16]
 [ext_resource path="res://BackgroundLayer Z0.gd" type="Script" id=17]
 [ext_resource path="res://EffectsLayer Z1.gd" type="Script" id=18]
-[ext_resource path="res://resources/shaders/duplicirano in shranjeno/screen_outline.gdshader" type="Shader" id=19]
-[ext_resource path="res://linja_temp.gd" type="Script" id=20]
+[ext_resource path="res://assets/arena/tileset_arena_edge.tres" type="TileSet" id=19]
+[ext_resource path="res://assets/donut.png" type="Texture" id=20]
+[ext_resource path="res://assets/arena/arena_outline_screen.gdshader" type="Shader" id=21]
+[ext_resource path="res://arena/ArenaTilemap.gd" type="Script" id=22]
 
 [sub_resource type="Shader" id=441]
 code = "shader_type canvas_item;
@@ -492,39 +494,14 @@ shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
 shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
 shader_param/transparent_color = Color( 0, 0, 0, 0 )
 
-[sub_resource type="TileSet" id=463]
-0/name = "tileset_mecha.png 0"
-0/texture = ExtResource( 16 )
-0/tex_offset = Vector2( 0, 0 )
-0/modulate = Color( 1, 1, 1, 1 )
-0/region = Rect2( 0, 0, 160, 192 )
-0/tile_mode = 1
-0/autotile/bitmask_mode = 0
-0/autotile/bitmask_flags = [ Vector2( 0, 0 ), 325, Vector2( 1, 0 ), 325, Vector2( 2, 0 ), 325, Vector2( 3, 0 ), 325, Vector2( 4, 0 ), 325 ]
-0/autotile/icon_coordinate = Vector2( 0, 0 )
-0/autotile/tile_size = Vector2( 32, 32 )
-0/autotile/spacing = 0
-0/autotile/occluder_map = [  ]
-0/autotile/navpoly_map = [  ]
-0/autotile/priority_map = [ Vector3( 0, 0, 17 ) ]
-0/autotile/z_index_map = [  ]
-0/occluder_offset = Vector2( 0, 0 )
-0/navigation_offset = Vector2( 0, 0 )
-0/shape_offset = Vector2( 0, 0 )
-0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
-0/shape_one_way = false
-0/shape_one_way_margin = 0.0
-0/shapes = [  ]
-0/z_index = 0
-
-[sub_resource type="ShaderMaterial" id=421]
+[sub_resource type="ShaderMaterial" id=509]
 shader = ExtResource( 3 )
 shader_param/manipulate_color_1 = Color( 1, 0, 0, 1 )
-shader_param/new_color_1 = Color( 0.32549, 0.356863, 0.407843, 1 )
-shader_param/manipulate_color_2 = Color( 1, 1, 1, 0 )
-shader_param/new_color_2 = Color( 0.184314, 0.211765, 0.286275, 1 )
-shader_param/manipulate_color_3 = Color( 1, 1, 1, 1 )
-shader_param/new_color_3 = Color( 0, 0, 0, 1 )
+shader_param/new_color_1 = Color( 1, 1, 0, 1 )
+shader_param/manipulate_color_2 = Color( 0, 1, 0, 1 )
+shader_param/new_color_2 = Color( 0, 1, 1, 1 )
+shader_param/manipulate_color_3 = Color( 0, 0, 1, 1 )
+shader_param/new_color_3 = Color( 1, 0, 1, 1 )
 shader_param/manipulate_other = false
 shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
 shader_param/manipulate_all = false
@@ -1383,7 +1360,7 @@ points = PoolVector2Array( 0, 0, 8, 0, 8, 8, 0, 8 )
 [sub_resource type="ConvexPolygonShape2D" id=415]
 points = PoolVector2Array( 0, 0, 8, 0, 8, 8, 0, 8 )
 
-[sub_resource type="TileSet" id=108]
+[sub_resource type="TileSet" id=508]
 0/name = "track_edge"
 0/texture = ExtResource( 10 )
 0/tex_offset = Vector2( 0, 0 )
@@ -3113,178 +3090,126 @@ points = PoolVector2Array( 0, 0, 8, 0, 8, 8, 0, 8 )
 } ]
 0/z_index = 0
 
-[sub_resource type="ShaderMaterial" id=454]
+[sub_resource type="ShaderMaterial" id=510]
 shader = ExtResource( 14 )
-shader_param/casting_color_1 = Color( 1, 0, 1, 1 )
-shader_param/casting_color_2 = Color( 0, 0, 0, 1 )
+shader_param/casting_color_1 = Color( 0.32549, 0.356863, 0.407843, 1 )
+shader_param/casting_color_2 = Color( 1, 1, 1, 1 )
 shader_param/casting_color_3 = Color( 0, 1, 0, 0 )
-shader_param/shadow_color = Color( 1, 1, 1, 1 )
+shader_param/shadow_color = Color( 1, 0.454902, 0.454902, 1 )
 shader_param/switch_cast_and_receive = false
 shader_param/new_casting_color = Color( 0, 0, 0, 0 )
 shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
 shader_param/shadow_rotation_deg = 180.0
 shader_param/shadow_distance_px = 0.0
-shader_param/offset_steps = 3
-shader_param/step_offset_px = 1.0
+shader_param/offset_steps = 5
+shader_param/step_to_px = 1.0
 
-[sub_resource type="ShaderMaterial" id=465]
-shader = ExtResource( 19 )
-shader_param/outlined_color = Color( 0, 0, 0, 1 )
-shader_param/outline_color = Color( 1, 0, 0, 1 )
+[sub_resource type="ShaderMaterial" id=507]
+shader = ExtResource( 21 )
+shader_param/outlined_color = Color( 0.32549, 0.356863, 0.407843, 1 )
+shader_param/outline_color = Color( 1, 1, 1, 1 )
+shader_param/outline_px_width = 1
 shader_param/outline_is_inside = false
-shader_param/outline_width_px = 8.0
 
-[sub_resource type="Shader" id=455]
-code = "
+[sub_resource type="Shader" id=500]
+code = "shader_type canvas_item;
+render_mode blend_mix;
 
-shader_type canvas_item;
+uniform float max_line_width = 10.0;
+uniform float min_line_width = 5.0;
+//uniform float freq = 1.0;
+//uniform float block_size = 20.0; // velikost bloka kjer se pobira noise ... resolucija noiseta 
 
-uniform vec4 line_color : hint_color = vec4(1.0);
-uniform float line_thickness : hint_range(0, 10) = 1.0;
+uniform vec4 starting_colour: hint_color = vec4(0,0,0,1);
+uniform vec4 ending_colour: hint_color = vec4(1);
 
-const vec2 OFFSETS[8] = {
-	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
-	vec2(1, -1), vec2(1, 0), vec2(1, 1)
-};
+const float pi = 3.1415;
+const int ang_res = 4;
+const int grad_res = 8;
 
-void fragment() {
-	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
-	float outline = 1.0;
-	
-	for (int i = 0; i < OFFSETS.length(); i++) {
-		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
-	}
-	outline = 1.0 - outline;
-	
-	vec4 color = texture(TEXTURE, UV);
-	vec4 outlined_result = mix(color, line_color, outline * color.a);
-	vec4 outlined_color = mix(color, outlined_result, outlined_result.a);
+//float hash(vec2 p, float s) {
+//	return fract(35.1 * sin(dot(vec3(112.3, 459.2, 753.2), vec3(p, s))));
+//}
 
+//float noise(vec2 p, float s) {
+//	vec2 d = vec2(0, 1);
+//	vec2 b = floor(p);
+//	vec2 f = fract(p);
+//	return mix(
+//		mix(hash(b + d.xx, s), hash(b + d.yx, s), f.x),
+//		mix(hash(b + d.xy, s), hash(b + d.yy, s), f.x), f.y);
+//}
 
-
-	vec2 center = vec2(0.5, 0.5); // center of the texture
-	vec2 pixel_pos = UV; // position of the current pixel
-	float max_distance = 0.9; // maximum distance for full gradient effect
-	vec4 pixel_color = texture(TEXTURE, pixel_pos); // color of the current pixel
-	vec4 pixel_line_color = texture(TEXTURE, pixel_pos); // color of the current pixel
-
-	float current_distance; // initialize distance to -1 (invalid value) ... transparenco da v belo
-//	float current_distance = -1.0; // initialize distance to -1 (invalid value) ... transparenco da v belo
-//	float gradient;
-
-
-//	if (pixel_color == line_color) // check for red pixel
-	if (pixel_color.a != 0.0) // check for red pixel
-	{
-		current_distance = distance(center, pixel_pos); // calculate distance
-//		COLOR = vec4(1.0);
-//		COLOR.a = 0.0;
-	}
-//	else if (pixel_color.rgb == vec3(0.0)) // check for red pixel
-//	{
-//		current_distance = distance(center, pixel_pos); // calculate distance
-////		COLOR = pixel_color;
-//		COLOR.a = 0.0;
-//		COLOR.rgb = vec3(0.5, 0.0, 1.5);
-//	}
-//	else {
-//		current_distance = distance(center, pixel_pos); // calculate distance
-//		current_distance = distance(pixel_pos,center); // calculate distance
-
-	if (current_distance >= 0.0) // check if distance is valid
-	{
-		float gradient = smoothstep(0.0, max_distance, current_distance); // calculate gradient
-		    // or: float gradient = mix(0.0, 1.0, distance / max_distance); // using mix function
-
-		    // use the gradient value in your shader as needed
-//			COLOR = vec4(gradient*0.01, gradient*0.0, 0.0, 1.0);
-//			COLOR = vec4(gradient) ;
-
-		COLOR = pixel_color * gradient;
-	}
+//float getLineWidth(vec2 p/*, float s*/) {
+//	p /= block_size;
+//	float w = 0.0;
+//	float intensity = 1.0;
+//	for (int i = 0; i < 3; i++) {
+//		w = mix(w, noise(p, s), intensity);
+//		p /= 2.0;
+//		intensity /= 2.0;
 //	}
 	
+//	return max_line_width;
+//	return mix(max_line_width, min_line_width, w);
+//	return mix(max_line_width, min_line_width, 0.5);
+//}
+
+bool pixelInRange(sampler2D text, vec2 uv, vec2 dist) {
+	float alpha = 0.0;
+	for (int i = 0; i < ang_res; i++) {
+		float angle = 2.0 * pi * float(i) / float(ang_res);
+		vec2 disp = dist * vec2(cos(angle), sin(angle));
+		if (texture(text, uv + disp).a > 0.0) return true;
+	}
+	return false;
+}
+
+float getClosestDistance(sampler2D text, vec2 uv, vec2 maxDist) {
+	if (!pixelInRange(text, uv, maxDist)) return -1.0;
 	
-//	COLOR = outlined_color;
+	float hi = 1.0; 
+	float lo = 0.0;
+	
+	for (int i = 1; i <= grad_res; i++) {
+		float curr = (hi + lo) / 2.0;
+		if (pixelInRange(text, uv, curr * maxDist)) {
+			hi = curr;
+		}
+		else {
+			lo = curr;
+		}
+	}
+	return hi;
 	
 }
 
+void fragment() {
+//	float timeStep = floor(freq * TIME);
+	
+ 	// širina glowa
+	vec2 scaledDist = TEXTURE_PIXEL_SIZE; // original scale pixla
+	scaledDist *= mix(max_line_width, min_line_width, 0.5); // original velikost množimo z želeno debelino glowa 
+	
+	
+	float w = getClosestDistance(TEXTURE, UV, scaledDist);
+//	scaledDist *= getLineWidth(UV / TEXTURE_PIXEL_SIZE/*, timeStep*/);
+	
+	if (( w > 0.0) && (texture(TEXTURE, UV).a < 0.2)) {
+		COLOR = mix(starting_colour, ending_colour, tanh(3.0*w));
+	}
+	else {
+		COLOR = texture(TEXTURE, UV);
+	}
+	
+}"
 
-
-
-
-//shader_type canvas_item;
-//
-//uniform vec4 line_color : hint_color = vec4(1.0);
-//uniform float line_thickness : hint_range(0, 10) = 1.0;
-//
-//const vec2 OFFSETS[8] = {
-//	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
-//	vec2(1, -1), vec2(1, 0), vec2(1, 1)
-//};
-//
-//void fragment() {
-//	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
-//	float outline = 1.0;
-//
-//	for (int i = 0; i < OFFSETS.length(); i++) {
-//		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
-//	}
-//	outline = 1.0 - outline;
-//
-//	vec4 color = texture(TEXTURE, UV);
-//	vec4 outlined_result = mix(color, line_color, outline * color.a);
-//	vec4 outlined_color = mix(color, outlined_result, outlined_result.a);
-//
-//
-//
-//	vec2 center = vec2(0.5, 0.5); // center of the texture
-//	vec2 pixel_pos = UV; // position of the current pixel
-//	float max_distance = 0.9; // maximum distance for full gradient effect
-//	vec4 pixel_color = texture(TEXTURE, pixel_pos); // color of the current pixel
-//
-//	float current_distance; // = -1.0; // initialize distance to -1 (invalid value)
-////	float gradient;
-//
-//
-//	if (pixel_color == line_color) // check for red pixel
-//	{
-//		current_distance = distance(center, pixel_pos); // calculate distance
-////		COLOR = vec4(1.0);
-////		COLOR.a = 0.0;
-//	}
-////	else if (pixel_color.rgb == vec3(0.0)) // check for red pixel
-////	{
-////		current_distance = distance(center, pixel_pos); // calculate distance
-//////		COLOR = pixel_color;
-////		COLOR.a = 0.0;
-////		COLOR.rgb = vec3(0.5, 0.0, 1.5);
-////	}
-//	else {
-////		current_distance = distance(center, pixel_pos); // calculate distance
-//		current_distance = distance(pixel_pos,center); // calculate distance
-//
-//		if (current_distance >= 0.0) // check if distance is valid
-//		{
-//			float gradient = smoothstep(0.0, max_distance, current_distance); // calculate gradient
-//			    // or: float gradient = mix(0.0, 1.0, distance / max_distance); // using mix function
-//
-//			    // use the gradient value in your shader as needed
-////			COLOR = vec4(gradient*0.01, gradient*0.0, 0.0, 1.0);
-//			COLOR = pixel_color * gradient;
-////			COLOR = vec4(gradient) ;
-//
-//		}
-//	}
-//
-//
-//	COLOR = outlined_color;
-//}"
-
-[sub_resource type="ShaderMaterial" id=456]
-shader = SubResource( 455 )
-shader_param/line_color = Color( 1, 0, 0, 1 )
-shader_param/line_thickness = 0.189
+[sub_resource type="ShaderMaterial" id=501]
+shader = SubResource( 500 )
+shader_param/max_line_width = 1.0
+shader_param/min_line_width = 20.891
+shader_param/starting_colour = Color( 0, 0, 0, 1 )
+shader_param/ending_colour = Color( 1, 1, 1, 1 )
 
 [sub_resource type="Shader" id=4]
 code = "shader_type canvas_item;
@@ -3405,7 +3330,7 @@ period = 14.5
 persistence = 1.0
 
 [sub_resource type="NoiseTexture" id=102]
-width = 64
+width = 36
 height = 36
 seamless = true
 noise = SubResource( 111 )
@@ -3836,6 +3761,384 @@ shader_param/intensity = 1.0
 shader_param/layers = 4.0
 shader_param/speed = 4.0
 
+[sub_resource type="Shader" id=455]
+code = "
+
+shader_type canvas_item;
+
+uniform vec4 line_color : hint_color = vec4(1.0);
+uniform float line_thickness : hint_range(0, 10) = 1.0;
+
+const vec2 OFFSETS[8] = {
+	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
+	vec2(1, -1), vec2(1, 0), vec2(1, 1)
+};
+
+void fragment() {
+	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
+	float outline = 1.0;
+	
+	for (int i = 0; i < OFFSETS.length(); i++) {
+		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
+	}
+	outline = 1.0 - outline;
+	
+	vec4 color = texture(TEXTURE, UV);
+	vec4 outlined_result = mix(color, line_color, outline * color.a);
+	vec4 outlined_color = mix(color, outlined_result, outlined_result.a);
+
+
+
+	vec2 center = vec2(0.5, 0.5); // center of the texture
+	vec2 pixel_pos = UV; // position of the current pixel
+	float max_distance = 0.9; // maximum distance for full gradient effect
+	vec4 pixel_color = texture(TEXTURE, pixel_pos); // color of the current pixel
+	vec4 pixel_line_color = texture(TEXTURE, pixel_pos); // color of the current pixel
+
+	float current_distance; // initialize distance to -1 (invalid value) ... transparenco da v belo
+//	float current_distance = -1.0; // initialize distance to -1 (invalid value) ... transparenco da v belo
+//	float gradient;
+
+
+//	if (pixel_color == line_color) // check for red pixel
+	if (pixel_color.a != 0.0) // check for red pixel
+	{
+		current_distance = distance(center, pixel_pos); // calculate distance
+//		COLOR = vec4(1.0);
+//		COLOR.a = 0.0;
+	}
+//	else if (pixel_color.rgb == vec3(0.0)) // check for red pixel
+//	{
+//		current_distance = distance(center, pixel_pos); // calculate distance
+////		COLOR = pixel_color;
+//		COLOR.a = 0.0;
+//		COLOR.rgb = vec3(0.5, 0.0, 1.5);
+//	}
+//	else {
+//		current_distance = distance(center, pixel_pos); // calculate distance
+//		current_distance = distance(pixel_pos,center); // calculate distance
+
+	if (current_distance >= 0.0) // check if distance is valid
+	{
+		float gradient = smoothstep(0.0, max_distance, current_distance); // calculate gradient
+		    // or: float gradient = mix(0.0, 1.0, distance / max_distance); // using mix function
+
+		    // use the gradient value in your shader as needed
+//			COLOR = vec4(gradient*0.01, gradient*0.0, 0.0, 1.0);
+//			COLOR = vec4(gradient) ;
+
+		COLOR = pixel_color * gradient;
+	}
+//	}
+	
+	
+//	COLOR = outlined_color;
+	
+}
+
+
+
+
+
+//shader_type canvas_item;
+//
+//uniform vec4 line_color : hint_color = vec4(1.0);
+//uniform float line_thickness : hint_range(0, 10) = 1.0;
+//
+//const vec2 OFFSETS[8] = {
+//	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
+//	vec2(1, -1), vec2(1, 0), vec2(1, 1)
+//};
+//
+//void fragment() {
+//	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
+//	float outline = 1.0;
+//
+//	for (int i = 0; i < OFFSETS.length(); i++) {
+//		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
+//	}
+//	outline = 1.0 - outline;
+//
+//	vec4 color = texture(TEXTURE, UV);
+//	vec4 outlined_result = mix(color, line_color, outline * color.a);
+//	vec4 outlined_color = mix(color, outlined_result, outlined_result.a);
+//
+//
+//
+//	vec2 center = vec2(0.5, 0.5); // center of the texture
+//	vec2 pixel_pos = UV; // position of the current pixel
+//	float max_distance = 0.9; // maximum distance for full gradient effect
+//	vec4 pixel_color = texture(TEXTURE, pixel_pos); // color of the current pixel
+//
+//	float current_distance; // = -1.0; // initialize distance to -1 (invalid value)
+////	float gradient;
+//
+//
+//	if (pixel_color == line_color) // check for red pixel
+//	{
+//		current_distance = distance(center, pixel_pos); // calculate distance
+////		COLOR = vec4(1.0);
+////		COLOR.a = 0.0;
+//	}
+////	else if (pixel_color.rgb == vec3(0.0)) // check for red pixel
+////	{
+////		current_distance = distance(center, pixel_pos); // calculate distance
+//////		COLOR = pixel_color;
+////		COLOR.a = 0.0;
+////		COLOR.rgb = vec3(0.5, 0.0, 1.5);
+////	}
+//	else {
+////		current_distance = distance(center, pixel_pos); // calculate distance
+//		current_distance = distance(pixel_pos,center); // calculate distance
+//
+//		if (current_distance >= 0.0) // check if distance is valid
+//		{
+//			float gradient = smoothstep(0.0, max_distance, current_distance); // calculate gradient
+//			    // or: float gradient = mix(0.0, 1.0, distance / max_distance); // using mix function
+//
+//			    // use the gradient value in your shader as needed
+////			COLOR = vec4(gradient*0.01, gradient*0.0, 0.0, 1.0);
+//			COLOR = pixel_color * gradient;
+////			COLOR = vec4(gradient) ;
+//
+//		}
+//	}
+//
+//
+//	COLOR = outlined_color;
+//}"
+
+[sub_resource type="ShaderMaterial" id=456]
+shader = SubResource( 455 )
+shader_param/line_color = Color( 1, 1, 1, 1 )
+shader_param/line_thickness = 1.0
+
+[sub_resource type="Shader" id=476]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D image_texture;
+uniform sampler2D image_multiply: hint_black; // barva, ki jo pomnožimo ... vidi se tam kjer je original textura polna
+uniform sampler2D image_add: hint_black; // barva, ki jo prištejemo v ozadje ... vidi se tam kjer je original textura prazna
+uniform sampler2D image_tint: hint_black; // obarva vse skupaj
+uniform float extra_power = 1.0;
+ 
+uniform float effect_scale = 4.0;
+uniform float effect_repeat = 4.0;
+uniform vec2 uv_mod = vec2(0.5); // .... isto kot efekt scale
+uniform vec2 effect_center = vec2(0.5);
+uniform vec2 scroll_speed = vec2(0.1);
+
+const float TAU = 6.2832; // 2 krat PI
+
+// manipulacija koordinat
+vec2 coordinates (vec2 uv, vec2 center, float scale, float repeat){
+// takes UV, effect_center, returns vec2, 
+	
+	vec2 dir = uv - center;
+	float radius = length(dir) * 2.0; // ker je center 0.5, moramo množit z 2, da dobimo cel spekter
+	
+//	float angle = atan (dir.x, dir.y);
+//	COLOR = vec4(angle, 0.0, 0.0, 1.0);
+	
+	// r kanal ima rotiran gradient
+	float angle = (atan (dir.x, dir.y) / TAU) + 0.5; // 0.5 zarotira teksturo
+	return (vec2(angle * repeat, radius * scale));
+	
+}
+
+void fragment(){
+	
+//	COLOR = vec4(angle + 0.5, 0.0, 0.0, 1.0);
+	
+	// g kanal dobi krožen gradient
+//	COLOR = vec4(angle, radius, 0.0, 1.0);
+	
+	// vmešamo teksturo 
+	vec2 uv = uv_mod * coordinates(UV, effect_center, effect_scale, effect_repeat);
+//	vec4 image_tex = texture(image_texture, uv + TIME * 0.05);
+	vec4 image_tex = texture(image_texture, uv + (TIME * scroll_speed));
+	
+	// multiply gradient na valove
+	image_tex *= texture(image_multiply, UV); 
+	// add gradient
+	COLOR = image_tex;
+//	image_tex += texture(image_add, UV); 
+//	COLOR = texture(image_tint, vec2(image_tex.r, 0.0));
+//	COLOR = textureLod(image_tint, vec2(image_tex.r, 0.0), 1.0);
+//	COLOR = textureLod(image_tint, vec2(clamp(image_tex.r, 0.0, 1.0))* extra_power, 0.0);
+	
+//	if (texture(TEXTURE,UV) == vec4(0.0)){
+//		COLOR.a = 0.0;
+//	}
+	
+}
+"
+
+[sub_resource type="Gradient" id=477]
+colors = PoolColorArray( 0, 0, 0, 1, 0.304688, 0.304688, 0.304688, 1 )
+
+[sub_resource type="GradientTexture2D" id=478]
+gradient = SubResource( 477 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="Gradient" id=492]
+offsets = PoolRealArray( 0, 0.633094, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=493]
+gradient = SubResource( 492 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 1, 0.5 )
+
+[sub_resource type="Gradient" id=474]
+
+[sub_resource type="GradientTexture" id=480]
+gradient = SubResource( 474 )
+
+[sub_resource type="ShaderMaterial" id=483]
+shader = SubResource( 476 )
+shader_param/extra_power = 1.0
+shader_param/effect_scale = 8.0
+shader_param/effect_repeat = 4.0
+shader_param/uv_mod = Vector2( 0.5, 0.5 )
+shader_param/effect_center = Vector2( 0.5, 0.5 )
+shader_param/scroll_speed = Vector2( 0.1, 2 )
+shader_param/image_texture = ExtResource( 6 )
+shader_param/image_multiply = SubResource( 493 )
+shader_param/image_add = SubResource( 478 )
+shader_param/image_tint = SubResource( 480 )
+
+[sub_resource type="Shader" id=484]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D image_texture;
+uniform sampler2D texture_multiplier;
+uniform sampler2D image_add: hint_black;
+uniform sampler2D image_tint: hint_black;
+uniform float extra_power = 1.0;
+ 
+uniform float effect_scale = 4.0;
+uniform float effect_repeat = 4.0;
+uniform vec2 effect_center = vec2(0.5);
+uniform vec2 uv_mod = vec2(0.5);
+uniform vec2 scroll_speed = vec2(0.1);
+
+const float TAU = 6.2832; // 2 krat PI
+
+// manipulacija koordinat
+vec2 coordinates (vec2 uv, vec2 center, float scale, float repeat){
+// takes UV, effect_center, returns vec2, 
+	
+	vec2 dir = uv - center;
+	float radius = length(dir) * 2.0; // ker je center 0.5, moramo množit z 2, da dobimo cel spekter
+	
+//	float angle = atan (dir.x, dir.y);
+//	COLOR = vec4(angle, 0.0, 0.0, 1.0);
+	
+	// r kanal ima rotiran gradient
+	float angle = (atan (dir.x, dir.y) / TAU) + 0.5; // 0.5 zarotira teksturo
+	return (vec2(angle * repeat, radius * scale));
+	
+}
+
+void fragment(){
+	
+//	COLOR = vec4(angle + 0.5, 0.0, 0.0, 1.0);
+	
+	// g kanal dobi krožen gradient
+//	COLOR = vec4(angle, radius, 0.0, 1.0);
+	
+	// vmešamo teksturo 
+	vec2 uv = uv_mod * coordinates(UV, effect_center, effect_scale, effect_repeat);
+//	vec4 image_tex = texture(image_texture, uv + TIME * 0.05);
+	vec4 image_tex = texture(image_texture, uv + (TIME * scroll_speed));
+	
+	// multiply texture multiplier
+	image_tex *= texture(texture_multiplier, UV); 
+	// add image_add
+	image_tex += texture(image_add, UV); 
+//	COLOR = image_tex;
+	COLOR = textureLod(image_tint, vec2(clamp(image_tex.r, 0.0, 1.0))* extra_power, 0.0);
+	
+	if (texture(TEXTURE,UV) == vec4(0.0)){
+		COLOR.a = 0.0;
+	}
+	
+}
+"
+
+[sub_resource type="Gradient" id=485]
+offsets = PoolRealArray( 0.0828877, 1 )
+colors = PoolColorArray( 0.0813009, 0.0813009, 0.0813009, 1, 0.378906, 0.378906, 0.378906, 1 )
+
+[sub_resource type="GradientTexture2D" id=486]
+gradient = SubResource( 485 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="StreamTexture" id=487]
+flags = 2
+load_path = "res://.import/donut.png-1e9097d8470973b401c2910e9b4ee959.stex"
+
+[sub_resource type="GradientTexture" id=488]
+gradient = SubResource( 474 )
+
+[sub_resource type="Gradient" id=489]
+offsets = PoolRealArray( 0, 0.502674, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=490]
+gradient = SubResource( 489 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="ShaderMaterial" id=491]
+shader = SubResource( 484 )
+shader_param/extra_power = 1.0
+shader_param/effect_scale = 4.0
+shader_param/effect_repeat = 4.0
+shader_param/effect_center = Vector2( 0.5, 0.5 )
+shader_param/uv_mod = Vector2( 0.5, 0.5 )
+shader_param/scroll_speed = Vector2( 0.1, 0.1 )
+shader_param/image_texture = SubResource( 487 )
+shader_param/texture_multiplier = SubResource( 490 )
+shader_param/image_add = SubResource( 486 )
+shader_param/image_tint = SubResource( 488 )
+
+[sub_resource type="Shader" id=494]
+code = "
+shader_type canvas_item;
+
+uniform int amount = 40;
+
+void fragment()
+{
+	vec2 grid_uv = round(UV * float(amount)) / float(amount);
+	
+	vec4 text = texture(TEXTURE, grid_uv);
+	
+	COLOR = text;
+}"
+
+[sub_resource type="ShaderMaterial" id=495]
+shader = SubResource( 494 )
+shader_param/amount = 10
+
 [sub_resource type="Shader" id=107]
 code = "shader_type canvas_item;
 render_mode blend_mix;
@@ -3922,12 +4225,12 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id=97]
 shader = SubResource( 107 )
-shader_param/max_line_width = 10.0
-shader_param/min_line_width = 4.0
-shader_param/freq = 7.0
-shader_param/block_size = 5.0
+shader_param/max_line_width = 40.0
+shader_param/min_line_width = 20.0
+shader_param/freq = 5.0
+shader_param/block_size = 20.0
 shader_param/starting_colour = Plane( 1, 0, 1, 1 )
-shader_param/ending_colour = Plane( 1, 0, 1, 0 )
+shader_param/ending_colour = Plane( 0.418, 0, 1, 0 )
 
 [sub_resource type="Shader" id=442]
 code = "shader_type canvas_item;
@@ -4015,8 +4318,8 @@ void fragment()
 [sub_resource type="ShaderMaterial" id=452]
 resource_local_to_scene = true
 shader = SubResource( 451 )
-shader_param/glow_color = Color( 1, 0, 0, 0.168627 )
-shader_param/emission_teture = ExtResource( 6 )
+shader_param/glow_color = Color( 1, 1, 1, 1 )
+shader_param/emission_teture = ExtResource( 20 )
 
 [sub_resource type="Shader" id=431]
 code = "
@@ -4038,7 +4341,7 @@ void fragment() {
 	for (int i = 0; i < OFFSETS.length(); i++) {
 		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
 	}
-//	outline = 1.0 - outline;
+	outline = 1.0 - outline;
 	
 	vec4 color = texture(TEXTURE, UV);
 	vec4 outlined_result = mix(color, line_color, outline * color.a);
@@ -4047,57 +4350,8 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id=432]
 shader = SubResource( 431 )
-shader_param/line_color = Color( 0.905882, 0, 0, 1 )
-shader_param/line_thickness = 1.235
-
-[sub_resource type="Shader" id=424]
-code = "shader_type canvas_item;
-
-uniform vec4 shadow_color : hint_color = vec4(1.0);
-uniform float shadow_offset : hint_range(0, 10) = 1.0; // zamik celotne sence 
-uniform float shadow_length : hint_range(0, 10) = 1.0; // debelina oz. dolžina sence ... je število duplikatov, ki so zamaknjeni za en pixel vsak
-uniform float shadow_lenght_step : hint_range(0, 10) = 1.0; // ... ki so zamaknjeni za en step (offset od zgoraj)
-
-uniform int hmmm  = 5;
-
-const vec2 OFFSETS[8] = {
-	vec2(-1, -1),
-	vec2(-1, -1)*2.0,
-	vec2(-1, -1)*3.0,
-	vec2(-1, -1)*4.0,
-	vec2(-1, -1)*5.0,
-	vec2(-1, -1)*6.0,
-	vec2(-1, -1)*7.0,
-	vec2(-1, -1)*8.0
-};
-
-void fragment() {
-	
-	vec2 size = TEXTURE_PIXEL_SIZE * shadow_offset;
-	float outline = 0.0;
-	
-	//
-	
-	for (int i = 0; i < hmmm; i++) {
-		outline += texture(TEXTURE, UV + size * OFFSETS[i]).a;
-	}
-	
-	// ta vrstica maska senco
-	outline = min(outline, 1.0);
-	
-	vec4 color = texture(TEXTURE, UV);
-	COLOR = mix(color, shadow_color, outline - color.a);
-}
-"
-
-[sub_resource type="ShaderMaterial" id=425]
-resource_local_to_scene = true
-shader = SubResource( 424 )
-shader_param/shadow_color = Color( 1, 1, 1, 1 )
-shader_param/shadow_offset = 0.183
-shader_param/shadow_length = 1.0
-shader_param/shadow_lenght_step = 1.0
-shader_param/hmmm = 6
+shader_param/line_color = Color( 1, 0, 0, 1 )
+shader_param/line_thickness = 1.0
 
 [sub_resource type="Shader" id=447]
 code = "shader_type canvas_item;
@@ -4123,790 +4377,213 @@ void fragment(){
 }"
 
 [sub_resource type="OpenSimplexNoise" id=449]
+period = 133.5
 
 [sub_resource type="NoiseTexture" id=450]
-width = 40
-height = 40
 seamless = true
 noise = SubResource( 449 )
 
 [sub_resource type="ShaderMaterial" id=448]
 shader = SubResource( 447 )
-shader_param/intensity = 1.214
-shader_param/speed = 0.843
+shader_param/intensity = 1.566
+shader_param/speed = 1.047
 shader_param/noise_texture = SubResource( 450 )
 
-[sub_resource type="Shader" id=82]
+[sub_resource type="Shader" id=466]
 code = "shader_type canvas_item;
 
+uniform sampler2D tex;
 
-// TUDU
-// glede na barvo sence se različno dobro obnaša ... popravi z normalizacijo in še čim
-// dodaj dolžino sence
-// ko poštimaš vse to, apliciraj več barnvo manipulacijo
-// mogoče bo treba tudi izločat ozadje
-
-
-uniform vec4 shadow_casting_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // senčena barva
-uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 1.0, 1.0);
-uniform vec4 shaded_background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0);
-
-uniform float tolerance : hint_range (0.0, 10.0) = 10; // toleranca ujemanja original barve z offsetano
-
-// če moramo izločati barvo ozadja
-//uniform vec4 background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-
-// shadow
-uniform vec2 shadow_direction = vec2(-1.0, -1.0); // smer offseta ... to niso texli ampak pixli
-uniform float cating_obj_altitude = 5.0; // količina offseta ... višina texture
-
-
-// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
-uniform float texture_width = 640.0;
-uniform float texture_height = 360.0;
-
+float sample (in vec2 st){ // returns float, takes input \"input vec2 named st\" 
+	// sample texture at \"st\", return its alpha
+	return texture(tex, st).a;
+	
+}
 
 void fragment(){
 	
-	// barva texture pred editiranjem
-	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV);
+	// dobimo velikost pixla napram texlu
+	vec2 px = vec2(1.0)/vec2(textureSize(tex, 0)); // ničla je LOD ... level of details ... v tem primeru tolk da je nekej
+	// textureSize vrne ivec2 (integer vec2) zato damo vec2 objem
 	
-	// zamik uvjev
-	vec2 shadow_offset = vec2(shadow_direction.x / texture_width, shadow_direction.y / texture_height);
-	vec2 uvs = SCREEN_UV + shadow_offset * cating_obj_altitude;
+	// za vsak textel poberemo sosednje pixle v vse štiri smeri
+	float neighbour = 
+		sample(UV + px * vec2(1.0, 0.0)) + 
+		sample(UV + px * vec2(0.0, 1.0)) + 
+		sample(UV + px * vec2(-1.0, 0.0)) + 
+		sample(UV + px * vec2(0.0, -1.0));
+	
+	// poberemo \"trenutni pixel\" krat 4 (strani neba)
+	// trenutni pixel je pixel na robu, ki mu damo soseda
+	float center = sample(UV)*4.0;
+	
+	// ugotavljamo edge, 
+	// tam kjer alpha med sosedom in centrom, je rob
+	float edge = neighbour - center; // tole da alpha razliko med trenutnim pixlom in sosedom
+	
+	// dodamo visibility gradient
+	float lit =  UV.y + TIME; // hor
+//	float lit =  UV.y + UV.x + TIME; // diag
+//	float lit =  dot(UV, vec2(cos(TIME), sin(TIME))) - TIME; // rotirano ... \"nejasna smer\"
+//	float lit =  dot(UV - vec2(0.5), vec2(cos(TIME), sin(TIME))) - TIME; // relativno s centrom
+	
+	// da se lupa
+	lit = mod(lit, 1.0); // variabla in površina teksture 
+//	lit = mod(lit, -3.0) + mod(lit, 3.0);
+	
+	
+	COLOR = vec4(vec3(1.0), edge*lit);
+//	COLOR = vec4(vec3(1.0), edge);
+//	COLOR = texture(tex, UV);
 	
 	
 	
-	// barva zamaknjene texture
-	vec4 offset_color = texture(SCREEN_TEXTURE, uvs);
-	
-	// manipuliramo zamaknjeno texturo
-	// senčeno barvo obarvamo v barvo sence
-	if (offset_color == shadow_casting_color){
-		offset_color = shadow_color;
-		}
-	// nesenčeno barvo obarvamo v barvo ozadja (ali alpha 0)
-	else {
-		offset_color = shaded_background_color;
-	}
-	
-	// preverjamo ujemanje barvnih vektorjev original in zamaknjene barve
-	float color_matching_dist = distance(original_color, offset_color);
-	
-	// barve zmiksamo v \"razmerju\" 1 ali 0 (ali/ali)
-	// če se barvi ujemata (v našem primeru, kjer sta prisotni obe barvi), se prikaže druga barva
-	// če se barvi ne ujemata (v našem primeru, kjer je prisotna le ena od barv), se prikaže prva barva
-	// katera je \"spredaj\" urejaš z zaporedjem mešanja barv
-	COLOR = mix(offset_color, original_color,  step(tolerance/10.0, color_matching_dist)); 
-}
+}"
 
-//temp {
-//	float stretch_factor = 0.0;
-//	float offset_x = shadow_offset * shadow_direction.x / 100.0; // z deljenjem dobimo bolj normalen slide
-//	float offset_y = shadow_offset * shadow_direction.y / 100.0;
-//
-//	for (int i = 0; i < shadow_steps; i++) {
-//		stretch_factor += 1.0;
-//		shadow += texture(TEXTURE, UV + (size * shadow_direction * stretch_factor) + vec2(offset_x, offset_y)).a;
-//
-//	}
-//}
+[sub_resource type="ShaderMaterial" id=467]
+shader = SubResource( 466 )
+shader_param/tex = ExtResource( 20 )
 
-//TEMP
-
-
-//shader_type canvas_item;
-//
-//// trenutno dela samo na osnovno senco na eno barvo
-//
-//// TUDU
-//// odreži senco tam kjer je tekstura prisotna
-//// dodaj dolžino sence
-//
-//// barve
-//uniform vec4 shadow_casting_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
-//uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 1.0, 1.0);
-//uniform vec4 shaded_background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-//
-//uniform float tolerance : hint_range (0.0, 2.0) = 0.5; // apply color to texture with alpha 0.0
-//// če moramo izločati barvo ozadja
-////uniform vec4 background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-//
-////uniform bool shade_all_colors = true; ... ne dela kot sem si predstavljal
-//
-//// shadow
-//uniform vec2 shadow_direction = vec2(1.0, 1.0); // smer offseta ... to niso texli ampak pixli
-//uniform float texture_altitude = 5.0; // količina offseta ... višina texture
-//
-//// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
-//uniform float texture_width = 640.0;
-//uniform float texture_height = 360.0;
-//
-//
-//void fragment(){
-//
-//	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV);
-//
-//	// offset color
-//	vec2 shadow_offset = vec2(shadow_direction.x / texture_width, shadow_direction.y / texture_height);
-//	vec2 uvs = SCREEN_UV + shadow_offset * texture_altitude;
-//	vec4 offset_color = texture(SCREEN_TEXTURE, uvs);
-//
-//	// najprej podatke o dolžini barvnih vektorjev
-//	float original_color_len = length(original_color.rgb);
-//	float offset_color_len = length(offset_color.rgb);
-//	// normaliziramo na fejk način, ker nas zanima samo smer barvnih vektorjev (dolžina me ne zanima ... v tem primeru)
-//	vec3 original_color_norm = original_color.rgb / original_color_len * offset_color_len;
-//	vec3 offset_color_norm = offset_color.rgb / original_color_len * offset_color_len;
-//
-//
-//	// primerjamo vektor razdaljo med original in novo barvo, da slednjo lahko odrežemo
-//	float color_matching_dist = distance(offset_color.rgb, original_color_norm);
-//
-//	// kjer je barva enaka barvi, ki daje senco
-//	if (offset_color == shadow_casting_color){
-////		color.rgb = shadow_color.rgb;
-////		shadow_color.a = original_color.a;
-//			offset_color = shadow_color;
-//		}
-//	// vse druge barve ostanejo kot so ... ali pa jim damo določeno barvo
-//	else {
-////		color = texture(SCREEN_TEXTURE, SCREEN_UV); // original barva in pozicija
-//		offset_color = shaded_background_color;
-//	}
-//
-//
-//	COLOR.rgb = mix(offset_color.rgb, original_color_norm,  step(tolerance, color_matching_dist));
-//	COLOR.a = offset_color.a;
-////	COLOR = vec4(offset_color.rgb, original_color.a );
-//
-//
-//}"
-
-[sub_resource type="ShaderMaterial" id=83]
-shader = SubResource( 82 )
-shader_param/shadow_casting_color = Color( 0, 1, 1, 1 )
-shader_param/shadow_color = Color( 0, 0, 0, 1 )
-shader_param/shaded_background_color = Color( 0, 0, 0, 0 )
-shader_param/tolerance = 10.0
-shader_param/shadow_direction = Vector2( -1, 0 )
-shader_param/cating_obj_altitude = 5.0
-shader_param/texture_width = 640.0
-shader_param/texture_height = 360.0
-
-[sub_resource type="Shader" id=429]
+[sub_resource type="Shader" id=496]
 code = "shader_type canvas_item;
 
+uniform vec4 background_color : hint_color;
+uniform vec4 shadow_color : hint_color;
+// Currently pixels always in application size, so zooming in further wouldn't increase the size of the dropdown
+// but changing that would also be relatively trivial
+uniform vec2 offset_in_pixels;
 
-// TUDU
-// glede na barvo sence se različno dobro obnaša ... popravi z normalizacijo in še čim
-// dodaj dolžino sence
-// ko poštimaš vse to, apliciraj več barnvo manipulacijo
-// mogoče bo treba tudi izločat ozadje
+void fragment() {
+	
+	// Read screen texture
+	vec4 current_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0);
+	
+	// Check if the current color is our background color
+	if (length(current_color - background_color) < 0.01) {
+		
+		vec4 offset_color = textureLod(SCREEN_TEXTURE, SCREEN_UV - offset_in_pixels * SCREEN_PIXEL_SIZE, 0.0);
+		
+		// Check if at our offset position we have a color which is not the background (meaning here we need a shadow actually)
+		if (length(offset_color - background_color) > 0.01) {
+			// If so set it to our shadow color
+			current_color = shadow_color;
+		}
+	}
+	
+	COLOR = current_color;
+}"
 
+[sub_resource type="ShaderMaterial" id=497]
+shader = SubResource( 496 )
+shader_param/background_color = Color( 0.32549, 0.356863, 0.407843, 1 )
+shader_param/shadow_color = Color( 0.0901961, 0.101961, 0.137255, 1 )
+shader_param/offset_in_pixels = Vector2( -5, 5 )
 
-uniform vec4 shadow_casting_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // senčena barva
-uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 1.0, 1.0);
-uniform vec4 shaded_background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0);
+[sub_resource type="Shader" id=468]
+code = "shader_type canvas_item;
+render_mode unshaded;
 
-uniform float tolerance : hint_range (0.0, 20.0) = 10; // toleranca ujemanja original barve z offsetano
-
-
-// raztegovalec vsega skupaj
-uniform float shadow_dir = -1;
-uniform vec2 shadow_direction = vec2(-1.0, -1.0); // smer offseta ... to niso texli ampak pixli
-
-// zamik sence
-uniform float zamik_celotne_sence = 0.0;
-
-
-
-// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
-uniform float screen_width = 640.0;
-uniform float screen_height = 360.0;
-
-uniform int steps = 1; // število korakov
-//uniform float step_width = 0.5; // dolžina koraka
-uniform	float stretch_factor = 1.0;
+uniform sampler2D image_texture;
+uniform sampler2D texture_multiplier;
+uniform sampler2D image_add: hint_black;
+uniform sampler2D image_tint: hint_black;
+uniform float extra_power = 1.0;
  
+uniform float effect_scale = 1.0;
+uniform float effect_repeat = 2.0;
+uniform vec2 effect_center = vec2(0.5);
+uniform vec2 uv_mod = vec2(0.5);
+uniform vec2 scroll_speed = vec2(0.0);
 
-void fragment(){
+const float TAU = 6.2832; // 2 krat PI
+
+// manipulacija koordinat
+vec2 coordinates (vec2 uv, vec2 center, float scale, float repeat){
+// takes UV, effect_center, returns vec2, 
 	
-	// barva texture pred editiranjem
-	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV);
+	vec2 dir = uv - center;
+	float radius = length(dir) * 2.0; // ker je center 0.5, moramo množit z 2, da dobimo cel spekter
 	
-	float stretch = 0.0;
-	vec4 offset_color; // barva zamaknjene texture
-	vec4 single_step_final_color;
-	float color_matching_dist;
+//	float angle = atan (dir.x, dir.y);
+//	COLOR = vec4(angle, 0.0, 0.0, 1.0);
 	
-//	vse skupaj zapakiramo v lupanje
-	for (int i = 0; i < 5; i++) {
-		
-		stretch += 2.0;
-		
-		// zamik uvjev
-		vec2 shadow_offset = vec2(shadow_dir / screen_width, shadow_dir / screen_height);
-		vec2 uvs = SCREEN_UV + shadow_offset * stretch;
-//		vec2 uvs = SCREEN_UV + (shadow_offset * shadow_width * stretch_factor);
-		
-		// barva zamaknjene texture
-		offset_color += texture(SCREEN_TEXTURE, uvs + vec2(zamik_celotne_sence));
-	
-//			shadow += texture(TEXTURE, UV + (size * shadow_direction * stretch_factor) + vec2(offset_x, offset_y)).a;
-		
-		// manipuliramo zamaknjeno texturo
-		if (offset_color == shadow_casting_color){
-			offset_color = shadow_color;
-			}
-		else {
-//			offset_color.a = 0.0;
-			offset_color = shaded_background_color;
-		}
-//		vec4 outlined_result = mix(color, line_color, );
-//		COLOR = mix(color, outlined_result, outlined_result.a);
-		
-		// rezanje sence
-		// preverjamo ujemanje barvnih vektorjev original in zamaknjene barve
-//		color_matching_dist = distance(original_color, offset_color);
-//		single_step_final_color = mix(offset_color, original_color,  step(tolerance/10.0, color_matching_dist)); 
-//		single_step_final_color = mix(original_color, offset_color, offset_color * original_color.a); 
-		single_step_final_color += offset_color; 
-	}
-	
-	
-//	COLOR = mix(single_step_final_color, original_color,  step(tolerance/10.0, color_matching_dist));  
-	if (original_color == shadow_casting_color){
-		COLOR =  original_color; 
-		}
-	else{
-		
-		COLOR =  single_step_final_color; 
-		
-	}
-	
-	// barve zmiksamo v \"razmerju\" 1 ali 0 (ali/ali)
-	// če se barvi ujemata (v našem primeru, kjer sta prisotni obe barvi), se prikaže druga barva
-	// če se barvi ne ujemata (v našem primeru, kjer je prisotna le ena od barv), se prikaže prva barva
-	// katera je \"spredaj\" urejaš z zaporedjem mešanja barv
-//	COLOR = vec4(offset_color);	
+	// r kanal ima rotiran gradient
+	float angle = (atan (dir.x, dir.y) / TAU) + 0.5; // 0.5 zarotira teksturo
+	return (vec2(angle * repeat, radius * scale));
 	
 }
 
-//temp {
-//	float stretch_factor = 0.0;
-//	float offset_x = shadow_offset * shadow_direction.x / 100.0; // z deljenjem dobimo bolj normalen slide
-//	float offset_y = shadow_offset * shadow_direction.y / 100.0;
-//
-//	for (int i = 0; i < shadow_steps; i++) {
-//		stretch_factor += 1.0;
-//		shadow += texture(TEXTURE, UV + (size * shadow_direction * stretch_factor) + vec2(offset_x, offset_y)).a;
-//
-//	}
-//}
-
-//TEMP
-
-
-//shader_type canvas_item;
-//
-//// trenutno dela samo na osnovno senco na eno barvo
-//
-//// TUDU
-//// odreži senco tam kjer je tekstura prisotna
-//// dodaj dolžino sence
-//
-//// barve
-//uniform vec4 shadow_casting_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
-//uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 1.0, 1.0);
-//uniform vec4 shaded_background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-//
-//uniform float tolerance : hint_range (0.0, 2.0) = 0.5; // apply color to texture with alpha 0.0
-//// če moramo izločati barvo ozadja
-////uniform vec4 background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-//
-////uniform bool shade_all_colors = true; ... ne dela kot sem si predstavljal
-//
-//// shadow
-//uniform vec2 shadow_direction = vec2(1.0, 1.0); // smer offseta ... to niso texli ampak pixli
-//uniform float texture_altitude = 5.0; // količina offseta ... višina texture
-//
-//// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
-//uniform float texture_width = 640.0;
-//uniform float texture_height = 360.0;
-//
-//
-//void fragment(){
-//
-//	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV);
-//
-//	// offset color
-//	vec2 shadow_offset = vec2(shadow_direction.x / texture_width, shadow_direction.y / texture_height);
-//	vec2 uvs = SCREEN_UV + shadow_offset * texture_altitude;
-//	vec4 offset_color = texture(SCREEN_TEXTURE, uvs);
-//
-//	// najprej podatke o dolžini barvnih vektorjev
-//	float original_color_len = length(original_color.rgb);
-//	float offset_color_len = length(offset_color.rgb);
-//	// normaliziramo na fejk način, ker nas zanima samo smer barvnih vektorjev (dolžina me ne zanima ... v tem primeru)
-//	vec3 original_color_norm = original_color.rgb / original_color_len * offset_color_len;
-//	vec3 offset_color_norm = offset_color.rgb / original_color_len * offset_color_len;
-//
-//
-//	// primerjamo vektor razdaljo med original in novo barvo, da slednjo lahko odrežemo
-//	float color_matching_dist = distance(offset_color.rgb, original_color_norm);
-//
-//	// kjer je barva enaka barvi, ki daje senco
-//	if (offset_color == shadow_casting_color){
-////		color.rgb = shadow_color.rgb;
-////		shadow_color.a = original_color.a;
-//			offset_color = shadow_color;
-//		}
-//	// vse druge barve ostanejo kot so ... ali pa jim damo določeno barvo
-//	else {
-////		color = texture(SCREEN_TEXTURE, SCREEN_UV); // original barva in pozicija
-//		offset_color = shaded_background_color;
-//	}
-//
-//
-//	COLOR.rgb = mix(offset_color.rgb, original_color_norm,  step(tolerance, color_matching_dist));
-//	COLOR.a = offset_color.a;
-////	COLOR = vec4(offset_color.rgb, original_color.a );
-//
-//
-//}"
-
-[sub_resource type="ShaderMaterial" id=430]
-shader = SubResource( 429 )
-shader_param/shadow_casting_color = Color( 0, 0, 0, 1 )
-shader_param/shadow_color = Color( 0, 0.231373, 1, 1 )
-shader_param/shaded_background_color = Color( 0, 0, 0, 0 )
-shader_param/tolerance = 10.0
-shader_param/shadow_dir = -1.672
-shader_param/shadow_direction = Vector2( -1, -1 )
-shader_param/zamik_celotne_sence = -0.019
-shader_param/screen_width = 640.0
-shader_param/screen_height = 360.0
-shader_param/steps = 1
-shader_param/stretch_factor = 1.0
-
-[sub_resource type="Shader" id=439]
-code = "shader_type canvas_item;
-
-
-// KAJ ŠEJDER DELA?
-// v prvem koraku naredi senco, jo zamakne ... potem jo izreže, da ne prekriva original barve 
-// n-krat se kopira prvi korak, z vsako kopijo se poveča foktor zamika
-// senca je tako zmeraj večja (barve se prekrivajo in na čuden način mešajo transparenco)
-// po vseh kopiranjih na celotno nastalo senco ponovno apliciramo željeno barvo sence
-// končno barvo senčenega objekta ali ozadja lahko poljubno nastavimo
-
-uniform vec4 shadow_casting_color: hint_color = vec4(1.0, 0.0, 0.0, 1.0); // senčena barva
-uniform vec4 new_shadow_casting_color: hint_color = vec4(1.0, 1.0, 0.0, 1.0);
-//uniform vec4 shadow_receiving_color: hint_color = vec4(1.0, 1.0, 0.0, 1.0); // barva, ki sprejema senco ... trenutno ni v uporabi
-uniform vec4 new_shadow_receiving_color: hint_color = vec4(0.0, 0.0, 0.0, 0.0);
-uniform vec4 shadow_color: hint_color = vec4(0.0, 0.0, 0.0, 0.5);
-
-uniform bool switch_cast_and_receive = false;
-
-uniform float shadow_rotation_deg: hint_range(0.0, 360.0) = 0; // rotacija v stopinjah
-uniform float shadow_distance_px: hint_range(0.0, 640.0) = 0.0; // imitacija višine z odmikom celotne sence od senčenega objekta
-
-uniform int offset_steps = 5; // število korakov ... imitira dolžino sence
-uniform float step_offset_px: hint_range(0.0, 1.0) = 1.0; // offset per step v pixlih
-
-//uniform vec2 screen_size = vec2(640.0, 360.0);
-
-// height manipul
-uniform float shadow_dist_factor: hint_range(0.0, 100.0) = 1.0;
-uniform vec4 test_color: hint_color = vec4(1.0, 0.0, 0.0, 1.0);
-
 void fragment(){
 	
-//	vec4 new_shadow_receiving_color = vec4(0.0, 0.0, 0.0, 0.0); // ne dela ... tukaj samo za to, ker sem jo umaknil od zgoraj
+//	COLOR = vec4(angle + 0.5, 0.0, 0.0, 1.0);
 	
-	vec2 screen_size = vec2(640.0, 360.0);
-
-	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV); // textura pred editiranjem
-	vec4 step_offset_color; // zamik teksture na korak
-	vec4 offset_color; // barva vsek korakov skupaj
+	// g kanal dobi krožen gradient
+//	COLOR = vec4(angle, radius, 0.0, 1.0);
 	
-	float shadow_rotation_rad = radians(shadow_rotation_deg);
-	float step_pixel_offset_y = cos(shadow_rotation_rad) * step_offset_px;
-	float step_pixel_offset_x = sin(shadow_rotation_rad) * step_offset_px;
+	// vmešamo teksturo 
+	vec2 uv = uv_mod * coordinates(UV, effect_center, effect_scale, effect_repeat);
+//	vec4 image_tex = texture(image_texture, uv + TIME * 0.05);
+	vec4 image_tex = texture(image_texture, uv + (TIME * scroll_speed));
 	
-	float step_count = 0.0;
-	
-	// preverjanje value
-	vec4 original_color_lightness; // v to barvo zajamemo sivi klin original teksture
-	int inside_offset_steps = 5; // _temp
-	
-	// monokromiramo original texturo ... vsi trije kanali dobijo isto barvo
-	original_color_lightness.rgb = vec3(original_color.r + original_color.g + original_color.b)/3.0;
-	original_color_lightness.a = original_color.a;
-//	float shadow_dist_light = original_color_lightness.r;
+	// multiply texture multiplier
+//	image_tex *= texture(texture_multiplier, UV); 
+	// add image_add
+//	image_tex += texture(image_add, UV); 
+	COLOR = image_tex;
+//	COLOR.a = image_tex.r;
+//	COLOR = textureLod(image_tint, vec2(clamp(image_tex.r, 0.0, 1.0))* extra_power, 0.0);
 	
 	
-	// multiplikacija sence
-	for (int i = 0; i < inside_offset_steps; i++) {
-
-		step_count += 1.0; // štejemo korake ... pusti na ena
-
-		// zamik texture v smeri (preračun texlov v pixle) ... z vsakim korakom se prišteje zamik-na-korak
-		vec2 uvs = SCREEN_UV + step_count * vec2(step_pixel_offset_x / screen_size.x, step_pixel_offset_y / screen_size.y) * -1.0; 
-		// opredelimo zamik cele teksture
-		vec2 shadow_distance = vec2(step_pixel_offset_x * shadow_distance_px / screen_size.x, step_pixel_offset_y * shadow_distance_px / screen_size.y) * -1.0;
-		// opredelimo barvo zamaknjene teksture in jo premaknemo še za željeno oddaljenost teksture (preračunano v pixle)
-		step_offset_color = texture(SCREEN_TEXTURE, uvs + shadow_distance); 
-		
-		
-		// ni switchano
-		if (switch_cast_and_receive != true){
-			// kjer je zamaknjena senčena barva, damo barvo sence
-			if (step_offset_color == shadow_casting_color){
-				step_offset_color = vec4(0.0, 0.0, 0.0, 1.0);
-			}
-			else {
-				step_offset_color.a = 0.0;
-			}
-		}
-		// switchano ... enaka koda samo drug pogoj negiramo
-		else if (switch_cast_and_receive == true) {
-			
-//			// TEST
-//
-			vec2 test_offset = vec2(-0.5,-0.000);
-			
-			if (step_offset_color == test_color){
-				step_offset_color = vec4(0.0, 0.0, 1.0, 0.0); 
-				
-//				step_offset_color = texture(SCREEN_TEXTURE, uvs+ shadow_distance + test_offset); 
-			}
-//			else if (step_offset_color == test_color){
-//				step_offset_color = texture(SCREEN_TEXTURE, uvs + shadow_distance + test_offset); 
-//			}
-			
-//			// senco povzorča barva, ki jo v originalu sprejema  
-			else if (step_offset_color != shadow_casting_color && step_offset_color != test_color){ // && step_offset_color == test_color){
-
-				// koda pred testiranjem svetlosti
-//				step_offset_color = texture(SCREEN_TEXTURE, uvs + shadow_distance );
-				step_offset_color = vec4(0.0, 0.0, 1.0, 0.1); 
-			}
-			else if (step_offset_color == shadow_casting_color){
-
-				step_offset_color.a = 0.0;
-			}	
-			
-			
-//			if (step_offset_color != shadow_casting_color){
-//
-//				// test zaznavanja svetlosti
-//				if (step_offset_color == test_color)
-//				{
-//					step_offset_color = vec4(0.0, 0.0, 1.0, 0.0);
-//				}
-//				else {
-//					step_offset_color = vec4(0.0, 0.0, 1.0, 1.0);
-//				}
-//			}
-//			else {
-//
-//				step_offset_color.a = 0.0;
-//			}	
-//
-		}
-			
-//			-----------------------------------------------------------------------------------------------------
-
-//			// PRED TESTOM
-//			// senco povzorča barva, ki jo v originalu sprejema  
-//			if (step_offset_color != shadow_casting_color){
-//
-//				// koda pred testiranjem svetlosti
-//				step_offset_color = vec4(0.0, 0.0, 1.0, 0.1); 
-//				// alfa vidno vpliva, barva pa ne, ker kasneje prelijemo s končno barvo sence
-//				// alfa je 0 ali 1, ker je v pogoju spodej, da ko ni nič daj barvo sence
-//			}
-//			else {
-//
-//				step_offset_color.a = 0.0;
-//			}	
-//		}
-//			// ... PRED TESTOM
-			
-
-		// dodajanje teksture korakov v skupno teksturo
-		offset_color += step_offset_color; // barve se čudno mešajo ... zato dodam pravo barvo sence kasneje
-	}
-
-
-
-
-	// ni switchano
-	if (switch_cast_and_receive != true){
-		// kjer je original barva enaka senčeni barvi, damo original barvo 
-		if (original_color == shadow_casting_color){
-			COLOR =  new_shadow_casting_color; // ... nima vpliva
-			}
-		// kjer skupna zamaknjena tekstura NI transparentna, damo željeno barvo sence 
-		else if (offset_color.a > 0.0){
-			COLOR = mix(new_shadow_receiving_color, shadow_color , shadow_color.a);
-		}
-		// kjer skupna zamaknjena tekstura JE transparentna, damo damo željeno barvo ozdja
-		else{
-			COLOR = new_shadow_receiving_color; 
-		}
-	}
-	// switchano ... enaka koda samo drug pogoj negiramo
-	else if (switch_cast_and_receive == true){
-		if (original_color != shadow_casting_color){
-			
-			// test zaznavanja svetlosti
-//			if (original_color = vec4(1.0))
-//			{
-//				COLOR = vec4(0.0, 1.0, 1.0, 1.0);
-//			}
-//			else {
-//				// original barva
-//				COLOR =  original_color;
-//
-//				// monokromirana barva
-//	//			COLOR =  original_color_lightness;
-//
-//				// meša barvi gleda na prosojnost ... to pomeni, da je monochrome preliv tudi zvezno apliciran
-//				// step funkcija omogoča, da je monchrome preliv neviden samo na koncu, ko nova barva ni več prosojna
-//	//			COLOR =  mix(original_color, new_shadow_casting_color, new_shadow_casting_color.a);
-//	//			COLOR = original_color_lightness + new_shadow_casting_color;
-//			}
-			COLOR =  original_color;
-		}
-			
-		// kjer je offsetana vreča barv netransparenta 	
-		else if (offset_color.a > 0.0){
-			
-//			COLOR = offset_color; // _temp
-			 
-			COLOR = mix(new_shadow_receiving_color, shadow_color, shadow_color.a); 
-			// meša barvi gleda na prosojnost ... prosojnost 
-		}	
-		else{
-			COLOR = new_shadow_receiving_color; 
-		}		
-
-	}
 }
 "
 
-[sub_resource type="ShaderMaterial" id=440]
-shader = SubResource( 439 )
-shader_param/shadow_casting_color = Color( 0, 0, 0, 1 )
-shader_param/new_shadow_casting_color = Color( 1, 1, 0, 0 )
-shader_param/new_shadow_receiving_color = Color( 0.831373, 0.831373, 0.831373, 1 )
-shader_param/shadow_color = Color( 0.827451, 0, 1, 1 )
-shader_param/switch_cast_and_receive = true
-shader_param/shadow_rotation_deg = 0.0
-shader_param/shadow_distance_px = 0.0
-shader_param/offset_steps = 5
-shader_param/step_offset_px = 1.0
-shader_param/shadow_dist_factor = 1.0
-shader_param/test_color = Color( 1, 0, 0, 1 )
+[sub_resource type="Gradient" id=472]
+offsets = PoolRealArray( 0.0828877, 1 )
+colors = PoolColorArray( 0.0813009, 0.0813009, 0.0813009, 1, 0.378906, 0.378906, 0.378906, 1 )
 
-[sub_resource type="Shader" id=437]
-code = "shader_type canvas_item;
+[sub_resource type="GradientTexture2D" id=473]
+gradient = SubResource( 472 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
 
+[sub_resource type="GradientTexture" id=475]
+gradient = SubResource( 474 )
 
-// TUDU
-// glede na barvo sence se različno dobro obnaša ... popravi z normalizacijo in še čim
-// dodaj dolžino sence
-// ko poštimaš vse to, apliciraj več barnvo manipulacijo
-// mogoče bo treba tudi izločat ozadje
+[sub_resource type="Gradient" id=470]
+offsets = PoolRealArray( 0, 0.502674, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
 
+[sub_resource type="GradientTexture2D" id=471]
+gradient = SubResource( 470 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
 
-uniform vec4 shadow_casting_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // senčena barva
-uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 1.0, 1.0);
-uniform vec4 shaded_background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0);
+[sub_resource type="ShaderMaterial" id=469]
+shader = SubResource( 468 )
+shader_param/extra_power = 1.0
+shader_param/effect_scale = 1.0
+shader_param/effect_repeat = 2.0
+shader_param/effect_center = Vector2( 0.5, 0.5 )
+shader_param/uv_mod = Vector2( 1, 7.163 )
+shader_param/scroll_speed = Vector2( 0.1, -0.547 )
+shader_param/image_texture = ExtResource( 16 )
+shader_param/texture_multiplier = SubResource( 471 )
+shader_param/image_add = SubResource( 473 )
+shader_param/image_tint = SubResource( 475 )
 
-uniform float tolerance : hint_range (0.0, 20.0) = 10; // toleranca ujemanja original barve z offsetano
-
-
-// raztegovalec vsega skupaj
-uniform float shadow_dir = -1;
-uniform vec2 shadow_direction = vec2(-1.0, -1.0); // smer offseta ... to niso texli ampak pixli
-
-// zamik sence
-uniform float zamik_celotne_sence = 0.0;
-
-
-
-// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
-uniform float screen_width = 640.0;
-uniform float screen_height = 360.0;
-
-uniform int steps = 1; // število korakov
-//uniform float step_width = 0.5; // dolžina koraka
-uniform	float stretch_factor = 1.0;
- 
-
-void fragment(){
-	
-	// barva texture pred editiranjem
-	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV);
-	
-	float stretch = 0.0;
-	vec4 offset_color; // barva zamaknjene texture
-	vec4 single_step_final_color;
-	float color_matching_dist;
-	
-//	vse skupaj zapakiramo v lupanje
-	for (int i = 0; i < 5; i++) {
-		
-		stretch += 2.0;
-		
-		// zamik uvjev
-		vec2 shadow_offset = vec2(shadow_dir / screen_width, shadow_dir / screen_height);
-		vec2 uvs = SCREEN_UV + shadow_offset * stretch;
-//		vec2 uvs = SCREEN_UV + (shadow_offset * shadow_width * stretch_factor);
-		
-		// barva zamaknjene texture
-		offset_color += texture(SCREEN_TEXTURE, uvs + vec2(zamik_celotne_sence));
-	
-//			shadow += texture(TEXTURE, UV + (size * shadow_direction * stretch_factor) + vec2(offset_x, offset_y)).a;
-		
-		// manipuliramo zamaknjeno texturo
-		if (offset_color == shadow_casting_color){
-			offset_color = shadow_color;
-			}
-		else {
-//			offset_color.a = 0.0;
-			offset_color = shaded_background_color;
-		}
-//		vec4 outlined_result = mix(color, line_color, );
-//		COLOR = mix(color, outlined_result, outlined_result.a);
-		
-		// rezanje sence
-		// preverjamo ujemanje barvnih vektorjev original in zamaknjene barve
-//		color_matching_dist = distance(original_color, offset_color);
-//		single_step_final_color = mix(offset_color, original_color,  step(tolerance/10.0, color_matching_dist)); 
-//		single_step_final_color = mix(original_color, offset_color, offset_color * original_color.a); 
-		single_step_final_color += offset_color; 
-	}
-	
-	
-//	COLOR = mix(single_step_final_color, original_color,  step(tolerance/10.0, color_matching_dist));  
-	if (original_color == shadow_casting_color){
-		COLOR =  original_color; 
-		}
-	else{
-		
-		COLOR =  single_step_final_color; 
-		
-	}
-	
-	// barve zmiksamo v \"razmerju\" 1 ali 0 (ali/ali)
-	// če se barvi ujemata (v našem primeru, kjer sta prisotni obe barvi), se prikaže druga barva
-	// če se barvi ne ujemata (v našem primeru, kjer je prisotna le ena od barv), se prikaže prva barva
-	// katera je \"spredaj\" urejaš z zaporedjem mešanja barv
-//	COLOR = vec4(offset_color);	
-	
-}
-
-//temp {
-//	float stretch_factor = 0.0;
-//	float offset_x = shadow_offset * shadow_direction.x / 100.0; // z deljenjem dobimo bolj normalen slide
-//	float offset_y = shadow_offset * shadow_direction.y / 100.0;
-//
-//	for (int i = 0; i < shadow_steps; i++) {
-//		stretch_factor += 1.0;
-//		shadow += texture(TEXTURE, UV + (size * shadow_direction * stretch_factor) + vec2(offset_x, offset_y)).a;
-//
-//	}
-//}
-
-//TEMP
-
-
-//shader_type canvas_item;
-//
-//// trenutno dela samo na osnovno senco na eno barvo
-//
-//// TUDU
-//// odreži senco tam kjer je tekstura prisotna
-//// dodaj dolžino sence
-//
-//// barve
-//uniform vec4 shadow_casting_color : hint_color = vec4(1.0, 0.0, 0.0, 1.0); // select color to regirster and manipulate
-//uniform vec4 shadow_color : hint_color = vec4(0.0, 0.0, 1.0, 1.0);
-//uniform vec4 shaded_background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-//
-//uniform float tolerance : hint_range (0.0, 2.0) = 0.5; // apply color to texture with alpha 0.0
-//// če moramo izločati barvo ozadja
-////uniform vec4 background_color : hint_color = vec4(0.0, 0.0, 0.0, 0.0); // apply color to texture with alpha 0.0
-//
-////uniform bool shade_all_colors = true; ... ne dela kot sem si predstavljal
-//
-//// shadow
-//uniform vec2 shadow_direction = vec2(1.0, 1.0); // smer offseta ... to niso texli ampak pixli
-//uniform float texture_altitude = 5.0; // količina offseta ... višina texture
-//
-//// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
-//uniform float texture_width = 640.0;
-//uniform float texture_height = 360.0;
-//
-//
-//void fragment(){
-//
-//	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV);
-//
-//	// offset color
-//	vec2 shadow_offset = vec2(shadow_direction.x / texture_width, shadow_direction.y / texture_height);
-//	vec2 uvs = SCREEN_UV + shadow_offset * texture_altitude;
-//	vec4 offset_color = texture(SCREEN_TEXTURE, uvs);
-//
-//	// najprej podatke o dolžini barvnih vektorjev
-//	float original_color_len = length(original_color.rgb);
-//	float offset_color_len = length(offset_color.rgb);
-//	// normaliziramo na fejk način, ker nas zanima samo smer barvnih vektorjev (dolžina me ne zanima ... v tem primeru)
-//	vec3 original_color_norm = original_color.rgb / original_color_len * offset_color_len;
-//	vec3 offset_color_norm = offset_color.rgb / original_color_len * offset_color_len;
-//
-//
-//	// primerjamo vektor razdaljo med original in novo barvo, da slednjo lahko odrežemo
-//	float color_matching_dist = distance(offset_color.rgb, original_color_norm);
-//
-//	// kjer je barva enaka barvi, ki daje senco
-//	if (offset_color == shadow_casting_color){
-////		color.rgb = shadow_color.rgb;
-////		shadow_color.a = original_color.a;
-//			offset_color = shadow_color;
-//		}
-//	// vse druge barve ostanejo kot so ... ali pa jim damo določeno barvo
-//	else {
-////		color = texture(SCREEN_TEXTURE, SCREEN_UV); // original barva in pozicija
-//		offset_color = shaded_background_color;
-//	}
-//
-//
-//	COLOR.rgb = mix(offset_color.rgb, original_color_norm,  step(tolerance, color_matching_dist));
-//	COLOR.a = offset_color.a;
-////	COLOR = vec4(offset_color.rgb, original_color.a );
-//
-//
-//}"
-
-[sub_resource type="ShaderMaterial" id=438]
-shader = SubResource( 437 )
-shader_param/shadow_casting_color = Color( 0, 0, 0, 1 )
-shader_param/shadow_color = Color( 0, 0.231373, 1, 1 )
-shader_param/shaded_background_color = Color( 0, 0, 0, 0 )
-shader_param/tolerance = 10.0
-shader_param/shadow_dir = -1.672
-shader_param/shadow_direction = Vector2( -1, -1 )
-shader_param/zamik_celotne_sence = -0.019
-shader_param/screen_width = 640.0
-shader_param/screen_height = 360.0
-shader_param/steps = 1
-shader_param/stretch_factor = 1.0
+[sub_resource type="ShaderMaterial" id=505]
+shader = ExtResource( 12 )
+shader_param/outlined_color = Color( 0.32549, 0.356863, 0.407843, 1 )
+shader_param/outline_color = Color( 0.415686, 0.745098, 0.309804, 1 )
+shader_param/outline_width_px = 1.0
+shader_param/new_outline_steps = 1.0
+shader_param/step_count_max = 40
 
 [sub_resource type="Environment" id=446]
 background_canvas_max_layer = 3
@@ -4938,7 +4615,10 @@ script = ExtResource( 17 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
-color = Color( 0.141176, 0.141176, 0.141176, 1 )
+color = Color( 0.152941, 0.176471, 0.239216, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Woda" type="ColorRect" parent="BackgroundLayer Z0/Background"]
 visible = false
@@ -4961,11 +4641,15 @@ color = Color( 1, 1, 0.388235, 1 )
 script = ExtResource( 18 )
 
 [node name="Shadows" type="Sprite" parent="EffectsLayer Z1"]
+visible = false
 modulate = Color( 1, 1, 1, 0.752941 )
 material = SubResource( 88 )
 texture = SubResource( 92 )
 centered = false
 flip_v = true
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Colors" type="Sprite" parent="EffectsLayer Z1"]
 modulate = Color( 1, 1, 1, 0.752941 )
@@ -4973,9 +4657,12 @@ material = SubResource( 86 )
 texture = SubResource( 93 )
 centered = false
 flip_v = true
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Viewport" type="Viewport" parent="EffectsLayer Z1"]
-size = Vector2( 640, 360 )
+size = Vector2( 1280, 720 )
 own_world = true
 transparent_bg = true
 hdr = false
@@ -4994,6 +4681,9 @@ bounce_size = 0.547
 
 [node name="Disabled Plejer" parent="BodiesLayer Z2" instance=ExtResource( 2 )]
 position = Vector2( 441, 126 )
+__meta__ = {
+"_edit_lock_": true
+}
 player_name = "P2"
 inputs_enabled = false
 
@@ -5004,6 +4694,9 @@ anims/shield_on = SubResource( 112 )
 position = Vector2( 521, 190 )
 motion/sync_to_physics = true
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="BodiesLayer Z2/FejkPlejer"]
 position = Vector2( 0, 0.5 )
@@ -5021,6 +4714,9 @@ material = SubResource( 445 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Shadows_old" type="ColorRect" parent="BodiesLayer Z2"]
 visible = false
@@ -5028,6 +4724,9 @@ material = SubResource( 63 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Colors" type="ColorRect" parent="BodiesLayer Z2"]
 visible = false
@@ -5035,6 +4734,9 @@ material = SubResource( 16 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="LevelLayer Z3" type="CanvasLayer" parent="."]
 layer = 3
@@ -5043,35 +4745,29 @@ script = ExtResource( 15 )
 [node name="Level_00" type="Node2D" parent="LevelLayer Z3"]
 z_index = -1
 
-[node name="Mecha" type="TileMap" parent="LevelLayer Z3/Level_00"]
-visible = false
-self_modulate = Color( 1, 1, 1, 0.231373 )
-tile_set = SubResource( 463 )
-cell_size = Vector2( 32, 32 )
-cell_quadrant_size = 32
-cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
-format = 1
-tile_data = PoolIntArray( 131075, 0, 0, 131076, 0, 0, 131077, 0, 0, 131078, 0, 0, 131079, 0, 0, 131080, 0, 0, 131081, 0, 0, 131082, 0, 0, 131083, 0, 0, 131084, 0, 0, 131085, 0, 0, 131086, 0, 0, 196611, 0, 0, 196612, 0, 4, 196613, 0, 0, 196614, 0, 0, 196615, 0, 0, 196616, 0, 0, 196617, 0, 1, 196618, 0, 4, 196619, 0, 0, 196620, 0, 0, 262144, 0, 0, 262145, 0, 0, 262146, 0, 0, 262147, 0, 0, 262148, 0, 0, 262149, 0, 0, 262150, 0, 0, 262151, 0, 0, 262152, 0, 1, 262153, 0, 0, 262154, 0, 0, 262155, 0, 0, 262156, 0, 0, 262157, 0, 0, 262158, 0, 0, 327680, 0, 0, 327681, 0, 0, 327682, 0, 0, 327683, 0, 0, 327684, 0, 0, 327685, 0, 0, 327686, 0, 0, 327687, 0, 0, 327688, 0, 2, 327689, 0, 2, 327690, 0, 0, 327691, 0, 0, 327692, 0, 0, 327693, 0, 0, 393220, 0, 0, 393221, 0, 0, 393222, 0, 0, 393223, 0, 0, 393224, 0, 0, 393225, 0, 0, 393226, 0, 0, 393227, 0, 0, 393228, 0, 0, 393229, 0, 0, 458753, 0, 0, 458754, 0, 0, 458755, 0, 0, 458756, 0, 0, 458757, 0, 1, 458758, 0, 0, 458759, 0, 0, 458760, 0, 0, 458761, 0, 0, 458762, 0, 0, 458763, 0, 0, 458764, 0, 0, 458765, 0, 0, 458767, 0, 0, 524290, 0, 0, 524291, 0, 0, 524292, 0, 0, 524293, 0, 4, 524294, 0, 0, 524295, 0, 0, 524296, 0, 0, 524297, 0, 4, 524298, 0, 0, 524299, 0, 262147, 524300, 0, 0, 589826, 0, 0, 589827, 0, 0, 589828, 0, 0, 589829, 0, 0, 589830, 0, 0, 589831, 0, 0, 589832, 0, 0, 589833, 0, 0, 589834, 0, 0, 589835, 0, 0, 589836, 0, 0, 589837, 0, 0 )
-
 [node name="ArenaTilemap" type="TileMap" parent="LevelLayer Z3/Level_00"]
-material = SubResource( 421 )
-tile_set = SubResource( 108 )
+material = SubResource( 509 )
+tile_set = ExtResource( 19 )
 cell_size = Vector2( 8, 8 )
 format = 1
-tile_data = PoolIntArray( -720901, 0, 65553, -327684, 0, 65536, -327683, 0, 65537, -327682, 0, 65537, -327681, 0, 65537, -393216, 0, 65537, -393215, 0, 65537, -393214, 0, 65537, -393213, 0, 65537, -393212, 0, 65537, -393211, 0, 65537, -393210, 0, 65537, -393209, 0, 65537, -393208, 0, 65537, -393207, 0, 65537, -393206, 0, 65537, -393205, 0, 65537, -393204, 0, 65537, -393203, 0, 65537, -393202, 0, 65537, -393201, 0, 65537, -393200, 0, 65537, -393199, 0, 65537, -393198, 0, 65537, -393197, 0, 65537, -393196, 0, 65537, -393195, 0, 65537, -393194, 0, 65537, -393193, 0, 65537, -393192, 0, 65537, -393191, 0, 65537, -393190, 0, 65537, -393189, 0, 65537, -393188, 0, 65537, -393187, 0, 65537, -393186, 0, 65537, -393185, 0, 65537, -393184, 0, 65537, -393183, 0, 65537, -393182, 0, 65537, -393181, 0, 65537, -393180, 0, 65537, -393179, 0, 65537, -393178, 0, 65537, -393177, 0, 1048587, -393145, 0, 1048586, -393144, 0, 1048587, -262148, 0, 131072, -262147, 0, 131073, -262146, 0, 131073, -262145, 0, 131073, -327680, 0, 131073, -327679, 0, 131073, -327678, 0, 131073, -327677, 0, 131073, -327676, 0, 131073, -327675, 0, 131073, -327674, 0, 131073, -327673, 0, 131073, -327672, 0, 131073, -327671, 0, 131073, -327670, 0, 131073, -327669, 0, 131073, -327668, 0, 131073, -327667, 0, 131073, -327666, 0, 131073, -327665, 0, 131073, -327664, 0, 131073, -327663, 0, 131073, -327662, 0, 131073, -327661, 0, 131073, -327660, 0, 131073, -327659, 0, 131073, -327658, 0, 131073, -327657, 0, 131073, -327656, 0, 131073, -327655, 0, 131073, -327654, 0, 131073, -327653, 0, 131073, -327652, 0, 131073, -327651, 0, 131073, -327650, 0, 131073, -327649, 0, 131073, -327648, 0, 131073, -327647, 0, 131073, -327646, 0, 131073, -327645, 0, 131073, -327644, 0, 131073, -327643, 0, 131073, -327642, 0, 131073, -327641, 0, 131073, -327640, 0, 655362, -327639, 0, 65537, -327638, 0, 65537, -327637, 0, 65537, -327636, 0, 65537, -327635, 0, 65537, -327634, 0, 65537, -327633, 0, 65537, -327632, 0, 65537, -327631, 0, 65537, -327630, 0, 65537, -327629, 0, 65537, -327628, 0, 65537, -327627, 0, 65537, -327626, 0, 65537, -327625, 0, 65537, -327624, 0, 65537, -327623, 0, 65537, -327622, 0, 65537, -327621, 0, 65537, -327620, 0, 65537, -327619, 0, 65537, -327618, 0, 65537, -327617, 0, 65537, -327616, 0, 65537, -327615, 0, 65537, -327614, 0, 65537, -327613, 0, 65537, -327612, 0, 65537, -327611, 0, 65537, -327610, 0, 655364, -327609, 0, 131073, -327608, 0, 131073, -327607, 0, 655362, -327606, 0, 65537, -327605, 0, 1048587, -196612, 0, 131072, -196611, 0, 131073, -196610, 0, 131073, -196609, 0, 131073, -262144, 0, 131073, -262143, 0, 131073, -262142, 0, 131073, -262141, 0, 131073, -262140, 0, 131073, -262139, 0, 131073, -262138, 0, 131073, -262137, 0, 131073, -262136, 0, 131073, -262135, 0, 131073, -262134, 0, 131073, -262133, 0, 131073, -262132, 0, 131073, -262131, 0, 131073, -262130, 0, 131073, -262129, 0, 131073, -262128, 0, 131073, -262127, 0, 131073, -262126, 0, 131073, -262125, 0, 131073, -262124, 0, 131073, -262123, 0, 131073, -262122, 0, 131073, -262121, 0, 131073, -262120, 0, 131073, -262119, 0, 131073, -262118, 0, 131073, -262117, 0, 131073, -262116, 0, 131073, -262115, 0, 131073, -262114, 0, 131073, -262113, 0, 131073, -262112, 0, 131073, -262111, 0, 131073, -262110, 0, 131073, -262109, 0, 131073, -262108, 0, 131073, -262107, 0, 131073, -262106, 0, 131073, -262105, 0, 131073, -262104, 0, 131073, -262103, 0, 131073, -262102, 0, 131073, -262101, 0, 131073, -262100, 0, 131073, -262099, 0, 131073, -262098, 0, 131073, -262097, 0, 131073, -262096, 0, 131073, -262095, 0, 131073, -262094, 0, 131073, -262093, 0, 131073, -262092, 0, 131073, -262091, 0, 131073, -262090, 0, 131073, -262089, 0, 131073, -262088, 0, 131073, -262087, 0, 131073, -262086, 0, 131073, -262085, 0, 131073, -262084, 0, 131073, -262083, 0, 131073, -262082, 0, 131073, -262081, 0, 131073, -262080, 0, 131073, -262079, 0, 131073, -262078, 0, 131073, -262077, 0, 131073, -262076, 0, 131073, -262075, 0, 131073, -262074, 0, 131073, -262073, 0, 131073, -262072, 0, 131073, -262071, 0, 131073, -262070, 0, 131073, -262069, 0, 131073, -262068, 0, 655362, -262067, 0, 65537, -262066, 0, 65537, -262065, 0, 1048587, -131076, 0, 131072, -131075, 0, 131073, -131074, 0, 131073, -131073, 0, 131073, -196608, 0, 131073, -196607, 0, 131073, -196606, 0, 131073, -196605, 0, 131073, -196604, 0, 131073, -196603, 0, 131073, -196602, 0, 131073, -196601, 0, 131073, -196600, 0, 131073, -196599, 0, 131073, -196598, 0, 131073, -196597, 0, 131073, -196596, 0, 131073, -196595, 0, 131073, -196594, 0, 131073, -196593, 0, 131073, -196592, 0, 131073, -196591, 0, 131073, -196590, 0, 131073, -196589, 0, 131073, -196588, 0, 131073, -196587, 0, 131073, -196586, 0, 131073, -196585, 0, 131073, -196584, 0, 131073, -196583, 0, 131073, -196582, 0, 131073, -196581, 0, 131073, -196580, 0, 131073, -196579, 0, 131073, -196578, 0, 131073, -196577, 0, 131073, -196576, 0, 131073, -196575, 0, 131073, -196574, 0, 131073, -196573, 0, 131073, -196572, 0, 131073, -196571, 0, 131073, -196570, 0, 131073, -196569, 0, 131073, -196568, 0, 131073, -196567, 0, 131073, -196566, 0, 131073, -196565, 0, 131073, -196564, 0, 131073, -196563, 0, 131073, -196562, 0, 131073, -196561, 0, 131073, -196560, 0, 131073, -196559, 0, 131073, -196558, 0, 131073, -196557, 0, 131073, -196556, 0, 131073, -196555, 0, 131073, -196554, 0, 131073, -196553, 0, 131073, -196552, 0, 131073, -196551, 0, 131073, -196550, 0, 131073, -196549, 0, 131073, -196548, 0, 131073, -196547, 0, 131073, -196546, 0, 131073, -196545, 0, 131073, -196544, 0, 131073, -196543, 0, 131073, -196542, 0, 131073, -196541, 0, 131073, -196540, 0, 131073, -196539, 0, 131073, -196538, 0, 131073, -196537, 0, 131073, -196536, 0, 131073, -196535, 0, 131073, -196534, 0, 131073, -196533, 0, 131073, -196532, 0, 131073, -196531, 0, 131073, -196530, 0, 131073, -196529, 0, 131073, -196528, 0, 655362, -196527, 0, 65537, -196526, 0, 65538, -65540, 0, 131072, -65539, 0, 131073, -65538, 0, 131073, -65537, 0, 131073, -131072, 0, 131073, -131071, 0, 131073, -131070, 0, 131073, -131069, 0, 131073, -131068, 0, 131073, -131067, 0, 131073, -131066, 0, 131073, -131065, 0, 131073, -131064, 0, 131073, -131063, 0, 131073, -131062, 0, 131073, -131061, 0, 131073, -131060, 0, 131073, -131059, 0, 131073, -131058, 0, 131073, -131057, 0, 131073, -131056, 0, 131073, -131055, 0, 131073, -131054, 0, 131073, -131053, 0, 131073, -131052, 0, 131073, -131051, 0, 131073, -131050, 0, 131073, -131049, 0, 131073, -131048, 0, 131073, -131047, 0, 131073, -131046, 0, 131073, -131045, 0, 131073, -131044, 0, 131073, -131043, 0, 131073, -131042, 0, 131073, -131041, 0, 131073, -131040, 0, 131073, -131039, 0, 131073, -131038, 0, 131073, -131037, 0, 131073, -131036, 0, 131073, -131035, 0, 131073, -131034, 0, 131073, -131033, 0, 131073, -131032, 0, 131073, -131031, 0, 131073, -131030, 0, 131073, -131029, 0, 131073, -131028, 0, 131073, -131027, 0, 131073, -131026, 0, 131073, -131025, 0, 131073, -131024, 0, 131073, -131023, 0, 131073, -131022, 0, 131073, -131021, 0, 131073, -131020, 0, 131073, -131019, 0, 131073, -131018, 0, 131073, -131017, 0, 131073, -131016, 0, 131073, -131015, 0, 131073, -131014, 0, 131073, -131013, 0, 131073, -131012, 0, 131073, -131011, 0, 131073, -131010, 0, 131073, -131009, 0, 131073, -131008, 0, 131073, -131007, 0, 131073, -131006, 0, 131073, -131005, 0, 131073, -131004, 0, 131073, -131003, 0, 131073, -131002, 0, 131073, -131001, 0, 131073, -131000, 0, 131073, -130999, 0, 131073, -130998, 0, 131073, -130997, 0, 131073, -130996, 0, 131073, -130995, 0, 131073, -130994, 0, 131073, -130993, 0, 131073, -130992, 0, 131073, -130991, 0, 131073, -130990, 0, 524288, -4, 0, 131072, -3, 0, 131073, -2, 0, 131073, -1, 0, 131073, -65536, 0, 131073, -65535, 0, 131073, -65534, 0, 131073, -65533, 0, 131073, -65532, 0, 131073, -65531, 0, 131073, -65530, 0, 131073, -65529, 0, 131073, -65528, 0, 131073, -65527, 0, 131073, -65526, 0, 131073, -65525, 0, 131073, -65524, 0, 131073, -65523, 0, 131073, -65522, 0, 131073, -65521, 0, 131073, -65520, 0, 131073, -65519, 0, 131073, -65518, 0, 131073, -65517, 0, 131073, -65516, 0, 131073, -65515, 0, 131073, -65514, 0, 131073, -65513, 0, 131073, -65512, 0, 131073, -65511, 0, 131073, -65510, 0, 131073, -65509, 0, 131073, -65508, 0, 131073, -65507, 0, 131073, -65506, 0, 131073, -65505, 0, 131073, -65504, 0, 131073, -65503, 0, 131073, -65502, 0, 131073, -65501, 0, 131073, -65500, 0, 131073, -65499, 0, 131073, -65498, 0, 131073, -65497, 0, 131073, -65496, 0, 131073, -65495, 0, 131073, -65494, 0, 131073, -65493, 0, 131073, -65492, 0, 131073, -65491, 0, 131073, -65490, 0, 131073, -65489, 0, 131073, -65488, 0, 131073, -65487, 0, 131073, -65486, 0, 131073, -65485, 0, 131073, -65484, 0, 131073, -65483, 0, 131073, -65482, 0, 131073, -65481, 0, 131073, -65480, 0, 131073, -65479, 0, 131073, -65478, 0, 131073, -65477, 0, 131073, -65476, 0, 131073, -65475, 0, 131073, -65474, 0, 131073, -65473, 0, 131073, -65472, 0, 131073, -65471, 0, 131073, -65470, 0, 131073, -65469, 0, 131073, -65468, 0, 131073, -65467, 0, 131073, -65466, 0, 131073, -65465, 0, 131073, -65464, 0, 131073, -65463, 0, 131073, -65462, 0, 131073, -65461, 0, 131073, -65460, 0, 131073, -65459, 0, 131073, -65458, 0, 131073, -65457, 0, 131073, -65456, 0, 131073, -65455, 0, 131073, -65454, 0, 131073, -65453, 0, 458766, 65532, 0, 131072, 65533, 0, 131073, 65534, 0, 131073, 65535, 0, 131073, 0, 0, 131073, 1, 0, 131073, 2, 0, 131073, 3, 0, 262146, 4, 0, 196609, 5, 0, 196609, 6, 0, 196609, 7, 0, 196609, 8, 0, 196609, 9, 0, 196609, 10, 0, 196609, 11, 0, 196609, 12, 0, 196609, 13, 0, 196609, 14, 0, 196609, 15, 0, 196609, 16, 0, 196609, 17, 0, 196609, 18, 0, 196609, 19, 0, 196609, 20, 0, 196609, 21, 0, 196609, 22, 0, 196609, 23, 0, 196609, 24, 0, 196609, 25, 0, 196609, 26, 0, 196609, 27, 0, 196609, 28, 0, 196609, 29, 0, 196609, 30, 0, 196609, 31, 0, 196609, 32, 0, 196609, 33, 0, 196609, 34, 0, 196609, 35, 0, 196609, 36, 0, 196609, 37, 0, 196609, 38, 0, 196609, 39, 0, 196609, 40, 0, 196609, 41, 0, 196609, 42, 0, 196609, 43, 0, 196609, 44, 0, 196609, 45, 0, 196609, 46, 0, 196609, 47, 0, 196609, 48, 0, 196609, 49, 0, 196609, 50, 0, 196609, 51, 0, 196609, 52, 0, 196609, 53, 0, 196609, 54, 0, 196609, 55, 0, 196609, 56, 0, 196609, 57, 0, 196609, 58, 0, 196609, 59, 0, 196609, 60, 0, 196609, 61, 0, 262148, 62, 0, 131073, 63, 0, 131073, 64, 0, 131073, 65, 0, 131073, 66, 0, 131073, 67, 0, 131073, 68, 0, 131073, 69, 0, 131073, 70, 0, 131073, 71, 0, 131073, 72, 0, 262146, 73, 0, 196609, 74, 0, 196609, 75, 0, 196609, 76, 0, 262148, 77, 0, 131073, 78, 0, 131073, 79, 0, 131073, 80, 0, 131073, 81, 0, 131073, 82, 0, 131073, 83, 0, 131074, 131068, 0, 131072, 131069, 0, 131073, 131070, 0, 131073, 131071, 0, 131073, 65536, 0, 131073, 65537, 0, 131073, 65538, 0, 327681, 65598, 0, 1114122, 65599, 0, 196609, 65600, 0, 196609, 65601, 0, 196609, 65602, 0, 196609, 65603, 0, 196609, 65604, 0, 196609, 65605, 0, 196609, 65606, 0, 196609, 65607, 0, 1114123, 65613, 0, 327685, 65614, 0, 131073, 65615, 0, 131073, 65616, 0, 131073, 65617, 0, 131073, 65618, 0, 131073, 65619, 0, 524302, 196604, 0, 524301, 196605, 0, 131073, 196606, 0, 131073, 196607, 0, 131073, 131072, 0, 131073, 131073, 0, 327681, 131150, 0, 327685, 131151, 0, 131073, 131152, 0, 131073, 131153, 0, 131073, 131154, 0, 393216, 262141, 0, 393222, 262142, 0, 131073, 262143, 0, 131073, 196608, 0, 393216, 196687, 0, 393222, 196688, 0, 131073, 196689, 0, 131073, 196690, 0, 131074, 327677, 0, 131072, 327678, 0, 131073, 327679, 0, 131073, 262144, 0, 131074, 262223, 0, 131072, 262224, 0, 131073, 262225, 0, 131073, 262226, 0, 131074, 393213, 0, 131072, 393214, 0, 131073, 393215, 0, 131073, 327680, 0, 131074, 327759, 0, 131072, 327760, 0, 131073, 327761, 0, 131073, 327762, 0, 131074, 458749, 0, 131072, 458750, 0, 131073, 458751, 0, 131073, 393216, 0, 131074, 393295, 0, 131072, 393296, 0, 131073, 393297, 0, 131073, 393298, 0, 131074, 524285, 0, 131072, 524286, 0, 131073, 524287, 0, 131073, 458752, 0, 524288, 458831, 0, 131072, 458832, 0, 131073, 458833, 0, 131073, 458834, 0, 131074, 589821, 0, 131072, 589822, 0, 131073, 589823, 0, 131073, 524288, 0, 131073, 524289, 0, 589825, 524367, 0, 131072, 524368, 0, 131073, 524369, 0, 131073, 524370, 0, 131074, 655357, 0, 131072, 655358, 0, 131073, 655359, 0, 131073, 589824, 0, 131073, 589825, 0, 131073, 589826, 0, 589825, 589903, 0, 131072, 589904, 0, 131073, 589905, 0, 131073, 589906, 0, 131074, 720893, 0, 131072, 720894, 0, 131073, 720895, 0, 131073, 655360, 0, 131073, 655361, 0, 131073, 655362, 0, 131073, 655363, 0, 458766, 655439, 0, 131072, 655440, 0, 131073, 655441, 0, 131073, 655442, 0, 131074, 786429, 0, 131072, 786430, 0, 131073, 786431, 0, 131073, 720896, 0, 131073, 720897, 0, 131073, 720898, 0, 131073, 720899, 0, 131074, 720975, 0, 131072, 720976, 0, 131073, 720977, 0, 131073, 720978, 0, 131074, 851965, 0, 131072, 851966, 0, 131073, 851967, 0, 131073, 786432, 0, 131073, 786433, 0, 131073, 786434, 0, 131073, 786435, 0, 131074, 786511, 0, 131072, 786512, 0, 131073, 786513, 0, 131073, 786514, 0, 131074, 917501, 0, 131072, 917502, 0, 131073, 917503, 0, 131073, 851968, 0, 131073, 851969, 0, 131073, 851970, 0, 131073, 851971, 0, 131074, 852047, 0, 131072, 852048, 0, 131073, 852049, 0, 131073, 852050, 0, 131074, 983037, 0, 131072, 983038, 0, 131073, 983039, 0, 131073, 917504, 0, 131073, 917505, 0, 131073, 917506, 0, 262146, 917507, 0, 196610, 917583, 0, 131072, 917584, 0, 131073, 917585, 0, 131073, 917586, 0, 131074, 1048573, 0, 131072, 1048574, 0, 131073, 1048575, 0, 131073, 983040, 0, 131073, 983041, 0, 327681, 983119, 0, 131072, 983120, 0, 131073, 983121, 0, 131073, 983122, 0, 131074, 1114109, 0, 131072, 1114110, 0, 131073, 1114111, 0, 131073, 1048576, 0, 393216, 1048655, 0, 131072, 1048656, 0, 131073, 1048657, 0, 131073, 1048658, 0, 131074, 1179645, 0, 131072, 1179646, 0, 131073, 1179647, 0, 131073, 1114112, 0, 131074, 1114191, 0, 131072, 1114192, 0, 131073, 1114193, 0, 131073, 1114194, 0, 131074, 1245181, 0, 131072, 1245182, 0, 131073, 1245183, 0, 131073, 1179648, 0, 131074, 1179727, 0, 131072, 1179728, 0, 131073, 1179729, 0, 131073, 1179730, 0, 131074, 1310717, 0, 131072, 1310718, 0, 131073, 1310719, 0, 131073, 1245184, 0, 131074, 1245263, 0, 131072, 1245264, 0, 131073, 1245265, 0, 131073, 1245266, 0, 131074, 1376253, 0, 131072, 1376254, 0, 131073, 1376255, 0, 131073, 1310720, 0, 131074, 1310799, 0, 131072, 1310800, 0, 131073, 1310801, 0, 131073, 1310802, 0, 524288, 1441789, 0, 131072, 1441790, 0, 131073, 1441791, 0, 131073, 1376256, 0, 131074, 1376335, 0, 131072, 1376336, 0, 131073, 1376337, 0, 131073, 1376338, 0, 131073, 1376339, 0, 458766, 1507325, 0, 131072, 1507326, 0, 131073, 1507327, 0, 131073, 1441792, 0, 131074, 1441871, 0, 131072, 1441872, 0, 131073, 1441873, 0, 131073, 1441874, 0, 131073, 1441875, 0, 524302, 1572861, 0, 131072, 1572862, 0, 131073, 1572863, 0, 131073, 1507328, 0, 524288, 1507407, 0, 131072, 1507408, 0, 131073, 1507409, 0, 131073, 1507410, 0, 393216, 1638397, 0, 131072, 1638398, 0, 131073, 1638399, 0, 131073, 1572864, 0, 131073, 1572865, 0, 458766, 1572943, 0, 131072, 1572944, 0, 131073, 1572945, 0, 131073, 1572946, 0, 131074, 1703933, 0, 131072, 1703934, 0, 131073, 1703935, 0, 131073, 1638400, 0, 131073, 1638401, 0, 131074, 1638479, 0, 131072, 1638480, 0, 131073, 1638481, 0, 131073, 1638482, 0, 131074, 1769469, 0, 131072, 1769470, 0, 131073, 1769471, 0, 131073, 1703936, 0, 131073, 1703937, 0, 131074, 1704015, 0, 131072, 1704016, 0, 131073, 1704017, 0, 131073, 1704018, 0, 524302, 1835005, 0, 131072, 1835006, 0, 131073, 1835007, 0, 131073, 1769472, 0, 131073, 1769473, 0, 131074, 1769551, 0, 131072, 1769552, 0, 131073, 1769553, 0, 458752, 1900541, 0, 131072, 1900542, 0, 131073, 1900543, 0, 131073, 1835008, 0, 131073, 1835009, 0, 524288, 1835087, 0, 131072, 1835088, 0, 131073, 1835089, 0, 131073, 1835090, 0, 458766, 1966077, 0, 131072, 1966078, 0, 131073, 1966079, 0, 131073, 1900544, 0, 131073, 1900545, 0, 131073, 1900546, 0, 131086, 1900623, 0, 131072, 1900624, 0, 131073, 1900625, 0, 131073, 1900626, 0, 131074, 2031613, 0, 524294, 2031614, 0, 131073, 2031615, 0, 131073, 1966080, 0, 131073, 1966081, 0, 393216, 1966159, 0, 131072, 1966160, 0, 131073, 1966161, 0, 131073, 1966162, 0, 131074, 2097148, 0, 458765, 2097149, 0, 131073, 2097150, 0, 131073, 2097151, 0, 131073, 2031616, 0, 131073, 2031617, 0, 524302, 2031695, 0, 131072, 2031696, 0, 131073, 2031697, 0, 131073, 2031698, 0, 131074, 2162684, 0, 131072, 2162685, 0, 131073, 2162686, 0, 131073, 2162687, 0, 131073, 2097152, 0, 393216, 2097231, 0, 131072, 2097232, 0, 131073, 2097233, 0, 131073, 2097234, 0, 131074, 2228220, 0, 524294, 2228221, 0, 131073, 2228222, 0, 131073, 2228223, 0, 131073, 2162688, 0, 524288, 2162767, 0, 131072, 2162768, 0, 131073, 2162769, 0, 131073, 2162770, 0, 131074, 2293755, 0, 458765, 2293756, 0, 131073, 2293757, 0, 131073, 2293758, 0, 131073, 2293759, 0, 131073, 2228224, 0, 131073, 2228225, 0, 458766, 2228303, 0, 524294, 2228304, 0, 131073, 2228305, 0, 131073, 2228306, 0, 131074, 2359291, 0, 131072, 2359292, 0, 131073, 2359293, 0, 131073, 2359294, 0, 131073, 2359295, 0, 131073, 2293760, 0, 131073, 2293761, 0, 524288, 2293838, 0, 458765, 2293839, 0, 131073, 2293840, 0, 131073, 2293841, 0, 131073, 2293842, 0, 131074, 2424827, 0, 131072, 2424828, 0, 131073, 2424829, 0, 131073, 2424830, 0, 131073, 2424831, 0, 131073, 2359296, 0, 131073, 2359297, 0, 131073, 2359298, 0, 458766, 2359374, 0, 524294, 2359375, 0, 131073, 2359376, 0, 131073, 2359377, 0, 131073, 2359378, 0, 131074, 2490363, 0, 131072, 2490364, 0, 131073, 2490365, 0, 131073, 2490366, 0, 131073, 2490367, 0, 131073, 2424832, 0, 131073, 2424833, 0, 131073, 2424834, 0, 131074, 2424891, 0, 1048586, 2424892, 0, 65537, 2424893, 0, 65537, 2424894, 0, 65538, 2424909, 0, 458765, 2424910, 0, 131073, 2424911, 0, 131073, 2424912, 0, 131073, 2424913, 0, 131073, 2424914, 0, 131074, 2555899, 0, 131072, 2555900, 0, 131073, 2555901, 0, 131073, 2555902, 0, 131073, 2555903, 0, 131073, 2490368, 0, 131073, 2490369, 0, 131073, 2490370, 0, 131074, 2490426, 0, 589829, 2490427, 0, 131073, 2490428, 0, 131073, 2490429, 0, 131073, 2490430, 0, 131074, 2490445, 0, 524294, 2490446, 0, 131073, 2490447, 0, 131073, 2490448, 0, 131073, 2490449, 0, 131073, 2490450, 0, 131074, 2621435, 0, 131072, 2621436, 0, 131073, 2621437, 0, 131073, 2621438, 0, 131073, 2621439, 0, 131073, 2555904, 0, 131073, 2555905, 0, 131073, 2555906, 0, 131074, 2555961, 0, 589829, 2555962, 0, 131073, 2555963, 0, 131073, 2555964, 0, 131073, 2555965, 0, 131073, 2555966, 0, 131074, 2555980, 0, 589829, 2555981, 0, 131073, 2555982, 0, 131073, 2555983, 0, 131073, 2555984, 0, 131073, 2555985, 0, 131073, 2555986, 0, 131074, 2686971, 0, 131072, 2686972, 0, 131073, 2686973, 0, 131073, 2686974, 0, 131073, 2686975, 0, 131073, 2621440, 0, 131073, 2621441, 0, 131073, 2621442, 0, 524288, 2621457, 0, 1048586, 2621458, 0, 65537, 2621459, 0, 65537, 2621460, 0, 65537, 2621461, 0, 65537, 2621462, 0, 65537, 2621463, 0, 65537, 2621464, 0, 65537, 2621465, 0, 65537, 2621466, 0, 65537, 2621467, 0, 65537, 2621468, 0, 65537, 2621469, 0, 65537, 2621470, 0, 65537, 2621471, 0, 65537, 2621472, 0, 65537, 2621473, 0, 65537, 2621474, 0, 1048587, 2621496, 0, 589829, 2621497, 0, 131073, 2621498, 0, 131073, 2621499, 0, 131073, 2621500, 0, 131073, 2621501, 0, 131073, 2621502, 0, 524288, 2621515, 0, 589829, 2621516, 0, 131073, 2621517, 0, 131073, 2621518, 0, 131073, 2621519, 0, 131073, 2621520, 0, 131073, 2621521, 0, 131073, 2621522, 0, 131074, 2752507, 0, 131072, 2752508, 0, 131073, 2752509, 0, 131073, 2752510, 0, 131073, 2752511, 0, 131073, 2686976, 0, 131073, 2686977, 0, 131073, 2686978, 0, 131073, 2686979, 0, 655362, 2686980, 0, 65537, 2686981, 0, 65537, 2686982, 0, 65537, 2686983, 0, 65537, 2686984, 0, 65537, 2686985, 0, 65537, 2686986, 0, 65537, 2686987, 0, 65537, 2686988, 0, 65537, 2686989, 0, 65537, 2686990, 0, 65537, 2686991, 0, 65537, 2686992, 0, 655364, 2686993, 0, 131073, 2686994, 0, 131073, 2686995, 0, 131073, 2686996, 0, 131073, 2686997, 0, 131073, 2686998, 0, 131073, 2686999, 0, 131073, 2687000, 0, 131073, 2687001, 0, 131073, 2687002, 0, 131073, 2687003, 0, 131073, 2687004, 0, 131073, 2687005, 0, 131073, 2687006, 0, 131073, 2687007, 0, 131073, 2687008, 0, 131073, 2687009, 0, 131073, 2687010, 0, 131073, 2687011, 0, 655362, 2687012, 0, 65537, 2687013, 0, 65537, 2687014, 0, 65537, 2687015, 0, 65537, 2687016, 0, 65537, 2687017, 0, 65537, 2687018, 0, 65537, 2687019, 0, 65537, 2687020, 0, 65537, 2687021, 0, 65537, 2687022, 0, 65537, 2687023, 0, 65537, 2687024, 0, 65537, 2687025, 0, 65537, 2687026, 0, 65537, 2687027, 0, 65537, 2687028, 0, 65537, 2687029, 0, 65537, 2687030, 0, 65537, 2687031, 0, 655364, 2687032, 0, 131073, 2687033, 0, 131073, 2687034, 0, 131073, 2687035, 0, 131073, 2687036, 0, 131073, 2687037, 0, 131073, 2687038, 0, 131073, 2687039, 0, 655362, 2687040, 0, 65537, 2687041, 0, 65537, 2687042, 0, 65537, 2687043, 0, 65537, 2687044, 0, 65537, 2687045, 0, 65537, 2687046, 0, 65537, 2687047, 0, 65537, 2687048, 0, 65537, 2687049, 0, 65537, 2687050, 0, 655364, 2687051, 0, 131073, 2687052, 0, 131073, 2687053, 0, 131073, 2687054, 0, 131073, 2687055, 0, 131073, 2687056, 0, 131073, 2687057, 0, 131073, 2687058, 0, 131074, 2818043, 0, 524301, 2818044, 0, 131073, 2818045, 0, 131073, 2818046, 0, 131073, 2818047, 0, 131073, 2752512, 0, 131073, 2752513, 0, 131073, 2752514, 0, 131073, 2752515, 0, 131073, 2752516, 0, 131073, 2752517, 0, 131073, 2752518, 0, 131073, 2752519, 0, 131073, 2752520, 0, 131073, 2752521, 0, 131073, 2752522, 0, 131073, 2752523, 0, 131073, 2752524, 0, 131073, 2752525, 0, 131073, 2752526, 0, 131073, 2752527, 0, 131073, 2752528, 0, 131073, 2752529, 0, 131073, 2752530, 0, 131073, 2752531, 0, 131073, 2752532, 0, 131073, 2752533, 0, 131073, 2752534, 0, 131073, 2752535, 0, 131073, 2752536, 0, 131073, 2752537, 0, 131073, 2752538, 0, 131073, 2752539, 0, 131073, 2752540, 0, 131073, 2752541, 0, 131073, 2752542, 0, 131073, 2752543, 0, 131073, 2752544, 0, 131073, 2752545, 0, 131073, 2752546, 0, 131073, 2752547, 0, 131073, 2752548, 0, 131073, 2752549, 0, 131073, 2752550, 0, 131073, 2752551, 0, 131073, 2752552, 0, 131073, 2752553, 0, 131073, 2752554, 0, 131073, 2752555, 0, 131073, 2752556, 0, 131073, 2752557, 0, 131073, 2752558, 0, 131073, 2752559, 0, 131073, 2752560, 0, 131073, 2752561, 0, 131073, 2752562, 0, 131073, 2752563, 0, 131073, 2752564, 0, 131073, 2752565, 0, 131073, 2752566, 0, 131073, 2752567, 0, 131073, 2752568, 0, 131073, 2752569, 0, 131073, 2752570, 0, 131073, 2752571, 0, 131073, 2752572, 0, 131073, 2752573, 0, 131073, 2752574, 0, 131073, 2752575, 0, 131073, 2752576, 0, 131073, 2752577, 0, 131073, 2752578, 0, 131073, 2752579, 0, 131073, 2752580, 0, 131073, 2752581, 0, 131073, 2752582, 0, 131073, 2752583, 0, 131073, 2752584, 0, 131073, 2752585, 0, 131073, 2752586, 0, 131073, 2752587, 0, 131073, 2752588, 0, 131073, 2752589, 0, 131073, 2752590, 0, 131073, 2752591, 0, 131073, 2752592, 0, 131073, 2752593, 0, 131073, 2752594, 0, 524288, 2883580, 0, 393222, 2883581, 0, 131073, 2883582, 0, 131073, 2883583, 0, 131073, 2818048, 0, 131073, 2818049, 0, 131073, 2818050, 0, 131073, 2818051, 0, 131073, 2818052, 0, 131073, 2818053, 0, 131073, 2818054, 0, 131073, 2818055, 0, 131073, 2818056, 0, 131073, 2818057, 0, 131073, 2818058, 0, 131073, 2818059, 0, 131073, 2818060, 0, 131073, 2818061, 0, 131073, 2818062, 0, 131073, 2818063, 0, 131073, 2818064, 0, 131073, 2818065, 0, 131073, 2818066, 0, 131073, 2818067, 0, 131073, 2818068, 0, 131073, 2818069, 0, 131073, 2818070, 0, 131073, 2818071, 0, 131073, 2818072, 0, 131073, 2818073, 0, 131073, 2818074, 0, 131073, 2818075, 0, 131073, 2818076, 0, 131073, 2818077, 0, 131073, 2818078, 0, 131073, 2818079, 0, 131073, 2818080, 0, 131073, 2818081, 0, 131073, 2818082, 0, 131073, 2818083, 0, 131073, 2818084, 0, 131073, 2818085, 0, 131073, 2818086, 0, 131073, 2818087, 0, 131073, 2818088, 0, 131073, 2818089, 0, 131073, 2818090, 0, 131073, 2818091, 0, 131073, 2818092, 0, 131073, 2818093, 0, 131073, 2818094, 0, 131073, 2818095, 0, 131073, 2818096, 0, 131073, 2818097, 0, 131073, 2818098, 0, 131073, 2818099, 0, 131073, 2818100, 0, 131073, 2818101, 0, 131073, 2818102, 0, 131073, 2818103, 0, 131073, 2818104, 0, 131073, 2818105, 0, 131073, 2818106, 0, 131073, 2818107, 0, 131073, 2818108, 0, 131073, 2818109, 0, 131073, 2818110, 0, 131073, 2818111, 0, 131073, 2818112, 0, 131073, 2818113, 0, 131073, 2818114, 0, 131073, 2818115, 0, 131073, 2818116, 0, 131073, 2818117, 0, 131073, 2818118, 0, 131073, 2818119, 0, 131073, 2818120, 0, 131073, 2818121, 0, 131073, 2818122, 0, 131073, 2818123, 0, 131073, 2818124, 0, 131073, 2818125, 0, 131073, 2818126, 0, 131073, 2818127, 0, 131073, 2818128, 0, 131073, 2818129, 0, 131073, 2818130, 0, 131073, 2818131, 0, 458766, 2949116, 0, 131072, 2949117, 0, 131073, 2949118, 0, 131073, 2949119, 0, 131073, 2883584, 0, 131073, 2883585, 0, 131073, 2883586, 0, 131073, 2883587, 0, 131073, 2883588, 0, 131073, 2883589, 0, 131073, 2883590, 0, 131073, 2883591, 0, 131073, 2883592, 0, 131073, 2883593, 0, 131073, 2883594, 0, 131073, 2883595, 0, 131073, 2883596, 0, 131073, 2883597, 0, 131073, 2883598, 0, 131073, 2883599, 0, 131073, 2883600, 0, 131073, 2883601, 0, 131073, 2883602, 0, 131073, 2883603, 0, 131073, 2883604, 0, 131073, 2883605, 0, 131073, 2883606, 0, 131073, 2883607, 0, 131073, 2883608, 0, 131073, 2883609, 0, 131073, 2883610, 0, 131073, 2883611, 0, 131073, 2883612, 0, 131073, 2883613, 0, 131073, 2883614, 0, 131073, 2883615, 0, 131073, 2883616, 0, 131073, 2883617, 0, 131073, 2883618, 0, 131073, 2883619, 0, 131073, 2883620, 0, 131073, 2883621, 0, 131073, 2883622, 0, 131073, 2883623, 0, 131073, 2883624, 0, 131073, 2883625, 0, 131073, 2883626, 0, 131073, 2883627, 0, 131073, 2883628, 0, 131073, 2883629, 0, 131073, 2883630, 0, 131073, 2883631, 0, 131073, 2883632, 0, 131073, 2883633, 0, 131073, 2883634, 0, 131073, 2883635, 0, 131073, 2883636, 0, 131073, 2883637, 0, 131073, 2883638, 0, 131073, 2883639, 0, 131073, 2883640, 0, 131073, 2883641, 0, 131073, 2883642, 0, 131073, 2883643, 0, 131073, 2883644, 0, 131073, 2883645, 0, 131073, 2883646, 0, 131073, 2883647, 0, 131073, 2883648, 0, 131073, 2883649, 0, 131073, 2883650, 0, 131073, 2883651, 0, 131073, 2883652, 0, 131073, 2883653, 0, 131073, 2883654, 0, 131073, 2883655, 0, 131073, 2883656, 0, 131073, 2883657, 0, 131073, 2883658, 0, 131073, 2883659, 0, 131073, 2883660, 0, 131073, 2883661, 0, 131073, 2883662, 0, 131073, 2883663, 0, 131073, 2883664, 0, 131073, 2883665, 0, 131073, 2883666, 0, 131073, 2883667, 0, 524302, 3014652, 0, 131072, 3014653, 0, 131073, 3014654, 0, 131073, 3014655, 0, 131073, 2949120, 0, 131073, 2949121, 0, 131073, 2949122, 0, 131073, 2949123, 0, 131073, 2949124, 0, 131073, 2949125, 0, 131073, 2949126, 0, 131073, 2949127, 0, 131073, 2949128, 0, 131073, 2949129, 0, 131073, 2949130, 0, 131073, 2949131, 0, 131073, 2949132, 0, 131073, 2949133, 0, 131073, 2949134, 0, 131073, 2949135, 0, 131073, 2949136, 0, 131073, 2949137, 0, 131073, 2949138, 0, 131073, 2949139, 0, 131073, 2949140, 0, 131073, 2949141, 0, 131073, 2949142, 0, 131073, 2949143, 0, 131073, 2949144, 0, 131073, 2949145, 0, 131073, 2949146, 0, 131073, 2949147, 0, 131073, 2949148, 0, 131073, 2949149, 0, 131073, 2949150, 0, 131073, 2949151, 0, 131073, 2949152, 0, 131073, 2949153, 0, 131073, 2949154, 0, 131073, 2949155, 0, 131073, 2949156, 0, 131073, 2949157, 0, 131073, 2949158, 0, 131073, 2949159, 0, 131073, 2949160, 0, 131073, 2949161, 0, 131073, 2949162, 0, 131073, 2949163, 0, 131073, 2949164, 0, 131073, 2949165, 0, 131073, 2949166, 0, 131073, 2949167, 0, 131073, 2949168, 0, 131073, 2949169, 0, 131073, 2949170, 0, 131073, 2949171, 0, 131073, 2949172, 0, 131073, 2949173, 0, 131073, 2949174, 0, 131073, 2949175, 0, 131073, 2949176, 0, 131073, 2949177, 0, 131073, 2949178, 0, 131073, 2949179, 0, 131073, 2949180, 0, 131073, 2949181, 0, 131073, 2949182, 0, 131073, 2949183, 0, 131073, 2949184, 0, 131073, 2949185, 0, 131073, 2949186, 0, 131073, 2949187, 0, 131073, 2949188, 0, 131073, 2949189, 0, 131073, 2949190, 0, 131073, 2949191, 0, 131073, 2949192, 0, 131073, 2949193, 0, 131073, 2949194, 0, 131073, 2949195, 0, 131073, 2949196, 0, 131073, 2949197, 0, 131073, 2949198, 0, 131073, 2949199, 0, 131073, 2949200, 0, 131073, 2949201, 0, 131073, 2949202, 0, 393216, 3080188, 0, 131072, 3080189, 0, 131073, 3080190, 0, 131073, 3080191, 0, 131073, 3014656, 0, 131073, 3014657, 0, 131073, 3014658, 0, 131073, 3014659, 0, 131073, 3014660, 0, 131073, 3014661, 0, 131073, 3014662, 0, 131073, 3014663, 0, 131073, 3014664, 0, 131073, 3014665, 0, 131073, 3014666, 0, 131073, 3014667, 0, 131073, 3014668, 0, 131073, 3014669, 0, 131073, 3014670, 0, 131073, 3014671, 0, 131073, 3014672, 0, 131073, 3014673, 0, 131073, 3014674, 0, 131073, 3014675, 0, 131073, 3014676, 0, 131073, 3014677, 0, 131073, 3014678, 0, 131073, 3014679, 0, 131073, 3014680, 0, 131073, 3014681, 0, 131073, 3014682, 0, 131073, 3014683, 0, 131073, 3014684, 0, 131073, 3014685, 0, 131073, 3014686, 0, 131073, 3014687, 0, 131073, 3014688, 0, 131073, 3014689, 0, 131073, 3014690, 0, 131073, 3014691, 0, 131073, 3014692, 0, 131073, 3014693, 0, 131073, 3014694, 0, 131073, 3014695, 0, 131073, 3014696, 0, 131073, 3014697, 0, 131073, 3014698, 0, 131073, 3014699, 0, 131073, 3014700, 0, 131073, 3014701, 0, 131073, 3014702, 0, 131073, 3014703, 0, 131073, 3014704, 0, 131073, 3014705, 0, 131073, 3014706, 0, 131073, 3014707, 0, 131073, 3014708, 0, 131073, 3014709, 0, 131073, 3014710, 0, 131073, 3014711, 0, 131073, 3014712, 0, 131073, 3014713, 0, 131073, 3014714, 0, 131073, 3014715, 0, 131073, 3014716, 0, 131073, 3014717, 0, 131073, 3014718, 0, 131073, 3014719, 0, 131073, 3014720, 0, 131073, 3014721, 0, 131073, 3014722, 0, 131073, 3014723, 0, 131073, 3014724, 0, 131073, 3014725, 0, 131073, 3014726, 0, 131073, 3014727, 0, 131073, 3014728, 0, 131073, 3014729, 0, 131073, 3014730, 0, 131073, 3014731, 0, 131073, 3014732, 0, 131073, 3014733, 0, 131073, 3014734, 0, 131073, 3014735, 0, 131073, 3014736, 0, 131073, 3014737, 0, 131073, 3014738, 0, 131074, 3145724, 0, 131072, 3145725, 0, 131073, 3145726, 0, 131073, 3145727, 0, 131073, 3080192, 0, 131073, 3080193, 0, 131073, 3080194, 0, 131073, 3080195, 0, 131073, 3080196, 0, 131073, 3080197, 0, 131073, 3080198, 0, 131073, 3080199, 0, 131073, 3080200, 0, 131073, 3080201, 0, 131073, 3080202, 0, 131073, 3080203, 0, 131073, 3080204, 0, 131073, 3080205, 0, 131073, 3080206, 0, 131073, 3080207, 0, 131073, 3080208, 0, 131073, 3080209, 0, 131073, 3080210, 0, 131073, 3080211, 0, 131073, 3080212, 0, 131073, 3080213, 0, 131073, 3080214, 0, 131073, 3080215, 0, 131073, 3080216, 0, 131073, 3080217, 0, 131073, 3080218, 0, 131073, 3080219, 0, 131073, 3080220, 0, 131073, 3080221, 0, 131073, 3080222, 0, 131073, 3080223, 0, 131073, 3080224, 0, 131073, 3080225, 0, 131073, 3080226, 0, 131073, 3080227, 0, 131073, 3080228, 0, 131073, 3080229, 0, 131073, 3080230, 0, 131073, 3080231, 0, 131073, 3080232, 0, 131073, 3080233, 0, 131073, 3080234, 0, 131073, 3080235, 0, 131073, 3080236, 0, 131073, 3080237, 0, 131073, 3080238, 0, 131073, 3080239, 0, 131073, 3080240, 0, 131073, 3080241, 0, 131073, 3080242, 0, 131073, 3080243, 0, 131073, 3080244, 0, 131073, 3080245, 0, 131073, 3080246, 0, 131073, 3080247, 0, 131073, 3080248, 0, 131073, 3080249, 0, 131073, 3080250, 0, 131073, 3080251, 0, 131073, 3080252, 0, 131073, 3080253, 0, 131073, 3080254, 0, 131073, 3080255, 0, 131073, 3080256, 0, 131073, 3080257, 0, 131073, 3080258, 0, 131073, 3080259, 0, 131073, 3080260, 0, 131073, 3080261, 0, 131073, 3080262, 0, 131073, 3080263, 0, 131073, 3080264, 0, 131073, 3080265, 0, 131073, 3080266, 0, 131073, 3080267, 0, 131073, 3080268, 0, 131073, 3080269, 0, 131073, 3080270, 0, 131073, 3080271, 0, 131073, 3080272, 0, 131073, 3080273, 0, 131073, 3080274, 0, 131074, 3211260, 0, 131072, 3211261, 0, 131073, 3211262, 0, 131073, 3211263, 0, 131073, 3145728, 0, 131073, 3145729, 0, 131073, 3145730, 0, 131073, 3145731, 0, 131073, 3145732, 0, 131073, 3145733, 0, 131073, 3145734, 0, 131073, 3145735, 0, 131073, 3145736, 0, 131073, 3145737, 0, 131073, 3145738, 0, 131073, 3145739, 0, 131073, 3145740, 0, 131073, 3145741, 0, 131073, 3145742, 0, 131073, 3145743, 0, 131073, 3145744, 0, 131073, 3145745, 0, 131073, 3145746, 0, 131073, 3145747, 0, 131073, 3145748, 0, 131073, 3145749, 0, 131073, 3145750, 0, 131073, 3145751, 0, 131073, 3145752, 0, 131073, 3145753, 0, 131073, 3145754, 0, 131073, 3145755, 0, 131073, 3145756, 0, 131073, 3145757, 0, 131073, 3145758, 0, 131073, 3145759, 0, 131073, 3145760, 0, 131073, 3145761, 0, 131073, 3145762, 0, 131073, 3145763, 0, 131073, 3145764, 0, 131073, 3145765, 0, 131073, 3145766, 0, 131073, 3145767, 0, 131073, 3145768, 0, 131073, 3145769, 0, 131073, 3145770, 0, 131073, 3145771, 0, 131073, 3145772, 0, 131073, 3145773, 0, 131073, 3145774, 0, 131073, 3145775, 0, 131073, 3145776, 0, 131073, 3145777, 0, 131073, 3145778, 0, 131073, 3145779, 0, 131073, 3145780, 0, 131073, 3145781, 0, 131073, 3145782, 0, 131073, 3145783, 0, 131073, 3145784, 0, 131073, 3145785, 0, 131073, 3145786, 0, 131073, 3145787, 0, 131073, 3145788, 0, 131073, 3145789, 0, 131073, 3145790, 0, 131073, 3145791, 0, 131073, 3145792, 0, 131073, 3145793, 0, 131073, 3145794, 0, 131073, 3145795, 0, 131073, 3145796, 0, 131073, 3145797, 0, 131073, 3145798, 0, 131073, 3145799, 0, 131073, 3145800, 0, 131073, 3145801, 0, 131073, 3145802, 0, 131073, 3145803, 0, 131073, 3145804, 0, 131073, 3145805, 0, 131073, 3145806, 0, 262146, 3145807, 0, 196609, 3145808, 0, 196609, 3145809, 0, 196609, 3145810, 0, 196610, 3276796, 0, 196608, 3276797, 0, 196609, 3276798, 0, 262148, 3276799, 0, 131073, 3211264, 0, 131073, 3211265, 0, 131073, 3211266, 0, 131073, 3211267, 0, 131073, 3211268, 0, 131073, 3211269, 0, 131073, 3211270, 0, 131073, 3211271, 0, 131073, 3211272, 0, 131073, 3211273, 0, 131073, 3211274, 0, 131073, 3211275, 0, 131073, 3211276, 0, 131073, 3211277, 0, 131073, 3211278, 0, 131073, 3211279, 0, 131073, 3211280, 0, 131073, 3211281, 0, 131073, 3211282, 0, 131073, 3211283, 0, 131073, 3211284, 0, 131073, 3211285, 0, 131073, 3211286, 0, 131073, 3211287, 0, 131073, 3211288, 0, 131073, 3211289, 0, 131073, 3211290, 0, 131073, 3211291, 0, 131073, 3211292, 0, 131073, 3211293, 0, 131073, 3211294, 0, 131073, 3211295, 0, 131073, 3211296, 0, 131073, 3211297, 0, 131073, 3211298, 0, 131073, 3211299, 0, 131073, 3211300, 0, 131073, 3211301, 0, 131073, 3211302, 0, 131073, 3211303, 0, 131073, 3211304, 0, 131073, 3211305, 0, 131073, 3211306, 0, 131073, 3211307, 0, 131073, 3211308, 0, 131073, 3211309, 0, 131073, 3211310, 0, 131073, 3211311, 0, 131073, 3211312, 0, 131073, 3211313, 0, 131073, 3211314, 0, 131073, 3211315, 0, 131073, 3211316, 0, 131073, 3211317, 0, 131073, 3211318, 0, 131073, 3211319, 0, 131073, 3211320, 0, 131073, 3211321, 0, 131073, 3211322, 0, 131073, 3211323, 0, 131073, 3211324, 0, 131073, 3211325, 0, 131073, 3211326, 0, 131073, 3211327, 0, 131073, 3211328, 0, 131073, 3211329, 0, 131073, 3211330, 0, 131073, 3211331, 0, 131073, 3211332, 0, 131073, 3211333, 0, 131073, 3211334, 0, 131073, 3211335, 0, 131073, 3211336, 0, 131073, 3211337, 0, 131073, 3211338, 0, 131073, 3211339, 0, 262146, 3211340, 0, 196609, 3211341, 0, 1114123, 3342335, 0, 1114122, 3276800, 0, 196609, 3276801, 0, 196609, 3276802, 0, 196609, 3276803, 0, 196609, 3276804, 0, 196609, 3276805, 0, 196609, 3276806, 0, 196609, 3276807, 0, 196609, 3276808, 0, 196609, 3276809, 0, 196609, 3276810, 0, 196609, 3276811, 0, 196609, 3276812, 0, 196609, 3276813, 0, 262148, 3276814, 0, 131073, 3276815, 0, 131073, 3276816, 0, 131073, 3276817, 0, 131073, 3276818, 0, 131073, 3276819, 0, 131073, 3276820, 0, 131073, 3276821, 0, 131073, 3276822, 0, 131073, 3276823, 0, 131073, 3276824, 0, 131073, 3276825, 0, 131073, 3276826, 0, 131073, 3276827, 0, 131073, 3276828, 0, 131073, 3276829, 0, 131073, 3276830, 0, 131073, 3276831, 0, 131073, 3276832, 0, 131073, 3276833, 0, 131073, 3276834, 0, 131073, 3276835, 0, 131073, 3276836, 0, 131073, 3276837, 0, 131073, 3276838, 0, 131073, 3276839, 0, 262146, 3276840, 0, 196609, 3276841, 0, 196609, 3276842, 0, 196609, 3276843, 0, 196609, 3276844, 0, 196609, 3276845, 0, 196609, 3276846, 0, 196609, 3276847, 0, 196609, 3276848, 0, 196609, 3276849, 0, 196609, 3276850, 0, 196609, 3276851, 0, 196609, 3276852, 0, 196609, 3276853, 0, 196609, 3276854, 0, 196609, 3276855, 0, 196609, 3276856, 0, 196609, 3276857, 0, 196609, 3276858, 0, 196609, 3276859, 0, 196609, 3276860, 0, 196609, 3276861, 0, 196609, 3276862, 0, 196609, 3276863, 0, 196609, 3276864, 0, 262148, 3276865, 0, 131073, 3276866, 0, 131073, 3276867, 0, 131073, 3276868, 0, 262146, 3276869, 0, 196609, 3276870, 0, 196609, 3276871, 0, 196609, 3276872, 0, 196609, 3276873, 0, 196609, 3276874, 0, 1114123, 3342350, 0, 1114122, 3342351, 0, 196609, 3342352, 0, 196609, 3342353, 0, 196609, 3342354, 0, 196609, 3342355, 0, 196609, 3342356, 0, 196609, 3342357, 0, 196609, 3342358, 0, 196609, 3342359, 0, 196609, 3342360, 0, 196609, 3342361, 0, 196609, 3342362, 0, 196609, 3342363, 0, 196609, 3342364, 0, 196609, 3342365, 0, 196609, 3342366, 0, 196609, 3342367, 0, 196609, 3342368, 0, 196609, 3342369, 0, 196609, 3342370, 0, 196609, 3342371, 0, 196609, 3342372, 0, 196609, 3342373, 0, 196609, 3342374, 0, 1114123, 3342401, 0, 1114122, 3342402, 0, 196609, 3342403, 0, 1114123, 3997739, 0, 65553 )
+tile_data = PoolIntArray( -720901, 0, 65553, -327684, 0, 65536, -327683, 0, 65537, -327682, 0, 65537, -327681, 0, 65537, -393216, 0, 65537, -393215, 0, 65537, -393214, 0, 65537, -393213, 0, 65537, -393212, 0, 65537, -393211, 0, 65537, -393210, 0, 65537, -393209, 0, 65537, -393208, 0, 65537, -393207, 0, 65537, -393206, 0, 65537, -393205, 0, 65537, -393204, 0, 65537, -393203, 0, 65537, -393202, 0, 65537, -393201, 0, 65537, -393200, 0, 65537, -393199, 0, 65537, -393198, 0, 65537, -393197, 0, 65537, -393196, 0, 65537, -393195, 0, 65537, -393194, 0, 65537, -393193, 0, 65537, -393192, 0, 65537, -393191, 0, 65537, -393190, 0, 65537, -393189, 0, 65537, -393188, 0, 65537, -393187, 0, 65537, -393186, 0, 65537, -393185, 0, 65537, -393184, 0, 65537, -393183, 0, 65537, -393182, 0, 65537, -393181, 0, 65537, -393180, 0, 65537, -393179, 0, 65537, -393178, 0, 65537, -393177, 0, 1048587, -393145, 0, 1048586, -393144, 0, 1048587, -262148, 0, 131072, -262147, 0, 131073, -262146, 0, 131073, -262145, 0, 131073, -327680, 0, 131073, -327679, 0, 131073, -327678, 0, 131073, -327677, 0, 131073, -327676, 0, 131073, -327675, 0, 131073, -327674, 0, 131073, -327673, 0, 131073, -327672, 0, 131073, -327671, 0, 131073, -327670, 0, 131073, -327669, 0, 131073, -327668, 0, 131073, -327667, 0, 131073, -327666, 0, 131073, -327665, 0, 131073, -327664, 0, 131073, -327663, 0, 131073, -327662, 0, 131073, -327661, 0, 131073, -327660, 0, 131073, -327659, 0, 131073, -327658, 0, 131073, -327657, 0, 131073, -327656, 0, 131073, -327655, 0, 131073, -327654, 0, 131073, -327653, 0, 131073, -327652, 0, 131073, -327651, 0, 131073, -327650, 0, 131073, -327649, 0, 131073, -327648, 0, 131073, -327647, 0, 131073, -327646, 0, 131073, -327645, 0, 131073, -327644, 0, 131073, -327643, 0, 131073, -327642, 0, 131073, -327641, 0, 131073, -327640, 0, 655362, -327639, 0, 65537, -327638, 0, 65537, -327637, 0, 65537, -327636, 0, 65537, -327635, 0, 65537, -327634, 0, 65537, -327633, 0, 65537, -327632, 0, 65537, -327631, 0, 65537, -327630, 0, 65537, -327629, 0, 65537, -327628, 0, 65537, -327627, 0, 65537, -327626, 0, 65537, -327625, 0, 65537, -327624, 0, 65537, -327623, 0, 65537, -327622, 0, 65537, -327621, 0, 65537, -327620, 0, 65537, -327619, 0, 65537, -327618, 0, 65537, -327617, 0, 65537, -327616, 0, 65537, -327615, 0, 65537, -327614, 0, 65537, -327613, 0, 65537, -327612, 0, 65537, -327611, 0, 65537, -327610, 0, 655364, -327609, 0, 131073, -327608, 0, 131073, -327607, 0, 655362, -327606, 0, 65537, -327605, 0, 1048587, -196612, 0, 131072, -196611, 0, 131073, -196610, 0, 131073, -196609, 0, 131073, -262144, 0, 131073, -262143, 0, 131073, -262142, 0, 131073, -262141, 0, 131073, -262140, 0, 131073, -262139, 0, 131073, -262138, 0, 131073, -262137, 0, 131073, -262136, 0, 131073, -262135, 0, 131073, -262134, 0, 131073, -262133, 0, 131073, -262132, 0, 131073, -262131, 0, 131073, -262130, 0, 131073, -262129, 0, 131073, -262128, 0, 131073, -262127, 0, 131073, -262126, 0, 131073, -262125, 0, 131073, -262124, 0, 131073, -262123, 0, 131073, -262122, 0, 131073, -262121, 0, 131073, -262120, 0, 131073, -262119, 0, 131073, -262118, 0, 131073, -262117, 0, 131073, -262116, 0, 131073, -262115, 0, 131073, -262114, 0, 131073, -262113, 0, 131073, -262112, 0, 131073, -262111, 0, 131073, -262110, 0, 131073, -262109, 0, 131073, -262108, 0, 131073, -262107, 0, 131073, -262106, 0, 131073, -262105, 0, 131073, -262104, 0, 131073, -262103, 0, 131073, -262102, 0, 131073, -262101, 0, 131073, -262100, 0, 131073, -262099, 0, 131073, -262098, 0, 131073, -262097, 0, 131073, -262096, 0, 131073, -262095, 0, 131073, -262094, 0, 131073, -262093, 0, 131073, -262092, 0, 131073, -262091, 0, 131073, -262090, 0, 131073, -262089, 0, 131073, -262088, 0, 131073, -262087, 0, 131073, -262086, 0, 131073, -262085, 0, 131073, -262084, 0, 131073, -262083, 0, 131073, -262082, 0, 131073, -262081, 0, 131073, -262080, 0, 131073, -262079, 0, 131073, -262078, 0, 131073, -262077, 0, 131073, -262076, 0, 131073, -262075, 0, 131073, -262074, 0, 131073, -262073, 0, 131073, -262072, 0, 131073, -262071, 0, 131073, -262070, 0, 131073, -262069, 0, 131073, -262068, 0, 655362, -262067, 0, 65537, -262066, 0, 65537, -262065, 0, 1048587, -131076, 0, 131072, -131075, 0, 131073, -131074, 0, 131073, -131073, 0, 131073, -196608, 0, 131073, -196607, 0, 131073, -196606, 0, 131073, -196605, 0, 131073, -196604, 0, 131073, -196603, 0, 131073, -196602, 0, 131073, -196601, 0, 131073, -196600, 0, 131073, -196599, 0, 131073, -196598, 0, 131073, -196597, 0, 131073, -196596, 0, 131073, -196595, 0, 131073, -196594, 0, 131073, -196593, 0, 131073, -196592, 0, 131073, -196591, 0, 131073, -196590, 0, 131073, -196589, 0, 131073, -196588, 0, 131073, -196587, 0, 131073, -196586, 0, 131073, -196585, 0, 131073, -196584, 0, 131073, -196583, 0, 131073, -196582, 0, 131073, -196581, 0, 131073, -196580, 0, 131073, -196579, 0, 131073, -196578, 0, 131073, -196577, 0, 131073, -196576, 0, 131073, -196575, 0, 131073, -196574, 0, 131073, -196573, 0, 131073, -196572, 0, 131073, -196571, 0, 131073, -196570, 0, 131073, -196569, 0, 131073, -196568, 0, 131073, -196567, 0, 131073, -196566, 0, 131073, -196565, 0, 131073, -196564, 0, 131073, -196563, 0, 131073, -196562, 0, 131073, -196561, 0, 131073, -196560, 0, 131073, -196559, 0, 131073, -196558, 0, 131073, -196557, 0, 131073, -196556, 0, 131073, -196555, 0, 131073, -196554, 0, 131073, -196553, 0, 131073, -196552, 0, 131073, -196551, 0, 131073, -196550, 0, 131073, -196549, 0, 131073, -196548, 0, 131073, -196547, 0, 131073, -196546, 0, 131073, -196545, 0, 131073, -196544, 0, 131073, -196543, 0, 131073, -196542, 0, 131073, -196541, 0, 131073, -196540, 0, 131073, -196539, 0, 131073, -196538, 0, 131073, -196537, 0, 131073, -196536, 0, 131073, -196535, 0, 131073, -196534, 0, 131073, -196533, 0, 131073, -196532, 0, 131073, -196531, 0, 131073, -196530, 0, 131073, -196529, 0, 131073, -196528, 0, 655362, -196527, 0, 65537, -196526, 0, 65538, -65540, 0, 131072, -65539, 0, 131073, -65538, 0, 131073, -65537, 0, 131073, -131072, 0, 131073, -131071, 0, 131073, -131070, 0, 131073, -131069, 0, 131073, -131068, 0, 131073, -131067, 0, 131073, -131066, 0, 131073, -131065, 0, 131073, -131064, 0, 131073, -131063, 0, 131073, -131062, 0, 131073, -131061, 0, 131073, -131060, 0, 131073, -131059, 0, 131073, -131058, 0, 131073, -131057, 0, 131073, -131056, 0, 131073, -131055, 0, 131073, -131054, 0, 131073, -131053, 0, 131073, -131052, 0, 131073, -131051, 0, 131073, -131050, 0, 131073, -131049, 0, 131073, -131048, 0, 131073, -131047, 0, 131073, -131046, 0, 131073, -131045, 0, 131073, -131044, 0, 131073, -131043, 0, 131073, -131042, 0, 131073, -131041, 0, 131073, -131040, 0, 131073, -131039, 0, 131073, -131038, 0, 131073, -131037, 0, 131073, -131036, 0, 131073, -131035, 0, 131073, -131034, 0, 131073, -131033, 0, 131073, -131032, 0, 131073, -131031, 0, 131073, -131030, 0, 131073, -131029, 0, 131073, -131028, 0, 131073, -131027, 0, 131073, -131026, 0, 131073, -131025, 0, 131073, -131024, 0, 131073, -131023, 0, 131073, -131022, 0, 131073, -131021, 0, 131073, -131020, 0, 131073, -131019, 0, 131073, -131018, 0, 131073, -131017, 0, 131073, -131016, 0, 131073, -131015, 0, 131073, -131014, 0, 131073, -131013, 0, 131073, -131012, 0, 131073, -131011, 0, 131073, -131010, 0, 131073, -131009, 0, 131073, -131008, 0, 131073, -131007, 0, 131073, -131006, 0, 131073, -131005, 0, 131073, -131004, 0, 131073, -131003, 0, 131073, -131002, 0, 131073, -131001, 0, 131073, -131000, 0, 131073, -130999, 0, 131073, -130998, 0, 131073, -130997, 0, 131073, -130996, 0, 131073, -130995, 0, 131073, -130994, 0, 131073, -130993, 0, 131073, -130992, 0, 131073, -130991, 0, 131073, -130990, 0, 524288, -4, 0, 131072, -3, 0, 131073, -2, 0, 131073, -1, 0, 131073, -65536, 0, 131073, -65535, 0, 131073, -65534, 0, 131073, -65533, 0, 131073, -65532, 0, 131073, -65531, 0, 131073, -65530, 0, 131073, -65529, 0, 131073, -65528, 0, 131073, -65527, 0, 131073, -65526, 0, 131073, -65525, 0, 131073, -65524, 0, 131073, -65523, 0, 131073, -65522, 0, 131073, -65521, 0, 131073, -65520, 0, 131073, -65519, 0, 131073, -65518, 0, 131073, -65517, 0, 131073, -65516, 0, 131073, -65515, 0, 131073, -65514, 0, 131073, -65513, 0, 131073, -65512, 0, 131073, -65511, 0, 131073, -65510, 0, 131073, -65509, 0, 131073, -65508, 0, 131073, -65507, 0, 131073, -65506, 0, 131073, -65505, 0, 131073, -65504, 0, 131073, -65503, 0, 131073, -65502, 0, 131073, -65501, 0, 131073, -65500, 0, 131073, -65499, 0, 131073, -65498, 0, 131073, -65497, 0, 131073, -65496, 0, 131073, -65495, 0, 131073, -65494, 0, 131073, -65493, 0, 131073, -65492, 0, 131073, -65491, 0, 131073, -65490, 0, 131073, -65489, 0, 131073, -65488, 0, 131073, -65487, 0, 131073, -65486, 0, 131073, -65485, 0, 131073, -65484, 0, 131073, -65483, 0, 131073, -65482, 0, 131073, -65481, 0, 131073, -65480, 0, 131073, -65479, 0, 131073, -65478, 0, 131073, -65477, 0, 131073, -65476, 0, 131073, -65475, 0, 131073, -65474, 0, 131073, -65473, 0, 131073, -65472, 0, 131073, -65471, 0, 131073, -65470, 0, 131073, -65469, 0, 131073, -65468, 0, 131073, -65467, 0, 131073, -65466, 0, 131073, -65465, 0, 131073, -65464, 0, 131073, -65463, 0, 131073, -65462, 0, 131073, -65461, 0, 131073, -65460, 0, 131073, -65459, 0, 131073, -65458, 0, 131073, -65457, 0, 131073, -65456, 0, 131073, -65455, 0, 131073, -65454, 0, 131073, -65453, 0, 458766, 65532, 0, 131072, 65533, 0, 131073, 65534, 0, 131073, 65535, 0, 131073, 0, 0, 131073, 1, 0, 131073, 2, 0, 131073, 3, 0, 262146, 4, 0, 196609, 5, 0, 196609, 6, 0, 196609, 7, 0, 196609, 8, 0, 196609, 9, 0, 196609, 10, 0, 196609, 11, 0, 196609, 12, 0, 196609, 13, 0, 196609, 14, 0, 196609, 15, 0, 196609, 16, 0, 196609, 17, 0, 196609, 18, 0, 196609, 19, 0, 196609, 20, 0, 196609, 21, 0, 196609, 22, 0, 196609, 23, 0, 196609, 24, 0, 196609, 25, 0, 196609, 26, 0, 196609, 27, 0, 196609, 28, 0, 196609, 29, 0, 196609, 30, 0, 196609, 31, 0, 196609, 32, 0, 196609, 33, 0, 196609, 34, 0, 196609, 35, 0, 196609, 36, 0, 196609, 37, 0, 196609, 38, 0, 196609, 39, 0, 196609, 40, 0, 196609, 41, 0, 196609, 42, 0, 196609, 43, 0, 196609, 44, 0, 196609, 45, 0, 196609, 46, 0, 196609, 47, 0, 196609, 48, 0, 196609, 49, 0, 196609, 50, 0, 196609, 51, 0, 196609, 52, 0, 196609, 53, 0, 196609, 54, 0, 196609, 55, 0, 196609, 56, 0, 196609, 57, 0, 196609, 58, 0, 196609, 59, 0, 196609, 60, 0, 196609, 61, 0, 262148, 62, 0, 131073, 63, 0, 131073, 64, 0, 131073, 65, 0, 131073, 66, 0, 131073, 67, 0, 131073, 68, 0, 131073, 69, 0, 131073, 70, 0, 131073, 71, 0, 131073, 72, 0, 262146, 73, 0, 196609, 74, 0, 196609, 75, 0, 196609, 76, 0, 262148, 77, 0, 131073, 78, 0, 131073, 79, 0, 131073, 80, 0, 131073, 81, 0, 131073, 82, 0, 131073, 83, 0, 131074, 131068, 0, 131072, 131069, 0, 131073, 131070, 0, 131073, 131071, 0, 131073, 65536, 0, 131073, 65537, 0, 131073, 65538, 0, 327681, 65598, 0, 1114122, 65599, 0, 196609, 65600, 0, 196609, 65601, 0, 196609, 65602, 0, 196609, 65603, 0, 196609, 65604, 0, 196609, 65605, 0, 196609, 65606, 0, 196609, 65607, 0, 1114123, 65613, 0, 327685, 65614, 0, 131073, 65615, 0, 131073, 65616, 0, 131073, 65617, 0, 131073, 65618, 0, 131073, 65619, 0, 524302, 196604, 0, 524301, 196605, 0, 131073, 196606, 0, 131073, 196607, 0, 131073, 131072, 0, 131073, 131073, 0, 327681, 131150, 0, 327685, 131151, 0, 131073, 131152, 0, 131073, 131153, 0, 131073, 131154, 0, 393216, 262141, 0, 393222, 262142, 0, 131073, 262143, 0, 131073, 196608, 0, 393216, 196687, 0, 393222, 196688, 0, 131073, 196689, 0, 131073, 196690, 0, 131074, 327677, 0, 131072, 327678, 0, 131073, 327679, 0, 131073, 262144, 0, 131074, 262223, 0, 131072, 262224, 0, 131073, 262225, 0, 131073, 262226, 0, 131074, 393213, 0, 131072, 393214, 0, 131073, 393215, 0, 131073, 327680, 0, 131074, 327759, 0, 131072, 327760, 0, 131073, 327761, 0, 131073, 327762, 0, 131074, 458749, 0, 131072, 458750, 0, 131073, 458751, 0, 131073, 393216, 0, 131074, 393295, 0, 131072, 393296, 0, 131073, 393297, 0, 131073, 393298, 0, 131074, 524285, 0, 131072, 524286, 0, 131073, 524287, 0, 131073, 458752, 0, 524288, 458831, 0, 131072, 458832, 0, 131073, 458833, 0, 131073, 458834, 0, 131074, 589821, 0, 131072, 589822, 0, 131073, 589823, 0, 131073, 524288, 0, 131073, 524289, 0, 589825, 524367, 0, 131072, 524368, 0, 131073, 524369, 0, 131073, 524370, 0, 131074, 655357, 0, 131072, 655358, 0, 131073, 655359, 0, 131073, 589824, 0, 131073, 589825, 0, 131073, 589826, 0, 589825, 589903, 0, 131072, 589904, 0, 131073, 589905, 0, 131073, 589906, 0, 131074, 720893, 0, 131072, 720894, 0, 131073, 720895, 0, 131073, 655360, 0, 131073, 655361, 0, 131073, 655362, 0, 131073, 655363, 0, 458766, 655439, 0, 131072, 655440, 0, 131073, 655441, 0, 131073, 655442, 0, 131074, 786429, 0, 131072, 786430, 0, 131073, 786431, 0, 131073, 720896, 0, 131073, 720897, 0, 131073, 720898, 0, 131073, 720899, 0, 131074, 720975, 0, 131072, 720976, 0, 131073, 720977, 0, 131073, 720978, 0, 131074, 851965, 0, 131072, 851966, 0, 131073, 851967, 0, 131073, 786432, 0, 131073, 786433, 0, 131073, 786434, 0, 131073, 786435, 0, 131074, 786511, 0, 131072, 786512, 0, 131073, 786513, 0, 131073, 786514, 0, 131074, 917501, 0, 131072, 917502, 0, 131073, 917503, 0, 131073, 851968, 0, 131073, 851969, 0, 131073, 851970, 0, 131073, 851971, 0, 131074, 852047, 0, 131072, 852048, 0, 131073, 852049, 0, 131073, 852050, 0, 131074, 983037, 0, 131072, 983038, 0, 131073, 983039, 0, 131073, 917504, 0, 131073, 917505, 0, 131073, 917506, 0, 262146, 917507, 0, 196610, 917583, 0, 131072, 917584, 0, 131073, 917585, 0, 131073, 917586, 0, 131074, 1048573, 0, 131072, 1048574, 0, 131073, 1048575, 0, 131073, 983040, 0, 131073, 983041, 0, 327681, 983119, 0, 131072, 983120, 0, 131073, 983121, 0, 131073, 983122, 0, 131074, 1114109, 0, 131072, 1114110, 0, 131073, 1114111, 0, 131073, 1048576, 0, 393216, 1048655, 0, 131072, 1048656, 0, 131073, 1048657, 0, 131073, 1048658, 0, 131074, 1179645, 0, 131072, 1179646, 0, 131073, 1179647, 0, 131073, 1114112, 0, 131074, 1114191, 0, 131072, 1114192, 0, 131073, 1114193, 0, 131073, 1114194, 0, 131074, 1245181, 0, 131072, 1245182, 0, 131073, 1245183, 0, 131073, 1179648, 0, 131074, 1179727, 0, 131072, 1179728, 0, 131073, 1179729, 0, 131073, 1179730, 0, 131074, 1310717, 0, 131072, 1310718, 0, 131073, 1310719, 0, 131073, 1245184, 0, 131074, 1245263, 0, 131072, 1245264, 0, 131073, 1245265, 0, 131073, 1245266, 0, 131074, 1376253, 0, 131072, 1376254, 0, 131073, 1376255, 0, 131073, 1310720, 0, 131074, 1310799, 0, 131072, 1310800, 0, 131073, 1310801, 0, 131073, 1310802, 0, 524288, 1441789, 0, 131072, 1441790, 0, 131073, 1441791, 0, 131073, 1376256, 0, 131074, 1376335, 0, 131072, 1376336, 0, 131073, 1376337, 0, 131073, 1376338, 0, 131073, 1376339, 0, 458766, 1507325, 0, 131072, 1507326, 0, 131073, 1507327, 0, 131073, 1441792, 0, 131074, 1441871, 0, 131072, 1441872, 0, 131073, 1441873, 0, 131073, 1441874, 0, 131073, 1441875, 0, 524302, 1572861, 0, 131072, 1572862, 0, 131073, 1572863, 0, 131073, 1507328, 0, 524288, 1507407, 0, 131072, 1507408, 0, 131073, 1507409, 0, 131073, 1507410, 0, 393216, 1638397, 0, 131072, 1638398, 0, 131073, 1638399, 0, 131073, 1572864, 0, 131073, 1572865, 0, 458766, 1572943, 0, 131072, 1572944, 0, 131073, 1572945, 0, 131073, 1572946, 0, 131074, 1703933, 0, 131072, 1703934, 0, 131073, 1703935, 0, 131073, 1638400, 0, 131073, 1638401, 0, 131074, 1638479, 0, 131072, 1638480, 0, 131073, 1638481, 0, 131073, 1638482, 0, 131074, 1769469, 0, 131072, 1769470, 0, 131073, 1769471, 0, 131073, 1703936, 0, 131073, 1703937, 0, 131074, 1704015, 0, 131072, 1704016, 0, 131073, 1704017, 0, 131073, 1704018, 0, 524302, 1835005, 0, 131072, 1835006, 0, 131073, 1835007, 0, 131073, 1769472, 0, 131073, 1769473, 0, 131074, 1769551, 0, 131072, 1769552, 0, 131073, 1769553, 0, 458752, 1900541, 0, 131072, 1900542, 0, 131073, 1900543, 0, 131073, 1835008, 0, 131073, 1835009, 0, 131074, 1835087, 0, 131072, 1835088, 0, 131073, 1835089, 0, 131073, 1835090, 0, 458766, 1966077, 0, 131072, 1966078, 0, 131073, 1966079, 0, 131073, 1900544, 0, 131073, 1900545, 0, 131074, 1900623, 0, 131072, 1900624, 0, 131073, 1900625, 0, 131073, 1900626, 0, 131074, 2031613, 0, 524294, 2031614, 0, 131073, 2031615, 0, 131073, 1966080, 0, 131073, 1966081, 0, 131074, 1966159, 0, 131072, 1966160, 0, 131073, 1966161, 0, 131073, 1966162, 0, 131074, 2097148, 0, 458765, 2097149, 0, 131073, 2097150, 0, 131073, 2097151, 0, 131073, 2031616, 0, 131073, 2031617, 0, 524302, 2031695, 0, 131072, 2031696, 0, 131073, 2031697, 0, 131073, 2031698, 0, 131074, 2162684, 0, 131072, 2162685, 0, 131073, 2162686, 0, 131073, 2162687, 0, 131073, 2097152, 0, 393216, 2097231, 0, 131072, 2097232, 0, 131073, 2097233, 0, 131073, 2097234, 0, 131074, 2228220, 0, 524294, 2228221, 0, 131073, 2228222, 0, 131073, 2228223, 0, 131073, 2162688, 0, 524288, 2162767, 0, 131072, 2162768, 0, 131073, 2162769, 0, 131073, 2162770, 0, 131074, 2293755, 0, 458765, 2293756, 0, 131073, 2293757, 0, 131073, 2293758, 0, 131073, 2293759, 0, 131073, 2228224, 0, 131073, 2228225, 0, 458766, 2228303, 0, 524294, 2228304, 0, 131073, 2228305, 0, 131073, 2228306, 0, 131074, 2359291, 0, 131072, 2359292, 0, 131073, 2359293, 0, 131073, 2359294, 0, 131073, 2359295, 0, 131073, 2293760, 0, 131073, 2293761, 0, 524288, 2293838, 0, 458765, 2293839, 0, 131073, 2293840, 0, 131073, 2293841, 0, 131073, 2293842, 0, 131074, 2424827, 0, 131072, 2424828, 0, 131073, 2424829, 0, 131073, 2424830, 0, 131073, 2424831, 0, 131073, 2359296, 0, 131073, 2359297, 0, 131073, 2359298, 0, 458766, 2359374, 0, 524294, 2359375, 0, 131073, 2359376, 0, 131073, 2359377, 0, 131073, 2359378, 0, 131074, 2490363, 0, 131072, 2490364, 0, 131073, 2490365, 0, 131073, 2490366, 0, 131073, 2490367, 0, 131073, 2424832, 0, 131073, 2424833, 0, 131073, 2424834, 0, 131074, 2424891, 0, 1048586, 2424892, 0, 65537, 2424893, 0, 65537, 2424894, 0, 65538, 2424909, 0, 458765, 2424910, 0, 131073, 2424911, 0, 131073, 2424912, 0, 131073, 2424913, 0, 131073, 2424914, 0, 131074, 2555899, 0, 131072, 2555900, 0, 131073, 2555901, 0, 131073, 2555902, 0, 131073, 2555903, 0, 131073, 2490368, 0, 131073, 2490369, 0, 131073, 2490370, 0, 131074, 2490426, 0, 589829, 2490427, 0, 131073, 2490428, 0, 131073, 2490429, 0, 131073, 2490430, 0, 131074, 2490445, 0, 524294, 2490446, 0, 131073, 2490447, 0, 131073, 2490448, 0, 131073, 2490449, 0, 131073, 2490450, 0, 131074, 2621435, 0, 131072, 2621436, 0, 131073, 2621437, 0, 131073, 2621438, 0, 131073, 2621439, 0, 131073, 2555904, 0, 131073, 2555905, 0, 131073, 2555906, 0, 131074, 2555961, 0, 589829, 2555962, 0, 131073, 2555963, 0, 131073, 2555964, 0, 131073, 2555965, 0, 131073, 2555966, 0, 131074, 2555980, 0, 589829, 2555981, 0, 131073, 2555982, 0, 131073, 2555983, 0, 131073, 2555984, 0, 131073, 2555985, 0, 131073, 2555986, 0, 131074, 2686971, 0, 131072, 2686972, 0, 131073, 2686973, 0, 131073, 2686974, 0, 131073, 2686975, 0, 131073, 2621440, 0, 131073, 2621441, 0, 131073, 2621442, 0, 524288, 2621457, 0, 1048586, 2621458, 0, 65537, 2621459, 0, 65537, 2621460, 0, 65537, 2621461, 0, 65537, 2621462, 0, 65537, 2621463, 0, 65537, 2621464, 0, 65537, 2621465, 0, 65537, 2621466, 0, 65537, 2621467, 0, 65537, 2621468, 0, 65537, 2621469, 0, 65537, 2621470, 0, 65537, 2621471, 0, 65537, 2621472, 0, 65537, 2621473, 0, 65537, 2621474, 0, 1048587, 2621496, 0, 589829, 2621497, 0, 131073, 2621498, 0, 131073, 2621499, 0, 131073, 2621500, 0, 131073, 2621501, 0, 131073, 2621502, 0, 524288, 2621515, 0, 589829, 2621516, 0, 131073, 2621517, 0, 131073, 2621518, 0, 131073, 2621519, 0, 131073, 2621520, 0, 131073, 2621521, 0, 131073, 2621522, 0, 131074, 2752507, 0, 131072, 2752508, 0, 131073, 2752509, 0, 131073, 2752510, 0, 131073, 2752511, 0, 131073, 2686976, 0, 131073, 2686977, 0, 131073, 2686978, 0, 131073, 2686979, 0, 655362, 2686980, 0, 65537, 2686981, 0, 65537, 2686982, 0, 65537, 2686983, 0, 65537, 2686984, 0, 65537, 2686985, 0, 65537, 2686986, 0, 65537, 2686987, 0, 65537, 2686988, 0, 65537, 2686989, 0, 65537, 2686990, 0, 65537, 2686991, 0, 65537, 2686992, 0, 655364, 2686993, 0, 131073, 2686994, 0, 131073, 2686995, 0, 131073, 2686996, 0, 131073, 2686997, 0, 131073, 2686998, 0, 131073, 2686999, 0, 131073, 2687000, 0, 131073, 2687001, 0, 131073, 2687002, 0, 131073, 2687003, 0, 131073, 2687004, 0, 131073, 2687005, 0, 131073, 2687006, 0, 131073, 2687007, 0, 131073, 2687008, 0, 131073, 2687009, 0, 131073, 2687010, 0, 131073, 2687011, 0, 655362, 2687012, 0, 65537, 2687013, 0, 65537, 2687014, 0, 65537, 2687015, 0, 65537, 2687016, 0, 65537, 2687017, 0, 65537, 2687018, 0, 65537, 2687019, 0, 65537, 2687020, 0, 65537, 2687021, 0, 65537, 2687022, 0, 65537, 2687023, 0, 65537, 2687024, 0, 65537, 2687025, 0, 65537, 2687026, 0, 65537, 2687027, 0, 65537, 2687028, 0, 65537, 2687029, 0, 65537, 2687030, 0, 65537, 2687031, 0, 655364, 2687032, 0, 131073, 2687033, 0, 131073, 2687034, 0, 131073, 2687035, 0, 131073, 2687036, 0, 131073, 2687037, 0, 131073, 2687038, 0, 131073, 2687039, 0, 655362, 2687040, 0, 65537, 2687041, 0, 65537, 2687042, 0, 65537, 2687043, 0, 65537, 2687044, 0, 65537, 2687045, 0, 65537, 2687046, 0, 65537, 2687047, 0, 65537, 2687048, 0, 65537, 2687049, 0, 65537, 2687050, 0, 655364, 2687051, 0, 131073, 2687052, 0, 131073, 2687053, 0, 131073, 2687054, 0, 131073, 2687055, 0, 131073, 2687056, 0, 131073, 2687057, 0, 131073, 2687058, 0, 131074, 2818043, 0, 524301, 2818044, 0, 131073, 2818045, 0, 131073, 2818046, 0, 131073, 2818047, 0, 131073, 2752512, 0, 131073, 2752513, 0, 131073, 2752514, 0, 131073, 2752515, 0, 131073, 2752516, 0, 131073, 2752517, 0, 131073, 2752518, 0, 131073, 2752519, 0, 131073, 2752520, 0, 131073, 2752521, 0, 131073, 2752522, 0, 131073, 2752523, 0, 131073, 2752524, 0, 131073, 2752525, 0, 131073, 2752526, 0, 131073, 2752527, 0, 131073, 2752528, 0, 131073, 2752529, 0, 131073, 2752530, 0, 131073, 2752531, 0, 131073, 2752532, 0, 131073, 2752533, 0, 131073, 2752534, 0, 131073, 2752535, 0, 131073, 2752536, 0, 131073, 2752537, 0, 131073, 2752538, 0, 131073, 2752539, 0, 131073, 2752540, 0, 131073, 2752541, 0, 131073, 2752542, 0, 131073, 2752543, 0, 131073, 2752544, 0, 131073, 2752545, 0, 131073, 2752546, 0, 131073, 2752547, 0, 131073, 2752548, 0, 131073, 2752549, 0, 131073, 2752550, 0, 131073, 2752551, 0, 131073, 2752552, 0, 131073, 2752553, 0, 131073, 2752554, 0, 131073, 2752555, 0, 131073, 2752556, 0, 131073, 2752557, 0, 131073, 2752558, 0, 131073, 2752559, 0, 131073, 2752560, 0, 131073, 2752561, 0, 131073, 2752562, 0, 131073, 2752563, 0, 131073, 2752564, 0, 131073, 2752565, 0, 131073, 2752566, 0, 131073, 2752567, 0, 131073, 2752568, 0, 131073, 2752569, 0, 131073, 2752570, 0, 131073, 2752571, 0, 131073, 2752572, 0, 131073, 2752573, 0, 131073, 2752574, 0, 131073, 2752575, 0, 131073, 2752576, 0, 131073, 2752577, 0, 131073, 2752578, 0, 131073, 2752579, 0, 131073, 2752580, 0, 131073, 2752581, 0, 131073, 2752582, 0, 131073, 2752583, 0, 131073, 2752584, 0, 131073, 2752585, 0, 131073, 2752586, 0, 131073, 2752587, 0, 131073, 2752588, 0, 131073, 2752589, 0, 131073, 2752590, 0, 131073, 2752591, 0, 131073, 2752592, 0, 131073, 2752593, 0, 131073, 2752594, 0, 524288, 2883580, 0, 393222, 2883581, 0, 131073, 2883582, 0, 131073, 2883583, 0, 131073, 2818048, 0, 131073, 2818049, 0, 131073, 2818050, 0, 131073, 2818051, 0, 131073, 2818052, 0, 131073, 2818053, 0, 131073, 2818054, 0, 131073, 2818055, 0, 131073, 2818056, 0, 131073, 2818057, 0, 131073, 2818058, 0, 131073, 2818059, 0, 131073, 2818060, 0, 131073, 2818061, 0, 131073, 2818062, 0, 131073, 2818063, 0, 131073, 2818064, 0, 131073, 2818065, 0, 131073, 2818066, 0, 131073, 2818067, 0, 131073, 2818068, 0, 131073, 2818069, 0, 131073, 2818070, 0, 131073, 2818071, 0, 131073, 2818072, 0, 131073, 2818073, 0, 131073, 2818074, 0, 131073, 2818075, 0, 131073, 2818076, 0, 131073, 2818077, 0, 131073, 2818078, 0, 131073, 2818079, 0, 131073, 2818080, 0, 131073, 2818081, 0, 131073, 2818082, 0, 131073, 2818083, 0, 131073, 2818084, 0, 131073, 2818085, 0, 131073, 2818086, 0, 131073, 2818087, 0, 131073, 2818088, 0, 131073, 2818089, 0, 131073, 2818090, 0, 131073, 2818091, 0, 131073, 2818092, 0, 131073, 2818093, 0, 131073, 2818094, 0, 131073, 2818095, 0, 131073, 2818096, 0, 131073, 2818097, 0, 131073, 2818098, 0, 131073, 2818099, 0, 131073, 2818100, 0, 131073, 2818101, 0, 131073, 2818102, 0, 131073, 2818103, 0, 131073, 2818104, 0, 131073, 2818105, 0, 131073, 2818106, 0, 131073, 2818107, 0, 131073, 2818108, 0, 131073, 2818109, 0, 131073, 2818110, 0, 131073, 2818111, 0, 131073, 2818112, 0, 131073, 2818113, 0, 131073, 2818114, 0, 131073, 2818115, 0, 131073, 2818116, 0, 131073, 2818117, 0, 131073, 2818118, 0, 131073, 2818119, 0, 131073, 2818120, 0, 131073, 2818121, 0, 131073, 2818122, 0, 131073, 2818123, 0, 131073, 2818124, 0, 131073, 2818125, 0, 131073, 2818126, 0, 131073, 2818127, 0, 131073, 2818128, 0, 131073, 2818129, 0, 131073, 2818130, 0, 131073, 2818131, 0, 458766, 2949116, 0, 131072, 2949117, 0, 131073, 2949118, 0, 131073, 2949119, 0, 131073, 2883584, 0, 131073, 2883585, 0, 131073, 2883586, 0, 131073, 2883587, 0, 131073, 2883588, 0, 131073, 2883589, 0, 131073, 2883590, 0, 131073, 2883591, 0, 131073, 2883592, 0, 131073, 2883593, 0, 131073, 2883594, 0, 131073, 2883595, 0, 131073, 2883596, 0, 131073, 2883597, 0, 131073, 2883598, 0, 131073, 2883599, 0, 131073, 2883600, 0, 131073, 2883601, 0, 131073, 2883602, 0, 131073, 2883603, 0, 131073, 2883604, 0, 131073, 2883605, 0, 131073, 2883606, 0, 131073, 2883607, 0, 131073, 2883608, 0, 131073, 2883609, 0, 131073, 2883610, 0, 131073, 2883611, 0, 131073, 2883612, 0, 131073, 2883613, 0, 131073, 2883614, 0, 131073, 2883615, 0, 131073, 2883616, 0, 131073, 2883617, 0, 131073, 2883618, 0, 131073, 2883619, 0, 131073, 2883620, 0, 131073, 2883621, 0, 131073, 2883622, 0, 131073, 2883623, 0, 131073, 2883624, 0, 131073, 2883625, 0, 131073, 2883626, 0, 131073, 2883627, 0, 131073, 2883628, 0, 131073, 2883629, 0, 131073, 2883630, 0, 131073, 2883631, 0, 131073, 2883632, 0, 131073, 2883633, 0, 131073, 2883634, 0, 131073, 2883635, 0, 131073, 2883636, 0, 131073, 2883637, 0, 131073, 2883638, 0, 131073, 2883639, 0, 131073, 2883640, 0, 131073, 2883641, 0, 131073, 2883642, 0, 131073, 2883643, 0, 131073, 2883644, 0, 131073, 2883645, 0, 131073, 2883646, 0, 131073, 2883647, 0, 131073, 2883648, 0, 131073, 2883649, 0, 131073, 2883650, 0, 131073, 2883651, 0, 131073, 2883652, 0, 131073, 2883653, 0, 131073, 2883654, 0, 131073, 2883655, 0, 131073, 2883656, 0, 131073, 2883657, 0, 131073, 2883658, 0, 131073, 2883659, 0, 131073, 2883660, 0, 131073, 2883661, 0, 131073, 2883662, 0, 131073, 2883663, 0, 131073, 2883664, 0, 131073, 2883665, 0, 131073, 2883666, 0, 131073, 2883667, 0, 524302, 3014652, 0, 131072, 3014653, 0, 131073, 3014654, 0, 131073, 3014655, 0, 131073, 2949120, 0, 131073, 2949121, 0, 131073, 2949122, 0, 131073, 2949123, 0, 131073, 2949124, 0, 131073, 2949125, 0, 131073, 2949126, 0, 131073, 2949127, 0, 131073, 2949128, 0, 131073, 2949129, 0, 131073, 2949130, 0, 131073, 2949131, 0, 131073, 2949132, 0, 131073, 2949133, 0, 131073, 2949134, 0, 131073, 2949135, 0, 131073, 2949136, 0, 131073, 2949137, 0, 131073, 2949138, 0, 131073, 2949139, 0, 131073, 2949140, 0, 131073, 2949141, 0, 131073, 2949142, 0, 131073, 2949143, 0, 131073, 2949144, 0, 131073, 2949145, 0, 131073, 2949146, 0, 131073, 2949147, 0, 131073, 2949148, 0, 131073, 2949149, 0, 131073, 2949150, 0, 131073, 2949151, 0, 131073, 2949152, 0, 131073, 2949153, 0, 131073, 2949154, 0, 131073, 2949155, 0, 131073, 2949156, 0, 131073, 2949157, 0, 131073, 2949158, 0, 131073, 2949159, 0, 131073, 2949160, 0, 131073, 2949161, 0, 131073, 2949162, 0, 131073, 2949163, 0, 131073, 2949164, 0, 131073, 2949165, 0, 131073, 2949166, 0, 131073, 2949167, 0, 131073, 2949168, 0, 131073, 2949169, 0, 131073, 2949170, 0, 131073, 2949171, 0, 131073, 2949172, 0, 131073, 2949173, 0, 131073, 2949174, 0, 131073, 2949175, 0, 131073, 2949176, 0, 131073, 2949177, 0, 131073, 2949178, 0, 131073, 2949179, 0, 131073, 2949180, 0, 131073, 2949181, 0, 131073, 2949182, 0, 131073, 2949183, 0, 131073, 2949184, 0, 131073, 2949185, 0, 131073, 2949186, 0, 131073, 2949187, 0, 131073, 2949188, 0, 131073, 2949189, 0, 131073, 2949190, 0, 131073, 2949191, 0, 131073, 2949192, 0, 131073, 2949193, 0, 131073, 2949194, 0, 131073, 2949195, 0, 131073, 2949196, 0, 131073, 2949197, 0, 131073, 2949198, 0, 131073, 2949199, 0, 131073, 2949200, 0, 131073, 2949201, 0, 131073, 2949202, 0, 393216, 3080188, 0, 131072, 3080189, 0, 131073, 3080190, 0, 131073, 3080191, 0, 131073, 3014656, 0, 131073, 3014657, 0, 131073, 3014658, 0, 131073, 3014659, 0, 131073, 3014660, 0, 131073, 3014661, 0, 131073, 3014662, 0, 131073, 3014663, 0, 131073, 3014664, 0, 131073, 3014665, 0, 131073, 3014666, 0, 131073, 3014667, 0, 131073, 3014668, 0, 131073, 3014669, 0, 131073, 3014670, 0, 131073, 3014671, 0, 131073, 3014672, 0, 131073, 3014673, 0, 131073, 3014674, 0, 131073, 3014675, 0, 131073, 3014676, 0, 131073, 3014677, 0, 131073, 3014678, 0, 131073, 3014679, 0, 131073, 3014680, 0, 131073, 3014681, 0, 131073, 3014682, 0, 131073, 3014683, 0, 131073, 3014684, 0, 131073, 3014685, 0, 131073, 3014686, 0, 131073, 3014687, 0, 131073, 3014688, 0, 131073, 3014689, 0, 131073, 3014690, 0, 131073, 3014691, 0, 131073, 3014692, 0, 131073, 3014693, 0, 131073, 3014694, 0, 131073, 3014695, 0, 131073, 3014696, 0, 131073, 3014697, 0, 131073, 3014698, 0, 131073, 3014699, 0, 131073, 3014700, 0, 131073, 3014701, 0, 131073, 3014702, 0, 131073, 3014703, 0, 131073, 3014704, 0, 131073, 3014705, 0, 131073, 3014706, 0, 131073, 3014707, 0, 131073, 3014708, 0, 131073, 3014709, 0, 131073, 3014710, 0, 131073, 3014711, 0, 131073, 3014712, 0, 131073, 3014713, 0, 131073, 3014714, 0, 131073, 3014715, 0, 131073, 3014716, 0, 131073, 3014717, 0, 131073, 3014718, 0, 131073, 3014719, 0, 131073, 3014720, 0, 131073, 3014721, 0, 131073, 3014722, 0, 131073, 3014723, 0, 131073, 3014724, 0, 131073, 3014725, 0, 131073, 3014726, 0, 131073, 3014727, 0, 131073, 3014728, 0, 131073, 3014729, 0, 131073, 3014730, 0, 131073, 3014731, 0, 131073, 3014732, 0, 131073, 3014733, 0, 131073, 3014734, 0, 131073, 3014735, 0, 131073, 3014736, 0, 131073, 3014737, 0, 131073, 3014738, 0, 131074, 3145724, 0, 131072, 3145725, 0, 131073, 3145726, 0, 131073, 3145727, 0, 131073, 3080192, 0, 131073, 3080193, 0, 131073, 3080194, 0, 131073, 3080195, 0, 131073, 3080196, 0, 131073, 3080197, 0, 131073, 3080198, 0, 131073, 3080199, 0, 131073, 3080200, 0, 131073, 3080201, 0, 131073, 3080202, 0, 131073, 3080203, 0, 131073, 3080204, 0, 131073, 3080205, 0, 131073, 3080206, 0, 131073, 3080207, 0, 131073, 3080208, 0, 131073, 3080209, 0, 131073, 3080210, 0, 131073, 3080211, 0, 131073, 3080212, 0, 131073, 3080213, 0, 131073, 3080214, 0, 131073, 3080215, 0, 131073, 3080216, 0, 131073, 3080217, 0, 131073, 3080218, 0, 131073, 3080219, 0, 131073, 3080220, 0, 131073, 3080221, 0, 131073, 3080222, 0, 131073, 3080223, 0, 131073, 3080224, 0, 131073, 3080225, 0, 131073, 3080226, 0, 131073, 3080227, 0, 131073, 3080228, 0, 131073, 3080229, 0, 131073, 3080230, 0, 131073, 3080231, 0, 131073, 3080232, 0, 131073, 3080233, 0, 131073, 3080234, 0, 131073, 3080235, 0, 131073, 3080236, 0, 131073, 3080237, 0, 131073, 3080238, 0, 131073, 3080239, 0, 131073, 3080240, 0, 131073, 3080241, 0, 131073, 3080242, 0, 131073, 3080243, 0, 131073, 3080244, 0, 131073, 3080245, 0, 131073, 3080246, 0, 131073, 3080247, 0, 131073, 3080248, 0, 131073, 3080249, 0, 131073, 3080250, 0, 131073, 3080251, 0, 131073, 3080252, 0, 131073, 3080253, 0, 131073, 3080254, 0, 131073, 3080255, 0, 131073, 3080256, 0, 131073, 3080257, 0, 131073, 3080258, 0, 131073, 3080259, 0, 131073, 3080260, 0, 131073, 3080261, 0, 131073, 3080262, 0, 131073, 3080263, 0, 131073, 3080264, 0, 131073, 3080265, 0, 131073, 3080266, 0, 131073, 3080267, 0, 131073, 3080268, 0, 131073, 3080269, 0, 131073, 3080270, 0, 131073, 3080271, 0, 131073, 3080272, 0, 131073, 3080273, 0, 131073, 3080274, 0, 131074, 3211260, 0, 131072, 3211261, 0, 131073, 3211262, 0, 131073, 3211263, 0, 131073, 3145728, 0, 131073, 3145729, 0, 131073, 3145730, 0, 131073, 3145731, 0, 131073, 3145732, 0, 131073, 3145733, 0, 131073, 3145734, 0, 131073, 3145735, 0, 131073, 3145736, 0, 131073, 3145737, 0, 131073, 3145738, 0, 131073, 3145739, 0, 131073, 3145740, 0, 131073, 3145741, 0, 131073, 3145742, 0, 131073, 3145743, 0, 131073, 3145744, 0, 131073, 3145745, 0, 131073, 3145746, 0, 131073, 3145747, 0, 131073, 3145748, 0, 131073, 3145749, 0, 131073, 3145750, 0, 131073, 3145751, 0, 131073, 3145752, 0, 131073, 3145753, 0, 131073, 3145754, 0, 131073, 3145755, 0, 131073, 3145756, 0, 131073, 3145757, 0, 131073, 3145758, 0, 131073, 3145759, 0, 131073, 3145760, 0, 131073, 3145761, 0, 131073, 3145762, 0, 131073, 3145763, 0, 131073, 3145764, 0, 131073, 3145765, 0, 131073, 3145766, 0, 131073, 3145767, 0, 131073, 3145768, 0, 131073, 3145769, 0, 131073, 3145770, 0, 131073, 3145771, 0, 131073, 3145772, 0, 131073, 3145773, 0, 131073, 3145774, 0, 131073, 3145775, 0, 131073, 3145776, 0, 131073, 3145777, 0, 131073, 3145778, 0, 131073, 3145779, 0, 131073, 3145780, 0, 131073, 3145781, 0, 131073, 3145782, 0, 131073, 3145783, 0, 131073, 3145784, 0, 131073, 3145785, 0, 131073, 3145786, 0, 131073, 3145787, 0, 131073, 3145788, 0, 131073, 3145789, 0, 131073, 3145790, 0, 131073, 3145791, 0, 131073, 3145792, 0, 131073, 3145793, 0, 131073, 3145794, 0, 131073, 3145795, 0, 131073, 3145796, 0, 131073, 3145797, 0, 131073, 3145798, 0, 131073, 3145799, 0, 131073, 3145800, 0, 131073, 3145801, 0, 131073, 3145802, 0, 131073, 3145803, 0, 131073, 3145804, 0, 131073, 3145805, 0, 131073, 3145806, 0, 262146, 3145807, 0, 196609, 3145808, 0, 196609, 3145809, 0, 196609, 3145810, 0, 196610, 3276796, 0, 196608, 3276797, 0, 196609, 3276798, 0, 262148, 3276799, 0, 131073, 3211264, 0, 131073, 3211265, 0, 131073, 3211266, 0, 131073, 3211267, 0, 131073, 3211268, 0, 131073, 3211269, 0, 131073, 3211270, 0, 131073, 3211271, 0, 131073, 3211272, 0, 131073, 3211273, 0, 131073, 3211274, 0, 131073, 3211275, 0, 131073, 3211276, 0, 131073, 3211277, 0, 131073, 3211278, 0, 131073, 3211279, 0, 131073, 3211280, 0, 131073, 3211281, 0, 131073, 3211282, 0, 131073, 3211283, 0, 131073, 3211284, 0, 131073, 3211285, 0, 131073, 3211286, 0, 131073, 3211287, 0, 131073, 3211288, 0, 131073, 3211289, 0, 131073, 3211290, 0, 131073, 3211291, 0, 131073, 3211292, 0, 131073, 3211293, 0, 131073, 3211294, 0, 131073, 3211295, 0, 131073, 3211296, 0, 131073, 3211297, 0, 131073, 3211298, 0, 131073, 3211299, 0, 131073, 3211300, 0, 131073, 3211301, 0, 131073, 3211302, 0, 131073, 3211303, 0, 131073, 3211304, 0, 131073, 3211305, 0, 131073, 3211306, 0, 131073, 3211307, 0, 131073, 3211308, 0, 131073, 3211309, 0, 131073, 3211310, 0, 131073, 3211311, 0, 131073, 3211312, 0, 131073, 3211313, 0, 131073, 3211314, 0, 131073, 3211315, 0, 131073, 3211316, 0, 131073, 3211317, 0, 131073, 3211318, 0, 131073, 3211319, 0, 131073, 3211320, 0, 131073, 3211321, 0, 131073, 3211322, 0, 131073, 3211323, 0, 131073, 3211324, 0, 131073, 3211325, 0, 131073, 3211326, 0, 131073, 3211327, 0, 131073, 3211328, 0, 131073, 3211329, 0, 131073, 3211330, 0, 131073, 3211331, 0, 131073, 3211332, 0, 131073, 3211333, 0, 131073, 3211334, 0, 131073, 3211335, 0, 131073, 3211336, 0, 131073, 3211337, 0, 131073, 3211338, 0, 131073, 3211339, 0, 262146, 3211340, 0, 196609, 3211341, 0, 1114123, 3342335, 0, 1114122, 3276800, 0, 196609, 3276801, 0, 196609, 3276802, 0, 196609, 3276803, 0, 196609, 3276804, 0, 196609, 3276805, 0, 196609, 3276806, 0, 196609, 3276807, 0, 196609, 3276808, 0, 196609, 3276809, 0, 196609, 3276810, 0, 196609, 3276811, 0, 196609, 3276812, 0, 196609, 3276813, 0, 262148, 3276814, 0, 131073, 3276815, 0, 131073, 3276816, 0, 131073, 3276817, 0, 131073, 3276818, 0, 131073, 3276819, 0, 131073, 3276820, 0, 131073, 3276821, 0, 131073, 3276822, 0, 131073, 3276823, 0, 131073, 3276824, 0, 131073, 3276825, 0, 131073, 3276826, 0, 131073, 3276827, 0, 131073, 3276828, 0, 131073, 3276829, 0, 131073, 3276830, 0, 131073, 3276831, 0, 131073, 3276832, 0, 131073, 3276833, 0, 131073, 3276834, 0, 131073, 3276835, 0, 131073, 3276836, 0, 131073, 3276837, 0, 131073, 3276838, 0, 131073, 3276839, 0, 262146, 3276840, 0, 196609, 3276841, 0, 196609, 3276842, 0, 196609, 3276843, 0, 196609, 3276844, 0, 196609, 3276845, 0, 196609, 3276846, 0, 196609, 3276847, 0, 196609, 3276848, 0, 196609, 3276849, 0, 196609, 3276850, 0, 196609, 3276851, 0, 196609, 3276852, 0, 196609, 3276853, 0, 196609, 3276854, 0, 196609, 3276855, 0, 196609, 3276856, 0, 196609, 3276857, 0, 196609, 3276858, 0, 196609, 3276859, 0, 196609, 3276860, 0, 196609, 3276861, 0, 196609, 3276862, 0, 196609, 3276863, 0, 196609, 3276864, 0, 262148, 3276865, 0, 131073, 3276866, 0, 131073, 3276867, 0, 131073, 3276868, 0, 262146, 3276869, 0, 196609, 3276870, 0, 196609, 3276871, 0, 196609, 3276872, 0, 196609, 3276873, 0, 196609, 3276874, 0, 1114123, 3342350, 0, 1114122, 3342351, 0, 196609, 3342352, 0, 196609, 3342353, 0, 196609, 3342354, 0, 196609, 3342355, 0, 196609, 3342356, 0, 196609, 3342357, 0, 196609, 3342358, 0, 196609, 3342359, 0, 196609, 3342360, 0, 196609, 3342361, 0, 196609, 3342362, 0, 196609, 3342363, 0, 196609, 3342364, 0, 196609, 3342365, 0, 196609, 3342366, 0, 196609, 3342367, 0, 196609, 3342368, 0, 196609, 3342369, 0, 196609, 3342370, 0, 196609, 3342371, 0, 196609, 3342372, 0, 196609, 3342373, 0, 196609, 3342374, 0, 1114123, 3342401, 0, 1114122, 3342402, 0, 196609, 3342403, 0, 1114123 )
+script = ExtResource( 22 )
 
-[node name="Node2D" type="Node2D" parent="LevelLayer Z3/Level_00/ArenaTilemap"]
-script = ExtResource( 20 )
+[node name="TileMap" type="TileMap" parent="LevelLayer Z3/Level_00"]
+tile_set = SubResource( 508 )
+cell_size = Vector2( 8, 8 )
+format = 1
 
 [node name="Shadows" type="ColorRect" parent="LevelLayer Z3"]
 visible = false
-material = SubResource( 454 )
+material = SubResource( 510 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 
 [node name="Outline" type="ColorRect" parent="LevelLayer Z3"]
-material = SubResource( 465 )
+visible = false
+material = SubResource( 507 )
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
@@ -5081,120 +4777,133 @@ visible = false
 z_index = 6
 current = false
 
-[node name="šejderji" type="Node2D" parent="."]
-visible = false
+[node name="zaloga šejderjev" type="Node2D" parent="."]
 position = Vector2( 407.401, 53.2947 )
 
-[node name="NovPoskus" type="Sprite" parent="šejderji"]
-material = SubResource( 456 )
-position = Vector2( 2.599, 20.7053 )
-texture = ExtResource( 7 )
+[node name="samo glow" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 501 )
+position = Vector2( -159.401, 164.705 )
+texture = ExtResource( 20 )
 
-[node name="v1" type="Sprite" parent="šejderji"]
+[node name="displace" type="Node2D" parent="zaloga šejderjev"]
+position = Vector2( -319.401, 226.705 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="v1" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 2 )
-position = Vector2( 68, 106 )
 texture = SubResource( 3 )
 
-[node name="v3" type="Sprite" parent="šejderji"]
+[node name="v3" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 101 )
-position = Vector2( 189, 104 )
+position = Vector2( 93, -1.00031 )
 texture = SubResource( 102 )
 
-[node name="v4" type="Sprite" parent="šejderji"]
+[node name="v4" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 104 )
-position = Vector2( 66.599, 176.705 )
-scale = Vector2( 1, 1.73041 )
+position = Vector2( 210, -1.00031 )
 texture = SubResource( 102 )
 
-[node name="v2" type="Sprite" parent="šejderji"]
+[node name="v2" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 105 )
-position = Vector2( 127, 106 )
+position = Vector2( 54, -1 )
 texture = SubResource( 102 )
 
-[node name="v5" type="Sprite" parent="šejderji"]
+[node name="v5" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 106 )
-position = Vector2( 130, 172 )
+position = Vector2( 132, -1 )
 texture = SubResource( 102 )
 
-[node name="v6" type="Sprite" parent="šejderji"]
+[node name="v6" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 18 )
-position = Vector2( 191, 172 )
+position = Vector2( 171, -1.00031 )
 texture = SubResource( 102 )
 
-[node name="v7 hor" type="Sprite" parent="šejderji"]
+[node name="v7 hor" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 22 )
-position = Vector2( 139.599, 234 )
+position = Vector2( 250, -1 )
 texture = SubResource( 102 )
 
-[node name="v7 hor3" type="Sprite" parent="šejderji"]
+[node name="v7 hor3" type="Sprite" parent="zaloga šejderjev/displace"]
 material = SubResource( 20 )
-position = Vector2( 194, 234 )
+position = Vector2( 295, -1 )
 texture = SubResource( 102 )
 
-[node name="neon light" type="Sprite" parent="šejderji"]
-material = SubResource( 97 )
-position = Vector2( -36.401, 197.705 )
-texture = ExtResource( 12 )
+[node name="gradient mask" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 456 )
+position = Vector2( -239.401, 162.705 )
+texture = ExtResource( 20 )
 
-[node name="drophadows" type="Sprite" parent="šejderji"]
-material = SubResource( 443 )
-position = Vector2( -292.401, 77.7053 )
-texture = ExtResource( 12 )
+[node name="waves3" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 483 )
+position = Vector2( -159.401, 82.7053 )
+texture = ExtResource( 20 )
 
-[node name="glow s kapco" type="Sprite" parent="šejderji"]
-material = SubResource( 452 )
-position = Vector2( -168.401, 83.7053 )
+[node name="blackhole" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 491 )
+position = Vector2( -159.401, 2.70531 )
+texture = ExtResource( 20 )
+
+[node name="pixelate" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 495 )
+position = Vector2( -79.401, 2.70531 )
 texture = ExtResource( 6 )
 
-[node name="outline inner" type="Sprite" parent="šejderji"]
+[node name="neon light" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 97 )
+position = Vector2( -79.401, 164.705 )
+texture = ExtResource( 20 )
+
+[node name="drophadows" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 443 )
+position = Vector2( -319.401, 2.7053 )
+texture = ExtResource( 20 )
+
+[node name="glow s kapco" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 452 )
+position = Vector2( -239.401, 82.7053 )
+texture = ExtResource( 20 )
+
+[node name="outline inner original" type="Sprite" parent="zaloga šejderjev"]
 material = SubResource( 432 )
-position = Vector2( -197.401, 203.705 )
-texture = ExtResource( 12 )
+position = Vector2( -239.401, 1.7053 )
+texture = ExtResource( 20 )
 
-[node name="outline" type="Sprite" parent="šejderji"]
-material = SubResource( 425 )
-position = Vector2( -169.401, 103.705 )
-texture = ExtResource( 12 )
-
-[node name="aura" type="Sprite" parent="šejderji"]
+[node name="aura" type="Sprite" parent="zaloga šejderjev"]
 material = SubResource( 448 )
-position = Vector2( -301.072, 218.034 )
-scale = Vector2( 0.657343, 0.657343 )
-texture = ExtResource( 5 )
+position = Vector2( -319.401, 162.705 )
+texture = ExtResource( 20 )
 
-[node name="Shadows maskanje ok" type="ColorRect" parent="šejderji"]
+[node name="edge_loop" type="Sprite" parent="zaloga šejderjev"]
+material = SubResource( 467 )
+position = Vector2( -319.401, 81.7053 )
+texture = ExtResource( 20 )
+
+[node name="Shadows glede na background" type="ColorRect" parent="zaloga šejderjev"]
 visible = false
-material = SubResource( 83 )
+material = SubResource( 497 )
 margin_left = -407.401
 margin_top = -53.2947
 margin_right = 232.599
 margin_bottom = 306.705
 rect_min_size = Vector2( 640, 360 )
 
-[node name="Shadows multiplikacija ok" type="ColorRect" parent="šejderji"]
+[node name="black hole orig" type="ColorRect" parent="zaloga šejderjev"]
 visible = false
-material = SubResource( 430 )
-margin_left = -490.401
-margin_top = -53.2947
-margin_right = 149.599
-margin_bottom = 306.705
-rect_min_size = Vector2( 640, 360 )
+material = SubResource( 469 )
+margin_left = -67.401
+margin_top = 41.7053
+margin_right = -27.401
+margin_bottom = 81.7053
+rect_scale = Vector2( 1.85666, 1.85666 )
 
-[node name="dropshadow_distanceon value" type="ColorRect" parent="šejderji"]
+[node name="Outline2 - perfekten\?2" type="ColorRect" parent="zaloga šejderjev"]
 visible = false
-material = SubResource( 440 )
+material = SubResource( 505 )
 margin_left = -407.401
 margin_top = -53.2947
 margin_right = 232.599
-margin_bottom = 306.705
-rect_min_size = Vector2( 640, 360 )
-
-[node name="glow iz dropshadows" type="ColorRect" parent="šejderji"]
-visible = false
-material = SubResource( 438 )
-margin_left = -490.401
-margin_top = -53.2947
-margin_right = 149.599
 margin_bottom = 306.705
 rect_min_size = Vector2( 640, 360 )
 

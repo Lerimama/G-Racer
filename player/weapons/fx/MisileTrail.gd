@@ -1,13 +1,13 @@
 extends Line2D
 
 
-export var max_points: int = 500 # kontroliram max dolžino sledi
+export var max_points: int = 60 # kontroliram max dolžino sledi
 
 var is_active: bool
 var min_spawn_distance: float = 5
 
 var point_age: Array = [0.0] # v ta array gre za vsako piko nova starost
-var chaos_level: float = 0.3
+var chaos_level: float = 0.2
 var chaos_speed: float = 1
 
 # tick je dodan za bolj fino kontrolo na obnašanjem linije 

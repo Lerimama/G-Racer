@@ -2,10 +2,11 @@ extends Node2D
 
 
 var spawned_by: String
+var spawned_by_color: Color
 
 var drop_direction: Vector2 = -transform.x # rikverc na osi x
 var drop_speed: float = 32 # regulacija v animaciji
-var drop_time: float = 5.0 # opredeli dolžino meta
+var drop_time: float = 1.0 # opredeli dolžino meta
 
 var activate_time: float = 0.3
 var deactivate_time: float = 0.7
@@ -31,6 +32,7 @@ onready var shockwave_node: Node2D = $ShockwaveNode
 func _ready() -> void:
 	
 	add_to_group("Mines")
+	modulate = spawned_by_color
 	
 	drop_direction = -transform.x # rikverc na osi x
 	
@@ -72,8 +74,7 @@ func activate():
 	
 	var activate_tween = get_tree().create_tween()
 	activate_tween.tween_property(detect_area_coll, "scale", detect_active_size, activate_time).set_trans(Tween.TRANS_SINE)#.set_ease(Tween.EASE_OUT)
-#	activate_tween.parallel().tween_property(shockwave, "material:shader_param/force", -0.1, activate_time).set_trans(Tween.TRANS_SINE)#.set_ease(Tween.EASE_OUT)
-#	activate_tween.parallel().tween_property(shockwave, "material:shader_param/size", 0.1, activate_time).set_trans(Tween.TRANS_SINE)#.set_ease(Tween.EASE_OUT)
+	activate_tween.parallel().tween_property(self, "modulate", Color.white, activate_time).set_trans(Tween.TRANS_SINE)#.set_ease(Tween.EASE_OUT)
 	
 	# loopanje
 	anim_sprite.play("loop_mini")

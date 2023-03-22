@@ -1,8 +1,11 @@
 extends Polygon2D
 
 
+var spawned_by_color: Color
+
 export var rand_color = false
-export var shard_count: int = 5
+export var shard_count: int = 0
+#export var shard_count: int = 5
 
 export var shard_gravity_factor: float = 0
 #export var shard_speed_factor: float = 200.0
@@ -39,6 +42,10 @@ func _ready() -> void:
 	explode()
 #	yield(get_tree().create_timer(0.05), "timeout")
 	debris_particles.set_emitting(true)
+	explosion_particles.process_material.color_ramp.gradient.colors[1] = Config.color_blue
+	explosion_particles.process_material.color_ramp.gradient.colors[2] = Config.color_blue
+#	explosion_particles.process_material.color_ramp.gradient.colors[1] = spawned_by_color
+#	explosion_particles.process_material.color_ramp.gradient.colors[2] = spawned_by_color
 	explosion_particles.set_emitting(true)
 
 

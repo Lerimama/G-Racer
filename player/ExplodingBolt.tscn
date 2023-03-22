@@ -1,16 +1,16 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://player/ExplodingBolt.gd" type="Script" id=1]
-[ext_resource path="res://resources/graphics/bolt.png" type="Texture" id=2]
-[ext_resource path="res://resources/graphics/explosions/explosion_smoke_sprite.png" type="Texture" id=3]
+[ext_resource path="res://assets/player/bolt.png" type="Texture" id=2]
+[ext_resource path="res://assets/weapons/explosion_smoke_sprite.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0.249071, 0.29368, 0.587361, 0.992565, 1 )
 colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0.254159, 0.494118, 0.494118, 0.494118, 0 )
 
 [sub_resource type="Gradient" id=17]
-offsets = PoolRealArray( 0.187755, 0.2, 0.371429, 0.42449, 0.783673, 1 )
-colors = PoolColorArray( 1, 1, 1, 1, 1, 0.921783, 0.0898438, 1, 1, 0.5625, 0, 1, 0.270271, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 )
+offsets = PoolRealArray( 0.220408, 0.226221, 0.375321, 0.444898, 0.783673, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 0.843137, 0.219608, 1, 1, 0.843137, 0.219608, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 )
 
 [sub_resource type="GradientTexture" id=8]
 gradient = SubResource( 17 )

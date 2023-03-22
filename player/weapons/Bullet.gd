@@ -4,6 +4,7 @@ extends KinematicBody2D
 signal Get_hit_by_bullet (hit_location, bullet_velocity, bullet_owner)
 
 var spawned_by: String
+var spawned_by_color: Color
 
 export var speed: float = 1400.00
 var direction: Vector2
@@ -27,6 +28,7 @@ onready var HitParticles: PackedScene = preload("res://player/weapons/fx/BulletH
 func _ready() -> void:
 	
 	add_to_group("Bullets")
+	modulate = spawned_by_color
 	
 	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo ko area zazna izhod
 		
@@ -36,10 +38,10 @@ func _ready() -> void:
 	
 	# spawn trail
 	new_bullet_trail = BulletTrail.instance()
+	new_bullet_trail.gradient.colors[1] = spawned_by_color
 #	new_bullet_trail.global_position = position
 #	new_bullet_trail.rotation = global_rotation
 	Global.effects_creation_parent.add_child(new_bullet_trail)
-#	new_bullet_trail.set_as_toplevel(true)
 	
 	
 func _process(delta: float) -> void:
@@ -49,12 +51,12 @@ func _process(delta: float) -> void:
 	away_from_owner_time += 1.5 * delta
 	if away_from_owner_time >= away_from_owner_time_limit:
 		collision_shape.disabled = false
-		print ("taJM")		
+		print ("bullet away tajm")		
 		print (collision_shape.disabled)
 
 func _physics_process(delta: float) -> void:
 
-	move_and_slide(velocity)
+	move_and_slide(velocity) 
 
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	if get_slide_count() != 0:
@@ -62,12 +64,21 @@ func _physics_process(delta: float) -> void:
 		destroy_bullet()
 		
 	# če kolizija obstaja in ima collider metodo ...
-	if collision != null && collision.collider.has_method("on_hit_by_bullet"):
+	if collision != null: 
 		
-#		emit_signal("Get_hit_by_bullet", collision_data.position + velocity.normalized()) 
-
+		if collision.collider.has_method("on_hit"):
+			# trenutno specialno za tilemap
+			# oddam signal s sporočilom o poziciji
+			emit_signal("Get_hit_by_bullet", collision.position + velocity.normalized()) 
+			# tilemap prevede pozicijo na najbližjo pozicijo tileta v tilempu  
+			# to pomeni da lahko izbriše prazen tile
+			# s tem ko poziciji dodamo nekaj malega v smeri gibanja izstrelka, poskrbimo, da je izbran pravi tile 
+			
+			collision.collider.on_hit(collision.position + velocity.normalized())
+			
+		if collision.collider.has_method("on_hit_by_bullet"):
 		# pošljem podatek o lokaciji, smer in hitrost
-		collision.collider.on_hit_by_bullet(velocity, spawned_by)
+			collision.collider.on_hit_by_bullet(velocity, spawned_by)
 
 
 func destroy_bullet():	
@@ -76,6 +87,7 @@ func destroy_bullet():
 	var new_hit_particles = HitParticles.instance()
 	new_hit_particles.position = collision.position
 	new_hit_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
+	new_hit_particles.color = spawned_by_color
 	new_hit_particles.set_emitting(true)
 	Global.effects_creation_parent.add_child(new_hit_particles)
 	

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://player/weapons/Bullet.gd" type="Script" id=1]
-[ext_resource path="res://resources/graphics/weapon_bullet.png" type="Texture" id=2]
+[ext_resource path="res://assets/weapons/weapon_bullet.png" type="Texture" id=2]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 2, 2 )

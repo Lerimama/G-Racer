@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://resources/graphics/tile_raketa.png" type="Texture" id=1]
-[ext_resource path="res://resources/graphics/light.png" type="Texture" id=2]
+[ext_resource path="res://assets/light.png" type="Texture" id=2]
 [ext_resource path="res://_obs/Player.gd" type="Script" id=3]
 
 [node name="Player" type="RigidBody2D"]

@@ -26,13 +26,15 @@ window/size/height=360
 window/size/always_on_top=true
 window/size/test_width=1280
 window/size/test_height=720
-window/stretch/mode="viewport"
+window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
 [global]
 
 scene=false
 displa=false
+folder=false
+map=false
 
 [gui]
 
@@ -182,4 +184,4 @@ common/enable_pause_aware_picking=true
 limits/buffers/canvas_polygon_buffer_size_kb=256
 limits/buffers/canvas_polygon_index_buffer_size_kb=256
 environment/default_clear_color=Color( 0.439216, 0.439216, 0.439216, 1 )
-environment/default_environment="res://resources/default_env.tres"
+environment/default_environment="res://assets/default_env.tres"

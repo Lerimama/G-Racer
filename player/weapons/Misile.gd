@@ -4,6 +4,7 @@ extends Node2D
 signal Get_hit (hit_location, misile_velocity, misile_owner)
 
 var spawned_by: String
+var spawned_by_color: Color
 
 # gibanje
 export var speed: float = 140.00
@@ -48,10 +49,12 @@ func _ready() -> void:
 	add_to_group("Misiles")
 	is_active = true
 	randomize()
+	$Sprite.modulate = spawned_by_color
 	
 	
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
+	new_misile_trail.gradient.colors[3] = spawned_by_color
 	Global.effects_creation_parent.add_child(new_misile_trail)
 #	new_misile_trail.position = TrailPosition.position # ne dela kot bi prićakoval
 	
@@ -62,8 +65,8 @@ func _ready() -> void:
 	
 	accelaration_tween.interpolate_property(self ,"accelaration", 0.0, max_accelaration, is_active_time, Tween.TRANS_SINE, Tween.EASE_IN )
 	accelaration_tween.start()
-
-		
+	
+	
 func _process(delta: float) -> void:
 	
 	time += 1.5 * delta # prirejeno, da je cirka sekunda na frejm
@@ -107,6 +110,7 @@ func dissarm(): # po pretečenem dometu
 	# drop particles
 	var new_drop_particles: CPUParticles2D = DropParticles.instance()
 	new_drop_particles.global_position = drop_position.global_position
+	new_drop_particles.color = spawned_by_color
 	new_drop_particles.set_emitting(true)
 	Global.effects_creation_parent.add_child(new_drop_particles)
 	
@@ -117,6 +121,8 @@ func explode():
 	var new_misile_explosion = MisileExplosion.instance()
 	new_misile_explosion.global_position = global_position
 	new_misile_explosion.set_one_shot(true)
+	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawned_by_color
+	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawned_by_color
 	new_misile_explosion.set_emitting(true)
 	Global.effects_creation_parent.add_child(new_misile_explosion)
 		

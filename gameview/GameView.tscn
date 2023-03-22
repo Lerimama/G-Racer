@@ -2,9 +2,9 @@
 
 [ext_resource path="res://gameview/GameView.gd" type="Script" id=1]
 [ext_resource path="res://arena/Arena.tscn" type="PackedScene" id=2]
-[ext_resource path="res://resources/graphics/_obs/pixel.png" type="Texture" id=3]
-[ext_resource path="res://resources/graphics/light.png" type="Texture" id=4]
-[ext_resource path="res://resources/fonts/8-BIT WONDER.TTF" type="DynamicFontData" id=5]
+[ext_resource path="res://assets/_obs/pixel.png" type="Texture" id=3]
+[ext_resource path="res://assets/light.png" type="Texture" id=4]
+[ext_resource path="res://assets/fonts/8-BIT WONDER.TTF" type="DynamicFontData" id=5]
 
 [sub_resource type="DynamicFont" id=1]
 size = 6
