@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://_obs/KinBullet.gd" type="Script" id=1]
-[ext_resource path="res://assets/weapons/weapon_bullet.png" type="Texture" id=2]
-[ext_resource path="res://player/weapons/fx/BulletTrail.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
+[ext_resource path="res://scenes/weapons/BulletTrail.tscn" type="PackedScene" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 1.5, 1.5 )

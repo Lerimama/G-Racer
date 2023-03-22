@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="gravity_bonanza_0.1"
-run/main_scene="res://arena/Arena.tscn"
+run/main_scene="res://scenes/Arena.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -184,4 +184,3 @@ common/enable_pause_aware_picking=true
 limits/buffers/canvas_polygon_buffer_size_kb=256
 limits/buffers/canvas_polygon_index_buffer_size_kb=256
 environment/default_clear_color=Color( 0.439216, 0.439216, 0.439216, 1 )
-environment/default_environment="res://assets/default_env.tres"
