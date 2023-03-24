@@ -1,24 +1,28 @@
-extends Node2D
+extends KinematicBody2D
 
 
 var spawned_by: String
 var spawned_by_color: Color
 
 # gibanje
-export var speed: float = 140.00
-export var accelaration: float # pospešek
-export var max_accelaration: float = 10.0 # pospešek
+export var speed: float = 20.0
+export var max_speed: float = 250.0
 
+#export var accelaration: float # pospešek
+#export var max_accelaration: float = 10.0 # pospešek
+
+var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
 var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
+var acceleration_time = 1.0
 
 # domet
-export var is_active_time_limit: float = 3.0 # zadetek ali domet
+export var is_active_time_limit: float = 2.0 # zadetek ali domet
 var is_active_time: float
 var is_active: bool # zadetek ali domet
-var deactivated_speed_drop_factor: float = 70
+var deactivated_speed_drop: float = 3 # notri je to v kvadratni funkciji
 
-var wiggle_direction_range: Array = [-2, 2] # uporaba ob deaktivaciji
+var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
 var wiggle_freq: float = 0.6
 
 #homming
@@ -28,6 +32,7 @@ var target_location: Vector2
 #var homming_target: Object = null # null je zato ker je še nenastavljen
 #var target: Object = null # null je zato ker je še nenastavljen
 
+var collision: KinematicCollision2D	
 var new_misile_trail: Object
 
 onready var trail_position: Position2D = $TrailPosition
@@ -39,7 +44,10 @@ onready var MisileTrail = preload("res://scenes/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://scenes/weapons/MisileDropParticles.tscn")
 
 onready var target: Node
+onready var collision_shape: CollisionShape2D = $MisileCollision
+onready var detect_shape: CollisionShape2D = $DetectArea/CollisionShape2D
 
+var is_released: bool = false
 
 func _ready() -> void:
 	
@@ -48,95 +56,107 @@ func _ready() -> void:
 	randomize()
 	$Sprite.modulate = spawned_by_color
 	
+	collision_shape.disabled = true
+		
+	# set movement vector
+	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
+	rotation += random_range # rotacija misile
+	direction = Vector2(cos(rotation), sin(rotation))
+#	velocity = direction * speed	
 	
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
 	new_misile_trail.gradient.colors[3] = spawned_by_color
 	Global.effects_creation_parent.add_child(new_misile_trail)
-#	new_misile_trail.position = TrailPosition.position # ne dela kot bi prićakoval
-	
-	# random start dir
-	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
-	direction = transform.x.rotated(random_range) # rotacija smeri ob štartu
-	rotation = random_range # rotacija misile
-	
-	accelaration_tween.interpolate_property(self ,"accelaration", 0.0, max_accelaration, is_active_time_limit, Tween.TRANS_SINE, Tween.EASE_IN )
-	accelaration_tween.start()
 	
 	
 func _process(delta: float) -> void:
-	
-	print(is_active_time)
+
 	is_active_time += 1.5 * delta # prirejeno, da je cirka sekunda na frejm
-		
-	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
-	position += direction * speed * delta# * accelaration
 	
-	# pospeševanje in propad
-	if is_active_time < is_active_time_limit:
-		speed += 1 * accelaration
-	elif is_active_time >= is_active_time_limit:
-		dissarm()
+	if is_active_time > 0.2: # domača rešitev za nedetekcijo avtorja
+		collision_shape.disabled = false	
+	
+	if is_active_time > is_active_time_limit:
+		is_active = false
+	
+
+func _physics_process(delta: float) -> void:
+	
+	if is_active == true:
+		var accelaration_tween = get_tree().create_tween()
+		accelaration_tween.tween_property(self ,"speed", max_speed, acceleration_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		new_misile_trail.add_points(trail_position.global_position)
 		
+	elif is_active != true:
+		speed -= pow(deactivated_speed_drop, 2.0)
+		speed = clamp(speed, 0.0, speed)
+		new_misile_trail.add_points(trail_position.global_position)
+		if speed <= 20.0:
+			dissarm()
+
 	if is_homming == true: 
-		direction = lerp(direction, global_position.direction_to(target_location), homming_precision) 
+		direction = lerp(direction, global_position.direction_to(target_location), 0.1) 	
+		rotation = global_position.direction_to(target_location).angle()
+		# detect area loop ... da dobivamo stalno informacijo o lokaciji targeta
+		if detect_shape.disabled != true:
+			detect_shape.disabled = true
+		elif detect_shape.disabled == true:
+			detect_shape.disabled = false
+		
+	velocity = direction * speed	
+	move_and_slide(velocity) 
 	
-	new_misile_trail.add_points(trail_position.global_position)
+	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
+	if get_slide_count() != 0:
+		collision = get_slide_collision(0) # we wan't to take the first collision
+		explode()
+		if collision.collider.has_method("on_hit"):
+			collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+			
+			
+func dissarm():
+	
+	# wigle
+#	var wiggle: Vector2  
+#	wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
+#	transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq)
+##	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
+#	velocity = transform.x * speed
+#	position += velocity * delta
 
+	# drop particles
+	var new_drop_particles: CPUParticles2D = DropParticles.instance()
+	new_drop_particles.global_position = drop_position.global_position
+	new_drop_particles.color = spawned_by_color
+	new_drop_particles.set_one_shot(true)
+	new_drop_particles.set_emitting(true)
+	Global.effects_creation_parent.add_child(new_drop_particles)
 
-func dissarm(): # po pretečenem dometu
+	queue_free()
 	
-	is_active = false
-	is_homming = false
-	
-	# Wigle
-	var wiggle: Vector2  
-	wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
-	transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq)
+	new_misile_trail.start_decay()
+		
+		
+func explode():
 
-	# upočasnitev
-	speed -= 0.1 * deactivated_speed_drop_factor
-	speed = clamp(speed, 0.0, speed)
+	new_misile_trail.start_decay()
 	
-	# pri kateri hitrosti izgine
-	if speed <= 100:
-		
-		# drop particles
-		var new_drop_particles: CPUParticles2D = DropParticles.instance()
-		new_drop_particles.global_position = drop_position.global_position
-		new_drop_particles.color = spawned_by_color
-		new_drop_particles.set_one_shot(true)
-		new_drop_particles.set_emitting(true)
-		Global.effects_creation_parent.add_child(new_drop_particles)
-		
-		new_misile_trail.start_decay()
-		
-		queue_free()
-		
-		
+	var new_misile_explosion = MisileExplosion.instance()
+	new_misile_explosion.global_position = global_position
+	new_misile_explosion.set_one_shot(true)
+	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawned_by_color
+	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawned_by_color
+	new_misile_explosion.set_emitting(true)
+	new_misile_explosion.get_node("ExplosionBlast").play()
+	Global.effects_creation_parent.add_child(new_misile_explosion)
+	
+	queue_free()
+	
+	
 func _on_DetectArea_body_entered(body: Node) -> void:
 	
-	# čekiramo, da ni avtor
 	if body.is_in_group("Bolts") && body.name != spawned_by:
-		target_location = body.global_position
 		is_homming = true
-
-
-func _on_MisileArea_body_entered(body: Node) -> void:
-	
-	if body.name != spawned_by: # ni avtor?
-
-		new_misile_trail.start_decay()
-		
-		var new_misile_explosion = MisileExplosion.instance()
-		new_misile_explosion.global_position = global_position
-		new_misile_explosion.set_one_shot(true)
-		new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawned_by_color
-		new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawned_by_color
-		new_misile_explosion.set_emitting(true)
-		Global.effects_creation_parent.add_child(new_misile_explosion)
-
-		if body.has_method("on_hit"): 
-			body.on_hit(self)
-			
-		queue_free()
+		target = body
+		target_location = body.global_position

@@ -49,21 +49,16 @@ func _process(delta: float) -> void:
 	away_from_owner_time += 1.5 * delta
 	if away_from_owner_time >= away_from_owner_time_limit:
 		collision_shape.disabled = false
-		print ("bullet away tajm")		
-		print (collision_shape.disabled)
 
 
 func _physics_process(delta: float) -> void:
 
 	move_and_slide(velocity) 
 
-	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
-	if get_slide_count() != 0:
-		collision = get_slide_collision(0) # we wan't to take the first collision
+	
+	if get_slide_count() != 0: # preverjamo obstoj kolizije
+		collision = get_slide_collision(0) # prva kolizija, da odstranimo morebitne erorje v debuggerju
 		destroy_bullet()
-		
-	# če kolizija obstaja in ima collider metodo ...
-	if collision != null: 
 		
 		if collision.collider.has_method("on_hit"):
 			
@@ -74,18 +69,8 @@ func _physics_process(delta: float) -> void:
 			# to pomeni da lahko izbriše prazen tile
 			# s tem ko poziciji dodamo nekaj malega v smeri gibanja izstrelka, poskrbimo, da je izbran pravi tile 
 			
-#			collision.collider.on_hit(collision.position + velocity.normalized())
-#			collision.collider.on_hit(collision)
-			
-#			# pošljem podatek o node, velocity in avtorja
-#			collision.collider.on_hit(collision.collider)
-			
-			# pošljem kolizijo in node
+			# pošljem kolizijo in node ... tam naredimo isto kot v zgornjem signalu
 			collision.collider.on_hit(self)
-			
-			
-			print("kolizija 1")
-			print(collision.position + velocity.normalized())
 			
 
 func destroy_bullet():	

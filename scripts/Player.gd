@@ -91,7 +91,7 @@ func _ready() -> void:
 	add_to_group("Bolts")
 	name = player_name
 	
-	bolt_sprite.self_modulate = player_color
+	bolt_sprite.modulate = player_color
 	
 	engines_setup() # postavi partikle za pogon
 	
@@ -391,13 +391,17 @@ func on_hit(collision_object: Node):
 				velocity = lerp(velocity, Vector2.ZERO, 0.8)
 				bolt_sprite.material.set_shader_param("noise_factor", 2)
 				bolt_sprite.material.set_shader_param("speed", 0.7)
+				
+				var modulate_tween = get_tree().create_tween()
+				modulate_tween.tween_property(bolt_sprite, "modulate", Color.white, 0.5)
+				
 			elif motion_enabled != true: # release
 				motion_enabled = true
 				bolt_sprite.material.set_shader_param("noise_factor", 0)
 				bolt_sprite.material.set_shader_param("speed", 0)
-	
-		
-#
+				
+				var modulate_tween = get_tree().create_tween()
+				modulate_tween.tween_property(bolt_sprite, "modulate", player_color, 0.5)		
 
 func die():
 	var new_exploding_bolt = ExplodingBolt.instance()
@@ -408,9 +412,7 @@ func die():
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
 	Global.node_creation_parent.add_child(new_exploding_bolt)
 	queue_free()		
-	
 
-# SIGNALI
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	

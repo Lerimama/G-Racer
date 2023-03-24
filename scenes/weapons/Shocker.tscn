@@ -1,15 +1,42 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://scripts/weapons/Shocker.gd" type="Script" id=1]
 [ext_resource path="res://assets/weapons/animation_bomb.png" type="Texture" id=2]
-[ext_resource path="res://assets/weapons/blast_mono_pixel.png" type="Texture" id=3]
+[ext_resource path="res://assets/_šejdergejm/donut.png" type="Texture" id=4]
 
 [sub_resource type="RectangleShape2D" id=139]
 extents = Vector2( 1, 1 )
 
+[sub_resource type="CircleShape2D" id=138]
+radius = 7.0
+
 [sub_resource type="AtlasTexture" id=71]
 atlas = ExtResource( 2 )
 region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=522]
+atlas = ExtResource( 2 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=524]
+atlas = ExtResource( 2 )
+region = Rect2( 144, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=525]
+atlas = ExtResource( 2 )
+region = Rect2( 160, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=527]
+atlas = ExtResource( 2 )
+region = Rect2( 176, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=526]
+atlas = ExtResource( 2 )
+region = Rect2( 192, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=528]
+atlas = ExtResource( 2 )
+region = Rect2( 96, 0, 16, 16 )
 
 [sub_resource type="AtlasTexture" id=61]
 atlas = ExtResource( 2 )
@@ -19,143 +46,112 @@ region = Rect2( 32, 0, 16, 16 )
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 16, 16 )
 
-[sub_resource type="AtlasTexture" id=72]
-atlas = ExtResource( 2 )
-region = Rect2( 64, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=73]
-atlas = ExtResource( 2 )
-region = Rect2( 80, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=74]
-atlas = ExtResource( 2 )
-region = Rect2( 96, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=75]
-atlas = ExtResource( 2 )
-region = Rect2( 112, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=76]
-atlas = ExtResource( 2 )
-region = Rect2( 128, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=77]
-atlas = ExtResource( 2 )
-region = Rect2( 144, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=78]
-atlas = ExtResource( 2 )
-region = Rect2( 160, 0, 16, 16 )
-
 [sub_resource type="SpriteFrames" id=135]
 animations = [ {
-"frames": [ SubResource( 71 ), SubResource( 61 ), SubResource( 59 ), null ],
+"frames": [ SubResource( 71 ), SubResource( 522 ), SubResource( 524 ), SubResource( 525 ), SubResource( 527 ), SubResource( 526 ), SubResource( 528 ), SubResource( 71 ), SubResource( 61 ), SubResource( 59 ), null ],
 "loop": false,
 "name": "deactivate",
 "speed": 20.0
 }, {
-"frames": [ SubResource( 59 ), SubResource( 61 ) ],
-"loop": false,
-"name": "drop",
-"speed": 10.0
-}, {
-"frames": [ SubResource( 59 ), SubResource( 59 ), SubResource( 59 ), SubResource( 61 ), SubResource( 71 ), SubResource( 72 ), SubResource( 73 ), SubResource( 74 ), SubResource( 75 ), SubResource( 76 ), SubResource( 77 ), SubResource( 78 ), ExtResource( 3 ), SubResource( 78 ), SubResource( 77 ), SubResource( 76 ), SubResource( 74 ), SubResource( 73 ), SubResource( 72 ), SubResource( 71 ), SubResource( 61 ), SubResource( 61 ), SubResource( 59 ) ],
-"loop": false,
-"name": "expand",
-"speed": 20.0
-}, {
-"frames": [ SubResource( 71 ), SubResource( 72 ), SubResource( 73 ), SubResource( 74 ), SubResource( 76 ), SubResource( 77 ), SubResource( 76 ), SubResource( 74 ), SubResource( 73 ), SubResource( 72 ), SubResource( 71 ) ],
+"frames": [ SubResource( 59 ), SubResource( 59 ), SubResource( 59 ), SubResource( 61 ), SubResource( 71 ), SubResource( 61 ) ],
 "loop": true,
-"name": "loop_active",
-"speed": 20.0
-}, {
-"frames": [ SubResource( 59 ), SubResource( 59 ), SubResource( 59 ), SubResource( 61 ), SubResource( 71 ), SubResource( 71 ), SubResource( 61 ) ],
-"loop": true,
-"name": "loop_mini",
+"name": "loop",
 "speed": 20.0
 } ]
 
-[sub_resource type="Shader" id=140]
+[sub_resource type="Shader" id=516]
 code = "shader_type canvas_item;
-render_mode blend_mix;
+render_mode blend_premul_alpha;
 
-uniform bool mask_on = true;// = vec2(0.5, 0.5);
-uniform vec2 center;// = vec2(0.5, 0.5);
-uniform float force = 0.5; // displacement vector ... globina podomače
-uniform float size = 0.2; 
-uniform float hole_thickness = 0.2;
-uniform float inside_trans = 0.2;
-uniform float outside_trans = 0.2;
+uniform float size_px: hint_range(0.0, 40.0, 1.0) = 40; 
+uniform float hole_size_px: hint_range(0.0, 40.0, 1.0) = 20;
+uniform int outside_trans_px = 0;
+uniform int inside_trans_px = 0;
 
 
 void fragment() {
+		
 	
-	// razmerje ekrana, da ni elipsaste oblike (pixel size x = 1/text oz. screen width)
-	float screen_ratio = SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y;
-	// (1/640) / (1/360) = 0,5625
-
-	// korektura centra, ker je x = y
+	vec2 texture_center = vec2(0.5, 0.5);
+	vec2 texture_size = vec2(80.0); // najbolje je, če je tekstura kvadrat
+	float texture_ratio = TEXTURE_PIXEL_SIZE.x / TEXTURE_PIXEL_SIZE.y; // razmerje ekrana, da ni elipsaste oblike (pixel size x = 1/text oz. screen width)
 	
-	vec2 center_corrected = vec2((center.x - (1.0 - screen_ratio)/2.0)/screen_ratio, center.y);
-	// od original x pozicije odštejem polovico od nezasedene x dolžine (
-	// zasedena dolžine je screen_ratio -> nezasedena je 1 - screen_ratio)
-	// zamaknjeno x pozicijo potem delimo z screen_ratio, da se 1.0 x vektor raztegne na širino ekrana
-	// delimo s šrino in višino ekrana, da enote iz texlov spremenimo v pixle
+	vec2 grid_uv = round(UV * texture_size.x) / texture_size.y; // pixelizacija efekta
+	
+	vec2 center_corrected = vec2((texture_center.x - (1.0 - texture_ratio)/2.0)/texture_ratio, texture_center.y);
+	
+	// texli v pixle
+	float size = size_px / texture_size.x;
+	float hole_size = hole_size_px / texture_size.x;
+	float outside_trans = float(outside_trans_px) / texture_size.x;
+	float inside_trans = float(inside_trans_px) / texture_size.x;
 	
 	// aplikacija razmerja ekrana
-	vec2 scale_uv = (SCREEN_UV - vec2(0.5, 0.0)) / vec2 (screen_ratio, 1.0) + vec2 (0.5, 0.0);
+	vec2 scale_uv = (grid_uv - vec2(0.5, 0.0)) / vec2 (texture_ratio, 1.0) + vec2 (0.5, 0.0);
 	// scale_uv = (skrin uv - offset x, da ga premaknemo v origin, da ga lahko pravilno skejlamo) / ratio x osi, ker je popačeno samo v eno smer + offset x, da ga popravimo s tistim, ki smo ga želeli
 	
-	// gradient masked circle 
-//	float mask = length(scale_uv - center);
+	float shape = (1.0 - smoothstep(size - outside_trans, size, length(scale_uv - center_corrected))) *
+		smoothstep(hole_size - inside_trans, hole_size, length(scale_uv - center_corrected));
 	
-	// sharp masked circle 
-//	float mask = step(mask_size, length(scale_uv - center)); 
-	// step funkcija vse vrednosti pripne na zapisani vrednosti ... izbrana, ki prestavlja size, in dolžina od našega centra
-	
-	// smooth masked circle 
-//	float mask = smoothstep(mask_size - 0.05, mask_size, length(scale_uv - center)); 
-//	float mask = 1.0 - smoothstep(mask_size - 0.05, mask_size, length(scale_uv - center)); // odštejemo od 1.0 in je inverted
-	// smoothstep funkcija naredi prehod med zapisanima vrednostima ... smoothstep(vrednosti pas 1, vrednosti pas 2, vrednosti pas 3)
-	
-	// masked donut
-//	float mask = (1.0 - smoothstep(mask_size - 0.05, mask_size, length(scale_uv - center))) *
-//		smoothstep(mask_size - 0.12, mask_size - 0.05, length(scale_uv - center));
-	// multiply oba koraka (smoothstepa) med sabo, da videz dveh prehodov ... drugi je manjši in ni invertan
-	// dodamo debelino
-	float mask = (1.0 - smoothstep(size - outside_trans, size, length(scale_uv - center_corrected))) *
-		smoothstep(hole_thickness - inside_trans, hole_thickness, length(scale_uv - center_corrected));
-	
-	
-	
-	// mavrični stožec
-//	vec2 disp = normalize(SCREEN_UV - center) * force; 
-//	vec2 disp = normalize(scale_uv - center) * force; // namesto skrin_uv damo popravljeno razmerje \"scale_uv\"
-	vec2 disp = normalize(scale_uv - center_corrected) * force * mask; // apliciramo masko (multiply pomeni, da je vidna samo, kjer je bele barve ... kot prava maska)
-	
-	// tukaj grebamo teksturo in jo vmešamo s šejpom
-	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV - disp);
-	
-	// čb test maske
-	if (mask_on == true){
-		COLOR.rgb = vec3(mask);
-	}
-	
+	COLOR.rgb = vec3(shape);
+	COLOR.a = shape;
+
 }"
 
-[sub_resource type="ShaderMaterial" id=137]
-resource_local_to_scene = true
-shader = SubResource( 140 )
-shader_param/mask_on = true
-shader_param/center = Vector2( 0.5, 0.5 )
-shader_param/force = 0.5
-shader_param/size = 0.2
-shader_param/hole_thickness = 0.2
-shader_param/inside_trans = 0.2
-shader_param/outside_trans = 0.2
+[sub_resource type="ShaderMaterial" id=519]
+shader = SubResource( 516 )
+shader_param/size_px = 0.0
+shader_param/hole_size_px = 0.0
+shader_param/outside_trans_px = 0
+shader_param/inside_trans_px = 0
 
-[sub_resource type="CircleShape2D" id=138]
-radius = 7.0
+[sub_resource type="Animation" id=520]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("Shock:material:shader_param/size_px")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0 )
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Shock:material:shader_param/hole_size_px")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=521]
+resource_name = "shockwave"
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("Shock:material:shader_param/hole_size_px")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( -0.240267, -0.7, 0, 0.3, 0, 40, -0.275, 0.0715332, 0.6, -0.156072 ),
+"times": PoolRealArray( 0.2, 0.8 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath("Shock:material:shader_param/size_px")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 0, -0.25, -0.284295, 0.3, 0.341154, 38, -0.5, -0.162792, 0.1, 0.0325584 ),
+"times": PoolRealArray( 0, 0.8 )
+}
 
 [node name="Shocker" type="Node2D"]
 script = ExtResource( 1 )
@@ -165,28 +161,34 @@ script = ExtResource( 1 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
 shape = SubResource( 139 )
 
-[node name="MineSprite" type="AnimatedSprite" parent="."]
-z_index = 1
-frames = SubResource( 135 )
-animation = "drop"
-
-[node name="ShockwaveNode" type="Node2D" parent="."]
-
-[node name="Shockwave" type="ColorRect" parent="ShockwaveNode"]
-material = SubResource( 137 )
-margin_right = 130.0
-margin_bottom = 129.0
-rect_min_size = Vector2( 640, 360 )
-
-[node name="BackBuffer" type="BackBufferCopy" parent="ShockwaveNode"]
-copy_mode = 2
-
 [node name="DetectArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
 shape = SubResource( 138 )
 
+[node name="ShockerSprite" type="AnimatedSprite" parent="."]
+z_index = 1
+frames = SubResource( 135 )
+animation = "loop"
+
+[node name="Shock" type="Sprite" parent="."]
+material = SubResource( 519 )
+position = Vector2( -0.401001, -0.294708 )
+texture = ExtResource( 4 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 520 )
+anims/shockwave = SubResource( 521 )
+
+[node name="InluenceTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="DeactivateTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="body_entered" from="CollisionArea" to="." method="_on_CollisionArea_body_entered"]
-[connection signal="animation_finished" from="MineSprite" to="." method="_on_BlastSprite_animation_finished"]
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]
+[connection signal="animation_finished" from="ShockerSprite" to="." method="_on_ShockerSprite_animation_finished"]
+[connection signal="timeout" from="InluenceTimer" to="." method="_on_InluenceTimer_timeout"]
+[connection signal="timeout" from="DeactivateTimer" to="." method="_on_DeactivateTimer_timeout"]
