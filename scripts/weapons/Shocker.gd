@@ -5,34 +5,31 @@ var spawned_by: String
 var spawned_by_color: Color
 
 var drop_direction: Vector2 = -transform.x # rikverc na osi x
-var drop_speed: float = 32
+var drop_speed: float = 50
 var drop_time: float = 1.0 # opredeli dolžino meta
 
 var activate_time: float = 0.3
 var deactivate_time: float = 10
 var infuence_time: float = 5
 
-var detect_active_size: Vector2 = Vector2(2.5, 2.5)
-var detect_expand_size: Vector2 = Vector2(6.0, 6.0) # doseg partiklov
+var is_expanded: bool = false
+var detect_expand_size: float = 3.5 # doseg šoka
 
-onready var detect_collision: CollisionShape2D = $DetectArea/CollisionShape2D
+onready var detect: Area2D = $DetectArea
 onready var shocker_sprite: AnimatedSprite = $ShockerSprite
-onready var shock_shader: Sprite = $Shock
+onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var infuence_timer: Timer = $InluenceTimer
-onready var deactivate_timer: Timer = $DeactivateTimer
+onready var active_timer: Timer = $ActiveTimer
 
 
 func _ready() -> void:
 	
 	add_to_group("Shockers")
 	modulate = spawned_by_color
+#	detect.monitoring = false # disable detect
 	
 	drop_direction = -transform.x # rikverc na osi x
-	
-	# disable detect area
-	detect_collision.scale = Vector2.ZERO
-	detect_collision.disabled = true # tako se ne zgodi prezgodnja interakcija in poruši vse animacije
 	
 	# drop mine
 	var drop_tween = get_tree().create_tween()
@@ -42,71 +39,64 @@ func _ready() -> void:
 	
 func _process(delta: float) -> void:
 	
-	# motion
-	global_position += drop_direction * drop_speed * delta
+	global_position += drop_direction * drop_speed * delta # motion
 	
 		 
 func activate():
 	
-	# najprej aktiviramo detect area ...
-	detect_collision.disabled = false
-	detect_collision.scale = detect_active_size
-	
-	# loopanje spajta
+	detect.monitoring = true
+	var krneki = 1
+	krneki += 1
 	shocker_sprite.play("loop")
-	
-	deactivate_timer.set_wait_time(deactivate_time)
-	deactivate_timer.start()
+	active_timer.set_wait_time(deactivate_time)
+	active_timer.start()
 
 
-# catch			
-func _on_DetectArea_body_entered(body: Node) -> void:
+func _on_CollisionArea_body_entered(body: Node) -> void:
 	
-	deactivate_timer.stop()
-	infuence_timer.set_wait_time(infuence_time)
-	infuence_timer.start()
-	
-	# preverjam metodo ...
-	if body.has_method("on_hit"): # && body.name != spawned_by:
+	# ustavi ob trku	
+	if body.name != spawned_by:
+		drop_direction = Vector2.ZERO
 		
-		detect_collision.scale = detect_expand_size
+	# sproži			
+	if body.has_method("on_hit") && body.is_class("KinematicBody2D") && body.name != spawned_by:
+		active_timer.stop()
+		infuence_timer.set_wait_time(infuence_time)
+		infuence_timer.start()
 		
 		var modulate_tween = get_tree().create_tween()
 		modulate_tween.tween_property(self, "modulate", Color.white, 0.35)
+		modulate_tween.parallel().tween_property(detect, "scale", Vector2(detect_expand_size, detect_expand_size), 0.35)
 		
 		animation_player.play("shockwave")
+		
+		# ugasnem kar ne rabim
 		shocker_sprite.stop()
 		shocker_sprite.visible = false
-		
+	
 		body.on_hit(self)
+		detect.monitoring = false
 		
-
-# release
-func _on_DetectArea_body_exited(body: Node) -> void:
 	
-	if body.has_method("on_hit") :#&& body.name != spawned_by:
+func _on_CollisionArea_body_exited(body: Node) -> void:
+	
+	if body.has_method("on_hit") && body.name != spawned_by:
 		body.on_hit(self) # na plejerju se izbira ali je motion true ali false
-		body.modulate.a = 1.0
-
-
-# ustavi ob trku
-func _on_CollisionArea_body_entered(body: Node) -> void:
 	
-	if body.name != spawned_by:
-		drop_direction = Vector2.ZERO
-
-
-func _on_InluenceTimer_timeout() -> void:
 	
-	detect_collision.scale = Vector2.ZERO
-	queue_free()
-
-
-func _on_DeactivateTimer_timeout() -> void:
+func _on_ActiveTimer_timeout() -> void:
 	
 	shocker_sprite.play("deactivate")
 	
 	var deactivate_tween = get_tree().create_tween() # tween dam zato, da se animacija lahko odvije
-	deactivate_tween.tween_property(detect_collision, "scale", Vector2.ZERO, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	deactivate_tween.tween_property(detect, "scale", Vector2.ZERO, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	deactivate_tween.tween_callback(self, "queue_free")
+
+# kvefri
+func _on_InluenceTimer_timeout() -> void:
 	
+#	detect.scale = Vector2.ZERO # da se izvede release funkcija
+	queue_free()
+
+
+

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/weapons/BulletTrail.gd" type="Script" id=1]
-[ext_resource path="res://assets/weapons/shocker.png" type="Texture" id=2]
+[ext_resource path="res://_obs/_obs/shocker.png" type="Texture" id=2]
 
 [node name="BlastTrail" type="Line2D"]
 modulate = Color( 1, 1, 1, 0.462745 )

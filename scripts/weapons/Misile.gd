@@ -3,66 +3,58 @@ extends KinematicBody2D
 
 var spawned_by: String
 var spawned_by_color: Color
+var spawned_by_speed: float
 
 # gibanje
 export var speed: float = 20.0
-export var max_speed: float = 250.0
-
-#export var accelaration: float # pospešek
-#export var max_accelaration: float = 10.0 # pospešek
-
+export var max_speed: float = 300.0
 var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
 var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
-var acceleration_time = 1.0
+var acceleration_time = 2.0
+var collision: KinematicCollision2D	
 
 # domet
-export var is_active_time_limit: float = 2.0 # zadetek ali domet
+export var is_active_time_limit: float = 1.0 # zadetek ali domet
 var is_active_time: float
 var is_active: bool # zadetek ali domet
-var deactivated_speed_drop: float = 3 # notri je to v kvadratni funkciji
+var dissarm_speed_drop: float = 3 # notri je to v kvadratni funkciji
 
 var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
 var wiggle_freq: float = 0.6
 
 #homming
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
-var homming_precision: float = 0.03 # lerp utež ... manjša ko je, manj je natančna
 var target_location: Vector2
-#var homming_target: Object = null # null je zato ker je še nenastavljen
-#var target: Object = null # null je zato ker je še nenastavljen
+onready var target: Node
 
-var collision: KinematicCollision2D	
 var new_misile_trail: Object
-
 onready var trail_position: Position2D = $TrailPosition
 onready var drop_position: Position2D = $DropPosition
-onready var accelaration_tween: Tween = $AccelarationTween
+
+onready var homming_detect: Area2D = $HommingArea
+onready var spawner_detect: Area2D = $DetectArea
+onready var collision_shape: CollisionShape2D = $MisileCollision
 
 onready var MisileExplosion = preload("res://scenes/weapons/MisileExplosionParticles.tscn")
 onready var MisileTrail = preload("res://scenes/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://scenes/weapons/MisileDropParticles.tscn")
 
-onready var target: Node
-onready var collision_shape: CollisionShape2D = $MisileCollision
-onready var detect_shape: CollisionShape2D = $DetectArea/CollisionShape2D
-
-var is_released: bool = false
 
 func _ready() -> void:
 	
+	randomize()
+	
 	add_to_group("Misiles")
 	is_active = true
-	randomize()
 	$Sprite.modulate = spawned_by_color
-	
-	collision_shape.disabled = true
+	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
-	# set movement vector
+	# set movement
 	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
 	rotation += random_range # rotacija misile
 	direction = Vector2(cos(rotation), sin(rotation))
-#	velocity = direction * speed	
+	speed = speed + spawned_by_speed
 	
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
@@ -72,47 +64,54 @@ func _ready() -> void:
 	
 func _process(delta: float) -> void:
 
-	is_active_time += 1.5 * delta # prirejeno, da je cirka sekunda na frejm
-	
-	if is_active_time > 0.2: # domača rešitev za nedetekcijo avtorja
-		collision_shape.disabled = false	
-	
+	# deactivate
+	is_active_time += delta
 	if is_active_time > is_active_time_limit:
 		is_active = false
-	
+
 
 func _physics_process(delta: float) -> void:
 	
+	# detect avtorja ... prva je zato, ker se zgodi hitreje
+	if spawner_detect.get_overlapping_bodies().empty() == true:
+		collision_shape.disabled = false
+	else:
+		for body in spawner_detect.get_overlapping_bodies():
+			if body.name == spawned_by:
+				collision_shape.disabled = true
+	# pospeševanje
 	if is_active == true:
 		var accelaration_tween = get_tree().create_tween()
 		accelaration_tween.tween_property(self ,"speed", max_speed, acceleration_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		new_misile_trail.add_points(trail_position.global_position)
-		
+	# bremzanje	
 	elif is_active != true:
-		speed -= pow(deactivated_speed_drop, 2.0)
+		speed -= pow(dissarm_speed_drop, 1.0) # deactivated_speed_drop na kvadrat
 		speed = clamp(speed, 0.0, speed)
 		new_misile_trail.add_points(trail_position.global_position)
-		if speed <= 20.0:
+		if speed <= 100.0:
 			dissarm()
 
 	if is_homming == true: 
 		direction = lerp(direction, global_position.direction_to(target_location), 0.1) 	
 		rotation = global_position.direction_to(target_location).angle()
-		# detect area loop ... da dobivamo stalno informacijo o lokaciji targeta
-		if detect_shape.disabled != true:
-			detect_shape.disabled = true
-		elif detect_shape.disabled == true:
-			detect_shape.disabled = false
 		
-	velocity = direction * speed	
+		if homming_detect.monitoring != true:
+			homming_detect.monitoring = true
+		elif homming_detect.monitoring == true:
+			homming_detect.monitoring = false
+		
+	velocity = direction * speed
+	
 	move_and_slide(velocity) 
 	
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	if get_slide_count() != 0:
 		collision = get_slide_collision(0) # we wan't to take the first collision
-		explode()
-		if collision.collider.has_method("on_hit"):
-			collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+		if collision.collider.name != spawned_by:
+			explode()
+			if collision.collider.has_method("on_hit"):
+				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
 			
 			
 func dissarm():
@@ -154,9 +153,10 @@ func explode():
 	queue_free()
 	
 	
-func _on_DetectArea_body_entered(body: Node) -> void:
+func _on_HommingArea_body_entered(body: Node) -> void:
 	
-	if body.is_in_group("Bolts") && body.name != spawned_by:
+	if body.is_in_group("Bolts") and body.name != spawned_by:
 		is_homming = true
 		target = body
 		target_location = body.global_position
+

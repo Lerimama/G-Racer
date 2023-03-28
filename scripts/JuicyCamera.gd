@@ -18,5 +18,5 @@ func _ready() -> void:
 
 
 func _on_TimeSlider_value_changed(value: float) -> void:
-	Engine.time_scale = value # nedela
-	print("time changed")
+	Engine.time_scale = value / 20
+#	print("time changed")

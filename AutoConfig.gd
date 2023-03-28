@@ -19,6 +19,7 @@
 
 extends Node
 
+var player_name: String = "P1"
 
 # new colors
 var color_gray0 = Color("#535b68")

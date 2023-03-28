@@ -1,8 +1,6 @@
 extends Line2D
 
 
-signal BoltTrail_is_gone
-
 var min_spawn_distance: float = 3
 
 # points aging

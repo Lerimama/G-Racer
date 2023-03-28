@@ -97,7 +97,7 @@ func explode():
 	var delaunay_points = Geometry.triangulate_delaunay_2d(points)
 	
 
-	var texture_center = Vector2(texture_width/2, texture_height/2)
+	var texture_center = Vector2(texture_width/2.0, texture_height/2.0)
 	
 	if not delaunay_points:
 		print ("error ... ni poligona")# ček for exsists
@@ -106,7 +106,7 @@ func explode():
 	
 	# za vsak prisoten trikotnik, gremo čez vse točke v trikotniku in jih dodamo v shard_pool
 	# loop over each returned triangle
-	for index in len(delaunay_points) / 3: 
+	for index in len(delaunay_points) / 3.0: 
 		# Length is the character count of String, element count of Array, size of Dictionary, etc.
 		# ker so v trikotniku 3 točke, vse točke delimo s 3, da dobimo št. trikotnikov
 		
@@ -146,7 +146,7 @@ func explode():
 	
 	# base sprite alfa 0
 	yield(get_tree().create_timer(0.1), "timeout") # zamik
-	color.a = 0 
+	color.a = .5
 
 	
 func reset():

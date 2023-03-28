@@ -1,7 +1,7 @@
 [gd_scene load_steps=25 format=2]
 
-[ext_resource path="res://assets/weapons/animation_bomb.png" type="Texture" id=1]
-[ext_resource path="res://assets/weapons/blast_sprite.png" type="Texture" id=2]
+[ext_resource path="res://assets/weapons/animation_shocker.png" type="Texture" id=1]
+[ext_resource path="res://_obs/_obs/blast_sprite.png" type="Texture" id=2]
 [ext_resource path="res://_obs/Blast_v1.gd" type="Script" id=3]
 
 [sub_resource type="CircleShape2D" id=67]

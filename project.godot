@@ -12,12 +12,16 @@ config_version=4
 
 config/name="gravity_bonanza_0.1"
 run/main_scene="res://scenes/Arena.tscn"
-config/icon="res://icon.png"
+config/icon="res://materials/icon.png"
 
 [autoload]
 
 Global="*res://AutoGlobal.gd"
 Config="*res://AutoConfig.gd"
+
+[debug]
+
+gdscript/completion/autocomplete_setters_and_getters=true
 
 [display]
 
