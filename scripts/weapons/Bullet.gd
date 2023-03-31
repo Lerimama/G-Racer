@@ -24,7 +24,7 @@ onready var HitParticles: PackedScene = preload("res://scenes/weapons/BulletHitP
 func _ready() -> void:
 	
 	add_to_group("Bullets")
-	modulate = spawned_by_color
+	modulate = Color.white
 	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
 	# set movement vector
@@ -48,10 +48,8 @@ func _physics_process(delta: float) -> void:
 	# detect avtorja ... prva je zato, ker se zgodi hitreje
 	for body in spawner_detect.get_overlapping_bodies():
 		if body.name == spawned_by:
-			print("TRU")
 			collision_shape.disabled = true
 		elif body.name != spawned_by:
-			print("FLS")
 			collision_shape.disabled = false
 		
 	move_and_slide(velocity) # ma delto že vgrajeno
@@ -83,7 +81,6 @@ func destroy_bullet():
 	new_hit_particles.color = spawned_by_color
 	new_hit_particles.set_emitting(true)
 	Global.effects_creation_parent.add_child(new_hit_particles)
-	
 	new_bullet_trail.start_decay(collision.position) # zadnja pika se pripne na mesto kolizije
 	queue_free()
 	

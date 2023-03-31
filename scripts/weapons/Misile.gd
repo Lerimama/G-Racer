@@ -7,7 +7,7 @@ var spawned_by_speed: float
 
 # gibanje
 export var speed: float = 20.0
-export var max_speed: float = 300.0
+export var max_speed: float = 200.0
 var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
 var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
@@ -48,6 +48,7 @@ func _ready() -> void:
 	add_to_group("Misiles")
 	is_active = true
 	$Sprite.modulate = spawned_by_color
+	$Sprite.modulate = Color.white
 	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
 	# set movement
@@ -102,7 +103,6 @@ func _physics_process(delta: float) -> void:
 			homming_detect.monitoring = false
 		
 	velocity = direction * speed
-	
 	move_and_slide(velocity) 
 	
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
@@ -160,3 +160,8 @@ func _on_HommingArea_body_entered(body: Node) -> void:
 		target = body
 		target_location = body.global_position
 
+
+
+#func _on_HommingArea_body_exited(body: Node) -> void:
+##	target = null
+#	is_homming = false

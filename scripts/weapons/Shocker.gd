@@ -26,7 +26,7 @@ onready var active_timer: Timer = $ActiveTimer
 func _ready() -> void:
 	
 	add_to_group("Shockers")
-	modulate = spawned_by_color
+	modulate = Color.white
 #	detect.monitoring = false # disable detect
 	
 	drop_direction = -transform.x # rikverc na osi x

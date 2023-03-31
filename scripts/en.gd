@@ -1,13 +1,19 @@
 extends KinematicBody2D
 
+signal path_changed (path) # pošlje array pozicij
+signal target_reached
+
+
+export var controller_node: Resource
+
 # player data
-export var player_name: String = "P1"
-var player_color: Color = Config.color_blue
+export var player_name: String = "Enemy"
+var player_color: Color = Color.turquoise
 export var inputs_enabled: bool = true # za nedelovanje naprej/nazaj ... input disable bilo bolje
 
 # osnovno gibanje
 export var axis_distance: int = 9 # medosna razdalja
-export (int, 0, 1000) var engine_power = 500
+export (int, 0, 1000) var engine_power = 200
 export (int, 0, 180) var turn_angle = 15 # kot obrata per frame (stopinje)
 export var free_rotation_multiplier = 20 # omogoča dovolj hitro rotacijo kadar je pri miru
 export var max_speed_reverse = 120
@@ -28,7 +34,8 @@ var rotation_angle: float # obrat per frame v izbrani smeri
 var rotation_dir: float
 
 var motion_enabled: bool = true # za nedelovanje naprej/nazaj ... input disable bilo bolje
-var reverse_motion: bool = false
+var rev_motion: bool = false
+var fwd_motion: bool = false
 
 var bounce_angle: float
 var collision: KinematicCollision2D
@@ -58,7 +65,6 @@ var bullet_push_factor: float = 0.02 # kako močen je potisk metka ... delež hi
 var misile_reloaded: bool = true
 var misile_reload_time: float = 1.0
 
-onready var BoltTexture = $Bolt.texture
 onready var bolt_sprite: Sprite = $Bolt
 onready var rear_engine_pos: Position2D = $Bolt/RearEnginePosition
 onready var front_engine_pos_left: Position2D = $Bolt/FrontEnginePositionL
@@ -68,6 +74,8 @@ onready var bolt_collision: CollisionPolygon2D = $BoltCollision
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var shield: Sprite = $Shield
 onready var animation_player: AnimationPlayer = $AnimationPlayer
+onready var navigation_agent = $NavigationAgent2D
+onready var raycast_eyes = $RayCast2D
 
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://scenes/bolt/EngineParticles.tscn") 
@@ -77,12 +85,32 @@ onready var Bullet: PackedScene = preload("res://scenes/weapons/Bullet.tscn")
 onready var Misile: PackedScene = preload("res://scenes/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 
+# ai sledenje
+var target_reached: bool
+var ray_rotation_range = 60 # (+ ray_rotation_range <> - ray_rotation_range)
+var ray_rotation_speed = 1.5
+var ray_rotation_start
+var locked_on_target: bool
+var target_location
+
+var idle_direction: Array = [-1, 1] # smer .... več nul pomeni večć možnosti
+#var idle_direction: Array = [-1, -1, 0, 1, 1] # smer .... več nul pomeni večć možnosti
+var idle_direction_time: Array = [0.2, 1.0] # sek
+var idle_area: Array = [] # sek
+
+onready var ray_cast_dist: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
+onready var idle_target: Position2D = $"%IdleTarget"
+onready var idle_timer: Timer = $IdleTimer
+
 
 func _ready() -> void:
 	
-	add_to_group("Bolts")
-	name = player_name
+	randomize()
 	
+#	connect("tilemap_complete", tilemap, [floor_tiles])
+	
+	add_to_group("Enemies")
+#	name = player_name
 	bolt_sprite.modulate = player_color
 	bolt_collision.disabled = false
 	
@@ -95,36 +123,128 @@ func _ready() -> void:
 	
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
+	
+	# raycast
+	ray_rotation_start = rotation
+	raycast_eyes.cast_to.x = ray_cast_dist
 
 
 func _physics_process(delta: float) -> void:
+#	var target_location = get_global_mouse_position()
 	
-	
-	acceleration = Vector2.ZERO # reset accelaration
+	# follow motion, ko najde tarčo 
+	if locked_on_target:
+		set_target_location(target_location)
+		look_at(navigation_agent.get_next_location())
 		
-	if velocity.length() < force_stop_velocity: # če je hitrost res majhna ... force stop
-		velocity = Vector2.ZERO # ...naj se kar ustavi, da ne bo neskončno računal pozicije
+		acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power # * 0
+		apply_friction(delta) # adaptacija "acceleration"
+		calculate_steering(delta) # adaptacija "rotacijo"
+		velocity += acceleration * delta
+		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
+		
+		if not _arrived_at_location(): # ... motion move inside navigation signal
+			fwd_motion = true
+			collision = move_and_collide(velocity * delta, false)
+		elif not target_reached:
+			fwd_motion = false
+			target_reached = true
+			emit_signal("path_changed", []) # pošljemo prazen array, tako se linija sprazne
+			emit_signal("target_reached")
 	
-	if inputs_enabled == true:
-		motion_input(delta)
-		shooting_input(delta)
+	# prosto letenje
+	else:
+		target_location = idle_target.global_position
+		
+#		print("not locked")
+#		print(target_location)
+#		set_target_location(target_location)
+#		look_at(target_location)
+
+		acceleration = transform.x * engine_power # transform.x je (-0, -1)
+#		rotation = 0.5 
+#		acceleration = spee * engine_power # * 0
+#		acceleration = position.direction_to(target_location) * engine_power # * 0
+		rotation_angle = rotation_dir * deg2rad(turn_angle)
+		apply_friction(delta) # adaptacija "acceleration"
+		calculate_steering(delta) # adaptacija "rotacijo"
+		velocity += acceleration * delta
+		collision = move_and_collide(velocity * delta, false)
+		
+		# idle tavanje
+		# vsakih nekaj sekund izbere eno smer in zavija nekaj sekund
+		# verjetno, da je smer ista je manjša
+		
 			
-	rotation_angle = rotation_dir * deg2rad(turn_angle) # vsak frejm se obrne za toliko
-	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-	
-	apply_friction(delta) # adaptacija "acceleration"
-	calculate_steering(delta) # adaptacija "rotacijo"
-	
-	velocity += acceleration * delta
-	collision = move_and_collide(velocity * delta, false) # infinite_inertia = false
-	
 	if collision:
 		on_collision()
-	
+			
+	apply_motion_effects()
 	add_trail_points()
 	update_engine_position()
-	
+	shield.rotation = -rotation
+	apply_ai(delta)
 
+
+func apply_ai(delta): # možgani ki odločajo ... delovanje je phy procesu
+	
+	var ray_rotation_diff = raycast_eyes.get_rotation() + ray_rotation_start # trenutna delta rotacije glede na štart
+	
+	raycast_eyes.rotation += ray_rotation_speed * delta
+	
+	if raycast_eyes.get_rotation_degrees() > ray_rotation_range or raycast_eyes.get_rotation_degrees() < -ray_rotation_range: 
+		ray_rotation_speed *= -1
+		
+	if raycast_eyes.is_colliding():
+		var collider = raycast_eyes.get_collider()
+		if collider.is_in_group("Bolts"):
+			locked_on_target = true
+			target_location = collider.global_position
+			look_at(collider.global_position)
+			raycast_eyes.rotation = 0.0
+#			shooting("misile")
+		
+		else:
+			locked_on_target = false
+			set_random_motion()
+	
+			
+var direction_applied: bool =  false
+
+func set_random_motion():
+	
+	# v1 na zavijanje
+	if direction_applied:
+		pass
+	else:	
+		# random dir	
+		var idle_rotation_dir = rand_range(idle_direction[0], idle_direction[1])	
+		rotation_dir = idle_rotation_dir
+		
+		# random time
+		var direction_time = rand_range(idle_direction_time[0], idle_direction_time[1])
+		idle_timer.set_wait_time(direction_time)
+		idle_timer.start() 
+		direction_applied = true
+	
+	# v2 na psudotarčo
+		
+#		var distance_to_target = global_position.distance_to(Vector2(200,200))
+#
+#		$temp.cast_to = Vector2(-distance_to_target,0)
+#		$temp.cast_to = Vector2(-300,0)
+	# v2 na psudotarčo
+	
+	
+	
+	# ko konča mu spremenim smer reštartam in 
+#			target_location = idle_target.global_position
+
+
+
+
+
+	
 func on_collision():
 	
 	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
@@ -141,117 +261,90 @@ func on_collision():
 		Global.effects_creation_parent.add_child(new_collision_particles)
 		
 		
-func motion_input(delta: float) -> void:
+func apply_motion_effects() -> void:
 
-	
-	if Input.is_action_pressed("forward") && motion_enabled == true:
-		acceleration = transform.x * engine_power # transform.x je (-0, -1)
+	if fwd_motion == true:
 		engine_particles_rear.set_emitting(true)
-		# spawn trail
 		if bolt_trail_active == false && velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 			new_bolt_trail = BoltTrail.instance()
 			Global.effects_creation_parent.add_child(new_bolt_trail)
-#			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
 			bolt_trail_active = true 
-		
-	elif Input.is_action_just_released("forward") && motion_enabled == true:
+	else:
 		engine_particles_rear.set_emitting(false)
-			
-	if Input.is_action_pressed("reverse") && motion_enabled == true:
-		acceleration = transform.x * -engine_power
-		reverse_motion = true
+	
+	if rev_motion:
 		engine_particles_front_left.set_emitting(true)
 		engine_particles_front_right.set_emitting(true)
-		# spawn trail
-		if bolt_trail_active == false && velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+		if bolt_trail_active == false && velocity.length() > 0: 
 			new_bolt_trail = BoltTrail.instance()
 			Global.effects_creation_parent.add_child(new_bolt_trail)
-#			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
 			bolt_trail_active = true 
-	
-	elif Input.is_action_just_released("reverse") && motion_enabled == true:
-		reverse_motion = false
+	else:
 		engine_particles_front_right.set_emitting(false)
 		engine_particles_front_left.set_emitting(false)
 	
-	rotation_dir = Input.get_axis("left", "right") # +1, -1 ali 0
-
-	# vrtenje na mestu ali v gibanju
-	if Input.is_action_pressed("reverse") == false && Input.is_action_pressed("forward") == false && motion_enabled == true: # ko ni gasa niti bremze
-		rotate(delta * rotation_angle * free_rotation_multiplier)
-	else:
-		rotate(delta * rotation_angle) 
-
 	
-func shooting_input(delta: float) -> void:
+func shooting(weapon) -> void:
 	
-	if motion_enabled == true:
-		# bullet	
-		if Input.is_action_just_pressed("space") && bullet_reloaded == true:
+	match weapon:
+		"bullet": 
+			if bullet_reloaded == true:
+				var new_bullet = Bullet.instance()
+				new_bullet.position = gun_position.global_position
+				new_bullet.rotation = gun_position.global_rotation
+				new_bullet.spawned_by = name # ime avtorja izstrelka
+				new_bullet.spawned_by_color = player_color
+				Global.node_creation_parent.add_child(new_bullet)
+				
+				bullet_reloaded = false
+				yield(get_tree().create_timer(bullet_reload_time), "timeout")
+				bullet_reloaded= true		
+		"misile": 
+			if misile_reloaded == true:	
+				var new_misile = Misile.instance()
+				new_misile.position = gun_position.global_position
+				new_misile.rotation = gun_position.global_rotation
+				new_misile.spawned_by = name # ime avtorja izstrelka
+				new_misile.spawned_by_color = player_color
+				new_misile.spawned_by_speed = velocity.length()
+				Global.node_creation_parent.add_child(new_misile)
+				
+				misile_reloaded = false
+				yield(get_tree().create_timer(misile_reload_time), "timeout")
+				misile_reloaded= true	
+		"shocker": 
+			if bullet_reloaded == true:	
+				var new_shocker = Shocker.instance()
+				new_shocker.rotation = rear_engine_pos.global_rotation
+				new_shocker.global_position = rear_engine_pos.global_position
+				new_shocker.spawned_by = name # ime avtorja izstrelka
+				new_shocker.spawned_by_color = player_color
+				Global.effects_creation_layer.add_child(new_shocker)
 
-			var new_bullet = Bullet.instance()
-			new_bullet.position = gun_position.global_position
-			new_bullet.rotation = gun_position.global_rotation
-			new_bullet.spawned_by = name # ime avtorja izstrelka
-			new_bullet.spawned_by_color = player_color
-			Global.node_creation_parent.add_child(new_bullet)
-			
-			# reload weapon
-			bullet_reloaded = false
-			yield(get_tree().create_timer(bullet_reload_time), "timeout")
-			bullet_reloaded= true
+				misile_reloaded = false
+				yield(get_tree().create_timer(misile_reload_time), "timeout")
+				misile_reloaded= true	
+				
 		
-		# misile
-		if Input.is_action_just_released("alt") && misile_reloaded == true:	
-			
-			var new_misile = Misile.instance()
-			new_misile.position = gun_position.global_position
-			new_misile.rotation = gun_position.global_rotation
-			new_misile.spawned_by = name # ime avtorja izstrelka
-			new_misile.spawned_by_color = player_color
-			new_misile.spawned_by_speed = velocity.length()
-			Global.node_creation_parent.add_child(new_misile)
-	#		new_misile.connect("get_hit", self, "on_got_hit")		
-			
-			# reload weapon
-			misile_reloaded = false
-			yield(get_tree().create_timer(misile_reload_time), "timeout")
-			misile_reloaded= true	
+	# shield		
+	if Input.is_action_just_pressed("shift"):
 		
-		# shocker
-		if Input.is_action_just_released("ctrl"):	
-
-			var new_shocker = Shocker.instance()
-			new_shocker.rotation = rear_engine_pos.global_rotation
-			new_shocker.global_position = rear_engine_pos.global_position
-			new_shocker.spawned_by = name # ime avtorja izstrelka
-			new_shocker.spawned_by_color = player_color
-			Global.effects_creation_layer.add_child(new_shocker)
-
-			# reload weapon
-			misile_reloaded = false
-			yield(get_tree().create_timer(misile_reload_time), "timeout")
-			misile_reloaded= true		
-		
-		# shield		
-		if Input.is_action_just_pressed("shift"):
-			
-			if shields_on == false:
-				shield.modulate.a = 1
-				animation_player.play("shield_on")
-				shields_on = true
-				bolt_collision.disabled = true
-				shield_collision.disabled = false
-			else:
-				animation_player.play_backwards("shield_on")
-				# shields_on = false # premaknjeno dol na konec animacije
-				# collisions setup premaknjeno dol na konec animacije
-				shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
+		if shields_on == false:
+			shield.modulate.a = 1
+			animation_player.play("shield_on")
+			shields_on = true
+			bolt_collision.disabled = true
+			shield_collision.disabled = false
+		else:
+			animation_player.play_backwards("shield_on")
+			# shields_on = false # premaknjeno dol na konec animacije
+			# collisions setup premaknjeno dol na konec animacije
+			shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
 			
 	# test explozije
 	if Input.is_action_just_pressed("x"):
-		explode_and_reset()
 #		die()
+		explode_and_reset()
 			
 		
 func apply_friction(delta: float) -> void:
@@ -266,7 +359,7 @@ func calculate_steering(delta: float) -> void:
 	
 	# lokacija sprednje in zadnje osi
 	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
-	var front_axis_position = position + transform.x * axis_distance / 2.0 # sredinska pozicija vozila plus polovica medosne razdalje
+	var front_axis_position = position + transform.x * axis_distance / 2.0
 	
 	# sprememba lokacije osi ob gibanju (per frame)
 	rear_axis_position += velocity * delta	
@@ -276,12 +369,11 @@ func calculate_steering(delta: float) -> void:
 	var new_heading = (front_axis_position - rear_axis_position).normalized()
 	
 	# rikverc?
-	if reverse_motion == true:
-		# velocity = velocity.linear_interpolate(-new_heading * velocity.length(), side_traction) # brez omejitve
+	if rev_motion == true:
 		velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.1)
 	else:
-		# velocity = velocity.linear_interpolate(new_heading * min(velocity.length(), max_speed), 0.2) # je fajn, ampak pokvari spreoščeno zavijanje
 		velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction) # željeno smer gibanja doseže z zamikom "side-traction"	
+	
 	rotation = new_heading.angle() # sprite se obrne v smeri
 
 			
@@ -405,6 +497,15 @@ func die():
 	queue_free()		
 
 
+func set_target_location (target: Vector2):
+	target_reached = false
+	navigation_agent.set_target_location(target)
+
+
+func _arrived_at_location()-> bool:
+	return navigation_agent.is_navigation_finished()
+
+
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	
 	shield_loops_counter += 1
@@ -428,3 +529,24 @@ func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 			# konec loopa, ko je limit dosežen
 			elif shield_loops_counter >= shield_loops_limit:
 				animation_player.play_backwards("shield_on")
+
+
+func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2, delta) -> void:
+	
+	# moved from phys process + safe_velocity
+	if not _arrived_at_location():
+		collision = move_and_collide(safe_velocity * delta, false) # infinite_inertia = false
+	elif not target_reached: # če je prišel na lokacijo in je has arrived false
+		target_reached = true
+		emit_signal("path_changed", []) # pošljemo prazen array, tako se linija sprazne
+		emit_signal("target_reached")
+
+	
+func _on_NavigationAgent2D_path_changed() -> void:
+	emit_signal("path_changed", navigation_agent.get_nav_path()) # pošljemo točke poti do cilja
+
+
+func _on_IdleTimer_timeout() -> void:
+	print("timer finišt, smer ni več aplicirana")
+	set_random_motion()
+	direction_applied = false

@@ -1,14 +1,13 @@
 extends Polygon2D
 
 
-export var add_points_count: int = 5 # 0 = poligon ima samo vogale ... dva fragmenta
-export var fragment_gravity: float = 0
-export var fragment_speed: Array = [22, 25]
+export var add_points_count: int = 14 # 0 = poligon ima samo vogale ... dva fragmenta
+export var fragment_speed: Array = [15, 20]
 export var fragment_rotation: float = 0.5 # negativno je v smeri urinega kazalca
-export var fragment_lifetime = 0.05 # sekunda?
+export var fragment_decay_speed: float = 0.3
 export var fragment_scale: float = 1.0
-export var explode_center = Vector2(0.5, 0.5)
 
+var explode_center = Vector2(0.5, 0.5)
 var per_fragment_points = 3 # trikotnik pač
 var fragment_direction_map = {} # slovar  za shranjevanje pozicije sredine trikotnika glede na center spriteta
 
@@ -18,28 +17,23 @@ var texture_height = texture.get_height()
 
 func _ready() -> void:
 	randomize()
-	
-
-func _input(event: InputEvent) -> void:
-	
-	if Input.is_action_just_pressed("space"):
-		reset()
-		triangulate_polygon()
-	if Input.is_action_just_pressed("pavza"):
-		reset()
+	triangulate_polygon()
 	
 		
 func _process(delta: float) -> void:
 	
 	if polygon: 
-		# aplikacija gibanja, ko poligon obstaja
+		# explode
 		for frag in fragment_direction_map.keys():
-			frag.scale = Vector2(fragment_scale, fragment_scale)
+			
 			frag.position -= fragment_direction_map[frag] * delta * rand_range(fragment_speed[0], fragment_speed[1])
 			frag.rotation -= fragment_direction_map[frag].y * delta * fragment_rotation  # y je za variacijo rotacije glede na fragment
-			fragment_direction_map[frag].x -= delta * fragment_gravity 
+			frag.scale -= Vector2.ONE * delta * fragment_decay_speed
 			
-			
+			if frag.scale <= Vector2.ZERO:
+				queue_free()
+				
+				
 func triangulate_polygon():
 	
 	# definicija poligona
@@ -55,10 +49,6 @@ func triangulate_polygon():
 	# triangulacija ... vlečenje robov med točkami
 	var texture_center = Vector2(texture_width * explode_center.x, texture_height * explode_center.y) # center explozije preračunan v pixle
 	var triangulate_points = Geometry.triangulate_delaunay_2d(polygon_points) # array s točkami triangulacije
-#	var triangulate_points = Geometry.triangulate_polygon(polygon_points) # array s točkami triangulacije
-	
-	if not triangulate_points: # error ček
-		print ("error ... ni poligona")
 	
 	# število trikotnikov
 	var triangulate_points_count: int = len(triangulate_points)
@@ -81,21 +71,10 @@ func triangulate_polygon():
 		# vizualizacija trenutnega trikotnika		
 		var fragment_polygon = Polygon2D.new()
 		fragment_polygon.polygon = fragment_points # točke fragmenta so točke trikotnika
-#		fragment.texture = texture # tekstura fragmenta je tekstura original poligona 
-		fragment_polygon.color = Color (randf(), randf(), randf(), 1)
-		
-		# smer gibanja trikotnika od centra teksture proti centru trikotnika
-		fragment_direction_map[fragment_polygon] = texture_center - fragment_center
+		fragment_polygon.texture = texture # tekstura fragmenta je tekstura original poligona 
+		fragment_polygon.scale = Vector2(fragment_scale, fragment_scale)
+		fragment_direction_map[fragment_polygon] = texture_center - fragment_center # smer gibanja trikotnika od centra teksture proti centru trikotnika
 		
 		add_child(fragment_polygon)
 	
-	# ko so narejeni vsi fragmenti, skrijem original teksturo
 	color.a = 0 
-	
-	
-func reset():
-	for child in get_children():
-		if child.name != "Camera2D":
-			remove_child(child)
-	color.a = 1
-	

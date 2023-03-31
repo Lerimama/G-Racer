@@ -143,8 +143,14 @@ func on_collision():
 		
 func motion_input(delta: float) -> void:
 
+	var fwd_move = true
+	var rev_move = true
+	var left_turn = true
+	var right_turn = true
 	
-	if Input.is_action_pressed("forward") && motion_enabled == true:
+#	if Input.is_action_pressed("forward") && motion_enabled == true:
+	
+	if fwd_move:
 		acceleration = transform.x * engine_power # transform.x je (-0, -1)
 		engine_particles_rear.set_emitting(true)
 		# spawn trail
@@ -153,11 +159,7 @@ func motion_input(delta: float) -> void:
 			Global.effects_creation_parent.add_child(new_bolt_trail)
 #			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
 			bolt_trail_active = true 
-		
-	elif Input.is_action_just_released("forward") && motion_enabled == true:
-		engine_particles_rear.set_emitting(false)
-			
-	if Input.is_action_pressed("reverse") && motion_enabled == true:
+	if rev_move:	
 		acceleration = transform.x * -engine_power
 		reverse_motion = true
 		engine_particles_front_left.set_emitting(true)
@@ -168,6 +170,13 @@ func motion_input(delta: float) -> void:
 			Global.effects_creation_parent.add_child(new_bolt_trail)
 #			new_bolt_trail.connect("BoltTrail_is_gone", self, "deactivate_trail")
 			bolt_trail_active = true 
+			
+			
+	elif Input.is_action_just_released("forward") && motion_enabled == true:
+		engine_particles_rear.set_emitting(false)
+			
+	if Input.is_action_pressed("reverse") && motion_enabled == true:
+		var fwd_move = true
 	
 	elif Input.is_action_just_released("reverse") && motion_enabled == true:
 		reverse_motion = false

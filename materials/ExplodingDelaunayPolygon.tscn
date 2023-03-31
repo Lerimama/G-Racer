@@ -9,4 +9,3 @@ rotation = 1.5708
 texture = ExtResource( 1 )
 polygon = PoolVector2Array( 16, -6.10352e-05, 7.9343, -2.67029e-05, 0, 0, -1.90735e-06, 8.02954, 0, 16, 7.99003, 16, 16.0001, 15.9999, 16, 8.02948 )
 script = ExtResource( 2 )
-fragment_rotation = 0.3
