@@ -1,11 +1,9 @@
 extends KinematicBody2D
 
+
 signal path_changed (path) # pošlje array pozicij
-signal target_reached # trenutno ni v uporabi
-signal pla
+#signal target_reached # trenutno ni v uporabi
 
-
-export var controller_node: Resource
 
 # player data
 export var player_name: String = "Enemy"
@@ -66,6 +64,24 @@ var bullet_push_factor: float = 0.02 # kako močen je potisk metka ... delež hi
 var misile_reloaded: bool = true
 var misile_reload_time: float = 1.0
 
+# vision
+var ray_rotation_range = 60 # (+ ray_rotation_range <> - ray_rotation_range)
+var ray_rotation_speed = 1.5
+var ray_rotation_start: float
+
+# following
+var locked_on_target: bool
+var target_reached: bool
+var target_location: Vector2
+
+# taveling
+var travel_time: Array = [0.5, 1.0] # sek
+onready var navigation_cells: Array # sek
+onready var vision_ray_distance: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
+var direction_set: bool =  false
+
+var time: float
+
 onready var bolt_sprite: Sprite = $Bolt
 onready var rear_engine_pos: Position2D = $Bolt/RearEnginePosition
 onready var front_engine_pos_left: Position2D = $Bolt/FrontEnginePositionL
@@ -76,7 +92,7 @@ onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var shield: Sprite = $Shield
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var navigation_agent = $NavigationAgent2D
-onready var raycast_eyes = $RayCast2D
+onready var vision_ray = $RayCast2D
 
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://scenes/bolt/EngineParticles.tscn") 
@@ -87,36 +103,13 @@ onready var Misile: PackedScene = preload("res://scenes/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 
 
-# ai sledenje
-
-var target_reached: bool
-var ray_rotation_range = 60 # (+ ray_rotation_range <> - ray_rotation_range)
-var ray_rotation_speed = 1.5
-var ray_rotation_start
-var locked_on_target: bool
-var target_location
-
-var idle_direction: Array = [-1, 1] # smer .... več nul pomeni večć možnosti
-#var idle_direction: Array = [-1, -1, 0, 1, 1] # smer .... več nul pomeni večć možnosti
-var idle_direction_time: Array = [0.5, 1.0] # sek
-onready var idle_area: Array # sek
-
-onready var ray_cast_dist: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
-onready var idle_target: Position2D = $"%IdleTarget"
-onready var idle_timer: Timer = $IdleTimer
-var time: float
-var direction_applied: bool =  false
-var stopped_time: float = 0
-
-
 func _ready() -> void:
 	
 	randomize()
 	
-#	connect("tilemap_complete", tilemap, [floor_tiles])
-	
 	add_to_group("Enemies")
-#	name = player_name
+	add_to_group("Bolts")
+	name = player_name # lahko da mora bit ugasnjeno zaradi nekega erorja
 	bolt_sprite.modulate = player_color
 	bolt_collision.disabled = false
 	
@@ -132,210 +125,98 @@ func _ready() -> void:
 	
 	# raycast
 	ray_rotation_start = rotation
-	raycast_eyes.cast_to.x = ray_cast_dist
+	vision_ray.cast_to.x = vision_ray_distance
 
 
 func _physics_process(delta: float) -> void:
-#	var target_location = get_global_mouse_position()
 	
 	time += delta
 	
-	# follow motion, ko najde tarčo 
-	if locked_on_target:
-		set_target_location(target_location)
-		look_at(navigation_agent.get_next_location())
-		
-		acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power # * 0
-		apply_friction(delta) # adaptacija "acceleration"
-		calculate_steering(delta) # adaptacija "rotacijo"
-		velocity += acceleration * delta
-		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
-		
-		if not _arrived_at_location(): # ... motion move inside navigation signal
-			fwd_motion = true
-			collision = move_and_collide(velocity * delta, false)
-		elif not target_reached:
-			fwd_motion = false
-			target_reached = true
-			emit_signal("path_changed", []) # pošljemo prazen array, tako se linija sprazne
-			emit_signal("target_reached")
+	set_target_location(target_location)
 	
-	# prosto letenje
-	elif target_location:
-		# v1 ... na smer
-#		target_location = idle_target.global_position
-#
-#		acceleration = transform.x * engine_power # transform.x je (-0, -1)
-#		rotation_angle = rotation_dir * deg2rad(turn_angle)
-#		apply_friction(delta) # adaptacija "acceleration"
-#		calculate_steering(delta) # adaptacija "rotacijo"
-#		velocity += acceleration * delta
-#		collision = move_and_collide(velocity * delta, false)
-		
-		# v2 ... na tarčo
-		set_target_location(target_location)
-#		look_at(navigation_agent.get_next_location())
-		
-		rotation += get_angle_to(navigation_agent.get_next_location()) * 0.1
-		
-		acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power # * 0
-		apply_friction(delta) # adaptacija "acceleration"
-		calculate_steering(delta) # adaptacija "rotacijo"
-		velocity += acceleration * delta
-		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
-		
-		if not _arrived_at_location(): # ... motion move inside navigation signal
-			fwd_motion = true
-			collision = move_and_collide(velocity * delta, false)
-		elif not target_reached:
-			fwd_motion = false
-			target_reached = true
-			emit_signal("path_changed", []) # pošljemo prazen array, tako se linija sprazne
-			emit_signal("target_reached")
-		
-		
-		
-#		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
-
-#		if not _arrived_at_location(): # ... motion move inside navigation signal
-#			fwd_motion = true
-#			collision = move_and_collide(velocity * delta, false)
-#		elif not target_reached:
-#			fwd_motion = false
-#			target_reached = true
-#			emit_signal("path_changed", []) # pošljemo prazen array, tako se linija sprazne
-#			emit_signal("target_reached")
+	if locked_on_target: # not traveling
+		look_at(navigation_agent.get_next_location())
+	
+	acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power # * 0
+	apply_friction(delta) # adaptacija "acceleration"
+	calculate_steering(delta) # adaptacija "rotacijo"
+	velocity += acceleration * delta
+	navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
+	
+	if not _arrived_at_location(): # ... motion move inside navigation signal
+		fwd_motion = true
+		collision = move_and_collide(velocity * delta, false)
+	elif not target_reached:
+		fwd_motion = false
+		target_reached = true
+		emit_signal("path_changed", []) # pošljemo prazen array, tako se linija sprazne
+#		emit_signal("target_reached")	
 			
 	if collision:
 		on_collision()
 			
+	apply_vision(delta)
 	apply_motion_effects()
 	add_trail_points()
 	update_engine_position()
 	shield.rotation = -rotation
-	apply_ai(delta)
 
 
-func apply_ai(delta): # možgani ki odločajo ... delovanje je phy procesu
+func apply_vision(delta): # možgani ki odločajo ... delovanje (telo) pa je ph procesu
 	
-	var ray_rotation_diff = raycast_eyes.get_rotation() + ray_rotation_start # trenutna delta rotacije glede na štart
+	# obračanje pogleda
+	vision_ray.rotation += ray_rotation_speed * delta
 	
-	raycast_eyes.rotation += ray_rotation_speed * delta
-	
-	if raycast_eyes.get_rotation_degrees() > ray_rotation_range or raycast_eyes.get_rotation_degrees() < -ray_rotation_range: 
+	# določanje razpona
+	if vision_ray.get_rotation_degrees() > ray_rotation_range or vision_ray.get_rotation_degrees() < -ray_rotation_range: 
 		ray_rotation_speed *= -1
+	
+	# lockanje na tarčo
+	if vision_ray.is_colliding():
 		
-	if raycast_eyes.is_colliding():
-		var collider = raycast_eyes.get_collider()
+		var collider = vision_ray.get_collider()
+		
 		if collider.is_in_group("Bolts"):
-			locked_on_target = true
 			target_location = collider.global_position
 			look_at(collider.global_position)
-			raycast_eyes.rotation = 0.0
-#			shooting("misile")
-		
+			vision_ray.rotation = 0.0
+			locked_on_target = true
+			# shooting("misile")
 		else:
 			locked_on_target = false
-			direction_applied = false
-			set_random_motion()
+			direction_set = false
+			apply_travel_direction()
 	
 
-func set_random_motion():
+func apply_travel_direction(): # sproži se vsakič ko poteče ena smer
 	
-	# v1 na zavijanje
-#	if direction_applied:
-#		pass
-#	else:	
-#		# random dir	
-#		var idle_rotation_dir = rand_range(idle_direction[0], idle_direction[1])	
-#		rotation_dir = idle_rotation_dir
-#
-#		# random time
-#		var direction_time = rand_range(idle_direction_time[0], idle_direction_time[1])
-#		if time > direction_time:
-#			time = 0
-#			print ("direction_time")
-#			print (direction_time)
-#			set_random_motion()
-#			$temp.rotate(rotation_dir)
-#		direction_applied = true
-			
-			
-	
-	# v2 na pesudotarčo
-#	if direction_applied: # pogoj raziči ker se stvar sprovede že na začetku (pa se nebi smela?)
-#		pass
-#	else:	
-#		var random_tile: Vector2 = Vector2.ZERO
-#		if not idle_area.empty(): # v prvem poskus je area prazen
-#			var random_id = randi() % idle_area.size()
-#			random_tile = idle_area[random_id]
-#
-#		# random time
-#		var direction_time = rand_range(idle_direction_time[0], idle_direction_time[1])
-#		if time > direction_time:
-#			time = 0
-#			set_random_motion()
-#			target_location = random_tile
-#			print ("random_tile")
-#			print (random_tile)
-#		direction_applied = true
+	# smer NI določena
+	if not direction_set:
 		
-	# v3 na sprednjo psudotarčo
-	
-	# smer je določena
-	if direction_applied:
-		pass
-	
-	# določanje smeri gibanja ... sproži se vsakič ko poteče ena smer
-	else:	
-		
-		var random_tile_position: Vector2 #= Vector2.ZERO
-		var visible_area: Array
-		var range_angle = 90.0  
-		
-		if velocity.length() < 5:	
-			stopped_time += 1
-		else:	
-			stopped_time = 0
-		
-		if stopped_time > 5:
-			range_angle = 180.0  
+		var random_cell: Vector2 #= Vector2.ZERO
+		var travel_area: Array
+		var travel_angle: float = 90  # plus in minus
 
-		# poberem lokacije ma voljo		
-		if not idle_area.empty(): # v prvem poskus je area prazen
-			# za vsako tile pozicijo
-			for tile_position in idle_area:
+		# celice ma voljo		
+		if not navigation_cells.empty(): # v prvem poskus je area prazen
+			for cell_position in navigation_cells:
 				# če je polju dosega
-				if rad2deg(get_angle_to(tile_position)) > -range_angle and rad2deg(get_angle_to(tile_position)) < range_angle:
-					# dodam v visible area ... ki se vakič po poteku smeri izbriše 
-					visible_area.append(tile_position)
+				if rad2deg(get_angle_to(cell_position)) > -travel_angle and rad2deg(get_angle_to(cell_position)) < travel_angle:
+					travel_area.append(cell_position)
 			
-			# izberem random tile id iz visible are
-			random_tile_position = visible_area[randi() % visible_area.size()]
+			# random travel celica 
+			random_cell = travel_area[randi() % travel_area.size()]
 		
-		print(stopped_time)
-		# random time
-		print ("velocity.length()")
-		print (velocity.length())
-		var direction_time = rand_range(idle_direction_time[0], idle_direction_time[1])
-		if time > 2:
-#		if time > direction_time:
-#			$poli.look_at(random_tile_position)
-			time = 0
-			set_random_motion()
-			target_location = random_tile_position
-			print ("random_tile")
-			print (random_tile_position)
-#			$poli.look_at(random_tile_position)
-#			print($poli.rotation_degrees)#.look_at(random_tile)
-#			print($poli.get_rotation_degrees())
-#			var angleto = rad2deg(get_angle_to(random_tile_position))
-#			print(rad2deg(get_angle_to(random_tile_position)))
-			
-		direction_applied = true
-
+		direction_set = true # smer je zdaj določena
 	
+		# random time
+		var direction_time = rand_range(travel_time[0], travel_time[1])
+		if time > direction_time:
+			time = 0
+			target_location = random_cell
+			apply_travel_direction()
+		
+		
 func on_collision():
 	
 	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
@@ -635,9 +516,3 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2, delta) -> v
 	
 func _on_NavigationAgent2D_path_changed() -> void:
 	emit_signal("path_changed", navigation_agent.get_nav_path()) # pošljemo točke poti do cilja
-
-
-func _on_IdleTimer_timeout() -> void:
-	set_random_motion()
-	direction_applied = false
-	print("tajmaut")

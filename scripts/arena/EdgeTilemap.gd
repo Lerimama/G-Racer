@@ -1,74 +1,52 @@
 extends TileMap
 
-signal tilemap_completed # pošljem lokacije floor tiletov
 
-var light_color: Color = Color.white		
-#var floor_tiles: Array = []
+signal navigation_completed # pošljem lokacije floor tiletov
 
-var floor_tiles_positions: Array = []
-
+var light_color: Color = Color.white # za barvanje debrisa		
 
 onready var DebrisParticles: PackedScene = preload("res://scenes/arena/EdgeDebrisParticles.tscn")	
 onready var ExplodingEdge: PackedScene = preload("res://scenes/arena/ExplodingEdge.tscn")	
 
 
 func _ready() -> void:
+	get_floor_navigation()
 	
-	# resolucija tilemepa
-	var screen_tiles_count: Vector2 = Vector2(get_viewport_rect().size.x / get_cell_size().x, get_viewport_rect().size.y / get_cell_size().y)
 	
-#	# v1 ... cel floor
-#	# zapolni navigation tilemap
-#	for x in screen_tiles_count.x:
-#		for y in screen_tiles_count.y:	
-#			var cell_id = get_cellv(Vector2(x, y))
-#			if cell_id == -1:
-#				set_cellv(Vector2(x, y), 3)
-#
-#	# tla so vsi tileti, ki imajo index navigacijskega tileta		
-#	var floor_tiles: Array = get_used_cells_by_id(3)
-#	for tile_position in floor_tiles:
-##		set_cellv(tile_position, 4)
-#		var tile_world_position_local = map_to_world(tile_position)
-#		var tile_world_position = to_global(tile_world_position_local)
-#		floor_tiles_positions.append(tile_world_position)
-#
-#	emit_signal("tilemap_completed", floor_tiles_positions) # pošljemo na level, da ga potem pošlje enemiju
+func get_floor_navigation():
 	
-	# v2 ... nekje spredej
-	
-	var floor_tiles: Array# = get_used_cells_by_id(3)
+	var tilemap_cells_count: Vector2 = Vector2(get_viewport_rect().size.x / get_cell_size().x, get_viewport_rect().size.y / get_cell_size().y)
+	var floor_cells_grid: Array # tilemap koordinate
+	var floor_cells: Array # global pozicija
 	
 	# zapolni navigation tilemap
-	for x in screen_tiles_count.x:
-		for y in screen_tiles_count.y:	
+	for x in tilemap_cells_count.x:
+		for y in tilemap_cells_count.y:	
 			var cell_position: Vector2 = Vector2(x, y)
 			var cell_id = get_cellv(cell_position)
-
-			# vsaka prazna je poden
+			
 			if cell_id == -1:
-				set_cellv(cell_position, 3)
-				var tile_world_position_local = map_to_world(cell_position)
-				var tile_world_position = to_global(tile_world_position_local)
-				floor_tiles_positions.append(tile_world_position)
-			
-			# odstrani zunanji vrstice
-			# preveri vse sosede in, če je samo ena prazna jo sprazni
+				set_cellv(cell_position, 3) # vsaka prazna je poden
+				# pretvorba v globalno pozicijo
+				var cell_local_position = map_to_world(cell_position)
+				var cell_global_position = to_global(cell_local_position)
 				
-#			for y in 3:
-#				for x in 3:
-#					target_cell = current_cell + Vector2(x - 1, y - 1)
-#					if current_cell != target_cell:
-#						surrounding_cells.append(target_cell)
-#
-			
-			
-	# tla so vsi tileti, ki imajo index navigacijskega tileta		
-#	for tile_position in floor_tiles:
+				floor_cells.append(cell_global_position)
+				floor_cells_grid.append(cell_position)
 	
-	emit_signal("tilemap_completed", floor_tiles_positions) # pošljemo na level, da ga potem pošlje enemiju
-	
-	
+	# odstrani zunanje vrstice celic
+	for floor_cell in floor_cells_grid:
+		var cell_in_check: Vector2
+		# preveri vse sosede
+		for y in 3: 
+			for x in 3:
+				cell_in_check = floor_cell + Vector2(x - 1, y - 1)
+				# če je vsaj ena soseda prazna, jo sprazni
+				if get_cellv(cell_in_check) == 0:
+					set_cellv (floor_cell, -1)
+					continue
+					
+	emit_signal("navigation_completed", floor_cells) # pošljemo na level, da ga potem pošlje enemiju
 	
 	
 func on_hit (collision_object):
@@ -95,7 +73,7 @@ func on_hit (collision_object):
 		if cell_index != -1: # če ni prazen
 			set_cellv(cell_position, -1) # namestimo celico iz autotile regije z id = 2
 			update_bitmask_area(cell_position) # vse celice se apdejtajo glede na novo stanje
-			explode(cell_position)
+			explode_tile(cell_position)
 
 
 func release_debris(collision):
@@ -108,9 +86,9 @@ func release_debris(collision):
 	Global.effects_creation_parent.add_child(new_debris_particles)
 
 
-func explode(current_cell):
+func explode_tile(current_cell):
 	
-	get_surrounding_cells(current_cell)
+	damage_surrounding_cells(current_cell)
 	var cell_global_position = map_to_world(current_cell)
 
 	var new_exploding_cell = ExplodingEdge.instance()
@@ -118,23 +96,7 @@ func explode(current_cell):
 	Global.node_creation_parent.add_child(new_exploding_cell)
 
 
-func get_surrounding_cells(current_cell):
-	
-	var surrounding_cells = []
-	var target_cell
-	
-	for y in 3:
-		for x in 3:
-			target_cell = current_cell + Vector2(x - 1, y - 1)
-			if current_cell != target_cell:
-				surrounding_cells.append(target_cell)
-	
-	for cell in surrounding_cells:
-		var cell_region_position = get_cell_autotile_coord(cell.x, cell.y) # položaj celice v autotile regiji
-		set_cellv(cell, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
-
-
-func get_player_surrounding_cells(current_cell):
+func damage_surrounding_cells(current_cell):
 	
 	var surrounding_cells = []
 	var target_cell
