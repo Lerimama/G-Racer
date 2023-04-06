@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=2]
+
+[sub_resource type="Gradient" id=1]
+colors = PoolColorArray( 0, 1, 0.27451, 1, 0.579832, 1, 0.695172, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.494565, 1 ), 0.0769072, 0.0769072, 0, 0, Vector2( 0.826087, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5]
+curve = SubResource( 4 )
+
+[sub_resource type="ParticlesMaterial" id=3]
+lifetime_randomness = 0.91
+trail_divisor = 3
+flag_disable_z = true
+direction = Vector3( 1, 1, 1 )
+spread = 90.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 23.52
+angular_velocity = 183.53
+angular_velocity_random = 0.09
+orbit_velocity = 0.0
+orbit_velocity_random = 0.97
+linear_accel = 31.37
+radial_accel = -45.09
+radial_accel_random = 0.69
+damping = 28.07
+scale = 3.0
+scale_curve = SubResource( 5 )
+color_ramp = SubResource( 2 )
+
+[node name="explozija_metka_part" type="Particles2D"]
+scale = Vector2( 2, 2 )
+emitting = false
+amount = 70
+one_shot = true
+speed_scale = 2.0
+explosiveness = 0.9
+process_material = SubResource( 3 )

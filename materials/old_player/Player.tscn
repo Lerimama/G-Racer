@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://materials/old_player/part_pogon.tscn" type="PackedScene" id=3]
+[ext_resource path="res://materials/old_player/Player.gd" type="Script" id=4]
+
+[node name="Player" type="KinematicBody2D" groups=["players"]]
+position = Vector2( -65, 23 )
+collision_mask = 15
+collision/safe_margin = 0.1
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 23.0 ]
+}
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( -6.59985, 0 )
+rotation = 1.5708
+scale = Vector2( 0.0774051, 0.0774051 )
+build_mode = 1
+polygon = PoolVector2Array( -193.785, 142.11, -193.786, 38.7579, -64.596, -219.624, 64.5945, -219.624, 193.786, 38.7565, 193.786, 142.109 )
+
+[node name="PlayerArea" type="Area2D" parent="."]
+position = Vector2( -7.59985, 0 )
+collision_mask = 15
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerArea"]
+position = Vector2( 1, 0 )
+rotation = 1.5708
+scale = Vector2( 0.0779578, 0.0779578 )
+build_mode = 1
+polygon = PoolVector2Array( -192.411, 141.103, -192.412, 38.483, -64.138, -218.067, 64.1365, -218.067, 192.412, 38.4816, 192.412, 141.101 )
+disabled = true
+
+[node name="Raketa" type="Sprite" parent="."]
+position = Vector2( -3.59985, 0 )
+rotation = 1.57079
+
+[node name="PlayerTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Pogon_Part" parent="." instance=ExtResource( 3 )]
+position = Vector2( -21, 0 )
+
+[node name="Pogon_Fx" type="AudioStreamPlayer" parent="."]
+volume_db = -16.605
+
+[connection signal="area_entered" from="PlayerArea" to="." method="_on_PlayerArea_area_entered"]
+[connection signal="area_exited" from="PlayerArea" to="." method="_on_PlayerArea_area_exited"]
+[connection signal="timeout" from="PlayerTimer" to="." method="_on_Reload_time_timeout"]

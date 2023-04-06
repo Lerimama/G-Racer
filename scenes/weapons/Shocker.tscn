@@ -182,13 +182,10 @@ margin_bottom = 40.0
 anims/RESET = SubResource( 520 )
 anims/shockwave = SubResource( 521 )
 
-[node name="InluenceTimer" type="Timer" parent="."]
-one_shot = true
-
 [node name="ActiveTimer" type="Timer" parent="."]
 one_shot = true
 
 [connection signal="body_entered" from="DetectArea" to="." method="_on_CollisionArea_body_entered"]
 [connection signal="body_exited" from="DetectArea" to="." method="_on_CollisionArea_body_exited"]
-[connection signal="timeout" from="InluenceTimer" to="." method="_on_InluenceTimer_timeout"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="timeout" from="ActiveTimer" to="." method="_on_ActiveTimer_timeout"]

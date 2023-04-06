@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="ParticlesMaterial" id=2]
+emission_shape = 2
+emission_box_extents = Vector3( 1, 0, 1 )
+flag_disable_z = true
+spread = 120.31
+gravity = Vector3( 0, 98, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+damping = 26.48
+damping_random = 0.44
+scale = 3.0
+scale_random = 1.0
+
+[node name="Pogon_Part" type="Particles2D"]
+position = Vector2( -16, 0 )
+rotation = 1.5708
+scale = Vector2( 2, 2 )
+emitting = false
+amount = 5
+lifetime = 0.5
+speed_scale = 2.22
+explosiveness = 0.1
+randomness = 1.0
+process_material = SubResource( 2 )

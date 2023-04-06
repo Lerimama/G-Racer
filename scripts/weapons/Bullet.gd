@@ -1,8 +1,5 @@
 extends KinematicBody2D
 
-
-signal Get_hit_by_bullet (hit_location, bullet_velocity, bullet_owner)
-
 var spawned_by: String
 var spawned_by_color: Color
 
@@ -11,6 +8,9 @@ var direction: Vector2
 var velocity: Vector2
 var collision: KinematicCollision2D
 
+var time: float = 0
+var hit_damage: float = 1
+var lifetime: float = 1
 var new_bullet_trail: Object
 
 onready var trail_position: Position2D = $TrailPosition
@@ -23,8 +23,8 @@ onready var HitParticles: PackedScene = preload("res://scenes/weapons/BulletHitP
 
 func _ready() -> void:
 	
-	add_to_group("Bullets")
-	modulate = Color.white
+	add_to_group(Config.group_bullets)
+	modulate = spawned_by_color
 	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
 	# set movement vector
@@ -38,12 +38,11 @@ func _ready() -> void:
 	velocity = direction * speed	# velocity is the velocity vector in pixels per second?
 	
 	
-func _process(delta: float) -> void:
-	
-	new_bullet_trail.add_points(trail_position.global_position)
-	
-	
 func _physics_process(delta: float) -> void:
+	
+	time += delta
+	
+	new_bullet_trail.add_points(trail_position.global_position) # premaknjeno iz process
 	
 	# detect avtorja ... prva je zato, ker se zgodi hitreje
 	for body in spawner_detect.get_overlapping_bodies():
@@ -61,9 +60,6 @@ func _physics_process(delta: float) -> void:
 
 		if collision.collider.has_method("on_hit"):
 
-			# trenutno specialno za tilemap
-			# oddam signal s sporočilom o poziciji
-			emit_signal("Get_hit_by_bullet", collision.position + velocity.normalized()) 
 			# tilemap prevede pozicijo na najbližjo pozicijo tileta v tilempu  
 			# to pomeni da lahko izbriše prazen tile
 			# s tem ko poziciji dodamo nekaj malega v smeri gibanja izstrelka, poskrbimo, da je izbran pravi tile 

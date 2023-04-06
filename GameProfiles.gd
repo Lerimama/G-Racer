@@ -20,41 +20,15 @@
 extends Node
 
 
-# game groups
-var group_players =  "Players"
-var group_enemies =  "Enemies"
-var group_bolts =  "Bolts"
-var group_misiles =  "Misiles"
-var group_bullets =  "Bullets"
-var group_shockers =  "Shockers"
-var group_arena =  "Arena"
-
-
-var player_name: String = "P1"
-
-# new colors
-var color_gray0 = Color("#535b68") # najsvetlejša
-var color_gray1 = Color("#404954")
-var color_gray2 = Color("#2f3649")
-var color_gray3 = Color("#272d3d")
-var color_gray4 = Color("#1d212d")
-var color_gray5 = Color("#171a23") # najtemnejša
-var color_red = Color("#f35b7f")
-var color_green = Color("#5effa9")
-var color_blue = Color("#4b9fff")
-var color_yellow = Color("#fef98b")
-
-
 ## temp_
 var odmik_od_roba = 20
 var playerstats_w = 500
 var playerstats_h = 32
-
 #
 #var anchor_L = odmik_od_roba
-#var anchor_R = get_viewport_rect().size.x - odmik_od_roba - playerstats_w
+#var anchor_R = get_viewport().size.x - odmik_od_roba - playerstats_w
 #var anchor_U = odmik_od_roba
-#var anchor_D = get_viewport_rect().size.y - odmik_od_roba - playerstats_h
+#var anchor_D = get_viewport().size.y - odmik_od_roba - playerstats_h
 #
 #var playerstats_positions : Dictionary = {
 #	"playerstats_position_1" : Vector2 (anchor_L,anchor_U),
@@ -194,24 +168,24 @@ var name_menu_characters : Dictionary = {
 	32 : " ",
 	}
 
-#var avatar_menu_selection: Dictionary = {
-#	1: preload("res://materiali/avatars/avatar1.png"),
-#	2: preload("res://materiali/avatars/avatar2.png"),
-#	3: preload("res://materiali/avatars/avatar3.png"),
-#	4: preload("res://materiali/avatars/avatar4.png"),
-#	5: preload("res://materiali/avatars/avatar5.png"),
-#	6: preload("res://materiali/avatars/avatar6.png"),
-#	7: preload("res://materiali/avatars/avatar7.png"),
-#	8: preload("res://materiali/avatars/avatar8.png"),
-#	9: preload("res://materiali/avatars/avatar9.png"),
-#	10: preload("res://materiali/avatars/avatar10.png"),
-#	11: preload("res://materiali/avatars/avatar11.png"),
-#	12: preload("res://materiali/avatars/avatar12.png"),
-#	13: preload("res://materiali/avatars/avatar13.png"),
-#	14: preload("res://materiali/avatars/avatar14.png"),
-#	15: preload("res://materiali/avatars/avatar15.png"),
-#	16: preload("res://materiali/avatars/avatar16.png"),
-#	}
+var avatar_menu_selection: Dictionary = {
+	1: preload("res://materiali/avatars/avatar1.png"),
+	2: preload("res://materiali/avatars/avatar2.png"),
+	3: preload("res://materiali/avatars/avatar3.png"),
+	4: preload("res://materiali/avatars/avatar4.png"),
+	5: preload("res://materiali/avatars/avatar5.png"),
+	6: preload("res://materiali/avatars/avatar6.png"),
+	7: preload("res://materiali/avatars/avatar7.png"),
+	8: preload("res://materiali/avatars/avatar8.png"),
+	9: preload("res://materiali/avatars/avatar9.png"),
+	10: preload("res://materiali/avatars/avatar10.png"),
+	11: preload("res://materiali/avatars/avatar11.png"),
+	12: preload("res://materiali/avatars/avatar12.png"),
+	13: preload("res://materiali/avatars/avatar13.png"),
+	14: preload("res://materiali/avatars/avatar14.png"),
+	15: preload("res://materiali/avatars/avatar15.png"),
+	16: preload("res://materiali/avatars/avatar16.png"),
+	}
 
 var color_menu_selection: Dictionary = {
 	1 : Color.skyblue,
@@ -241,14 +215,14 @@ var default_player_profiles : Dictionary = { # ime profila ime igralca ... pazi 
 	"ACE" : {
 		"player_name" : "ACE",
 		# "player_controller" : "Up/Le/Do/Ri/Al",
-#		"player_avatar" : preload("res://materiali/avatars/avatar1.png"),
+		"player_avatar" : preload("res://materiali/avatars/avatar1.png"),
 		"player_color" : Color.skyblue,
 		"player_editable" : false,
 		},
 	"RIT" : {
 		"player_name" : "RIT",
 		# "player_controller" : "W/A/S/D/Sp",
-#		"player_avatar" : preload("res://materiali/avatars/avatar2.png"),
+		"player_avatar" : preload("res://materiali/avatars/avatar2.png"),
 		"player_color" : Color.turquoise,
 		"player_editable" : false,
 		},
@@ -257,7 +231,7 @@ var default_player_profiles : Dictionary = { # ime profila ime igralca ... pazi 
 var default_new_player_profile : Dictionary = { # ime profila ime igralca
 	"player_name" : "XXX",
 	"player_controller" : "vseeno, kaj je, ker ga itak kasneje spremenimo v ime kopije def kontroler profila",
-#	"player_avatar" : preload("res://materiali/avatars/avatar3.png"),
+	"player_avatar" : preload("res://materiali/avatars/avatar3.png"),
 	"player_color" : Color.tomato,
 	"player_editable" : true,
 	}
@@ -281,7 +255,7 @@ var default_player_game_stats : Dictionary = { # tole ne uporabljam v zadnji var
 
 
 # -------------------------------------------------------------------------------------------------------------
-#	CONTROLLER PROFILES¸
+#	CONTROLLER PROFILES
 # -------------------------------------------------------------------------------------------------------------
 
 

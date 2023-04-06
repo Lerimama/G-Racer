@@ -2,9 +2,9 @@ extends Polygon2D
 
 
 export var add_points_count: int = 14 # 0 = poligon ima samo vogale ... dva fragmenta
-export var fragment_speed: Array = [15, 20]
+export var fragment_speed: Array = [12, 15]
 export var fragment_rotation: float = 0.5 # negativno je v smeri urinega kazalca
-export var fragment_decay_speed: float = 0.3
+export var fragment_decay_speed: float = 0.5 # večja je, hitreje je
 export var fragment_scale: float = 1.0
 
 var explode_center = Vector2(0.5, 0.5)

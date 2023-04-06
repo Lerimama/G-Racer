@@ -1,27 +1,30 @@
 extends KinematicBody2D
 
 
+# premaknjeno v Signals
+# signal misile_destroyed
+
 var spawned_by: String
 var spawned_by_color: Color
 var spawned_by_speed: float
 
 # gibanje
 export var speed: float = 20.0
-export var max_speed: float = 200.0
+export var max_speed: float = 150.0
 var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
 var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
 var acceleration_time = 2.0
 var collision: KinematicCollision2D	
 
-# domet
-export var is_active_time_limit: float = 1.0 # zadetek ali domet
-var is_active_time: float
-var is_active: bool # zadetek ali domet
+var hit_damage: float = 3
 var dissarm_speed_drop: float = 3 # notri je to v kvadratni funkciji
-
 var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
 var wiggle_freq: float = 0.6
+
+# domet
+var time: float = 0
+export var lifetime: float = 1.0 # zadetek ali domet
 
 #homming
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
@@ -45,10 +48,8 @@ func _ready() -> void:
 	
 	randomize()
 	
-	add_to_group("Misiles")
-	is_active = true
+	add_to_group(Config.group_misiles)
 	$Sprite.modulate = spawned_by_color
-	$Sprite.modulate = Color.white
 	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
 	# set movement
@@ -62,16 +63,10 @@ func _ready() -> void:
 	new_misile_trail.gradient.colors[3] = spawned_by_color
 	Global.effects_creation_parent.add_child(new_misile_trail)
 	
-	
-func _process(delta: float) -> void:
-
-	# deactivate
-	is_active_time += delta
-	if is_active_time > is_active_time_limit:
-		is_active = false
-
 
 func _physics_process(delta: float) -> void:
+	
+	time += delta
 	
 	# detect avtorja ... prva je zato, ker se zgodi hitreje
 	if spawner_detect.get_overlapping_bodies().empty() == true:
@@ -81,16 +76,16 @@ func _physics_process(delta: float) -> void:
 			if body.name == spawned_by:
 				collision_shape.disabled = true
 	# pospeševanje
-	if is_active == true:
+	if time < lifetime:
 		var accelaration_tween = get_tree().create_tween()
 		accelaration_tween.tween_property(self ,"speed", max_speed, acceleration_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		new_misile_trail.add_points(trail_position.global_position)
 	# bremzanje	
-	elif is_active != true:
+	elif time > lifetime:
 		speed -= pow(dissarm_speed_drop, 1.0) # deactivated_speed_drop na kvadrat
 		speed = clamp(speed, 0.0, speed)
 		new_misile_trail.add_points(trail_position.global_position)
-		if speed <= 100.0:
+		if speed <= 50.0:
 			dissarm()
 
 	if is_homming == true: 
@@ -150,6 +145,8 @@ func explode():
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Global.effects_creation_parent.add_child(new_misile_explosion)
 	
+	Signals.emit_signal("misile_destroyed") # pošlje avtorju, da lahko izstreli novo
+	
 	queue_free()
 	
 	
@@ -159,9 +156,3 @@ func _on_HommingArea_body_entered(body: Node) -> void:
 		is_homming = true
 		target = body
 		target_location = body.global_position
-
-
-
-#func _on_HommingArea_body_exited(body: Node) -> void:
-##	target = null
-#	is_homming = false

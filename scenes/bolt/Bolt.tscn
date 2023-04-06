@@ -151,7 +151,7 @@ tracks/1/keys = {
 
 [node name="Bolt" type="KinematicBody2D"]
 script = ExtResource( 6 )
-max_speed_reverse = 32
+drag = 1.048
 
 [node name="BoltCollision" type="CollisionPolygon2D" parent="."]
 position = Vector2( -0.5, 0.5 )
@@ -223,4 +223,4 @@ anims/RESET = SubResource( 117 )
 anims/shield_on = SubResource( 112 )
 anims/shielding = SubResource( 110 )
 
-[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]

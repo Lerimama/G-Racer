@@ -1,6 +1,7 @@
 extends TileMap
 
 
+# premaknjeno v Signals
 signal navigation_completed # pošljem lokacije floor tiletov
 
 var light_color: Color = Color.white # za barvanje debrisa		
@@ -10,6 +11,7 @@ onready var ExplodingEdge: PackedScene = preload("res://scenes/arena/ExplodingEd
 
 
 func _ready() -> void:
+	add_to_group(Config.group_arena)
 	get_floor_navigation()
 	
 	
@@ -46,6 +48,7 @@ func get_floor_navigation():
 					set_cellv (floor_cell, -1)
 					continue
 					
+#	Signals.emit_signal("navigation_completed", floor_cells) # pošljemo na level, da ga potem pošlje enemiju
 	emit_signal("navigation_completed", floor_cells) # pošljemo na level, da ga potem pošlje enemiju
 	
 	

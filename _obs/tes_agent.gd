@@ -17,7 +17,6 @@ func navigate(path: Array) -> void:
 func _physics_process(delta: float) -> void:
 
 	if _path.size() > 0:
-#		print(_path)
 		var current_pos= global_position
 		var target = navAgent.get_next_location()
 		velocity = current_pos.direction_to(target) * 100
