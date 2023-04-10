@@ -36,6 +36,7 @@ func get_floor_navigation():
 				floor_cells.append(cell_global_position)
 				floor_cells_grid.append(cell_position)
 	
+	var id = 0
 	# odstrani zunanje vrstice celic
 	for floor_cell in floor_cells_grid:
 		var cell_in_check: Vector2
@@ -46,8 +47,20 @@ func get_floor_navigation():
 				# če je vsaj ena soseda prazna, jo sprazni
 				if get_cellv(cell_in_check) == 0:
 					set_cellv (floor_cell, -1)
+#					floor_cells.remove(id)
+#					print(floor_cell)
+#					print(id)
 					continue
-					
+		id += 1
+		
+#	for obs in floor_cells:
+#		if get_cellv(obs) == -1: 
+#			floor_cells.remove(obs)
+		
+		
+		
+#	var new_arej = get_used_cells_by_id(3)	
+#	print(get_used_cells_by_id(3))		
 #	Signals.emit_signal("navigation_completed", floor_cells) # pošljemo na level, da ga potem pošlje enemiju
 	emit_signal("navigation_completed", floor_cells) # pošljemo na level, da ga potem pošlje enemiju
 	

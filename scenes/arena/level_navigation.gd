@@ -19,7 +19,7 @@ func _on_Enemy_path_changed(path) -> void:
 
 func _on_Edge_navigation_completed(floor_cells: Array) -> void:
 	call_deferred("pass_on", floor_cells) # če ni te poti, pride do erorja pri nalaganju  ... vsami igri verjetno tega ne bo
-	print("JA")
+	
 	
 func pass_on(floor_cells):
 	enemy.navigation_cells = floor_cells

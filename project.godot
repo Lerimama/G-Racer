@@ -28,7 +28,6 @@ gdscript/completion/autocomplete_setters_and_getters=true
 
 window/size/width=640
 window/size/height=360
-window/size/fullscreen=true
 window/size/always_on_top=true
 window/size/test_width=640
 window/size/test_height=360

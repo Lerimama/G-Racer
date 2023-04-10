@@ -62,7 +62,7 @@ var target_location: Vector2
 var idle_time_range: Array = [5, 10] # sek
 onready var navigation_cells: Array # sek
 onready var vision_ray_distance: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
-var idle_direction_set: bool # =  false
+var idle_target_set: bool # =  false
 
 # šuting
 export var shooting_distance: float = 200
@@ -255,8 +255,8 @@ func set_random_target(): # sproži se ob štartu in vsakič ko poteče ena smer
 	
 	var current_potka_size = navigation_agent.get_nav_path().size()
 	
-	if idle_direction_set:
-		idle_direction_set = false 
+	if idle_target_set:
+		idle_target_set = false 
 	else:
 		var target_cell: Vector2 = global_position# - Vector2(100,-200) # določena pozicija prve celice
 		var idle_area: Array
@@ -276,7 +276,7 @@ func set_random_target(): # sproži se ob štartu in vsakič ko poteče ena smer
 			if idle_area.size() > 0: # je nek error, če gre iz ekrana ... samo ko mam miško za target
 				target_cell = idle_area[randi() % idle_area.size()]
 			
-		idle_direction_set = true # smer je zdaj določena
+		idle_target_set = true # smer je zdaj določena
 
 		# ko se pot izteče
 		var current_path_size = navigation_agent.get_nav_path().size()
