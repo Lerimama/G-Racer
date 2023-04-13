@@ -10,7 +10,7 @@ var drop_time: float = 1.0 # opredeli dolžino meta
 
 var lifetime: float = 10
 var shock_time: float = 5
-
+var hit_damage: float = 1
 var is_expanded: bool = false
 var detect_expand_size: float = 3.5 # doseg šoka
 

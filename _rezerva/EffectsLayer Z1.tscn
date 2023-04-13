@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/arena/effect_shadows_screen.gdshader" type="Shader" id=1]
+[ext_resource path="res://assets/arena/effect_colors_screen.gdshader" type="Shader" id=2]
+[ext_resource path="res://scripts/arena/LayerEffects.gd" type="Script" id=3]
+[ext_resource path="res://scripts/arena/Effects.gd" type="Script" id=4]
+
+[sub_resource type="ShaderMaterial" id=88]
+shader = ExtResource( 1 )
+shader_param/manipulate_color = Color( 1, 0, 0, 1 )
+shader_param/manipulate_other_colors = true
+shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
+shader_param/shadow_color = Color( 0, 0, 0, 0.196078 )
+shader_param/shadow_offset_x = 0.0
+shader_param/shadow_offset_y = 1.0
+shader_param/texture_altitude = 6.0
+shader_param/texture_width = 640.0
+shader_param/texture_height = 360.0
+
+[sub_resource type="ViewportTexture" id=92]
+viewport_path = NodePath("EffectsLayer Z1/Viewport")
+
+[sub_resource type="ShaderMaterial" id=86]
+shader = ExtResource( 2 )
+
+[sub_resource type="ViewportTexture" id=93]
+viewport_path = NodePath("EffectsLayer Z1/Viewport")
+
+[node name="EffectsLayer Z1" type="CanvasLayer"]
+script = ExtResource( 3 )
+
+[node name="Shadows" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = SubResource( 88 )
+texture = SubResource( 92 )
+centered = false
+flip_v = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Colors" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.752941 )
+material = SubResource( 86 )
+texture = SubResource( 93 )
+centered = false
+flip_v = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Viewport" type="Viewport" parent="."]
+size = Vector2( 640, 360 )
+own_world = true
+transparent_bg = true
+hdr = false
+usage = 0
+
+[node name="Effects" type="Node2D" parent="Viewport"]
+script = ExtResource( 4 )

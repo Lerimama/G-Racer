@@ -5,6 +5,7 @@ extends Node
 var node_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
 var effects_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
 var effects_creation_layer = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var current_camera = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
 # uporaba -> Global.node_creation_parent = self # na ready funkciji se določi, da je dotična scena node_creation_parent
 
 

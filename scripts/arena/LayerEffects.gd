@@ -4,5 +4,5 @@ extends CanvasLayer
 # namenjeno elementom, ki senčke ne morejo producirati drugače kot prek screen šejderja na viewportu
 func _ready() -> void:
 	
-	Global.effects_creation_layer = self
+#	Global.effects_creation_layer = self
 	print ("Effects Lejer Z1")

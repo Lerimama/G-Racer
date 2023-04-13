@@ -8,4 +8,3 @@ func _ready() -> void:
 	print ("Plejer Lejer Z2")
 	Global.node_creation_parent = self
 
-

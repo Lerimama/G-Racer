@@ -2,10 +2,11 @@ extends KinematicBody2D
 
 
 # player data
-var player_name: String = "P1"
+export var player_name: String = "P1"
 var player_color: Color = Config.color_blue
-var health: int = 5
-var life: int = 3
+export var health: int = 5
+export var life: int = 3
+var camera_follow: bool = false
 
 # bolt data
 export var axis_distance: int = 9
@@ -17,6 +18,11 @@ export (float, 0, 10) var drag: float = 1.0 # raste kvadratno s hitrostjo
 export (float, 0, 1) var side_traction: float = 0.1
 export (float, 0, 1) var bounce_size: float = 0.3		
 
+# camerashakes
+export (float, 0, 1) var bolt_explosion_shake = 0 
+export (float, 0, 1) var bullet_hit_shake = 0
+export (float, 0, 1) var misile_hit_shake = 0
+
 var input_power: float
 var acceleration: Vector2
 var velocity: Vector2 = Vector2.ZERO
@@ -27,16 +33,19 @@ var collision: KinematicCollision2D
 var power_fwd: bool
 var power_rev: bool
 var no_power: bool
-#var motion_enabled: bool = true
 var control_enabled: bool = true
 
 var bullet_reloaded: bool = true
 var bullet_reload_time: float = 0.2
-var misile_reloaded: bool = true
+var bullet_push_factor: float = 0.3 # kako močen je potisk metka ... delež hitrosti metka
 var misile_count = 5
+var misile_reloaded: bool = true
+var misile_reload_time: float = 1.0
+var misile_push_factor = 0.5 # push eksplozije
 var shocker_count = 3
-var hit_push_factor: float = 0.02 # potisk metka ... delež hitrosti metka
-
+var shocker_reload_time: float = 1.0
+var shocker_reloaded: bool = true
+var shocker_released: bool # če je že odvržen v trneutni ožini
 var shields_on = false
 var shield_loops_counter: int = 0
 var shield_loops_limit: int = 3
@@ -53,6 +62,11 @@ onready var bolt_collision: CollisionPolygon2D = $BoltCollision
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var shield: Sprite = $Shield
 onready var animation_player: AnimationPlayer = $AnimationPlayer
+onready var camera = Global.current_camera
+onready var gun_position = $Bolt/GunPosition
+onready var rear_engine_position = $Bolt/RearEnginePosition
+onready var front_engine_position_L = $Bolt/FrontEnginePositionL
+onready var front_engine_position_R = $Bolt/FrontEnginePositionR
 
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://scenes/bolt/EngineParticles.tscn") 
@@ -105,17 +119,14 @@ func _input(event: InputEvent) -> void:
 func state_machine(delta):
 	
 	#motion states
-#	if input_power > 0:
 	if input_power > 0 and control_enabled:
 		power_fwd = true
 		power_rev = false
 		no_power = false
-#	elif input_power < 0:
 	elif input_power < 0 and control_enabled:
 		power_fwd = false
 		power_rev = true
 		no_power = false
-#	elif input_power == 0:
 	elif input_power == 0 or not control_enabled:
 		power_fwd = false
 		power_rev = false
@@ -147,31 +158,21 @@ func _physics_process(delta: float) -> void:
 	if collision:
 		on_collision()
 	
-	motion_effects(delta)
+	motion_fx(delta)
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-	
 
-func on_collision():
+	# camera follow
+	if camera_follow:
+		camera.position = position
 	
-	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 	
-	# odbojni partikli
-	if velocity.length() > 10: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
-		var new_collision_particles = CollisionParticles.instance()
-		new_collision_particles.position = collision.position
-		new_collision_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
-		new_collision_particles.amount = velocity.length()/15 # količnik je korektor	
-		new_collision_particles.color = player_color
-		new_collision_particles.set_emitting(true)
-		Global.effects_creation_parent.add_child(new_collision_particles)
-		
-		
-func motion_effects(delta):
+	
+func motion_fx(delta):
 	
 	if power_fwd:
 		engine_particles_rear.set_emitting(true)
-		engine_particles_rear.position = $Bolt/RearEnginePosition.global_position
-		engine_particles_rear.rotation = $Bolt/RearEnginePosition.global_rotation
+		engine_particles_rear.position = rear_engine_position.global_position
+		engine_particles_rear.rotation = rear_engine_position.global_rotation
 		
 		# spawn trail
 		if bolt_trail_active == false and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
@@ -181,11 +182,11 @@ func motion_effects(delta):
 	
 	if power_rev:
 		engine_particles_front_left.set_emitting(true)
-		engine_particles_front_left.position = $Bolt/FrontEnginePositionL.global_position
-		engine_particles_front_left.rotation = $Bolt/FrontEnginePositionL.global_rotation - deg2rad(180)
+		engine_particles_front_left.position = front_engine_position_L.global_position
+		engine_particles_front_left.rotation = front_engine_position_L.global_rotation - deg2rad(180)
 		engine_particles_front_right.set_emitting(true)
-		engine_particles_front_right.position = $Bolt/FrontEnginePositionR.global_position
-		engine_particles_front_right.rotation = $Bolt/FrontEnginePositionR.global_rotation - deg2rad(180)	
+		engine_particles_front_right.position = front_engine_position_R.global_position
+		engine_particles_front_right.rotation = front_engine_position_R.global_rotation - deg2rad(180)	
 		
 		# spawn trail
 		if bolt_trail_active == false and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
@@ -202,6 +203,21 @@ func motion_effects(delta):
 			new_bolt_trail.start_decay() # trail decay tween start
 			bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
 
+
+func on_collision():
+	
+	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
+	
+	# odbojni partikli
+	if velocity.length() > 10: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
+		var new_collision_particles = CollisionParticles.instance()
+		new_collision_particles.position = collision.position
+		new_collision_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
+		new_collision_particles.amount = velocity.length()/15 # količnik je korektor	
+		new_collision_particles.color = player_color
+		new_collision_particles.set_emitting(true)
+		Global.effects_creation_parent.add_child(new_collision_particles)
+
 	
 func shooting(weapons) -> void:
 	
@@ -209,8 +225,8 @@ func shooting(weapons) -> void:
 		"Bullet":	
 			if bullet_reloaded:
 				var new_bullet = Bullet.instance()
-				new_bullet.position = $Bolt/GunPosition.global_position
-				new_bullet.rotation = $Bolt/GunPosition.global_rotation
+				new_bullet.position = gun_position.global_position
+				new_bullet.rotation = gun_position.global_rotation
 				new_bullet.spawned_by = name # ime avtorja izstrelka
 				new_bullet.spawned_by_color = player_color
 				Global.node_creation_parent.add_child(new_bullet)
@@ -222,8 +238,8 @@ func shooting(weapons) -> void:
 		"Misile":
 			if misile_reloaded and misile_count > 0:			
 				var new_misile = Misile.instance()
-				new_misile.position = $Bolt/GunPosition.global_position
-				new_misile.rotation = $Bolt/GunPosition.global_rotation
+				new_misile.position = gun_position.global_position
+				new_misile.rotation = gun_position.global_rotation
 				new_misile.spawned_by = name # ime avtorja izstrelka
 				new_misile.spawned_by_color = player_color
 				new_misile.spawned_by_speed = velocity.length()
@@ -236,11 +252,11 @@ func shooting(weapons) -> void:
 		"Shocker":
 			if shocker_count > 0:			
 				var new_shocker = Shocker.instance()
-				new_shocker.rotation = $Bolt/RearEnginePosition.global_rotation
-				new_shocker.global_position = $Bolt/RearEnginePosition.global_position
+				new_shocker.rotation = rear_engine_position.global_rotation
+				new_shocker.global_position = rear_engine_position.global_position
 				new_shocker.spawned_by = name # ime avtorja izstrelka
 				new_shocker.spawned_by_color = player_color
-				Global.effects_creation_layer.add_child(new_shocker)
+				Global.node_creation_parent.add_child(new_shocker)
 				
 				shocker_count -= 1
 		
@@ -284,8 +300,8 @@ func steering(delta: float) -> void:
 func engines_setup():
 	
 	engine_particles_rear = EngineParticles.instance()
-	engine_particles_rear.position = $Bolt/RearEnginePosition.global_position
-	engine_particles_rear.rotation = $Bolt/RearEnginePosition.global_rotation
+	engine_particles_rear.position = rear_engine_position.global_position
+	engine_particles_rear.rotation = rear_engine_position.global_rotation
 	Global.effects_creation_parent.add_child(engine_particles_rear)
 	
 	engine_particles_front_left = EngineParticles.instance()
@@ -293,8 +309,8 @@ func engines_setup():
 	engine_particles_front_left.amount = 20
 	engine_particles_front_left.initial_velocity = 50
 	engine_particles_front_left.lifetime = 0.05
-	engine_particles_front_left.position = $Bolt/FrontEnginePositionL.global_position
-	engine_particles_front_left.rotation = $Bolt/FrontEnginePositionL.global_rotation - deg2rad(180)
+	engine_particles_front_left.position = front_engine_position_L.global_position
+	engine_particles_front_left.rotation = front_engine_position_L.global_rotation - deg2rad(180)
 	Global.effects_creation_parent.add_child(engine_particles_front_left)
 	
 	engine_particles_front_right = EngineParticles.instance()
@@ -302,43 +318,36 @@ func engines_setup():
 	engine_particles_front_right.amount = 20
 	engine_particles_front_right.initial_velocity = 50
 	engine_particles_front_right.lifetime = 0.05
-	engine_particles_front_right.position = $Bolt/FrontEnginePositionR.global_position
-	engine_particles_front_right.rotation = $Bolt/FrontEnginePositionR.global_rotation - deg2rad(180)	
+	engine_particles_front_right.position = front_engine_position_R.global_position
+	engine_particles_front_right.rotation = front_engine_position_R.global_rotation - deg2rad(180)	
 	Global.effects_creation_parent.add_child(engine_particles_front_right)
 
-	
-func explode_and_reset():
-	if visible == true:
-		var new_exploding_bolt = ExplodingBolt.instance()
-		new_exploding_bolt.global_position = global_position
-		new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
-		new_exploding_bolt.spawned_by_color = player_color
-		new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
-		Global.node_creation_parent.add_child(new_exploding_bolt)
-		visible = false
-	else:
-		visible = true
-	
 	
 func on_hit(collision_object: Node):
 	
 	if not shields_on:
 		
 		if collision_object.is_in_group(Config.group_bullets):
+			# shake camera
+			camera.add_trauma(bullet_hit_shake)
+			
 			health -= collision_object.hit_damage
-			velocity = collision_object.velocity * hit_push_factor
+			velocity = collision_object.velocity * bullet_push_factor
+			
 			# blink efekt ... more bit na koncu zaradi tajmerja
 			modulate = Color.black
 			yield(get_tree().create_timer(0.05), "timeout")
 			modulate = Color.white 
 			
-			if health <= 0:
-#				die()
-				pass
+
 		elif collision_object.is_in_group(Config.group_misiles):
-#			die()
-			pass
-	
+			# shake camera
+			camera.add_trauma(misile_hit_shake)
+			
+			health -= collision_object.hit_damage
+			velocity = collision_object.velocity * misile_push_factor
+			
+			
 		elif collision_object.is_in_group(Config.group_shockers):
 			
 			if control_enabled == true: # catch
@@ -354,16 +363,21 @@ func on_hit(collision_object: Node):
 				bolt_sprite.material.set_shader_param("speed", 0.7)
 					
 				yield(get_tree().create_timer(collision_object.shock_time), "timeout")
-				
 				control_enabled = true
 				
 				var relase_tween = get_tree().create_tween()
 				relase_tween.tween_property(self, "engine_power", 200, 0.1)
 				relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
+				
 				bolt_sprite.material.set_shader_param("noise_factor", 0.0)
 				bolt_sprite.material.set_shader_param("speed", 0.0)
 
-
+		if health <= 0:
+#			die()
+#			explode_and_reset()
+			pass
+			
+			
 func die():
 	
 	# najprej explodiraj 
@@ -403,3 +417,23 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 			# konec loopa, ko je limit dosežen
 			elif shield_loops_counter >= shield_loops_limit:
 				animation_player.play_backwards("shield_on")
+
+
+	
+func explode_and_reset():
+	
+	# shake camera
+	camera.add_trauma(bolt_explosion_shake)
+	
+	if visible == true:
+		var new_exploding_bolt = ExplodingBolt.instance()
+		new_exploding_bolt.global_position = global_position
+		new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
+		new_exploding_bolt.spawned_by_color = player_color
+		new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
+		Global.node_creation_parent.add_child(new_exploding_bolt)
+		visible = false
+	else:
+		visible = true
+		health = 5 # podamo hitrost, da se premika s hitrostjo bolta
+	

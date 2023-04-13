@@ -1,6 +1,6 @@
 extends Node2D
 
-onready var enema = $LevelLayer_Z3/Level_00/enema
+#onready var enema = $LevelLayer_Z3/Level_00/enema
 
 func _ready() -> void:
 	
