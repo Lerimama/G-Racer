@@ -4,8 +4,7 @@ extends KinematicBody2D
 # player data
 export var player_name: String = "P1"
 var player_color: Color = Config.color_blue
-export var health: float = 10
-export var health_max: float = 10 #
+export var health: int = 10
 export var life: int = 3
 var camera_follow: bool = false
 
@@ -37,7 +36,6 @@ var no_power: bool
 var control_enabled: bool = true
 var on_hit_disabled_time: float = 1.5
 
-# weapons
 var bullet_reloaded: bool = true
 var bullet_reload_time: float = 0.2
 var bullet_push_factor: float = 0.1 # kako močen je potisk metka ... delež hitrosti metka
@@ -49,8 +47,6 @@ var shocker_count = 3
 var shocker_reload_time: float = 1.0
 var shocker_reloaded: bool = true
 var shocker_released: bool # če je že odvržen v trneutni ožini
-
-# features
 var shields_on = false
 var shield_loops_counter: int = 0
 var shield_loops_limit: int = 3
@@ -61,21 +57,16 @@ var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
 var engine_particles_front_right : CPUParticles2D
 
+onready var bolt_sprite: Sprite = $Bolt
+onready var bolt_collision: CollisionPolygon2D = $BoltCollision
+onready var shield_collision: CollisionShape2D = $ShieldCollision
+onready var shield: Sprite = $Shield
+onready var animation_player: AnimationPlayer = $AnimationPlayer
+onready var camera = Global.current_camera
 onready var gun_position = $Bolt/GunPosition
 onready var rear_engine_position = $Bolt/RearEnginePosition
 onready var front_engine_position_L = $Bolt/FrontEnginePositionL
 onready var front_engine_position_R = $Bolt/FrontEnginePositionR
-
-onready var bolt_sprite: Sprite = $Bolt
-onready var bolt_collision: CollisionPolygon2D = $BoltCollision
-onready var health_bar: Polygon2D = $EnergyPoly
-
-onready var shield_collision: CollisionShape2D = $ShieldCollision
-onready var shield: Sprite = $Shield
-
-onready var animation_player: AnimationPlayer = $AnimationPlayer
-
-onready var camera = Global.current_camera
 
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://scenes/bolt/EngineParticles.tscn") 
@@ -109,19 +100,20 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	
 	if control_enabled:
-		input_power = Input.get_action_strength("forward") - Input.get_action_strength("reverse") # +1, -1 ali 0
-		rotation_dir = Input.get_axis("left", "right") # +1, -1 ali 0	
+		input_power = Input.get_action_strength("w") - Input.get_action_strength("s") # +1, -1 ali 0
 		
+		rotation_dir = Input.get_axis("a", "d") # +1, -1 ali 0	
+		
+		if Input.is_action_just_pressed("F"):
+			shooting("Bullet")
+		if Input.is_action_just_released("G"):	
+			shooting("Misile")
+		if Input.is_action_just_released("H"):	
+			shooting("Shocker")
+		if Input.is_action_just_pressed("x"):
+			shooting("Shield")
 #		if Input.is_action_just_pressed("x"):
 #			explode_and_reset()
-		if Input.is_action_just_pressed("space"):
-			shooting("Bullet")
-		if Input.is_action_just_released("alt"):	
-			shooting("Misile")
-		if Input.is_action_just_released("ctrl"):	
-			shooting("Shocker")
-		if Input.is_action_just_pressed("shift"):
-			shooting("Shield")
 
 
 func state_machine(delta):
@@ -139,25 +131,8 @@ func state_machine(delta):
 		power_fwd = false
 		power_rev = false
 		no_power = true
-	
-
-func _process(delta: float) -> void:
-	
-#	motion_fx(delta)
-#	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-#	energy_line.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-#	energy_line.global_position = global_position + Vector2(0.5, 7) # negiramo rotacijo bolta, da je pri miru		
-#
-
-	# camera follow
-	if camera_follow:
-		camera.position = position
+			
 		
-	
-		
-	pass
-	
-	
 func _physics_process(delta: float) -> void:
 	
 	state_machine(delta)
@@ -185,17 +160,10 @@ func _physics_process(delta: float) -> void:
 	
 	motion_fx(delta)
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-	health_bar.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-	health_bar.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
-	
-	health_bar.scale.x = health / health_max
-	if health_bar.scale.x < 0.5:
-		health_bar.color = Color.indianred
-	else:
-		health_bar.color = Color.aquamarine
-	print("healh")
-	print(health_bar.scale.x)
-	print(health)
+
+	# camera follow
+	if camera_follow:
+		camera.position = position
 	
 	
 func motion_fx(delta):
@@ -363,8 +331,6 @@ func on_hit(collision_object: Node):
 			camera.add_trauma(bullet_hit_shake)
 			# take damage
 			health -= collision_object.hit_damage
-			health_bar.scale.x = health/10
-			
 			if health <= 0:
 				die()
 #				explode_and_reset()
@@ -466,6 +432,7 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 			# konec loopa, ko je limit dosežen
 			elif shield_loops_counter >= shield_loops_limit:
 				animation_player.play_backwards("shield_on")
+
 
 	
 func explode_and_reset():

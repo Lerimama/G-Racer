@@ -1,5 +1,31 @@
 extends KinematicBody2D
 
+# NEW ... OLD
+
+var player_index: int
+var player_name: String
+var player_color: Color
+var player_controller_profile: Dictionary
+var player_game_stats: Dictionary = 
+
+
+onready var gun_position = $Bolt/GunPosition
+onready var rear_engine_position = $Bolt/RearEnginePosition
+onready var front_engine_position_L = $Bolt/FrontEnginePositionL
+onready var front_engine_position_R = $Bolt/FrontEnginePositionR
+
+onready var bolt_sprite: Sprite = $Bolt
+
+
+export var engine_power: int = 250
+export var turn_angle: int = 15 # deg per frame
+export var rotation_multiplier: int = 15 # rotacija kadar miruje
+export (float, 0, 10) var drag: float = 1.0 # raste kvadratno s hitrostjo
+var bolt_mass: float = 250 # kg
+var reload_ability: float =  # reload def gre v weapons
+
+# ---------------------------------------------------------------------
+
 
 # player data
 export var player_name: String = "P1"

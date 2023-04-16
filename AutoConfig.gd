@@ -1,4 +1,4 @@
-## ------------------------------------------------------------------------------------------------------------------------------
+## --- stara verzija ---------------------------------------------------------------------------------------------------------------------------
 ##
 ##	! autolad filet !
 ##
@@ -16,9 +16,14 @@
 ##
 ## -----------------------------------------------------------------------------------------------------------------------------
 
-
 extends Node
 
+
+# global nodes
+var node_creation_parent = null
+var effects_creation_parent = null
+var effects_creation_layer = null
+var current_camera = null
 
 # game groups
 var group_players =  "Players"
@@ -32,7 +37,7 @@ var group_arena =  "Arena"
 
 var player_name: String = "P1"
 
-# new colors
+# game colors
 var color_gray0 = Color("#535b68") # najsvetlejša
 var color_gray1 = Color("#404954")
 var color_gray2 = Color("#2f3649")
@@ -49,6 +54,11 @@ var color_yellow = Color("#fef98b")
 var odmik_od_roba = 20
 var playerstats_w = 500
 var playerstats_h = 32
+
+
+
+
+
 
 #
 #var anchor_L = odmik_od_roba

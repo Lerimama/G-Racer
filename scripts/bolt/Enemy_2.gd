@@ -8,9 +8,8 @@ extends KinematicBody2D
 var player_name: String = "Enemy"
 var player_color: Color = Color.antiquewhite
 
-export var health: int = 10
-export var health_max: float = 10 #
-export var life: int = 3
+var health: int = 5
+var life: int = 3
 
 # data
 export var axis_distance: int = 9
@@ -122,7 +121,6 @@ onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 
 # _temp
 var target_presssed: bool # _temp ... za klikanje z miško
-onready var health_bar: Polygon2D = $EnergyPoly
 
 
 func _ready() -> void:
@@ -177,23 +175,8 @@ func _physics_process(delta: float) -> void:
 	vision(delta)
 	motion_fx()
 	shield.rotation = -rotation
-#	seek_ray.force_raycast_update()
 
-	shield.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-	
-	health_bar.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-	health_bar.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
-	
-	health_bar.scale.x = health / health_max
-	if health_bar.scale.x < 0.5:
-		health_bar.color = Color.indianred
-	else:
-		health_bar.color = Color.aquamarine
-	print("healh")
-	print(health_bar.scale.x)
-	print(health)
-	
-	
+
 func steering(delta: float) -> void:
 	
 	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
@@ -496,7 +479,7 @@ func on_hit(hit_by: Node):
 			# take damage
 			health -= hit_by.hit_damage
 			if health <= 0:
-				die()
+#				die()
 #				explode_and_reset()
 				pass
 			# push
@@ -522,7 +505,7 @@ func on_hit(hit_by: Node):
 			# take damage
 			health -= hit_by.hit_damage
 			if health <= 0:
-				die()
+#				die()
 #				explode_and_reset()
 				pass
 			# push

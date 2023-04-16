@@ -17,7 +17,7 @@ var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi 
 var acceleration_time = 2.0
 var collision: KinematicCollision2D	
 
-var hit_damage: float = 10
+var hit_damage: float = 4
 var dissarm_speed_drop: float = 3 # notri je to v kvadratni funkciji
 var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
 var wiggle_freq: float = 0.6

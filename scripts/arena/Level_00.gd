@@ -6,6 +6,9 @@ onready var enemy = $Enemy
 func _ready() -> void:
 	Signals.connect("navigation_completed", self, "_on_Edge_navigation_completed")
 #	Signals.connect("misile_destroyed", self, "on_misile_destroyed")		
+	Global.node_creation_parent = self
+	Global.effects_creation_parent = self
+	
 	
 func _physics_process(delta: float) -> void:
 	pass
