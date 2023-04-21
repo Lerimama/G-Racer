@@ -59,14 +59,23 @@ var enemy_profiles: Dictionary = {
 #	"misile_push_factor": 0.5,
 }
 
-var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
-	"player_active" : true,
+var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"player_start_position" : Vector2(0, 0),
 	"health" : 10,
-	"life" : 3,
 	"bullet_count" : 30,
 	"misile_count" : 5,
 	"shocker_count" : 3,
+}
+
+
+var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
+	"player_active" : true,
+#	"player_start_position" : Vector2(0, 0),
+#	"health" : 10,
+#	"life" : 3,
+#	"bullet_count" : 30,
+#	"misile_count" : 5,
+#	"shocker_count" : 3,
 	"score" : 0000,
 	"bricks" : 0,
 	"wins" : 0,

@@ -1,28 +1,16 @@
 extends KinematicBody2D
 
 
-# player data
-#export var player_name: String = "P1"
-#var player_color: Color = Config.color_blue
-#export var health: float = 10
-#export var health_max: float = 10 #
-#export var life: int = 3
 var camera_follow: bool = false
 
-# bolt data
-#export var axis_distance: int = 9
-#export var engine_power: int = 250
-#export var turn_angle: int = 15 # deg per frame
-#export var rotation_multiplier: int = 15 # rotacija kadar miruje
-#export var top_speed_reverse: int = 50
-#export (float, 0, 10) var drag: float = 1.0 # raste kvadratno s hitrostjo
-#export (float, 0, 1) var side_traction: float = 0.1
-#export (float, 0, 1) var bounce_size: float = 0.3		
 
-# camerashakes
-#export (float, 0, 1) var bolt_explosion_shake = 1
-#export (float, 0, 1) var bullet_hit_shake = 0.2
-#export (float, 0, 1) var misile_hit_shake = 0.4
+var player_index: int # ga dobi iz game managerja ob kreaciji
+var player_name: String = "P1"
+var player_profile: Dictionary
+var player_color: Color
+var axis_distance: int
+
+
 
 var input_power: float
 var acceleration: Vector2
@@ -35,27 +23,41 @@ var power_fwd: bool
 var power_rev: bool
 var no_power: bool
 var control_enabled: bool = true
-#var on_hit_disabled_time: float = 1.5
 
 # weapons
 var bullet_reloaded: bool = true
-#var bullet_reload_time: float = 0.2
 var bullet_push_factor: float = 0.1 # kako močen je potisk metka ... delež hitrosti metka
-#var misile_count = 5
 var misile_reloaded: bool = true
-#var misile_reload_time: float = 1.0
 var misile_push_factor = 0.5 # push eksplozije
-#var shocker_count = 3
-#var shocker_reload_time: float = 1.0
 var shocker_reloaded: bool = true
 var shocker_released: bool # če je že odvržen v trneutni ožini
 
 # features
 var shields_on = false
 var shield_loops_counter: int = 0
-#var shield_loops_limit: int = 3
 var bolt_trail_active: bool = false # če je je aktivna, je ravno spawnana, če ni, potem je "odklopljena"
 var new_bolt_trail: Object
+var trail_grad_color = Color.white
+
+# positions
+var gun_pos: Vector2 = Vector2(6.5, 0.5)
+var shocker_pos: Vector2 = Vector2(-4.5, 0.5)
+var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
+var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
+var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)
+
+# controls
+var controller_profile_name: String
+var controller_profile: Dictionary
+var controller_actions: Dictionary
+
+var fwd_action# = controller_actions["fwd_action"]
+var rev_action# = controller_actions["rev_action"]
+var left_action# = controller_actions["left_action"]
+var right_action# = controller_actions["right_action"]
+var shoot_bullet_action# = controller_actions["shoot_bullet_action"]
+var shoot_misile_action# = controller_actions["shoot_misile_action"]
+var shoot_shocker_action# = controller_actions["shoot_shocker_action"]
 
 var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
@@ -64,12 +66,9 @@ var engine_particles_front_right : CPUParticles2D
 onready var bolt_sprite: Sprite = $Bolt
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision
 onready var health_bar: Polygon2D = $EnergyPoly
-
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var shield: Sprite = $Shield
-
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-
 onready var camera = Global.current_camera
 
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
@@ -80,20 +79,11 @@ onready var Bullet: PackedScene = preload("res://scenes/weapons/Bullet.tscn")
 onready var Misile: PackedScene = preload("res://scenes/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 
-
-# NEW
-var player_index: int # ga dobi iz game managerja ob kreaciji
-
-# slovarji
-
-onready var player_stats: Dictionary = Profiles.default_player_stats
-onready var bolt_profile: Dictionary = Profiles.bolt_profiles["basic"]
-
 # bolt
+onready var bolt_profile: Dictionary = Profiles.bolt_profiles["basic"]
 onready var bolt_texture: Texture = bolt_profile["bolt_texture"] 
 onready var engine_power: int = bolt_profile["engine_power"]
 onready var max_speed_reverse: int =  bolt_profile["max_speed_reverse"]
-
 onready var turn_angle: int = bolt_profile["turn_angle"] # deg per frame
 onready var rotation_multiplier: int = bolt_profile["rotation_multiplier"] # rotacija kadar miruje
 onready var drag: float = bolt_profile["drag"] # raste kvadratno s hitrostjo
@@ -104,21 +94,8 @@ onready var reload_ability: float = bolt_profile["reload_ability"]  # reload def
 onready var on_hit_disabled_time: float = bolt_profile["on_hit_disabled_time"] 
 onready var shield_loops_limit: int = bolt_profile["shield_loops_limit"] 
 
-#onready var controller_profile_name: String = player_profile["controller_profile"]
-#onready var controller_profile: Dictionary = Profiles.default_controller_profiles[controller_profile_name]
-#onready var controller_actions: Dictionary = Profiles.default_controller_actions[controller_profile_name]
-
-var controller_profile_name: String
-var controller_profile: Dictionary
-var controller_actions: Dictionary
-
-# player data
-#var player_profile_name: String = "P2"
-#onready var player_profile: Dictionary = Profiles.default_player_profiles[player_profile_name]
-#onready var player_name: String = player_profile["player_name"]
-#onready var player_color: Color = player_profile["player_color"]
-
 # plejer stats
+onready var player_stats: Dictionary = Profiles.default_player_stats
 onready var health: float = Profiles.default_player_stats["health"] # tale se sreminja z igro
 onready var health_max: float = Profiles.default_player_stats["health"] # tole je konstanta da se lahko vrne
 onready var life: int = Profiles.default_player_stats["life"]
@@ -126,41 +103,7 @@ onready var bullet_count = Profiles.default_player_stats["bullet_count"]
 onready var misile_count = Profiles.default_player_stats["misile_count"]
 onready var shocker_count = Profiles.default_player_stats["shocker_count"]
 
-onready var indikator: PackedScene = preload("res://indikator.tscn")
 
-# positions
-var gun_pos: Vector2 = Vector2(6.5, 0.5)
-var shocker_pos: Vector2 = Vector2(-4.5, 0.5)
-var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
-var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
-var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)
-
-var fwd_action# = controller_actions["fwd_action"]
-var rev_action# = controller_actions["rev_action"]
-var left_action# = controller_actions["left_action"]
-var right_action# = controller_actions["right_action"]
-var shoot_bullet_action# = controller_actions["shoot_bullet_action"]
-var shoot_misile_action# = controller_actions["shoot_misile_action"]
-var shoot_shocker_action# = controller_actions["shoot_shocker_action"]
-
-var player_name: String = "P1"
-var player_profile: Dictionary
-var player_color: Color
-
-#onready var bolt_texture: Texture = bolt_profile["bolt_texture"] 
-onready var texture_width: int = bolt_texture.get_width()
-onready var axis_distance: int = texture_width
-
-var trail_grad_color = Color.white
-
-func indikator_spawn(pos): # za test pozicije
-	
-	var new_indikator = indikator.instance()
-	new_indikator.global_position = pos
-	new_indikator.global_rotation = bolt_sprite.global_rotation
-	new_indikator.modulate = Color.red
-	add_child(new_indikator)
-	
 	
 func _ready() -> void:
 		
@@ -175,6 +118,7 @@ func _ready() -> void:
 	name = player_name
 	bolt_sprite.self_modulate = player_color
 	bolt_sprite.texture = bolt_texture
+	axis_distance = bolt_texture.get_width()
 	add_to_group(Config.group_players)
 	add_to_group(Config.group_bolts)	
 
@@ -190,14 +134,6 @@ func _ready() -> void:
 	shoot_misile_action = controller_actions["shoot_misile_action"]
 	shoot_shocker_action = controller_actions["shoot_shocker_action"]
 	
-	# spawn pozicij
-#	indikator_spawn(gun_pos)
-#	indikator_spawn(shocker_pos)
-#	indikator_spawn(rear_engine_pos)
-#	indikator_spawn(front_engine_pos_L)
-#	indikator_spawn(front_engine_pos_R)
-	
-		
 	# ----------------------------------------------------------------------
 	
 	bolt_collision.disabled = false
@@ -246,19 +182,9 @@ func state_machine(delta):
 
 func _process(delta: float) -> void:
 	
-#	motion_fx(delta)
-#	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-#	energy_line.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-#	energy_line.global_position = global_position + Vector2(0.5, 7) # negiramo rotacijo bolta, da je pri miru		
-#
-
-	# camera follow
 	if camera_follow:
 		camera.position = position
 		
-	
-		
-	pass
 	
 func _physics_process(delta: float) -> void:
 	
@@ -390,10 +316,6 @@ func shooting(weapons) -> void:
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
 				misile_reloaded= true
 			
-				# reload, ko je uničena				
-				# Signals.connect("misile_destroyed", self, "on_misile_destroyed")		
-				# misile_reloaded = false
-		
 		"Shocker":
 			if shocker_reloaded and shocker_count > 0:			
 				var new_shocker = Shocker.instance()
@@ -421,10 +343,6 @@ func shooting(weapons) -> void:
 				# collisions setup premaknjeno dol na konec animacije
 				shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
 
-	
-func on_misile_destroyed(): # iz signala
-	misile_reloaded= true	
-	
 
 func steering(delta: float) -> void:
 	
@@ -450,8 +368,6 @@ func engines_setup():
 			
 	engine_particles_rear = EngineParticles.instance()
 	# rotacija se seta v FP
-#	engine_particles_rear.global_position = to_global(rear_engine_pos)
-#	engine_particles_rear.global_rotation = bolt_sprite.global_rotation
 	Global.effects_creation_parent.add_child(engine_particles_rear)
 	
 	engine_particles_front_left = EngineParticles.instance()
@@ -460,8 +376,6 @@ func engines_setup():
 	engine_particles_front_left.initial_velocity = 50
 	engine_particles_front_left.lifetime = 0.05
 	# rotacija se seta v FP
-#	engine_particles_front_left.global_position = to_global(front_engine_pos_L)
-#	engine_particles_front_left.global_rotation = bolt_sprite.global_rotation - deg2rad(180)
 	Global.effects_creation_parent.add_child(engine_particles_front_left)
 	
 	engine_particles_front_right = EngineParticles.instance()
@@ -470,8 +384,6 @@ func engines_setup():
 	engine_particles_front_right.initial_velocity = 50
 	engine_particles_front_right.lifetime = 0.05
 	# rotacija se seta v FP
-#	engine_particles_front_right.global_position = to_global(front_engine_pos_R)
-#	engine_particles_front_right.global_rotation = bolt_sprite.global_rotation - deg2rad(180)
 	Global.effects_creation_parent.add_child(engine_particles_front_right)
 
 
@@ -493,12 +405,10 @@ func on_hit(hit_by: Node):
 			# push
 #			velocity = collision_object.velocity * bullet_push_factor
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-#			print("hit velocity")
-#			print(velocity.length())
 			# utripne	
-			modulate = Color.red
-			yield(get_tree().create_timer(0.05), "timeout")
-			modulate = Color.white 
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 
 
 		elif hit_by.is_in_group(Config.group_misiles):
@@ -514,12 +424,10 @@ func on_hit(hit_by: Node):
 			# push
 #			velocity = collision_object.velocity * misile_push_factor
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-#			print("hit velocity")
-#			print(velocity.length())
 			# utripne	
-			modulate = Color.red
-			yield(get_tree().create_timer(0.05), "timeout")
-			modulate = Color.white 
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			# disabled
 			var disabled_tween = get_tree().create_tween()
 			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
@@ -531,7 +439,6 @@ func on_hit(hit_by: Node):
 		elif hit_by.is_in_group(Config.group_shockers):
 			
 			control_enabled = false
-#			if control_enabled == true: 
 			
 			# catch
 			var catch_tween = get_tree().create_tween()
@@ -556,13 +463,8 @@ func on_hit(hit_by: Node):
 			
 func die():
 	
-	# shake camera
 	camera.add_trauma(camera.bolt_explosion_shake)
 		
-	# najprej explodiraj 
-	# potem ugasni sprite in coll 
-	# potem ugasni motor in štartaj trail decay
-	# explozijo izključi ko grejo partikli ven
 	var new_exploding_bolt = ExplodingBolt.instance()
 	new_exploding_bolt.global_position = global_position
 	new_exploding_bolt.global_rotation = bolt_sprite.global_rotation

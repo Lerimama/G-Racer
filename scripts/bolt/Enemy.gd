@@ -141,7 +141,6 @@ onready var shield_loops_limit: int = bolt_profile["shield_loops_limit"]
 
 #var target_found: bool = false	
 
-onready var seek_rays_group: Array = [$SeekRayL1, $SeekRayL2, $SeekRayR1, $SeekRayR2]
 
 
 
@@ -606,9 +605,9 @@ func on_hit(hit_by: Node):
 #			print("hit velocity")
 #			print(velocity.length())
 			# utripne	
-			modulate = Color.red
-			yield(get_tree().create_timer(0.05), "timeout")
-			modulate = Color.white 
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			# disabled
 			var disabled_tween = get_tree().create_tween()
 			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
@@ -635,9 +634,9 @@ func on_hit(hit_by: Node):
 #			print("hit velocity")
 #			print(velocity.length())
 			# utripne	
-			modulate = Color.red
-			yield(get_tree().create_timer(0.05), "timeout")
-			modulate = Color.white 
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			# disabled
 			var disabled_tween = get_tree().create_tween()
 			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 

@@ -14,9 +14,17 @@ export var time_scale: float = 150
 
 # traume
 export(float, 0, 1) var add_trauma = 0.2
-export (float, 0, 1) var bolt_explosion_shake = 1 # explosion add_trauma
-export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
-export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
+
+# battle shake
+var shake_on: bool = false
+#export (float, 0, 1) var bolt_explosion_shake = 0.5 # explosion add_trauma
+#export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
+#export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
+export (float, 0, 1) var bolt_explosion_shake = 0
+export (float, 0, 1) var bullet_hit_shake = 0
+export (float, 0, 1) var misile_hit_shake = 0
+
+
 
 var time: float = 0
 var test_view_on = false
@@ -39,11 +47,10 @@ onready var octaves_slider = $UILayer/TestHud/NoiseControl/Octaves
 onready var period_slider = $UILayer/TestHud/NoiseControl/Period
 onready var persistence_slider = $UILayer/TestHud/NoiseControl/Persistence
 onready var lacunarity_slider = $UILayer/TestHud/NoiseControl/Lacunarity
+onready var shake_toggle: CheckBox = $UILayer/TestHud/ShakeToggle
 
 onready var testhud_node = $UILayer/TestHud
 onready var test_toggle_btn = $UILayer/TestToggle
-
-
 
 
 func _ready():
@@ -138,6 +145,19 @@ func _on_CheckBox_toggled(button_pressed: bool) -> void:
 		testhud_node.show()
 		test_view_on = true
 
+func _on_ShakeToggle_toggled(button_pressed: bool) -> void:
+	
+	if shake_on:
+		bolt_explosion_shake = 0
+		bullet_hit_shake = 0
+		misile_hit_shake = 0
+		shake_on = false
+	else:
+		bolt_explosion_shake = 0.5
+		bullet_hit_shake = 0.2
+		misile_hit_shake = 0.4
+		shake_on = true
+
 func _on_AddTraumaBtn_pressed() -> void:
 	mouse_used = true
 	add_trauma(add_trauma)
@@ -224,3 +244,4 @@ func _on_CheckBox_mouse_entered() -> void:
 	mouse_used = true
 func _on_CheckBox_mouse_exited() -> void:
 	mouse_used = false
+

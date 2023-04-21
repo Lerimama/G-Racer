@@ -17,7 +17,10 @@ signal navigation_completed
 	- signal sprejme level
 
 # stats 
-signal just_hit # bolt in damage
+signal stat_changed (stat, stat_change) # ni še v akciji
+	- poslan z bolta po obdelavit zadetka
+	- sprejme ga arena oz. score manager, GM
+signal just_hit # ni v rabi
 	- zaenkrat pošiljam škodo in poškodovanca ... kasneje tudi lasntika (za točke)
 	- s signalom se v ready poveže arena (GM)
 	- ob zadetku bolt pošlje signal s podatki, arena ga pograbi zaigra funkcijo manage stats

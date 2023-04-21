@@ -14,7 +14,6 @@ onready var player2_profile = Profiles.default_player_profiles[player2_player_na
 onready var enemy1_profile = Profiles.default_player_profiles[enemy1_player_name]
 
 onready var enemy: KinematicBody2D = $Level_00/Enemy
-onready var bolt: KinematicBody2D = $Level_00/Bolt
 
 onready var spawn_position_1: Position2D = $Level_00/SpawnPosition1
 onready var spawn_position_2: Position2D = $Level_00/SpawnPosition2
@@ -36,6 +35,7 @@ var p2_energy: float = 10
 #var damage
 #var shooter
 
+
 func _ready() -> void:
 	
 	Config.game_manager = self
@@ -50,10 +50,6 @@ func _ready() -> void:
 	
 	$Level_00/FaktoriranEnemy.connect("path_changed_faktoriran", level, "_on_Enemy_path_changed_faktoriran")
 	
-	$Level_00/FaktoriranPlayer.connect("just_hit", self, "manage_player_stats")
-	
-	
-
 
 func _unhandled_key_input(event: InputEventKey) -> void:
 

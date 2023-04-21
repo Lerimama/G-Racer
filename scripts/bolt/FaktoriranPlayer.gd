@@ -7,16 +7,16 @@ var controller_profile_name: String
 var controller_profile: Dictionary
 var controller_actions: Dictionary
 
-onready var health_bar: Polygon2D = $EnergyPoly
+#onready var health_bar: Polygon2D = $EnergyPoly
 
 # plejer stats
-onready var player_stats: Dictionary = Profiles.default_player_stats
-onready var health: float = Profiles.default_player_stats["health"] # tale se sreminja z igro
-onready var health_max: float = Profiles.default_player_stats["health"] # tole je konstanta da se lahko vrne
-onready var life: int = Profiles.default_player_stats["life"]
-onready var bullet_count = Profiles.default_player_stats["bullet_count"]
-onready var misile_count = Profiles.default_player_stats["misile_count"]
-onready var shocker_count = Profiles.default_player_stats["shocker_count"]
+#onready var player_stats: Dictionary = Profiles.default_player_stats
+#onready var health: float = Profiles.default_player_stats["health"] # tale se sreminja z igro
+#onready var health_max: float = Profiles.default_player_stats["health"] # tole je konstanta da se lahko vrne
+#onready var life: int = Profiles.default_player_stats["life"]
+#onready var bullet_count = Profiles.default_player_stats["bullet_count"]
+#onready var misile_count = Profiles.default_player_stats["misile_count"]
+#onready var shocker_count = Profiles.default_player_stats["shocker_count"]
 
 var fwd_action # = controller_actions["fwd_action"]
 var rev_action # = controller_actions["rev_action"]
@@ -26,7 +26,7 @@ var shoot_bullet_action # = controller_actions["shoot_bullet_action"]
 var shoot_misile_action # = controller_actions["shoot_misile_action"]
 var shoot_shocker_action # = controller_actions["shoot_shocker_action"]
 
-var player_name: String = "P1"
+onready var player_name: String = "P1"
 var player_profile: Dictionary
 var player_color: Color
 	
@@ -99,14 +99,14 @@ func _physics_process(delta: float) -> void:
 #	print(input_power)
 	state_machine(delta)
 	
-	health_bar.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-	health_bar.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
-	
-	health_bar.scale.x = health / health_max
-	if health_bar.scale.x < 0.5:
-		health_bar.color = Color.indianred
-	else:
-		health_bar.color = Color.aquamarine
+#	health_bar.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
+#	health_bar.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
+#
+#	health_bar.scale.x = health / health_max
+#	if health_bar.scale.x < 0.5:
+#		health_bar.color = Color.indianred
+#	else:
+#		health_bar.color = Color.aquamarine
 
 
 func manage_player_stats(stat_changed: String, change_value: float):

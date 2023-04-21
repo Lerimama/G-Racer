@@ -3,7 +3,7 @@ extends KinematicBody2D
 class_name Bolt, "res://assets/bolt/bolt.png"
 
 
-signal just_hit # bolt in damage
+signal stat_changed (stat, stat_change) # bolt in damage
 
 var camera_follow: bool = false
 
@@ -62,6 +62,10 @@ onready var Misile: PackedScene = preload("res://scenes/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 
+onready var health_bar: Polygon2D = $EnergyPoly
+var health: float = 10
+var health_max: float = 10
+
 # bolt profil
 onready var bolt_profile: Dictionary = Profiles.bolt_profiles["basic"]
 onready var bolt_sprite_texture: Texture = bolt_profile["bolt_texture"] 
@@ -76,7 +80,7 @@ onready var inertia: float = bolt_profile["inertia"]
 onready var reload_ability: float = bolt_profile["reload_ability"]  # reload def gre v weapons
 onready var on_hit_disabled_time: float = bolt_profile["on_hit_disabled_time"] 
 onready var shield_loops_limit: int = bolt_profile["shield_loops_limit"] 
-	
+
 	
 func _ready() -> void:
 	print("bolt je redi")
@@ -87,7 +91,6 @@ func _ready() -> void:
 	add_to_group(Config.group_bolts)	
 	axis_distance = bolt_sprite_texture.get_width()
 	
-#	bolt_collision.disabled = false
 	engines_setup() # postavi partikle za pogon
 	
 	# shield
@@ -98,6 +101,7 @@ func _ready() -> void:
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
 	
+
 	
 func _process(delta: float) -> void:
 
@@ -132,7 +136,17 @@ func _physics_process(delta: float) -> void:
 	motion_fx()
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
 	
-				
+	# health_bar setup
+	health_bar.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
+	health_bar.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
+
+	health_bar.scale.x = health / health_max
+	if health_bar.scale.x < 0.5:
+		health_bar.color = Color.indianred
+	else:
+		health_bar.color = Color.aquamarine	
+		
+						
 func power_states() -> void:
 	
 	# nad mejo
@@ -369,28 +383,26 @@ func on_hit(hit_by: Node):
 			# shake camera
 			camera.add_trauma(camera.bullet_hit_shake)
 			# take damage
-			emit_signal("just_hit", hit_by.hit_damage, self)
-			
-#			manage_player_stats("damage", hit_by.hit_damage)
+			take_damage(hit_by.hit_damage)
 			# push
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
 			# utripne	
-			modulate = Color.red
-			yield(get_tree().create_timer(0.05), "timeout")
-			modulate = Color.white 
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 
 		elif hit_by.is_in_group(Config.group_misiles):
 			control_enabled = false
 			# shake camera
 			camera.add_trauma(camera.misile_hit_shake)
 			# take damage
-#			manage_player_stats("damage", hit_by.hit_damage)
+			take_damage(hit_by.hit_damage)
 			# push
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
 			# utripne	
-			modulate = Color.red
-			yield(get_tree().create_timer(0.05), "timeout")
-			modulate = Color.white 
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			# disabled
 			var disabled_tween = get_tree().create_tween()
 			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
@@ -400,9 +412,8 @@ func on_hit(hit_by: Node):
 			
 		elif hit_by.is_in_group(Config.group_shockers):
 			control_enabled = false
-			
 			# take damage
-#			manage_player_stats("damage", hit_by.hit_damage)		
+			take_damage(hit_by.hit_damage)		
 			# catch
 			var catch_tween = get_tree().create_tween()
 			catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
@@ -422,7 +433,18 @@ func on_hit(hit_by: Node):
 			bolt_sprite.material.set_shader_param("speed", 0.0)
 			
 			control_enabled = true
-				
+
+
+func take_damage(damage_amount):
+	
+#	emit_signal("stat_changed", damage_amount) # pošiljanje v HUD
+	
+	health -= damage_amount
+	health_bar.scale.x = health/10
+	if health <= 0:
+		die()
+	
+						
 			
 func die():
 	
@@ -438,8 +460,6 @@ func die():
 	Global.node_creation_parent.add_child(new_exploding_bolt)
 	
 	queue_free()		
-	
-
 	
 		
 func _on_shield_animation_finished(anim_name: String) -> void:
