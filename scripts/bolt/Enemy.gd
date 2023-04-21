@@ -2,11 +2,11 @@ extends KinematicBody2D
 
 
 # premaknjeno v Signals
-# signal path_changed (path) # pošlje array pozicij
+signal path_changed (path) # pošlje array pozicij
 # signal target_reached # trenutno ni v uporabi
 
 var player_name: String = "Enemy"
-var player_color: Color = Color.antiquewhite
+var player_color: Color = Color.white
 
 export var health: int = 10
 export var health_max: float = 10 #
@@ -15,10 +15,10 @@ export var life: int = 3
 # data
 export var axis_distance: int = 9
 export var engine_power: float	
-export var engine_power_idle: float = 50
-export var engine_power_battle: float = 200
+#export var engine_power_idle: float = 50
+#export var engine_power_battle: float = 200
 export var top_speed_reverse: float = 50
-export var turn_angle: float = 10 # deg per frame
+export var turn_angle: float = 15 # deg per frame
 export var rotation_multiplier: float = 15 # rotacija kadar miruje
 export (float, 0, 10) var drag: float = 1.0 # raste kvadratno s hitrostjo
 export (float, 0, 1) var side_traction: float = 0.1
@@ -31,28 +31,28 @@ var rotation_dir: float
 var collision: KinematicCollision2D
 
 # features
-var bullet_reload_time: float = 1.0
+#var bullet_reload_time: float = 1.0
 var bullet_reloaded: bool = true
-var bullet_push_factor: float = 0.1 # kako močen je potisk metka ... delež hitrosti metka
+#var bullet_push_factor: float = 0.1 # kako močen je potisk metka ... delež hitrosti metka
 export var misile_count = 5
-var misile_reload_time: float = 1.0
+#var misile_reload_time: float = 1.0
 var misile_reloaded: bool = true
-var misile_push_factor = 0.5 # push eksplozije
+#var misile_push_factor = 0.5 # push eksplozije
 export var shocker_count = 3
-var shocker_reload_time: float = 1.0
+#var shocker_reload_time: float = 1.0
 var shocker_reloaded: bool = true
 var shocker_released: bool # če je že odvržen v trneutni ožini
 var shield_loops_counter: int = 0
-var shield_loops_limit: int = 3
+#var shield_loops_limit: int = 3
 var shields_on = false
 
 # camerashakes
-export (float, 0, 1) var bolt_explosion_shake = 1
-export (float, 0, 1) var bullet_hit_shake = 0.2
-export (float, 0, 1) var misile_hit_shake = 0.4
+#export (float, 0, 1) var bolt_explosion_shake = 1
+#export (float, 0, 1) var bullet_hit_shake = 0.2
+#export (float, 0, 1) var misile_hit_shake = 0.4
 
 # fx
-var stop_velocity = 5 # pri kateri hitrosti se tretira kod, da je pri miru
+var stop_velocity = 5 # pri kateri hitrosti se tretira kot, da je pri miru
 var bolt_trail_active: bool = false # če je je aktivna, je ravno spawnana, če ni , potem je "odklopljena"
 var new_bolt_trail: Object
 var engine_particles_rear : CPUParticles2D
@@ -64,13 +64,13 @@ var control_enabled: bool = true
 var control_disabled_color: Color = Config.color_gray0
 
 # time vars
-var aim_time: float = 1 # čas od opažanja do streljanja ... timer
+#var aim_time: float = 1 # čas od opažanja do streljanja ... timer
 var on_hit_disabled_time: float = 1.5
 
 # vision
-var seek_rotation_range = 60 # (+ ray_rotation_range <> - ray_rotation_range)
-var seek_rotation_speed = 10
-onready var seek_distance: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
+#var seek_rotation_range = 60 # (+ ray_rotation_range <> - ray_rotation_range)
+#var seek_rotation_speed = 10
+#onready var seek_distance: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
 
 # battle
 var locked_on_target: bool
@@ -111,7 +111,6 @@ onready var rear_engine_position = $Bolt/RearEnginePosition
 onready var front_engine_position_L = $Bolt/FrontEnginePositionL
 onready var front_engine_position_R = $Bolt/FrontEnginePositionR
 
-
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://scenes/bolt/EngineParticles.tscn") 
 onready var ExplodingBolt: PackedScene = preload("res://scenes/bolt/ExplodingBolt.tscn") # trianguliran razpad bolta ... no more (opr. ur.)
@@ -124,6 +123,35 @@ onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 var target_presssed: bool # _temp ... za klikanje z miško
 onready var health_bar: Polygon2D = $EnergyPoly
 
+# NEW
+
+onready var enemy_profile = Profiles.enemy_profiles
+onready var bolt_profile: Dictionary = Profiles.bolt_profiles["basic"]
+
+onready var aim_time = enemy_profile["aim_time"]
+onready var seek_rotation_range = enemy_profile["seek_rotation_range"]
+onready var seek_rotation_speed = enemy_profile["seek_rotation_speed"]
+onready var seek_distance = enemy_profile["seek_distance"]
+onready var engine_power_idle = enemy_profile["engine_power_idle"]
+onready var engine_power_battle = enemy_profile["engine_power_battle"]
+#onready var bullet_push_factor = enemy_profile["bullet_push_factor"]
+#onready var misile_push_factor = enemy_profile["misile_push_factor"]
+
+onready var shield_loops_limit: int = bolt_profile["shield_loops_limit"] 
+
+#var target_found: bool = false	
+
+onready var seek_rays_group: Array = [$SeekRayL1, $SeekRayL2, $SeekRayR1, $SeekRayR2]
+
+
+
+# vision
+#var seek_rotation_range = 60 # (+ ray_rotation_range <> - ray_rotation_range)
+#var seek_rotation_speed = 10
+#onready var seek_distance: float = get_viewport_rect().size.x * 0.7 # dolžina v smeri lokal x ... onready, ker še ni viewporta
+var trail_grad_color = Color.white
+var inertia = 5
+onready var shooting_ability = enemy_profile["shooting_ability"]
 
 func _ready() -> void:
 	
@@ -141,9 +169,18 @@ func _ready() -> void:
 	shield.self_modulate = player_color 
 	shield_collision.disabled = true 
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
-	seek_ray.cast_to.x = seek_distance
-	
 
+	seek_ray.cast_to.x = seek_distance
+#	for ray in seek_rays_group:
+#		ray.cast_to.x = seek_distance
+#		var start_ray_start_angle = ray.cast_to.angle()
+#		seek_rays_angles.append(start_ray_start_angle)
+#		print(seek_rays_angles)
+#		ray.rotation += seek_rotation_speed * delta
+#		if ray.get_rotation_degrees() > seek_rotation_range or ray.get_rotation_degrees() < - seek_rotation_range: 
+#			seek_rotation_speed *= -1
+#		modulate = player_color	
+	
 func _physics_process(delta: float) -> void:
 	
 	if Input.is_mouse_button_pressed(1):
@@ -189,13 +226,12 @@ func _physics_process(delta: float) -> void:
 		health_bar.color = Color.indianred
 	else:
 		health_bar.color = Color.aquamarine
-	print("healh")
-	print(health_bar.scale.x)
-	print(health)
+#	print("healh")
+#	print(health_bar.scale.x)
+#	print(health)
 	
 	
 func steering(delta: float) -> void:
-	
 	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
 	var front_axis_position = position + transform.x * axis_distance / 2.0 # sredinska pozicija vozila plus polovica medosne razdalje
 	
@@ -212,19 +248,54 @@ func steering(delta: float) -> void:
 	
 	rotation = new_heading.angle() # sprite se obrne v smeri
 
-	
+
+#onready var seek_ray_1: RayCast2D = $SeekRay1
+#onready var seek_ray_2: RayCast2D = $SeekRay2
+#onready var seek_ray_3: RayCast2D = $SeekRay3
+#onready var seek_ray_4: RayCast2D = $SeekRay4
+#onready var seek_ray_5: RayCast2D = $SeekRay5
+
+#onready var seek_rays_group: Array = [$SeekRay1, $SeekRay2, $SeekRay3, $SeekRay4, $SeekRay5]
+#onready var seek_rays_group: Array = [seek_ray_1, seek_ray_2, seek_ray_3, seek_ray_4, seek_ray_5]
+#onready var seek_rays_angles: Array
+#onready var seek_rays_angles: Array = [ray_angle_1, ray_angle_2, ray_angle_3, ray_angle_4, ray_angle_5]
+var target_found: bool =  false
+
 func vision(delta):
 	
 	if control_enabled: 
 		
-		# čekiraj spredaj
+		# čekiraj ovire pred sabo
 		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost
 		if vision_ray_front.is_colliding():
 			velocity *= idle_brake_force
 			engine_particles_rear.modulate.a = 0
 		else:
 			engine_particles_rear.modulate.a = 1
-	
+		
+#		# išči tarčo ... grupa
+#		# za vsak žarek čekiramo kolizijo 
+#		var dray
+#		var ray_collider
+#		for ray in seek_rays_group:
+#			if ray.is_colliding():
+#				ray_collider = ray.get_collider()
+#				dray = ray
+#		# če kolizija obstaja
+#		if ray_collider and ray_collider.is_in_group(Config.group_bolts):
+#			target_location = ray_collider.global_position
+##			for rej in seek_rays_group:
+##				rej.look_at(target_location)
+##			dray.look_at(target_location)
+#			# če je tarča počasna
+#			if ray_collider.velocity.length() < target_slow_speed:
+#				rotation = (target_location - global_position).angle() # kot vektorja AB = B - A 
+#				look_at(target_location)
+##			battle(ray_collider)
+#			modulate = Color.red
+		
+		
+		# išči tarčo
 		if seek_ray.is_colliding() and seek_ray.get_collider().is_in_group(Config.group_bolts):
 			var collider = seek_ray.get_collider()
 			target_location = collider.global_position
@@ -232,20 +303,45 @@ func vision(delta):
 				rotation = (target_location - global_position).angle() # kot vektorja AB = B - A 
 #					look_at(target_location)
 			seek_ray.look_at(target_location)
+#			print("ray")
+#			print(target_location)
 			battle(collider)
+			modulate = Color.red
+			
 		else:
 			idle() # vklopi idle režim
+			modulate = player_color
 			seek_ray.rotation += seek_rotation_speed * delta
 			if seek_ray.get_rotation_degrees() > seek_rotation_range or seek_ray.get_rotation_degrees() < - seek_rotation_range: 
 				seek_rotation_speed *= -1
+#			for ray in seek_rays_group:
+#				ray.rotation = seek_ray.rotation
 				
 	# reset vision ray
 	elif not control_enabled:
 		seek_ray.rotation = 0
 
 
+func _on_SeekArea_body_entered(body: Node) -> void:
+	if body.is_in_group(Config.group_bolts) and body.is_in_group(Config.group_players):
+		target_location = body.global_position
+		indikator_spawn(target_location)
+		target_found = true
+		pass 	# Replace with function body.
+
+onready var indikator: PackedScene = preload("res://indikator.tscn")
+func indikator_spawn(pos): # za test pozicije
+	
+	var new_indikator = indikator.instance()
+	new_indikator.global_position = pos
+#	new_indikator.global_rotation = bolt_sprite.global_rotation
+	new_indikator.modulate = Color.red
+	add_child(new_indikator)
+	
+	
 func idle():
 #	print("IDLE")
+#	print(target_location)
 
 	engine_power = engine_power_idle
 	
@@ -267,12 +363,13 @@ func idle():
 				idle_target_cell = idle_area[randi() % idle_area.size() - 1]
 
 			target_location = idle_target_cell # boltova tarča je random tarča
+			idle_target_set = true
 	else:	
 		# ko se pot izteče, gremo še enkrat iskat tarčo
 		var current_path_size = navigation_agent.get_nav_path().size()
 		if current_path_size < 5:
 			idle_target_set = false
-			print(navigation_agent.get_nav_path().size())
+
 		
 	shocker_check() # a postavlja mine v idle modetu?
 	
@@ -285,29 +382,31 @@ func battle(target_body):
 	
 	# razdalja večja od dosega rakete
 	if distance_to_target >= max_attacking_distance:
-		shooting("bullet")
-		modulate = Color.pink
+#		shooting("bullet")
+		shooting("misile")
+#		modulate = Color.pink
 	# razdalja manjša od dosega rakete in večja od minimalne bližine
 	elif distance_to_target > min_attacking_distance:
-		modulate = Color.red
+#		modulate = Color.red
 		# bremzaj, če je tarča počasna
 		if target_speed < target_slow_speed:
 			velocity = lerp(velocity, Vector2.ZERO, 0.1)
 		# streljaj raketo, če je v coni za raketo in raketo ima
 		if distance_to_target > mid_attacking_distance and misile_count > 0:
-			yield(get_tree().create_timer(aim_time), "timeout")
+#			yield(get_tree().create_timer(aim_time), "timeout")
 			shooting("misile")
+			yield(get_tree().create_timer(2*aim_time), "timeout")
 		# streljaj metk, če ni v coni za raketo in raketo ima
 		else:
 			# da ni istočasno z raketo ... se na pozna na hitrosti streljanja
 			# na vsakem metku je aim_time zamik, med sabo pa so zamaknjeni za reload time
 			yield(get_tree().create_timer(aim_time), "timeout") 
-			shooting("bullet")
+#			shooting("bullet")
 	# razdalja manjša od minimalne bližine
 	elif distance_to_target <= min_attacking_distance:
 		velocity = lerp(velocity, Vector2.ZERO, 0.1)
 		engine_power = 0 # majhen vpliv na vse skupaj ... prepreči pa kakšen čuden karambol
-		modulate = Color.turquoise
+#		modulate = Color.turquoise
 		shooting("bullet")
 	
 	engine_power = engine_power_battle
@@ -331,7 +430,8 @@ func on_collision():
 
 
 func motion_fx() -> void:
-
+#	print("enemi motion")
+	
 	if velocity.length() > stop_velocity:
 		if control_enabled:
 			engine_particles_rear.set_emitting(true)
@@ -339,7 +439,7 @@ func motion_fx() -> void:
 			engine_particles_rear.rotation = rear_engine_position.global_rotation
 		# če trail obstaja, dodajaj pike
 		if bolt_trail_active: 		
-			new_bolt_trail.gradient.colors[1] = player_color
+			new_bolt_trail.gradient.colors[1] = trail_grad_color
 			new_bolt_trail.add_points(global_position)
 		# če je bil trail neaktiven, začni novega
 		else:
@@ -357,7 +457,7 @@ func motion_fx() -> void:
 			engine_particles_front_right.rotation = front_engine_position_R.global_rotation - deg2rad(180)	
 		# če trail obstaja, dodajaj pike
 		if bolt_trail_active: 		
-			new_bolt_trail.gradient.colors[1] = player_color
+			new_bolt_trail.gradient.colors[1] = trail_grad_color
 			new_bolt_trail.add_points(global_position)
 		# če je bil trail neaktiven, začni novega
 		else:
@@ -436,7 +536,7 @@ func shooting(weapon) -> void:
 					Global.node_creation_parent.add_child(new_bullet)
 					
 					bullet_reloaded = false
-					yield(get_tree().create_timer(bullet_reload_time), "timeout")
+					yield(get_tree().create_timer(new_bullet.reload_time / shooting_ability), "timeout")
 					bullet_reloaded= true	
 						
 			"misile": 
@@ -449,7 +549,7 @@ func shooting(weapon) -> void:
 					new_misile.spawned_by_speed = velocity.length()
 					Global.node_creation_parent.add_child(new_misile)
 					
-					Signals.connect("misile_destroyed", self, "on_misile_destroyed")		
+					new_misile.connect("misile_destroyed", self, "on_misile_destroyed")		
 					misile_reloaded = false
 					misile_count -= 1
 					
@@ -463,7 +563,7 @@ func shooting(weapon) -> void:
 					Global.node_creation_parent.add_child(new_shocker)
 
 					shocker_reloaded = false
-					yield(get_tree().create_timer(misile_reload_time), "timeout")
+					yield(get_tree().create_timer(new_shocker.reload_time / shooting_ability), "timeout")
 					shocker_reloaded= true	
 
 			
@@ -484,6 +584,7 @@ func activate_shield():
 
 func on_hit(hit_by: Node):
 	
+	
 	if not shields_on:
 		
 		idle_target_set = false
@@ -492,7 +593,7 @@ func on_hit(hit_by: Node):
 		if hit_by.is_in_group(Config.group_bullets):
 			
 			# shake camera
-			camera.add_trauma(bullet_hit_shake)
+			camera.add_trauma(camera.bullet_hit_shake)
 			# take damage
 			health -= hit_by.hit_damage
 			if health <= 0:
@@ -500,7 +601,10 @@ func on_hit(hit_by: Node):
 #				explode_and_reset()
 				pass
 			# push
-			velocity = hit_by.velocity * bullet_push_factor
+#			velocity = hit_by.velocity * bullet_push_factor
+			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
+#			print("hit velocity")
+#			print(velocity.length())
 			# utripne	
 			modulate = Color.red
 			yield(get_tree().create_timer(0.05), "timeout")
@@ -518,7 +622,7 @@ func on_hit(hit_by: Node):
 		elif hit_by.is_in_group(Config.group_misiles):
 			control_enabled = false
 			# shake camera
-			camera.add_trauma(misile_hit_shake)
+			camera.add_trauma(camera.misile_hit_shake)
 			# take damage
 			health -= hit_by.hit_damage
 			if health <= 0:
@@ -526,7 +630,10 @@ func on_hit(hit_by: Node):
 #				explode_and_reset()
 				pass
 			# push
-			velocity = hit_by.velocity * misile_push_factor
+#			velocity = hit_by.velocity * misile_push_factor
+			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
+#			print("hit velocity")
+#			print(velocity.length())
 			# utripne	
 			modulate = Color.red
 			yield(get_tree().create_timer(0.05), "timeout")
@@ -563,12 +670,13 @@ func on_hit(hit_by: Node):
 			
 			# enable controls
 			control_enabled = true # najprej se uporabi setan target potem poišče idle target
-			
-
 
 
 func die():
 	
+	# shake camera
+	camera.add_trauma(camera.bolt_explosion_shake)
+		
 	# najprej explodiraj 
 	# potem ugasni sprite in coll 
 	# potem ugasni motor in štartaj trail decay
@@ -580,6 +688,7 @@ func die():
 	new_exploding_bolt.modulate.a = 1
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
 	Global.node_creation_parent.add_child(new_exploding_bolt)
+
 	queue_free()		
 
 
@@ -594,9 +703,8 @@ func on_misile_destroyed(): # iz signala
 
 func _on_NavigationAgent2D_path_changed() -> void:
 	
-#	emit_signal("path_changed", navigation_agent.get_nav_path()) # pošljemo točke poti do cilja
-	Signals.emit_signal("path_changed", navigation_agent.get_nav_path()) # pošljemo točke poti do cilja
-
+	emit_signal("path_changed", navigation_agent.get_nav_path()) # pošljemo točke poti do cilja
+#	Signals.emit_signal("path_changed", navigation_agent.get_nav_path()) # pošljemo točke poti do cilja
 
 func _on_shield_animation_finished(anim_name: String) -> void:
 	
@@ -629,7 +737,7 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 func explode_and_reset(): 
 	
 	# shake camera
-	camera.add_trauma(bolt_explosion_shake)
+	camera.add_trauma(camera.bolt_explosion_shake)
 	
 	if visible == true:
 		var new_exploding_bolt = ExplodingBolt.instance()
@@ -641,4 +749,5 @@ func explode_and_reset():
 		visible = false
 	else:
 		visible = true
+
 

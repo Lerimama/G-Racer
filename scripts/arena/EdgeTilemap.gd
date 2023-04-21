@@ -13,7 +13,7 @@ onready var ExplodingEdge: PackedScene = preload("res://scenes/arena/ExplodingEd
 func _ready() -> void:
 	add_to_group(Config.group_arena)
 	get_floor_navigation()
-	
+	Global.level_tilemap = self
 	
 func get_floor_navigation():
 	

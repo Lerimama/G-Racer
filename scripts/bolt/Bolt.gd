@@ -18,11 +18,12 @@ export var top_speed_reverse: int = 50
 export (float, 0, 10) var drag: float = 1.0 # raste kvadratno s hitrostjo
 export (float, 0, 1) var side_traction: float = 0.1
 export (float, 0, 1) var bounce_size: float = 0.3		
+var inertia = 5
 
 # camerashakes
-export (float, 0, 1) var bolt_explosion_shake = 1
-export (float, 0, 1) var bullet_hit_shake = 0.2
-export (float, 0, 1) var misile_hit_shake = 0.4
+#export (float, 0, 1) var bolt_explosion_shake = 1
+#export (float, 0, 1) var bullet_hit_shake = 0.2
+#export (float, 0, 1) var misile_hit_shake = 0.4
 
 var input_power: float
 var acceleration: Vector2
@@ -114,14 +115,14 @@ func _input(event: InputEvent) -> void:
 		
 #		if Input.is_action_just_pressed("x"):
 #			explode_and_reset()
-		if Input.is_action_just_pressed("space"):
+		if Input.is_action_just_pressed("ctrl"):
 			shooting("Bullet")
-		if Input.is_action_just_released("alt"):	
+		if Input.is_action_just_released("shift"):	
 			shooting("Misile")
-		if Input.is_action_just_released("ctrl"):	
+		if Input.is_action_just_released("alt"):	
 			shooting("Shocker")
-		if Input.is_action_just_pressed("shift"):
-			shooting("Shield")
+#		if Input.is_action_just_pressed("shift"):
+#			shooting("Shield")
 
 
 func state_machine(delta):
@@ -193,9 +194,9 @@ func _physics_process(delta: float) -> void:
 		health_bar.color = Color.indianred
 	else:
 		health_bar.color = Color.aquamarine
-	print("healh")
-	print(health_bar.scale.x)
-	print(health)
+#	print("healh")
+#	print(health_bar.scale.x)
+#	print(health)
 	
 	
 func motion_fx(delta):
@@ -354,15 +355,15 @@ func engines_setup():
 	Global.effects_creation_parent.add_child(engine_particles_front_right)
 
 
-func on_hit(collision_object: Node):
+func on_hit(hit_by: Node):
 	
 	if not shields_on:
 		
-		if collision_object.is_in_group(Config.group_bullets):
+		if hit_by.is_in_group(Config.group_bullets):
 			# shake camera
-			camera.add_trauma(bullet_hit_shake)
+			camera.add_trauma(camera.bullet_hit_shake)
 			# take damage
-			health -= collision_object.hit_damage
+			health -= hit_by.hit_damage
 			health_bar.scale.x = health/10
 			
 			if health <= 0:
@@ -370,25 +371,31 @@ func on_hit(collision_object: Node):
 #				explode_and_reset()
 				pass
 			# push
-			velocity = collision_object.velocity * bullet_push_factor
+#			velocity = collision_object.velocity * bullet_push_factor
+			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
+#			print("hit velocity")
+#			print(velocity.length())
 			# utripne	
 			modulate = Color.red
 			yield(get_tree().create_timer(0.05), "timeout")
 			modulate = Color.white 
 
 
-		elif collision_object.is_in_group(Config.group_misiles):
+		elif hit_by.is_in_group(Config.group_misiles):
 			control_enabled = false
 			# shake camera
-			camera.add_trauma(misile_hit_shake)
+			camera.add_trauma(camera.misile_hit_shake)
 			# take damage
-			health -= collision_object.hit_damage
+			health -= hit_by.hit_damage
 			if health <= 0:
 				die()
 #				explode_and_reset()
 				pass			
 			# push
-			velocity = collision_object.velocity * misile_push_factor
+#			velocity = collision_object.velocity * misile_push_factor
+			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
+#			print("hit velocity")
+#			print(velocity.length())
 			# utripne	
 			modulate = Color.red
 			yield(get_tree().create_timer(0.05), "timeout")
@@ -401,7 +408,7 @@ func on_hit(collision_object: Node):
 			# enable controls
 			control_enabled = true
 			
-		elif collision_object.is_in_group(Config.group_shockers):
+		elif hit_by.is_in_group(Config.group_shockers):
 			
 			control_enabled = false
 #			if control_enabled == true: 
@@ -414,7 +421,7 @@ func on_hit(collision_object: Node):
 			bolt_sprite.material.set_shader_param("noise_factor", 2.0)
 			bolt_sprite.material.set_shader_param("speed", 0.7)
 				
-			yield(get_tree().create_timer(collision_object.shock_time), "timeout")
+			yield(get_tree().create_timer(hit_by.shock_time), "timeout")
 			
 			#releaase
 			var relase_tween = get_tree().create_tween()
@@ -428,7 +435,9 @@ func on_hit(collision_object: Node):
 				
 			
 func die():
-	
+	# shake camera
+	camera.add_trauma(camera.bolt_explosion_shake)
+		
 	# najprej explodiraj 
 	# potem ugasni sprite in coll 
 	# potem ugasni motor in štartaj trail decay
@@ -440,6 +449,7 @@ func die():
 	new_exploding_bolt.modulate.a = 1
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
 	Global.node_creation_parent.add_child(new_exploding_bolt)
+	
 	queue_free()		
 
 
@@ -471,7 +481,7 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 func explode_and_reset():
 	
 	# shake camera
-	camera.add_trauma(bolt_explosion_shake)
+	camera.add_trauma(camera.bolt_explosion_shake)
 	
 	if visible == true:
 		var new_exploding_bolt = ExplodingBolt.instance()

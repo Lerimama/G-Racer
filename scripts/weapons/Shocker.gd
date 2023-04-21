@@ -5,12 +5,12 @@ var spawned_by: String
 var spawned_by_color: Color
 
 var drop_direction: Vector2 = -transform.x # rikverc na osi x
-var drop_speed: float = 50
+#var speed: float = 50
 var drop_time: float = 1.0 # opredeli dolžino meta
 
-var lifetime: float = 10
+#var lifetime: float = 10
 var shock_time: float = 5
-var hit_damage: float = 1
+#var hit_damage: float = 1
 var is_expanded: bool = false
 var detect_expand_size: float = 3.5 # doseg šoka
 
@@ -19,6 +19,17 @@ onready var shocker_sprite: AnimatedSprite = $ShockerSprite
 onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
+
+
+# NEW
+
+onready var weapon_profile: Dictionary = Profiles.weapon_profiles["shocker"]
+onready var reload_time: float = weapon_profile["reload_time"]
+onready var hit_damage: float = weapon_profile["hit_damage"]
+onready var speed: float = weapon_profile["speed"]
+onready var lifetime: float = weapon_profile["lifetime"]
+onready var inertia: float = weapon_profile["inertia"]
+onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
 
 func _ready() -> void:
@@ -30,13 +41,13 @@ func _ready() -> void:
 	
 	# drop mine
 	var drop_tween = get_tree().create_tween()
-	drop_tween.tween_property(self, "drop_speed", 0.0, drop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	drop_tween.tween_property(self, "speed", 0.0, drop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	drop_tween.tween_callback(self, "activate")
 	
 
 func _physics_process(delta: float) -> void:
 	
-	global_position += drop_direction * drop_speed * delta # motion
+	global_position += drop_direction * speed * delta # motion
 	
 		 
 func activate():

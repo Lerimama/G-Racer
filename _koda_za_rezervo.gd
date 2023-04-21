@@ -1,6 +1,35 @@
 
-# -------------------------------------------------------------------------------------
+-> error remover line
 
+# IMPLEMENTACIJA KONTROL V PLEJERJA ----------------------------------------------------------
+
+# ready
+
+# za vsako ime akcije v profilu
+for action_name in controller_profile.keys():
+	# ustvarim akcijo s ključem iz slovarja
+	InputMap.add_action(action_name)
+	# ustvarim prazno tipko, ki ji bomo pripisali skenkodo tipke
+	var action_key = InputEventKey.new()
+	# tipki dodam skenkodo
+	action_key.scancode = controller_profile[action_name]
+	InputMap.action_add_event(action_name, action_key)
+
+# input
+if control_enabled:
+	input_power = Input.get_action_strength(Profiles.fwd_action) - Input.get_action_strength(Profiles.rev_action) # +1, -1 ali 0
+	rotation_dir = Input.get_axis(Profiles.left_action, Profiles.right_action) # +1, -1 ali 0	
+
+	if Input.is_action_just_pressed(Profiles.shoot_bullet_action):
+		shooting("Bullet")
+	if Input.is_action_just_released(Profiles.shoot_misile_action):	
+		shooting("Misile")
+	if Input.is_action_just_released(Profiles.shoot_shocker_action):	
+		shooting("Shocker")
+	if Input.is_action_just_pressed("x"):
+		explode_and_reset()
+	if Input.is_action_just_pressed("shift"):
+		shooting("Shield")
 
 # BOUNCE ---------------------------------------------------------------------------------------
 

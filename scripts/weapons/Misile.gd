@@ -2,7 +2,7 @@ extends KinematicBody2D
 
 
 # premaknjeno v Signals
-# signal misile_destroyed
+signal misile_destroyed
 
 var spawned_by: String
 var spawned_by_color: Color
@@ -10,21 +10,21 @@ var spawned_by_speed: float
 
 # gibanje
 export var speed: float = 20.0
-export var max_speed: float = 150.0
+#export var max_speed: float = 150.0
 var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
-var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
+#var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
 var acceleration_time = 2.0
 var collision: KinematicCollision2D	
 
-var hit_damage: float = 4
+#var hit_damage: float = 4
 var dissarm_speed_drop: float = 3 # notri je to v kvadratni funkciji
 var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
 var wiggle_freq: float = 0.6
 
 # domet
 var time: float = 0
-export var lifetime: float = 1.0 # zadetek ali domet
+#export var lifetime: float = 1.0 # zadetek ali domet
 
 #homming
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
@@ -42,6 +42,19 @@ onready var collision_shape: CollisionShape2D = $MisileCollision
 onready var MisileExplosion = preload("res://scenes/weapons/MisileExplosionParticles.tscn")
 onready var MisileTrail = preload("res://scenes/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://scenes/weapons/MisileDropParticles.tscn")
+
+# NEW
+
+onready var weapon_profile: Dictionary = Profiles.weapon_profiles["misile"]
+onready var reload_time: float = weapon_profile["reload_time"]
+onready var hit_damage: float = weapon_profile["hit_damage"]
+onready var max_speed: float = weapon_profile["speed"]
+onready var lifetime: float = weapon_profile["lifetime"]
+onready var inertia: float = weapon_profile["inertia"]
+onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
+
+
+#var mass: float = 10 #kg
 
 
 func _ready() -> void:

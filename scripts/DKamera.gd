@@ -5,13 +5,18 @@ export (OpenSimplexNoise) var noise # tekstura za vizualizacijo ma kopijo tega n
 
 
 export(float, 0, 1) var trauma = 0.0
-export(float, 0, 1) var add_trauma = 0.2
 export var trauma_time = 0 # decay delay
 export var max_horizontal = 150
 export var max_vertical = 150
 export var max_rotation = 25
 export(float, 0, 1) var decay = 0.5
 export var time_scale: float = 150
+
+# traume
+export(float, 0, 1) var add_trauma = 0.2
+export (float, 0, 1) var bolt_explosion_shake = 1 # explosion add_trauma
+export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
+export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
 
 var time: float = 0
 var test_view_on = false
@@ -21,6 +26,7 @@ var mouse_used: bool = false # če je miška ni redi z dreganje ekrana
 var camera_center = Vector2(320, 180)
 var mouse_position_on_drag_start: Vector2 # zamik pozicije miške ob kliku
 var drag_on: bool = false
+
 
 onready var trauma_bar = $UILayer/TestHud/TraumaBar
 onready var shake_bar = $UILayer/TestHud/ShakeBar
@@ -38,8 +44,10 @@ onready var testhud_node = $UILayer/TestHud
 onready var test_toggle_btn = $UILayer/TestToggle
 
 
+
+
 func _ready():
-	
+	print("KAMERA")
 	Global.current_camera = self
 	
 	testhud_node.hide()

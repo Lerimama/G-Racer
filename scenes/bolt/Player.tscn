@@ -4,7 +4,7 @@
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
 [ext_resource path="res://assets/bolt/bolt_shield_texture.gdshader" type="Shader" id=3]
 [ext_resource path="res://assets/bolt/bolt_wiggle_texture.gdshader" type="Shader" id=4]
-[ext_resource path="res://scripts/bolt/Bolt.gd" type="Script" id=6]
+[ext_resource path="res://scripts/bolt/Player.gd" type="Script" id=5]
 
 [sub_resource type="CircleShape2D" id=30]
 radius = 12.0
@@ -149,9 +149,8 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.6, 1.2 )
 }
 
-[node name="Bolt" type="KinematicBody2D"]
-script = ExtResource( 6 )
-drag = 1.048
+[node name="Player" type="KinematicBody2D"]
+script = ExtResource( 5 )
 
 [node name="BoltCollision" type="CollisionPolygon2D" parent="."]
 position = Vector2( -0.5, 0.5 )
@@ -169,10 +168,14 @@ texture = ExtResource( 1 )
 
 [node name="FrontEnginePositionL" type="Position2D" parent="Bolt"]
 visible = false
-position = Vector2( 1.99999, -4.00001 )
+position = Vector2( 2, -4 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
+
+[node name="indikator3" type="Sprite" parent="Bolt/FrontEnginePositionL"]
+position = Vector2( 0, 1 )
+texture = ExtResource( 2 )
 
 [node name="FrontEnginePositionR" type="Position2D" parent="Bolt"]
 visible = false
@@ -180,6 +183,9 @@ position = Vector2( 2.00001, 2.99999 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
+
+[node name="indikator2" type="Sprite" parent="Bolt/FrontEnginePositionR"]
+texture = ExtResource( 2 )
 
 [node name="RearEnginePosition" type="Position2D" parent="Bolt"]
 visible = false
@@ -189,8 +195,7 @@ __meta__ = {
 }
 
 [node name="indikator" type="Sprite" parent="Bolt/RearEnginePosition"]
-modulate = Color( 0, 0.811765, 1, 1 )
-position = Vector2( 0.5, 0.5 )
+position = Vector2( 0, 0.5 )
 texture = ExtResource( 2 )
 
 [node name="TrailPosition" type="Position2D" parent="Bolt"]

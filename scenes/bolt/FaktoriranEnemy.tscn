@@ -3,7 +3,7 @@
 [ext_resource path="res://assets/bolt/bolt_wiggle_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
 [ext_resource path="res://assets/bolt/bolt.png" type="Texture" id=3]
-[ext_resource path="res://scripts/bolt/Enemy.gd" type="Script" id=4]
+[ext_resource path="res://scripts/bolt/FaktoriranEnemy.gd" type="Script" id=4]
 [ext_resource path="res://assets/bolt/bolt_shield_texture.gdshader" type="Shader" id=5]
 
 [sub_resource type="CircleShape2D" id=545]
@@ -149,7 +149,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.6, 1.2 )
 }
 
-[node name="Enemy" type="KinematicBody2D"]
+[node name="FaktoriranEnemy" type="KinematicBody2D"]
 position = Vector2( 498, 113 )
 rotation = 3.14159
 script = ExtResource( 4 )

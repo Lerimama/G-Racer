@@ -1,8 +1,31 @@
 extends Node
 
+# GLOBAL NODES
+
+var level_tilemap = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var node_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var effects_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var effects_creation_layer = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var current_camera = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+var game_manager = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
+# uporaba -> Global.node_creation_parent = self # na ready funkciji se določi, da je dotična scena node_creation_parent
 
 
+onready var indikator: PackedScene = preload("res://indikator.tscn")
+# spawn indikator
 
+func spawn_indikator(pos, rot): # neki ne štima
+	
+	var new_indikator = indikator.instance()
+	new_indikator.global_position = pos
+	new_indikator.global_rotation = rot
+#	new_indikator.global_position = bolt_sprite.global_position + pos
+#	new_indikator.global_rotation = bolt_sprite.global_rotation
+	new_indikator.modulate = Color.red
+	Global.node_creation_parent.add_child(new_indikator)
+	
+#	print(new_indikator.new_indikator.global_position)
+	pass
 
 
 # Changing scenes is most easily done using the functions `change_scene`

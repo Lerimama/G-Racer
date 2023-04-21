@@ -15,10 +15,10 @@
 
 extends Node
 
+# zaenkrat je tukaj samo popis signalov
 
-signal misile_destroyed # avtorju pošljem signal za "reloaded" stanje
-
-# enemy AI
-signal navigation_completed # enemiju pošljem lokacije floor tiletov po izračunu tal
-signal path_changed (path) # pošlje nov array točk na navgicajski poti (ta signal se sproži skoraj vsak frejm
-signal target_reached # trenutno ni v uporabi
+# AI path and target
+#signal path_changed (path)
+#signal path_reached # trenutno ni v uporabi
+#signal misile_destroyed 
+#signal navigation_completed 

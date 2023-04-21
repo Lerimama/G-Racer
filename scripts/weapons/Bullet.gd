@@ -3,14 +3,14 @@ extends KinematicBody2D
 var spawned_by: String
 var spawned_by_color: Color
 
-export var speed: float = 1000.00
+#export var speed: float = 1000.00
 var direction: Vector2
 var velocity: Vector2
 var collision: KinematicCollision2D
 
 var time: float = 0
-var hit_damage: float = 1
-var lifetime: float = 1
+#var hit_damage: float = 1
+#var lifetime: float = 1
 var new_bullet_trail: Object
 
 onready var trail_position: Position2D = $TrailPosition
@@ -20,6 +20,20 @@ onready var spawner_detect: Area2D = $DetectArea
 onready var BulletTrail: PackedScene = preload("res://scenes/weapons/BulletTrail.tscn") 
 onready var HitParticles: PackedScene = preload("res://scenes/weapons/BulletHitParticles.tscn")
 
+var bullet_momentum: float # je zmnožek hitrosti in teže
+var collider_momentum: float # je zmnožek hitrosti in teže
+
+# NEW
+
+onready var weapon_profile: Dictionary = Profiles.weapon_profiles["bullet"]
+onready var reload_time: float = weapon_profile["reload_time"]
+onready var hit_damage: float = weapon_profile["hit_damage"]
+onready var speed: float = weapon_profile["speed"]
+onready var lifetime: float = weapon_profile["lifetime"]
+onready var inertia: float = weapon_profile["inertia"]
+#onready var direction_start_range: Array = misile_profile["direction_start_range"] # natančnost misile
+
+var force: float
 
 func _ready() -> void:
 	
@@ -39,6 +53,11 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
+	
+#	force = velocity.length() * mass
+#	print("force: ")
+#	print(force)
+#	print(velocity.length())
 	
 	time += delta
 	
