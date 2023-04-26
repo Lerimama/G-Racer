@@ -6,6 +6,25 @@
 [ext_resource path="res://scripts/bolt/Enemy.gd" type="Script" id=4]
 [ext_resource path="res://assets/bolt/bolt_shield_texture.gdshader" type="Shader" id=5]
 
+[sub_resource type="OpenSimplexNoise" id=523]
+seed = 1
+octaves = 4
+period = 90.5
+persistence = 0.354
+lacunarity = 3.58
+
+[sub_resource type="NoiseTexture" id=524]
+width = 9
+height = 9
+seamless = true
+noise = SubResource( 523 )
+
+[sub_resource type="ShaderMaterial" id=525]
+shader = ExtResource( 1 )
+shader_param/noise_factor = 0.0
+shader_param/speed = 0.0
+shader_param/noise_texture = SubResource( 524 )
+
 [sub_resource type="CircleShape2D" id=545]
 radius = 12.0
 
@@ -33,25 +52,6 @@ height = 32
 seamless = true
 bump_strength = 13.9
 noise = SubResource( 546 )
-
-[sub_resource type="OpenSimplexNoise" id=523]
-seed = 1
-octaves = 4
-period = 90.5
-persistence = 0.354
-lacunarity = 3.58
-
-[sub_resource type="NoiseTexture" id=524]
-width = 9
-height = 9
-seamless = true
-noise = SubResource( 523 )
-
-[sub_resource type="ShaderMaterial" id=525]
-shader = ExtResource( 1 )
-shader_param/noise_factor = 0.0
-shader_param/speed = 0.0
-shader_param/noise_texture = SubResource( 524 )
 
 [sub_resource type="Animation" id=535]
 length = 0.001
@@ -159,13 +159,6 @@ position = Vector2( -0.5, 0.5 )
 rotation = 1.57079
 polygon = PoolVector2Array( -1.99997, -4.00001, -5, -3.13719e-05, -5.00001, 1.99997, -4.00002, 2.99997, 2.99998, 3.00002, 3.99999, 2.00003, 4, 2.50975e-05, 1.00003, -3.99999 )
 
-[node name="ShieldCollision" type="CollisionShape2D" parent="."]
-shape = SubResource( 545 )
-
-[node name="Shield" type="Sprite" parent="."]
-material = SubResource( 549 )
-texture = SubResource( 547 )
-
 [node name="Bolt" type="Sprite" parent="."]
 material = SubResource( 525 )
 position = Vector2( 0.5, 0.5 )
@@ -217,18 +210,29 @@ modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
+[node name="ShieldCollision" type="CollisionShape2D" parent="."]
+shape = SubResource( 545 )
+
+[node name="Shield" type="Sprite" parent="."]
+material = SubResource( 549 )
+texture = SubResource( 547 )
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Shield")
 anims/RESET = SubResource( 535 )
 anims/shield_on = SubResource( 536 )
 anims/shielding = SubResource( 537 )
 
+[node name="HealthBar" type="Polygon2D" parent="."]
+position = Vector2( -3.5, -1.52588e-05 )
+color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
+polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
+
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-path_max_distance = 100.0
 
 [node name="VisionFront" type="RayCast2D" parent="."]
 enabled = true
-cast_to = Vector2( 50, 0 )
+cast_to = Vector2( 100, 0 )
 
 [node name="VisionRear" type="RayCast2D" parent="."]
 enabled = true
@@ -242,31 +246,10 @@ cast_to = Vector2( 10, -40 )
 enabled = true
 cast_to = Vector2( 10, 40 )
 
-[node name="EnergyPoly" type="Polygon2D" parent="."]
-position = Vector2( -3.5, 0 )
-color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
-polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
-
 [node name="SeekRay" type="RayCast2D" parent="."]
+visible = false
 enabled = true
 cast_to = Vector2( 90, 0 )
 
-[node name="SeekRayL1" type="RayCast2D" parent="."]
-visible = false
-cast_to = Vector2( 90, -10 )
-
-[node name="SeekRayL2" type="RayCast2D" parent="."]
-visible = false
-cast_to = Vector2( 90, -20 )
-
-[node name="SeekRayR1" type="RayCast2D" parent="."]
-visible = false
-cast_to = Vector2( 90, 10 )
-
-[node name="SeekRayR2" type="RayCast2D" parent="."]
-visible = false
-cast_to = Vector2( 90, 20 )
-
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
-[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_velocity_computed"]

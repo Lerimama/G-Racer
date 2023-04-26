@@ -1,15 +1,16 @@
 extends Node
 
 # GLOBAL NODES
-
-var level_tilemap = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
-var node_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
-var effects_creation_parent = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
-var effects_creation_layer = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
-var current_camera = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
-var game_manager = null	# variabla setana na NULL pomeni, da trenutno je "nič", isto uporabimo za na objektu, če ga želimo zbrisat 
-# uporaba -> Global.node_creation_parent = self # na ready funkciji se določi, da je dotična scena node_creation_parent
-
+var level_tilemap = null
+var node_creation_parent = null
+var effects_creation_parent = null
+var current_camera = null
+var game_manager = null
+#var player_manager = null	# variabla setana na NULL pomeni, da trenutno je "nič"
+#var weapon_manager = null
+#var game_profiles = null
+#var player_profiles = null
+#var player = null	# čekiraš plejerja, če je prisoten, trenutno ne uporabljam (a sploh dela za vse plejerje
 
 onready var indikator: PackedScene = preload("res://indikator.tscn")
 # spawn indikator
@@ -60,17 +61,10 @@ func _deferred_goto_scene(path):
 	# Set it as the current scene, only after it has been added to the tree
 	get_tree().set_current_scene(instanced_scene)
 
-# OLD ------------------------------------------------------------------------------
+
 # OLD ------------------------------------------------------------------------------
 
-#
-##var player_manager = null	# variabla setana na NULL pomeni, da trenutno je "nič"
-#var weapon_manager = null
-#var game_manager = null
-#var game_profiles = null
-#var player_profiles = null
-##var player = null	# čekiraš plejerja, če je prisoten, trenutno ne uporabljam (a sploh dela za vse plejerje
-#
+
 ## INSTANCE NODE
 #
 #func instance_node (node, location, direction, parent):
@@ -131,34 +125,6 @@ func _deferred_goto_scene(path):
 #	return A_distance_to_B
 #
 #
-## GENERATE TIMER -----------------------------------------------------------------------------------
-#
-##var timer # if "onready var" We cache the children should we need to access them again
-##var timer_target
-#
-#func get_universal_timer(timer_name, timer_func_target, function_name):
-#
-#	timer_name = Timer.new()
-#	timer_name.set_one_shot(false)
-##	timer.set_timer_process_m	ode(TIMER_PROCESS_IDLE)
-##	timer.set_wait_time(2)
-##	timer.connect("timeout", self, "_timer_callback")
-##	timer.start()
-#	timer_name.connect("timeout", timer_func_target, function_name)
-#	timer_func_target.add_child(timer_name)
-#
-##	timer_name.start(5)
-#
-#func unisex_print(print_location : Node, print_variable_name, print_variable):
-#
-#	print("")
-#	print("Iz: " + str(print_location.name))
-#	print("--------------------------------------------------")
-#	print(print_variable_name)
-#	print(print_variable)
-#	print("")
-#
-#
 ## INSTANCE FROM TILEMAPS ---------------------------------------------------------------------------
 #
 ##func create_instance_from_tilemap(coord:Vector2, prefab:PackedScene, parent: Node2D, origin_zamik:Vector2 = Vector2.ZERO):	# primer dobre prakse ... static typing
@@ -170,27 +136,3 @@ func _deferred_goto_scene(path):
 ##	parent.add_child(pf)
 ##	print("COORD")
 ##	print(coord)
-#
-#
-## SHAKE --------------------------------------------------------------------------------------------
-#
-##var shake_amount : float
-##
-##func shake (new_shake, shake_time = 0.4, shake_limit = 100):
-##	shake_amount += new_shake
-##	if shake_amount > shake_limit:
-##		shake_amount = shake_limit
-#
-##TOLE BI LAHKO DODAL -------------------------------------------------------------------------------
-#
-## var rng = RandomNumberGenerator.new()
-#
-##func wrap():
-##	if position.x < 0:
-##		position.x = velikost_ekrana.x
-##	if position.x > velikost_ekrana.x:
-##		position.x = 0
-##	if position.y < 0:
-##		position.y = velikost_ekrana.y
-##	if position.y > velikost_ekrana.y:
-##		position.y = 0

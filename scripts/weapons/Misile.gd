@@ -158,8 +158,6 @@ func explode():
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Global.effects_creation_parent.add_child(new_misile_explosion)
 	
-	Signals.emit_signal("misile_destroyed") # pošlje avtorju, da lahko izstreli novo
-	
 	queue_free()
 	
 	

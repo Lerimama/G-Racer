@@ -14,7 +14,7 @@ var points_count_before: int
 var points_count_after: int
 var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
 
-onready var decay_tween = $Decay
+#onready var decay_twin = $Decay
 
 
 func _ready() -> void:
@@ -63,9 +63,12 @@ func _process(delta: float) -> void:
 
 func start_decay():
 #	modulate = Color.red
-	decay_tween.interpolate_property(self ,"modulate:a", null, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT )
-	decay_tween.start()
+#	decay_twin.interpolate_property(self ,"modulate:a", null, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT )
+#	decay_twin.start()
 	
+	var decay_tween = get_tree().create_tween()
+	decay_tween.tween_property(self, "modulate:a", 0, decay_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	decay_tween.tween_callback(self, "queue_free")
 	
 func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta in na začetek arraya
 	

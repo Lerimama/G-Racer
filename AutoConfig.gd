@@ -19,17 +19,10 @@
 extends Node
 
 
-# global nodes
-#var node_creation_parent = null
-#var effects_creation_parent = null
-#var effects_creation_layer = null
-#var current_camera = null
-
 var bolt_explosion_shake
 var bullet_hit_shake
 var misile_hit_shake
 
-var game_manager = null
 
 # game groups
 var group_players =  "Players"

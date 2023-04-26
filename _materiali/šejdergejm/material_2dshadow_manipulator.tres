@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://_materiali/šejdergejm/shader_2dshadow_manipulator.gdshader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/manipulate_color = Color( 0, 0, 0, 1 )
+shader_param/manipulate_other_colors = false
+shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
+shader_param/shadow_color = Color( 0, 0, 0, 0.258824 )
+shader_param/shadow_offset_x = 0.0
+shader_param/shadow_offset_y = 1.0
+shader_param/texture_altitude = 12.0
+shader_param/texture_width = 640.0
+shader_param/texture_height = 360.0

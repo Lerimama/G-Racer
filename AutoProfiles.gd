@@ -1,7 +1,7 @@
 extends Node
 
 
-var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
+var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
 	"P1" : {
 		"player_name" : "P1",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_01.png"),
@@ -18,14 +18,14 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_name" : "E1",
 		# "player_controller" : "Up/Le/Do/Ri/Al",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_03.png"),
-		"player_color" : Color.greenyellow,
+		"player_color" : Config.color_yellow,
 		"controller_profile" : "AI",
 	},
 	"E2" : {
 		"player_name" : "E2",
 		# "player_controller" : "W/A/S/D/Sp",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_04.png"),
-		"player_color" : Color.white,
+		"player_color" : Config.color_green,
 		"controller_profile" : "AI",
 	},
 }
@@ -33,10 +33,10 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 var bolt_profiles: Dictionary = {
 	"basic": {
 		"bolt_texture": preload("res://assets/bolt/bolt_basic.png"),
-		"engine_power": 250, # 1 - 500 konjev 
-		"max_speed_reverse": 50, # velocity.length() 
+		"fwd_engine_power": 250, # 1 - 500 konjev 
+		"rev_engine_power": 150, # 1 - 500 konjev 
 		"turn_angle": 15, # deg per frame
-		"rotation_multiplier": 15, # rotacija kadar miruje
+		"free_rotation_multiplier": 15, # rotacija kadar miruje
 		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
 		"side_traction": 0.1, # 0 - 1
 		"bounce_size": 0.3, # 0 - 1 
@@ -47,16 +47,16 @@ var bolt_profiles: Dictionary = {
 		},
 }
 
-var enemy_profiles: Dictionary = {
+var enemy_profile: Dictionary = {
 	"aim_time": 1,
 	"seek_rotation_range": 60,
 	"seek_rotation_speed": 3,
 	"seek_distance": 640 * 0.7,
-	"engine_power_idle": 50,
-	"engine_power_battle": 150, # je enaka kot od  bolta 
-	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
+	"engine_power_idle": 35,
+	"engine_power_battle": 120, # je enaka kot od  bolta 
 #	"bullet_push_factor": 0.1,
 #	"misile_push_factor": 0.5,
+	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
 }
 
 var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
@@ -66,7 +66,6 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"misile_count" : 5,
 	"shocker_count" : 3,
 }
-
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"player_active" : true,
@@ -108,6 +107,28 @@ var weapon_profiles : Dictionary = {
 	},
 }
 
+# v plejerja pošljem imena akcij iz input mapa
+var default_controller_actions : Dictionary = {
+	"ARROWS" : {
+		fwd_action = "forward", 
+		rev_action = "reverse",
+		left_action = "left",
+		right_action = "right",
+		shoot_bullet_action = "ctrl",
+		shoot_misile_action = "shift",
+		shoot_shocker_action = "alt",
+		},
+	"WASD" : {
+		fwd_action = "w",
+		rev_action = "s",
+		left_action = "a",
+		right_action = "d",
+		shoot_bullet_action = "v",
+		shoot_misile_action = "g",
+		shoot_shocker_action = "space",
+	},
+}
+
 # v uporabi šele ko je kofigurator
 # imena akcij za player "input"
 #var fwd_action: String = "fwd" 
@@ -140,25 +161,3 @@ var weapon_profiles : Dictionary = {
 ##		"is_editable" : false,
 #	},
 #}
-
-# v plejerja pošljem imena akcij iz input mapa
-var default_controller_actions : Dictionary = {
-	"ARROWS" : {
-		fwd_action = "forward", 
-		rev_action = "reverse",
-		left_action = "left",
-		right_action = "right",
-		shoot_bullet_action = "ctrl",
-		shoot_misile_action = "shift",
-		shoot_shocker_action = "alt",
-		},
-	"WASD" : {
-		fwd_action = "w",
-		rev_action = "s",
-		left_action = "a",
-		right_action = "d",
-		shoot_bullet_action = "v",
-		shoot_misile_action = "g",
-		shoot_shocker_action = "space",
-	},
-}

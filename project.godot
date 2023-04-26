@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "KinematicBody2D",
 "class": "Bolt",
 "language": "GDScript",
-"path": "res://scripts/bolt/FaktoriranBolt.gd"
+"path": "res://scripts/bolt/Bolt.gd"
 } ]
 _global_script_class_icons={
 "Bolt": "res://assets/bolt/bolt.png"
@@ -22,7 +22,7 @@ _global_script_class_icons={
 
 config/name="gravity_bonanza_0.1"
 run/main_scene="res://scenes/arena/Arena.tscn"
-config/icon="res://materials/icon.png"
+config/icon="res://_materiali/icon.png"
 
 [autoload]
 
@@ -39,11 +39,15 @@ gdscript/completion/autocomplete_setters_and_getters=true
 
 window/size/width=640
 window/size/height=360
-window/size/fullscreen=true
+window/size/always_on_top=true
 window/size/test_width=640
 window/size/test_height=360
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
+
+[editor]
+
+scene_naming=1
 
 [global]
 

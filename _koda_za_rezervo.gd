@@ -128,5 +128,15 @@ func new_trail():
 			print("get_point_count()" )
 			print(bolt_trail.get_point_count() )
 
-			
+	
+# SCREEN WRAP NODE -------------------------------------------------------------------------	
 
+func wrap():
+	if position.x < 0:
+		position.x = velikost_ekrana.x
+	if position.x > velikost_ekrana.x:
+		position.x = 0
+	if position.y < 0:
+		position.y = velikost_ekrana.y
+	if position.y > velikost_ekrana.y:
+		position.y = 0
