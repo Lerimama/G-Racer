@@ -25,6 +25,7 @@ func _ready() -> void:
 	is_active = true
 	clear_points()
 	randomize()
+
 	 
 func _process(delta: float) -> void:
 	
@@ -45,7 +46,7 @@ func start_decay():
 	is_active = false
 	
 	var random_lifetime: float = rand_range(lifetime[0], lifetime[1])
-	decay_tween.interpolate_property(self ,"modulate", null, Color("#00000000"), lifetime[0], Tween.TRANS_EXPO, Tween.EASE_OUT )
+	decay_tween.interpolate_property(self ,"modulate", null, Color("#00171a23"), lifetime[0], Tween.TRANS_EXPO, Tween.EASE_OUT )
 	decay_tween.interpolate_property(self ,"width", null, rand_range(max_width[0], max_width[1]), random_lifetime, Tween.TRANS_EXPO, Tween.EASE_IN )
 	decay_tween.start()
 	

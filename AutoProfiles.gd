@@ -1,28 +1,97 @@
 extends Node
 
 
+# array imen rabim za izbirnik, dokler imam v ključih slovarja cifre
+var Pickables_names : Array = ["bullet", "misile", "shocker", "shield","energy",  "life", "nitro", "tracking", "random"] 
+# enum Pickables {BULLET, MISILE, SHOCKER, SHIELD, ENERGY, LIFE, NITRO, TRACKING, RANDOM} ... je v pickablu
+
+var pickable_profiles_old: Dictionary = {
+	# zaporedje ENERGY, MISILE, SHOCKER, SHIELD, LIFE, NITRO, TRACKING, RANDOM 
+	# dokler so enums deklarirani v pckbl nodetu, moram v ključih uporabljati cifre
+	0: 0, # ENERGY
+	1: 2, # MISILE
+	2: 1, # SHOCKER
+	3: 0, # SHIELD
+	4: 1, # LIFE
+	5: 500, # NITRO
+	6: 0.7, # TRACKING
+	7: 7, # RANDOM, ker je random zadnja ima v svoji številki tudi range vseh pickablov (brez random)
+}
+
+var pickable_profiles: Dictionary = {
+	# dokler so enums deklarirani v pckbl nodetu, moram v ključih uporabljati cifre, ki so zaporedje enum
+	0: { # BULLET
+		"path": preload("res://scenes/pickables/PickableBullet.res"),
+		"amount": 20,
+	},
+	1: { # MISILE
+		"path": preload("res://scenes/pickables/PickableMisile.res"),
+		"amount": 2,
+	}, 
+	2: { # SHOCKER
+		"path": preload("res://scenes/pickables/PickableShocker.res"),
+		"amount": 1,
+	}, 
+	3: { # SHIELD
+		"path": preload("res://scenes/pickables/PickableShield.res"),
+		"amount": 0,
+	},
+	4: { # ENERGY
+		"path": preload("res://scenes/pickables/PickableEnergy.res"),
+		"amount": 0,
+	},
+	5: { # LIFE
+		"path": preload("res://scenes/pickables/PickableLife.res"),
+		"amount": 1,
+	},
+	6: { # NITRO
+		"path": preload("res://scenes/pickables/PickableNitro.res"),
+		"amount": 500,
+	},
+	7: { # TRACKING
+		"path": preload("res://scenes/pickables/PickableTracking.res"),
+		"amount": 0.7,
+	},
+	8: { # RANDOM
+		"path": preload("res://scenes/pickables/PickableRandom.res"),
+		"amount": 8, # ker je random zadnja ima v svoji številki tudi range vseh pickablov (brez random)
+	},
+}
+
 var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
-	"P1" : {
-		"player_name" : "P1",
+	"P1" : { # ključi bodo kasneje samo indexi
+		"player_name" : "Moe",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_01.png"),
 		"player_color" : Config.color_blue, # color_yellow, color_green, color_red
 		"controller_profile" : "ARROWS",
 	},
 	"P2" : {
-		"player_name" : "P2",
+		"player_name" : "Zed",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_02.png"),
 		"player_color" : Config.color_red,
 		"controller_profile" : "WASD",
 	},
+	"P3" : {
+		"player_name" : "Dot",
+		"player_avatar" : preload("res://assets/bolt/avatars/avatar_03.png"),
+		"player_color" : Config.color_yellow, # color_yellow, color_green, color_red
+		"controller_profile" : "JP1",
+	},
+	"P4" : {
+		"player_name" : "Jax",
+		"player_avatar" : preload("res://assets/bolt/avatars/avatar_04.png"),
+		"player_color" : Config.color_green,
+		"controller_profile" : "JP2",
+	},
 	"E1" : {
-		"player_name" : "E1",
+		"player_name" : "Rat",
 		# "player_controller" : "Up/Le/Do/Ri/Al",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_03.png"),
 		"player_color" : Config.color_yellow,
 		"controller_profile" : "AI",
 	},
 	"E2" : {
-		"player_name" : "E2",
+		"player_name" : "Bub",
 		# "player_controller" : "W/A/S/D/Sp",
 		"player_avatar" : preload("res://assets/bolt/avatars/avatar_04.png"),
 		"player_color" : Config.color_green,
@@ -33,7 +102,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 var bolt_profiles: Dictionary = {
 	"basic": {
 		"bolt_texture": preload("res://assets/bolt/bolt_basic.png"),
-		"fwd_engine_power": 250, # 1 - 500 konjev 
+		"fwd_engine_power": 200, # 1 - 500 konjev 
 		"rev_engine_power": 150, # 1 - 500 konjev 
 		"turn_angle": 15, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
@@ -44,6 +113,7 @@ var bolt_profiles: Dictionary = {
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 1.5,
 		"shield_loops_limit": 3,
+		# "bolt_trail_alpha": 0.05, ... ne dela ... trail je prozoren
 		},
 }
 
@@ -61,20 +131,16 @@ var enemy_profile: Dictionary = {
 
 var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"player_start_position" : Vector2(0, 0),
+	"life" : 1,
+	"energy" : 2,
 	"health" : 10,
 	"bullet_count" : 30,
-	"misile_count" : 5,
-	"shocker_count" : 3,
+	"misile_count" : 1,
+	"shocker_count" : 1,
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"player_active" : true,
-#	"player_start_position" : Vector2(0, 0),
-#	"health" : 10,
-#	"life" : 3,
-#	"bullet_count" : 30,
-#	"misile_count" : 5,
-#	"shocker_count" : 3,
 	"score" : 0000,
 	"bricks" : 0,
 	"wins" : 0,
@@ -126,6 +192,24 @@ var default_controller_actions : Dictionary = {
 		shoot_bullet_action = "v",
 		shoot_misile_action = "g",
 		shoot_shocker_action = "space",
+	},
+	"JP1" : {
+		fwd_action = "jp1_fwd",
+		rev_action = "jp1_rev",
+		left_action = "jp1_left",
+		right_action = "jp1_right",
+		shoot_bullet_action = "jp1_bullet",
+		shoot_misile_action = "jp1_misile",
+		shoot_shocker_action = "jp1_shocker",
+	},
+	"JP2" : {
+		fwd_action = "jp2_fwd",
+		rev_action = "jp2_rev",
+		left_action = "jp2_left",
+		right_action = "jp2_right",
+		shoot_bullet_action = "jp2_bullet",
+		shoot_misile_action = "jp2_misile",
+		shoot_shocker_action = "jp2_shocker",
 	},
 }
 

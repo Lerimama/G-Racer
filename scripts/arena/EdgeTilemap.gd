@@ -4,6 +4,8 @@ extends TileMap
 signal navigation_completed # pošljem lokacije floor tiletov
 
 var light_color: Color = Color.white # za barvanje debrisa		
+var bullet_hit_count: float 
+var bullet_destroy_count: float = 10 
 
 onready var DebrisParticles: PackedScene = preload("res://scenes/arena/EdgeDebrisParticles.tscn")	
 onready var ExplodingEdge: PackedScene = preload("res://scenes/arena/ExplodingEdge.tscn")	
@@ -19,7 +21,7 @@ func _ready() -> void:
 func get_floor_navigation():
 	
 	var tilemap_cells_count: Vector2 = Vector2(get_viewport_rect().size.x / get_cell_size().x, get_viewport_rect().size.y / get_cell_size().y)
-	var floor_cells_grid: Array # tilemap koordinate
+	var floor_grid: Array # tilemap koordinate
 	var floor_cells: Array # global pozicija
 	
 	# zapolni navigation tilemap
@@ -35,24 +37,29 @@ func get_floor_navigation():
 				var cell_global_position = to_global(cell_local_position)
 				
 				floor_cells.append(cell_global_position)
-				floor_cells_grid.append(cell_position)
+				floor_grid.append(cell_position) # za odstranitev robne vrstice
 	
-	var id = 0
+	
 	# odstrani zunanje vrstice celic
-	for floor_cell in floor_cells_grid:
+	var floor_cell_id = 0
+	
+#	print(floor_cells.size())
+	for floor_cell in floor_grid:
 		var cell_in_check: Vector2
 		# preveri vse sosede
-		for y in 3: 
-			for x in 3:
-				cell_in_check = floor_cell + Vector2(x - 1, y - 1)
+		for y in 5: 
+			for x in 5:
+				cell_in_check = floor_cell + Vector2(x - 2, y - 2)
 				# če je vsaj ena soseda prazna, jo sprazni
 				if get_cellv(cell_in_check) == 0:
-					set_cellv (floor_cell, -1)
-#					floor_cells.remove(id)
+					set_cellv (floor_cell, -1) # id 5 so zelene barve
+#					floor_cells.remove(floor_cell_id)
 					continue
-		id += 1
 		
-	emit_signal("navigation_completed", floor_cells) # pošljemo na level, da ga potem pošlje enemiju
+		floor_cell_id += 1
+	
+	print(floor_cells.size())	
+	emit_signal("navigation_completed", floor_cells) # pošljemo v GM, da ga potem pošlje enemiju
 	
 	
 func on_hit (collision_object):
@@ -104,7 +111,7 @@ func explode_tile(current_cell):
 
 func damage_surrounding_cells(current_cell):
 	
-	var surrounding_cells = []
+	var surrounding_cells: Array = []
 	var target_cell
 	
 	for y in 3:

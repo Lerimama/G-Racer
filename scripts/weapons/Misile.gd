@@ -44,7 +44,6 @@ onready var MisileTrail = preload("res://scenes/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://scenes/weapons/MisileDropParticles.tscn")
 
 # NEW
-
 onready var weapon_profile: Dictionary = Profiles.weapon_profiles["misile"]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
@@ -52,9 +51,6 @@ onready var max_speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var inertia: float = weapon_profile["inertia"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
-
-
-#var mass: float = 10 #kg
 
 
 func _ready() -> void:
@@ -73,7 +69,7 @@ func _ready() -> void:
 	
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
-	new_misile_trail.gradient.colors[3] = spawned_by_color
+	new_misile_trail.gradient.colors[2] = spawned_by_color
 	Global.effects_creation_parent.add_child(new_misile_trail)
 	
 

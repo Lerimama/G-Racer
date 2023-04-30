@@ -104,4 +104,4 @@ func _physics_process(delta: float) -> void:
 	# aplikacija free rotacije
 	if not fwd_motion and not rev_motion: 
 		rotate(delta * rotation_angle * free_rotation_multiplier)
-		
+

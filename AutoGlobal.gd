@@ -15,6 +15,17 @@ var game_manager = null
 onready var indikator: PackedScene = preload("res://indikator.tscn")
 # spawn indikator
 
+	
+func get_random_member_index(group_of_elements):
+
+		var random_range = group_of_elements.size()
+		var selected_int = randi() % int(random_range)
+#		var selected_value = current_array[random_int]
+		
+		return selected_int
+#		printt(current_array, random_range, random_int, selected_int)
+	
+
 func spawn_indikator(pos, rot): # neki ne štima
 	
 	var new_indikator = indikator.instance()
@@ -103,26 +114,26 @@ func _deferred_goto_scene(path):
 #
 ## GET DIRECTION ------------------------------------------------------------------------------------
 #
-#func get_direction_to (A_position, B_position):
-#
-#	var x_to_B = B_position.x - A_position.x
-#	var y_to_B = B_position.y - A_position.y
-#
-#	var A_direction_to_B = atan2(y_to_B, x_to_B)
-#
-#	return A_direction_to_B
+func get_direction_to (A_position, B_position):
+
+	var x_to_B = B_position.x - A_position.x
+	var y_to_B = B_position.y - A_position.y
+
+	var A_direction_to_B = atan2(y_to_B, x_to_B)
+
+	return A_direction_to_B
 #
 #
 ## GET DISTANCE -------------------------------------------------------------------------------------
 #
-#func get_distance_to (A_position, B_position):
-#
-#	var x_to_B = B_position.x - A_position.x
-#	var y_to_B = B_position.y - A_position.y
-#
-#	var A_distance_to_B = sqrt ((y_to_B * y_to_B) + (x_to_B * x_to_B))
-#
-#	return A_distance_to_B
+func get_distance_to (A_position, B_position):
+
+	var x_to_B = B_position.x - A_position.x
+	var y_to_B = B_position.y - A_position.y
+
+	var A_distance_to_B = sqrt ((y_to_B * y_to_B) + (x_to_B * x_to_B))
+
+	return A_distance_to_B
 #
 #
 ## INSTANCE FROM TILEMAPS ---------------------------------------------------------------------------

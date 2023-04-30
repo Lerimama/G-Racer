@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0, 0.121429, 0.478571, 0.803571, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="ParticlesMaterial" id=3]
+emission_shape = 2
+emission_box_extents = Vector3( 450, 550, 1 )
+flag_disable_z = true
+gravity = Vector3( 0, 3, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 2.0
+scale_random = 1.0
+color_ramp = SubResource( 2 )
+
+[node name="Background" type="Sprite"]
+position = Vector2( 1, 0 )
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = -23.0
+margin_top = -29.0
+margin_right = 1047.0
+margin_bottom = 779.0
+
+[node name="Zvezde" type="Particles2D" parent="."]
+position = Vector2( 479, 358 )
+rotation = 1.57079
+scale = Vector2( 1.2, 1.2 )
+amount = 77
+lifetime = 10.0
+randomness = 1.0
+process_material = SubResource( 3 )

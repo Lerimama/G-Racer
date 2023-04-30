@@ -223,7 +223,7 @@ anims/RESET = SubResource( 535 )
 anims/shield_on = SubResource( 536 )
 anims/shielding = SubResource( 537 )
 
-[node name="HealthBar" type="Polygon2D" parent="."]
+[node name="EnergyBar1" type="Polygon2D" parent="."]
 position = Vector2( -3.5, -1.52588e-05 )
 color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
 polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
@@ -233,23 +233,39 @@ polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
 [node name="VisionFront" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( 100, 0 )
+collide_with_areas = true
 
 [node name="VisionRear" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( -50, 0 )
+collide_with_areas = true
 
 [node name="VisionLeft" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( 10, -40 )
+collide_with_areas = true
 
 [node name="VisionRight" type="RayCast2D" parent="."]
 enabled = true
 cast_to = Vector2( 10, 40 )
+collide_with_areas = true
 
 [node name="SeekRay" type="RayCast2D" parent="."]
-visible = false
 enabled = true
 cast_to = Vector2( 90, 0 )
+collide_with_areas = true
+
+[node name="EnergyBar" type="Node2D" parent="."]
+
+[node name="Undi" type="Polygon2D" parent="EnergyBar"]
+position = Vector2( -3.5, 0 )
+color = Color( 1, 1, 1, 0.156863 )
+polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
+
+[node name="Bar" type="Polygon2D" parent="EnergyBar"]
+position = Vector2( -3.5, -7.62939e-06 )
+color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
+polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]

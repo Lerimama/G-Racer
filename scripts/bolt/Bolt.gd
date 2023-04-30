@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-class_name Bolt, "res://assets/bolt/bolt.png"
+class_name Bolt, "res://assets/icons/bolt_icon.png"
 
 
 signal stat_changed (stat, stat_change) # bolt in damage
@@ -17,10 +17,11 @@ var rotation_dir: float
 var collision: KinematicCollision2D
 
 # states
+var control_enabled: bool = true
+
 var fwd_motion: bool	
 var rev_motion: bool
 var no_motion: bool	
-var control_enabled: bool = true
 var bullet_reloaded: bool = true
 var misile_reloaded: bool = true
 var shocker_reloaded: bool = true
@@ -41,13 +42,18 @@ var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
 var engine_particles_front_right : CPUParticles2D
 
+# nitro
+var nitro_active: bool =  false
+var nitro_power: float # se seta s pickable
+var nitro_active_time: float = 5
+var tracking_active_time: float = 5
+
 # positions
 var gun_pos: Vector2 = Vector2(6.5, 0.5)
 var shocker_pos: Vector2 = Vector2(-4.5, 0.5)
 var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
 var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
 var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)
-
 
 # ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +63,8 @@ onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var camera = Global.current_camera
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var health_bar: Polygon2D = $HealthBar
+onready var energy_bar_holder: Node2D = $EnergyBar
+onready var energy_bar: Polygon2D = $EnergyBar/Bar
 
 onready var CollisionParticles: PackedScene = preload("res://scenes/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://scenes/bolt/EngineParticles.tscn") 
@@ -68,25 +75,28 @@ onready var Misile: PackedScene = preload("res://scenes/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://scenes/weapons/Shocker.tscn")
 
 # bolt stats
-onready var health: float = Profiles.default_bolt_stats["health"]
-onready var max_health: float = Profiles.default_bolt_stats["health"] # zato, da se lahko resetira
+onready var life: float = Profiles.default_bolt_stats["life"]
+onready var energy: float = Profiles.default_bolt_stats["energy"]
+onready var max_energy: float = Profiles.default_bolt_stats["energy"] # zato, da se lahko resetira
 onready var bullet_count: float = Profiles.default_bolt_stats["bullet_count"]
 onready var misile_count: float = Profiles.default_bolt_stats["misile_count"]
 onready var shocker_count: float = Profiles.default_bolt_stats["shocker_count"]
 
 # bolt profil
-onready var bolt_sprite_texture: Texture = Profiles.bolt_profiles["basic"]["bolt_texture"] 
-onready var fwd_engine_power: int = Profiles.bolt_profiles["basic"]["fwd_engine_power"]
-onready var rev_engine_power: int = Profiles.bolt_profiles["basic"]["rev_engine_power"]
-onready var turn_angle: int = Profiles.bolt_profiles["basic"]["turn_angle"] # deg per frame
-onready var free_rotation_multiplier: int = Profiles.bolt_profiles["basic"]["free_rotation_multiplier"] # rotacija kadar miruje
-onready var drag: float = Profiles.bolt_profiles["basic"]["drag"] # raste kvadratno s hitrostjo
-onready var side_traction: float = Profiles.bolt_profiles["basic"]["side_traction"]
-onready var bounce_size: float = Profiles.bolt_profiles["basic"]["bounce_size"]
-onready var inertia: float = Profiles.bolt_profiles["basic"]["inertia"]
-onready var reload_ability: float = Profiles.bolt_profiles["basic"]["reload_ability"]  # reload def gre v weapons
-onready var on_hit_disabled_time: float = Profiles.bolt_profiles["basic"]["on_hit_disabled_time"] 
-onready var shield_loops_limit: int = Profiles.bolt_profiles["basic"]["shield_loops_limit"] 
+onready var bolt_type: String = "basic" 
+onready var bolt_sprite_texture: Texture = Profiles.bolt_profiles[bolt_type]["bolt_texture"] 
+onready var fwd_engine_power: int = Profiles.bolt_profiles[bolt_type]["fwd_engine_power"]
+onready var rev_engine_power: int = Profiles.bolt_profiles[bolt_type]["rev_engine_power"]
+onready var turn_angle: int = Profiles.bolt_profiles[bolt_type]["turn_angle"] # deg per frame
+onready var free_rotation_multiplier: int = Profiles.bolt_profiles[bolt_type]["free_rotation_multiplier"] # rotacija kadar miruje
+onready var drag: float = Profiles.bolt_profiles[bolt_type]["drag"] # raste kvadratno s hitrostjo
+onready var side_traction: float = Profiles.bolt_profiles[bolt_type]["side_traction"]
+onready var bounce_size: float = Profiles.bolt_profiles[bolt_type]["bounce_size"]
+onready var inertia: float = Profiles.bolt_profiles[bolt_type]["inertia"]
+onready var reload_ability: float = Profiles.bolt_profiles[bolt_type]["reload_ability"]  # reload def gre v weapons
+onready var on_hit_disabled_time: float = Profiles.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
+onready var shield_loops_limit: int = Profiles.bolt_profiles[bolt_type]["shield_loops_limit"] 
+#onready var bolt_trail_alpha: int = Profiles.bolt_profiles[bolt_type]["bolt_trail_alpha"] 
 
 
 func _ready() -> void:
@@ -107,18 +117,22 @@ func _ready() -> void:
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
 	
-# FP -------------------------------------------------------------
 
 func _physics_process(delta: float) -> void:
+	
 	# fwd motion se seta v kontrolerjih
 	# aktivacija pospeška je setana na kotrolerju
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
 	
+	
 	# pospešek omejim z uporom
 	var drag_force = drag * velocity * velocity.length() / 100 # množenje z velocity nam da obliko vektorja ... 100 je za dapatacijo višine inputa
 	acceleration -= drag_force
 	
+	if nitro_active and fwd_motion: # se seta ob prevozu bonusa
+		engine_power = nitro_power
+					
 	# "hitrost" je pospešek s časom
 	velocity += acceleration * delta	
 
@@ -137,7 +151,10 @@ func _physics_process(delta: float) -> void:
 		on_collision()	
 			
 	motion_fx()
-	update_health_bar()
+	update_energy_bar()
+	
+# IZ FP ----------------------------------------------------------------------------
+
 	
 func on_collision():
 	
@@ -154,7 +171,9 @@ func on_collision():
 		new_collision_particles.set_emitting(true)
 		Global.effects_creation_parent.add_child(new_collision_particles)
 
+
 func motion_fx():
+	
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
 	
 	if fwd_motion:
@@ -217,17 +236,6 @@ func motion_fx():
 		engine_particles_front_left.modulate.a = 1
 		engine_particles_front_right.modulate.a = 1
 	
-func update_health_bar():
-	
-	# health_bar
-	health_bar.rotation = -(rotation) # negiramo rotacijo bolta, da je pri miru
-	health_bar.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
-
-	health_bar.scale.x = health / max_health
-	if health_bar.scale.x < 0.5:
-		health_bar.color = Color.indianred
-	else:
-		health_bar.color = Color.aquamarine		
 
 func steering(delta: float) -> void:
 	
@@ -241,12 +249,30 @@ func steering(delta: float) -> void:
 	var new_heading = (front_axis_position - rear_axis_position).normalized()
 	
 	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction" ... 10 je za adaptacijo inputa	
-#	if fwd_motion:
-#		velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction"	
-#	elif rev_motion:
-#		velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.5) # željeno smer gibanja doseže z zamikom "side-traction"	
+	#if fwd_motion:
+	#	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction"	
+	#elif rev_motion:
+	#	velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.5) # željeno smer gibanja doseže z zamikom "side-traction"	
 	
 	rotation = new_heading.angle() # sprite se obrne v smeri
+
+	
+func update_energy_bar():
+	
+	# energy_bar
+	energy_bar_holder.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
+	energy_bar_holder.global_position = global_position + Vector2(0, 8) # negiramo rotacijo bolta, da je pri miru
+#	energy_bar_holder.global_position = global_position + Vector2(-3.5, 8) # negiramo rotacijo bolta, da je pri miru
+
+	energy_bar.scale.x = energy / max_energy
+	if energy_bar.scale.x < 0.5:
+		energy_bar.color = Color.indianred
+	else:
+		energy_bar.color = Color.aquamarine		
+			
+
+# FEATURES ----------------------------------------------------------------------------
+
 
 func engines_setup():
 	
@@ -272,10 +298,9 @@ func engines_setup():
 	engine_particles_front_right.modulate.a = 0
 	# rotacija se seta v FP
 	Global.effects_creation_parent.add_child(engine_particles_front_right)
-		
-# battle ------------------------------------------------------
 
-func shooting(weapon) -> void:
+		
+func shooting(weapon: String) -> void:
 	
 	match weapon:
 		"bullet":	
@@ -320,19 +345,35 @@ func shooting(weapon) -> void:
 				shocker_reloaded = false
 				yield(get_tree().create_timer(new_shocker.reload_time / reload_ability), "timeout")
 				shocker_reloaded= true
-		
 		"shield":
-			if shields_on == false:
-				shield.modulate.a = 1
-				animation_player.play("shield_on")
-				shields_on = true
-				bolt_collision.disabled = true
-				shield_collision.disabled = false
-			else:
-				animation_player.play_backwards("shield_on")
-				# shields_on in collisions_setup # premaknjeno dol na konec animacije
-				shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
+			activate_shield()
 		
+			
+func activate_shield():
+	
+	if shields_on == false:
+		shield.modulate.a = 1
+		animation_player.play("shield_on")
+		shields_on = true
+		bolt_collision.disabled = true
+		shield_collision.disabled = false
+	else:
+		animation_player.play_backwards("shield_on")
+		# shields_on in collisions_setup # premaknjeno dol na konec animacije
+		shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
+
+
+func activate_nitro():
+	
+	# pospešek
+	var nitro_tween = get_tree().create_tween()
+	nitro_tween.tween_property(self, "engine_power", nitro_power, 1) # pospešek spreminja engine_power, na katereg input ne vpliva
+	nitro_tween.tween_property(self, "nitro_active", true, 0)
+	# trajanje
+	yield(get_tree().create_timer(nitro_active_time), "timeout")
+	nitro_active = false	
+
+
 func on_hit(hit_by: Node):
 	
 	if not shields_on:
@@ -383,7 +424,7 @@ func on_hit(hit_by: Node):
 			yield(get_tree().create_timer(hit_by.shock_time), "timeout")
 			#releaase
 			var relase_tween = get_tree().create_tween()
-			relase_tween.tween_property(self, "engine_power", 200, 0.1)
+			relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
 			relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
 			yield(relase_tween, "finished")
 			# reset shsder
@@ -392,14 +433,52 @@ func on_hit(hit_by: Node):
 			
 			control_enabled = true
 
-func take_damage(damage_amount):
+
+func take_damage(damage_amount: float):
 	
 #	emit_signal("stat_changed", damage_amount) # pošiljanje v HUD
 	
-	health -= damage_amount
-	health_bar.scale.x = health/10
-	if health <= 0:
+	energy -= damage_amount
+	energy_bar.scale.x = energy/10
+	if energy <= 0:
 		die()
+
+
+func item_picked(pickable_type: String, amount: float):
+	
+	match pickable_type:
+		"bullet":
+			bullet_count += amount
+		"misile":
+			misile_count += amount
+		"shocker":
+			shocker_count += amount
+		"shield":
+			activate_shield()
+		"energy":
+			energy = max_energy
+		"life":
+			life += amount
+		"nitro":
+			nitro_power = amount
+			activate_nitro()
+		"tracking":
+			var default_traction = side_traction
+			side_traction = amount
+			yield(get_tree().create_timer(tracking_active_time), "timeout")
+			side_traction = default_traction
+		"random":
+			# žrebanje
+			var selection_range: int = amount
+			var selected_pickable_index = randi() % selection_range
+#			var selected_pickable_index: int = Global.get_random_member_index(Profiles.Pickables_names) ... tole vključi tudi random, česar nočem
+			var selected_pickable_name: String = Profiles.Pickables_names[selected_pickable_index]
+			var selected_pickable_amount: float = Profiles.pickable_profiles[selected_pickable_index]["amount"]
+			
+			# pick again
+#			printt("žrebanje", selected_pickable_index, selected_pickable_name, selected_pickable_amount)
+			item_picked(selected_pickable_name, selected_pickable_amount)	
+			
 			
 func die():
 	
@@ -415,11 +494,14 @@ func die():
 	new_exploding_bolt.modulate = modulate
 	new_exploding_bolt.modulate.a = 1
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
+	new_exploding_bolt.spawned_by_color = bolt_color
 	Global.node_creation_parent.add_child(new_exploding_bolt)
 	
 	queue_free()		
 
-# signals ------------------------------------------------------
+
+# SIGNALS ----------------------------------------------------------------------------
+
 		
 func _on_shield_animation_finished(anim_name: String) -> void:
 	

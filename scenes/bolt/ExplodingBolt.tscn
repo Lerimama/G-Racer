@@ -9,7 +9,7 @@ offsets = PoolRealArray( 0.249071, 0.29368, 0.587361, 0.992565, 1 )
 colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0.254159, 0.494118, 0.494118, 0.494118, 0 )
 
 [sub_resource type="Gradient" id=17]
-offsets = PoolRealArray( 0.220408, 0.226221, 0.375321, 0.444898, 0.783673, 1 )
+offsets = PoolRealArray( 0.220408, 0.220994, 0.28453, 0.444898, 0.783673, 1 )
 colors = PoolColorArray( 1, 1, 1, 1, 1, 0.843137, 0.219608, 1, 1, 0.843137, 0.219608, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 )
 
 [sub_resource type="GradientTexture" id=8]
@@ -86,9 +86,7 @@ color_ramp = SubResource( 1 )
 
 [node name="ExplosionParticles" type="Particles2D" parent="."]
 show_behind_parent = true
-emitting = false
 amount = 24
-one_shot = true
 explosiveness = 0.85
 randomness = 1.0
 draw_order = 1

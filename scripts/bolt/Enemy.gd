@@ -99,14 +99,13 @@ func _physics_process(delta: float) -> void:
 	vision(delta)
 
 
-func vision(delta):
+func vision(delta: float):
 	
 	if control_enabled:
 		
 		# čekiraj ovire pred sabo
 		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost
 		if vision_ray_front.is_colliding() and not vision_ray_front.get_collider().is_in_group(Config.group_bolts):
-#		if vision_ray_front.is_colliding():
 			velocity *= idle_brake_factor
 		
 		# večno iskanje tarče
@@ -117,7 +116,7 @@ func vision(delta):
 				rotation = (target_location - global_position).angle() # kot vektorja AB = B - A
 				look_at(target_location)
 			seek_ray.look_at(target_location)
-			battle(collider)
+#			battle(collider)
 			bolt_sprite.modulate = Color.red
 			
 		else:
@@ -163,7 +162,7 @@ func idle():
 	shocker_check() # a postavlja mine v idle modetu?
 
 
-func battle(target_body):
+func battle(target_body: Node):
 	
 	var distance_to_target: float = navigation_agent.distance_to_target()
 	var target_speed: float = target_body.velocity.length()

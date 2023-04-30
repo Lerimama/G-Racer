@@ -32,6 +32,7 @@ var group_misiles =  "Misiles"
 var group_bullets =  "Bullets"
 var group_shockers =  "Shockers"
 var group_arena =  "Arena"
+var group_pickups =  "Pickups"
 
 
 var player_name: String = "P1"
@@ -43,6 +44,7 @@ var color_gray2 = Color("#2f3649")
 var color_gray3 = Color("#272d3d")
 var color_gray4 = Color("#1d212d")
 var color_gray5 = Color("#171a23") # najtemnejša
+var color_gray_trans = Color("#272d3d00") # transparentna
 var color_red = Color("#f35b7f")
 var color_green = Color("#5effa9")
 var color_blue = Color("#4b9fff")

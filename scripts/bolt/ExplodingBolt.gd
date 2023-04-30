@@ -3,7 +3,7 @@ extends Node2D
 
 var spawned_by_color: Color
 
-var decay_time: float = 2.0
+export var decay_time: float = 1.0
 
 var velocity: Vector2
 
@@ -21,13 +21,15 @@ func _ready() -> void:
 	yield(get_tree().create_timer(0.05), "timeout")
 	debris_particles.set_emitting(true)
 	
-#	explosion_particles.process_material.color_ramp.gradient.colors[1] = Config.color_blue
-#	explosion_particles.process_material.color_ramp.gradient.colors[2] = Config.color_blue
+#	explosion_particles.process_material.color_ramp.gradient.colors[0] = spawned_by_color
 	explosion_particles.process_material.color_ramp.gradient.colors[1] = spawned_by_color
 	explosion_particles.process_material.color_ramp.gradient.colors[2] = spawned_by_color
 	explosion_particles.set_emitting(true)
 	
-
+	decay_timer.wait_time = decay_time
+	decay_timer.start()
+	
+	print(spawned_by_color)
 func _process(delta: float) -> void:
 	
 	global_position += velocity/2 * delta
