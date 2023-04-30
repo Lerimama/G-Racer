@@ -20,7 +20,9 @@ func _ready() -> void:
 	
 func get_floor_navigation():
 	
-	var tilemap_cells_count: Vector2 = Vector2(get_viewport_rect().size.x / get_cell_size().x, get_viewport_rect().size.y / get_cell_size().y)
+	var cell_count_x: float = get_viewport_rect().size.x / get_cell_size().x
+	var cell_count_y: float = get_viewport_rect().size.y / get_cell_size().y
+	var tilemap_cells_count: Vector2 = Vector2(cell_count_x, cell_count_y)
 	var floor_grid: Array # tilemap koordinate
 	var floor_cells: Array # global pozicija
 	
@@ -87,7 +89,13 @@ func on_hit (collision_object):
 			set_cellv(cell_position, -1) # namestimo celico iz autotile regije z id = 2
 			update_bitmask_area(cell_position) # vse celice se apdejtajo glede na novo stanje
 			explode_tile(cell_position)
-
+	
+	# poberi vse celice podna
+	# vse ki so prazne so del luknje
+	# vsem praznim pripiši gap
+	# vse, ki so index X in outotile koordinate Y ... so del luknje
+	# vsem v outo tiletu pripiši GapRL, ...
+	# vse ostale so background
 
 func release_debris(collision):
 

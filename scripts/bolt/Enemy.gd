@@ -24,7 +24,6 @@ var target_location: Vector2
 var target_speed_slow = 25
 var shocker_delay_time: float = 1.5
 
-
 # ---------------------------------------------------------------------------------------
 
 onready var navigation_agent = $NavigationAgent2D

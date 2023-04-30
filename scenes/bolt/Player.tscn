@@ -149,7 +149,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.6, 1.2 )
 }
 
-[node name="Bolt" type="KinematicBody2D"]
+[node name="Player" type="KinematicBody2D"]
 script = ExtResource( 5 )
 
 [node name="BoltCollision" type="CollisionPolygon2D" parent="."]

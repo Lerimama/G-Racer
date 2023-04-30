@@ -16,6 +16,7 @@ onready var edge: TileMap = $Edge
 func _ready() -> void:
 	call_deferred("setup_tiles")	# funkcijo "setup_tiles" se izvede šele, ko se celotn drevo naloži
 
+
 func setup_tiles():
 	
 	var tilemap_cells = edge.get_used_cells() # dobi vse celice brez indexa -1
@@ -40,3 +41,15 @@ func create_instance_from_tilemap(coord:Vector2, brick_scene:PackedScene, parent
 	new_brick_scene.position = edge.map_to_world(coord) + brick_anchor_offset
 #	new_brick_scene.scale = Vector2(0.5, 0.5)
 	add_child(new_brick_scene)	
+
+
+func _on_FloorGap_body_entered(body: Node) -> void:
+	if body is Bolt:
+		body.control_enabled = false
+
+
+func _on_FloorGap_body_exited(body: Node) -> void:
+	if body is Bolt:
+		body.modulate = Color.red
+		body.control_enabled = true
+		pass # Replace with function body.
