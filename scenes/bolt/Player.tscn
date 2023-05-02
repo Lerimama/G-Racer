@@ -231,7 +231,7 @@ anims/shielding = SubResource( 110 )
 
 [node name="Undi" type="Polygon2D" parent="EnergyBar"]
 position = Vector2( -3.5, 0 )
-color = Color( 1, 1, 1, 0.156863 )
+color = Color( 0.32549, 0.356863, 0.407843, 0.54902 )
 polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
 
 [node name="Bar" type="Polygon2D" parent="EnergyBar"]

@@ -1,7 +1,7 @@
 extends StaticBody2D
 
 
-var target_score = 100
+var target_points = 100
 
 var brick_color_1 = Color.purple
 var brick_color_2 = Color.pink

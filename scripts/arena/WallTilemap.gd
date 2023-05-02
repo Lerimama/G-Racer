@@ -4,8 +4,6 @@ extends TileMap
 signal navigation_completed # pošljem lokacije floor tiletov
 
 var light_color: Color = Color.white # za barvanje debrisa		
-var bullet_hit_count: float 
-var bullet_destroy_count: float = 10 
 
 onready var DebrisParticles: PackedScene = preload("res://scenes/arena/EdgeDebrisParticles.tscn")	
 onready var ExplodingEdge: PackedScene = preload("res://scenes/arena/ExplodingEdge.tscn")	
@@ -60,7 +58,7 @@ func get_floor_navigation():
 		
 		floor_cell_id += 1
 	
-	print(floor_cells.size())	
+#	print(floor_cells.size())	
 	emit_signal("navigation_completed", floor_cells) # pošljemo v GM, da ga potem pošlje enemiju
 	
 	

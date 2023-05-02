@@ -30,6 +30,8 @@ func _ready() -> void:
 	decay_timer.start()
 	
 	print(spawned_by_color)
+	
+	
 func _process(delta: float) -> void:
 	
 	global_position += velocity/2 * delta

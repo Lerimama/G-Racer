@@ -118,5 +118,4 @@ root_node = NodePath("../DetectArea")
 anims/outro = SubResource( 14 )
 
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
-[connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

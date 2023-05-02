@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/hud/tileset_hud_lite.png" type="Texture" id=1]
+
+[node name="HudIconLife" type="Sprite"]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 32, 0, 8, 8 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

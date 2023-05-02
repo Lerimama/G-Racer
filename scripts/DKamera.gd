@@ -54,7 +54,7 @@ onready var test_toggle_btn = $UILayer/TestToggle
 
 
 func _ready():
-	print("KAMERA")
+#	print("KAMERA")
 	Global.current_camera = self
 	
 	testhud_node.hide()

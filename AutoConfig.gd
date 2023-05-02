@@ -123,7 +123,7 @@ var level_values : Dictionary = { # tale bo na koncu obsoleten, al bo za drzgam?
 	"bonus_m_color" : Color.pink,
 
 	# pointer
-	"pointer_score" : 100,
+	"pointer_points" : 100,
 	"pointer_color" : Color.aquamarine,
 	"pointer_brake" : 3,
 	# exploder

@@ -131,18 +131,18 @@ var enemy_profile: Dictionary = {
 
 var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"player_start_position" : Vector2(0, 0),
-	"life" : 1,
+	"life" : 5,
 	"energy" : 2,
-	"health" : 10,
-	"bullet_count" : 30,
-	"misile_count" : 1,
-	"shocker_count" : 1,
+	"bullet_power" : 0.1,
+#	"bullet_count" : 30,
+	"misile_count" : 5,
+	"shocker_count" : 5,
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"player_active" : true,
-	"score" : 0000,
-	"bricks" : 0,
+	"life" : 5,
+	"points" : 10,
 	"wins" : 0,
 }
 

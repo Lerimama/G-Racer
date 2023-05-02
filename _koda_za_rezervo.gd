@@ -1,7 +1,15 @@
 
 -> error remover line
 
-# IMPLEMENTACIJA KONTROL V PLEJERJA ----------------------------------------------------------
+
+# ANALOGEN INPUT
+
+export var analog_input: bool = false # _temp
+			
+input_power = Input.get_action_strength(fwd_action) - Input.get_action_strength(rev_action) # +1, -1 ali 0
+
+
+# IMPLEMENTACIJA KONTROL V PLEJERJA
 
 # ready
 
@@ -31,13 +39,13 @@ if control_enabled:
 	if Input.is_action_just_pressed("shift"):
 		shooting("Shield")
 
-# BOUNCE ---------------------------------------------------------------------------------------
+# BOUNCE 
 
 velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 bounce_angle = collision.normal.angle_to(velocity)	
 
 
-# RIGID BODY KOZIJA -------------------------------------------------------------------------------------
+# RIGID BODY KOZIJA 
 
 if collision.collider.is_class("RigidBody2D"):
 
@@ -53,7 +61,7 @@ if collision.collider.is_class("RigidBody2D"):
 
 
 
-# DROP SHADOW -------------------------------------------------------------------------------------
+# DROP SHADOW 
 
 
 #func _draw():
@@ -96,7 +104,7 @@ func _process(_delta):
 		
 
 	
-# TRAIL -------------------------------------------------------------------------------------	
+# TRAIL 	
 
 func new_trail():
 
@@ -129,7 +137,7 @@ func new_trail():
 			print(bolt_trail.get_point_count() )
 
 	
-# SCREEN WRAP NODE -------------------------------------------------------------------------	
+# SCREEN WRAP NODE 	
 
 func wrap():
 	if position.x < 0:

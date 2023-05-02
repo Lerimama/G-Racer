@@ -86,7 +86,9 @@ color_ramp = SubResource( 1 )
 
 [node name="ExplosionParticles" type="Particles2D" parent="."]
 show_behind_parent = true
+emitting = false
 amount = 24
+one_shot = true
 explosiveness = 0.85
 randomness = 1.0
 draw_order = 1

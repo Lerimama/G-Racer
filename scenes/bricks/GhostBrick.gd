@@ -1,7 +1,7 @@
 extends StaticBody2D
 
 
-var ghost_score = 100
+var ghost_points = 100
 var ghost_color = Color.aquamarine
 var ghost_brake = 3
 
