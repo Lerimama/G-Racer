@@ -36,6 +36,37 @@ var stat_line_btmR_active: bool = false
 var stat_lines_owners: Dictionary = {}
 var loading_time: float = 0.5 # pred prikazom nbaj se v miru postavi
 
+# pavza
+onready var pause_ui: Control = $"../PauseUI"
+onready var pavza_btn: Button = $PavzaBtn
+onready var pavza_back_btn: Button = $"../PauseUI/BackBtn"
+onready var pavza_restart_btn: Button = $"../PauseUI/RestartBtn"
+onready var pavza_quit_btn: Button = $"../PauseUI/QuitBtn"
+
+# gameover
+onready var game_over_ui: Control = $"../GameOverUI"
+onready var gameover_restart_btn: Button = $"../GameOverUI/RestartBtn"
+onready var gameover_high_score_btn: Button = $"../GameOverUI/HighScoreBtn"
+onready var gameover_quit_btn: Button = $"../GameOverUI/QuitBtn"
+
+
+
+func _input(event: InputEvent) -> void:
+	
+	if Input.is_action_just_released("ui_cancel"):	
+		if not pause_ui.visible:
+			pause_ui.visible = true
+		else:
+			pause_ui.visible = false
+	
+	
+	if Input.is_action_just_released("r"):	
+		if not pause_ui.visible:
+			yield(get_tree().create_timer(1), "timeout")
+			game_over_ui.visible = true
+		else:
+			game_over_ui.visible = false
+
 
 func _ready() -> void:
 	
@@ -47,14 +78,49 @@ func _ready() -> void:
 	game_time.visible = false
 	game_over.visible = false
 
-	# temp
-#	player_line.label_name.text = "Moe"
-	
 	# Global.game_manager.connect("stat_change_received", self, "on_Stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
 	get_parent().get_node("GameManager").connect("stat_change_received", self, "on_Stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
 	get_parent().get_node("GameManager").connect("new_bolt_spawned", self, "on_New_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+	
+	# pavza
+	pavza_restart_btn.connect("pressed", self, "_on_pavza_restart_btn_pressed")	
+	pavza_btn.connect("pressed", self, "_on_pavza_btn_pressed")
+	pavza_back_btn.connect("pressed", self, "_on_pavza_back_btn_pressed")
+	pavza_quit_btn.connect("pressed", self, "_on_pavza_quit_btn_pressed")
+	pause_ui.visible = false
 
-	# napolni statistiko
+	# gameover
+	gameover_restart_btn.connect("pressed", self, "_on_gameover_restart_btn_pressed")
+	gameover_high_score_btn.connect("pressed", self, "_on_gameover_high_score_btn_pressed")
+	gameover_quit_btn.connect("pressed", self, "_on_gameover_quit_btn_pressed")
+	game_over_ui.visible = false
+
+
+		
+func _on_gameover_restart_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Global.switch_to_scene("res://scenes/arena/Arena.tscn")
+	
+	
+func _on_gameover_quit_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Global.switch_to_scene("res://scenes/GameInterface.tscn")
+	
+func _on_gameover_high_score_btn_pressed():
+	game_over_ui.visible = false
+	
+	
+func _on_pavza_back_btn_pressed():
+	pause_ui.visible = false
+	
+func _on_pavza_restart_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Global.switch_to_scene("res://scenes/arena/Arena.tscn")
+	
+	
+func _on_pavza_quit_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Global.switch_to_scene("res://scenes/GameInterface.tscn")
 
 func _on_game_status_change(new_game_status):
 	
@@ -71,6 +137,7 @@ func _on_game_status_change(new_game_status):
 		game_over.visible = true
 		game_is_on = false
 		pass
+
 
 func on_Stat_change_received(stat_owner_id, stat_name, new_stat_value):
 	
@@ -94,6 +161,7 @@ func on_Stat_change_received(stat_owner_id, stat_name, new_stat_value):
 #			print("--------- šoker")
 			# value se preračuna v plejerju
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
+
 	
 func on_New_bolt_spawned(bolt_index, player_id):
 	
@@ -126,6 +194,7 @@ func on_New_bolt_spawned(bolt_index, player_id):
 	
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse obarva
 	current_stat_line.visible = true
+
 	
 func hide_player_stats():
 	# skrij statistiko
@@ -133,6 +202,8 @@ func hide_player_stats():
 	stat_line_topR.visible = false
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false	
+
+
 
 
 

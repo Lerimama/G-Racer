@@ -3,7 +3,6 @@ extends Node2D
 
 signal stat_change_received (player_index, changed_stat, stat_new_value)
 
-
 var player1_id = "P1"
 var player2_id = "P2"
 var player3_id = "P3"
@@ -32,6 +31,10 @@ onready var player_bolt = preload("res://scenes/bolt/Player.tscn")
 onready var enemy_bolt = preload("res://scenes/bolt/Enemy.tscn")
 onready var game_manager: Node = $GameManager
 
+# temp
+onready var back_btn: Button = $BackBtn
+onready var pause_ui: Control = $PauseUI
+
 
 func _ready() -> void:
 	
@@ -39,7 +42,8 @@ func _ready() -> void:
 #	Global.game_manager = game_manager
 #
 	$Enemy.connect("path_changed", Global.game_manager, "_on_Enemy_path_changed") # za prikaz linije, drugače ne rabiš
-	
+
+
 #
 #func _unhandled_key_input(event: InputEventKey) -> void:
 #

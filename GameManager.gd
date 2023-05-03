@@ -36,11 +36,6 @@ onready var player3_profile = Profiles.default_player_profiles[player3_id]
 onready var player4_profile = Profiles.default_player_profiles[player4_id]
 onready var enemy_profile = Profiles.default_player_profiles[enemy_id]
 
-#onready var spawn_position_1: Position2D = $Level_00/Positions/SpawnPosition1
-#onready var spawn_position_2: Position2D = $Level_00/Positions/SpawnPosition2
-#onready var spawn_position_3: Position2D = $Level_00/Positions/SpawnPosition3
-#onready var spawn_position_4: Position2D = $Level_00/Positions/SpawnPosition4
-
 onready var tilemap_floor_cells: Array
 onready var navigation_line: Line2D = $"../NavigationPath"
 onready var enemy: KinematicBody2D = $"../Enemy"
@@ -55,7 +50,7 @@ var game_stats: Dictionary = {
 	"final_score": 0,
 }
 
-
+	
 func _ready() -> void:
 	
 	Global.game_manager = self	
@@ -93,7 +88,6 @@ func _process(delta: float) -> void:
 	pickables_in_game = get_tree().get_nodes_in_group(Config.group_pickups)	
 
 
-
 func spawn_bolt(bolt, spawned_position, spawned_player_id):
 	
 	spawned_bolt_index += 1
@@ -122,7 +116,6 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id):
 	emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_player_id) # pošljem na hud, da prižge stat line in ga napolne
 	
 	
-
 func spawn_pickable():
 	
 	
