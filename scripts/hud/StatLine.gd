@@ -43,3 +43,4 @@ func _on_bolt_color_set(bolt_color):
 	stat_points.def_stat_color = bolt_color # setget
 #	modulate = bolt_color
 	
+

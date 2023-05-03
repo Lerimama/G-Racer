@@ -18,13 +18,6 @@ func _ready() -> void:
 	start.visible =  false
 	count_down.visible =  true
 	
-#	game_is_on = true
-#	# razdeli čas na minute in sekunde
-#	time_minutes -= 1
-#	time_seconds = 59
-#	minutes.text = "%02d" % time_minutes
-#	seconds.text = "%02d" % 60
-
 func _physics_process(delta: float) -> void:
 	
 	current_time += delta

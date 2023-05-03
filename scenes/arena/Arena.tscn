@@ -452,7 +452,6 @@ tile_data = PoolIntArray( -196610, 0, 65536, -196609, 0, 65537, -262144, 0, 6553
 script = ExtResource( 10 )
 
 [node name="Edge" type="TileMap" parent="Level_00"]
-visible = false
 material = SubResource( 509 )
 tile_set = ExtResource( 6 )
 cell_size = Vector2( 8, 8 )

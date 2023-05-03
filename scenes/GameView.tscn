@@ -22,6 +22,7 @@ modulate = Color( 0.054902, 0.709804, 0.498039, 1 )
 z_index = -2
 
 [node name="TextureRect" type="TextureRect" parent="Background"]
+visible = false
 margin_right = 640.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
@@ -58,8 +59,10 @@ usage = 0
 render_target_update_mode = 3
 
 [node name="Arena" parent="Viewport" instance=ExtResource( 2 )]
+visible = false
 
 [node name="Background" type="Node2D" parent="Viewport"]
+visible = false
 modulate = Color( 0.27451, 0.670588, 0.545098, 1 )
 z_index = -2
 
@@ -71,6 +74,7 @@ texture = ExtResource( 3 )
 expand = true
 
 [node name="Control" type="Control" parent="."]
+visible = false
 modulate = Color( 1, 1, 1, 0.360784 )
 margin_right = 40.0
 margin_bottom = 40.0
