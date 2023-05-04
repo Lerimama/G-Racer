@@ -586,6 +586,20 @@ tracks/2/keys = {
 "update": 0,
 "values": [ Vector2( -352, 0 ), Vector2( -800, 0 ), Vector2( -736, 0 ) ]
 }
+tracks/3/type = "method"
+tracks/3/path = NodePath("..")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 1.2 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "_on_quit_btn_pressed"
+} ]
+}
 
 [node name="Home" type="Node"]
 script = ExtResource( 5 )
@@ -625,6 +639,7 @@ tile_data = PoolIntArray( 917523, 4, 0, 917524, 4, 0, 917525, 4, 0, 917526, 4, 0
 [node name="HomeUI" type="Control" parent="."]
 margin_right = 640.0
 margin_bottom = 360.0
+theme = ExtResource( 4 )
 
 [node name="MainMenu" type="Control" parent="HomeUI"]
 margin_right = 640.0

@@ -50,6 +50,10 @@ var game_stats: Dictionary = {
 	"final_score": 0,
 }
 
+func _input(event: InputEvent) -> void:
+	
+	if Input.is_action_just_released("ui_cancel"):	
+		print("juhej")
 	
 func _ready() -> void:
 	
@@ -154,7 +158,7 @@ func restart():
 	if not pickables_in_game.empty():
 		for p in pickables_in_game:
 			p.queue_free()
-	$"../HUD".hide_player_stats()
+	$"../UI/HUD".hide_player_stats()
 	spawned_bolt_index = 0
 	
 	

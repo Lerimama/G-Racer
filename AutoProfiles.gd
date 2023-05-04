@@ -86,14 +86,14 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 	"E1" : {
 		"player_name" : "Rat",
 		# "player_controller" : "Up/Le/Do/Ri/Al",
-		"player_avatar" : preload("res://assets/bolt/avatars/avatar_03.png"),
+		"player_avatar" : preload("res://assets/bolt/avatars/avatar_05.png"),
 		"player_color" : Config.color_gray0,
 		"controller_profile" : "AI",
 	},
 	"E2" : {
 		"player_name" : "Bub",
 		# "player_controller" : "W/A/S/D/Sp",
-		"player_avatar" : preload("res://assets/bolt/avatars/avatar_04.png"),
+		"player_avatar" : preload("res://assets/bolt/avatars/avatar_06.png"),
 		"player_color" : Config.color_gray0,
 		"controller_profile" : "AI",
 	},

@@ -49,16 +49,13 @@ onready var gameover_restart_btn: Button = $"../GameOverUI/RestartBtn"
 onready var gameover_high_score_btn: Button = $"../GameOverUI/HighScoreBtn"
 onready var gameover_quit_btn: Button = $"../GameOverUI/QuitBtn"
 
+onready var scene_tree: = get_tree()
 
 
 func _input(event: InputEvent) -> void:
 	
-	if Input.is_action_just_released("ui_cancel"):	
-		if not pause_ui.visible:
-			pause_ui.visible = true
-		else:
-			pause_ui.visible = false
-	
+	if Input.is_action_just_released("ui_cancel"):
+		toggle_pause()
 	
 	if Input.is_action_just_released("r"):	
 		if not pause_ui.visible:
@@ -78,13 +75,13 @@ func _ready() -> void:
 	game_time.visible = false
 	game_over.visible = false
 
-	# Global.game_manager.connect("stat_change_received", self, "on_Stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-	get_parent().get_node("GameManager").connect("stat_change_received", self, "on_Stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-	get_parent().get_node("GameManager").connect("new_bolt_spawned", self, "on_New_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+	# Global.game_manager.connect("stat_change_received", self, "on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
+	get_parent().get_parent().get_node("GameManager").connect("stat_change_received", self, "_on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
+	get_parent().get_parent().get_node("GameManager").connect("new_bolt_spawned", self, "_on_new_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
 	
 	# pavza
-	pavza_restart_btn.connect("pressed", self, "_on_pavza_restart_btn_pressed")	
 	pavza_btn.connect("pressed", self, "_on_pavza_btn_pressed")
+	pavza_restart_btn.connect("pressed", self, "_on_pavza_restart_btn_pressed")	
 	pavza_back_btn.connect("pressed", self, "_on_pavza_back_btn_pressed")
 	pavza_quit_btn.connect("pressed", self, "_on_pavza_quit_btn_pressed")
 	pause_ui.visible = false
@@ -95,12 +92,10 @@ func _ready() -> void:
 	gameover_quit_btn.connect("pressed", self, "_on_gameover_quit_btn_pressed")
 	game_over_ui.visible = false
 
-
 		
 func _on_gameover_restart_btn_pressed():
 #	yield(get_tree().create_timer(2), "timeout")
 	Global.switch_to_scene("res://scenes/arena/Arena.tscn")
-	
 	
 func _on_gameover_quit_btn_pressed():
 #	yield(get_tree().create_timer(2), "timeout")
@@ -108,19 +103,28 @@ func _on_gameover_quit_btn_pressed():
 	
 func _on_gameover_high_score_btn_pressed():
 	game_over_ui.visible = false
+
+
+func _on_pavza_btn_pressed():
+	toggle_pause()
 	
+func toggle_pause():
+	pause_ui.visible = not pause_ui.visible
+	scene_tree.paused = not scene_tree.paused
+	pavza_btn.visible = not pavza_btn.visible
+	scene_tree.set_input_as_handled()
 	
 func _on_pavza_back_btn_pressed():
-	pause_ui.visible = false
+	toggle_pause()
 	
 func _on_pavza_restart_btn_pressed():
 #	yield(get_tree().create_timer(2), "timeout")
 	Global.switch_to_scene("res://scenes/arena/Arena.tscn")
 	
-	
 func _on_pavza_quit_btn_pressed():
 #	yield(get_tree().create_timer(2), "timeout")
 	Global.switch_to_scene("res://scenes/GameInterface.tscn")
+
 
 func _on_game_status_change(new_game_status):
 	
@@ -139,7 +143,7 @@ func _on_game_status_change(new_game_status):
 		pass
 
 
-func on_Stat_change_received(stat_owner_id, stat_name, new_stat_value):
+func _on_stat_change_received(stat_owner_id, stat_name, new_stat_value):
 	
 	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
 	
@@ -163,7 +167,7 @@ func on_Stat_change_received(stat_owner_id, stat_name, new_stat_value):
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
 
 	
-func on_New_bolt_spawned(bolt_index, player_id):
+func _on_new_bolt_spawned(bolt_index, player_id):
 	
 	var current_stat_line: Control
 	
