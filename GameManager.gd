@@ -50,10 +50,11 @@ var game_stats: Dictionary = {
 	"final_score": 0,
 }
 
-func _input(event: InputEvent) -> void:
+
+
 	
-	if Input.is_action_just_released("ui_cancel"):	
-		print("juhej")
+
+
 	
 func _ready() -> void:
 	
@@ -61,24 +62,30 @@ func _ready() -> void:
 #	$Enemy.connect("path_changed", self, "_on_Enemy_path_changed") # za prikaz linije, drugače ne rabiš
 	pass
 
-func _unhandled_key_input(event: InputEventKey) -> void:
+func _input(event: InputEvent) -> void:
+#func _unhandled_key_input(event: InputEventKey) -> void:
+
+
+	if Input.is_action_just_released("ui_cancel"):	
+		print("juhej")
+	var ppp1 = null
 
 	if bolts_in_game.size() < 4:
 		# P1
 		if Input.is_key_pressed(KEY_1):
-			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player1_id)
+			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player1_id, Global.ppp1)
 		# P2
 		if Input.is_key_pressed(KEY_2):
-			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player2_id)
+			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player2_id, Global.ppp2)
 		# P3
 		if Input.is_key_pressed(KEY_3):
-			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player3_id)
+			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player3_id, Global.ppp3)
 		# P4
 		if Input.is_key_pressed(KEY_4):
-			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player4_id)
+			spawn_bolt(player_bolt, get_parent().get_global_mouse_position(), player4_id, Global.ppp4)
 		# Enemi
 		if Input.is_key_pressed(KEY_5):
-			spawn_bolt(enemy_bolt, get_parent().get_global_mouse_position(), enemy_id)
+			spawn_bolt(enemy_bolt, get_parent().get_global_mouse_position(), enemy_id, Global.ppp4)
 	
 	if Input.is_action_just_pressed("x"):
 		spawn_pickable()
@@ -92,7 +99,7 @@ func _process(delta: float) -> void:
 	pickables_in_game = get_tree().get_nodes_in_group(Config.group_pickups)	
 
 
-func spawn_bolt(bolt, spawned_position, spawned_player_id):
+func spawn_bolt(bolt, spawned_position, spawned_player_id, ppp):
 	
 	spawned_bolt_index += 1
 
@@ -102,6 +109,8 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id):
 	Global.node_creation_parent.add_child(new_bolt)
 
 	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
+	
+	ppp = new_bolt
 	
 	# če je plejer komp mu pošljem navigation area
 	if new_bolt == enemy_bolt:

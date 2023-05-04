@@ -1,13 +1,11 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://scripts/arena/WallTilemap.gd" type="Script" id=1]
 [ext_resource path="res://scripts/DKamera.gd" type="Script" id=2]
-[ext_resource path="res://scripts/Pickable.gd" type="Script" id=3]
 [ext_resource path="res://scripts/arena/Arena.gd" type="Script" id=4]
 [ext_resource path="res://scenes/bolt/Enemy.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/arena/tileset_arena_edge.tres" type="TileSet" id=6]
 [ext_resource path="res://scripts/Level_00.gd" type="Script" id=7]
-[ext_resource path="res://assets/items/tileset_pickables.png" type="Texture" id=8]
 [ext_resource path="res://assets/arena/tileset_arena_background.tres" type="TileSet" id=9]
 [ext_resource path="res://scripts/arena/BackgroundTilemap.gd" type="Script" id=10]
 [ext_resource path="res://scenes/hud/StatLine.tscn" type="PackedScene" id=11]
@@ -38,18 +36,6 @@ glow_hdr_scale = 1.44
 glow_bicubic_upscale = true
 glow_high_quality = true
 adjustment_brightness = 0.64
-
-[sub_resource type="OpenSimplexNoise" id=556]
-seed = 2
-octaves = 1
-period = 10.0
-persistence = 0.0
-lacunarity = 1.0
-
-[sub_resource type="NoiseTexture" id=555]
-width = 80
-height = 80
-noise = SubResource( 556 )
 
 [sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0, 0.121429, 0.478571, 0.803571, 1 )
@@ -178,14 +164,6 @@ func _ready() -> void:
 	Global.effects_creation_parent = self
 "
 
-[sub_resource type="SpriteFrames" id=772]
-animations = [ {
-"frames": [  ],
-"loop": true,
-"name": "default",
-"speed": 5.0
-} ]
-
 [sub_resource type="DynamicFontData" id=773]
 font_path = "res://assets/fonts/Gamer.ttf"
 
@@ -197,6 +175,24 @@ font_data = SubResource( 773 )
 size = 32
 extra_spacing_char = 2
 font_data = SubResource( 773 )
+
+[sub_resource type="OpenSimplexNoise" id=777]
+seed = 14
+period = 60.9
+
+[sub_resource type="OpenSimplexNoise" id=776]
+seed = 2
+octaves = 1
+period = 10.0
+persistence = 0.0
+lacunarity = 1.0
+
+[sub_resource type="NoiseTexture" id=555]
+width = 80
+height = 80
+noise = SubResource( 776 )
+
+[sub_resource type="RectangleShape2D" id=778]
 
 [node name="Arena" type="Node2D"]
 position = Vector2( -1, 0 )
@@ -210,173 +206,6 @@ script = ExtResource( 14 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 446 )
-
-[node name="DKamera" type="Camera2D" parent="."]
-position = Vector2( 320, 180 )
-rotation = 3.14159
-rotating = true
-current = true
-drag_margin_left = 0.0
-drag_margin_top = 0.0
-drag_margin_right = 0.0
-drag_margin_bottom = 0.0
-editor_draw_drag_margin = true
-script = ExtResource( 2 )
-noise = SubResource( 556 )
-max_horizontal = 15
-max_vertical = 15
-max_rotation = 2
-decay = 0.3
-time_scale = 200.0
-
-[node name="UILayer" type="CanvasLayer" parent="DKamera"]
-layer = 3
-
-[node name="TestToggle" type="CheckBox" parent="DKamera/UILayer"]
-visible = false
-margin_left = 6.0
-margin_top = 6.0
-margin_right = 59.0
-margin_bottom = 30.0
-text = "test"
-
-[node name="TestHud" type="Node2D" parent="DKamera/UILayer"]
-visible = false
-
-[node name="AddTraumaBtn" type="Button" parent="DKamera/UILayer/TestHud"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 9.0
-margin_top = 157.0
-margin_right = 88.0
-margin_bottom = 177.0
-text = "tresi"
-
-[node name="ResetViewBtn" type="Button" parent="DKamera/UILayer/TestHud"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 64.0
-margin_top = 8.0
-margin_right = 176.0
-margin_bottom = 28.0
-text = "resetiraj pogled"
-
-[node name="ShakeBar" type="ProgressBar" parent="DKamera/UILayer/TestHud"]
-modulate = Color( 1, 0, 0, 1 )
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 96.0
-margin_top = 338.0
-margin_right = 610.0
-margin_bottom = 352.0
-max_value = 1.0
-
-[node name="TraumaBar" type="ProgressBar" parent="DKamera/UILayer/TestHud"]
-modulate = Color( 0.12549, 1, 0, 1 )
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 96.0
-margin_top = 322.0
-margin_right = 611.0
-margin_bottom = 336.0
-max_value = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ZoomSlider" type="VSlider" parent="DKamera/UILayer/TestHud"]
-visible = false
-anchor_bottom = 1.0
-margin_left = 3.0
-margin_top = 57.0
-margin_right = 19.0
-margin_bottom = 312.0
-max_value = 1.0
-step = 0.1
-value = 1.0
-
-[node name="TimeSlider" type="VSlider" parent="DKamera/UILayer/TestHud"]
-anchor_bottom = 1.0
-margin_left = 635.0
-margin_top = 6.0
-margin_right = 651.0
-margin_bottom = 352.0
-rect_scale = Vector2( -1, 1 )
-max_value = 2.0
-step = 0.1
-value = 1.0
-
-[node name="NoiseControl" type="Control" parent="DKamera/UILayer/TestHud"]
-margin_left = 1.0
-margin_top = 172.0
-margin_right = 95.0
-margin_bottom = 356.0
-
-[node name="NoiseVisual" type="TextureRect" parent="DKamera/UILayer/TestHud/NoiseControl"]
-margin_left = 7.0
-margin_top = 13.0
-margin_right = 87.0
-margin_bottom = 93.0
-texture = SubResource( 555 )
-
-[node name="Seed" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
-margin_left = 8.0
-margin_top = 99.0
-margin_right = 87.0
-margin_bottom = 115.0
-hint_tooltip = "Seed"
-
-[node name="Octaves" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
-margin_left = 8.0
-margin_top = 114.0
-margin_right = 87.0
-margin_bottom = 130.0
-hint_tooltip = "Octaves"
-min_value = 1.0
-max_value = 9.0
-value = 3.0
-
-[node name="Period" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
-margin_left = 8.0
-margin_top = 131.0
-margin_right = 87.0
-margin_bottom = 147.0
-hint_tooltip = "Period"
-min_value = 0.1
-max_value = 256.0
-step = 0.1
-value = 64.0
-
-[node name="Persistence" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
-margin_left = 8.0
-margin_top = 148.0
-margin_right = 87.0
-margin_bottom = 164.0
-hint_tooltip = "Persistance"
-min_value = 0.001
-max_value = 1.0
-step = 0.001
-value = 0.5
-
-[node name="Lacunarity" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
-margin_left = 8.0
-margin_top = 165.0
-margin_right = 87.0
-margin_bottom = 181.0
-hint_tooltip = "Lacunarity"
-min_value = 0.01
-max_value = 4.0
-step = 0.01
-value = 2.0
-
-[node name="ShakeToggle" type="CheckBox" parent="DKamera/UILayer/TestHud"]
-margin_left = 4.0
-margin_top = 128.0
-margin_right = 57.0
-margin_bottom = 152.0
-text = "in gejm"
 
 [node name="Background" type="Node2D" parent="."]
 z_index = -2
@@ -470,34 +299,15 @@ z_index = 1
 width = 1.0
 default_color = Color( 1, 0.752941, 0.0156863, 0.392157 )
 
-[node name="Background2" type="Sprite" parent="."]
-position = Vector2( 213, 92 )
-
-[node name="PickableRandom" type="Area2D" parent="."]
-visible = false
-position = Vector2( 135, 127 )
-script = ExtResource( 3 )
-__meta__ = {
-"_edit_group_": true
-}
-type = 7
-
-[node name="Sprite" type="Sprite" parent="PickableRandom"]
-texture = ExtResource( 8 )
-region_enabled = true
-region_rect = Rect2( 48, 16, 16, 16 )
-
-[node name="AnimatedSprite" type="AnimatedSprite" parent="PickableRandom"]
-frames = SubResource( 772 )
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PickableRandom"]
-position = Vector2( 0, 1 )
-polygon = PoolVector2Array( -1, -8, -7, -2, -7, 0, -1, 6, 1, 6, 7, 0, 7, -2, 1, -8 )
-
 [node name="Enemy" parent="." instance=ExtResource( 5 )]
 
 [node name="Player" parent="." instance=ExtResource( 12 )]
 position = Vector2( 161, 165 )
+player_id = "P1"
+
+[node name="Player2" parent="." instance=ExtResource( 12 )]
+position = Vector2( 185, 253 )
+player_id = "P2"
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -629,6 +439,7 @@ align = 1
 
 [node name="PauseUI" type="Control" parent="UI"]
 pause_mode = 2
+visible = false
 margin_left = -1.0
 margin_right = 639.0
 margin_bottom = 360.0
@@ -1165,6 +976,176 @@ custom_fonts/font = ExtResource( 19 )
 text = "QUIT"
 align = 2
 
+[node name="DKamera" type="Camera2D" parent="."]
+position = Vector2( 320, 180 )
+rotation = 3.14159
+rotating = true
+current = true
+drag_margin_left = 0.0
+drag_margin_top = 0.0
+drag_margin_right = 0.0
+drag_margin_bottom = 0.0
+editor_draw_drag_margin = true
+script = ExtResource( 2 )
+noise = SubResource( 777 )
+
+[node name="UILayer" type="CanvasLayer" parent="DKamera"]
+layer = 3
+visible = false
+
+[node name="TestToggle" type="CheckBox" parent="DKamera/UILayer"]
+margin_left = 6.0
+margin_top = 6.0
+margin_right = 59.0
+margin_bottom = 30.0
+text = "test"
+
+[node name="TestHud" type="Node2D" parent="DKamera/UILayer"]
+
+[node name="AddTraumaBtn" type="Button" parent="DKamera/UILayer/TestHud"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 9.0
+margin_top = 157.0
+margin_right = 88.0
+margin_bottom = 177.0
+text = "tresi"
+
+[node name="ResetViewBtn" type="Button" parent="DKamera/UILayer/TestHud"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 64.0
+margin_top = 8.0
+margin_right = 176.0
+margin_bottom = 28.0
+text = "resetiraj pogled"
+
+[node name="ShakeBar" type="ProgressBar" parent="DKamera/UILayer/TestHud"]
+modulate = Color( 1, 0, 0, 1 )
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 96.0
+margin_top = 338.0
+margin_right = 610.0
+margin_bottom = 352.0
+max_value = 1.0
+
+[node name="TraumaBar" type="ProgressBar" parent="DKamera/UILayer/TestHud"]
+modulate = Color( 0.12549, 1, 0, 1 )
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 96.0
+margin_top = 322.0
+margin_right = 611.0
+margin_bottom = 336.0
+max_value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ZoomSlider" type="VSlider" parent="DKamera/UILayer/TestHud"]
+visible = false
+anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = 57.0
+margin_right = 19.0
+margin_bottom = 312.0
+max_value = 1.0
+step = 0.1
+value = 1.0
+
+[node name="TimeSlider" type="VSlider" parent="DKamera/UILayer/TestHud"]
+anchor_bottom = 1.0
+margin_left = 635.0
+margin_top = 6.0
+margin_right = 651.0
+margin_bottom = 352.0
+rect_scale = Vector2( -1, 1 )
+max_value = 2.0
+step = 0.1
+value = 1.0
+
+[node name="NoiseControl" type="Control" parent="DKamera/UILayer/TestHud"]
+margin_left = 1.0
+margin_top = 172.0
+margin_right = 95.0
+margin_bottom = 356.0
+
+[node name="NoiseVisual" type="TextureRect" parent="DKamera/UILayer/TestHud/NoiseControl"]
+margin_left = 7.0
+margin_top = 13.0
+margin_right = 87.0
+margin_bottom = 93.0
+texture = SubResource( 555 )
+
+[node name="Seed" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
+margin_left = 8.0
+margin_top = 99.0
+margin_right = 87.0
+margin_bottom = 115.0
+hint_tooltip = "Seed"
+
+[node name="Octaves" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
+margin_left = 8.0
+margin_top = 114.0
+margin_right = 87.0
+margin_bottom = 130.0
+hint_tooltip = "Octaves"
+min_value = 1.0
+max_value = 9.0
+value = 3.0
+
+[node name="Period" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
+margin_left = 8.0
+margin_top = 131.0
+margin_right = 87.0
+margin_bottom = 147.0
+hint_tooltip = "Period"
+min_value = 0.1
+max_value = 256.0
+step = 0.1
+value = 64.0
+
+[node name="Persistence" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
+margin_left = 8.0
+margin_top = 148.0
+margin_right = 87.0
+margin_bottom = 164.0
+hint_tooltip = "Persistance"
+min_value = 0.001
+max_value = 1.0
+step = 0.001
+value = 0.5
+
+[node name="Lacunarity" type="HSlider" parent="DKamera/UILayer/TestHud/NoiseControl"]
+margin_left = 8.0
+margin_top = 165.0
+margin_right = 87.0
+margin_bottom = 181.0
+hint_tooltip = "Lacunarity"
+min_value = 0.01
+max_value = 4.0
+step = 0.01
+value = 2.0
+
+[node name="ShakeToggle" type="CheckBox" parent="DKamera/UILayer/TestHud"]
+margin_left = 4.0
+margin_top = 128.0
+margin_right = 57.0
+margin_bottom = 152.0
+text = "in gejm"
+
+[node name="RigidBody2D" type="RigidBody2D" parent="DKamera"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DKamera/RigidBody2D"]
+shape = SubResource( 778 )
+
+[node name="Polygon2D" type="Polygon2D" parent="DKamera/RigidBody2D"]
+polygon = PoolVector2Array( 7.99997, 9.00002, 9.00003, -9.99998, -9.99997, -10, -11, 7.99997 )
+
+[connection signal="navigation_completed" from="Level_00/Edge" to="GameManager" method="_on_Edge_navigation_completed"]
 [connection signal="mouse_entered" from="DKamera/UILayer/TestToggle" to="DKamera" method="_on_CheckBox_mouse_entered"]
 [connection signal="mouse_exited" from="DKamera/UILayer/TestToggle" to="DKamera" method="_on_CheckBox_mouse_exited"]
 [connection signal="toggled" from="DKamera/UILayer/TestToggle" to="DKamera" method="_on_CheckBox_toggled"]
@@ -1200,5 +1181,3 @@ align = 2
 [connection signal="mouse_entered" from="DKamera/UILayer/TestHud/ShakeToggle" to="DKamera" method="_on_CheckBox_mouse_entered"]
 [connection signal="mouse_exited" from="DKamera/UILayer/TestHud/ShakeToggle" to="DKamera" method="_on_CheckBox_mouse_exited"]
 [connection signal="toggled" from="DKamera/UILayer/TestHud/ShakeToggle" to="DKamera" method="_on_ShakeToggle_toggled"]
-[connection signal="navigation_completed" from="Level_00/Edge" to="GameManager" method="_on_Edge_navigation_completed"]
-[connection signal="body_entered" from="PickableRandom" to="PickableRandom" method="_on_Item_body_entered"]

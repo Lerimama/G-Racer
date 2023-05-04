@@ -1,7 +1,7 @@
 extends Camera2D
 
  
-export (OpenSimplexNoise) var noise # tekstura za vizualizacijo ma kopijo tega noisa
+export (OpenSimplexNoise) var noise1 # tekstura za vizualizacijo ma kopijo tega noisa
 
 
 export(float, 0, 1) var trauma = 0.0
@@ -55,7 +55,7 @@ onready var test_toggle_btn = $UILayer/TestToggle
 
 func _ready():
 #	print("KAMERA")
-	Global.current_camera = self
+#	Global.current_camera = self
 	
 	testhud_node.hide()
 	test_toggle_btn.set_focus_mode(0)
@@ -73,17 +73,17 @@ func _ready():
 	zoom_slider.hide()
 	
 	# noise setup
-	noise.seed = 2
-	noise.octaves = 1
-	noise.period = 10
-	noise.persistence = 0
-	noise.lacunarity = 1
+	noise1.seed = 2
+	noise1.octaves = 1
+	noise1.period = 10
+	noise1.persistence = 0
+	noise1.lacunarity = 1
 
-	seed_slider.value = noise.seed
-	octaves_slider.value = noise.octaves
-	period_slider.value = noise.period 
-	persistence_slider.value = noise.persistence
-	lacunarity_slider.value = noise.lacunarity 
+	seed_slider.value = noise1.seed
+	octaves_slider.value = noise1.octaves
+	period_slider.value = noise1.period 
+	persistence_slider.value = noise1.persistence
+	lacunarity_slider.value = noise1.lacunarity 
 	
 func _input(event: InputEvent) -> void:
 	
@@ -108,9 +108,9 @@ func _process(delta):
 	# start decay
 #	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo 
 	var shake = trauma
-	offset.x = noise.get_noise_3d(time * time_scale, 0, 0) * max_horizontal * shake
-	offset.y = noise.get_noise_3d(0, time * time_scale, 0) * max_vertical * shake
-	rotation_degrees = noise.get_noise_3d(0, 0, time * time_scale) * max_rotation * shake
+	offset.x = noise1.get_noise_3d(time * time_scale, 0, 0) * max_horizontal * shake
+	offset.y = noise1.get_noise_3d(0, time * time_scale, 0) * max_vertical * shake
+	rotation_degrees = noise1.get_noise_3d(0, 0, time * time_scale) * max_rotation * shake
 	
 	# start decay
 	if trauma > 0:
@@ -120,11 +120,11 @@ func _process(delta):
 	# UI
 	trauma_bar.value = trauma
 	shake_bar.value = shake
-	seed_slider.value = noise.seed
-	octaves_slider.value = noise.octaves
-	period_slider.value = noise.period 
-	persistence_slider.value = noise.persistence
-	lacunarity_slider.value = noise.lacunarity 
+	seed_slider.value = noise1.seed
+	octaves_slider.value = noise1.octaves
+	period_slider.value = noise1.period 
+	persistence_slider.value = noise1.persistence
+	lacunarity_slider.value = noise1.lacunarity 
 	
 	# drag
 	if drag_on:
@@ -160,7 +160,7 @@ func _on_ShakeToggle_toggled(button_pressed: bool) -> void:
 
 func _on_AddTraumaBtn_pressed() -> void:
 	mouse_used = true
-	add_trauma(add_trauma)
+	Global.current_camera.add_trauma(add_trauma)
 
 func _on_TimeSlider_value_changed(value: float) -> void:
 	Engine.time_scale = value
@@ -173,19 +173,19 @@ func _on_ResetView_pressed() -> void:
 	zoom = Vector2.ONE
 
 func _on_Seed_value_changed(value: float) -> void:
-	noise.seed = value
+	noise1.seed = value
 
 func _on_Octaves_value_changed(value: float) -> void:
-	noise.octaves = value
+	noise1.octaves = value
 
 func _on_Period_value_changed(value: float) -> void:
-	noise.period = value
+	noise1.period = value
 
 func _on_Persistence_value_changed(value: float) -> void:
-	noise.persistence = value
+	noise1.persistence = value
 
 func _on_Lacunarity_value_changed(value: float) -> void:
-	noise.lacunarity = value
+	noise1.lacunarity = value
 
 
 # UI FOKUS

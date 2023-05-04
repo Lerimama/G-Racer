@@ -1,6 +1,7 @@
 extends Camera2D
 
  
+export (OpenSimplexNoise) var noise1 # tekstura za vizualizacijo ma kopijo tega noisa
 export (OpenSimplexNoise) var noise # tekstura za vizualizacijo ma kopijo tega noisa
 
 

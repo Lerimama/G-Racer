@@ -1,7 +1,7 @@
 extends Bolt
 
 
-var player_id: String # = "P2" # more bit določen apriorij, ker po imenu določim profil ... ob spawnu dobi pravo ime
+export var player_id: String # = "P2" # more bit določen apriorij, ker po imenu določim profil ... ob spawnu dobi pravo ime
 var player_name: String
 var player_color: Color
 var player_profile: Dictionary
@@ -22,13 +22,14 @@ var shoot_shocker_action # = controller_actions["shoot_shocker_action"]
 
 onready var controller_profiles: Dictionary = Profiles.default_controller_actions
 
-
 func _ready() -> void:
+	
+	Global.ppp1 = self
 	
 	player_id = bolt_id
 	# player setup
 #	name = player_name _temp off
-	player_profile = Profiles.default_player_profiles[player_id]
+	player_profile = Profiles.default_player_profiles["P2"]
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
@@ -47,6 +48,7 @@ func _ready() -> void:
 	shoot_bullet_action = controller_actions["shoot_bullet_action"]
 	shoot_misile_action = controller_actions["shoot_misile_action"]
 	shoot_shocker_action = controller_actions["shoot_shocker_action"]
+	
 
 
 func _input(event: InputEvent) -> void:

@@ -51,6 +51,8 @@ func _ready() -> void:
 	
 	randomize()
 	
+	Global.ppp2 = self
+	
 	# player setup
 #	name = player_name _temp off
 	player_profile = Profiles.default_player_profiles[player_id]

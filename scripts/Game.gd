@@ -1,30 +1,35 @@
 extends Node
 
 
-onready var animation_player: AnimationPlayer = $AnimationPlayer
-#onready var animacija: AnimationNodeAnimation = $
+#var active_players_count: int = 4
+onready var game_view_grid: GridContainer = $GameViewGrid
 
-
-onready var back_btn: Button = $PauseUI/BackBtn
-onready var restart_btn: Button = $PauseUI/RestartBtn
-onready var quit_btn: Button = $PauseUI/QuitBtn
 
 
 func _ready() -> void:
 
-	# main
-	back_btn.connect("pressed", self, "_on_back_btn_pressed")
-	restart_btn.connect("pressed", self, "_on_restart_btn_pressed")
-	quit_btn.connect("pressed", self, "_on_quit_btn_pressed")
+	pass
+	
+func reload_scene(vp_count):
+	get_tree().reload_current_scene()
+	pass # Replace with function body.
 
 
-func _on_back_btn_pressed():
-	animation_player.play("play_in")
+func _on_Button_pressed() -> void:
+	game_view_grid.active_players_count = 1
+#	reload_scene(1)
+	
+	
+func _on_Button2_pressed() -> void:
+	game_view_grid.active_players_count = 2
+#	reload_scene(2)
 
-func _on_restart_btn_pressed():
-	animation_player.play("settings_in")
 
-func _on_quit_btn_pressed():
-	Global.switch_to_scene("res://scenes/GameInterface.tscn")
+func _on_Button3_pressed() -> void:
+	game_view_grid.active_players_count = 3
+#	reload_scene(3)
 
 
+func _on_Button4_pressed() -> void:
+	game_view_grid.active_players_count = 4
+#	reload_scene(4)

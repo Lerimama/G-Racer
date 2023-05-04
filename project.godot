@@ -27,7 +27,7 @@ _global_script_class_icons={
 [application]
 
 config/name="gravity_bonanza_0.1"
-run/main_scene="res://scenes/arena/Arena.tscn"
+run/main_scene="res://scenes/Game.tscn"
 config/icon="res://_materiali/icon.png"
 
 [autoload]

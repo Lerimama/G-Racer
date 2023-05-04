@@ -35,6 +35,9 @@ onready var game_manager: Node = $GameManager
 onready var back_btn: Button = $BackBtn
 onready var pause_ui: Control = $PauseUI
 
+onready var d_kamera: Camera2D = $DKamera
+onready var camera_follow_target: Bolt setget _set_camera_follow_target
+
 
 func _ready() -> void:
 	
@@ -44,6 +47,10 @@ func _ready() -> void:
 	$Enemy.connect("path_changed", Global.game_manager, "_on_Enemy_path_changed") # za prikaz linije, drugače ne rabiš
 
 
+
+func _set_camera_follow_target(player_to_follow):
+	camera_follow_target = player_to_follow
+	d_kamera.position = camera_follow_target.global_position
 #
 #func _unhandled_key_input(event: InputEventKey) -> void:
 #
