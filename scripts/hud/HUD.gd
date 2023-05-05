@@ -99,7 +99,7 @@ func _on_gameover_restart_btn_pressed():
 	
 func _on_gameover_quit_btn_pressed():
 #	yield(get_tree().create_timer(2), "timeout")
-	Global.switch_to_scene("res://scenes/GameInterface.tscn")
+	Global.switch_to_scene("res://scenes/Home.tscn")
 	
 func _on_gameover_high_score_btn_pressed():
 	game_over_ui.visible = false
@@ -123,7 +123,7 @@ func _on_pavza_restart_btn_pressed():
 	
 func _on_pavza_quit_btn_pressed():
 #	yield(get_tree().create_timer(2), "timeout")
-	Global.switch_to_scene("res://scenes/GameInterface.tscn")
+	Global.switch_to_scene("res://scenes/Home.tscn")
 
 
 func _on_game_status_change(new_game_status):

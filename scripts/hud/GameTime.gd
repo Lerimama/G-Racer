@@ -18,7 +18,8 @@ var minute_in_seconds = 60
 onready var clock: Control = $clock
 onready var minutes: Label = $clock/Minutes
 onready var seconds: Label = $clock/Seconds
-onready var game_over: Label = $GameOver
+#onready var game_over: Label = $GameOver
+onready var game_over: Control = $"../GameOver"
 
 
 func _ready() -> void:

@@ -213,6 +213,12 @@ var default_controller_actions : Dictionary = {
 	},
 }
 
+
+var arena_tilemap_profiles: Dictionary = {
+	"default_arena" : Vector2.ONE,
+}
+
+
 # v uporabi šele ko je kofigurator
 # imena akcij za player "input"
 #var fwd_action: String = "fwd" 

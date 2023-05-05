@@ -101,14 +101,19 @@ func _process(delta: float) -> void:
 
 func spawn_bolt(bolt, spawned_position, spawned_player_id, ppp):
 	
+	
 	spawned_bolt_index += 1
-
+	
 	var new_bolt = bolt.instance()
 	new_bolt.bolt_id = spawned_player_id
 	new_bolt.global_position = spawned_position
 	Global.node_creation_parent.add_child(new_bolt)
 
 	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
+	
+	# camera follor temp
+	Global.node_creation_parent.camera_follow_target = new_bolt
+	
 	
 	ppp = new_bolt
 	

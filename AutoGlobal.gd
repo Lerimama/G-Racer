@@ -70,7 +70,7 @@ func switch_to_scene(path):
 	# it is ensured that no code from the current scene is running:
 	call_deferred("_deferred_goto_scene", path)
 	
-	
+
 func _deferred_goto_scene(path):
 
 	# free current

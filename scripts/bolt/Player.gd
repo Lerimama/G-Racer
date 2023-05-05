@@ -29,7 +29,7 @@ func _ready() -> void:
 	player_id = bolt_id
 	# player setup
 #	name = player_name _temp off
-	player_profile = Profiles.default_player_profiles["P2"]
+	player_profile = Profiles.default_player_profiles[player_id]
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
