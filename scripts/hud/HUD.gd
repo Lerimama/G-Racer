@@ -50,6 +50,7 @@ onready var gameover_high_score_btn: Button = $"../GameOverUI/HighScoreBtn"
 onready var gameover_quit_btn: Button = $"../GameOverUI/QuitBtn"
 
 onready var scene_tree: = get_tree()
+onready var game_manager: Node = $"../../GameManager"
 
 
 func _input(event: InputEvent) -> void:
@@ -76,8 +77,8 @@ func _ready() -> void:
 	game_over.visible = false
 
 	# Global.game_manager.connect("stat_change_received", self, "on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-	get_parent().get_parent().get_node("GameManager").connect("stat_change_received", self, "_on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-	get_parent().get_parent().get_node("GameManager").connect("new_bolt_spawned", self, "_on_new_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+	game_manager.connect("stat_change_received", self, "_on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
+	game_manager.connect("new_bolt_spawned", self, "_on_new_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
 	
 	# pavza
 	pavza_btn.connect("pressed", self, "_on_pavza_btn_pressed")

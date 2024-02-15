@@ -7,6 +7,7 @@
 [ext_resource path="res://scenes/bolt/Enemy.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/arena/tileset_arena_edge.tres" type="TileSet" id=6]
 [ext_resource path="res://scripts/Level_00.gd" type="Script" id=7]
+[ext_resource path="res://scenes/hud/GameTime.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/arena/tileset_arena_background.tres" type="TileSet" id=9]
 [ext_resource path="res://scripts/arena/BackgroundTilemap.gd" type="Script" id=10]
 [ext_resource path="res://scenes/hud/StatLine.tscn" type="PackedScene" id=11]
@@ -15,7 +16,7 @@
 [ext_resource path="res://GameManager.gd" type="Script" id=14]
 [ext_resource path="res://assets/gravity_theme.tres" type="Theme" id=15]
 [ext_resource path="res://assets/arena/arena_colors_texture.gdshader" type="Shader" id=16]
-[ext_resource path="res://scripts/hud/GameTime.gd" type="Script" id=17]
+[ext_resource path="res://Controls_za_LIM.tscn" type="PackedScene" id=17]
 [ext_resource path="res://scripts/hud/GameStart.gd" type="Script" id=18]
 [ext_resource path="res://assets/fonts/menu_font.tres" type="DynamicFont" id=19]
 [ext_resource path="res://assets/light.png" type="Texture" id=20]
@@ -170,11 +171,6 @@ font_path = "res://assets/fonts/Gamer.ttf"
 
 [sub_resource type="DynamicFont" id=775]
 size = 120
-font_data = SubResource( 773 )
-
-[sub_resource type="DynamicFont" id=774]
-size = 32
-extra_spacing_char = 2
 font_data = SubResource( 773 )
 
 [sub_resource type="NoiseTexture" id=779]
@@ -394,67 +390,7 @@ custom_fonts/font = SubResource( 775 )
 text = "START"
 align = 1
 
-[node name="GameTime" type="Control" parent="UI/HUD"]
-margin_left = 256.0
-margin_top = 4.0
-margin_right = 392.0
-margin_bottom = 26.0
-theme = ExtResource( 15 )
-script = ExtResource( 17 )
-time_minutes = 1.0
-
-[node name="LevelName" type="Label" parent="UI/HUD/GameTime"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_top = -19.0
-margin_right = 59.0
-margin_bottom = -4.0
-text = "Prva runda"
-
-[node name="clock" type="Control" parent="UI/HUD/GameTime"]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -64.0
-margin_top = -22.0
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Sepa" type="Label" parent="UI/HUD/GameTime/clock"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -4.0
-margin_right = 4.0
-margin_bottom = 26.0
-theme = ExtResource( 15 )
-custom_fonts/font = SubResource( 774 )
-text = ":"
-align = 1
-
-[node name="Minutes" type="Label" parent="UI/HUD/GameTime/clock"]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_top = -13.0
-margin_right = 26.0
-margin_bottom = 13.0
-theme = ExtResource( 15 )
-custom_fonts/font = SubResource( 774 )
-text = "00"
-
-[node name="Seconds" type="Label" parent="UI/HUD/GameTime/clock"]
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_left = -26.0
-margin_top = -13.0
-margin_bottom = 13.0
-theme = ExtResource( 15 )
-custom_fonts/font = SubResource( 774 )
-text = "88"
-align = 2
+[node name="GameTime" parent="UI/HUD" instance=ExtResource( 8 )]
 
 [node name="GameOver" type="Control" parent="UI/HUD"]
 visible = false
@@ -474,7 +410,6 @@ align = 1
 
 [node name="PauseUI" type="Control" parent="UI"]
 pause_mode = 2
-visible = false
 margin_left = -1.0
 margin_right = 639.0
 margin_bottom = 360.0
@@ -577,150 +512,7 @@ custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "camera shake"
 flat = true
 
-[node name="Controls" type="Control" parent="UI/PauseUI/VBoxContainer"]
-margin_top = 150.0
-margin_right = 640.0
-margin_bottom = 296.0
-rect_min_size = Vector2( 640, 140 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Title" type="Label" parent="UI/PauseUI/VBoxContainer/Controls"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_left = 80.0
-margin_top = 4.0
-margin_right = 170.0
-margin_bottom = 30.0
-size_flags_horizontal = 3
-theme = ExtResource( 15 )
-custom_fonts/font = ExtResource( 19 )
-text = "Controls"
-
-[node name="Controller" type="Control" parent="UI/PauseUI/VBoxContainer/Controls"]
-margin_left = 80.0
-margin_top = 34.0
-margin_right = 224.0
-margin_bottom = 122.0
-
-[node name="Controller" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 0.392157 )
-margin_top = 5.0
-margin_right = 144.0
-margin_bottom = 18.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "Tipkovnica 1"
-autowrap = true
-
-[node name="Text" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_top = 29.0
-margin_right = 72.0
-margin_bottom = 90.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "F ... naprej
-B ... nazaj
-< ... levo
-> ... desno"
-autowrap = true
-
-[node name="Text2" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_left = 72.0
-margin_top = 29.0
-margin_right = 152.0
-margin_bottom = 90.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "CTRL ... metk
-SH ... sledilka
-ALT ... mina"
-autowrap = true
-
-[node name="Controller2" type="Control" parent="UI/PauseUI/VBoxContainer/Controls"]
-margin_left = 256.0
-margin_top = 34.0
-margin_right = 400.0
-margin_bottom = 122.0
-
-[node name="Controller" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller2"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 0.392157 )
-margin_top = 5.0
-margin_right = 144.0
-margin_bottom = 18.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "Tipkovnica 2"
-autowrap = true
-
-[node name="Text" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller2"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_top = 29.0
-margin_right = 72.0
-margin_bottom = 90.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "W ... naprej
-S ... nazaj
-A ... levo
-D ... desno"
-autowrap = true
-
-[node name="Text2" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller2"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_left = 72.0
-margin_top = 29.0
-margin_right = 144.0
-margin_bottom = 90.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "V ... metk
-g ... sledilka
-SP ... mina"
-autowrap = true
-
-[node name="Controller3" type="Control" parent="UI/PauseUI/VBoxContainer/Controls"]
-margin_left = 423.0
-margin_top = 34.0
-margin_right = 567.0
-margin_bottom = 122.0
-
-[node name="Controller" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller3"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 0.392157 )
-margin_top = 5.0
-margin_right = 144.0
-margin_bottom = 18.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "JoyPad"
-autowrap = true
-
-[node name="Text" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller3"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_top = 29.0
-margin_right = 72.0
-margin_bottom = 90.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "A ... naprej
-v ... nazaj
-< ... levo
-> ... desno"
-autowrap = true
-
-[node name="Text2" type="Label" parent="UI/PauseUI/VBoxContainer/Controls/Controller3"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_left = 72.0
-margin_top = 29.0
-margin_right = 144.0
-margin_bottom = 90.0
-size_flags_vertical = 0
-theme = ExtResource( 15 )
-text = "2 ... metk
-3 ... sledilka
-1 ... mina"
-autowrap = true
+[node name="Controls" parent="UI/PauseUI/VBoxContainer" instance=ExtResource( 17 )]
 
 [node name="RestartBtn" type="Button" parent="UI/PauseUI"]
 margin_left = 340.0
