@@ -1,0 +1,668 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://assets/skill_light.png" type="Texture" id=1]
+[ext_resource path="res://game/pixel/player_class.gd" type="Script" id=2]
+[ext_resource path="res://assets/burst_light.png" type="Texture" id=3]
+[ext_resource path="res://assets/glow_light.png" type="Texture" id=4]
+[ext_resource path="res://assets/resources/anim_zbrisane/pixelrevive.tres" type="Animation" id=10]
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 16, 16 )
+
+[sub_resource type="Animation" id=142]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("BurstLight:enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("ColorPoly:modulate:a")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=140]
+resource_name = "_junfer short"
+length = 1.25
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.16, 0.26, 0.36, 0.52, 0.66, 0.76, 0.9, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.282353 ), Color( 1, 1, 1, 0.780392 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.360784 ), Color( 1, 1, 1, 0.486275 ), Color( 1, 1, 1, 0.203922 ), Color( 1, 1, 1, 0.819608 ), Color( 1, 1, 1, 0.282353 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.12, 0.34, 0.88 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=139]
+resource_name = "_last_breath _polypixel"
+length = 0.8
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.32, 0.52, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.12, 0.2, 0.18, 0.12, 0.12 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorPoly:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.06, 0.32, 0.52, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.8, 1.0, 0.98, 0.8, 0.8 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("BurstLight:enabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"update": 1,
+"values": [  ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("BurstLight:energy")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"update": 0,
+"values": [  ]
+}
+
+[sub_resource type="Animation" id=138]
+resource_name = "_start_white"
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.234773, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.0605592, 0.115436, 0.184698, 0.232797, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.2, 1.0, 0.2, 1.0, 1.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.06, 0.185384 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=135]
+resource_name = "_still_alive"
+length = 2.5
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate:a")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.32, 0.464183, 0.532472, 0.750925, 0.824842, 0.96, 1.01382, 1.09509, 1.13858, 1.22, 1.27792, 1.32604, 1.439, 1.54235, 1.58225, 1.66352, 1.73553, 1.8067, 1.92, 2.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0812916, 0.0, 0.1, 0.0, 0.0, 0.15, 0.0, 0.15, 0.1, 0.0, 0.25, 0.0, 0.15, 0.2, 0.0, 0.15, 0.1, 0.0, 0.2, 0.25, 0.8 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.3, 0.48, 0.7, 0.84, 1.02, 1.14, 1.24, 1.34, 1.6, 1.74, 1.92 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=141]
+resource_name = "_virgin_blink"
+length = 2.0
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.185737, 0.447234, 0.53924, 0.72, 0.82, 0.9, 1, 1.1, 1.2, 1.36541, 1.5, 1.6, 1.6544, 1.86, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 0.619608 ), Color( 1, 1, 1, 0.545098 ), Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.27451 ), Color( 1, 1, 1, 0.462745 ), Color( 1, 1, 1, 0.266667 ), Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.360784 ), Color( 1, 1, 1, 0.486275 ), Color( 1, 1, 1, 0.203922 ), Color( 1, 1, 1, 0.305882 ), Color( 1, 1, 1, 0.14902 ), Color( 1, 1, 1, 0.0392157 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.4, 0.88, 1.24, 1.92 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:pixel_color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0.58 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=144]
+resource_name = "_virgin_blink old"
+length = 2.0
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.185737, 0.447234, 0.53924, 0.72, 0.82, 0.9, 1, 1.1, 1.2, 1.36541, 1.5, 1.6, 1.6544, 1.86, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 0.619608 ), Color( 1, 1, 1, 0.545098 ), Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.27451 ), Color( 1, 1, 1, 0.462745 ), Color( 1, 1, 1, 0.266667 ), Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.0392157 ), Color( 1, 1, 1, 0.360784 ), Color( 1, 1, 1, 0.486275 ), Color( 1, 1, 1, 0.203922 ), Color( 1, 1, 1, 0.305882 ), Color( 1, 1, 1, 0.14902 ), Color( 1, 1, 1, 0.0392157 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.4, 0.88, 1.24, 1.92 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=143]
+resource_name = "become_white_again"
+length = 3.5
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorPoly:modulate")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.996392, 1.11724, 1.23113, 1.35204, 1.47116, 1.61175, 1.72789, 1.842, 1.93194, 2.01968, 2.08918, 2.15893, 2.23526, 2.30319, 2.38, 2.65231, 2.71886, 2.81077, 2.89683, 3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorPoly:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 2.38, 3.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 0.368627, 1, 0.662745, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:modulate:a")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.18, 0.32, 0.5, 0.58, 0.64, 0.72, 0.78, 0.82, 0.94, 1.02777, 1.08, 1.16, 1.3, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.5, 0.15, 0.3, 0.3, 0.0, 0.25, 0.0, 0.15, 0.2, 0.0, 0.15, 0.1, 1.0, 1.0 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.2, 0.34, 0.52, 0.64, 0.74, 0.84, 1.1, 1.24, 1.42, 1.64028, 1.75616, 1.84317, 2.01869, 2.08511, 2.17142, 2.23404, 2.30473, 2.37727, 2.44781 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("GlowLight:color")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 1.00277, 1.12096, 1.22691, 1.35324, 1.47142, 1.61202, 1.72613, 1.84023, 1.92989, 2.02362, 2.09697, 2.16218, 2.23145, 2.30481, 2.38, 3.50089 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.996078, 0.976471, 0.545098, 1 ), Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 0.294118, 0.623529, 1, 1 ), Color( 0.368627, 1, 0.662745, 1 ), Color( 0.980392, 0.980392, 0.980392, 1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "die_player"
+length = 2.5
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0605592, 0.114726, 0.185737, 0.234325, 0.447234, 0.53924, 0.672547, 0.73924, 0.803158, 0.841606, 0.9, 1, 1.1, 1.2, 1.36541, 1.5, 1.6, 1.6544, 1.94, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.545098 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.392157 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.360784 ), Color( 1, 1, 1, 0.486275 ), Color( 1, 1, 1, 0.203922 ), Color( 1, 1, 1, 0.533333 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.282353 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.0605592, 0.115436, 0.184698, 0.234449, 0.445392, 0.539576, 0.67419, 0.738793, 0.8, 0.841557, 0.899275, 1, 1.10076, 1.19941, 1.36723, 1.49998, 1.60081, 1.6553, 1.94, 2, 2.1, 2.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.2, 1.0, 0.2, 1.0, 1.0, 0.55, 1.0, 0.2, 0.118591, 0.4, 1.0, 0.2, 0.2, 1.0, 0.4, 0.55, 0.2, 0.55, 0.0, 0.5, 0.2, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.12, 0.46, 0.7, 0.808553, 0.9, 0.92, 1.18, 1.24, 1.48, 1.52, 1.84 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CollisionShape2D:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.06 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=137]
+resource_name = "heartbeat"
+length = 0.8
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.32, 0.52, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 1.0, 0.8, 1.0, 1.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("BurstLight:enabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.01 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("BurstLight:energy")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.06, 0.14, 0.32, 0.52, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.5, 0.5, 0.3, 0.05, 0.0 ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.06 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_heartbeat_sound"
+} ]
+}
+
+[node name="Player" type="KinematicBody2D"]
+script = ExtResource( 2 )
+pixel_color = Color( 1, 1, 1, 1 )
+
+[node name="GlowLight" type="Light2D" parent="."]
+show_behind_parent = true
+position = Vector2( 7.62939e-06, -9.53674e-06 )
+scale = Vector2( 0.75, 0.75 )
+z_index = -1
+texture = ExtResource( 4 )
+color = Color( 0.368627, 1, 0.662745, 1 )
+energy = 1.5
+range_z_min = -2
+range_z_max = -1
+shadow_enabled = true
+
+[node name="ColorPoly" type="Polygon2D" parent="."]
+position = Vector2( -16, -16 )
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2( 0.99, 0.99 )
+shape = SubResource( 4 )
+
+[node name="BurstLight" type="Light2D" parent="."]
+position = Vector2( 7.62939e-06, -9.53674e-06 )
+scale = Vector2( 0.25, 0.25 )
+enabled = false
+texture = ExtResource( 3 )
+energy = 0.0
+range_z_min = 0
+
+[node name="SkillLight" type="Light2D" parent="."]
+position = Vector2( 1.97093e-06, 0 )
+scale = Vector2( 0.266667, 0.266667 )
+texture = ExtResource( 1 )
+energy = 0.0
+range_z_min = 0
+
+[node name="VisionRay" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 48, 0 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 142 )
+"anims/_junfer short" = SubResource( 140 )
+"anims/_last_breath _polypixel" = SubResource( 139 )
+anims/_start_white = SubResource( 138 )
+anims/_still_alive = SubResource( 135 )
+anims/_virgin_blink = SubResource( 141 )
+"anims/_virgin_blink old" = SubResource( 144 )
+anims/become_white_again = SubResource( 143 )
+anims/die_player = SubResource( 2 )
+anims/heartbeat = SubResource( 137 )
+anims/revive = ExtResource( 10 )
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/theme/theme_lerimama.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/font_body.tres" type="DynamicFont" id=2]
+
+[sub_resource type="StyleBoxLine" id=3]
+color = Color( 1, 1, 1, 1 )
+grow_begin = 0.0
+grow_end = 0.0
+thickness = 2
+
+[node name="SpectrumColorIndicator" type="ColorRect"]
+margin_right = 12.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 0, 12 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Line" type="Panel" parent="."]
+visible = false
+anchor_right = 1.0
+margin_top = -6.0
+custom_styles/panel = SubResource( 3 )
+
+[node name="IndicatorCount" type="Label" parent="."]
+visible = false
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 12.0
+margin_bottom = 18.0
+rect_scale = Vector2( 0.5, 0.5 )
+theme = ExtResource( 1 )
+custom_fonts/font = ExtResource( 2 )
+text = "00"
+align = 1

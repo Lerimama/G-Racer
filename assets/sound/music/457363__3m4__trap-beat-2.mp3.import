@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/457363__3m4__trap-beat-2.mp3-1c96fd44e1282a5e104e5fd14ef6823c.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/music/457363__3m4__trap-beat-2.mp3"
+dest_files=[ "res://.import/457363__3m4__trap-beat-2.mp3-1c96fd44e1282a5e104e5fd14ef6823c.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

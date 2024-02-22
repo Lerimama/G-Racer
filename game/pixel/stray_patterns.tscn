@@ -1,0 +1,993 @@
+[gd_scene load_steps=40 format=2]
+
+[ext_resource path="res://game/pixel/stray_patterns.gd" type="Script" id=1]
+[ext_resource path="res://assets/resources/animation/stray_glitch_2.tres" type="Animation" id=2]
+[ext_resource path="res://assets/resources/animation/stray_glitch_1.tres" type="Animation" id=3]
+[ext_resource path="res://assets/resources/animation/stray_glitch_3.tres" type="Animation" id=4]
+[ext_resource path="res://assets/theme/theme_lerimama.tres" type="Theme" id=5]
+[ext_resource path="res://assets/sound/sfx/stepping/step_5.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_static_2.wav" type="AudioStream" id=7]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_static_5.wav" type="AudioStream" id=8]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_static_4.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/sound/sfx/stepping/step_1.wav" type="AudioStream" id=10]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_2.wav" type="AudioStream" id=11]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_3.wav" type="AudioStream" id=12]
+[ext_resource path="res://assets/sound/sfx/stepping/step_3.wav" type="AudioStream" id=13]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_static_1.wav" type="AudioStream" id=14]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_static_3.wav" type="AudioStream" id=15]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_4.wav" type="AudioStream" id=16]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_1.wav" type="AudioStream" id=17]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_static_6.wav" type="AudioStream" id=18]
+[ext_resource path="res://assets/sound/sfx/stepping/step_2.wav" type="AudioStream" id=19]
+[ext_resource path="res://assets/sound/sfx/stepping/step_4.wav" type="AudioStream" id=20]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 15.95, 15.95 )
+
+[sub_resource type="RectangleShape2D" id=142]
+extents = Vector2( 15.95, 15.95 )
+
+[sub_resource type="Animation" id=140]
+resource_name = "die_stray"
+length = 0.7
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.115685, 0.229303, 0.32, 0.379559, 0.46, 0.52, 0.7 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.721569 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.647059 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.115685, 0.229303, 0.32, 0.379609, 0.46, 0.52, 0.7 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0, 1.0, 0.0, 0.8, 0.0, 0.6, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0.02, 0.22, 0.26, 0.52 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.7 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0.02, 0.221049, 0.26, 0.52 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"values": [ {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=138]
+length = 1.3
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.114726, 0.185737, 0.234325, 0.402195, 0.494201, 0.627508, 0.683042, 0.786978, 0.84, 0.939692, 1.02304, 1.06304, 1.18532, 1.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.215686 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.545098 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.784314 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.54902 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.392157 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.06, 0.112226, 0.190969, 0.234796, 0.400628, 0.492478, 0.623042, 0.683042, 0.792653, 0.84, 0.941542, 1.02304, 1.06304, 1.18532, 1.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.2, 1.0, 0.2, 1.0, 1.0, 0.55, 1.0, 0.2, 1.0, 0.8, 0.2, 0.55, 0.2, 0.55, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0.0148915, 0.1, 0.14, 0.26, 0.383042, 0.423042, 0.603042, 0.771901, 0.811901, 0.86, 1.02304, 1.16532, 1.20532 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 1.3 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0.0151901, 0.1, 0.14, 0.26, 0.381363, 0.423848, 0.602841, 0.770539, 0.810941, 0.858078, 1.02257, 1.16591, 1.20439 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=134]
+resource_name = "die_stray_2"
+length = 1.2
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0666933, 0.2, 0.249016, 0.309016, 0.369016, 0.409016, 0.554183, 0.595503, 0.695503, 0.875503, 0.995503, 1.1155, 1.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.784314 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.54902 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.0671055, 0.192166, 0.249016, 0.309016, 0.369016, 0.409016, 0.554183, 0.595503, 0.695503, 0.855503, 0.995503, 1.0355, 1.1155, 1.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.6, 1.0, 0.0, 1.0, 0.6, 0.6, 1.0, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.18, 0.24, 0.349016, 0.389016, 0.575503, 0.635503, 0.835503, 0.955503, 1.0555, 1.1355 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 1.2 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.179068, 0.24, 0.346734, 0.388097, 0.574271, 0.634586, 0.834991, 0.956199, 1.05528, 1.13513 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=135]
+resource_name = "die_stray_3"
+length = 1.1
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.108591, 0.281275, 0.331525, 0.426225, 0.513585, 0.521275, 0.546975, 0.613745, 0.727483, 0.792, 0.870135, 0.913835, 1.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.627451 ), Color( 1, 1, 1, 0.627451 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.470588 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.392157 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.06, 0.172179, 0.281275, 0.33343, 0.426275, 0.543898, 0.613736, 0.729673, 0.789533, 0.866195, 0.910255, 1.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0, 0.8, 1.0, 0.0, 0.8, 0.0, 0.6, 0.7, 0.0, 0.7, 1.0, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.04, 0.261275, 0.321275, 0.521275, 0.721275, 0.741275, 0.861275, 0.941275 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 1.1 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.04, 0.26, 0.32, 0.52, 0.72, 0.74, 0.860964, 0.940807 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=136]
+resource_name = "die_stray_4"
+step = 0.02
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.229303, 0.319553, 0.379559, 0.501613, 0.535003, 0.601773, 0.712446, 0.831086, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.627451 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.392157 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.06, 0.229303, 0.321458, 0.379609, 0.505558, 0.601764, 0.708506, 0.827506, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0, 1.0, 0.0, 0.8, 0.0, 0.6, 0.7, 1.0, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0.02, 0.22, 0.26, 0.48, 0.5, 0.68, 0.74, 0.86 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 1 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0.02, 0.22, 0.259528, 0.479484, 0.5, 0.68, 0.74, 0.860964 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=137]
+resource_name = "die_stray_5"
+length = 1.1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.05, 0.203418, 0.26, 0.4, 0.48, 0.58, 0.68, 0.8, 0.9, 1.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.784314 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.54902 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.05, 0.202442, 0.26, 0.4, 0.48, 0.58, 0.68, 0.8, 0.84, 0.92, 1.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0, 1.0, 0.0, 0.6, 1.0, 0.0, 1.0, 0.6, 0.6, 1.0, 0.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.18, 0.22, 0.36, 0.48, 0.66, 0.68, 0.86, 0.94, 0.96 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+}, {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 1.1 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.179068, 0.221049, 0.358477, 0.479484, 0.659887, 0.678837, 0.860964, 0.940807, 0.959085 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+}, {
+"args": [ "blinking" ],
+"method": "play_sound"
+} ]
+}
+
+[sub_resource type="Animation" id=141]
+resource_name = "glitch_intro"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.106689, 0.172837, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0.196078 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.196078 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.103803, 0.170441, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.2, 1.0, 0.2, 1.0 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0.103848 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "play_blinking_sound"
+} ]
+}
+
+[sub_resource type="AudioStreamRandomPitch" id=143]
+audio_stream = ExtResource( 17 )
+
+[sub_resource type="AudioStreamRandomPitch" id=144]
+audio_stream = ExtResource( 11 )
+random_pitch = 1.0
+
+[sub_resource type="AudioStreamRandomPitch" id=145]
+audio_stream = ExtResource( 12 )
+
+[sub_resource type="AudioStreamRandomPitch" id=146]
+audio_stream = ExtResource( 16 )
+
+[sub_resource type="AudioStreamRandomPitch" id=147]
+audio_stream = ExtResource( 14 )
+
+[sub_resource type="AudioStreamRandomPitch" id=148]
+audio_stream = ExtResource( 7 )
+
+[sub_resource type="AudioStreamRandomPitch" id=149]
+audio_stream = ExtResource( 15 )
+
+[sub_resource type="AudioStreamRandomPitch" id=150]
+audio_stream = ExtResource( 9 )
+
+[sub_resource type="AudioStreamRandomPitch" id=151]
+audio_stream = ExtResource( 8 )
+
+[sub_resource type="AudioStreamRandomPitch" id=152]
+audio_stream = ExtResource( 18 )
+
+[node name="PatternsStray" type="KinematicBody2D"]
+script = ExtResource( 1 )
+
+[node name="ColorPoly" type="Polygon2D" parent="."]
+position = Vector2( -16, -16 )
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[node name="debug" type="Polygon2D" parent="."]
+visible = false
+position = Vector2( -16, -16 )
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( 16, 16, 32, 0, 16, 32, 0, 32 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="CollisionShapeExt" type="CollisionShape2D" parent="."]
+shape = SubResource( 142 )
+
+[node name="PositionIndicator" type="Node2D" parent="."]
+
+[node name="Background" type="Polygon2D" parent="PositionIndicator"]
+position = Vector2( -16, -16 )
+color = Color( 1, 1, 1, 0 )
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[node name="PositionPoly" type="Polygon2D" parent="PositionIndicator"]
+position = Vector2( -12, -12 )
+color = Color( 0.980392, 0.980392, 0.980392, 1 )
+polygon = PoolVector2Array( 8, 8, 16, 8, 16, 16, 8, 16 )
+
+[node name="Vision" type="Node2D" parent="."]
+
+[node name="VisionRay1" type="RayCast2D" parent="Vision"]
+position = Vector2( 0, -15.9 )
+enabled = true
+cast_to = Vector2( 47, 0 )
+
+[node name="VisionRay2" type="RayCast2D" parent="Vision"]
+enabled = true
+cast_to = Vector2( 47, 0 )
+
+[node name="VisionRay3" type="RayCast2D" parent="Vision"]
+position = Vector2( 0, 15.9 )
+enabled = true
+cast_to = Vector2( 47, 0 )
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+position = Vector2( 0, 4.76837e-07 )
+rect = Rect2( -1, -1, 2, 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/die_stray = SubResource( 140 )
+anims/die_stray_1 = SubResource( 138 )
+anims/die_stray_2 = SubResource( 134 )
+anims/die_stray_3 = SubResource( 135 )
+anims/die_stray_4 = SubResource( 136 )
+anims/die_stray_5 = SubResource( 137 )
+anims/glitch_1 = ExtResource( 3 )
+anims/glitch_2 = ExtResource( 2 )
+anims/glitch_3 = ExtResource( 4 )
+anims/glitch_intro = SubResource( 141 )
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="Stepping" type="Node2D" parent="Sounds"]
+
+[node name="Step1" type="AudioStreamPlayer" parent="Sounds/Stepping"]
+stream = ExtResource( 10 )
+volume_db = -10.0
+pitch_scale = 1.1
+bus = "GameSfx"
+
+[node name="Step2" type="AudioStreamPlayer" parent="Sounds/Stepping"]
+stream = ExtResource( 19 )
+volume_db = -10.0
+pitch_scale = 1.1
+bus = "GameSfx"
+
+[node name="Step4" type="AudioStreamPlayer" parent="Sounds/Stepping"]
+stream = ExtResource( 20 )
+volume_db = -10.0
+pitch_scale = 1.1
+bus = "GameSfx"
+
+[node name="Step5" type="AudioStreamPlayer" parent="Sounds/Stepping"]
+stream = ExtResource( 6 )
+volume_db = -10.0
+pitch_scale = 1.1
+bus = "GameSfx"
+
+[node name="Step3" type="AudioStreamPlayer" parent="Sounds/Stepping"]
+stream = ExtResource( 13 )
+volume_db = -10.0
+pitch_scale = 1.1
+bus = "GameSfx"
+
+[node name="Blinking" type="Node2D" parent="Sounds"]
+
+[node name="Blink1" type="AudioStreamPlayer" parent="Sounds/Blinking"]
+stream = SubResource( 143 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="Blink2" type="AudioStreamPlayer" parent="Sounds/Blinking"]
+stream = SubResource( 144 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="Blink3" type="AudioStreamPlayer" parent="Sounds/Blinking"]
+stream = SubResource( 145 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="Blink4_mute" type="AudioStreamPlayer" parent="Sounds/Blinking"]
+stream = SubResource( 146 )
+volume_db = -80.0
+bus = "GameSfx"
+
+[node name="Blink5_mute" type="AudioStreamPlayer" parent="Sounds/Blinking"]
+stream = SubResource( 146 )
+volume_db = -80.0
+bus = "GameSfx"
+
+[node name="Blink6_mute" type="AudioStreamPlayer" parent="Sounds/Blinking"]
+stream = SubResource( 146 )
+volume_db = -80.0
+bus = "GameSfx"
+
+[node name="BlinkingStatic" type="Node2D" parent="Sounds"]
+
+[node name="BlinkStatic1" type="AudioStreamPlayer" parent="Sounds/BlinkingStatic"]
+stream = SubResource( 147 )
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="BlinkStatic2" type="AudioStreamPlayer" parent="Sounds/BlinkingStatic"]
+stream = SubResource( 148 )
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="BlinkStatic3" type="AudioStreamPlayer" parent="Sounds/BlinkingStatic"]
+stream = SubResource( 149 )
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="BlinkStatic4" type="AudioStreamPlayer" parent="Sounds/BlinkingStatic"]
+stream = SubResource( 150 )
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="BlinkStatic5" type="AudioStreamPlayer" parent="Sounds/BlinkingStatic"]
+stream = SubResource( 151 )
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="BlinkStatic6" type="AudioStreamPlayer" parent="Sounds/BlinkingStatic"]
+stream = SubResource( 152 )
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="CountLabel" type="Label" parent="."]
+visible = false
+margin_left = -13.0
+margin_top = -12.0
+margin_right = 15.0
+margin_bottom = 12.0
+theme = ExtResource( 5 )
+text = "00"
+align = 1
+
+[connection signal="viewport_entered" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_viewport_entered"]
+[connection signal="viewport_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_viewport_exited"]

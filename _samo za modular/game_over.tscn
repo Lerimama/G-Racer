@@ -1,0 +1,1183 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/theme/font_title.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/theme/font_body.tres" type="DynamicFont" id=2]
+[ext_resource path="res://game/gui/game_over_class.gd" type="Script" id=3]
+[ext_resource path="res://game/gui/highscore_table.gd" type="Script" id=4]
+[ext_resource path="res://assets/resources/tileset_titles.tres" type="TileSet" id=5]
+[ext_resource path="res://assets/theme/theme_lerimama.tres" type="Theme" id=6]
+
+[node name="GameOver" type="Control"]
+pause_mode = 2
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 6 )
+script = ExtResource( 3 )
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0 )
+
+[node name="GameoverTitle" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Duel" type="Control" parent="GameoverTitle"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Win" type="Control" parent="GameoverTitle/Duel"]
+visible = false
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -160.0
+margin_right = 512.0
+margin_bottom = 128.0
+
+[node name="PlayerLabel" type="Label" parent="GameoverTitle/Duel/Win"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -272.0
+margin_top = -2.0
+margin_right = 272.0
+margin_bottom = 30.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "player 1"
+align = 1
+autowrap = true
+uppercase = true
+
+[node name="Win" type="TileMap" parent="GameoverTitle/Duel/Win"]
+position = Vector2( 120, 56 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 14, 0, 0, 16, 0, 0, 18, 0, 0, 20, 0, 0, 22, 0, 0, 26, 0, 0, 29, 0, 0, 30, 0, 0, 31, 0, 0, 34, 0, 0, 65550, 0, 0, 65552, 0, 0, 65554, 0, 0, 65556, 0, 0, 65558, 0, 0, 65562, 0, 0, 65564, 0, 0, 65570, 0, 0, 131086, 0, 0, 131088, 0, 0, 131090, 0, 0, 131092, 0, 0, 131094, 0, 0, 131095, 0, 0, 131098, 0, 0, 131100, 0, 0, 131101, 0, 0, 131102, 0, 0, 131103, 0, 0, 131106, 0, 0, 196622, 0, 0, 196624, 0, 0, 196626, 0, 0, 196628, 0, 0, 196630, 0, 0, 196632, 0, 0, 196634, 0, 0, 196640, 0, 0, 196642, 0, 0, 262158, 0, 0, 262160, 0, 0, 262162, 0, 0, 262164, 0, 0, 262166, 0, 0, 262169, 0, 0, 262170, 0, 0, 262176, 0, 0, 262178, 0, 0, 327694, 0, 0, 327696, 0, 0, 327698, 0, 0, 327700, 0, 0, 327702, 0, 0, 327706, 0, 0, 327712, 0, 0, 393230, 0, 0, 393231, 0, 0, 393233, 0, 0, 393234, 0, 0, 393236, 0, 0, 393238, 0, 0, 393242, 0, 0, 393244, 0, 0, 393245, 0, 0, 393246, 0, 0, 393247, 0, 0, 393248, 0, 0, 393250, 0, 0 )
+
+[node name="ReasonLabel" type="Label" parent="GameoverTitle/Duel/Win"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -160.0
+margin_top = 214.0
+margin_right = 160.0
+margin_bottom = 264.0
+grow_horizontal = 2
+text = "Winner was better by ..."
+align = 1
+autowrap = true
+
+[node name="Draw" type="Control" parent="GameoverTitle/Duel"]
+visible = false
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -104.0
+margin_right = 512.0
+margin_bottom = 160.0
+
+[node name="PlayerLabel" type="Label" parent="GameoverTitle/Duel/Draw"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -272.0
+margin_top = -58.0
+margin_right = 272.0
+margin_bottom = -26.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "Nobody wins"
+align = 1
+autowrap = true
+
+[node name="Draw" type="TileMap" parent="GameoverTitle/Duel/Draw"]
+position = Vector2( 168, 0 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 10, 0, 0, 11, 0, 0, 12, 0, 0, 13, 0, 0, 16, 0, 0, 17, 0, 0, 18, 0, 0, 19, 0, 0, 23, 0, 0, 24, 0, 0, 25, 0, 0, 28, 0, 0, 30, 0, 0, 32, 0, 0, 65546, 0, 0, 65550, 0, 0, 65552, 0, 0, 65556, 0, 0, 65558, 0, 0, 65562, 0, 0, 65564, 0, 0, 65566, 0, 0, 65568, 0, 0, 131082, 0, 0, 131086, 0, 0, 131088, 0, 0, 131089, 0, 0, 131090, 0, 0, 131091, 0, 0, 131094, 0, 0, 131095, 0, 0, 131096, 0, 0, 131097, 0, 0, 131098, 0, 0, 131100, 0, 0, 131102, 0, 0, 131104, 0, 0, 196618, 0, 0, 196622, 0, 0, 196624, 0, 0, 196628, 0, 0, 196630, 0, 0, 196634, 0, 0, 196636, 0, 0, 196638, 0, 0, 196640, 0, 0, 262154, 0, 0, 262158, 0, 0, 262160, 0, 0, 262164, 0, 0, 262166, 0, 0, 262170, 0, 0, 262172, 0, 0, 262174, 0, 0, 262176, 0, 0, 327690, 0, 0, 327694, 0, 0, 327696, 0, 0, 327700, 0, 0, 327702, 0, 0, 327706, 0, 0, 327708, 0, 0, 327710, 0, 0, 327712, 0, 0, 393226, 0, 0, 393227, 0, 0, 393228, 0, 0, 393229, 0, 0, 393232, 0, 0, 393236, 0, 0, 393238, 0, 0, 393242, 0, 0, 393244, 0, 0, 393245, 0, 0, 393247, 0, 0, 393248, 0, 0 )
+
+[node name="DrawLabel" type="Label" parent="GameoverTitle/Duel/Draw"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -176.0
+margin_top = 158.0
+margin_right = 176.0
+margin_bottom = 216.0
+grow_horizontal = 2
+text = "You both collected the same amount of points."
+align = 1
+autowrap = true
+
+[node name="Menu" type="HBoxContainer" parent="GameoverTitle/Duel"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -180.0
+margin_top = 198.0
+margin_right = 180.0
+margin_bottom = 220.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="QuitBtn" type="Button" parent="GameoverTitle/Duel/Menu"]
+margin_right = 226.0
+margin_bottom = 22.0
+focus_neighbour_right = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+size_flags_vertical = 8
+text = "QUIT TO MAIN MENU"
+
+[node name="RestartBtn" type="Button" parent="GameoverTitle/Duel/Menu"]
+margin_left = 258.0
+margin_right = 360.0
+margin_bottom = 22.0
+focus_neighbour_left = NodePath("../QuitBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "REMATCH"
+
+[node name="ReasonCleaned" type="Control" parent="GameoverTitle"]
+visible = false
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -104.0
+margin_right = 512.0
+margin_bottom = 72.0
+
+[node name="Congrats" type="TileMap" parent="GameoverTitle/ReasonCleaned"]
+position = Vector2( 120, 0 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 0, 0, 0, 1, -1610612736, 0, 2, -1610612736, 0, 3, -1610612736, 0, 7, 0, 0, 8, 0, 0, 9, 0, 0, 10, 0, 0, 12, 0, 0, 16, 0, 0, 18, 0, 0, 19, 0, 0, 20, 0, 0, 21, 0, 0, 24, 0, 0, 25, 0, 0, 26, 0, 0, 27, 0, 0, 31, 0, 0, 32, 0, 0, 33, 0, 0, 36, 0, 0, 37, 0, 0, 38, 0, 0, 39, 0, 0, 40, 0, 0, 43, 0, 0, 44, 0, 0, 45, 0, 0, 48, 0, 0, 65536, 0, 0, 65542, -1610612736, 0, 65546, 0, 0, 65548, 0, 0, 65552, 0, 0, 65554, 0, 0, 65560, 0, 0, 65564, 0, 0, 65566, 0, 0, 65570, 0, 0, 65574, 0, 0, 65578, 0, 0, 65584, 0, 0, 131072, 0, 0, 131078, -1610612736, 0, 131082, 0, 0, 131084, 0, 0, 131085, 0, 0, 131088, 0, 0, 131090, 0, 0, 131096, 0, 0, 131097, 0, 0, 131098, 0, 0, 131099, 0, 0, 131102, 0, 0, 131103, 0, 0, 131104, 0, 0, 131105, 0, 0, 131106, 0, 0, 131110, 0, 0, 131114, 0, 0, 131115, 0, 0, 131116, 0, 0, 131117, 0, 0, 131120, 0, 0, 196608, 0, 0, 196614, -1610612736, 0, 196618, 0, 0, 196620, 0, 0, 196622, 0, 0, 196624, 0, 0, 196626, 0, 0, 196632, 0, 0, 196636, 0, 0, 196638, 0, 0, 196642, 0, 0, 196646, 0, 0, 196654, 0, 0, 196656, 0, 0, 262144, 0, 0, 262150, -1610612736, 0, 262154, 0, 0, 262156, 0, 0, 262159, 0, 0, 262160, 0, 0, 262162, 0, 0, 262164, 0, 0, 262165, 0, 0, 262168, 0, 0, 262172, 0, 0, 262174, 0, 0, 262178, 0, 0, 262182, 0, 0, 262190, 0, 0, 262192, 0, 0, 327680, -1610612736, 0, 327686, -1610612736, 0, 327690, 0, 0, 327692, 0, 0, 327696, 0, 0, 327698, 0, 0, 327702, 0, 0, 327704, 0, 0, 327708, 0, 0, 327710, 0, 0, 327714, 0, 0, 327718, 0, 0, 327726, 0, 0, 393216, 0, 0, 393217, 0, 0, 393218, 0, 0, 393219, 0, 0, 393220, 0, 0, 393222, 0, 0, 393223, 0, 0, 393224, 0, 0, 393225, 0, 0, 393226, 0, 0, 393228, 0, 0, 393232, 0, 0, 393234, 0, 0, 393235, 0, 0, 393236, 0, 0, 393237, -1610612736, 0, 393238, -1610612736, 0, 393240, 0, 0, 393244, 0, 0, 393246, 0, 0, 393250, 0, 0, 393254, 0, 0, 393258, 0, 0, 393259, 0, 0, 393260, 0, 0, 393261, 0, 0, 393262, 0, 0, 393264, 0, 0 )
+
+[node name="CleanedLabel" type="Label" parent="GameoverTitle/ReasonCleaned"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -252.0
+margin_top = 142.0
+margin_right = 252.0
+margin_bottom = 174.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "You are full of colors again!"
+align = 1
+
+[node name="ReasonTime" type="Control" parent="GameoverTitle"]
+visible = false
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -104.0
+margin_right = 512.0
+margin_bottom = 72.0
+
+[node name="GameOver" type="TileMap" parent="GameoverTitle/ReasonTime"]
+position = Vector2( 120, 0 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 0, 0, 0, 1, -1610612736, 0, 2, -1610612736, 0, 3, -1610612736, 0, 7, 0, 0, 8, 0, 0, 9, 0, 0, 12, 0, 0, 16, 0, 0, 18, 0, 0, 19, 0, 0, 20, 0, 0, 21, 0, 0, 27, -1610612736, 0, 28, -1610612736, 0, 29, -1610612736, 0, 30, 0, 0, 32, 0, 0, 36, 0, 0, 38, -1610612736, 0, 39, -1610612736, 0, 40, -1610612736, 0, 41, -1610612736, 0, 44, -1610612736, 0, 45, -1610612736, 0, 46, -1610612736, 0, 47, -1610612736, 0, 65536, 0, 0, 65542, -1610612736, 0, 65546, 0, 0, 65548, 0, 0, 65549, 0, 0, 65551, 0, 0, 65552, 0, 0, 65554, 0, 0, 65562, -1610612736, 0, 65566, -1610612736, 0, 65568, 0, 0, 65572, 0, 0, 65574, 0, 0, 65580, -1610612736, 0, 65584, -1610612736, 0, 131072, 0, 0, 131078, -1610612736, 0, 131079, 0, 0, 131080, 0, 0, 131081, 0, 0, 131082, 0, 0, 131084, 0, 0, 131086, 0, 0, 131088, 0, 0, 131090, 0, 0, 131091, 0, 0, 131092, 0, 0, 131098, -1610612736, 0, 131102, -1610612736, 0, 131104, 0, 0, 131108, 0, 0, 131110, 0, 0, 131111, 0, 0, 131112, 0, 0, 131116, -1610612736, 0, 131117, -1610612736, 0, 131118, -1610612736, 0, 131119, -1610612736, 0, 196608, 0, 0, 196614, -1610612736, 0, 196618, 0, 0, 196620, 0, 0, 196624, 0, 0, 196626, 0, 0, 196634, -1610612736, 0, 196638, -1610612736, 0, 196640, 0, 0, 196644, 0, 0, 196646, 0, 0, 196652, -1610612736, 0, 196656, -1610612736, 0, 262144, 0, 0, 262146, 0, 0, 262147, 0, 0, 262150, -1610612736, 0, 262154, 0, 0, 262156, 0, 0, 262160, 0, 0, 262162, 0, 0, 262170, -1610612736, 0, 262174, -1610612736, 0, 262176, 0, 0, 262180, 0, 0, 262182, 0, 0, 262188, -1610612736, 0, 262192, -1610612736, 0, 327680, -1610612736, 0, 327684, 0, 0, 327686, -1610612736, 0, 327690, 0, 0, 327692, 0, 0, 327696, 0, 0, 327698, 0, 0, 327706, -1610612736, 0, 327710, -1610612736, 0, 327713, 0, 0, 327715, 0, 0, 327718, 0, 0, 327724, -1610612736, 0, 327728, -1610612736, 0, 393216, 0, 0, 393217, 0, 0, 393218, 0, 0, 393219, 0, 0, 393220, 0, 0, 393222, -1610612736, 0, 393226, 0, 0, 393228, 0, 0, 393232, 0, 0, 393234, 0, 0, 393235, 0, 0, 393236, 0, 0, 393237, -1610612736, 0, 393238, -1610612736, 0, 393242, -1610612736, 0, 393243, 0, 0, 393244, 0, 0, 393245, 0, 0, 393246, -1610612736, 0, 393250, 0, 0, 393254, 0, 0, 393255, 0, 0, 393256, 0, 0, 393257, 0, 0, 393258, 0, 0, 393260, -1610612736, 0, 393264, -1610612736, 0 )
+
+[node name="TimeupLabel" type="Label" parent="GameoverTitle/ReasonTime"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -177.0
+margin_top = 142.0
+margin_right = 177.0
+margin_bottom = 174.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "You are out of time!"
+align = 1
+
+[node name="ReasonLife" type="Control" parent="GameoverTitle"]
+visible = false
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -104.0
+margin_right = 512.0
+margin_bottom = 72.0
+
+[node name="GameOver" type="TileMap" parent="GameoverTitle/ReasonLife"]
+position = Vector2( 120, 0 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 0, 0, 0, 1, -1610612736, 0, 2, -1610612736, 0, 3, -1610612736, 0, 7, 0, 0, 8, 0, 0, 9, 0, 0, 12, 0, 0, 16, 0, 0, 18, 0, 0, 19, 0, 0, 20, 0, 0, 21, 0, 0, 27, -1610612736, 0, 28, -1610612736, 0, 29, -1610612736, 0, 30, 0, 0, 32, 0, 0, 36, 0, 0, 38, -1610612736, 0, 39, -1610612736, 0, 40, -1610612736, 0, 41, -1610612736, 0, 44, -1610612736, 0, 45, -1610612736, 0, 46, -1610612736, 0, 47, -1610612736, 0, 65536, 0, 0, 65542, -1610612736, 0, 65546, 0, 0, 65548, 0, 0, 65549, 0, 0, 65551, 0, 0, 65552, 0, 0, 65554, 0, 0, 65562, -1610612736, 0, 65566, -1610612736, 0, 65568, 0, 0, 65572, 0, 0, 65574, 0, 0, 65580, -1610612736, 0, 65584, -1610612736, 0, 131072, 0, 0, 131078, -1610612736, 0, 131079, 0, 0, 131080, 0, 0, 131081, 0, 0, 131082, 0, 0, 131084, 0, 0, 131086, 0, 0, 131088, 0, 0, 131090, 0, 0, 131091, 0, 0, 131092, 0, 0, 131098, -1610612736, 0, 131102, -1610612736, 0, 131104, 0, 0, 131108, 0, 0, 131110, 0, 0, 131111, 0, 0, 131112, 0, 0, 131116, -1610612736, 0, 131117, -1610612736, 0, 131118, -1610612736, 0, 131119, -1610612736, 0, 196608, 0, 0, 196614, -1610612736, 0, 196618, 0, 0, 196620, 0, 0, 196624, 0, 0, 196626, 0, 0, 196634, -1610612736, 0, 196638, -1610612736, 0, 196640, 0, 0, 196644, 0, 0, 196646, 0, 0, 196652, -1610612736, 0, 196656, -1610612736, 0, 262144, 0, 0, 262146, 0, 0, 262147, 0, 0, 262150, -1610612736, 0, 262154, 0, 0, 262156, 0, 0, 262160, 0, 0, 262162, 0, 0, 262170, -1610612736, 0, 262174, -1610612736, 0, 262176, 0, 0, 262180, 0, 0, 262182, 0, 0, 262188, -1610612736, 0, 262192, -1610612736, 0, 327680, -1610612736, 0, 327684, 0, 0, 327686, -1610612736, 0, 327690, 0, 0, 327692, 0, 0, 327696, 0, 0, 327698, 0, 0, 327706, -1610612736, 0, 327710, -1610612736, 0, 327713, 0, 0, 327715, 0, 0, 327718, 0, 0, 327724, -1610612736, 0, 327728, -1610612736, 0, 393216, 0, 0, 393217, 0, 0, 393218, 0, 0, 393219, 0, 0, 393220, 0, 0, 393222, -1610612736, 0, 393226, 0, 0, 393228, 0, 0, 393232, 0, 0, 393234, 0, 0, 393235, 0, 0, 393236, 0, 0, 393237, -1610612736, 0, 393238, -1610612736, 0, 393242, -1610612736, 0, 393243, 0, 0, 393244, 0, 0, 393245, 0, 0, 393246, -1610612736, 0, 393250, 0, 0, 393254, 0, 0, 393255, 0, 0, 393256, 0, 0, 393257, 0, 0, 393258, 0, 0, 393260, -1610612736, 0, 393264, -1610612736, 0 )
+
+[node name="DiedLabel" type="Label" parent="GameoverTitle/ReasonLife"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -234.0
+margin_top = 142.0
+margin_right = 234.0
+margin_bottom = 174.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "You are forever colorless!"
+align = 1
+
+[node name="Tutorial" type="Control" parent="GameoverTitle"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -144.0
+margin_right = 512.0
+margin_bottom = 221.0
+
+[node name="NotFinished" type="Control" parent="GameoverTitle/Tutorial"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -182.5
+margin_right = 512.0
+margin_bottom = 113.5
+
+[node name="Label" type="Label" parent="GameoverTitle/Tutorial/NotFinished"]
+visible = false
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -304.0
+margin_top = -2.0
+margin_right = 304.0
+margin_bottom = 30.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "You've cleaned all strays before finishing the stages."
+align = 1
+
+[node name="Wow" type="TileMap" parent="GameoverTitle/Tutorial/NotFinished"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+position = Vector2( 240, 40 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 8, 0, 0, 10, 0, 0, 12, 0, 0, 15, 0, 0, 16, 0, 0, 17, 0, 0, 18, 0, 0, 20, 0, 0, 22, 0, 0, 24, 0, 0, 26, 0, 0, 65544, 0, 0, 65546, 0, 0, 65548, 0, 0, 65550, 0, 0, 65554, 0, 0, 65556, 0, 0, 65558, 0, 0, 65560, 0, 0, 65562, 0, 0, 131080, 0, 0, 131082, 0, 0, 131084, 0, 0, 131086, 0, 0, 131090, 0, 0, 131092, 0, 0, 131094, 0, 0, 131096, 0, 0, 131098, 0, 0, 196616, 0, 0, 196618, 0, 0, 196620, 0, 0, 196622, 0, 0, 196626, 0, 0, 196628, 0, 0, 196630, 0, 0, 196632, 0, 0, 196634, 0, 0, 262152, 0, 0, 262154, 0, 0, 262156, 0, 0, 262158, 0, 0, 262162, 0, 0, 262164, 0, 0, 262166, 0, 0, 262168, 0, 0, 262170, 0, 0, 327688, 0, 0, 327690, 0, 0, 327692, 0, 0, 327694, 0, 0, 327698, 0, 0, 327700, 0, 0, 327702, 0, 0, 327704, 0, 0, 393224, 0, 0, 393225, 0, 0, 393227, 0, 0, 393228, 0, 0, 393230, 0, 0, 393231, 0, 0, 393232, 0, 0, 393233, 0, 0, 393234, 0, 0, 393236, 0, 0, 393237, -1610612736, 0, 393239, 0, 0, 393240, 0, 0, 393242, 0, 0 )
+
+[node name="Label2" type="Label" parent="GameoverTitle/Tutorial/NotFinished"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -252.0
+margin_top = 190.0
+margin_right = 252.0
+margin_bottom = 268.0
+grow_horizontal = 2
+text = "You've cleaned all stray pixels before finishing tutorial. You are a talent!"
+align = 1
+autowrap = true
+
+[node name="Finished" type="Control" parent="GameoverTitle/Tutorial"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -182.5
+margin_right = 512.0
+margin_bottom = 113.5
+
+[node name="Label" type="Label" parent="GameoverTitle/Tutorial/Finished"]
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -304.0
+margin_top = -2.0
+margin_right = 304.0
+margin_bottom = 30.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 1 )
+text = "You've learned the basics."
+align = 1
+
+[node name="WellDone" type="TileMap" parent="GameoverTitle/Tutorial/Finished"]
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+position = Vector2( 104, 56 )
+tile_set = ExtResource( 5 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
+format = 1
+tile_data = PoolIntArray( 0, 0, 0, 2, -1610612736, 0, 4, 0, 0, 6, 0, 0, 7, 0, 0, 8, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 26, 0, 0, 27, 0, 0, 28, 0, 0, 29, 0, 0, 33, 0, 0, 34, 0, 0, 35, 0, 0, 36, 0, 0, 38, 0, 0, 42, 0, 0, 44, 0, 0, 45, 0, 0, 46, 0, 0, 47, 0, 0, 50, 0, 0, 65536, 0, 0, 65538, 0, 0, 65540, 0, 0, 65542, -1610612736, 0, 65548, 0, 0, 65554, 0, 0, 65562, 0, 0, 65566, 0, 0, 65568, 0, 0, 65572, 0, 0, 65574, 0, 0, 65578, 0, 0, 65580, 0, 0, 65586, 0, 0, 131072, 0, 0, 131074, 0, 0, 131076, 0, 0, 131078, -1610612736, 0, 131079, 0, 0, 131080, 0, 0, 131084, 0, 0, 131090, 0, 0, 131098, 0, 0, 131102, 0, 0, 131104, 0, 0, 131108, 0, 0, 131110, 0, 0, 131111, 0, 0, 131114, 0, 0, 131116, 0, 0, 131117, 0, 0, 131118, 0, 0, 131122, 0, 0, 196608, 0, 0, 196610, 0, 0, 196612, 0, 0, 196614, -1610612736, 0, 196620, 0, 0, 196626, 0, 0, 196634, 0, 0, 196638, 0, 0, 196640, 0, 0, 196644, 0, 0, 196646, 0, 0, 196648, 0, 0, 196650, 0, 0, 196652, 0, 0, 196658, 0, 0, 262144, 0, 0, 262146, 0, 0, 262148, 0, 0, 262150, -1610612736, 0, 262156, 0, 0, 262162, 0, 0, 262170, 0, 0, 262174, 0, 0, 262176, 0, 0, 262180, 0, 0, 262182, 0, 0, 262185, 0, 0, 262186, 0, 0, 262188, 0, 0, 262194, 0, 0, 327680, -1610612736, 0, 327682, 0, 0, 327684, 0, 0, 327686, -1610612736, 0, 327692, 0, 0, 327698, 0, 0, 327706, 0, 0, 327710, 0, 0, 327712, 0, 0, 327716, 0, 0, 327718, 0, 0, 327722, 0, 0, 327724, 0, 0, 393216, 0, 0, 393217, 0, 0, 393219, 0, 0, 393220, 0, 0, 393222, 0, 0, 393223, 0, 0, 393224, 0, 0, 393225, 0, 0, 393226, 0, 0, 393228, 0, 0, 393229, 0, 0, 393230, 0, 0, 393231, 0, 0, 393232, 0, 0, 393234, 0, 0, 393235, 0, 0, 393236, 0, 0, 393237, -1610612736, 0, 393238, -1610612736, 0, 393242, 0, 0, 393243, 0, 0, 393244, 0, 0, 393245, 0, 0, 393248, 0, 0, 393249, 0, 0, 393250, 0, 0, 393251, 0, 0, 393252, 0, 0, 393254, 0, 0, 393258, 0, 0, 393260, 0, 0, 393261, 0, 0, 393262, 0, 0, 393263, 0, 0, 393264, 0, 0, 393266, 0, 0 )
+
+[node name="Label2" type="Label" parent="GameoverTitle/Tutorial/Finished"]
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -288.0
+margin_top = 214.0
+margin_right = 288.0
+margin_bottom = 240.0
+grow_horizontal = 2
+text = "Now, try a real game and become a master."
+align = 1
+autowrap = true
+
+[node name="Label3" type="Label" parent="GameoverTitle/Tutorial/Finished"]
+visible = false
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -288.0
+margin_top = 242.0
+margin_right = 288.0
+margin_bottom = 292.0
+grow_horizontal = 2
+text = "But beware! Real games have have a little twist on some mechanics"
+align = 1
+autowrap = true
+
+[node name="Menu" type="HBoxContainer" parent="GameoverTitle/Tutorial"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -190.0
+margin_top = 183.0
+margin_right = 190.0
+margin_bottom = 205.0
+custom_constants/separation = 32
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="QuitBtn" type="Button" parent="GameoverTitle/Tutorial/Menu"]
+margin_right = 202.0
+margin_bottom = 22.0
+focus_neighbour_right = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+size_flags_vertical = 8
+text = "TRY A REAL GAME"
+
+[node name="RestartBtn" type="Button" parent="GameoverTitle/Tutorial/Menu"]
+margin_left = 234.0
+margin_right = 380.0
+margin_bottom = 22.0
+focus_neighbour_left = NodePath("../QuitBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "LEARN AGAIN"
+
+[node name="GameSummary" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="NoHS" type="Control" parent="GameSummary"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="GameSummary/NoHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -132.0
+margin_top = -226.5
+margin_right = 132.0
+margin_bottom = -194.5
+custom_colors/font_color = Color( 0.952941, 0.356863, 0.498039, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "GAME SUMMARY"
+
+[node name="DataContainer" type="VBoxContainer" parent="GameSummary/NoHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -112.0
+margin_top = -152.0
+margin_right = 111.0
+margin_bottom = 122.0
+custom_constants/separation = 14
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Game" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_right = 223.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 2 )
+text = "Game: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Level" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 32.0
+margin_right = 223.0
+margin_bottom = 50.0
+custom_fonts/font = ExtResource( 2 )
+text = "Level: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Points" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 64.0
+margin_right = 223.0
+margin_bottom = 82.0
+custom_fonts/font = ExtResource( 2 )
+text = "Points total: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Time" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 96.0
+margin_right = 223.0
+margin_bottom = 114.0
+custom_fonts/font = ExtResource( 2 )
+text = "Time used:  %s seconds"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="CellsTraveled" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 128.0
+margin_right = 223.0
+margin_bottom = 146.0
+custom_fonts/font = ExtResource( 2 )
+text = "Cells travelled: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="BurstCount" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 160.0
+margin_right = 223.0
+margin_bottom = 178.0
+custom_fonts/font = ExtResource( 2 )
+text = "Burst count: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="SkillsUsed" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 192.0
+margin_right = 223.0
+margin_bottom = 210.0
+custom_fonts/font = ExtResource( 2 )
+text = "Skill count: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="PixelsOff" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 224.0
+margin_right = 223.0
+margin_bottom = 242.0
+custom_fonts/font = ExtResource( 2 )
+text = "Colors collected: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="AstrayPixels" type="Label" parent="GameSummary/NoHS/DataContainer"]
+margin_top = 256.0
+margin_right = 223.0
+margin_bottom = 274.0
+custom_fonts/font = ExtResource( 2 )
+text = "Pixels left astray: %s"
+align = 1
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Menu" type="HBoxContainer" parent="GameSummary/NoHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -195.0
+margin_top = 222.0
+margin_right = 109.0
+margin_bottom = 244.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="QuitBtn" type="Button" parent="GameSummary/NoHS/Menu"]
+margin_right = 226.0
+margin_bottom = 22.0
+focus_neighbour_right = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+size_flags_vertical = 8
+text = "QUIT TO MAIN MENU"
+
+[node name="RestartBtn" type="Button" parent="GameSummary/NoHS/Menu"]
+margin_left = 258.0
+margin_right = 390.0
+margin_bottom = 22.0
+focus_neighbour_left = NodePath("../QuitBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "PLAY AGAIN"
+
+[node name="WithHS" type="Control" parent="GameSummary"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="GameSummary/WithHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -132.0
+margin_top = -226.5
+margin_right = 132.0
+margin_bottom = -194.5
+custom_colors/font_color = Color( 0.952941, 0.356863, 0.498039, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "GAME SUMMARY"
+
+[node name="DataContainer" type="VBoxContainer" parent="GameSummary/WithHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -215.0
+margin_top = -152.0
+margin_right = 8.0
+margin_bottom = 122.0
+custom_constants/separation = 14
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Game" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_right = 223.0
+margin_bottom = 18.0
+custom_fonts/font = ExtResource( 2 )
+text = "Game: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Level" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 32.0
+margin_right = 223.0
+margin_bottom = 50.0
+custom_fonts/font = ExtResource( 2 )
+text = "Level: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Points" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 64.0
+margin_right = 223.0
+margin_bottom = 82.0
+custom_fonts/font = ExtResource( 2 )
+text = "Points total: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Time" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 96.0
+margin_right = 223.0
+margin_bottom = 114.0
+custom_fonts/font = ExtResource( 2 )
+text = "Time used:  %s seconds"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="CellsTraveled" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 128.0
+margin_right = 223.0
+margin_bottom = 146.0
+custom_fonts/font = ExtResource( 2 )
+text = "Cells travelled: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="BurstCount" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 160.0
+margin_right = 223.0
+margin_bottom = 178.0
+custom_fonts/font = ExtResource( 2 )
+text = "Bursts used: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="SkillsUsed" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 192.0
+margin_right = 223.0
+margin_bottom = 210.0
+custom_fonts/font = ExtResource( 2 )
+text = "Skills used: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="PixelsOff" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 224.0
+margin_right = 223.0
+margin_bottom = 242.0
+custom_fonts/font = ExtResource( 2 )
+text = "Colors collected: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="AstrayPixels" type="Label" parent="GameSummary/WithHS/DataContainer"]
+margin_top = 256.0
+margin_right = 223.0
+margin_bottom = 274.0
+custom_fonts/font = ExtResource( 2 )
+text = "Pixels left astray: %s"
+valign = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="HighscoreTable" type="VBoxContainer" parent="GameSummary/WithHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 38.0
+margin_top = -154.0
+margin_right = 216.0
+margin_bottom = 124.0
+custom_constants/separation = 6
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Title" type="Label" parent="GameSummary/WithHS/HighscoreTable"]
+margin_right = 178.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 28, 26 )
+size_flags_horizontal = 6
+size_flags_vertical = 0
+custom_colors/font_color = Color( 0.513726, 0.513726, 0.513726, 1 )
+text = "Top 9 cleaners"
+
+[node name="ScoreLine1" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 32.0
+margin_right = 178.0
+margin_bottom = 54.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine1"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine1"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine1"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine2" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 60.0
+margin_right = 178.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine2"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine2"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine2"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine3" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 88.0
+margin_right = 178.0
+margin_bottom = 110.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine3"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine3"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine3"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine4" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 116.0
+margin_right = 178.0
+margin_bottom = 138.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine4"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine4"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine4"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine5" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 144.0
+margin_right = 178.0
+margin_bottom = 166.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine5"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine5"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine5"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine6" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 172.0
+margin_right = 178.0
+margin_bottom = 194.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine6"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine6"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine6"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine7" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 200.0
+margin_right = 178.0
+margin_bottom = 222.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine7"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine7"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine7"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine8" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 228.0
+margin_right = 178.0
+margin_bottom = 250.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine8"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine8"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine8"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="ScoreLine9" type="HBoxContainer" parent="GameSummary/WithHS/HighscoreTable"]
+margin_top = 256.0
+margin_right = 178.0
+margin_bottom = 278.0
+rect_min_size = Vector2( 72, 0 )
+
+[node name="Position" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine9"]
+margin_right = 24.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 24, 0 )
+text = "2."
+
+[node name="Owner" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine9"]
+margin_left = 28.0
+margin_top = 2.0
+margin_right = 100.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 72, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "PLAYERRR"
+clip_text = true
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="GameSummary/WithHS/HighscoreTable/ScoreLine9"]
+margin_left = 108.0
+margin_right = 178.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 70, 0 )
+size_flags_horizontal = 10
+text = "00000"
+align = 2
+
+[node name="Menu" type="HBoxContainer" parent="GameSummary/WithHS"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -195.0
+margin_top = 222.0
+margin_right = 195.0
+margin_bottom = 244.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="QuitBtn" type="Button" parent="GameSummary/WithHS/Menu"]
+margin_right = 226.0
+margin_bottom = 22.0
+focus_neighbour_right = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+size_flags_vertical = 8
+text = "QUIT TO MAIN MENU"
+
+[node name="RestartBtn" type="Button" parent="GameSummary/WithHS/Menu"]
+margin_left = 258.0
+margin_right = 390.0
+margin_bottom = 22.0
+focus_neighbour_left = NodePath("../QuitBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "PLAY AGAIN"
+
+[node name="NameInputPopup" type="Control" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -256.0
+margin_top = 112.0
+margin_right = 256.0
+margin_bottom = 336.0
+
+[node name="Undi" type="Panel" parent="NameInputPopup"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="NameInputPopup"]
+anchor_right = 1.0
+margin_left = 40.0
+margin_top = 22.0
+margin_right = -40.0
+margin_bottom = 44.0
+size_flags_vertical = 3
+text = "%s"
+align = 1
+autowrap = true
+
+[node name="Label2" type="Label" parent="NameInputPopup"]
+anchor_right = 1.0
+margin_left = -32.0
+margin_top = 54.0
+margin_right = 32.0
+margin_bottom = 80.0
+size_flags_vertical = 3
+custom_constants/line_spacing = 2
+text = "You rank among the all-time best."
+align = 1
+autowrap = true
+
+[node name="NameInput" type="LineEdit" parent="NameInputPopup"]
+anchor_right = 1.0
+margin_left = 166.0
+margin_top = 101.0
+margin_right = -166.0
+margin_bottom = 141.0
+rect_min_size = Vector2( 180, 40 )
+focus_neighbour_bottom = NodePath("../HBoxContainer/ConfirmBtn")
+focus_next = NodePath("../HBoxContainer/ConfirmBtn")
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "00000000000"
+align = 1
+caret_blink = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NameInputPopup"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -88.0
+margin_top = 166.0
+margin_right = 88.0
+margin_bottom = 188.0
+size_flags_horizontal = 4
+size_flags_vertical = 11
+
+[node name="CancelBtn" type="Button" parent="NameInputPopup/HBoxContainer"]
+margin_right = 52.0
+margin_bottom = 22.0
+focus_neighbour_top = NodePath("../../NameInput")
+focus_neighbour_right = NodePath("../ConfirmBtn")
+focus_next = NodePath("../../NameInput")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+text = "SKIP"
+align = 0
+
+[node name="ConfirmBtn" type="Button" parent="NameInputPopup/HBoxContainer"]
+margin_left = 78.0
+margin_right = 176.0
+margin_bottom = 22.0
+focus_neighbour_left = NodePath("../CancelBtn")
+focus_neighbour_top = NodePath("../../NameInput")
+focus_next = NodePath("../CancelBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 9
+size_flags_vertical = 9
+text = "CONFIRM"
+align = 0
+
+[connection signal="pressed" from="GameoverTitle/Duel/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="GameoverTitle/Duel/Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
+[connection signal="pressed" from="GameoverTitle/Tutorial/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="GameoverTitle/Tutorial/Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
+[connection signal="pressed" from="GameSummary/NoHS/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="GameSummary/NoHS/Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
+[connection signal="pressed" from="GameSummary/WithHS/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="GameSummary/WithHS/Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
+[connection signal="text_changed" from="NameInputPopup/NameInput" to="." method="_on_NameEdit_text_changed"]
+[connection signal="text_entered" from="NameInputPopup/NameInput" to="." method="_on_PopupNameEdit_text_entered"]
+[connection signal="pressed" from="NameInputPopup/HBoxContainer/CancelBtn" to="." method="_on_CancelBtn_pressed"]
+[connection signal="pressed" from="NameInputPopup/HBoxContainer/ConfirmBtn" to="." method="_on_ConfirmBtn_pressed"]

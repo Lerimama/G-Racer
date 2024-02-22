@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://game/pixel/pixel_dizzy_particles.gd" type="Script" id=1]
+
+[sub_resource type="Gradient" id=133]
+offsets = PoolRealArray( 0.922535, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=134]
+gradient = SubResource( 133 )
+
+[sub_resource type="ParticlesMaterial" id=135]
+lifetime_randomness = 1.0
+emission_shape = 5
+emission_ring_radius = 45.38
+emission_ring_inner_radius = 25.0
+emission_ring_height = 1.0
+emission_ring_axis = Vector3( 0, 0, 1 )
+flag_disable_z = true
+direction = Vector3( 0, -1, 0 )
+spread = 60.23
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 10.0
+initial_velocity_random = 0.45
+angular_velocity = 100.0
+angular_velocity_random = 0.57
+orbit_velocity = 0.36
+orbit_velocity_random = 0.42
+radial_accel = 1.05
+radial_accel_random = 0.46
+scale = 3.0
+color_ramp = SubResource( 134 )
+
+[node name="ColisionParticles" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Particles" type="Particles2D" parent="."]
+emitting = false
+lifetime = 3.0
+one_shot = true
+explosiveness = 0.85
+randomness = 1.0
+process_material = SubResource( 135 )
+
+[node name="PolyPixel" type="Polygon2D" parent="."]
+visible = false
+position = Vector2( -16, -16 )
+color = Color( 1, 1, 1, 0.54902 )
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[connection signal="tree_exited" from="Particles" to="." method="_on_Particles_tree_exited"]

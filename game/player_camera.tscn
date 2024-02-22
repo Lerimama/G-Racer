@@ -1,0 +1,484 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://game/player_camera.gd" type="Script" id=2]
+[ext_resource path="res://assets/resources/noise_gamecam.tres" type="OpenSimplexNoise" id=3]
+[ext_resource path="res://assets/theme/font_main.tres" type="DynamicFont" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=251]
+
+[sub_resource type="StreamTexture" id=175]
+load_path = "res://.import/iconset_lerimama_theme.png-7ff4695cad905aee2e2e716d4a555101.stex"
+
+[sub_resource type="AtlasTexture" id=252]
+atlas = SubResource( 175 )
+region = Rect2( 16, 16, 14, 16 )
+
+[sub_resource type="AtlasTexture" id=253]
+atlas = SubResource( 175 )
+region = Rect2( 0, 16, 10, 16 )
+
+[sub_resource type="StyleBoxFlat" id=254]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+expand_margin_left = 6.0
+expand_margin_right = 6.0
+expand_margin_top = 2.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxEmpty" id=255]
+
+[sub_resource type="StyleBoxEmpty" id=256]
+
+[sub_resource type="StyleBoxLine" id=257]
+color = Color( 1, 1, 1, 1 )
+thickness = 2
+
+[sub_resource type="AtlasTexture" id=258]
+atlas = SubResource( 175 )
+region = Rect2( 32, 0, 10, 10 )
+
+[sub_resource type="StyleBoxEmpty" id=259]
+
+[sub_resource type="StyleBoxFlat" id=260]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+expand_margin_left = 6.0
+expand_margin_top = 6.0
+expand_margin_bottom = 6.0
+
+[sub_resource type="StreamTexture" id=261]
+load_path = "res://.import/iconset_lerimama_theme.png-7ff4695cad905aee2e2e716d4a555101.stex"
+
+[sub_resource type="AtlasTexture" id=152]
+atlas = SubResource( 261 )
+region = Rect2( 0, 4, 16, 8 )
+
+[sub_resource type="StyleBoxTexture" id=262]
+texture = SubResource( 152 )
+region_rect = Rect2( 0, 0, 16, 8 )
+margin_left = 3.34132
+margin_right = 4.0
+margin_top = 4.0
+margin_bottom = 4.0
+modulate_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+
+[sub_resource type="StyleBoxFlat" id=263]
+bg_color = Color( 0, 0, 0, 0 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="AtlasTexture" id=264]
+atlas = SubResource( 175 )
+region = Rect2( 16, 0, 16, 12 )
+margin = Rect2( 4, 0, 0, 0 )
+
+[sub_resource type="StyleBoxFlat" id=265]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 0.901961 )
+expand_margin_left = 6.0
+expand_margin_right = 6.0
+expand_margin_top = 2.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id=266]
+bg_color = Color( 0, 0, 0, 0.862745 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.423529, 0.423529, 0.423529, 1 )
+
+[sub_resource type="StyleBoxLine" id=267]
+color = Color( 1, 1, 1, 1 )
+thickness = 2
+vertical = true
+
+[sub_resource type="Theme" id=194]
+default_font = ExtResource( 4 )
+Button/colors/font_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+Button/colors/font_color_disabled = Color( 0.494118, 0.517647, 0.545098, 0.470588 )
+Button/colors/font_color_focus = Color( 1, 1, 1, 1 )
+Button/colors/font_color_hover = Color( 1, 1, 1, 1 )
+Button/styles/disabled = SubResource( 251 )
+Button/styles/focus = SubResource( 251 )
+Button/styles/hover = SubResource( 251 )
+Button/styles/normal = SubResource( 251 )
+Button/styles/pressed = SubResource( 251 )
+CheckBox/colors/font_color_focus = Color( 0.294118, 0.623529, 1, 1 )
+CheckBox/colors/font_color_hover = Color( 0.996078, 0.976471, 0.545098, 1 )
+CheckBox/colors/font_color_hover_pressed = Color( 0.368627, 1, 0.662745, 1 )
+CheckBox/colors/font_color_pressed = Color( 0.494118, 0.517647, 0.545098, 1 )
+CheckBox/constants/hseparation = 4
+CheckBox/icons/checked = SubResource( 252 )
+CheckBox/icons/unchecked = SubResource( 253 )
+CheckBox/styles/focus = SubResource( 254 )
+CheckBox/styles/hover = SubResource( 254 )
+CheckBox/styles/hover_pressed = SubResource( 254 )
+CheckBox/styles/normal = SubResource( 255 )
+CheckBox/styles/pressed = SubResource( 256 )
+HSeparator/styles/separator = SubResource( 257 )
+HSlider/icons/grabber = SubResource( 258 )
+HSlider/icons/grabber_disabled = null
+HSlider/icons/grabber_highlight = SubResource( 258 )
+HSlider/icons/tick = null
+HSlider/styles/grabber_area = SubResource( 259 )
+HSlider/styles/grabber_area_highlight = SubResource( 260 )
+HSlider/styles/slider = SubResource( 262 )
+Label/colors/font_color = Color( 0.980392, 0.980392, 0.980392, 1 )
+Label/constants/line_spacing = 6
+LineEdit/colors/font_color_selected = Color( 0, 0, 0, 1 )
+LineEdit/colors/selection_color = Color( 0.72549, 0.737255, 0.764706, 1 )
+LineEdit/styles/normal = SubResource( 263 )
+OptionButton/colors/font_color = Color( 1, 1, 1, 0.901961 )
+OptionButton/colors/font_color_focus = Color( 1, 1, 1, 0.901961 )
+OptionButton/colors/font_color_hover = Color( 1, 1, 1, 0.901961 )
+OptionButton/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+OptionButton/icons/arrow = SubResource( 264 )
+OptionButton/styles/focus = SubResource( 265 )
+OptionButton/styles/hover = SubResource( 265 )
+OptionButton/styles/pressed = SubResource( 265 )
+Panel/styles/panel = SubResource( 266 )
+VSeparator/styles/separator = SubResource( 267 )
+
+[sub_resource type="NoiseTexture" id=238]
+width = 246
+height = 246
+noise = ExtResource( 3 )
+
+[node name="PlayerCamera" type="Camera2D"]
+rotation = 3.14159
+rotating = true
+current = true
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 7.0
+editor_draw_limits = true
+script = ExtResource( 2 )
+noise = ExtResource( 3 )
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 3
+visible = false
+
+[node name="TestToggle" type="CheckBox" parent="UILayer"]
+margin_left = 32.0
+margin_top = 10.0
+margin_right = 96.0
+margin_bottom = 36.0
+theme = SubResource( 194 )
+text = "test"
+
+[node name="TestHud" type="Control" parent="UILayer"]
+margin_left = 32.0
+margin_top = 32.0
+margin_right = 1248.0
+margin_bottom = 612.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = SubResource( 194 )
+
+[node name="ZoomLabel" type="Label" parent="UILayer/TestHud"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -236.0
+margin_top = -141.0
+margin_right = -38.0
+margin_bottom = -120.0
+text = "Zoom level: 100%"
+align = 2
+
+[node name="ResetViewBtn" type="Button" parent="UILayer/TestHud"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 992.0
+margin_top = -104.0
+margin_right = 1180.0
+margin_bottom = -78.0
+theme = SubResource( 194 )
+text = "resetiraj pogled"
+
+[node name="ShakeBar" type="ProgressBar" parent="UILayer/TestHud"]
+modulate = Color( 1, 0, 0, 1 )
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -608.0
+margin_top = -55.0
+margin_right = 608.0
+margin_bottom = -29.0
+rect_min_size = Vector2( 0, 16 )
+size_flags_horizontal = 3
+theme = SubResource( 194 )
+max_value = 1.0
+
+[node name="TraumaBar" type="ProgressBar" parent="UILayer/TestHud"]
+modulate = Color( 0.12549, 1, 0, 1 )
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -608.0
+margin_top = -24.0
+margin_right = 608.0
+margin_bottom = 2.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource( 194 )
+max_value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ZoomSlider" type="VSlider" parent="UILayer/TestHud"]
+visible = false
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -51.0
+margin_top = -300.0
+margin_right = -35.0
+margin_bottom = 212.0
+theme = SubResource( 194 )
+max_value = 1.0
+step = 0.1
+value = 1.0
+
+[node name="TimeSlider" type="VSlider" parent="UILayer/TestHud"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = -302.0
+margin_right = 16.0
+margin_bottom = 209.0
+rect_scale = Vector2( -1, 1 )
+theme = SubResource( 194 )
+max_value = 2.0
+step = 0.1
+value = 1.0
+
+[node name="NoiseControl" type="Control" parent="UILayer/TestHud"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -516.0
+margin_right = 248.0
+margin_bottom = -151.0
+theme = SubResource( 194 )
+
+[node name="NoiseVisual" type="TextureRect" parent="UILayer/TestHud/NoiseControl"]
+margin_right = 246.0
+margin_bottom = 246.0
+texture = SubResource( 238 )
+
+[node name="Seed" type="HSlider" parent="UILayer/TestHud/NoiseControl"]
+margin_left = 60.0
+margin_top = 260.0
+margin_right = 246.0
+margin_bottom = 276.0
+hint_tooltip = "Seed"
+
+[node name="Label" type="Label" parent="UILayer/TestHud/NoiseControl"]
+margin_top = 252.0
+margin_right = 48.0
+margin_bottom = 278.0
+text = "Seed"
+
+[node name="Octaves" type="HSlider" parent="UILayer/TestHud/NoiseControl"]
+margin_left = 88.0
+margin_top = 281.0
+margin_right = 246.0
+margin_bottom = 297.0
+hint_tooltip = "Octaves"
+min_value = 1.0
+max_value = 9.0
+value = 3.0
+
+[node name="Label2" type="Label" parent="UILayer/TestHud/NoiseControl"]
+margin_top = 272.0
+margin_right = 82.0
+margin_bottom = 298.0
+text = "Octaves"
+
+[node name="Period" type="HSlider" parent="UILayer/TestHud/NoiseControl"]
+margin_left = 76.0
+margin_top = 300.0
+margin_right = 246.0
+margin_bottom = 316.0
+hint_tooltip = "Period"
+min_value = 0.1
+max_value = 256.0
+step = 0.1
+value = 64.0
+
+[node name="Label3" type="Label" parent="UILayer/TestHud/NoiseControl"]
+margin_top = 292.0
+margin_right = 66.0
+margin_bottom = 318.0
+text = "Period"
+
+[node name="Persistence" type="HSlider" parent="UILayer/TestHud/NoiseControl"]
+margin_left = 88.0
+margin_top = 321.0
+margin_right = 246.0
+margin_bottom = 337.0
+hint_tooltip = "Persistance"
+min_value = 0.001
+max_value = 1.0
+step = 0.001
+value = 0.5
+
+[node name="Label4" type="Label" parent="UILayer/TestHud/NoiseControl"]
+margin_top = 312.0
+margin_right = 124.0
+margin_bottom = 338.0
+text = "Persist"
+
+[node name="Lacunarity" type="HSlider" parent="UILayer/TestHud/NoiseControl"]
+margin_left = 84.0
+margin_top = 341.0
+margin_right = 246.0
+margin_bottom = 357.0
+hint_tooltip = "Lacunarity"
+min_value = 0.01
+max_value = 4.0
+step = 0.01
+value = 2.0
+
+[node name="Label5" type="Label" parent="UILayer/TestHud/NoiseControl"]
+margin_top = 332.0
+margin_right = 124.0
+margin_bottom = 358.0
+text = "Lacuna"
+
+[node name="TraumaControl" type="Control" parent="UILayer/TestHud"]
+margin_top = 432.0
+margin_right = 248.0
+margin_bottom = 501.0
+
+[node name="TraumaTime" type="HSlider" parent="UILayer/TestHud/TraumaControl"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -184.0
+margin_top = 9.0
+margin_bottom = 25.0
+hint_tooltip = "Seed"
+max_value = 10.0
+step = 0.1
+
+[node name="Label" type="Label" parent="UILayer/TestHud/TraumaControl"]
+margin_right = 74.0
+margin_bottom = 26.0
+text = "Time"
+
+[node name="TraumaStrength" type="HSlider" parent="UILayer/TestHud/TraumaControl"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -144.0
+margin_top = 29.0
+margin_bottom = 45.0
+hint_tooltip = "Seed"
+max_value = 1.0
+step = 0.01
+
+[node name="Label2" type="Label" parent="UILayer/TestHud/TraumaControl"]
+margin_top = 20.0
+margin_right = 92.0
+margin_bottom = 46.0
+text = "Strenght"
+
+[node name="ShakeDecay" type="HSlider" parent="UILayer/TestHud/TraumaControl"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -176.0
+margin_top = 49.0
+margin_bottom = 65.0
+hint_tooltip = "Seed"
+max_value = 1.0
+step = 0.01
+
+[node name="Label3" type="Label" parent="UILayer/TestHud/TraumaControl"]
+margin_top = 40.0
+margin_right = 60.0
+margin_bottom = 66.0
+text = "Decay"
+
+[node name="Panel" type="Panel" parent="UILayer/TestHud"]
+margin_left = 73.0
+margin_top = 163.0
+margin_right = 173.0
+margin_bottom = 212.0
+
+[node name="AddTraumaBtn" type="Button" parent="UILayer/TestHud"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 73.0
+margin_top = -417.0
+margin_right = 173.0
+margin_bottom = -368.0
+theme = SubResource( 194 )
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0.945098, 0.945098, 0.945098, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+text = "tresi"
+
+[connection signal="mouse_entered" from="UILayer/TestToggle" to="." method="_on_CheckBox_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestToggle" to="." method="_on_CheckBox_mouse_exited"]
+[connection signal="toggled" from="UILayer/TestToggle" to="." method="_on_CheckBox_toggled"]
+[connection signal="mouse_entered" from="UILayer/TestHud/ResetViewBtn" to="." method="_on_ResetView_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/ResetViewBtn" to="." method="_on_ResetView_mouse_exited"]
+[connection signal="pressed" from="UILayer/TestHud/ResetViewBtn" to="." method="_on_ResetView_pressed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/ZoomSlider" to="." method="_on_ZoomSlider_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/ZoomSlider" to="." method="_on_ZoomSlider_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/ZoomSlider" to="." method="_on_ZoomSlider_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/TimeSlider" to="." method="_on_TimeSlider_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/TimeSlider" to="." method="_on_TimeSlider_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/TimeSlider" to="." method="_on_TimeSlider_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/NoiseControl" to="." method="_on_Control_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/NoiseControl" to="." method="_on_Control_mouse_exited"]
+[connection signal="mouse_entered" from="UILayer/TestHud/NoiseControl/Seed" to="." method="_on_SeedSlider_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/NoiseControl/Seed" to="." method="_on_SeedSlider_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/NoiseControl/Seed" to="." method="_on_Seed_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/NoiseControl/Octaves" to="." method="_on_Octaves_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/NoiseControl/Octaves" to="." method="_on_Octaves_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/NoiseControl/Octaves" to="." method="_on_Octaves_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/NoiseControl/Period" to="." method="_on_Period_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/NoiseControl/Period" to="." method="_on_Period_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/NoiseControl/Period" to="." method="_on_Period_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/NoiseControl/Persistence" to="." method="_on_Persistance_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/NoiseControl/Persistence" to="." method="_on_Persistance_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/NoiseControl/Persistence" to="." method="_on_Persistence_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/NoiseControl/Lacunarity" to="." method="_on_Lacunarity_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/NoiseControl/Lacunarity" to="." method="_on_Lacunarity_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/NoiseControl/Lacunarity" to="." method="_on_Lacunarity_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/TraumaControl/TraumaTime" to="." method="_on_TraumaTime_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/TraumaControl/TraumaTime" to="." method="_on_TraumaTime_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/TraumaControl/TraumaTime" to="." method="_on_TraumaTime_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/TraumaControl/TraumaStrength" to="." method="_on_TraumaStrength_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/TraumaControl/TraumaStrength" to="." method="_on_TraumaStrength_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/TraumaControl/TraumaStrength" to="." method="_on_TraumaStrength_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/TraumaControl/ShakeDecay" to="." method="_on_ShakeDecay_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/TraumaControl/ShakeDecay" to="." method="_on_ShakeDecay_mouse_exited"]
+[connection signal="value_changed" from="UILayer/TestHud/TraumaControl/ShakeDecay" to="." method="_on_ShakeDecay_value_changed"]
+[connection signal="mouse_entered" from="UILayer/TestHud/AddTraumaBtn" to="." method="_on_AddTraumaBtn_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/TestHud/AddTraumaBtn" to="." method="_on_AddTraumaBtn_mouse_exited"]
+[connection signal="pressed" from="UILayer/TestHud/AddTraumaBtn" to="." method="_on_AddTraumaBtn_pressed"]

@@ -1,0 +1,66 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://game/pixel/pixel_collision_particles.gd" type="Script" id=1]
+
+[sub_resource type="Gradient" id=133]
+offsets = PoolRealArray( 0.922535, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=134]
+gradient = SubResource( 133 )
+
+[sub_resource type="ParticlesMaterial" id=135]
+lifetime_randomness = 1.0
+flag_disable_z = true
+direction = Vector3( 0, -1, 0 )
+spread = 70.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 50.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 2.0
+color_ramp = SubResource( 134 )
+
+[sub_resource type="ParticlesMaterial" id=136]
+lifetime_randomness = 1.0
+flag_disable_z = true
+direction = Vector3( 0, 1, 0 )
+spread = 70.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 60.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 2.0
+color_ramp = SubResource( 134 )
+
+[node name="ColisionParticles" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="TopParticles" type="Particles2D" parent="."]
+position = Vector2( 16, -16 )
+emitting = false
+amount = 2
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.82
+randomness = 1.0
+process_material = SubResource( 135 )
+
+[node name="BtmParticles" type="Particles2D" parent="."]
+position = Vector2( 16, 16 )
+emitting = false
+amount = 2
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.9
+randomness = 1.0
+process_material = SubResource( 136 )
+
+[node name="PolyPixel" type="Polygon2D" parent="."]
+visible = false
+position = Vector2( -16, -16 )
+color = Color( 1, 1, 1, 0.54902 )
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+
+[connection signal="tree_exited" from="TopParticles" to="." method="_on_Particles2D_tree_exited"]
+[connection signal="tree_exited" from="BtmParticles" to="." method="_on_Particles2D2_tree_exited"]
