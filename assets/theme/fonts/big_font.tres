@@ -1,0 +1,8 @@
+[gd_resource type="DynamicFont" load_steps=2 format=2]
+
+[sub_resource type="DynamicFontData" id=773]
+font_path = "res://assets/theme/fonts/Gamer.ttf"
+
+[resource]
+size = 80
+font_data = SubResource( 773 )

@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/laser_charge_long.ogg-5ebdafa8643f2adba3b9357d1285e1ac.oggstr"
+
+[deps]
+
+source_file="res://_materiali/sfx/laser_charge_long.ogg"
+dest_files=[ "res://.import/laser_charge_long.ogg-5ebdafa8643f2adba3b9357d1285e1ac.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

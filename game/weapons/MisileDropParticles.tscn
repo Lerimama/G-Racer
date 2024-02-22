@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="Curve" id=6]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 1, Vector2( 0.553247, 1 ), 0.0, -0.155475, 0, 0, Vector2( 1, 0 ), -6.29687, 0.0, 0, 0 ]
+
+[node name="DropParticles" type="CPUParticles2D"]
+emitting = false
+amount = 7
+lifetime = 0.4
+one_shot = true
+speed_scale = 0.7
+explosiveness = 0.6
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 50.0
+initial_velocity_random = 0.27
+linear_accel = -50.0
+linear_accel_random = 0.58
+damping = 32.5
+scale_amount = 1.4
+scale_amount_curve = SubResource( 6 )

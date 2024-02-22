@@ -1,0 +1,50 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://game/weapons/Misile.gd" type="Script" id=1]
+[ext_resource path="res://assets/weapons/misile.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 2.5, 0.5 )
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 60.5331
+
+[sub_resource type="CircleShape2D" id=6]
+radius = 4.0
+
+[node name="Misile" type="KinematicBody2D"]
+script = ExtResource( 1 )
+
+[node name="MisileCollision" type="CollisionShape2D" parent="."]
+position = Vector2( -1.5, 0 )
+shape = SubResource( 1 )
+
+[node name="HommingArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HommingArea"]
+position = Vector2( -0.5, 0 )
+shape = SubResource( 5 )
+
+[node name="DetectArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource( 6 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( -3, -1.5 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="TrailPosition" type="Position2D" parent="."]
+position = Vector2( -3, 0 )
+__meta__ = {
+"_gizmo_extents_": 2.0
+}
+
+[node name="DropPosition" type="Position2D" parent="."]
+position = Vector2( 2, 0 )
+__meta__ = {
+"_gizmo_extents_": 2.0
+}
+
+[connection signal="body_entered" from="HommingArea" to="." method="_on_HommingArea_body_entered"]

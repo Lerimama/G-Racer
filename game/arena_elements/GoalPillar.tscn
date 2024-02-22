@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://game/arena_elements/GoalPillar.gd" type="Script" id=1]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
+[ext_resource path="res://assets/arena/pillar_detec_area.png" type="Texture" id=3]
+[ext_resource path="res://assets/light.png" type="Texture" id=4]
+
+[sub_resource type="CircleShape2D" id=559]
+radius = 37.054
+
+[sub_resource type="SpriteFrames" id=560]
+animations = [ {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[node name="GoalPillar" type="StaticBody2D"]
+position = Vector2( 102, 107 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 24, 24 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -10, -4, -4, -10, 4, -10, 10, -4, 10, 4, 4, 10, -4, 10, -10, 4 )
+
+[node name="DetectArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource( 559 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 560 )
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+visible = false
+
+[node name="LightPoly" type="Polygon2D" parent="."]
+modulate = Color( 1, 1, 1, 0.235294 )
+polygon = PoolVector2Array( -3, -2, -4, -2, -4, 2, -3, 2, -3, 3, -2, 3, -2, 4, 2, 4, 2, 3, 3, 3, 3, 2, 4, 2, 4, -2, 3, -2, 3, -3, 2, -3, 2, -4, -2, -4, -2, -3, -3, -3 )
+
+[node name="Light2D" type="Light2D" parent="."]
+scale = Vector2( 0.167832, 0.167832 )
+texture = ExtResource( 4 )
+mode = 2
+
+[connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
+[connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]

@@ -1,0 +1,159 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
+[ext_resource path="res://game/hud/HudRacer.gd" type="Script" id=3]
+[ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=4]
+[ext_resource path="res://game/hud/StatLineRacer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://game/hud/GameStart.gd" type="Script" id=6]
+[ext_resource path="res://game/hud/StatLine.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/hud/GameTime.tscn" type="PackedScene" id=8]
+
+[sub_resource type="DynamicFontData" id=773]
+font_path = "res://assets/theme/fonts/Gamer.ttf"
+
+[sub_resource type="DynamicFont" id=774]
+size = 120
+font_data = SubResource( 773 )
+
+[node name="HudRacer" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 2 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 360.0 ],
+"_edit_vertical_guides_": [ 640.0, 0.0 ]
+}
+
+[node name="PavzaBtn" type="Button" parent="."]
+margin_left = 315.0
+margin_top = 331.0
+margin_right = 327.0
+margin_bottom = 357.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 4 )
+text = "P"
+
+[node name="StatLineRacer1" parent="." instance=ExtResource( 5 )]
+margin_left = 9.0
+margin_top = 7.0
+margin_right = 49.0
+margin_bottom = 119.0
+
+[node name="StatLineRacer2" parent="." instance=ExtResource( 5 )]
+margin_left = 592.0
+margin_top = 8.0
+margin_right = 632.0
+margin_bottom = 120.0
+
+[node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
+margin_left = 16.0
+margin_top = 248.0
+margin_right = 56.0
+margin_bottom = 360.0
+
+[node name="StatLineRacer4" parent="." instance=ExtResource( 5 )]
+margin_left = 592.0
+margin_top = 248.0
+margin_right = 632.0
+margin_bottom = 360.0
+
+[node name="StatLineTopL" parent="." instance=ExtResource( 7 )]
+visible = false
+margin_right = 186.0
+rect_min_size = Vector2( 186, 24 )
+
+[node name="StatLineTopR" parent="." instance=ExtResource( 7 )]
+visible = false
+margin_left = 447.0
+margin_right = 644.0
+
+[node name="StatLineBtmL" parent="." instance=ExtResource( 7 )]
+visible = false
+margin_top = 336.0
+margin_right = 186.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 186, 24 )
+
+[node name="StatLineBtmR_" parent="." instance=ExtResource( 7 )]
+visible = false
+margin_left = 447.0
+margin_top = 336.0
+margin_right = 644.0
+margin_bottom = 360.0
+
+[node name="GameTime" parent="." instance=ExtResource( 8 )]
+
+[node name="Popups" type="Control" parent="."]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="GameEvent" type="Control" parent="Popups"]
+margin_left = 190.0
+margin_top = 122.0
+margin_right = 454.0
+margin_bottom = 203.0
+
+[node name="Name" type="Label" parent="Popups/GameEvent"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -44.0
+margin_right = 44.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 4 )
+text = "Player 1"
+align = 1
+
+[node name="Event" type="Label" parent="Popups/GameEvent"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -122.5
+margin_top = -64.0
+margin_right = 122.5
+custom_fonts/font = ExtResource( 1 )
+text = "DEAD!!!"
+align = 1
+
+[node name="GameOver" type="Control" parent="Popups"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="GameOver" type="Label" parent="Popups/GameOver"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+margin_left = 115.0
+margin_top = 119.0
+margin_right = 535.0
+margin_bottom = 214.0
+custom_fonts/font = SubResource( 774 )
+text = "GAME-OVER"
+align = 1
+
+[node name="GameStart" type="Control" parent="Popups"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 6 )
+
+[node name="CountDown" type="Label" parent="Popups/GameStart"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+margin_left = 115.0
+margin_top = 119.0
+margin_right = 535.0
+margin_bottom = 214.0
+custom_fonts/font = SubResource( 774 )
+text = "00"
+align = 1
+
+[node name="Start" type="Label" parent="Popups/GameStart"]
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+margin_left = 115.0
+margin_top = 119.0
+margin_right = 535.0
+margin_bottom = 214.0
+custom_fonts/font = SubResource( 774 )
+text = "START"
+align = 1

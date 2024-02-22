@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
+[ext_resource path="res://game/hud/GameTime.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFontData" id=773]
+font_path = "res://assets/theme/fonts/Gamer.ttf"
+
+[sub_resource type="DynamicFont" id=774]
+size = 32
+extra_spacing_char = 2
+font_data = SubResource( 773 )
+
+[node name="GameTime" type="Control"]
+margin_left = 256.0
+margin_top = 4.0
+margin_right = 392.0
+margin_bottom = 26.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+time_minutes = 1.0
+
+[node name="LevelName" type="Label" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -19.0
+margin_right = 59.0
+margin_bottom = -4.0
+text = "Prva runda"
+
+[node name="clock" type="Control" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -64.0
+margin_top = -22.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sepa" type="Label" parent="clock"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -4.0
+margin_right = 4.0
+margin_bottom = 26.0
+custom_fonts/font = SubResource( 774 )
+text = ":"
+align = 1
+
+[node name="Minutes" type="Label" parent="clock"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -13.0
+margin_right = 26.0
+margin_bottom = 13.0
+custom_fonts/font = SubResource( 774 )
+text = "00"
+
+[node name="Seconds" type="Label" parent="clock"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -26.0
+margin_top = -13.0
+margin_bottom = 13.0
+custom_fonts/font = SubResource( 774 )
+text = "88"
+align = 2

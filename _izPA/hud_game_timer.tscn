@@ -1,0 +1,203 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://game/hud/hud_game_timer.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme/font_main.tres" type="DynamicFont" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=285]
+
+[sub_resource type="StreamTexture" id=175]
+load_path = "res://.import/iconset_lerimama_theme.png-7ff4695cad905aee2e2e716d4a555101.stex"
+
+[sub_resource type="AtlasTexture" id=286]
+atlas = SubResource( 175 )
+region = Rect2( 16, 16, 14, 16 )
+
+[sub_resource type="AtlasTexture" id=287]
+atlas = SubResource( 175 )
+region = Rect2( 0, 16, 10, 16 )
+
+[sub_resource type="StyleBoxFlat" id=288]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+expand_margin_left = 6.0
+expand_margin_right = 6.0
+expand_margin_top = 2.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxEmpty" id=289]
+
+[sub_resource type="StyleBoxEmpty" id=290]
+
+[sub_resource type="StyleBoxLine" id=291]
+color = Color( 1, 1, 1, 1 )
+thickness = 2
+
+[sub_resource type="AtlasTexture" id=292]
+atlas = SubResource( 175 )
+region = Rect2( 32, 0, 10, 10 )
+
+[sub_resource type="StyleBoxEmpty" id=293]
+
+[sub_resource type="StyleBoxFlat" id=294]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+expand_margin_left = 6.0
+expand_margin_top = 6.0
+expand_margin_bottom = 6.0
+
+[sub_resource type="StreamTexture" id=295]
+load_path = "res://.import/iconset_lerimama_theme.png-7ff4695cad905aee2e2e716d4a555101.stex"
+
+[sub_resource type="AtlasTexture" id=152]
+atlas = SubResource( 295 )
+region = Rect2( 0, 4, 16, 8 )
+
+[sub_resource type="StyleBoxTexture" id=296]
+texture = SubResource( 152 )
+region_rect = Rect2( 0, 0, 16, 8 )
+margin_left = 3.34132
+margin_right = 4.0
+margin_top = 4.0
+margin_bottom = 4.0
+modulate_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+
+[sub_resource type="StyleBoxFlat" id=297]
+bg_color = Color( 0, 0, 0, 0 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="AtlasTexture" id=298]
+atlas = SubResource( 175 )
+region = Rect2( 16, 0, 16, 12 )
+margin = Rect2( 4, 0, 0, 0 )
+
+[sub_resource type="StyleBoxFlat" id=299]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 0.901961 )
+expand_margin_left = 6.0
+expand_margin_right = 6.0
+expand_margin_top = 2.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id=300]
+bg_color = Color( 0, 0, 0, 0.862745 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.423529, 0.423529, 0.423529, 1 )
+
+[sub_resource type="StyleBoxLine" id=301]
+color = Color( 1, 1, 1, 1 )
+thickness = 2
+vertical = true
+
+[sub_resource type="Theme" id=194]
+default_font = ExtResource( 2 )
+Button/colors/font_color = Color( 0.494118, 0.517647, 0.545098, 1 )
+Button/colors/font_color_disabled = Color( 0.494118, 0.517647, 0.545098, 0.470588 )
+Button/colors/font_color_focus = Color( 1, 1, 1, 1 )
+Button/colors/font_color_hover = Color( 1, 1, 1, 1 )
+Button/styles/disabled = SubResource( 285 )
+Button/styles/focus = SubResource( 285 )
+Button/styles/hover = SubResource( 285 )
+Button/styles/normal = SubResource( 285 )
+Button/styles/pressed = SubResource( 285 )
+CheckBox/colors/font_color_focus = Color( 0.294118, 0.623529, 1, 1 )
+CheckBox/colors/font_color_hover = Color( 0.996078, 0.976471, 0.545098, 1 )
+CheckBox/colors/font_color_hover_pressed = Color( 0.368627, 1, 0.662745, 1 )
+CheckBox/colors/font_color_pressed = Color( 0.494118, 0.517647, 0.545098, 1 )
+CheckBox/constants/hseparation = 4
+CheckBox/icons/checked = SubResource( 286 )
+CheckBox/icons/unchecked = SubResource( 287 )
+CheckBox/styles/focus = SubResource( 288 )
+CheckBox/styles/hover = SubResource( 288 )
+CheckBox/styles/hover_pressed = SubResource( 288 )
+CheckBox/styles/normal = SubResource( 289 )
+CheckBox/styles/pressed = SubResource( 290 )
+HSeparator/styles/separator = SubResource( 291 )
+HSlider/icons/grabber = SubResource( 292 )
+HSlider/icons/grabber_disabled = null
+HSlider/icons/grabber_highlight = SubResource( 292 )
+HSlider/icons/tick = null
+HSlider/styles/grabber_area = SubResource( 293 )
+HSlider/styles/grabber_area_highlight = SubResource( 294 )
+HSlider/styles/slider = SubResource( 296 )
+Label/colors/font_color = Color( 0.980392, 0.980392, 0.980392, 1 )
+Label/constants/line_spacing = 6
+LineEdit/colors/font_color_selected = Color( 0, 0, 0, 1 )
+LineEdit/colors/selection_color = Color( 0.72549, 0.737255, 0.764706, 1 )
+LineEdit/styles/normal = SubResource( 297 )
+OptionButton/colors/font_color = Color( 1, 1, 1, 0.901961 )
+OptionButton/colors/font_color_focus = Color( 1, 1, 1, 0.901961 )
+OptionButton/colors/font_color_hover = Color( 1, 1, 1, 0.901961 )
+OptionButton/colors/font_color_pressed = Color( 1, 1, 1, 1 )
+OptionButton/icons/arrow = SubResource( 298 )
+OptionButton/styles/focus = SubResource( 299 )
+OptionButton/styles/hover = SubResource( 299 )
+OptionButton/styles/pressed = SubResource( 299 )
+Panel/styles/panel = SubResource( 300 )
+VSeparator/styles/separator = SubResource( 301 )
+
+[node name="GameTimer" type="HBoxContainer"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -38.0
+margin_top = 7.0
+margin_right = 40.0
+margin_bottom = 29.0
+grow_horizontal = 2
+theme = SubResource( 194 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Mins" type="Label" parent="."]
+margin_right = 32.0
+margin_bottom = 22.0
+grow_horizontal = 0
+rect_min_size = Vector2( 32, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 8
+text = "00"
+align = 2
+valign = 2
+
+[node name="Dots" type="Label" parent="."]
+margin_left = 36.0
+margin_right = 42.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 6, 0 )
+size_flags_vertical = 8
+text = ":"
+align = 1
+valign = 2
+
+[node name="Secs" type="Label" parent="."]
+margin_left = 46.0
+margin_right = 78.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 32, 0 )
+size_flags_vertical = 8
+text = "00"
+valign = 2
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
