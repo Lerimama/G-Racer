@@ -42,41 +42,67 @@ func spawn_indikator(pos, rot): # neki ne štima
 	pass
 
 
+# SCENE MANAGER (prehajanje med igro in menijem) --------------------------------------------------------------
+
 var current_scene = null
 
-func switch_to_scene(path):
-	# This function will usually be called from a signal callback,
-	# or some other function from the running scene.
-	# Deleting the current scene at this point might be
-	# a bad idea, because it may be inside of a callback or function of it.
-	# The worst case will be a crash or unexpected behavior.
+func release_scene(scene_node): # release scene
+	scene_node.set_physics_process(false)
+	call_deferred("_free_scene", scene_node)	
 
-	# The way around this is deferring the load to a later time, when
-	# it is ensured that no code from the current scene is running:
-	call_deferred("_deferred_goto_scene", path)
+
+func _free_scene(scene_node):
+	print ("SCENE RELEASED (in next step): ", scene_node)	
+	scene_node.free()
 	
 
-func _deferred_goto_scene(path):
+func spawn_new_scene(scene_path, parent_node): # spawn scene
 
-	# free current
-#	get_tree().get_current_scene().free()
-	print ("deleted_scene: ", current_scene)	
-	current_scene.free()
+	var scene_resource = ResourceLoader.load(scene_path)
 	
-	# spawn new
-#	var packed_scene = ResourceLoader.load(path)
-#	var instanced_scene = packed_scene.instance()
-#	get_tree().get_root().add_child(instanced_scene) # direct child of root
-	# set as current scene after it is added to tree
-#	get_tree().set_current_scene(instanced_scene)
+	current_scene = scene_resource.instance()
+	print ("SCENE INSTANCED: ", current_scene)
 	
-	var new_scene = ResourceLoader.load(path)
-	current_scene = new_scene.instance()
-	get_tree().root.add_child(current_scene) # direct child of root
-
-	# Optionally, to make it compatible with the SceneTree.change_scene() API.
-	get_tree().current_scene = current_scene
-	print ("new_scene: ", current_scene)
+#	current_scene.modulate.a = 0
+	parent_node.add_child(current_scene) # direct child of root
+	print ("SCENE ADDED: ", current_scene)	
+	
+	return current_scene
+#
+#
+#func switch_to_scene(path):
+#	# This function will usually be called from a signal callback,
+#	# or some other function from the running scene.
+#	# Deleting the current scene at this point might be
+#	# a bad idea, because it may be inside of a callback or function of it.
+#	# The worst case will be a crash or unexpected behavior.
+#
+#	# The way around this is deferring the load to a later time, when
+#	# it is ensured that no code from the current scene is running:
+#	call_deferred("_deferred_goto_scene", path)
+#
+#
+#func _deferred_goto_scene(path):
+#
+#	# free current
+##	get_tree().get_current_scene().free()
+#	print ("deleted_scene: ", current_scene)	
+#	current_scene.free()
+#
+#	# spawn new
+##	var packed_scene = ResourceLoader.load(path)
+##	var instanced_scene = packed_scene.instance()
+##	get_tree().get_root().add_child(instanced_scene) # direct child of root
+#	# set as current scene after it is added to tree
+##	get_tree().set_current_scene(instanced_scene)
+#
+#	var new_scene = ResourceLoader.load(path)
+#	current_scene = new_scene.instance()
+#	get_tree().root.add_child(current_scene) # direct child of root
+#
+#	# Optionally, to make it compatible with the SceneTree.change_scene() API.
+#	get_tree().current_scene = current_scene
+#	print ("new_scene: ", current_scene)
 
 
 
