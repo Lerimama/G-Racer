@@ -51,8 +51,6 @@ func _ready() -> void:
 	
 	randomize()
 	
-#	Ref.ppp2 = self
-	
 	# player setup
 #	name = player_name _temp off
 	player_profile = Pro.default_player_profiles[player_id]
@@ -230,4 +228,3 @@ func set_target_location (target: Vector2):
 
 func _on_NavigationAgent2D_path_changed() -> void:
 	emit_signal("path_changed", navigation_agent.get_nav_path()) # levelu preko arene pošljemo točke poti do cilja
-#	print(navigation_agent.get_nav_path())

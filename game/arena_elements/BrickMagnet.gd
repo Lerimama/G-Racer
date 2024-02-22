@@ -28,11 +28,8 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 
 func _ready() -> void:
-
-	name = "Magnet"
-
-#	sprite.modulate = magnet_color
-#	intro()
+	
+	pass
 
 
 func _physics_process(delta: float) -> void:

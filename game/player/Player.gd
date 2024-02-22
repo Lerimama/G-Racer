@@ -25,8 +25,6 @@ onready var controller_profiles: Dictionary = Pro.default_controller_actions
 
 func _ready() -> void:
 	
-#	Ref.ppp1 = self 
-	
 	player_id = bolt_id
 	# player setup
 #	name = player_name _temp off

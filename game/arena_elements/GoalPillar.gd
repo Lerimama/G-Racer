@@ -25,6 +25,7 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	if body is Bolt:
 		bolts_in_goal_area.append(body)
 
+
 func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if bolts_in_goal_area.has(body):

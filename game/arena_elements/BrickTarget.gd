@@ -17,10 +17,8 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 func _ready() -> void:
 
-#	name = "Exploder"
-#	add_to_group("exploders")
-
 	sprite.modulate = brick_color_1
+
 
 func on_hit(hit_by: Node):
 	
@@ -34,8 +32,6 @@ func on_hit(hit_by: Node):
 			3:
 				animation_player.play("outro")
 				modulate = Set.color_gray0
-#				explode_particles.modulate = Set.color_gray0
-#				modulate = Set.color_yellow
 	elif hit_by is Misile:
 		modulate = Set.color_red
 		animation_player.play("outro")

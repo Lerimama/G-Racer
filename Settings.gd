@@ -2,26 +2,6 @@ extends Node
 
 ## settings(namesto slovarja so variable), zagon levela), home_settings
 
-
-## --- stara verzija ---------------------------------------------------------------------------------------------------------------------------
-##
-##	! autolad filet !
-##
-## 	KAJ JE ...
-##	- v tem filetu so vsi prednastavljeni profili igre ... Lastnosti, ki se tekom igre ne spreminjajo
-##	- vse štartne nastavitve za igro ... props: barve, pravila igre, orožja, funkcije opek ...
-##	- štart vrednosti vseh elementov v levelih
-##	- štart pogoji za igro ... game rules
-##	- defolt vsebine menijev
-##	- defolt lastnosti rakete (motion, ...)
-##
-##	KAJ NI ...
-##	- tukaj ni profilov igralcev
-##	- tukaj ni variabl, ki se se lahko spreminjajo
-##
-## -----------------------------------------------------------------------------------------------------------------------------
-
-
 var bolt_explosion_shake
 var bullet_hit_shake
 var misile_hit_shake
@@ -59,7 +39,6 @@ var default_game_settings: Dictionary = {
 	"area_tracking_value": 1, # 100%
 	"area_nitro_value": 500,
 }
-
 
 #
 #var default_game_settings: Dictionary = {
@@ -104,8 +83,6 @@ var default_game_settings: Dictionary = {
 #	"manage_highscores": true, # obsoleten, ker je vključen v HS type
 ##	"stray_step_time": 0.2,
 #}
-
-
 
 
 #

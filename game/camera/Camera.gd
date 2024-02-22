@@ -1,13 +1,22 @@
 extends Camera2D
 
 
-onready var test_ui = $TestUI
+var is_following: bool = true
+var follow_target: Node
 
+onready var test_ui = $TestUI
 
 func _ready():
 #	print("KAMERA")
 	Ref.current_camera = self
 
+
+func _process(delta: float) -> void:
+	
+	if follow_target:
+		position = follow_target.global_position
+	
+	
 func shake_camera(shake_power: float):
 	# time, power in nivo popuščanja
 	

@@ -71,7 +71,6 @@ func _ready() -> void:
 	new_misile_trail.gradient.colors[2] = spawned_by_color
 	new_misile_trail.z_index = z_index + Set.trail_z_index
 	Ref.node_creation_parent.add_child(new_misile_trail)
-#	Ref.effects_creation_parent.add_child(new_misile_trail)
 	
 
 func _physics_process(delta: float) -> void:
@@ -137,7 +136,6 @@ func dissarm():
 	new_drop_particles.set_one_shot(true)
 	new_drop_particles.set_emitting(true)
 	Ref.node_creation_parent.add_child(new_drop_particles)
-#	Ref.effects_creation_parent.add_child(new_drop_particles)
 
 	queue_free()
 	
@@ -157,7 +155,6 @@ func explode():
 	new_misile_explosion.set_emitting(true)
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Ref.node_creation_parent.add_child(new_misile_explosion)
-#	Ref.effects_creation_parent.add_child(new_misile_explosion)
 	
 	queue_free()
 	

@@ -5,12 +5,9 @@ var spawned_by: String
 var spawned_by_color: Color
 
 var drop_direction: Vector2 = -transform.x # rikverc na osi x
-#var speed: float = 50
 var drop_time: float = 1.0 # opredeli dolžino meta
 
-#var lifetime: float = 10
 var shock_time: float = 5
-#var hit_damage: float = 1
 var is_expanded: bool = false
 var detect_expand_size: float = 3.5 # doseg šoka
 
@@ -19,9 +16,6 @@ onready var shocker_sprite: AnimatedSprite = $ShockerSprite
 onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
-
-
-# NEW
 
 onready var weapon_profile: Dictionary = Pro.weapon_profiles["shocker"]
 onready var reload_time: float = weapon_profile["reload_time"]

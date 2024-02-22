@@ -16,7 +16,6 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body is Bolt:
 		body.control_enabled = false
-		# sprite.modulate = Set.color_red ... ni okej, ker je detect večji ... more bit
 		body.bounce_size = bouncer_strenght
 
 
