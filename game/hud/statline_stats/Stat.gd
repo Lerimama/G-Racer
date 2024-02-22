@@ -27,7 +27,6 @@ func _ready() -> void:
 
 func _on_stat_change(new_stat_value):
 	
-	print ("new_stat_value", new_stat_value, current_stat_value)
 	# če bo šlo navzgor
 	if new_stat_value > current_stat_value:
 		current_stat_value = new_stat_value

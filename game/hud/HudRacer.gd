@@ -152,7 +152,6 @@ func _on_game_status_change(new_game_status):
 
 func _on_stat_change_received(stat_owner_id, stat_name, new_stat_value):
 	
-	print("stat")
 	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
 	
 	match stat_name:
@@ -179,7 +178,6 @@ func _on_stat_change_received(stat_owner_id, stat_name, new_stat_value):
 
 	
 func _on_new_bolt_spawned(bolt_index, player_id):
-	print("spawn")
 	
 	var current_stat_line: Control
 	

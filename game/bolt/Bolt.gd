@@ -117,15 +117,16 @@ var loose_life_time: float = 2
 
 func _ready() -> void:
 
-	print("Žiu!. Moje ime je, ", name, "Moja identifikacija je: ", bolt_id)
+	printt("Bolt", name, bolt_id)
 	
 	# bolt 
 #	bolt_sprite.self_mod1ulate = bolt_color
-	bolt_sprite.texture = bolt_sprite_texture
 	add_to_group(Ref.group_bolts)	
+	bolt_sprite.texture = bolt_sprite_texture
 	axis_distance = bolt_sprite_texture.get_width()
 #	bolt_index ... se določi iz spawnerja
 
+#	call_deferred("engines_setup") # postavi partikle za pogon
 	engines_setup() # postavi partikle za pogon
 	
 	# shield
@@ -188,7 +189,8 @@ func on_collision():
 		new_collision_particles.amount = (velocity.length() + 15)/15 # količnik je korektor ... 15 dodam zato da amount ni nikoli nič	
 		new_collision_particles.color = bolt_color
 		new_collision_particles.set_emitting(true)
-		Ref.effects_creation_parent.add_child(new_collision_particles)
+		Ref.node_creation_parent.add_child(new_collision_particles)
+#		Ref.effects_creation_parent.add_child(new_collision_particles)
 
 
 func motion_fx():
@@ -205,7 +207,9 @@ func motion_fx():
 		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 			new_bolt_trail = BoltTrail.instance()
 			new_bolt_trail.modulate.a = bolt_trail_alpha
-			Ref.effects_creation_parent.add_child(new_bolt_trail)
+			new_bolt_trail.z_index = z_index + Set.trail_z_index
+#			Ref.effects_creation_parent.add_child(new_bolt_trail)
+			Ref.node_creation_parent.add_child(new_bolt_trail)
 			bolt_trail_active = true 
 			
 	elif rev_motion:
@@ -222,7 +226,9 @@ func motion_fx():
 		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 			new_bolt_trail = BoltTrail.instance()
 			new_bolt_trail.modulate.a = bolt_trail_alpha
-			Ref.effects_creation_parent.add_child(new_bolt_trail)
+			new_bolt_trail.z_index = z_index + Set.trail_z_index
+			Ref.node_creation_parent.add_child(new_bolt_trail)
+#			Ref.effects_creation_parent.add_child(new_bolt_trail)
 			bolt_trail_active = true 
 
 	# manage trail
@@ -299,7 +305,9 @@ func engines_setup():
 	
 	engine_particles_rear = EngineParticles.instance()
 	# rotacija se seta v FP
-	Ref.effects_creation_parent.add_child(engine_particles_rear)
+#	Ref.effects_creation_parent.add_child(engine_particles_rear)
+	engine_particles_rear.z_index = z_index + Set.engine_z_index
+	Ref.node_creation_parent.add_child(engine_particles_rear)
 	engine_particles_rear.modulate.a = 0
 	
 	engine_particles_front_left = EngineParticles.instance()
@@ -309,7 +317,9 @@ func engines_setup():
 	engine_particles_front_left.lifetime = 0.05
 	engine_particles_front_left.modulate.a = 0
 	# rotacija se seta v FP
-	Ref.effects_creation_parent.add_child(engine_particles_front_left)
+	engine_particles_front_left.z_index = z_index + Set.engine_z_index
+	Ref.node_creation_parent.add_child(engine_particles_front_left)
+#	Ref.effects_creation_parent.add_child(engine_particles_front_left)
 	
 	engine_particles_front_right = EngineParticles.instance()
 	engine_particles_front_right.emission_rect_extents = Vector2.ZERO
@@ -317,8 +327,10 @@ func engines_setup():
 	engine_particles_front_right.initial_velocity = 50
 	engine_particles_front_right.lifetime = 0.05
 	engine_particles_front_right.modulate.a = 0
+	engine_particles_front_right.z_index = z_index + Set.engine_z_index
 	# rotacija se seta v FP
-	Ref.effects_creation_parent.add_child(engine_particles_front_right)
+	Ref.node_creation_parent.add_child(engine_particles_front_right)
+#	Ref.effects_creation_parent.add_child(engine_particles_front_right)
 
 		
 func shooting(weapon: String) -> void:
@@ -334,6 +346,7 @@ func shooting(weapon: String) -> void:
 				new_bullet.global_rotation = bolt_sprite.global_rotation
 				new_bullet.spawned_by = name # ime avtorja izstrelka
 				new_bullet.spawned_by_color = bolt_color
+				new_bullet.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_bullet)
 #				energy -= bullet_power
 #				if energy <= 0:
@@ -354,6 +367,7 @@ func shooting(weapon: String) -> void:
 				new_misile.spawned_by = name # ime avtorja izstrelka
 				new_misile.spawned_by_color = bolt_color
 				new_misile.spawned_by_speed = velocity.length()
+				new_misile.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_misile)
 				misile_count -= 1
 
@@ -369,6 +383,7 @@ func shooting(weapon: String) -> void:
 				new_shocker.global_rotation = bolt_sprite.global_rotation
 				new_shocker.spawned_by = name # ime avtorja izstrelka
 				new_shocker.spawned_by_color = bolt_color
+				new_shocker.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_shocker)
 				shocker_count -= 1
 				
@@ -411,7 +426,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 func on_hit(hit_by: Node):
 	
 	if not shields_on:
-		
+#		if hit_by is Bullet:
 		if hit_by.is_in_group(Ref.group_bullets):
 			# shake camera
 #			camera.add_trauma(camera.bullet_hit_shake)
@@ -425,6 +440,7 @@ func on_hit(hit_by: Node):
 			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 
 			
+#		elif hit_by is Misile:
 		elif hit_by.is_in_group(Ref.group_misiles):
 			control_enabled = false
 			# shake camera
@@ -444,6 +460,7 @@ func on_hit(hit_by: Node):
 			
 			control_enabled = true
 			
+#		elif hit_by is Shocker:
 		elif hit_by.is_in_group(Ref.group_shockers):
 			control_enabled = false
 			# take damage
@@ -548,6 +565,7 @@ func loose_life():
 	new_exploding_bolt.modulate.a = 1
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
 	new_exploding_bolt.spawned_by_color = bolt_color
+	new_exploding_bolt.z_index = z_index + Set.explosion_z_index
 	Ref.node_creation_parent.add_child(new_exploding_bolt)
 	
 	emit_signal("stat_changed", bolt_id, "life", -1)

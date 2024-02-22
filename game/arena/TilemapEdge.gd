@@ -8,6 +8,10 @@ var light_color: Color = Color.white # za barvanje debrisa
 onready var DebrisParticles: PackedScene = preload("res://game/arena/EdgeDebrisParticles.tscn")	
 onready var ExplodingEdge: PackedScene = preload("res://game/arena/ExplodingEdge.tscn")	
 
+func _ready() -> void:
+	
+	print("Level edge, Z-index ", z_index)
+	
 	
 func on_hit (collision_object):
 			
@@ -33,8 +37,10 @@ func release_debris(collision):
 	new_debris_particles.position = collision.position
 	new_debris_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
 	new_debris_particles.color = light_color
+	new_debris_particles.z_index = z_index + Set.explosion_z_index
 	new_debris_particles.set_emitting(true)
-	Ref.effects_creation_parent.add_child(new_debris_particles)
+#	Ref.effects_creation_parent.add_child(new_debris_particles)
+	Ref.node_creation_parent.add_child(new_debris_particles)
 
 
 func explode_tile(current_cell):
@@ -46,6 +52,7 @@ func explode_tile(current_cell):
 	var cell_global_position = map_to_world(current_cell)
 	var new_exploding_cell = ExplodingEdge.instance()
 	new_exploding_cell.global_position = cell_global_position
+	new_exploding_cell.z_index = z_index + Set.explosion_z_index
 	Ref.node_creation_parent.add_child(new_exploding_cell)
 	
 	# poiščem sosede in jim dodam poškodovani autotile

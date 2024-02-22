@@ -15,7 +15,7 @@ onready var spawn_position_4: Position2D = $Positions/SpawnPosition4
 func _ready() -> void:
 	
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
-	print("level")
+	print("Level, Z-index ", z_index)
 	set_level_floor()
 	set_level_edge()
 	set_level_elements()

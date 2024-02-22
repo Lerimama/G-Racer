@@ -36,7 +36,7 @@ onready var game_view: ViewportContainer = $GameView
 onready var game_view2: ViewportContainer = $GameView2
 
 func _process(delta: float) -> void:
-	$GameView/Viewport/Arena/Camera.position = $GameView/Viewport/Arena/Player.global_position
+#	$GameView/Viewport/Arena/Camera.position = $GameView/Viewport/Arena/Player.global_position
 #	$GameView2/Viewport/Arena/Camera.position = $GameView/Viewport/Arena/Player2.global_position
 	viewport_containers_in_game = get_tree().get_nodes_in_group("VP")	
 #	print("viewports_in_game: ", viewports_in_game)

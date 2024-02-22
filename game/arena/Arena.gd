@@ -47,7 +47,7 @@ func _ready() -> void:
 	camera_follow_target = player
 	
 	Ref.node_creation_parent = self
-	printt("Arena ", Ref.node_creation_parent, Ref.game_manager, Ref.game_hud)
+	print("Arena, Z-index ", z_index)
 #	$Enemy.connect("path_changed", Ref.game_manager, "_on_Enemy_path_changed") # za prikaz linije, drugače ne rabiš
 
 

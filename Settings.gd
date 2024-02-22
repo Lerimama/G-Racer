@@ -48,6 +48,12 @@ var odmik_od_roba = 20
 var playerstats_w = 500
 var playerstats_h = 32
 
+## Z index spawnanih elementov ... relativno glede na tistega, ki jih spawna
+#var bolt_z_index = -1
+var weapons_z_index = -1 # bolt je 0
+var engine_z_index = -1
+var trail_z_index = -1
+var explosion_z_index = 1
 
 var default_game_settings: Dictionary = {
 	"area_tracking_value": 1, # 100%

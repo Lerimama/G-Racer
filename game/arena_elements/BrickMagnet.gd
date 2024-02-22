@@ -50,7 +50,8 @@ func _physics_process(delta: float) -> void:
 		var detected_bodies = force_field.get_overlapping_bodies()
 		
 		for body in detected_bodies:
-			if body.is_in_group(Ref.group_bolts):
+			if body is Bolt:
+#			if body.is_in_group(Ref.group_bolts):
 				direction_to_magnet = Met.get_direction_to(body.global_position, global_position)
 				distance_to_magnet = Met.get_distance_to(body.global_position, global_position)
 				gravity_velocity = gravity_force / (distance_to_magnet * 1)

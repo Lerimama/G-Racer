@@ -1,116 +1,10 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
-[ext_resource path="res://game/enemies/Enemy.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/arena/Arena.gd" type="Script" id=4]
-[ext_resource path="res://game/player/Player.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/managers/GameManager.gd" type="Script" id=6]
-[ext_resource path="res://assets/light.png" type="Texture" id=20]
-
-[sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0, 0.121429, 0.478571, 0.803571, 1 )
-colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
-
-[sub_resource type="GradientTexture" id=2]
-gradient = SubResource( 1 )
-
-[sub_resource type="ParticlesMaterial" id=3]
-lifetime_randomness = 0.5
-emission_shape = 2
-emission_box_extents = Vector3( 200, 300, 1 )
-flag_disable_z = true
-direction = Vector3( 0, 1, 0 )
-spread = 0.0
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 10.0
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-scale = 0.4
-scale_random = 1.0
-color_ramp = SubResource( 2 )
-
-[sub_resource type="Shader" id=441]
-code = "shader_type canvas_item;
-render_mode blend_mix;
-
-uniform sampler2D noise_texture;
-uniform float speed1 = 0.02;
-uniform float speed2 = 0.05;
-uniform float threshold_min = 0.5;
-uniform float threshold_max = 0.58;
-
-//uniform float noise_resolution_x = 640.0;
-//uniform float noise_resolution_y = 360.0;
-
-uniform vec2 texture_size = vec2(640.0, 360.0);
-
-
-float random (vec2 st) {
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898, 78.233))) * 43758.5453123);
-}
-
-void fragment() {
-	
-	// pixelizacija
-	vec2 grid_uv = round(UV * texture_size.x) / texture_size.y;
-	
-	
-	vec4 col0 = texture(noise_texture, mod(grid_uv + TIME * speed1, vec2(1, 1)));
-	vec4 col1 = texture(noise_texture, mod(grid_uv + TIME * speed2, vec2(1, 1)));
-	
-	//we apply red channel as alpha
-	col0.a = col0.r;
-	col1.a = col1.r;
-	
-//	//step function return 0 if last parameter is < threshold and 1 otherwise
-//	//here we want 1 if value between threshold_min and threshold_max
-//	//same result as following code:
-//	float col = (col0. r + col1.r) / 2.0;
-//	if(col > threshold_min && col < threshold_max){
-//		COLOR = vec4(1.0, 1.0, 1.0, 1.0);
-//	} else {
-//		COLOR = vec4(1.0, 1.0, 1.0, 0.0);
-//	}
-	
-	
-	vec4 water_color;
-	vec4 pixelated_color;
-	
-	//here we normalize col0 + col1 (/ 2.0) to have result between [0,1]
-	water_color = step(threshold_min, (col0 + col1) / 2.0) * (1.0 - step(threshold_max, (col0 + col1) / 2.0));
-	
-	
-//	//as UV is between [0;1] we multiply with noise_resolution factor to have noise_resolution differents values
-//	float val = random(floor(UV * noise_resolution_x));
-//	pixelated_color = vec4(val,val,val,1.0);
-//	COLOR =  pixelated_color + water_color;
-	
-	COLOR = water_color;
-}"
-
-[sub_resource type="OpenSimplexNoise" id=115]
-seed = 4
-octaves = 4
-period = 36.6
-persistence = 0.0
-lacunarity = 0.1
-
-[sub_resource type="NoiseTexture" id=116]
-width = 640
-height = 320
-seamless = true
-noise = SubResource( 115 )
-
-[sub_resource type="ShaderMaterial" id=114]
-shader = SubResource( 441 )
-shader_param/speed1 = 0.0
-shader_param/speed2 = 0.008
-shader_param/threshold_min = 0.5
-shader_param/threshold_max = 0.6
-shader_param/texture_size = Vector2( 640, 360 )
-shader_param/noise_texture = SubResource( 116 )
+[ext_resource path="res://assets/resources/arena_environment.tres" type="Environment" id=7]
 
 [sub_resource type="GDScript" id=771]
 script/source = "extends Node2D
@@ -118,25 +12,9 @@ script/source = "extends Node2D
 
 func _ready() -> void:
 	
-	Ref.effects_creation_parent = self
+#	Ref.effects_creation_parent = self
+	pass
 "
-
-[sub_resource type="Environment" id=446]
-background_canvas_max_layer = 3
-glow_enabled = true
-glow_levels/1 = true
-glow_levels/2 = true
-glow_levels/4 = true
-glow_levels/6 = true
-glow_levels/7 = true
-glow_intensity = 0.74
-glow_strength = 0.84
-glow_blend_mode = 0
-glow_hdr_threshold = 0.04
-glow_hdr_scale = 1.44
-glow_bicubic_upscale = true
-glow_high_quality = true
-adjustment_brightness = 0.64
 
 [node name="Arena" type="Node2D"]
 position = Vector2( -1, 0 )
@@ -148,71 +26,19 @@ __meta__ = {
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource( 6 )
 
-[node name="Background" type="Node2D" parent="."]
-z_index = -2
-
-[node name="ColorRect" type="ColorRect" parent="Background"]
-margin_right = 640.0
-margin_bottom = 360.0
-rect_min_size = Vector2( 640, 360 )
-color = Color( 0.0666667, 0.0705882, 0.0784314, 1 )
-
-[node name="StarsFar" type="Particles2D" parent="Background"]
-modulate = Color( 1, 1, 1, 0.164706 )
-position = Vector2( 310, 178 )
-rotation = 1.57079
-scale = Vector2( 1.2, 1.2 )
-amount = 300
-lifetime = 20.0
-speed_scale = 0.6
-explosiveness = 0.1
-randomness = 1.0
-process_material = SubResource( 3 )
-
-[node name="StarsClose" type="Particles2D" parent="Background"]
-position = Vector2( 310, 178 )
-rotation = 1.57079
-scale = Vector2( 1.2, 1.2 )
-amount = 100
-lifetime = 20.0
-explosiveness = 0.1
-randomness = 1.0
-process_material = SubResource( 3 )
-
-[node name="Woda" type="ColorRect" parent="Background"]
-visible = false
-modulate = Color( 1, 1, 1, 0.0509804 )
-material = SubResource( 114 )
-margin_right = 640.0
-margin_bottom = 360.0
-rect_min_size = Vector2( 640, 360 )
-
-[node name="Light2D" type="Light2D" parent="Background"]
-visible = false
-position = Vector2( 320.5, 181 )
-scale = Vector2( 1.95988, 1.10416 )
-z_index = 1
-texture = ExtResource( 20 )
-texture_scale = 3.3
-mode = 2
-
 [node name="Level" parent="." instance=ExtResource( 1 )]
 
 [node name="Effects" type="Node2D" parent="."]
+z_index = 1
 script = SubResource( 771 )
 
 [node name="NavigationPath" type="Line2D" parent="."]
-z_index = 1
+z_index = 5
 width = 2.0
 default_color = Color( 1, 0.752941, 0.0156863, 0.392157 )
-
-[node name="Enemy" parent="." instance=ExtResource( 3 )]
-
-[node name="Player" parent="." instance=ExtResource( 5 )]
-position = Vector2( 216, 248 )
 
 [node name="Camera" parent="." instance=ExtResource( 2 )]
 current = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 446 )
+[node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 7 )

@@ -7,10 +7,10 @@ var current_camera = null
 var game_manager = null
 var game_hud = null
 
-var ppp1 = null
-var ppp2 = null
-var ppp3 = null
-var ppp4 = null
+#var ppp1 = null
+#var ppp2 = null
+#var ppp3 = null
+#var ppp4 = null
 
 var group_players =  "Players"
 var group_enemies =  "Enemies"

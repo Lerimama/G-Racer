@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/hud/statline_stats/StatIcons.gd" type="Script" id=1]
-[ext_resource path="res://assets/tilesets/tileset_hud_lite.png" type="Texture" id=2]
+[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=2]
 
 [node name="StatIcons" type="Node2D"]
 position = Vector2( 37, 12 )

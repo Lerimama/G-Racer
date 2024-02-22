@@ -30,12 +30,14 @@ func on_hit(hit_by: Node):
 			1:
 				sprite.modulate = Set.color_green
 			2:
-				sprite.modulate = Set.color_yellow
+				sprite.modulate = Set.color_red
 			3:
-				explode_particles.modulate = Set.color_red
 				animation_player.play("outro")
+				modulate = Set.color_gray0
+#				explode_particles.modulate = Set.color_gray0
+#				modulate = Set.color_yellow
 	elif hit_by is Misile:
-		sprite.modulate = Set.color_red
+		modulate = Set.color_red
 		animation_player.play("outro")
 	
 

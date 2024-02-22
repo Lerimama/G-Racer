@@ -49,7 +49,9 @@ func _ready() -> void:
 	# spawn trail
 	new_bullet_trail = BulletTrail.instance()
 	new_bullet_trail.gradient.colors[1] = spawned_by_color
-	Ref.effects_creation_parent.add_child(new_bullet_trail)
+	new_bullet_trail.z_index = z_index + Set.trail_z_index
+#	Ref.effects_creation_parent.add_child(new_bullet_trail)
+	Ref.node_creation_parent.add_child(new_bullet_trail)
 	
 	velocity = direction * speed	# velocity is the velocity vector in pixels per second?
 	
@@ -96,8 +98,10 @@ func destroy_bullet():
 	new_hit_particles.position = collision.position
 	new_hit_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
 	new_hit_particles.color = spawned_by_color
+	new_hit_particles.z_index = z_index + Set.explosion_z_index
 	new_hit_particles.set_emitting(true)
-	Ref.effects_creation_parent.add_child(new_hit_particles)
+#	Ref.effects_creation_parent.add_child(new_hit_particles)
+	Ref.node_creation_parent.add_child(new_hit_particles)
 	new_bullet_trail.start_decay(collision.position) # zadnja pika se pripne na mesto kolizije
 	queue_free()
 	

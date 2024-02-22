@@ -51,7 +51,7 @@ func _ready() -> void:
 	
 	randomize()
 	
-	Ref.ppp2 = self
+#	Ref.ppp2 = self
 	
 	# player setup
 #	name = player_name _temp off

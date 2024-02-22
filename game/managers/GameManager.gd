@@ -96,7 +96,8 @@ func _ready() -> void:
 #	Global.game_manager = self	
 	Ref.game_manager = self	
 	printt("Game Manager")
-	enemy.connect("path_changed", self, "_on_Enemy_path_changed") # za prikaz linije, drugače ne rabiš
+#	enemy.connect("path_changed", self, "_on_Enemy_path_changed") # za prikaz linije, drugače ne rabiš
+#	spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, player1_id, 1)
 	pass
 	
 	
@@ -115,6 +116,7 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 	var new_bolt = bolt.instance()
 	new_bolt.bolt_id = spawned_player_id
 	new_bolt.global_position = spawned_position
+#	new_bolt.z_index = 1
 	Ref.node_creation_parent.add_child(new_bolt)
 
 	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
@@ -233,7 +235,6 @@ func _on_Stat_changed(stat_owner_id, changed_stat, new_stat_value):
 
 #	printt(player_stats_to_change) # pošljemo signal, ki je že prikloplje na HUD
 	emit_signal("stat_change_received", stat_owner_id, changed_stat, new_stat_value) # pošljemo signal, ki je že prikloplje na HUD
-	print("stat")
 
 #func _on_Edge_navigation_completed(floor_cells:  Array) -> void:
 #

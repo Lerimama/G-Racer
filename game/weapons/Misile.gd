@@ -69,7 +69,9 @@ func _ready() -> void:
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
 	new_misile_trail.gradient.colors[2] = spawned_by_color
-	Ref.effects_creation_parent.add_child(new_misile_trail)
+	new_misile_trail.z_index = z_index + Set.trail_z_index
+	Ref.node_creation_parent.add_child(new_misile_trail)
+#	Ref.effects_creation_parent.add_child(new_misile_trail)
 	
 
 func _physics_process(delta: float) -> void:
@@ -131,9 +133,11 @@ func dissarm():
 	var new_drop_particles: CPUParticles2D = DropParticles.instance()
 	new_drop_particles.global_position = drop_position.global_position
 	new_drop_particles.color = spawned_by_color
+	new_drop_particles.z_index = z_index + Set.explosion_z_index
 	new_drop_particles.set_one_shot(true)
 	new_drop_particles.set_emitting(true)
-	Ref.effects_creation_parent.add_child(new_drop_particles)
+	Ref.node_creation_parent.add_child(new_drop_particles)
+#	Ref.effects_creation_parent.add_child(new_drop_particles)
 
 	queue_free()
 	
@@ -149,9 +153,11 @@ func explode():
 	new_misile_explosion.set_one_shot(true)
 	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawned_by_color
 	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawned_by_color
+	new_misile_explosion.z_index = z_index + Set.explosion_z_index
 	new_misile_explosion.set_emitting(true)
 	new_misile_explosion.get_node("ExplosionBlast").play()
-	Ref.effects_creation_parent.add_child(new_misile_explosion)
+	Ref.node_creation_parent.add_child(new_misile_explosion)
+#	Ref.effects_creation_parent.add_child(new_misile_explosion)
 	
 	queue_free()
 	
