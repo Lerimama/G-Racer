@@ -21,6 +21,7 @@ var color_red = Color("#f35b7f")
 var color_green = Color("#5effa9")
 var color_blue = Color("#4b9fff")
 var color_yellow = Color("#fef98b")
+var color_hud_base = Color("#ffffff")
 
 
 ## temp_
@@ -36,6 +37,18 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 var default_game_settings: Dictionary = {
+	"game_time_limit": 0, # če je 0 ni omejitve
+	"suddent_death_mode": false,
+	"sudden_death_limit": 20,
+	"timer_mode_countdown": false,
+	"gameover_countdown_duration": 5,
+	# points and arena values
+	"goal_points": 1000,
+	"light_points": 10,
+	"target_brick_points": 100,
+	"ghost_brick_points": 30,
+	"bouncer_brick_points": 10,
+	"magnet_brick_points": -1,
 	"area_tracking_value": 1, # 100%
 	"area_nitro_value": 500,
 }

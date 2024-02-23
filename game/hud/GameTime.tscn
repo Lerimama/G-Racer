@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
 [ext_resource path="res://game/hud/GameTime.gd" type="Script" id=2]
+[ext_resource path="res://_izPA/hud_game_timer.tscn" type="PackedScene" id=3]
 
 [sub_resource type="DynamicFontData" id=773]
 font_path = "res://assets/theme/fonts/Gamer.ttf"
@@ -18,7 +19,6 @@ margin_right = 392.0
 margin_bottom = 26.0
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
-time_minutes = 1.0
 
 [node name="LevelName" type="Label" parent="."]
 anchor_top = 1.0
@@ -27,6 +27,8 @@ margin_top = -19.0
 margin_right = 59.0
 margin_bottom = -4.0
 text = "Prva runda"
+
+[node name="GameTimer" parent="." instance=ExtResource( 3 )]
 
 [node name="clock" type="Control" parent="."]
 anchor_left = 1.0

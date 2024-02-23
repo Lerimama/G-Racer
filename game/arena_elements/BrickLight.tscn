@@ -68,7 +68,7 @@ modulate = Color( 1, 1, 1, 0.235294 )
 polygon = PoolVector2Array( -1, 2, 1, 2, 1, 1, 2, 1, 2, -1, 1, -1, 1, -2, -1, -2, -1, -1, -2, -1, -2, 1, -1, 1 )
 
 [node name="Light2D" type="Light2D" parent="."]
-scale = Vector2( 0.0699301, 0.0699301 )
+scale = Vector2( 0.041958, 0.041958 )
 texture = ExtResource( 3 )
 color = Color( 0.952941, 0.356863, 0.498039, 1 )
 mode = 2

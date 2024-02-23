@@ -2,7 +2,7 @@ extends KinematicBody2D
 class_name Bullet
 
 
-var spawned_by: String
+var spawned_by: Node
 var spawned_by_color: Color
 
 #export var speed: float = 1000.00
@@ -64,9 +64,11 @@ func _physics_process(delta: float) -> void:
 	
 	# detect avtorja ... prva je zato, ker se zgodi hitreje
 	for body in spawner_detect.get_overlapping_bodies():
-		if body.name == spawned_by:
+		if body == spawned_by:
+#		if body.name == spawned_by:
 			collision_shape.disabled = true
-		elif body.name != spawned_by:
+		elif body != spawned_by:
+#		elif body.name != spawned_by:
 			collision_shape.disabled = false
 		
 	move_and_slide(velocity) # ma delto že vgrajeno

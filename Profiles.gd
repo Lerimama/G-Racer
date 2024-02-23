@@ -52,54 +52,12 @@ var pickable_profiles: Dictionary = {
 	},
 }
 
-var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
-	"P1" : { # ključi bodo kasneje samo indexi
-		"player_name" : "Moe",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_01.png"),
-		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
-		"controller_profile" : "ARROWS",
-	},
-	"P2" : {
-		"player_name" : "Zed",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_02.png"),
-		"player_color" : Set.color_red,
-		"controller_profile" : "WASD",
-	},
-	"P3" : {
-		"player_name" : "Dot",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
-		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
-		"controller_profile" : "ARROWS",
-#		"controller_profile" : "JP1",
-	},
-	"P4" : {
-		"player_name" : "Jax",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
-		"player_color" : Set.color_green,
-#		"controller_profile" : "JP2",
-		"controller_profile" : "WASD",
-		
-	},
-	"E1" : {
-		"player_name" : "Rat",
-		# "player_controller" : "Up/Le/Do/Ri/Al",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_05.png"),
-		"player_color" : Set.color_gray0,
-		"controller_profile" : "AI",
-	},
-	"E2" : {
-		"player_name" : "Bub",
-		# "player_controller" : "W/A/S/D/Sp",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_06.png"),
-		"player_color" : Set.color_gray0,
-		"controller_profile" : "AI",
-	},
-}
-
-
+enum BoltTypes {SMALL, BASIC, BIG}
+var current_bolt_type
 
 var bolt_profiles: Dictionary = {
-	"basic": {
+	BoltTypes.BASIC: {
+#	"basic": {
 		"bolt_texture": preload("res://assets/bolt/bolt_basic.png"),
 		"fwd_engine_power": 200, # 1 - 500 konjev 
 		"rev_engine_power": 150, # 1 - 500 konjev 
@@ -116,7 +74,59 @@ var bolt_profiles: Dictionary = {
 		},
 }
 
+
+var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
+	"P1" : { # ključi bodo kasneje samo indexi
+		"player_name" : "Moe",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_01.png"),
+		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+		"controller_profile" : "ARROWS",
+		"bolt_type:": BoltTypes.BASIC,
+	},
+	"P2" : {
+		"player_name" : "Zed",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_02.png"),
+		"player_color" : Set.color_red,
+		"controller_profile" : "WASD",
+		"bolt_type:": BoltTypes.BASIC,
+	},
+	"P3" : {
+		"player_name" : "Dot",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
+		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
+		"controller_profile" : "ARROWS",
+#		"controller_profile" : "JP1",
+		"bolt_type:": BoltTypes.BASIC,
+	},
+	"P4" : {
+		"player_name" : "Jax",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
+		"player_color" : Set.color_green,
+#		"controller_profile" : "JP2",
+		"controller_profile" : "WASD",
+		"bolt_type:": BoltTypes.BASIC,
+	},
+	"E1" : {
+		"player_name" : "Rat",
+		# "player_controller" : "Up/Le/Do/Ri/Al",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_05.png"),
+		"player_color" : Set.color_gray0,
+		"controller_profile" : "AI",
+		"bolt_type:": BoltTypes.BASIC,
+	},
+	"E2" : {
+		"player_name" : "Bub",
+		# "player_controller" : "W/A/S/D/Sp",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_06.png"),
+		"player_color" : Set.color_gray0,
+		"controller_profile" : "AI",
+		"bolt_type:": BoltTypes.BASIC,
+	},
+}
+
+
 var enemy_profile: Dictionary = {
+	
 	"aim_time": 1,
 	"seek_rotation_range": 60,
 	"seek_rotation_speed": 3,
@@ -139,10 +149,11 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
-	"player_active" : true,
-	"life" : 5,
-	"points" : 10,
-	"wins" : 0,
+# statse ima tudi enemy
+#	"player_active" : true,
+	"driver_life" : 5,
+	"driver_points" : 10,
+	"driver_wins" : 2,
 }
 
 var weapon_profiles : Dictionary = {

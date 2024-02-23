@@ -4,15 +4,12 @@ extends Node
 #var active_players_count: int = 4
 onready var game_view_grid: GridContainer = $GameViewGrid
 
-
-
 func _ready() -> void:
 	print("Game")
 	pass
 	
 func reload_scene(vp_count):
 	get_tree().reload_current_scene()
-	pass # Replace with function body.
 
 
 func _on_Button_pressed() -> void:

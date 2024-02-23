@@ -3,7 +3,7 @@ class_name Misile
 
 signal misile_destroyed
 
-var spawned_by: String
+var spawned_by: Node
 var spawned_by_color: Color
 var spawned_by_speed: float
 
@@ -82,7 +82,8 @@ func _physics_process(delta: float) -> void:
 		collision_shape.disabled = false
 	else:
 		for body in spawner_detect.get_overlapping_bodies():
-			if body.name == spawned_by:
+			if body == spawned_by:
+#			if body.name == spawned_by:
 				collision_shape.disabled = true
 	# pospeševanje
 	if time < lifetime:
@@ -112,7 +113,8 @@ func _physics_process(delta: float) -> void:
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	if get_slide_count() != 0:
 		collision = get_slide_collision(0) # we wan't to take the first collision
-		if collision.collider.name != spawned_by:
+		if collision.collider != spawned_by:
+#		if collision.collider.name != spawned_by:
 			explode()
 			if collision.collider.has_method("on_hit"):
 				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
@@ -161,7 +163,8 @@ func explode():
 	
 func _on_HommingArea_body_entered(body: Node) -> void:
 	
-	if body.is_in_group("Bolts") and body.name != spawned_by:
+	if body.is_in_group("Bolts") and body != spawned_by:
+#	if body.is_in_group("Bolts") and body.name != spawned_by:
 		is_homming = true
 		target = body
 		target_location = body.global_position

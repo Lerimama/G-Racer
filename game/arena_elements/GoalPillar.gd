@@ -1,11 +1,12 @@
 extends StaticBody2D
 
 
+var turned_on: bool = false
 var bolts_in_goal_area: Array = []
-var goal_points = 100
 
 onready var light_2d: Light2D = $Light2D
 onready var light_poly: Polygon2D = $LightPoly
+onready var goal_points: int = Set.default_game_settings["goal_points"]
 
 
 func _ready() -> void:
@@ -14,10 +15,13 @@ func _ready() -> void:
 	light_poly.color = Set.color_red
 
 
-func goal_reached():
+func goal_reached(bolt: KinematicBody2D):
 	
-	light_2d.color = Set.color_green
-	light_poly.color = Set.color_green
+	if not turned_on:
+		turned_on = true
+		light_2d.color = Set.color_green
+		light_poly.color = Set.color_green
+		bolt.get_points(goal_points)
 	
 
 func _on_DetectArea_body_entered(body: Node) -> void:
@@ -30,4 +34,4 @@ func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if bolts_in_goal_area.has(body):
 		bolts_in_goal_area.erase(body)
-		goal_reached()
+		goal_reached(body)

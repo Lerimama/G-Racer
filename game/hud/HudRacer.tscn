@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
@@ -6,14 +6,23 @@
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=4]
 [ext_resource path="res://game/hud/StatLineRacer.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/hud/GameStart.gd" type="Script" id=6]
-[ext_resource path="res://game/hud/GameTime.tscn" type="PackedScene" id=8]
+[ext_resource path="res://game/hud/GameTime.gd" type="Script" id=7]
+[ext_resource path="res://_izPA/hud_game_timer.tscn" type="PackedScene" id=8]
 
 [sub_resource type="DynamicFontData" id=773]
 font_path = "res://assets/theme/fonts/Gamer.ttf"
 
 [sub_resource type="DynamicFont" id=774]
-size = 120
+size = 32
+extra_spacing_char = 2
 font_data = SubResource( 773 )
+
+[sub_resource type="DynamicFontData" id=775]
+font_path = "res://assets/theme/fonts/Gamer.ttf"
+
+[sub_resource type="DynamicFont" id=776]
+size = 120
+font_data = SubResource( 775 )
 
 [node name="HudRacer" type="Control"]
 anchor_right = 1.0
@@ -21,24 +30,15 @@ anchor_bottom = 1.0
 theme = ExtResource( 2 )
 script = ExtResource( 3 )
 __meta__ = {
-"_edit_horizontal_guides_": [ 360.0 ],
-"_edit_vertical_guides_": [ 640.0, 0.0 ]
+"_edit_horizontal_guides_": [ 360.0, 16.0 ],
+"_edit_vertical_guides_": [ 640.0, 0.0, 324.0 ]
 }
-
-[node name="PavzaBtn" type="Button" parent="."]
-margin_left = 315.0
-margin_top = 331.0
-margin_right = 327.0
-margin_bottom = 357.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
-text = "P"
 
 [node name="StatLineRacer1" parent="." instance=ExtResource( 5 )]
 margin_left = 9.0
-margin_top = 7.0
+margin_top = 8.0
 margin_right = 49.0
-margin_bottom = 119.0
+margin_bottom = 120.0
 
 [node name="StatLineRacer2" parent="." instance=ExtResource( 5 )]
 margin_left = 592.0
@@ -47,9 +47,9 @@ margin_right = 632.0
 margin_bottom = 120.0
 
 [node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
-margin_left = 16.0
+margin_left = 8.0
 margin_top = 248.0
-margin_right = 56.0
+margin_right = 48.0
 margin_bottom = 360.0
 
 [node name="StatLineRacer4" parent="." instance=ExtResource( 5 )]
@@ -58,7 +58,72 @@ margin_top = 248.0
 margin_right = 632.0
 margin_bottom = 360.0
 
-[node name="GameTime" parent="." instance=ExtResource( 8 )]
+[node name="GameTime" type="HBoxContainer" parent="."]
+margin_left = 193.0
+margin_right = 394.0
+margin_bottom = 26.0
+grow_horizontal = 0
+theme = ExtResource( 2 )
+alignment = 2
+script = ExtResource( 7 )
+
+[node name="LevelName" type="Label" parent="GameTime"]
+margin_left = 60.0
+margin_top = 6.0
+margin_right = 119.0
+margin_bottom = 19.0
+text = "Prva runda"
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="GameTimer" parent="GameTime" instance=ExtResource( 8 )]
+unique_name_in_owner = true
+margin_left = 123.0
+margin_right = 201.0
+
+[node name="clock" type="Control" parent="GameTime"]
+visible = false
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -64.0
+margin_top = -22.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sepa" type="Label" parent="GameTime/clock"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -4.0
+margin_right = 4.0
+margin_bottom = 26.0
+custom_fonts/font = SubResource( 774 )
+text = ":"
+align = 1
+
+[node name="Minutes" type="Label" parent="GameTime/clock"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -13.0
+margin_right = 26.0
+margin_bottom = 13.0
+custom_fonts/font = SubResource( 774 )
+text = "00"
+
+[node name="Seconds" type="Label" parent="GameTime/clock"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -26.0
+margin_top = -13.0
+margin_bottom = 13.0
+custom_fonts/font = SubResource( 774 )
+text = "88"
+align = 2
 
 [node name="Popups" type="Control" parent="."]
 visible = false
@@ -104,7 +169,7 @@ margin_left = 115.0
 margin_top = 119.0
 margin_right = 535.0
 margin_bottom = 214.0
-custom_fonts/font = SubResource( 774 )
+custom_fonts/font = SubResource( 776 )
 text = "GAME-OVER"
 align = 1
 
@@ -119,7 +184,7 @@ margin_left = 115.0
 margin_top = 119.0
 margin_right = 535.0
 margin_bottom = 214.0
-custom_fonts/font = SubResource( 774 )
+custom_fonts/font = SubResource( 776 )
 text = "00"
 align = 1
 
@@ -129,6 +194,6 @@ margin_left = 115.0
 margin_top = 119.0
 margin_right = 535.0
 margin_bottom = 214.0
-custom_fonts/font = SubResource( 774 )
+custom_fonts/font = SubResource( 776 )
 text = "START"
 align = 1

@@ -1,8 +1,6 @@
 extends StaticBody2D
 
 
-var target_points = 100
-
 var hit_count: int = 0
 var brick_color_1: Color = Set.color_blue
 var brick_color_2: Color = Color.cyan
@@ -13,6 +11,8 @@ var def_particle_speed = 5
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
+
+onready var target_points: int = Set.default_game_settings["target_brick_points"]
 
 
 func _ready() -> void:
@@ -31,10 +31,13 @@ func on_hit(hit_by: Node):
 				sprite.modulate = Set.color_red
 			3:
 				animation_player.play("outro")
-				modulate = Set.color_gray0
+				modulate = Set.color_red
+				hit_by.spawned_by.get_points(target_points)
+				
 	elif hit_by is Misile:
 		modulate = Set.color_red
 		animation_player.play("outro")
+		hit_by.spawned_by.get_points(target_points)
 	
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

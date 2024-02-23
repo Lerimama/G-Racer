@@ -5,7 +5,7 @@ class_name Bolt, "res://assets/class_icons/bolt_icon.png"
 
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
 
-var bolt_id: String = "P1"
+var bolt_owner: String = "P1"
 #var bolt_index: int
 var bolt_color: Color = Color.white
 var trail_pseudodecay_color = Color.white
@@ -17,7 +17,7 @@ var velocity: Vector2 = Vector2.ZERO
 var rotation_angle: float
 var rotation_dir: float
 var collision: KinematicCollision2D
-var loose_life_time: float = 2
+var lose_life_time: float = 2
 
 # states
 var control_enabled: bool = true
@@ -77,9 +77,16 @@ onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
 onready var bullet_power: float = Pro.default_bolt_stats["bullet_power"]
 onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
 onready var shocker_count: float = Pro.default_bolt_stats["shocker_count"]
+# player stats
+#onready var player_active: bool = Pro.default_player_stats["player_active"] # true
+onready var driver_life: int = Pro.default_player_stats["driver_life"]
+onready var driver_points: int = Pro.default_player_stats["driver_points"]
+onready var driver_wins: int = Pro.default_player_stats["driver_wins"]
 
 # bolt profil
-onready var bolt_type: String = "basic" 
+#onready var bolt_type: String = "basic" # temp
+onready var bolt_type: int = Pro.BoltTypes.BASIC
+
 onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
 onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 onready var rev_engine_power: int = Pro.bolt_profiles[bolt_type]["rev_engine_power"]
@@ -92,10 +99,12 @@ onready var inertia: float = Pro.bolt_profiles[bolt_type]["inertia"]
 onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability"]  # reload def gre v weapons
 onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
 
+#NEU
+
 
 func _ready() -> void:
 
-	printt("Bolt", name, bolt_id)
+	printt("Bolt", name, bolt_owner)
 	
 	# bolt 
 	add_to_group(Ref.group_bolts)	
@@ -308,13 +317,14 @@ func shooting(weapon: String) -> void:
 				var new_bullet = Bullet.instance()
 				new_bullet.global_position = to_global(gun_pos)
 				new_bullet.global_rotation = bolt_sprite.global_rotation
-				new_bullet.spawned_by = name # ime avtorja izstrelka
+				new_bullet.spawned_by = self # ime avtorja izstrelka
 				new_bullet.spawned_by_color = bolt_color
 				new_bullet.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_bullet)
+				
 				bullet_count -= 1
 				
-				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) # do GMa
+				emit_signal("stat_changed", bolt_owner, "bullet_count", bullet_count) # do GMa
 				
 				bullet_reloaded = false
 				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
@@ -324,14 +334,14 @@ func shooting(weapon: String) -> void:
 				var new_misile = Misile.instance()
 				new_misile.global_position = to_global(gun_pos)
 				new_misile.global_rotation = bolt_sprite.global_rotation
-				new_misile.spawned_by = name # ime avtorja izstrelka
+				new_misile.spawned_by = self # zato, da lahko dobiva "točke ali kazni nadaljavo
 				new_misile.spawned_by_color = bolt_color
 				new_misile.spawned_by_speed = velocity.length()
 				new_misile.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_misile)
 				misile_count -= 1
 
-				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) # do GMa
+				emit_signal("stat_changed", bolt_owner, "misile_count", misile_count) # do GMa
 
 				misile_reloaded = false
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
@@ -341,19 +351,18 @@ func shooting(weapon: String) -> void:
 				var new_shocker = Shocker.instance()
 				new_shocker.global_position = to_global(shocker_pos)
 				new_shocker.global_rotation = bolt_sprite.global_rotation
-				new_shocker.spawned_by = name # ime avtorja izstrelka
+				new_shocker.spawned_by = self # ime avtorja izstrelka
 				new_shocker.spawned_by_color = bolt_color
 				new_shocker.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_shocker)
 				shocker_count -= 1
 				
-				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) # do GMa
+				emit_signal("stat_changed", bolt_owner, "shocker_count", shocker_count) # do GMa
 				
 				shocker_reloaded = false
 				yield(get_tree().create_timer(new_shocker.reload_time / reload_ability), "timeout")
 				shocker_reloaded= true
 
-		
 			
 func activate_shield():
 	
@@ -442,6 +451,13 @@ func on_hit(hit_by: Node):
 			control_enabled = true
 
 
+func get_points(points_added: int):
+	driver_points += points_added
+	driver_points = clamp(driver_points, 0, driver_points)
+	print()
+	emit_signal("stat_changed", bolt_owner, "driver_points", driver_points) # do GMa
+	
+
 func take_damage(hit_by: Node):
 	
 	var damage_amount: float = hit_by.hit_damage
@@ -451,10 +467,10 @@ func take_damage(hit_by: Node):
 	energy_bar.scale.x = energy/10
 	
 	# za damage
-	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
+	emit_signal("stat_changed", bolt_owner, "energy", energy) # do GMa
 	
 	if energy <= 0:
-		loose_life()
+		lose_life()
 
 	
 func item_picked(pickable_type_key: String):
@@ -466,20 +482,20 @@ func item_picked(pickable_type_key: String):
 		"BULLET":
 			bullet_count += pickable_value
 #			energy += max_energy/2
-			emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+			emit_signal("stat_changed", bolt_owner, "bullet_count", bullet_count) 
 		"MISILE":
 			misile_count += pickable_value
-			emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
+			emit_signal("stat_changed", bolt_owner, "misile_count", misile_count) 
 		"SHOCKER":
 			shocker_count += pickable_value
-			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
+			emit_signal("stat_changed", bolt_owner, "shocker_count", shocker_count) 
 		"SHIELD":
 			shield_loops_limit = pickable_value
 			activate_shield()
 		"ENERGY":
 			energy = max_energy
 		"LIFE":
-			emit_signal("stat_changed", bolt_id, "life", pickable_value)
+			emit_signal("stat_changed", bolt_owner, "driver_life", pickable_value)
 		"NITRO":
 			activate_nitro(pickable_value, pickable_time)
 		"TRACKING":
@@ -494,7 +510,7 @@ func item_picked(pickable_type_key: String):
 			item_picked(random_pickable_key) # pick selected
 			
 			
-func loose_life():
+func lose_life():
 	
 	# shake camera
 #	camera.add_trauma(camera.bolt_explosion_shake)
@@ -519,12 +535,12 @@ func loose_life():
 	new_exploding_bolt.z_index = z_index + Set.explosion_z_index
 	Ref.node_creation_parent.add_child(new_exploding_bolt)
 	
-	emit_signal("stat_changed", bolt_id, "life", -1)
+	emit_signal("stat_changed", bolt_owner, "driver_life", -1)
 	
 	bolt_collision.disabled = true
 	visible = false
 	set_physics_process(false)
-	yield(get_tree().create_timer(loose_life_time), "timeout")
+	yield(get_tree().create_timer(lose_life_time), "timeout")
 	
 	# on new life
 	bolt_collision.disabled = false

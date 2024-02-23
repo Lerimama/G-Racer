@@ -1,7 +1,7 @@
 extends Node2D
 class_name Shocker
 
-var spawned_by: String
+var spawned_by: Node
 var spawned_by_color: Color
 
 var drop_direction: Vector2 = -transform.x # rikverc na osi x
@@ -55,11 +55,13 @@ func activate():
 func _on_CollisionArea_body_entered(body: Node) -> void:
 	
 	# ustavi ob trku	
-	if body.name != spawned_by:
+	if body != spawned_by:
+#	if body.name != spawned_by:
 		drop_direction = Vector2.ZERO
 		
 	# sproži val in detect shape			
-	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body.name != spawned_by:
+	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body != spawned_by:
+#	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body.name != spawned_by:
 		active_timer.stop()
 		
 		# detect tween

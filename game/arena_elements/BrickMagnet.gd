@@ -25,6 +25,7 @@ onready var force_field: Area2D = $ForceField
 onready var sprite: Sprite = $Sprite
 onready var blackhole_particles: Particles2D = $BlackholeParticles
 onready var animation_player: AnimationPlayer = $AnimationPlayer
+onready var magnet_points: int = Set.default_game_settings["magnet_brick_points"]
 
 
 func _ready() -> void:
@@ -53,6 +54,7 @@ func _physics_process(delta: float) -> void:
 				distance_to_magnet = Met.get_distance_to(body.global_position, global_position)
 				gravity_velocity = gravity_force / (distance_to_magnet * 1)
 				body.velocity += Vector2(gravity_velocity, 0).rotated(direction_to_magnet)
+				body.get_points(magnet_points)
 		
 
 func intro():

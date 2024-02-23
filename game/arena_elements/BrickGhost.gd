@@ -1,7 +1,6 @@
 extends StaticBody2D
 
 
-var ghost_points = 100
 var ghost_color = Set.color_green
 var ghost_brake = 3
 
@@ -9,7 +8,7 @@ var def_particle_speed: float = 6
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-
+onready var ghost_points: int = Set.default_game_settings["ghost_brick_points"]
 
 func _ready() -> void:
 

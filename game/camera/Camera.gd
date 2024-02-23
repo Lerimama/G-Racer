@@ -14,7 +14,6 @@ func _ready():
 func _process(delta: float) -> void:
 	
 	if follow_target:
-		print("FOLL")
 		position = follow_target.global_position
 	
 	

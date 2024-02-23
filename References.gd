@@ -5,10 +5,11 @@ var node_creation_parent = null
 var effects_creation_parent = null
 var current_camera = null
 var game_manager = null
-var game_hud = null
+var hud = null
 var sound_manager = null
 var data_manager = null
 var main_node = null
+var game_timer
 
 #var ppp1 = null
 #var ppp2 = null

@@ -1,23 +1,13 @@
 extends Control
 
 
-var game_is_on: bool = false setget _on_game_status_change
+#var spawned_player_profile
+#var playerstats_index: int = 0 # index znotraj ene runde
+#var playerstats_round: int = 0 # ena runda so 4 hudi
 
-
-var spawned_player_profile
-var playerstats_index: int = 0 # index znotraj ene runde
-var playerstats_round: int = 0 # ena runda so 4 hudi
-
-var odmik_od_roba = 24
-var odmik_od_roba_spodaj = 48 # adaptacija za anchor
-var playerstats_w = 350
-var playerstats_h = 38
-var premik_runde = 38
-
-#onready var player_line: Control = $PlayerLine_P1
-onready var bolt_stats: = Pro.default_bolt_stats
-onready var player_stats: = Pro.default_player_stats
-onready var player_profiles: = Pro.default_player_profiles
+#onready var bolt_stats: = Pro.default_bolt_stats
+#onready var driver_stats: = Pro.default_player_stats
+#onready var driver_profiles: = Pro.default_player_profiles
 #onready var player_name = Profiles.default_player_profiles["player_name"]
 
 #onready var stat_line_topL: Control = $StatLineTopL
@@ -28,6 +18,7 @@ onready var stat_line_topL: Control = $StatLineRacer1
 onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
+
 onready var game_time: Control = $GameTime
 onready var game_over: Control = $Popups/GameOver
 onready var game_start: Control = $Popups/GameStart
@@ -40,40 +31,20 @@ var stat_line_btmR_active: bool = false
 var stat_lines_owners: Dictionary = {}
 var loading_time: float = 0.5 # pred prikazom nbaj se v miru postavi
 
-# pavza
-onready var pause_ui: Control = $"../PauseUI"
-onready var pavza_btn: Button = $PavzaBtn
-onready var pavza_back_btn: Button = $"../PauseUI/BackBtn"
-onready var pavza_restart_btn: Button = $"../PauseUI/RestartBtn"
-onready var pavza_quit_btn: Button = $"../PauseUI/QuitBtn"
-
-# gameover
-onready var game_over_ui: Control = $"../GameOverUI"
-onready var gameover_restart_btn: Button = $"../GameOverUI/RestartBtn"
-onready var gameover_high_score_btn: Button = $"../GameOverUI/HighScoreBtn"
-onready var gameover_quit_btn: Button = $"../GameOverUI/QuitBtn"
-
-onready var scene_tree: = get_tree()
-onready var game_manager: Node = Ref.game_manager
-#onready var game_manager: Node = $"../../GameManager"
-
+# neu
+onready var game_timer: Control = $"%GameTimer"
 
 func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_released("ui_cancel"):
 		toggle_pause()
 	
-#	if Input.is_action_just_released("r"):	
-#		if not pause_ui.visible:
-#			yield(get_tree().create_timer(1), "timeout")
-#			game_over_ui.visible = true
-#		else:
-#			game_over_ui.visible = false
-
-
 func _ready() -> void:
+	
 	print("HUD")
-	Ref.game_hud = self	
+	
+	Ref.hud = self	
+	
 	# skrij statistiko
 	stat_line_topL.visible = false
 	stat_line_topR.visible = false
@@ -83,11 +54,11 @@ func _ready() -> void:
 	game_over.visible = false
 
 	# Global.game_manager.connect("stat_change_received", self, "on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-	game_manager.connect("stat_change_received", self, "_on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-	game_manager.connect("new_bolt_spawned", self, "_on_new_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+#	Ref.game_manager.connect("stat_change_received", self, "_on_stat_changed") # signal pride iz GM in pošlje spremenjeno statistiko
+	Ref.game_manager.connect("new_bolt_spawned", self, "_on_new_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
 	
 	# pavza
-	pavza_btn.connect("pressed", self, "_on_pavza_btn_pressed")
+#	pavza_btn.connect("pressed", self, "_on_pavza_btn_pressed")
 	pavza_restart_btn.connect("pressed", self, "_on_pavza_restart_btn_pressed")	
 	pavza_back_btn.connect("pressed", self, "_on_pavza_back_btn_pressed")
 	pavza_quit_btn.connect("pressed", self, "_on_pavza_quit_btn_pressed")
@@ -99,70 +70,39 @@ func _ready() -> void:
 	gameover_quit_btn.connect("pressed", self, "_on_gameover_quit_btn_pressed")
 	game_over_ui.visible = false
 
-		
-func _on_gameover_restart_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://game/arena/Arena.tscn")
-	
-func _on_gameover_quit_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://home/Home.tscn")
-	
-func _on_gameover_high_score_btn_pressed():
-	game_over_ui.visible = false
 
 
-func _on_pavza_btn_pressed():
-	toggle_pause()
-	
-func toggle_pause():
-	pause_ui.visible = not pause_ui.visible
-	scene_tree.paused = not scene_tree.paused
-	pavza_btn.visible = not pavza_btn.visible
-	scene_tree.set_input_as_handled()
-	
-func _on_pavza_back_btn_pressed():
-	toggle_pause()
-	
-func _on_pavza_restart_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://game/arena/Arena.tscn")
-	
-func _on_pavza_quit_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://home/Home.tscn")
+func on_game_start():
+	game_start.visible = false
+	game_time.visible = true
+	game_over.visible = false
+	game_timer.start_timer()
 
 
-func _on_game_status_change(new_game_status):
+func on_game_over():
+	game_start.visible = false
+	game_time.visible = false
+	game_over.visible = true
+	hide_player_stats()
 	
-#	game_time.visible = true
-#	print(new_game_status)
-	if new_game_status == true:
-		game_start.visible = false
-		game_time.visible = true
-		game_over.visible = false
-		game_is_on = true
-	else:
-		game_start.visible = false
-		game_time.visible = false
-		game_over.visible = true
-		game_is_on = false
-		pass
 
-
-func _on_stat_change_received(stat_owner_id, stat_name, new_stat_value):
+func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
 	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
 	
 	match stat_name:
-		"points":
+		"driver_points":
 #			print("--------- točka")
 			# value se preračuna na GM
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
-		"life": 
+		"driver_life": 
 #			print("--------- lajf")
 			# value se preračuna na GM
 			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
+		"driver_wins": 
+#			print("--------- lajf")
+			# value se preračuna na GM
+			stat_line_to_change.stat_wins.current_stat_value = new_stat_value # setget
 		"bullet_count": 
 #			print("--------- misila")
 			# value se preračuna v plejerju
@@ -196,18 +136,24 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 			current_stat_line = stat_line_btmR
 			stat_lines_owners[player_id] = stat_line_btmR 
 	
-	current_stat_line.stat_line_color = player_profiles[player_id]["player_color"]
+	# data
+
+	var bolt_stats: Dictionary = Pro.default_bolt_stats
+	var driver_stats: Dictionary = Pro.default_player_stats
+	var driver_profiles: Dictionary = Pro.default_player_profiles
 	
-	# napolni statistiko
-	current_stat_line.stat_name.text = player_profiles[player_id]["player_name"]
+	current_stat_line.stat_line_color = driver_profiles[player_id]["player_color"]
+	current_stat_line.stat_name.text = driver_profiles[player_id]["player_name"]
+	
 	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
 	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
-	current_stat_line.stat_points.current_stat_value = player_stats["points"]
-	current_stat_line.stat_life.current_stat_value = player_stats["life"]
-	current_stat_line.stat_wins.current_stat_value = player_stats["wins"]
+
+	current_stat_line.stat_points.current_stat_value = driver_stats["driver_points"]
+	current_stat_line.stat_life.current_stat_value = driver_stats["driver_life"]
+	current_stat_line.stat_wins.current_stat_value = driver_stats["driver_wins"]
 	
-	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse obarva
+	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	current_stat_line.visible = true
 
 	
@@ -217,3 +163,56 @@ func hide_player_stats():
 	stat_line_topR.visible = false
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false	
+
+
+# BTNS ------------------------------------------------------------------------------------------------------------
+
+
+
+# pavza
+onready var pause_ui: Control = $"../PauseUI"
+#onready var pavza_btn: Button = $PavzaBtn
+onready var pavza_back_btn: Button = $"../PauseUI/BackBtn"
+onready var pavza_restart_btn: Button = $"../PauseUI/RestartBtn"
+onready var pavza_quit_btn: Button = $"../PauseUI/QuitBtn"
+
+# gameover
+onready var game_over_ui: Control = $"../GameOverUI"
+onready var gameover_restart_btn: Button = $"../GameOverUI/RestartBtn"
+onready var gameover_high_score_btn: Button = $"../GameOverUI/HighScoreBtn"
+onready var gameover_quit_btn: Button = $"../GameOverUI/QuitBtn"
+
+onready var scene_tree: = get_tree()
+
+		
+func _on_gameover_restart_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Met.switch_to_scene("res://game/arena/Arena.tscn")
+	
+func _on_gameover_quit_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Met.switch_to_scene("res://home/Home.tscn")
+	
+func _on_gameover_high_score_btn_pressed():
+	game_over_ui.visible = false
+
+
+func _on_pavza_btn_pressed():
+	toggle_pause()
+	
+func toggle_pause():
+	pause_ui.visible = not pause_ui.visible
+	scene_tree.paused = not scene_tree.paused
+#	pavza_btn.visible = not pavza_btn.visible
+	scene_tree.set_input_as_handled()
+	
+func _on_pavza_back_btn_pressed():
+	toggle_pause()
+	
+func _on_pavza_restart_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Met.switch_to_scene("res://game/arena/Arena.tscn")
+	
+func _on_pavza_quit_btn_pressed():
+#	yield(get_tree().create_timer(2), "timeout")
+	Met.switch_to_scene("res://home/Home.tscn")
