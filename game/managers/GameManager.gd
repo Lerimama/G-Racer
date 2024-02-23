@@ -42,18 +42,26 @@ onready var enemy_profile = Pro.default_player_profiles[Pro.Players.ENEMY]
 
 onready var tilemap_floor_cells: Array
 onready var navigation_line: Line2D = $"../NavigationPath"
-onready var enemy: KinematicBody2D = $"../Enemy"
+#onready var enemy: KinematicBody2D = $"../Enemy"
 
 onready var player_bolt = preload("res://game/player/Player.tscn")
 onready var enemy_bolt = preload("res://game/enemies/Enemy.tscn")
 
+var switch_camera_follow_count: int = 0
 
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("x"):
 		spawn_pickable()
 	if Input.is_action_just_pressed("r"):
-		game_over(0)
+		game_over(0)	
+	if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
+		
+		switch_camera_follow_count += 1
+		if switch_camera_follow_count > bolts_in_game.size() - 1:
+			switch_camera_follow_count = 0
+		Ref.current_camera.follow_target = bolts_in_game[switch_camera_follow_count]
+	
 		
 	if not game_on and bolts_in_game.size() <= 4:
 		if Input.is_key_pressed(KEY_1):
@@ -87,9 +95,11 @@ func _ready() -> void:
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
 	spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, player1_id, 1)	
+#	spawn_bolt(player_bolt, Ref.current_level.spawn_position_2.global_position, player2_id, 2)	
 
 
 func _process(delta: float) -> void:
+	
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickups)	
 
@@ -119,25 +129,24 @@ func set_game():
 #		yield(get_tree().create_timer(1), "timeout") # da si plejer ogleda	
 #
 #	Global.hud.slide_in(start_players_count)
-#	yield(Global.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
-
+	Ref.hud.start_countdown.start_countdown()
+	yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
+	print("tsart")
 	start_game()
 
 
 func start_game():
 
-#		for player in get_tree().get_nodes_in_group(Global.group_players):
-#			player.set_physics_process(true)
+	for bolt in bolts_in_game:
+		bolt.set_physics_process(true)
 #		Ref.sound_manager.play_music("game_music")
 
-		if Ref.hud:
-			Ref.hud.on_game_start()
-		game_on = true
+	if Ref.hud:
+		Ref.hud.on_game_start()
+	game_on = true
 		
 		
 func game_over(gameover_reason: int):
-	print("NO GO")
-	
 
 	if game_on == false: # preprečim double gameover
 		return
@@ -160,7 +169,6 @@ func game_over(gameover_reason: int):
 #
 #	stop_game_elements()
 #	Global.gameover_menu.open_gameover(gameover_reason)
-	print("GO")
 	
 #	if Ref.game_hud != null:
 	if Ref.hud:
@@ -184,12 +192,13 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 	spawned_bolt_index += 1
 
 	var new_bolt = bolt.instance()
-	new_bolt.bolt_driver = spawned_player_id
+	new_bolt.bolt_owner = spawned_player_id
 	new_bolt.global_position = spawned_position
 	Ref.node_creation_parent.add_child(new_bolt)
 
 	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
-
+	
+	new_bolt.set_physics_process(false)
 	# če je plejer komp mu pošljem navigation area
 	if new_bolt == enemy_bolt:
 		new_bolt.navigation_cells = tilemap_floor_cells
@@ -201,7 +210,7 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 	# statistika med boltom in hudom
 	new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # za prikaz linije, drugače ne rabiš
 	
-	printt("new_bolt_spawned", spawned_bolt_index, spawned_player_id)
+#	printt("new_bolt_spawned", spawned_bolt_index, spawned_player_id)
 	emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_player_id) # pošljem na hud, da prižge stat line in ga napolne
 
 

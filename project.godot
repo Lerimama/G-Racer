@@ -75,7 +75,7 @@ _global_script_class_icons={
 [application]
 
 config/name="gravity_bonanza_0.1"
-run/main_scene="res://game/Game.tscn"
+run/main_scene="res://Main.tscn"
 config/icon="res://_materiali/icon.png"
 <<<<<<<HEADconfig/name="gravity_bonanza_0.1"
 
@@ -243,6 +243,11 @@ r={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":82,"unicode":0,"echo":false,"script":null)
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":11,"pressure":0.0,"pressed":false,"script":null)
+ ]
+}
+f={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":70,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 jp1_fwd={

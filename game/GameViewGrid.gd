@@ -33,7 +33,7 @@ func _ready() -> void:
 			
 		# old ... get_child(i).player_id = i+1
 onready var game_view: ViewportContainer = $GameView
-onready var game_view2: ViewportContainer = $GameView2
+#onready var game_view2: ViewportContainer = $GameView2
 
 func _process(delta: float) -> void:
 #	$GameView/Viewport/Arena/Camera.position = $GameView/Viewport/Arena/Player.global_position

@@ -27,7 +27,7 @@ func _ready() -> void:
 	
 	# player setup
 #	name = player_name _temp off
-	player_profile = Pro.default_player_profiles[bolt_driver]
+	player_profile = Pro.default_player_profiles[bolt_owner]
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color

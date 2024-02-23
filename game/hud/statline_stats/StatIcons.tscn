@@ -1,50 +1,96 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/hud/statline_stats/StatIcons.gd" type="Script" id=1]
 [ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=2]
 
-[node name="StatIcons" type="Node2D"]
-position = Vector2( 37, 12 )
+[sub_resource type="AtlasTexture" id=147]
+atlas = ExtResource( 2 )
+region = Rect2( 32, 0, 8, 8 )
+margin = Rect2( -2, 0, 0, 0 )
+
+[node name="StatIcons" type="HBoxContainer"]
+margin_right = 36.0
+margin_bottom = 8.0
+size_flags_vertical = 8
+custom_constants/separation = -1
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+icon_texture = SubResource( 147 )
 
-[node name="StatIcon1" type="Sprite" parent="."]
-texture = ExtResource( 2 )
-region_enabled = true
-region_rect = Rect2( 32, 0, 8, 8 )
+[node name="StatIcon" type="Control" parent="."]
+margin_right = 8.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_vertical = 8
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="StatIcon1"]
+[node name="OffIcon" type="TextureRect" parent="StatIcon"]
+modulate = Color( 1, 1, 1, 0.313726 )
+margin_right = 8.0
+margin_bottom = 8.0
 
-[node name="StatIcon2" type="Sprite" parent="."]
-position = Vector2( 7, 0 )
-texture = ExtResource( 2 )
-region_enabled = true
-region_rect = Rect2( 32, 0, 8, 8 )
+[node name="OnIcon" type="TextureRect" parent="StatIcon"]
+margin_right = 8.0
+margin_bottom = 8.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="StatIcon2"]
+[node name="StatIcon2" type="Control" parent="."]
+margin_left = 7.0
+margin_right = 15.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_vertical = 8
 
-[node name="StatIcon3" type="Sprite" parent="."]
-position = Vector2( 14, 0 )
-texture = ExtResource( 2 )
-region_enabled = true
-region_rect = Rect2( 32, 0, 8, 8 )
+[node name="OffIcon" type="TextureRect" parent="StatIcon2"]
+modulate = Color( 1, 1, 1, 0.313726 )
+margin_right = 8.0
+margin_bottom = 8.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="StatIcon3"]
+[node name="OnIcon" type="TextureRect" parent="StatIcon2"]
+margin_right = 8.0
+margin_bottom = 8.0
 
-[node name="StatIcon4" type="Sprite" parent="."]
-position = Vector2( 21, 0 )
-texture = ExtResource( 2 )
-region_enabled = true
-region_rect = Rect2( 32, 0, 8, 8 )
+[node name="StatIcon3" type="Control" parent="."]
+margin_left = 14.0
+margin_right = 22.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_vertical = 8
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="StatIcon4"]
+[node name="OffIcon" type="TextureRect" parent="StatIcon3"]
+modulate = Color( 1, 1, 1, 0.313726 )
+margin_right = 8.0
+margin_bottom = 8.0
 
-[node name="StatIcon5" type="Sprite" parent="."]
-position = Vector2( 28, 0 )
-texture = ExtResource( 2 )
-region_enabled = true
-region_rect = Rect2( 32, 0, 8, 8 )
+[node name="OnIcon" type="TextureRect" parent="StatIcon3"]
+margin_right = 8.0
+margin_bottom = 8.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="StatIcon5"]
+[node name="StatIcon4" type="Control" parent="."]
+margin_left = 21.0
+margin_right = 29.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_vertical = 8
+
+[node name="OffIcon" type="TextureRect" parent="StatIcon4"]
+modulate = Color( 1, 1, 1, 0.313726 )
+margin_right = 8.0
+margin_bottom = 8.0
+
+[node name="OnIcon" type="TextureRect" parent="StatIcon4"]
+margin_right = 8.0
+margin_bottom = 8.0
+
+[node name="StatIcon5" type="Control" parent="."]
+margin_left = 28.0
+margin_right = 36.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_vertical = 8
+
+[node name="OffIcon" type="TextureRect" parent="StatIcon5"]
+modulate = Color( 1, 1, 1, 0.313726 )
+margin_right = 8.0
+margin_bottom = 8.0
+
+[node name="OnIcon" type="TextureRect" parent="StatIcon5"]
+margin_right = 8.0
+margin_bottom = 8.0

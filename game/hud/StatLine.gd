@@ -11,9 +11,9 @@ var current_stat_value: int
 
 
 onready var stat_avatar: TextureRect = $Avatar
-onready var stat_name: Label = $PlayerName
-onready var stat_wins: Node2D = $StatIconsWins
-onready var stat_life: Node2D = $StatIconsLife
+onready var stat_name: Label = $PlayerLine/PlayerName
+onready var stat_wins: Control = $StatIconsWins
+onready var stat_life: Control = $StatIconsLife
 onready var stat_misile: NinePatchRect = $StatMisile
 onready var stat_shocker: NinePatchRect = $StatShocker
 onready var stat_points: NinePatchRect = $StatPoints
@@ -39,6 +39,7 @@ func _on_bolt_color_set(bolt_color):
 	stat_name.modulate = bolt_color # setget
 	stat_wins.def_stat_color = bolt_color # setget
 	stat_life.def_stat_color = bolt_color # setget
+#	stat_life2.def_stat_color = bolt_color # setget
 	stat_misile.def_stat_color = bolt_color # setget
 	stat_shocker.def_stat_color = bolt_color # setget
 	stat_points.def_stat_color = bolt_color # setget

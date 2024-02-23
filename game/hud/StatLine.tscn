@@ -4,10 +4,10 @@
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/hud/statline_stats/StatMisile.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/hud/statline_stats/StatPoints.tscn" type="PackedScene" id=4]
-[ext_resource path="res://game/hud/statline_stats/StatIconsWins.tscn" type="PackedScene" id=5]
+[ext_resource path="res://_obs/StatIconsWins_.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/hud/statline_stats/StatShocker.tscn" type="PackedScene" id=6]
 [ext_resource path="res://game/hud/StatLine.gd" type="Script" id=7]
-[ext_resource path="res://game/hud/statline_stats/StatIconsLife.tscn" type="PackedScene" id=8]
+[ext_resource path="res://_obs/StatIconsLife_.tscn" type="PackedScene" id=8]
 
 [node name="StatLine" type="Control"]
 margin_right = 197.0

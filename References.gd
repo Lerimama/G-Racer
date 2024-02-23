@@ -9,7 +9,8 @@ var hud = null
 var sound_manager = null
 var data_manager = null
 var main_node = null
-var game_timer
+#var game_timer = null
+#var start_countdown = null
 
 #var ppp1 = null
 #var ppp2 = null

@@ -153,9 +153,9 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 # statse ima tudi enemy
 #	"player_active" : true,
-	"driver_life" : 5,
-	"driver_points" : 10,
-	"driver_wins" : 2,
+	"player_life" : 5,
+	"player_points" : 10,
+	"player_wins" : 2,
 }
 
 var weapon_profiles : Dictionary = {

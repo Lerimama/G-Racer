@@ -42,6 +42,7 @@ var default_game_settings: Dictionary = {
 	"sudden_death_limit": 20,
 	"timer_mode_countdown": false,
 	"gameover_countdown_duration": 5,
+	"start_countdown": false,
 	# points and arena values
 	"goal_points": 1000,
 	"light_points": 10,

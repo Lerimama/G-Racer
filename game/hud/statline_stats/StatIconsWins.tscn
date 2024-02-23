@@ -1,24 +1,40 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/hud/statline_stats/StatIcons.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=2]
+
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 2 )
+region = Rect2( 40, 0, 8, 8 )
+margin = Rect2( 0, -1, 0, 0 )
 
 [node name="StatIconsWins" instance=ExtResource( 1 )]
+custom_constants/separation = 3
+icon_texture = SubResource( 1 )
 
-[node name="StatIcon1" parent="." index="0"]
-region_rect = Rect2( 40, 0, 8, 8 )
+[node name="OffIcon" parent="StatIcon" index="0"]
+texture = SubResource( 1 )
+
+[node name="OnIcon" parent="StatIcon" index="1"]
+texture = SubResource( 1 )
 
 [node name="StatIcon2" parent="." index="1"]
-position = Vector2( 10, 0 )
-region_rect = Rect2( 40, 0, 8, 8 )
+margin_left = 11.0
+margin_right = 19.0
+
+[node name="OnIcon" parent="StatIcon2" index="1"]
+texture = SubResource( 1 )
 
 [node name="StatIcon3" parent="." index="2"]
-position = Vector2( 20, 0 )
-region_rect = Rect2( 40, 0, 8, 8 )
+margin_left = 22.0
+margin_right = 30.0
 
 [node name="StatIcon4" parent="." index="3"]
 visible = false
-region_rect = Rect2( 40, 0, 8, 8 )
+margin_left = 33.0
+margin_right = 41.0
 
 [node name="StatIcon5" parent="." index="4"]
 visible = false
-region_rect = Rect2( 40, 0, 8, 8 )
+margin_left = 44.0
+margin_right = 52.0

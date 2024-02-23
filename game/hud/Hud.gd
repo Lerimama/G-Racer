@@ -19,9 +19,9 @@ onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
 
-onready var game_time: Control = $GameTime
-onready var game_over: Control = $Popups/GameOver
-onready var game_start: Control = $Popups/GameStart
+#onready var game_time: Control = $GameTime
+#onready var game_over: Control = $Popups/GameOver
+#onready var game_start: Control = $Popups/GameStart
 
 var stat_line_topL_active: bool = false
 var stat_line_topR_active: bool = false
@@ -33,6 +33,8 @@ var loading_time: float = 0.5 # pred prikazom nbaj se v miru postavi
 
 # neu
 onready var game_timer: Control = $"%GameTimer"
+onready var game_over: Control = $"%GameOver"
+onready var start_countdown: Control = $"%StartCountdown"
 
 func _input(event: InputEvent) -> void:
 	
@@ -50,7 +52,7 @@ func _ready() -> void:
 	stat_line_topR.visible = false
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false
-	game_time.visible = false
+#	game_time.visible = false
 	game_over.visible = false
 
 	# Global.game_manager.connect("stat_change_received", self, "on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
@@ -73,16 +75,18 @@ func _ready() -> void:
 
 
 func on_game_start():
-	game_start.visible = false
-	game_time.visible = true
-	game_over.visible = false
+#	game_start.visible = false
+#	game_time.visible = true
+#	game_over.visible = false
 	game_timer.start_timer()
 
 
 func on_game_over():
-	game_start.visible = false
-	game_time.visible = false
+	game_timer.stop_timer()
+#	game_start.visible = false
+#	game_time.visible = false
 	game_over.visible = true
+	
 	hide_player_stats()
 	
 
@@ -92,12 +96,13 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
 	match stat_name:
 		# value se preračun na plejerju
-		"driver_points":
+		"player_points":
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
-		"driver_life": 
+		"player_life": 
 			# value se preračuna na plejerju
 			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
-		"driver_wins": 
+#			stat_line_to_change.stat_life2.current_stat_value = new_stat_value # setget
+		"player_wins": 
 			# value se preračuna na plejerju
 			stat_line_to_change.stat_wins.current_stat_value = new_stat_value # setget
 		"bullet_count": 
@@ -133,19 +138,20 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 	# data
 
 	var bolt_stats: Dictionary = Pro.default_bolt_stats
-	var driver_stats: Dictionary = Pro.default_player_stats
-	var driver_profiles: Dictionary = Pro.default_player_profiles
+	var player_stats: Dictionary = Pro.default_player_stats
+	var player_profiles: Dictionary = Pro.default_player_profiles
 	
-	current_stat_line.stat_line_color = driver_profiles[player_id]["player_color"]
-	current_stat_line.stat_name.text = driver_profiles[player_id]["player_name"]
+	current_stat_line.stat_line_color = player_profiles[player_id]["player_color"]
+	current_stat_line.stat_name.text = player_profiles[player_id]["player_name"]
 	
 	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
 	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
 
-	current_stat_line.stat_points.current_stat_value = driver_stats["driver_points"]
-	current_stat_line.stat_life.current_stat_value = driver_stats["driver_life"]
-	current_stat_line.stat_wins.current_stat_value = driver_stats["driver_wins"]
+	current_stat_line.stat_points.current_stat_value = player_stats["player_points"]
+	current_stat_line.stat_life.current_stat_value = player_stats["player_life"]
+#	current_stat_line.stat_life2.current_stat_value = driver_stats["driver_life"]
+	current_stat_line.stat_wins.current_stat_value = player_stats["player_wins"]
 	
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	current_stat_line.visible = true

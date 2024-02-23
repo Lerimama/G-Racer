@@ -11,7 +11,8 @@ region = Rect2( 24, 0, 8, 8 )
 [node name="Stat" type="NinePatchRect"]
 anchor_right = 0.037
 anchor_bottom = 0.022
-margin_right = 0.32
+margin_left = -1.0
+margin_right = -0.68
 margin_bottom = 0.0799994
 grow_horizontal = 0
 grow_vertical = 0
