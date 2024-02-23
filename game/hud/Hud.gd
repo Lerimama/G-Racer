@@ -91,28 +91,22 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
 	
 	match stat_name:
+		# value se preračun na plejerju
 		"driver_points":
-#			print("--------- točka")
-			# value se preračuna na GM
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
 		"driver_life": 
-#			print("--------- lajf")
-			# value se preračuna na GM
+			# value se preračuna na plejerju
 			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
 		"driver_wins": 
-#			print("--------- lajf")
-			# value se preračuna na GM
+			# value se preračuna na plejerju
 			stat_line_to_change.stat_wins.current_stat_value = new_stat_value # setget
 		"bullet_count": 
-#			print("--------- misila")
 			# value se preračuna v plejerju
 			stat_line_to_change.stat_bullet.current_stat_value = new_stat_value # setget
 		"misile_count": 
-#			print("--------- misila")
 			# value se preračuna v plejerju
 			stat_line_to_change.stat_misile.current_stat_value = new_stat_value # setget
 		"shocker_count": 
-#			print("--------- šoker")
 			# value se preračuna v plejerju
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
 

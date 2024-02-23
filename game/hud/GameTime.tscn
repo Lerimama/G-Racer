@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
 [ext_resource path="res://game/hud/GameTime.gd" type="Script" id=2]
-[ext_resource path="res://_izPA/hud_game_timer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/hud/HudGameTimer.tscn" type="PackedScene" id=3]
 
 [sub_resource type="DynamicFontData" id=773]
 font_path = "res://assets/theme/fonts/Gamer.ttf"

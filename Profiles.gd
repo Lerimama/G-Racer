@@ -74,23 +74,25 @@ var bolt_profiles: Dictionary = {
 		},
 }
 
+enum Players {P1 = 1, P2, P3, P4, ENEMY}
 
 var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
-	"P1" : { # ključi bodo kasneje samo indexi
+	Players.P1 : { # ključi bodo kasneje samo indexi
+#	"P1" : { # ključi bodo kasneje samo indexi
 		"player_name" : "Moe",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_01.png"),
 		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile" : "ARROWS",
 		"bolt_type:": BoltTypes.BASIC,
 	},
-	"P2" : {
+	Players.P2 : {
 		"player_name" : "Zed",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_02.png"),
 		"player_color" : Set.color_red,
 		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
 	},
-	"P3" : {
+	Players.P3 : {
 		"player_name" : "Dot",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
 		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
@@ -98,7 +100,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 #		"controller_profile" : "JP1",
 		"bolt_type:": BoltTypes.BASIC,
 	},
-	"P4" : {
+	Players.P4 : {
 		"player_name" : "Jax",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
 		"player_color" : Set.color_green,
@@ -106,7 +108,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
 	},
-	"E1" : {
+	Players.ENEMY : {
 		"player_name" : "Rat",
 		# "player_controller" : "Up/Le/Do/Ri/Al",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_05.png"),
@@ -114,14 +116,14 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"controller_profile" : "AI",
 		"bolt_type:": BoltTypes.BASIC,
 	},
-	"E2" : {
-		"player_name" : "Bub",
-		# "player_controller" : "W/A/S/D/Sp",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_06.png"),
-		"player_color" : Set.color_gray0,
-		"controller_profile" : "AI",
-		"bolt_type:": BoltTypes.BASIC,
-	},
+#	"E2" : {
+#		"player_name" : "Bub",
+#		# "player_controller" : "W/A/S/D/Sp",
+#		"player_avatar" : preload("res://assets/sprites/avatars/avatar_06.png"),
+#		"player_color" : Set.color_gray0,
+#		"controller_profile" : "AI",
+#		"bolt_type:": BoltTypes.BASIC,
+#	},
 }
 
 

@@ -26,7 +26,7 @@ func get_random_member_index(group_of_elements):
 #		printt(current_array, random_range, random_int, selected_int)
 		return selected_int
 	
-onready var indikator: PackedScene = preload("res://game/debug_indikator.tscn")
+onready var indikator: PackedScene = preload("res://game/DebugIndikator.tscn")
 
 func spawn_indikator(pos, rot): # neki ne štima
 	

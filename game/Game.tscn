@@ -6,7 +6,7 @@
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=4]
 [ext_resource path="res://game/Game.gd" type="Script" id=5]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=6]
-[ext_resource path="res://game/hud/HudRacer.tscn" type="PackedScene" id=8]
+[ext_resource path="res://game/hud/Hud.tscn" type="PackedScene" id=8]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 5 )

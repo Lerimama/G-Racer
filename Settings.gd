@@ -7,7 +7,7 @@ var bullet_hit_shake
 var misile_hit_shake
 
 
-var player_name: String = "P1"
+#var player_name: String = "P1"
 
 # game colors
 var color_gray0 = Color("#535b68") # najsvetlejša
