@@ -129,9 +129,9 @@ func set_game():
 #		yield(get_tree().create_timer(1), "timeout") # da si plejer ogleda	
 #
 #	Global.hud.slide_in(start_players_count)
-	Ref.hud.start_countdown.start_countdown()
-	yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
-	print("tsart")
+	if Ref.hud:
+		Ref.hud.start_countdown.start_countdown()
+		yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
 	start_game()
 
 

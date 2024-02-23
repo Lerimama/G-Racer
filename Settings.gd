@@ -51,7 +51,7 @@ var default_game_settings: Dictionary = {
 	"bouncer_brick_points": 10,
 	"magnet_brick_points": -1,
 	"area_tracking_value": 1, # 100%
-	"area_nitro_value": 500,
+	"area_nitro_value": 700,
 }
 
 #

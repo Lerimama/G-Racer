@@ -21,14 +21,13 @@ color_ramp = SubResource( 2 )
 [node name="SpaceBackground" type="Sprite"]
 position = Vector2( 1, 0 )
 
-[node name="Panel" type="Panel" parent="."]
-margin_left = -23.0
-margin_top = -29.0
-margin_right = 1047.0
-margin_bottom = 779.0
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 1351.0
+margin_bottom = 1108.0
+color = Color( 0.0607605, 0.0675389, 0.0859375, 1 )
 
 [node name="Zvezde" type="Particles2D" parent="."]
-position = Vector2( 479, 358 )
+position = Vector2( 735, 550 )
 rotation = 1.57079
 scale = Vector2( 1.2, 1.2 )
 amount = 77

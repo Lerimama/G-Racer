@@ -29,6 +29,7 @@ region_enabled = true
 region_rect = Rect2( 0, 0, 24, 24 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+scale = Vector2( 0.5, 0.5 )
 polygon = PoolVector2Array( -10, -4, -4, -10, 4, -10, 10, -4, 10, 4, 4, 10, -4, 10, -10, 4 )
 
 [node name="DetectArea" type="Area2D" parent="."]

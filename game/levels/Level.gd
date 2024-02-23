@@ -22,14 +22,16 @@ func _ready() -> void:
 
 
 func get_tilemap_cells(tilemap: TileMap):
-	
-	var cell_count_x: float = tilemap.get_viewport_rect().size.x / tilemap.get_cell_size().x
-	var cell_count_y: float = tilemap.get_viewport_rect().size.y / tilemap.get_cell_size().y
+
+#	var cell_count_x: float = tilemap.get_viewport_rect().size.x / tilemap.get_cell_size().x
+#	var cell_count_y: float = tilemap.get_viewport_rect().size.y / tilemap.get_cell_size().y
 	
 	var tilemap_cells: Array # celice v gridu
 	
-	for x in cell_count_x:
-		for y in cell_count_y:	
+	for x in tilemap.get_used_rect().size.x:
+		for y in tilemap.get_used_rect().size.y:	
+#	for x in cell_count_x:
+#		for y in cell_count_y:	
 			var cell: Vector2 = Vector2(x, y)
 			tilemap_cells.append(cell)
 	
@@ -47,6 +49,7 @@ onready var brick_target: PackedScene = preload("res://game/arena_elements/Brick
 onready var brick_light: PackedScene = preload("res://game/arena_elements/BrickLight.tscn")
 onready var area_nitro: PackedScene = preload("res://game/arena_elements/AreaNitro.tscn")
 onready var area_tracking: PackedScene = preload("res://game/arena_elements/AreaTracking.tscn")
+onready var area_finish: PackedScene = preload("res://game/arena_elements/AreaFinish.tscn")
 
 onready var pickable_energy: PackedScene = preload("res://game/arena_elements/pickables/PickableEnergy.tscn")
 onready var pickable_life: PackedScene = preload("res://game/arena_elements/pickables/PickableLife.tscn")
@@ -61,7 +64,8 @@ onready var pickable_random: PackedScene = preload("res://game/arena_elements/pi
 
 func set_level_elements():
 	
-	var element_cells = get_tilemap_cells(tilemap_elements)
+
+	var element_cells = get_tilemap_cells(tilemap_edge) # poberem celice edga, da je prave velikosti
 	
 	for cell in element_cells:
 		
@@ -119,6 +123,12 @@ func set_level_elements():
 			22: # pickable random
 				spawn_element(cell_global_position, pickable_random, Vector2(9,8))
 				tilemap_elements.set_cellv(cell, -1)
+			23: # area finish
+				spawn_element(cell_global_position, area_finish, Vector2(9,8))
+				tilemap_elements.set_cellv(cell, -1)
+#			24: # area start
+#				spawn_element(cell_global_position, pickable_random, Vector2(9,8))
+#				tilemap_elements.set_cellv(cell, -1)
 
 
 func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):

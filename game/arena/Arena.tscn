@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://game/levels/LevelTraining.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/levels/LevelNitro.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/arena/Arena.gd" type="Script" id=4]
 [ext_resource path="res://game/managers/GameManager.gd" type="Script" id=6]
@@ -26,7 +26,7 @@ __meta__ = {
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource( 6 )
 
-[node name="LevelTraining" parent="." instance=ExtResource( 1 )]
+[node name="LevelNitro" parent="." instance=ExtResource( 1 )]
 
 [node name="Effects" type="Node2D" parent="."]
 z_index = 1

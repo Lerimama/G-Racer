@@ -37,7 +37,7 @@ var pickable_profiles: Dictionary = {
 	},
 	"NITRO": { # NITRO
 #		"path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
-		"pickable_value": 500,
+		"pickable_value": 700,
 		"pickable_time": 10, # sekunde
 	},
 	"TRACKING": { # TRACKING
@@ -59,12 +59,12 @@ var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
 #	"basic": {
 		"bolt_texture": preload("res://assets/bolt/bolt_basic.png"),
-		"fwd_engine_power": 200, # 1 - 500 konjev 
+		"fwd_engine_power": 300, # 1 - 500 konjev 
 		"rev_engine_power": 150, # 1 - 500 konjev 
 		"turn_angle": 15, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
 		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
-		"side_traction": 0.1, # 0 - 1
+		"side_traction": 0.05, # 0 - 1
 		"bounce_size": 0.3, # 0 - 1 
 		"inertia": 5, # kg
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja

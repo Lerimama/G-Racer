@@ -18,6 +18,7 @@ onready var stat_line_topL: Control = $StatLineRacer1
 onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
+onready var game_stats: HBoxContainer = $GameStats
 
 #onready var game_time: Control = $GameTime
 #onready var game_over: Control = $Popups/GameOver
@@ -77,7 +78,7 @@ func _ready() -> void:
 func on_game_start():
 #	game_start.visible = false
 #	game_time.visible = true
-#	game_over.visible = false
+	game_over.visible = false
 	game_timer.start_timer()
 
 
@@ -163,6 +164,7 @@ func hide_player_stats():
 	stat_line_topR.visible = false
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false	
+	game_stats.hide()
 
 
 # BTNS ------------------------------------------------------------------------------------------------------------
