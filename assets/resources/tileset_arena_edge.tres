@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=494 format=2]
 
 [ext_resource path="res://assets/tilesets/tileset_arena_edge.png" type="Texture" id=1]
-[ext_resource path="res://assets/arena/tile_arena_floor.png" type="Texture" id=2]
+[ext_resource path="res://assets/arena/tile_arena_navigation.png" type="Texture" id=2]
 [ext_resource path="res://assets/tilesets/tileset_arena_edge_broken.png" type="Texture" id=3]
 [ext_resource path="res://assets/arena/tile_arena_colored.png" type="Texture" id=5]
 
@@ -4468,7 +4468,7 @@ points = PoolVector2Array( 0, 0, 8, 0, 8, 8, 0, 8 )
 13/name = "navigation_tile"
 13/texture = ExtResource( 2 )
 13/tex_offset = Vector2( 0, 0 )
-13/modulate = Color( 1, 1, 1, 0.466667 )
+13/modulate = Color( 1, 1, 1, 1 )
 13/region = Rect2( 0, 0, 8, 8 )
 13/tile_mode = 0
 13/occluder_offset = Vector2( 0, 0 )

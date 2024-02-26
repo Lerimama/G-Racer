@@ -54,6 +54,46 @@ var default_game_settings: Dictionary = {
 	"area_nitro_value": 700,
 }
 
+enum Levels {TRAINING, NITRO}
+
+var level_settings: Dictionary = {
+	Levels.TRAINING: {
+		"level_path": "res://game/levels/LevelTraining.tscn",
+		},
+	Levels.NITRO: {
+		"level_path": "res://game/levels/LevelNitro.tscn",
+		} 
+}
+
+
+# ON GAME START -----------------------------------------------------------------------------------
+
+
+var current_game_settings: Dictionary = {} # ta je uporabljen ob štartu igre
+var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
+var selected_level: int
+
+func _ready() -> void:
+	
+	# če greš iz menija je tole povoženo
+	var debug_level = Levels.NITRO
+#	var debug_level = Levels.TRAINING
+	set_game_settings(debug_level)
+	
+	
+func set_game_settings(selected_level) -> void:
+	
+	current_game_settings = default_game_settings.duplicate() # naloži default, potrebne spremeni ob loadanju igre
+	
+	match selected_level:
+		Levels.TRAINING: 
+			current_level_settings = level_settings[Levels.TRAINING]
+			current_game_settings["area_nitro_value"] = 0
+		Levels.NITRO: 
+			current_level_settings = level_settings[Levels.NITRO]
+
+
+
 #
 #var default_game_settings: Dictionary = {
 #	# to so default CLEANER settings

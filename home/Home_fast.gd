@@ -217,6 +217,8 @@ extends Node
 
 func _on_ConfirmBtn_pressed() -> void:
 	
+#	Set.selected_level = Set.Levels.TRAINING
+	Set.set_game_settings(Set.Levels.TRAINING)
 	Ref.main_node.home_out()
 	# trenutna mapa
 #	var current_used_cells: Array = new_world.arena_tilemap.get_used_cells()
@@ -229,4 +231,7 @@ func _on_ConfirmBtn_pressed() -> void:
 
 
 func _on_ConfirmBtn2_pressed() -> void:
+	
+	Set.set_game_settings(Set.Levels.NITRO)
+	Ref.main_node.home_out()
 	pass # Replace with function body.

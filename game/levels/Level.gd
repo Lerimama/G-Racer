@@ -11,11 +11,13 @@ onready var spawn_position_2: Position2D = $Positions/SpawnPosition2
 onready var spawn_position_3: Position2D = $Positions/SpawnPosition3
 onready var spawn_position_4: Position2D = $Positions/SpawnPosition4
 
+onready var spawn_positions: Array = $Positions.get_children()
+
 
 func _ready() -> void:
 	
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
-	print("Level, Z-index ", z_index)
+	printt("Level ")
 	set_level_floor()
 	set_level_edge()
 	set_level_elements()
@@ -154,7 +156,7 @@ func set_level_edge():
 
 		# če je prazna, jo zamenjam z navigacijsko celico
 		if cell_index == -1:
-			tilemap_edge.set_cellv(cell, -1)
+			tilemap_edge.set_cellv(cell, 13)
 			navigation_cells.append(cell) # grid pozicije
 
 	# odstrani zunanje rob navigacije (rob je vsaka, ki ima eno od sosednjih celic prazno
@@ -169,6 +171,13 @@ func set_level_edge():
 					tilemap_edge.set_cellv (cell, -1)
 					break # ko je ena prazna, ne rabi več čekirat
 		navigation_cell_index += 1
+		
+#	yield(get_tree().create_timer(0.1), "timeout")
+	
+	emit_signal("level_is_set", spawn_positions, navigation_cells)
+#	printt("level_is_set", spawn_positions, navigation_cells.size())
+
+signal level_is_set(navigation, spawn_positions, other_)
 
 
 # FLOOR --------------------------------------------------------------------------------------------------------------------------------

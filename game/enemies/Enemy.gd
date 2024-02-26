@@ -53,7 +53,8 @@ func _ready() -> void:
 	
 	# player setup
 #	name = player_name _temp off
-	player_profile = Pro.default_player_profiles[player_id]
+	player_profile = Pro.default_player_profiles[bolt_owner]
+#	player_profile = Pro.default_player_profiles[player_id]
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
 	bolt_sprite.modulate = bolt_color
 	
@@ -132,14 +133,21 @@ func vision(delta: float):
 
 
 func idle():
-	
 	engine_power = engine_power_idle
+	
 	
 	var idle_target_cell: Vector2 = global_position # določena pozicija prve random celice
 	var idle_area: Array = []
 	
+	idle_target_cell = Ref.current_level.get_node("IdleTarget").global_position
+	
+	# position node
+#	target_location = idle_target_cell # boltova tarča je random tarča
+	
+	# random close area
 	if not idle_target_set:
 		if not navigation_cells.empty(): # v prvem poskus je area prazen ... napolne se ob nalaganju enemija
+
 			for cell_position in navigation_cells:
 				# če je polju dosega
 				var distance_to_cell: float = global_position.distance_to(cell_position)
@@ -222,6 +230,7 @@ func shocker_check():
 	
 
 func set_target_location (target: Vector2):
+#	return
 	target_reached = false
 	navigation_agent.set_target_location(target)
 

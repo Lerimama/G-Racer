@@ -47,7 +47,14 @@ onready var navigation_line: Line2D = $"../NavigationPath"
 onready var player_bolt = preload("res://game/player/Player.tscn")
 onready var enemy_bolt = preload("res://game/enemies/Enemy.tscn")
 
+#NEU
+onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
+onready var game_settings: Dictionary = Set.current_game_settings # ga med igro ne spreminjaš
 var switch_camera_follow_count: int = 0
+var bolt_spawn_positions: Array # dobi od tilemapa
+var navigation_area: Array # vsi navigation tileti od tilemapa
+
+
 
 func _input(event: InputEvent) -> void:
 
@@ -66,36 +73,40 @@ func _input(event: InputEvent) -> void:
 	if not game_on and bolts_in_game.size() <= 4:
 		if Input.is_key_pressed(KEY_1):
 			set_game()
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, Pro.Players.P1, 1)
+			spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, Pro.Players.P1, 1)
 		if Input.is_key_pressed(KEY_2):
 			set_game()
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, Pro.Players.P1, 1)
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_2.global_position, Pro.Players.P2, 2)
+			spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, Pro.Players.P1, 1)
+			spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, Pro.Players.P2, 2)
 		if Input.is_key_pressed(KEY_3):
 			set_game()
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, Pro.Players.P1, 1)
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_2.global_position, Pro.Players.P2, 2)
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_3.global_position, Pro.Players.P3, 3)
+			spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, Pro.Players.P1, 1)
+			spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, Pro.Players.P2, 2)
+			spawn_bolt(player_bolt, bolt_spawn_positions[2].global_position, Pro.Players.P3, 3)
 		if Input.is_key_pressed(KEY_4):
 			set_game()
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, Pro.Players.P1, 1)
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_2.global_position, Pro.Players.P2, 2)
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_3.global_position, Pro.Players.P3, 3)
-			spawn_bolt(player_bolt, Ref.current_level.spawn_position_4.global_position, Pro.Players.P4, 4)
+			spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, Pro.Players.P1, 1)
+			spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, Pro.Players.P2, 2)
+			spawn_bolt(player_bolt, bolt_spawn_positions[2].global_position, Pro.Players.P3, 3)
+			spawn_bolt(player_bolt, bolt_spawn_positions[3].global_position, Pro.Players.P4, 4)
+
+	if game_on and bolts_in_game.size() <= 4:
 		if Input.is_key_pressed(KEY_5):
-			spawn_bolt(enemy_bolt, get_parent().get_global_mouse_position(), enemy_id, 5)
+			spawn_bolt(enemy_bolt, bolt_spawn_positions[1].global_position, enemy_id, 5)
 
 
 
 func _ready() -> void:
+	
 	
 	Ref.game_manager = self	
 	printt("Game Manager")
 	
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
-	spawn_bolt(player_bolt, Ref.current_level.spawn_position_1.global_position, player1_id, 1)	
-#	spawn_bolt(player_bolt, Ref.current_level.spawn_position_2.global_position, player2_id, 2)	
+	spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, player1_id, 1)	
+	spawn_bolt(enemy_bolt, bolt_spawn_positions[1].global_position, enemy_id, 5)
+#	spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, player2_id, 2)	
 
 
 func _process(delta: float) -> void:
@@ -104,10 +115,37 @@ func _process(delta: float) -> void:
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickups)	
 
 
+func set_level():
+	# kliče main.gd pred prikazom igre
+	
+	var level_to_release: Node2D = Ref.current_level # trenutno naložen v areni (holder)
+	var level_to_load_path: String = level_settings["level_path"]
+	var level_z_index: int = Ref.current_level.z_index
+	
+	# release default level	
+	level_to_release.set_physics_process(false)
+	level_to_release.free()
+
+	# spawn new level
+	var GameTilemap = ResourceLoader.load(level_to_load_path)
+	var new_level = GameTilemap.instance()
+	# new_level.z_index = level_z_index
+	new_level.connect( "level_is_set", self, "_on_level_is_set")
+	Ref.node_creation_parent.add_child(new_level)
+	
+	
+func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array):
+	printt("level is set", spawn_positions.size(), tilemap_navigation_cells.size())
+	
+	bolt_spawn_positions = spawn_positions
+	navigation_area = tilemap_navigation_cells
+	
+	printt (bolt_spawn_positions.size(), navigation_area.size())	
+	pass
+
 func set_game():
 
 	# kliče main.gd pred prikazom igre
-	# set_tilemap()
 	# set_game_view()
 	# set_players() # da je plejer viden že na fejdin
 
@@ -198,14 +236,16 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 
 	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
 	
-	new_bolt.set_physics_process(false)
 	# če je plejer komp mu pošljem navigation area
-	if new_bolt == enemy_bolt:
-		new_bolt.navigation_cells = tilemap_floor_cells
+	if new_bolt is Enemy:
+		new_bolt.navigation_cells = navigation_area
+#		new_bolt.navigation_cells = tilemap_floor_cells
 		# prikaz nav linije
-		# new_bolt.connect("path_changed", self, "_on_Enemy_path_changed")
+		new_bolt.connect("path_changed", self, "_on_Enemy_path_changed")
 	else:
-		Ref.current_camera.follow_target = new_bolt
+		new_bolt.set_physics_process(false)
+		
+	Ref.current_camera.follow_target = new_bolt
 	
 	# statistika med boltom in hudom
 	new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # za prikaz linije, drugače ne rabiš
@@ -258,5 +298,4 @@ func _on_Enemy_path_changed(path: Array) -> void:
 	# ta funkcija je vezana na signal bolta
 	# inline connect za primer, če je bolt spawnan
 	# def signal connect za primer, če je bolt "in-tree" node
-	
 	navigation_line.points = path
