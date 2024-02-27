@@ -53,7 +53,7 @@ onready var game_settings: Dictionary = Set.current_game_settings # ga med igro 
 var switch_camera_follow_count: int = 0
 var bolt_spawn_positions: Array # dobi od tilemapa
 var navigation_area: Array # vsi navigation tileti od tilemapa
-
+var current_racing_line: Array # linija za ranking (array točk oz. pozicij)
 
 
 func _input(event: InputEvent) -> void:
@@ -64,10 +64,12 @@ func _input(event: InputEvent) -> void:
 		game_over(0)	
 	if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
 		
-		switch_camera_follow_count += 1
-		if switch_camera_follow_count > bolts_in_game.size() - 1:
-			switch_camera_follow_count = 0
-		Ref.current_camera.follow_target = bolts_in_game[switch_camera_follow_count]
+		printt ("RL", bolts_on_racing_line)
+		
+#		switch_camera_follow_count += 1
+#		if switch_camera_follow_count > bolts_in_game.size() - 1:
+#			switch_camera_follow_count = 0
+#		Ref.current_camera.follow_target = bolts_in_game[switch_camera_follow_count]
 	
 		
 	if not game_on and bolts_in_game.size() <= 4:
@@ -114,6 +116,120 @@ func _process(delta: float) -> void:
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickups)	
 
+	if game_on:
+		
+		# čekiram ranking na progi ... ta del hgre v navigacijo
+		
+		# najprej čekiram najbližje točke za vsakega na progi
+		for bolt in bolts_in_game:
+			
+			# naberem razdalje vseh točk do bolta
+			var distances: Array
+			var current_shortest_distance: float = 0
+			var current_closest_racing_line_point: Vector2
+			for line_point in current_racing_line:
+				var distance_to_point: float = bolt.global_position.distance_to(line_point)
+				# če je prva distance jo štejem in zapišem lokacijo točke na liniji
+				if current_shortest_distance == 0:
+					current_shortest_distance = distance_to_point
+					current_closest_racing_line_point = line_point
+				# če je nižja od trenutne jo zamenjam in zapišem lokacijo točke na liniji
+				elif distance_to_point < current_shortest_distance:
+					current_shortest_distance = distance_to_point
+					current_closest_racing_line_point = line_point
+			
+			# ko pregleda vse točke na racing liniji
+			var closest_racing_line_point = current_closest_racing_line_point
+			# zapišem najbližjo racing line točko k boltu
+			var bolt_on_racing_line: Array = [bolt, closest_racing_line_point]
+			# podatek pripnem k vsem boltom na racing liniji 	
+			bolts_on_racing_line.append(bolt_on_racing_line)
+			
+		rank_bolts(bolts_on_racing_line)
+
+				
+#				# dobim najkrajš 
+#
+#				if current_racing_line.find(line_point) == 28:
+#					printt("a", current_shortest_distance, current_closest_racing_line_point)
+#					printt("b", distance_to_point, current_racing_line.find(line_point))
+			
+
+
+#			# razporedim po velikosti				
+#			distances.sort_custom(self, "sort_ascending")
+#			# izberem namanjšo in ta velja za boltovo distanco do cilja
+#			var closest_racing_line_point = distances[0]
+#
+#			# lokacijo točke zapakiram z boltom
+			
+#			printt("dist", distances)
+#			printt("point", closest_racing_line_point)
+			
+		# najbližje točke vseh boltov primerjam (po indexu v racing liniji) 
+#		printt("bolts_on_line", bolts_on_racing_line)
+#			for distance in distances:
+				
+var bolts_on_racing_line: Array	# paketi podatkov o boltu in njegovi pozicij na racing liniji	
+var position_indikator: Node2D	
+func rank_bolts(bolts_on_racing_line):
+	# najbližje točke vseh boltov primerjam (po indexu v racing liniji) 
+	position_indikator
+	var best_racing_point_index: int = 0
+	var best_bolt: KinematicBody2D
+	
+	for bolt in bolts_on_racing_line:
+		var bolt_line_point = bolt[1]
+		var bolt_line_point_index = current_racing_line.find(bolt_line_point)
+		var current_bolt = bolt[0] # racing line točka
+		# prvega dodam
+		if best_racing_point_index == 0:
+			best_racing_point_index = bolt_line_point_index
+			best_bolt = current_bolt
+		elif bolt_line_point_index < best_racing_point_index:
+			best_racing_point_index = bolt_line_point_index
+			best_bolt = current_bolt
+			
+	position_indikator.global_position = current_racing_line[best_racing_point_index]
+	position_indikator.modulate = best_bolt.bolt_color
+#		position_indikator.global_position = bolt_line_point
+#		print (current_racing_line.find(bolt_line_point))
+		
+#	position_indikator
+#	var best_racing_point_index: int # = bolts_on_racing_line.size() # najvišji možni index je pač število vseh igralev 
+#	var best_ranking_bolt: KinematicBody2D
+#
+#	for bolt in bolts_on_racing_line:
+#		var bolt_line_point = bolt[1] # racing line točka
+#
+#		var bolt_line_point_index: int = current_racing_line.find(bolt_line_point)
+#		if best_racing_point_index == null:
+#			best_racing_point_index = bolt_line_point_index
+#			best_ranking_bolt = bolt[0]
+#		elif bolt_line_point_index < best_racing_point_index:
+#			best_racing_point_index = bolt_line_point_index
+#			best_ranking_bolt = bolt[0]
+#
+#	printt("best", best_racing_point_index, best_ranking_bolt)	
+#		var bolt_line_point_index: int = current_racing_line.find(bolt_line_point)
+		
+#		printt ("point", bolt_line_point, bolt_line_point_index)
+#			for point in current_racing_line:
+#		printt ("ind", current_racing_line.find(point))
+	pass
+	
+	
+	
+	
+func sort_ascending(a, b):
+	
+	if a < b:
+	    return true
+	return false
+			
+			
+#			line_point.get_point_position()
+		
 
 func set_level():
 	# kliče main.gd pred prikazom igre
@@ -140,8 +256,18 @@ func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array):
 	bolt_spawn_positions = spawn_positions
 	navigation_area = tilemap_navigation_cells
 	
+	current_racing_line = Ref.current_level.racing_line.draw_racing_line()
+	
+	position_indikator = Met.spawn_indikator(bolt_spawn_positions[0].global_position, 0)
+	
+	for point in current_racing_line:
+#		printt ("ind", current_racing_line.find(point))
+		pass
+		
+	
 	printt (bolt_spawn_positions.size(), navigation_area.size())	
 	pass
+	
 
 func set_game():
 

@@ -12,6 +12,7 @@ onready var spawn_position_3: Position2D = $Positions/SpawnPosition3
 onready var spawn_position_4: Position2D = $Positions/SpawnPosition4
 
 onready var spawn_positions: Array = $Positions.get_children()
+onready var racing_line: Node2D = $RacingLine
 
 
 func _ready() -> void:

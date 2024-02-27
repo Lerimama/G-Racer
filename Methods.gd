@@ -38,6 +38,7 @@ func spawn_indikator(pos, rot): # neki ne štima
 	new_indikator.modulate = Color.red
 	Ref.node_creation_parent.add_child(new_indikator)
 	
+	return new_indikator
 #	print(new_indikator.new_indikator.global_position)
 	pass
 

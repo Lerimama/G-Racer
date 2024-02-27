@@ -42,3 +42,5 @@ current = true
 
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 7 )
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

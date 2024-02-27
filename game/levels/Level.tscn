@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=1]
 [ext_resource path="res://game/levels/Level.gd" type="Script" id=2]
 [ext_resource path="res://assets/resources/tileset_arena_floor.tres" type="TileSet" id=3]
+[ext_resource path="res://game/levels/RacingLine.gd" type="Script" id=4]
 [ext_resource path="res://assets/shaders/arena_colors_texture.gdshader" type="Shader" id=5]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=6]
 [ext_resource path="res://game/arena/BackgroundSpace.tscn" type="PackedScene" id=7]
@@ -71,4 +72,18 @@ position = Vector2( 97, 272 )
 [node name="SpawnPosition4" type="Position2D" parent="Positions"]
 position = Vector2( 545, 272 )
 
+[node name="RacingLine" type="Node2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="StartPosition" type="Position2D" parent="RacingLine"]
+
+[node name="FinishPosition" type="Position2D" parent="RacingLine"]
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="RacingLine"]
+
+[node name="RacingPath" type="Line2D" parent="RacingLine"]
+width = 2.0
+default_color = Color( 0.4, 0.501961, 1, 0.0588235 )
+
 [connection signal="navigation_completed" from="Edge" to="." method="_on_Edge_navigation_completed"]
+[connection signal="path_changed" from="RacingLine/NavigationAgent2D" to="RacingLine" method="_on_NavigationAgent2D_path_changed"]
