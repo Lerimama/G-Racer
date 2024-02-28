@@ -7,11 +7,14 @@ var follow_target: Node
 onready var test_ui = $TestUI
 
 func _ready():
-#	print("KAMERA")
+	print("KAMERA")
 	Ref.current_camera = self
 	set_camera_limits()
 
+
 func _process(delta: float) -> void:
+	
+#	screen_area.global_position = get_camera_screen_center()
 	
 	if follow_target:
 		position = follow_target.global_position
@@ -27,6 +30,9 @@ func shake_camera(shake_power: float):
 #	rotation_degrees = test_ui.noise.get_noise_3d(0, 0, test_ui.time * test_ui.time_scale) * test_ui.max_rotation * shake_power	
 
 # limits
+onready var screen_area: Area2D = $ScreenArea
+
+
 
 
 func set_camera_limits():
@@ -55,3 +61,15 @@ func set_camera_limits():
 	limit_top = corner_BL
 	limit_bottom = corner_BR
 	
+
+
+func _on_ScreenArea_body_entered(body: Node) -> void:
+	pass # Replace with function body.
+	if body is Player:
+		body.modulate = Color.white # ne spremeni barve bolta
+
+func _on_ScreenArea_body_exited(body: Node) -> void:
+	
+	if body is Player:
+		body.modulate = Color.red
+	pass # Replace with function body.

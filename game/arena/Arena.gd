@@ -16,3 +16,7 @@ func _ready() -> void:
 #	camera_follow_target = player_to_follow
 #	camera.following_target = player_to_follow
 ##	camera.position = player_to_follow.global_position
+
+
+func _on_ScreenArea_body_entered() -> void:
+	pass # Replace with function body.

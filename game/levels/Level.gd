@@ -149,6 +149,7 @@ func set_level_edge():
 	var edge_cells = get_tilemap_cells(tilemap_elements) # celice v obliki grid koordinat
 
 	var navigation_cells: Array
+	var navigation_cells_positions: Array
 
 	for cell in edge_cells:
 		var cell_index = tilemap_edge.get_cellv(cell)
@@ -159,23 +160,24 @@ func set_level_edge():
 		if cell_index == -1:
 			tilemap_edge.set_cellv(cell, 13)
 			navigation_cells.append(cell) # grid pozicije
-
+			navigation_cells_positions.append(cell_global_position)
+			
 	# odstrani zunanje rob navigacije (rob je vsaka, ki ima eno od sosednjih celic prazno
-	var navigation_cell_index = 0
-	for cell in navigation_cells:
-		var cell_in_check: Vector2
-		# pregledam 5 celic v ver in hor smeri
-		for y in 5: 
-			for x in 5:
-				cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
-				if tilemap_edge.get_cellv(cell_in_check) == 0:
-					tilemap_edge.set_cellv (cell, -1)
-					break # ko je ena prazna, ne rabi več čekirat
-		navigation_cell_index += 1
+#	var navigation_cell_index = 0
+#	for cell in navigation_cells:
+#		var cell_in_check: Vector2
+#		# pregledam 5 celic v ver in hor smeri
+#		for y in 5: 
+#			for x in 5:
+#				cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
+#				if tilemap_edge.get_cellv(cell_in_check) == 0:
+#					tilemap_edge.set_cellv (cell, -1)
+#					break # ko je ena prazna, ne rabi več čekirat
+#		navigation_cell_index += 1
 		
 #	yield(get_tree().create_timer(0.1), "timeout")
 	
-	emit_signal("level_is_set", spawn_positions, navigation_cells)
+	emit_signal("level_is_set", spawn_positions, navigation_cells, navigation_cells_positions)
 #	printt("level_is_set", spawn_positions, navigation_cells.size())
 
 signal level_is_set(navigation, spawn_positions, other_)

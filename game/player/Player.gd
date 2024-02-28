@@ -46,7 +46,6 @@ func _ready() -> void:
 	shoot_bullet_action = controller_actions["shoot_bullet_action"]
 	shoot_misile_action = controller_actions["shoot_misile_action"]
 	shoot_shocker_action = controller_actions["shoot_shocker_action"]
-	
 
 
 func _input(event: InputEvent) -> void:
@@ -104,3 +103,6 @@ func _physics_process(delta: float) -> void:
 	if not fwd_motion and not rev_motion: 
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 
+
+func reset_bolt():
+	pass
