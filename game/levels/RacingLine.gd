@@ -11,7 +11,6 @@ onready var racing_path: Line2D = $RacingPath
 
 
 func _ready() -> void:
-	
 #	printt ("RacingLine", racing_path.get_point_count())
 	
 	pass

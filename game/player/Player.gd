@@ -106,3 +106,40 @@ func _physics_process(delta: float) -> void:
 
 func reset_bolt():
 	pass
+
+
+func pull_bolt_on_screen(pull_position: Vector2):
+	
+#	global_position = pull_position	
+	set_deferred("bolt_collision.disabled", true) # na priporočilo
+	set_deferred("shield_collision", true) # na priporočilo
+#	shield_collision.disabled = true
+	modulate.a = 0.7
+	
+	# spawn particles
+	
+	var pull_tween = get_tree().create_tween()
+	pull_tween.tween_property(self, "global_position", pull_position, 0.15)
+	
+	
+	
+	# bolt_to_pull.global_position += vector_to_pull_position			
+	
+	# posledice
+	modulate = Color.red
+
+	if bolt_trail_active:
+		current_active_trail.start_decay() # trail decay tween start
+		bolt_trail_active = false
+	
+#	var pull_trail: Line2D# = spawn_new_trail()
+#	call_deferred("spawn_new_trail")
+#	pull_trail.modulate = bolt_color
+##	if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+#	if bolt_trail_active and velocity.length() > 0:
+#		bolt_trail_active = false
+#	new_bolt_trail = BoltTrail.instance()
+#	new_bolt_trail.modulate.a = bolt_trail_alpha
+#	new_bolt_trail.z_index = z_index + Set.trail_z_index
+#	Ref.node_creation_parent.add_child(new_bolt_trail)
+#	bolt_trail_active = true 

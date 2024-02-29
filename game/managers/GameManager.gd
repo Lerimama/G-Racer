@@ -329,9 +329,9 @@ func rank_bolts():
 #	printt("leading_players", leading_player)
 	
 	# posledice	
-#	position_indikator.scale = Vector2(3,3)
-#	position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
-#	position_indikator.modulate = leading_player.bolt_color
+	position_indikator.scale = Vector2(3,3)
+	position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
+	position_indikator.modulate = leading_player.bolt_color
 	
 	Ref.current_camera.follow_target = leading_player
 
@@ -398,9 +398,9 @@ func _on_Enemy_path_changed(path: Array) -> void:
 	navigation_line.points = path
 
 
-func pull_bolt(bolt_to_pull: KinematicBody2D):
+func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 	
-	var pull_position_distance_from_leader: float = 20 # pull razdalja od vodilnega plejerja  
+	var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja  
 	
 	# vektor od pullanega do vodilnega
 	var vector_to_leading_player = leading_player.global_position - bolt_to_pull.global_position
@@ -422,31 +422,18 @@ func pull_bolt(bolt_to_pull: KinematicBody2D):
 				pull_position_on_navigation = cell_position
 	
 	# na koncu mam najbližjo pozicijo, ki upošteva razdaljo do vodilnega
-	bolt_to_pull.global_position = pull_position_on_navigation	
-	# bolt_to_pull.global_position += vector_to_pull_position			
-	
-	# posledice
-	bolt_to_pull.modulate = Color.red
-	
-#	var pull_tween = get_tree().create_tween()
-#	pull_tween.tween_property(bolt_to_pull, "position", pull_position_on_navigation, 1)
-	
-	
-	position_indikator.modulate = leading_player.bolt_color
-
-	
-	position_indikator.scale = Vector2(3,3)
-	position_indikator.global_position = bolt_to_pull.global_position
+	return pull_position_on_navigation	
 	
 
 func _on_ScreenArea_body_exited(body: Node) -> void:
 	
 	if body is Player:
-		pull_bolt(body)
+		var bolt_pull_position = get_bolt_pull_position(body)
+		body.pull_bolt_on_screen(bolt_pull_position)
 
 
 
 func _on_ScreenArea_body_entered(body: Node) -> void:
-	if body is Player:
-		body.modulate = Color.white
-	pass # Replace with function body.
+	pass
+#	if body is Player:
+#		body.modulate = Color.white

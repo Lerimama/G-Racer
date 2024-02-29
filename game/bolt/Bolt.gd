@@ -35,7 +35,7 @@ var shield_loops_counter: int = 0
 var shield_loops_limit: int = 1 # poberem jo iz profilov, ali pa kot veleva pickable
 
 # trail
-var new_bolt_trail: Object
+#var new_bolt_trail: Object
 var bolt_trail_active: bool = false # če je je aktivna, je ravno spawnana, če ni, potem je "odklopljena"
 var bolt_trail_alpha = 0.05
 
@@ -168,12 +168,53 @@ func on_collision():
 		new_collision_particles.color = bolt_color
 		new_collision_particles.set_emitting(true)
 		Ref.node_creation_parent.add_child(new_collision_particles)
+	
+	if bolt_trail_active:
+		current_active_trail.start_decay() # trail decay tween start
+		bolt_trail_active = false
 
 
+var current_active_trail: Line2D
+
+		
+func spawn_new_trail():
+	
+	var new_bolt_trail: Object
+	new_bolt_trail = BoltTrail.instance()
+	new_bolt_trail.modulate.a = bolt_trail_alpha
+	new_bolt_trail.z_index = z_index + Set.trail_z_index
+	Ref.node_creation_parent.add_child(new_bolt_trail)
+	
+	bolt_trail_active = true	
+	
+	return new_bolt_trail
+	
+	
+func manage_trail():
+	# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
+	if velocity.length() > 0:
+		
+		current_active_trail.add_points(global_position)
+		current_active_trail.gradient.colors[1] = trail_pseudodecay_color
+		
+		if velocity.length() > stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
+			# če se premikam in se je tril že začel skrivat ga prikažem
+			var trail_grad = get_tree().create_tween()
+			trail_grad.tween_property(current_active_trail, "modulate:a", bolt_trail_alpha, 0.5)
+		else:
+			# če grem počasi ga skrijem
+			var trail_grad = get_tree().create_tween()
+			trail_grad.tween_property(current_active_trail, "modulate:a", 0, 0.5)
+	# če sem pri mirua deaktiviram trail ... ob ponovnem premiku se kreira nova 
+	else:
+		current_active_trail.start_decay() # trail decay tween start
+		bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena	
+			
 func motion_fx():
 	
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
 	
+	# zadnji motor
 	if fwd_motion:
 		engine_particles_rear.modulate.a = velocity.length()/50
 		engine_particles_rear.set_emitting(true)
@@ -182,12 +223,9 @@ func motion_fx():
 		
 		# spawn trail if not active
 		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
-			new_bolt_trail = BoltTrail.instance()
-			new_bolt_trail.modulate.a = bolt_trail_alpha
-			new_bolt_trail.z_index = z_index + Set.trail_z_index
-			Ref.node_creation_parent.add_child(new_bolt_trail)
-			bolt_trail_active = true 
-			
+			current_active_trail = spawn_new_trail()
+	
+		
 	elif rev_motion:
 		engine_particles_front_left.modulate.a = velocity.length()/10
 		engine_particles_front_left.set_emitting(true)
@@ -200,32 +238,11 @@ func motion_fx():
 		
 		# spawn trail if not active
 		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
-			new_bolt_trail = BoltTrail.instance()
-			new_bolt_trail.modulate.a = bolt_trail_alpha
-			new_bolt_trail.z_index = z_index + Set.trail_z_index
-			Ref.node_creation_parent.add_child(new_bolt_trail)
-			bolt_trail_active = true 
+			current_active_trail = spawn_new_trail()
 
 	# manage trail
 	if bolt_trail_active:
-		# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
-		if velocity.length() > 0:
-			
-			new_bolt_trail.add_points(global_position)
-			new_bolt_trail.gradient.colors[1] = trail_pseudodecay_color
-			
-			if velocity.length() > stop_speed and new_bolt_trail.modulate.a < bolt_trail_alpha:
-				# če se premikam in se je tril že začel skrivat ga prikažem
-				var trail_grad = get_tree().create_tween()
-				trail_grad.tween_property(new_bolt_trail, "modulate:a", bolt_trail_alpha, 0.5)
-			else:
-				# če grem počasi ga skrijem
-				var trail_grad = get_tree().create_tween()
-				trail_grad.tween_property(new_bolt_trail, "modulate:a", 0, 0.5)
-		# če sem pri mirua deaktiviram trail ... ob ponovnem premiku se kreira nova 
-		else:
-			new_bolt_trail.start_decay() # trail decay tween start
-			bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
+		manage_trail()
 
 	# engine transparency
 	if velocity.length() < 100:
@@ -518,7 +535,7 @@ func lose_life():
 	
 	# ugasni tejl
 	if bolt_trail_active:
-		new_bolt_trail.start_decay() # trail decay tween start
+		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false
 	
 	# "ugasni" motorje

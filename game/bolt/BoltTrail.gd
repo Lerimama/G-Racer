@@ -9,7 +9,7 @@ var point_aging_speed: int = 5
 var point_aging_limit: int = 7 # kontrola koliko stare pike odstranimo
 
 # trail decay
-var decay_time: float = 0.5 # time to disapear
+var decay_time: float = 1 # time to disapear
 var points_count_before: int
 var points_count_after: int
 var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
