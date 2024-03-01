@@ -2,11 +2,12 @@ extends Camera2D
 
 
 #var is_following: bool = true
-var follow_target: Node
+var follow_target: Node = null setget _on_follow_target_change
 
 onready var test_ui = $TestUI
 
 func _ready():
+	
 	print("KAMERA")
 	Ref.current_camera = self
 	set_camera_limits()
@@ -14,11 +15,23 @@ func _ready():
 
 func _process(delta: float) -> void:
 	
-#	screen_area.global_position = get_camera_screen_center()
-	
 	if follow_target:
 		position = follow_target.global_position
+
+
+var in_transition: bool = false
+
+func _on_follow_target_change(new_follow_target):
+	set_follow_smoothing(3)
+#	follow_target = null
+#	var target_transition = get_tree().create_tween()
+#	target_transition.tween_property(self, "position", new_follow_target.global_position, 1)
+#	yield(get_tree().create_timer(1), "timeout")
+#	smoothing_speed = 3
+	follow_target = new_follow_target
 	
+
+
 	
 func shake_camera(shake_power: float):
 	# time, power in nivo popuščanja

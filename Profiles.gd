@@ -57,20 +57,32 @@ var current_bolt_type
 
 var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
-#	"basic": {
 		"bolt_texture": preload("res://assets/bolt/bolt_basic.png"),
+		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
+		"on_hit_disabled_time": 1.5,
+		"shield_loops_limit": 3,
+		# orig
 		"fwd_engine_power": 300, # 1 - 500 konjev 
 		"rev_engine_power": 150, # 1 - 500 konjev 
 		"turn_angle": 15, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
-		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
 		"side_traction": 0.05, # 0 - 1
 		"bounce_size": 0.3, # 0 - 1 
 		"inertia": 5, # kg
-		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
-		"on_hit_disabled_time": 1.5,
-		"shield_loops_limit": 3,
-		# "bolt_trail_alpha": 0.05, ... ne dela ... trail je prozoren
+		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
+		"drag_force_quo": 100.0, # večji pomeni nižjo drag force
+		"drag_force_quo_gravel": 25.0, 
+		"drag_force_quo_hole": 5.0,
+		"drag_force_quo_nitro": 1000.0,
+		# v1
+#		"fwd_engine_power": 300, # 1 - 500 konjev 
+#		"rev_engine_power": 150, # 1 - 500 konjev 
+#		"turn_angle": 15, # deg per frame
+#		"free_rotation_multiplier": 15, # rotacija kadar miruje
+#		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
+#		"side_traction": 0.05, # 0 - 1
+#		"bounce_size": 0.3, # 0 - 1 
+#		"inertia": 5, # kg
 		},
 }
 
@@ -148,6 +160,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"bullet_count" : 30,
 	"misile_count" : 5,
 	"shocker_count" : 5,
+	"gas_count" : 5,
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti

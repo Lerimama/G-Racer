@@ -34,15 +34,15 @@ margin_bottom = 121.0
 
 [node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
 margin_left = 8.0
-margin_top = 245.0
+margin_top = 229.0
 margin_right = 48.0
-margin_bottom = 361.0
+margin_bottom = 345.0
 
 [node name="StatLineRacer4" parent="." instance=ExtResource( 5 )]
 margin_left = 598.0
-margin_top = 245.0
+margin_top = 229.0
 margin_right = 638.0
-margin_bottom = 361.0
+margin_bottom = 345.0
 
 [node name="GameStats" type="HBoxContainer" parent="."]
 margin_left = 189.0

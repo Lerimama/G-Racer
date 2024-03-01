@@ -24,6 +24,7 @@ func draw_racing_line():
 
 
 func _on_NavigationAgent2D_path_changed() -> void:
+	return
 	emit_signal("racing_line_changed", navigation_agent.get_nav_path())
 	printt("path", navigation_agent.get_nav_path().size())
 	

@@ -61,6 +61,7 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		},
 	Levels.NITRO: {
+#		"level_path": "res://game/levels/LevelNitroOne.tscn",
 		"level_path": "res://game/levels/LevelNitro.tscn",
 		} 
 }

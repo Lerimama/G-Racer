@@ -23,6 +23,10 @@ var shoot_shocker_action # = controller_actions["shoot_shocker_action"]
 
 onready var controller_profiles: Dictionary = Pro.default_controller_actions
 
+# NEU
+var player_active: bool = false
+
+
 func _ready() -> void:
 	
 	# player setup
@@ -47,14 +51,32 @@ func _ready() -> void:
 	shoot_misile_action = controller_actions["shoot_misile_action"]
 	shoot_shocker_action = controller_actions["shoot_shocker_action"]
 
-
+func get_gas_usage():
+#	printt("ACC", velocity.length())
+#	if engine_power > 0:
+	gas_count -= 0.1
+	gas_count = clamp(gas_count,0, gas_count)
+	emit_signal("stat_changed", bolt_owner, "gas_count", gas_count) # do GMa
+	
+	
 func _input(event: InputEvent) -> void:
+	
+	get_gas_usage()
+	
+	if not bolt_active:
+		return
+
 	
 	if control_enabled:
 		
 		# move
 		if Input.is_action_pressed(fwd_action):
 			engine_power = fwd_engine_power
+#			get_gas_usage()
+#			if acceleration.length() > 0:
+#				gas_count -= 1
+#				emit_signal("stat_changed", bolt_owner, "gas_count", gas_count) # do GMa
+#			acceleration.length() > 0:
 			# motion state
 			fwd_motion = true
 			# off
@@ -108,8 +130,16 @@ func reset_bolt():
 	pass
 
 
+func out_of_gas():
+	fwd_engine_power = 0
+	engine_power = 0
+	
+	
+	
 func pull_bolt_on_screen(pull_position: Vector2):
 	
+	if not gas_count > 0:
+		return
 #	global_position = pull_position	
 #	set_deferred("bolt_collision.disabled", true) # na priporočilo
 #	set_deferred("shield_collision", true) # na priporočilo

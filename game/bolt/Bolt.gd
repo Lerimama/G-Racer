@@ -40,7 +40,6 @@ var bolt_trail_active: bool = false # če je je aktivna, je ravno spawnana, če 
 var bolt_trail_alpha = 0.05
 
 # engine
-var max_engine_power = 0 # ob štartu je noga z gasa
 var engine_power = 0 # ob štartu je noga z gasa
 var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
@@ -71,6 +70,7 @@ onready var Misile: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://game/weapons/Shocker.tscn")
 
 # bolt stats
+onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
 onready var energy: float = Pro.default_bolt_stats["energy"]
 onready var max_energy: float = Pro.default_bolt_stats["energy"] # zato, da se lahko resetira
 onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
@@ -85,7 +85,9 @@ onready var player_wins: int = Pro.default_player_stats["player_wins"]
 # bolt profil
 onready var bolt_type: int = Pro.BoltTypes.BASIC
 onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
+onready var default_fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
+onready var default_rev_engine_power: int = Pro.bolt_profiles[bolt_type]["rev_engine_power"]
 onready var rev_engine_power: int = Pro.bolt_profiles[bolt_type]["rev_engine_power"]
 onready var turn_angle: int = Pro.bolt_profiles[bolt_type]["turn_angle"] # deg per frame
 onready var free_rotation_multiplier: int = Pro.bolt_profiles[bolt_type]["free_rotation_multiplier"] # rotacija kadar miruje
@@ -97,7 +99,7 @@ onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability
 onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
 
 #NEU
-
+var bolt_active: bool = false
 
 func _ready() -> void:
 
@@ -117,39 +119,42 @@ func _ready() -> void:
 	
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
-	
 	energy_bar_holder.hide()
 	
+	
+var drag_force_quo: float = 100 # vpliva na pospešek oz. pojemek (rast upora glede na hitrost)
 
 func _physics_process(delta: float) -> void:
-	
 	# fwd motion se seta v kontrolerjih
 	# aktivacija pospeška je setana na kotrolerju
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
-	
-	
-	# pospešek omejim z uporom
-	var drag_force = drag * velocity * velocity.length() / 100 # množenje z velocity nam da obliko vektorja ... 100 je za dapatacijo višine inputa
-	acceleration -= drag_force
-	
-	# "hitrost" je pospešek s časom
-	velocity += acceleration * delta	
 
+	var drag_force = drag * velocity * velocity.length() / drag_force_quo # množenje z velocity nam da obliko vektorja
+	
+	# če zmanjka bencina je deaktiviran, povečam drag in ga postopoma ustavim
+	if not bolt_active:
+		drag_force_quo = lerp(drag_force_quo, 1, 0.05)
+		printt("drag", drag_force)
+	else: 	
+		if gas_count <= 0:
+			bolt_active = false
+			
+	
+	acceleration -= drag_force
+		
+	# "hitrost" je pospešek s časom
+	velocity += acceleration * delta
 	rotation_angle = rotation_dir * deg2rad(turn_angle)
-#	if velocity.length() < stop_speed: 
-#		rotate(delta * rotation_angle * free_rotation_multiplier)
-#	else: 
-#		rotate(delta * rotation_angle)
 	
 	rotate(delta * rotation_angle)
 	steering(delta)	# vpliva na ai !!!
-
+	
 	collision = move_and_collide(velocity * delta, false)
 
 	if collision:
 		on_collision()	
-			
+				
 	motion_fx()
 	update_energy_bar()
 	
@@ -210,6 +215,7 @@ func manage_trail():
 	else:
 		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena	
+	
 			
 func motion_fx():
 	
@@ -528,7 +534,7 @@ func item_picked(pickable_type_key: String):
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
 			item_picked(random_pickable_key) # pick selected
 			
-			
+
 func lose_life():
 	
 	# shake camera
@@ -574,6 +580,13 @@ func lose_life():
 #	queue_free()		
 
 
+# DRIVING ----------------------------------------------------------------------------
+
+func is_on_gravel():
+	
+	pass
+	
+	
 # SIGNALS ----------------------------------------------------------------------------
 
 		

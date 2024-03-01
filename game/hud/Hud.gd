@@ -97,24 +97,22 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
 	match stat_name:
 		# value se preračun na plejerju
+		# player stats
 		"player_points":
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
 		"player_life": 
-			# value se preračuna na plejerju
 			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
-#			stat_line_to_change.stat_life2.current_stat_value = new_stat_value # setget
 		"player_wins": 
-			# value se preračuna na plejerju
 			stat_line_to_change.stat_wins.current_stat_value = new_stat_value # setget
+		# bolt stats
 		"bullet_count": 
-			# value se preračuna v plejerju
 			stat_line_to_change.stat_bullet.current_stat_value = new_stat_value # setget
 		"misile_count": 
-			# value se preračuna v plejerju
 			stat_line_to_change.stat_misile.current_stat_value = new_stat_value # setget
 		"shocker_count": 
-			# value se preračuna v plejerju
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
+		"gas_count":
+			stat_line_to_change.stat_gas.current_stat_value = new_stat_value # setget
 
 	
 func _on_new_bolt_spawned(bolt_index, player_id):
@@ -145,13 +143,15 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 	current_stat_line.stat_line_color = player_profiles[player_id]["player_color"]
 	current_stat_line.stat_name.text = player_profiles[player_id]["player_name"]
 	
+	# bolt stats
 	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
 	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
-
+	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
+	
+	# player stats
 	current_stat_line.stat_points.current_stat_value = player_stats["player_points"]
 	current_stat_line.stat_life.current_stat_value = player_stats["player_life"]
-#	current_stat_line.stat_life2.current_stat_value = driver_stats["driver_life"]
 	current_stat_line.stat_wins.current_stat_value = player_stats["player_wins"]
 	
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene

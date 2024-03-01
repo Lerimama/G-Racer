@@ -108,7 +108,7 @@ func _ready() -> void:
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
 	spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, player1_id, 1)	
-#	spawn_bolt(enemy_bolt, bolt_spawn_positions[2].global_position, enemy_id, 5)
+	spawn_bolt(enemy_bolt, bolt_spawn_positions[2].global_position, enemy_id, 5)
 	spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, player2_id, 2)	
 
 
@@ -203,6 +203,7 @@ func start_game():
 
 	for bolt in bolts_in_game:
 		bolt.set_physics_process(true)
+		bolt.bolt_active = true
 #		Ref.sound_manager.play_music("game_music")
 
 	if Ref.hud:
@@ -258,9 +259,10 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 	var new_bolt = bolt.instance()
 	new_bolt.bolt_owner = spawned_player_id
 	new_bolt.global_position = spawned_position
+	new_bolt.rotation_degrees = -90
 	Ref.node_creation_parent.add_child(new_bolt)
 
-	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
+#	new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
 	
 	# če je plejer komp mu pošljem navigation area
 	if new_bolt is Enemy:
@@ -333,7 +335,9 @@ func rank_bolts():
 	position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
 	position_indikator.modulate = leading_player.bolt_color
 	
-	Ref.current_camera.follow_target = leading_player
+	
+	if not Ref.current_camera.follow_target == leading_player:
+		Ref.current_camera.follow_target = leading_player
 
 
 func sort_ascending(array_1, array_2):
