@@ -50,8 +50,9 @@ var default_game_settings: Dictionary = {
 	"ghost_brick_points": 30,
 	"bouncer_brick_points": 10,
 	"magnet_brick_points": -1,
-	"area_tracking_value": 1, # 100%
-	"area_nitro_value": 700,
+	"area_tracking_value": 1, # 1 = 100%
+	"pull_penalty_gas": -200,
+#	"area_nitro_value": 700,
 }
 
 enum Levels {TRAINING, NITRO}
@@ -89,7 +90,7 @@ func set_game_settings(selected_level) -> void:
 	match selected_level:
 		Levels.TRAINING: 
 			current_level_settings = level_settings[Levels.TRAINING]
-			current_game_settings["area_nitro_value"] = 0
+#			current_game_settings["area_nitro_value"] = 0
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
 

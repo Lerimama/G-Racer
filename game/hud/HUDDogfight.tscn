@@ -6,7 +6,7 @@
 [ext_resource path="res://game/hud/GameStart.gd" type="Script" id=6]
 [ext_resource path="res://game/hud/StatLine.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/hud/GameTime.tscn" type="PackedScene" id=8]
-[ext_resource path="res://game/hud/Hud_orig.gd" type="Script" id=9]
+[ext_resource path="res://_obs/Hud_orig.gd" type="Script" id=9]
 
 [sub_resource type="DynamicFontData" id=773]
 font_path = "res://assets/fonts/Gamer.ttf"

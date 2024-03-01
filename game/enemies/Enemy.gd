@@ -4,7 +4,7 @@ class_name Enemy
 signal path_changed (path)
 # signal target_reached
 
-var player_id: String = "E1" # drugače ga pošlje spawner
+var player_id: String # = "E1" # drugače ga pošlje spawner
 var player_profile: Dictionary
 
 # idle
@@ -15,7 +15,7 @@ var idle_target_max_distance: float = 200
 var idle_target_min_distance: float = 100
 var idle_target_set: bool #  =  false
 
-# battle
+# battle AI
 var min_attacking_distance: float = 50
 var max_attacking_distance: float = 350 # znotraj dometa rakete
 var locked_on_target: bool
@@ -64,8 +64,10 @@ func _ready() -> void:
 	
 	
 func set_motion_states():
+	
 	if velocity.length() > stop_speed:
-		fwd_motion = true # bolt var
+		current_motion_state = MotionStates.FWD
+#		fwd_motion = true # bolt var
 
 
 func _physics_process(delta: float) -> void:
@@ -81,7 +83,8 @@ func _physics_process(delta: float) -> void:
 #	var drag_force = drag * velocity * velocity.length() / 100 # množenje z velocity nam da obliko vektorja
 #	acceleration -= drag_force
 
-	if control_enabled:
+#	if control_enabled:
+	if bolt_active:
 #		velocity += acceleration * delta
 		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
 
@@ -102,7 +105,8 @@ func _physics_process(delta: float) -> void:
 
 func vision(delta: float):
 	
-	if control_enabled:
+#	if control_enabled:
+	if bolt_active:
 		
 		# čekiraj ovire pred sabo
 		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost
@@ -128,7 +132,8 @@ func vision(delta: float):
 				seek_rotation_speed *= -1
 				
 	# reset vision ray
-	elif not control_enabled:
+	elif not bolt_active:
+#	elif not control_enabled:
 		seek_ray.rotation = 0
 
 

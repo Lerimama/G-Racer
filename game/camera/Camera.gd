@@ -1,10 +1,14 @@
 extends Camera2D
 
 
-#var is_following: bool = true
 var follow_target: Node = null setget _on_follow_target_change
 
+var bolt_explosion_shake = 0
+var bullet_hit_shake = 0.02
+var misile_hit_shake = 0.05
+
 onready var test_ui = $TestUI
+
 
 func _ready():
 	
@@ -19,15 +23,8 @@ func _process(delta: float) -> void:
 		position = follow_target.global_position
 
 
-var in_transition: bool = false
-
 func _on_follow_target_change(new_follow_target):
 	set_follow_smoothing(3)
-#	follow_target = null
-#	var target_transition = get_tree().create_tween()
-#	target_transition.tween_property(self, "position", new_follow_target.global_position, 1)
-#	yield(get_tree().create_timer(1), "timeout")
-#	smoothing_speed = 3
 	follow_target = new_follow_target
 	
 
@@ -38,19 +35,9 @@ func shake_camera(shake_power: float):
 	
 	test_ui.add_trauma(shake_power)
 	
-#	offset.x = test_ui.noise.get_noise_3d(test_ui.time * test_ui.time_scale, 0, 0) * test_ui.max_horizontal * shake_power
-#	offset.y = test_ui.noise.get_noise_3d(0, test_ui.time * test_ui.time_scale, 0) * test_ui.max_vertical * shake_power
-#	rotation_degrees = test_ui.noise.get_noise_3d(0, 0, test_ui.time * test_ui.time_scale) * test_ui.max_rotation * shake_power	
-
-# limits
-onready var screen_area: Area2D = $ScreenArea
-
-
-
 
 func set_camera_limits():
 	
-#	var tilemap_edge: Rect2 = Ref.current_tilemap.get_used_rect()
 	var tilemap_edge: Rect2 = Ref.current_level.tilemap_edge.get_used_rect()
 	
 	var corner_TL: float
@@ -67,22 +54,7 @@ func set_camera_limits():
 	if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
 		return	
 
-	# printt("edge tile", corner_TL, corner_TR, corner_BL, corner_BR)
-	# printt("limit", limit_left, limit_right, limit_top, limit_bottom)
 	limit_left = corner_TL
 	limit_right = corner_TR
 	limit_top = corner_BL
 	limit_bottom = corner_BR
-	
-
-
-func _on_ScreenArea_body_entered(body: Node) -> void:
-#	if body is Player:
-#		body.modulate = Color.white # ne spremeni barve bolta
-	pass # Replace with function body.
-
-func _on_ScreenArea_body_exited(body: Node) -> void:
-	
-#	if body is Player:
-#		body.modulate = Color.red
-	pass # Replace with function body.

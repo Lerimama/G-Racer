@@ -17,14 +17,9 @@ export(float, 0, 1) var add_trauma = 0.2
 
 # battle shake
 var shake_on: bool = false
-#export (float, 0, 1) var bolt_explosion_shake = 0.5 # explosion add_trauma
-#export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
-#export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
-export (float, 0, 1) var bolt_explosion_shake = 0
-export (float, 0, 1) var bullet_hit_shake = 0
-export (float, 0, 1) var misile_hit_shake = 0
-
-
+export (float, 0, 1) var bolt_explosion_shake = 0.5 # explosion add_trauma
+export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
+export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
 
 var time: float = 0
 var test_view_on = false

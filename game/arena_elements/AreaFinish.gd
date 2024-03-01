@@ -5,7 +5,6 @@ func _on_AreaFinish_body_entered(body: Node) -> void:
 	
 	if body is Bolt:
 		body.modulate = Color.red
-#		body.engine_power = Set.default_game_settings["area_nitro_value"] # fwd_engine_power ostaja isto močen in ima spet efekt ko ni nitro zoni
 	
 
 func _on_AreaFinish_body_exited(body: Node) -> void:

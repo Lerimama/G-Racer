@@ -5,48 +5,44 @@ extends Node
 
 var pickable_profiles: Dictionary = {
 	# imena so ista kot enum ključi v pickables
+	
 	"BULLET": { # BULLET
-#		"path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"),
 		"pickable_value": 20,
 		"pickable_time": 0, # sekunde
 	},
 	"MISILE": { # MISILE
-#		"path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
 		"pickable_value": 2,
 		"pickable_time": 0, # sekunde
 	}, 
 	"SHOCKER": { # SHOCKER
-#		"path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 		"pickable_value": 3,
 		"pickable_time": 10, # sekunde
 	}, 
 	"SHIELD": { # SHIELD
-#		"path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 	},
 	"ENERGY": { # ENERGY
-#		"path": preload("res://game/arena_elements/pickables/PickableEnergy.tscn"),
 		"pickable_value": 0,
 		"pickable_time": 0, # sekunde
 	},
+	"GAS": { # GAS
+		"pickable_value": 200,
+		"pickable_time": 0, # sekunde
+	},
 	"LIFE": { # LIFE
-#		"path": preload("res://game/arena_elements/pickables/PickableLife.tscn"),
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 	},
 	"NITRO": { # NITRO
-#		"path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
 		"pickable_value": 700,
 		"pickable_time": 10, # sekunde
 	},
 	"TRACKING": { # TRACKING
-#		"path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 		"pickable_value": 0.7,
 		"pickable_time": 10, # sekunde
 	},
 	"RANDOM": { # RANDOM
-#		"path": preload("res://game/arena_elements/pickables/PickableRandom.tscn"),
 		"pickable_value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
 	},
@@ -74,6 +70,8 @@ var bolt_profiles: Dictionary = {
 		"drag_force_quo_gravel": 25.0, 
 		"drag_force_quo_hole": 5.0,
 		"drag_force_quo_nitro": 1000.0,
+		"fwd_gas_usage": -0.1, # per fram
+		"rev_gas_usage": -0.05, # per fram
 		# v1
 #		"fwd_engine_power": 300, # 1 - 500 konjev 
 #		"rev_engine_power": 150, # 1 - 500 konjev 
@@ -160,7 +158,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"bullet_count" : 30,
 	"misile_count" : 5,
 	"shocker_count" : 5,
-	"gas_count" : 5,
+	"gas_count" : 50,
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti

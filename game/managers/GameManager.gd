@@ -1,21 +1,6 @@
 extends Node
 
 
-## ---------------------------------------------------------------------------------------------
-## 
-## KAJ DOGAJA
-## - spawna plejerje in druge entitete v areni
-## - spavna levele
-## - uravnava potek igre (uvaljevlja pravila)
-## - je centralna baza za vso statistiko igre
-## - povezava med igro in HUDom
-##
-## KAJ NE ...
-## - nima povezave z izgradnjo levela
-## 
-## ---------------------------------------------------------------------------------------------
-
-
 signal stat_change_received (player_index, changed_stat, stat_new_value)
 signal new_bolt_spawned # (name, ...)
 
@@ -27,34 +12,28 @@ var player2_id = Pro.Players.P2
 var player3_id = Pro.Players.P3
 var player4_id = Pro.Players.P4
 var enemy_id = Pro.Players.ENEMY
+var spawned_bolt_index: int = 0
+var bolt_spawn_positions: Array # dobi od tilemapa
+var leading_player: KinematicBody2D # trenutno vodilni igralec
 
 var bolts_in_game: Array
-var spawned_bolt_index: int = 0
-
 var pickables_in_game: Array
-var available_pickable_positions: Array
 
-onready var player1_profile = Pro.default_player_profiles[Pro.Players.P1]
-onready var player2_profile = Pro.default_player_profiles[Pro.Players.P2]
-onready var player3_profile = Pro.default_player_profiles[Pro.Players.P3]
-onready var player4_profile = Pro.default_player_profiles[Pro.Players.P4]
-onready var enemy_profile = Pro.default_player_profiles[Pro.Players.ENEMY]
+# level
+#onready var tilemap_floor_cells: Array
+var navigation_area: Array # vsi navigation tileti
+var navigation_positions: Array # pozicije vseh navigation tiletov
+var current_racing_line: Array # linija za ranking (array točk oz. pozicij)
 
-onready var tilemap_floor_cells: Array
 onready var navigation_line: Line2D = $"../NavigationPath"
-#onready var enemy: KinematicBody2D = $"../Enemy"
-
+onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
+onready var game_settings: Dictionary = Set.current_game_settings # ga med igro ne spreminjaš
 onready var player_bolt = preload("res://game/player/Player.tscn")
 onready var enemy_bolt = preload("res://game/enemies/Enemy.tscn")
 
-#NEU
-onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
-onready var game_settings: Dictionary = Set.current_game_settings # ga med igro ne spreminjaš
-var switch_camera_follow_count: int = 0
-var bolt_spawn_positions: Array # dobi od tilemapa
-var navigation_area: Array # vsi navigation tileti od tilemapa
-var navigation_positions: Array # vsi navigation tileti od tilemapa
-var current_racing_line: Array # linija za ranking (array točk oz. pozicij)
+# temp
+var position_indikator: Node2D	# debug
+var available_pickable_positions: Array
 
 
 func _input(event: InputEvent) -> void:
@@ -65,13 +44,6 @@ func _input(event: InputEvent) -> void:
 		game_over(0)	
 	if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
 		pass
-#		printt ("RL", bolts_on_racing_line)
-		
-#		switch_camera_follow_count += 1
-#		if switch_camera_follow_count > bolts_in_game.size() - 1:
-#			switch_camera_follow_count = 0
-#		Ref.current_camera.follow_target = bolts_in_game[switch_camera_follow_count]
-	
 		
 	if not game_on and bolts_in_game.size() <= 4:
 		if Input.is_key_pressed(KEY_1):
@@ -98,17 +70,15 @@ func _input(event: InputEvent) -> void:
 			spawn_bolt(enemy_bolt, bolt_spawn_positions[1].global_position, enemy_id, 5)
 
 
-
 func _ready() -> void:
-	
 	
 	Ref.game_manager = self	
 	printt("Game Manager")
 	
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
+#	spawn_bolt(enemy_bolt, bolt_spawn_positions[2].global_position, enemy_id, 5)
 	spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, player1_id, 1)	
-	spawn_bolt(enemy_bolt, bolt_spawn_positions[2].global_position, enemy_id, 5)
 	spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, player2_id, 2)	
 
 
@@ -117,15 +87,8 @@ func _process(delta: float) -> void:
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickups)	
 
-	if game_on:
+	if game_on:# and Set.selected_level == Set.Levels.NITRO:
 		rank_bolts()
-		# čekiram ranking na progi ... ta del hgre v navigacijo
-
-				
-var position_indikator: Node2D	
-
-
-
 	
 	
 func set_level():
@@ -148,27 +111,15 @@ func set_level():
 	
 	
 func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
-#	printt("level is set", spawn_positions.size(), tilemap_navigation_cells.size())
 	
 	bolt_spawn_positions = spawn_positions
 	navigation_area = tilemap_navigation_cells
 	navigation_positions = tilemap_navigation_cells_positions
-	
 	current_racing_line = Ref.current_level.racing_line.draw_racing_line()
-	
 	position_indikator = Met.spawn_indikator(bolt_spawn_positions[0].global_position, 0)
-	
-	for point in current_racing_line:
-#		printt ("ind", current_racing_line.find(point))
-		pass
-		
-	
-	printt (bolt_spawn_positions.size(), navigation_area.size())	
-	pass
 	
 
 func set_game():
-
 	# kliče main.gd pred prikazom igre
 	# set_game_view()
 	# set_players() # da je plejer viden že na fejdin
@@ -198,7 +149,6 @@ func set_game():
 	start_game()
 
 
-
 func start_game():
 
 	for bolt in bolts_in_game:
@@ -217,25 +167,25 @@ func game_over(gameover_reason: int):
 		return
 	game_on = false
 
-#	Global.hud.game_timer.stop_timer()
-#
-#	if gameover_reason == GameoverReason.CLEANED:
-#		all_strays_died_alowed = true
-#		yield(self, "all_strays_died")
-#		var signaling_player: KinematicBody2D
-#		for player in get_tree().get_nodes_in_group(Global.group_players):
-#			player.all_cleaned()
-#			signaling_player = player # da se zgodi na obeh plejerjih istočasno
-#		yield(signaling_player, "rewarded_on_game_over") # počakam, da je nagrajen
-#
-#	get_tree().call_group(Global.group_players, "set_physics_process", false)
-#
-#	yield(get_tree().create_timer(1), "timeout") # za dojet
-#
-#	stop_game_elements()
-#	Global.gameover_menu.open_gameover(gameover_reason)
-	
-#	if Ref.game_hud != null:
+	#	Global.hud.game_timer.stop_timer()
+	#
+	#	if gameover_reason == GameoverReason.CLEANED:
+	#		all_strays_died_alowed = true
+	#		yield(self, "all_strays_died")
+	#		var signaling_player: KinematicBody2D
+	#		for player in get_tree().get_nodes_in_group(Global.group_players):
+	#			player.all_cleaned()
+	#			signaling_player = player # da se zgodi na obeh plejerjih istočasno
+	#		yield(signaling_player, "rewarded_on_game_over") # počakam, da je nagrajen
+	#
+	#	get_tree().call_group(Global.group_players, "set_physics_process", false)
+	#
+	#	yield(get_tree().create_timer(1), "timeout") # za dojet
+	#
+	#	stop_game_elements()
+	#	Global.gameover_menu.open_gameover(gameover_reason)
+		
+	#	if Ref.game_hud != null:
 	if Ref.hud:
 		Ref.hud.on_game_over()
 	
@@ -267,7 +217,6 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 	# če je plejer komp mu pošljem navigation area
 	if new_bolt is Enemy:
 		new_bolt.navigation_cells = navigation_area
-#		new_bolt.navigation_cells = tilemap_floor_cells
 		# prikaz nav linije
 		new_bolt.connect("path_changed", self, "_on_Enemy_path_changed")
 	else:
@@ -282,8 +231,7 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 
 
 func spawn_pickable():
-
-
+	
 	# uteži
 	if not available_pickable_positions.empty():
 
@@ -296,8 +244,8 @@ func spawn_pickable():
 		var selected_pickable_path = pickables_dict[selected_pickable_index]["path"]
 
 		# žrebanje pozicije
-		var selected_cell_index: int = Met.get_random_member_index(tilemap_floor_cells)
-		var selected_cell_position = tilemap_floor_cells[selected_cell_index]
+		var selected_cell_index: int = Met.get_random_member_index(navigation_area)
+		var selected_cell_position = navigation_area[selected_cell_index]
 
 		# spawn
 		var new_pickable = selected_pickable_path.instance()
@@ -307,7 +255,6 @@ func spawn_pickable():
 		# odstranim celico iz arraya
 		available_pickable_positions.remove(selected_cell_index)		
 
-var leading_player: KinematicBody2D
 
 func rank_bolts():
 	# najbližje točke vseh boltov primerjam (po indexu v racing liniji) 
@@ -318,7 +265,6 @@ func rank_bolts():
 	var leading_bolt_on_racing_line: Array = all_bolts_on_racing_line[0]
 	var leading_racing_point_index: int = leading_bolt_on_racing_line[1]
 	var leading_bolt: KinematicBody2D = leading_bolt_on_racing_line[0]
-#	printt("leading", leading_bolt)
 	
 	# samo plejerji
 	var players_on_racing_line: Array
@@ -328,7 +274,6 @@ func rank_bolts():
 	var leading_player_on_racing_line: Array = players_on_racing_line[0] # players_on_racing_line so že rangirani zato je 0 prvi
 	leading_player = leading_player_on_racing_line[0]
 	var leading_player_racing_point_index: int = leading_player_on_racing_line[1]
-#	printt("leading_players", leading_player)
 	
 	# posledice	
 	position_indikator.scale = Vector2(3,3)
@@ -379,7 +324,6 @@ func get_racing_line_distances():
 		bolts_on_racing_line.append(bolt_on_racing_line)
 	
 	return bolts_on_racing_line
-				
 				
 					
 func check_neighbour_cells(cell_grid_position, area_span):
@@ -436,8 +380,5 @@ func _on_ScreenArea_body_exited(body: Node) -> void:
 		body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
 
 
-
 func _on_ScreenArea_body_entered(body: Node) -> void:
 	pass
-#	if body is Player:
-#		body.modulate = Color.white

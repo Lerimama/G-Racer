@@ -1,21 +1,17 @@
 extends Node
 
+
 var current_level = null
 var node_creation_parent = null
-var effects_creation_parent = null
 var current_camera = null
 var game_manager = null
 var hud = null
 var sound_manager = null
 var data_manager = null
 var main_node = null
+#var effects_creation_parent = null
 #var game_timer = null
 #var start_countdown = null
-
-#var ppp1 = null
-#var ppp2 = null
-#var ppp3 = null
-#var ppp4 = null
 
 var group_players =  "Players"
 var group_enemies =  "Enemies"

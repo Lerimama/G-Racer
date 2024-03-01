@@ -2,7 +2,7 @@ extends Area2D
 class_name Pickable, "res://assets/class_icons/pickable_icon.png"
 
 
-enum Pickables {BULLET, MISILE, SHOCKER, SHIELD, ENERGY, LIFE, NITRO, TRACKING, RANDOM} # mešanje zaporedja meša izbrane tipe
+enum Pickables {BULLET, MISILE, SHOCKER, SHIELD, ENERGY, GAS, LIFE, NITRO, TRACKING, RANDOM} # mešanje zaporedja meša izbrane tipe
 export (Pickables) var pickable_type 
 
 var pickable_value: float # = 0 pobere iz profilov

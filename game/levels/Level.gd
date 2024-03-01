@@ -1,15 +1,11 @@
 extends Node2D
 
 
+signal level_is_set(navigation, spawn_positions, other_)
+
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
-
-# pozicije pobere GM
-onready var spawn_position_1: Position2D = $Positions/SpawnPosition1
-onready var spawn_position_2: Position2D = $Positions/SpawnPosition2
-onready var spawn_position_3: Position2D = $Positions/SpawnPosition3
-onready var spawn_position_4: Position2D = $Positions/SpawnPosition4
 
 onready var spawn_positions: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
@@ -26,15 +22,11 @@ func _ready() -> void:
 
 func get_tilemap_cells(tilemap: TileMap):
 
-#	var cell_count_x: float = tilemap.get_viewport_rect().size.x / tilemap.get_cell_size().x
-#	var cell_count_y: float = tilemap.get_viewport_rect().size.y / tilemap.get_cell_size().y
 	
 	var tilemap_cells: Array # celice v gridu
 	
 	for x in tilemap.get_used_rect().size.x:
 		for y in tilemap.get_used_rect().size.y:	
-#	for x in cell_count_x:
-#		for y in cell_count_y:	
 			var cell: Vector2 = Vector2(x, y)
 			tilemap_cells.append(cell)
 	
@@ -64,6 +56,7 @@ onready var pickable_shield: PackedScene = preload("res://game/arena_elements/pi
 onready var pickable_nitro: PackedScene = preload("res://game/arena_elements/pickables/PickableNitro.tscn")
 onready var pickable_tracking: PackedScene = preload("res://game/arena_elements/pickables/PickableTracking.tscn")
 onready var pickable_random: PackedScene = preload("res://game/arena_elements/pickables/PickableRandom.tscn")
+onready var pickable_gas: PackedScene = preload("res://game/arena_elements/pickables/PickableGas.tscn")
 
 
 func set_level_elements():
@@ -133,9 +126,9 @@ func set_level_elements():
 			22: # pickable random
 				spawn_element(cell_global_position, pickable_random, Vector2(9,8))
 				tilemap_elements.set_cellv(cell, -1)
-#			24: # area start
-#				spawn_element(cell_global_position, pickable_random, Vector2(9,8))
-#				tilemap_elements.set_cellv(cell, -1)
+			27: # pickable gas
+				spawn_element(cell_global_position, pickable_gas, Vector2(9,8))
+				tilemap_elements.set_cellv(cell, -1)
 
 
 func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):
@@ -178,13 +171,10 @@ func set_level_edge():
 #					tilemap_edge.set_cellv (cell, -1)
 #					break # ko je ena prazna, ne rabi več čekirat
 #		navigation_cell_index += 1
-		
 #	yield(get_tree().create_timer(0.1), "timeout")
 	
 	emit_signal("level_is_set", spawn_positions, navigation_cells, navigation_cells_positions)
-#	printt("level_is_set", spawn_positions, navigation_cells.size())
 
-signal level_is_set(navigation, spawn_positions, other_)
 
 
 # FLOOR --------------------------------------------------------------------------------------------------------------------------------

@@ -84,7 +84,7 @@ func spawn_viewport(vp_id, vp_scale, global_player):
 	print ("new_viewport_container: ", new_viewport_container.viewport_id, new_viewport_container.rect_scale )
 	
 	# follow player
-	$GameView/Viewport/Arena.camera_follow_target = global_player
+#	$GameView/Viewport/Arena.camera_follow_target = global_player
 	
 	pass
 	
