@@ -18,7 +18,7 @@ func _ready() -> void:
 "
 
 [sub_resource type="RectangleShape2D" id=772]
-extents = Vector2( 256, 116 )
+extents = Vector2( 319, 179 )
 
 [sub_resource type="StyleBoxFlat" id=773]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
@@ -54,10 +54,11 @@ z_index = 5
 script = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ScreenArea"]
-position = Vector2( -9.15527e-05, -0.000350952 )
+position = Vector2( 0, -5 )
 shape = SubResource( 772 )
 
 [node name="Panel" type="Panel" parent="ScreenArea"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -257.0

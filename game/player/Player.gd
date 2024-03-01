@@ -111,22 +111,32 @@ func reset_bolt():
 func pull_bolt_on_screen(pull_position: Vector2):
 	
 #	global_position = pull_position	
-	set_deferred("bolt_collision.disabled", true) # na priporočilo
-	set_deferred("shield_collision", true) # na priporočilo
+#	set_deferred("bolt_collision.disabled", true) # na priporočilo
+#	set_deferred("shield_collision", true) # na priporočilo
+	bolt_collision.disabled = true
 #	shield_collision.disabled = true
-	modulate.a = 0.7
+	shield_collision.disabled = true
 	
+	var pull_time: float = 0.2
 	# spawn particles
-	
 	var pull_tween = get_tree().create_tween()
-	pull_tween.tween_property(self, "global_position", pull_position, 0.15)
+	pull_tween.tween_property(self, "global_position", pull_position, pull_time).set_ease(Tween.EASE_OUT)
+	pull_tween.parallel().tween_property(self, "modulate:a", 0.2, pull_time/2).set_ease(Tween.EASE_OUT)
+	pull_tween.parallel().tween_property(self, "modulate:a", 1, pull_time/2).set_delay(pull_time/2).set_ease(Tween.EASE_IN)
+	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	
-	
+#	modulate.a = 0.1
+#	yield(get_tree().create_timer(0.2), "timeout")
+#	modulate.a = 0modulate.a = 0.2
+#	yield(get_tree().create_timer(0.2), "timeout")
+#	modulate.a = 0.2
+#	yield(get_tree().create_timer(0.2), "timeout")
+#	modulate.a = 1
 	
 	# bolt_to_pull.global_position += vector_to_pull_position			
 	
 	# posledice
-	modulate = Color.red
+#	modulate = Color.red
 
 	if bolt_trail_active:
 		current_active_trail.start_decay() # trail decay tween start

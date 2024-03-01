@@ -52,6 +52,7 @@ onready var brick_target: PackedScene = preload("res://game/arena_elements/Brick
 onready var brick_light: PackedScene = preload("res://game/arena_elements/BrickLight.tscn")
 onready var area_nitro: PackedScene = preload("res://game/arena_elements/AreaNitro.tscn")
 onready var area_tracking: PackedScene = preload("res://game/arena_elements/AreaTracking.tscn")
+onready var area_gravel: PackedScene = preload("res://game/arena_elements/AreaGravel.tscn")
 onready var area_finish: PackedScene = preload("res://game/arena_elements/AreaFinish.tscn")
 
 onready var pickable_energy: PackedScene = preload("res://game/arena_elements/pickables/PickableEnergy.tscn")
@@ -80,6 +81,7 @@ func set_level_elements():
 			6: # goal pillar
 				spawn_element(cell_global_position, goal_pillar, Vector2(13,12))
 				tilemap_elements.set_cellv(cell, -1)
+				
 			7: # brick ghost
 				spawn_element(cell_global_position, brick_ghost, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
@@ -95,10 +97,15 @@ func set_level_elements():
 			11: # brick light
 				spawn_element(cell_global_position, brick_light, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
+				
 			12: # area nitro
 				spawn_element(cell_global_position, area_nitro, Vector2(5,4))
 			13: # area magnet
-				spawn_element(cell_global_position, area_tracking, Vector2(5,4))
+				spawn_element(cell_global_position, area_gravel, Vector2(5,4))
+			23: # area finish
+				spawn_element(cell_global_position, area_finish, Vector2(9,8))
+				tilemap_elements.set_cellv(cell, -1)
+				
 			14: # pickable bullet
 				spawn_element(cell_global_position, pickable_bullet, Vector2(9,8))
 				tilemap_elements.set_cellv(cell, -1)
@@ -125,9 +132,6 @@ func set_level_elements():
 				tilemap_elements.set_cellv(cell, -1)
 			22: # pickable random
 				spawn_element(cell_global_position, pickable_random, Vector2(9,8))
-				tilemap_elements.set_cellv(cell, -1)
-			23: # area finish
-				spawn_element(cell_global_position, area_finish, Vector2(9,8))
 				tilemap_elements.set_cellv(cell, -1)
 #			24: # area start
 #				spawn_element(cell_global_position, pickable_random, Vector2(9,8))

@@ -108,7 +108,7 @@ func _ready() -> void:
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
 	spawn_bolt(player_bolt, bolt_spawn_positions[0].global_position, player1_id, 1)	
-	spawn_bolt(enemy_bolt, bolt_spawn_positions[2].global_position, enemy_id, 5)
+#	spawn_bolt(enemy_bolt, bolt_spawn_positions[2].global_position, enemy_id, 5)
 	spawn_bolt(player_bolt, bolt_spawn_positions[1].global_position, player2_id, 2)	
 
 
@@ -429,7 +429,7 @@ func _on_ScreenArea_body_exited(body: Node) -> void:
 	
 	if body is Player:
 		var bolt_pull_position = get_bolt_pull_position(body)
-		body.pull_bolt_on_screen(bolt_pull_position)
+		body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
 
 
 

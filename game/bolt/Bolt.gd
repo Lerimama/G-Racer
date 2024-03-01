@@ -40,6 +40,7 @@ var bolt_trail_active: bool = false # če je je aktivna, je ravno spawnana, če 
 var bolt_trail_alpha = 0.05
 
 # engine
+var max_engine_power = 0 # ob štartu je noga z gasa
 var engine_power = 0 # ob štartu je noga z gasa
 var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D

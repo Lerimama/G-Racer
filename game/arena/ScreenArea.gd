@@ -11,13 +11,13 @@ func _process(delta: float) -> void:
 
 
 func _on_ScreenArea_body_entered(body: Node) -> void:
+#	if body is Player:
+#		body.modulate = Color.white # ne spremeni barve bolta
 	pass # Replace with function body.
-	if body is Player:
-		body.modulate = Color.white # ne spremeni barve bolta
 
 
 func _on_ScreenArea_body_exited(body: Node) -> void:
 	
-	if body is Player:
-		body.modulate = Color.red
+#	if body is Player:
+#		body.modulate = Color.red
 	pass # Replace with function body.
