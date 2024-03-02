@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://_modular originali/DKamera/dkamera_noise.tres" type="OpenSimplexNoise" id=1]
+[ext_resource path="res://_modular/DKamera/dkamera_noise.tres" type="OpenSimplexNoise" id=1]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
-[ext_resource path="res://_modular originali/DKamera/DKamera.gd" type="Script" id=3]
+[ext_resource path="res://_modular/DKamera/DKamera.gd" type="Script" id=3]
 
 [sub_resource type="NoiseTexture" id=1]
 noise = ExtResource( 1 )

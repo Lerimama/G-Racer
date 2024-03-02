@@ -5,7 +5,7 @@ extends Node
 onready var game_view_grid: GridContainer = $GameViewGrid
 
 func _ready() -> void:
-	print("Game")
+	print("GAME")
 	pass
 	
 func reload_scene(vp_count):

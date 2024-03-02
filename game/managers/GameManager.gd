@@ -8,13 +8,6 @@ enum GameoverReason {SUCCES, FAIL} # ali kdo od plejerjev napreduje, ali pa ne
 
 var game_on: bool
 
-# players
-var player1_id = Pro.Players.P1
-var player2_id = Pro.Players.P2
-var player3_id = Pro.Players.P3
-var player4_id = Pro.Players.P4
-var enemy_id = Pro.Players.ENEMY
-var spawned_bolt_index: int = 0
 var level_positions: Array # dobi od tilemapa
 var leading_player: KinematicBody2D # trenutno vodilni igralec
 
@@ -36,7 +29,7 @@ onready var enemy_bolt = preload("res://game/enemies/Enemy.tscn")
 # NEU (temp)
 var position_indikator: Node2D	# debug
 var available_pickable_positions: Array
-var bolts_across_finish_line: Array 
+var bolts_across_finish_line: Array # array boltov skupaj s časom
 onready var NewLevel: PackedScene = level_settings["level_scene"]
 
 
@@ -44,7 +37,7 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("x"):
 		spawn_pickable()
-	if Input.is_action_just_released("ui_cancel"):
+	if Input.is_action_just_released("r"):
 		call_deferred("game_over", GameoverReason.SUCCES)	
 	if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
 		pass
@@ -52,39 +45,39 @@ func _input(event: InputEvent) -> void:
 	if not game_on and bolts_in_game.size() <= 4:
 		if Input.is_key_pressed(KEY_1):
 			set_game()
-			spawn_bolt(player_bolt, level_positions[0].global_position, Pro.Players.P1, 1)
+			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)
 		if Input.is_key_pressed(KEY_2):
 			set_game()
-			spawn_bolt(player_bolt, level_positions[0].global_position, Pro.Players.P1, 1)
-			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Players.P2, 2)
+			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)
+			spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)
 		if Input.is_key_pressed(KEY_3):
 			set_game()
-			spawn_bolt(player_bolt, level_positions[0].global_position, Pro.Players.P1, 1)
-			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Players.P2, 2)
-			spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Players.P3, 3)
+			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)
+			spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)
+			spawn_bolt(player_bolt, level_positions[3].global_position, Pro.Bolts.P3, 3)
 		if Input.is_key_pressed(KEY_4):
 			set_game()
-			spawn_bolt(player_bolt, level_positions[0].global_position, Pro.Players.P1, 1)
-			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Players.P2, 2)
-			spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Players.P3, 3)
-			spawn_bolt(player_bolt, level_positions[3].global_position, Pro.Players.P4, 4)
+			spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)
+			spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)
+			spawn_bolt(player_bolt, level_positions[3].global_position, Pro.Bolts.P3, 3)
+			spawn_bolt(player_bolt, level_positions[4].global_position, Pro.Bolts.P4, 4)
 
-	if game_on and bolts_in_game.size() <= 4:
-		if Input.is_key_pressed(KEY_5):
-			spawn_bolt(enemy_bolt, level_positions[1].global_position, enemy_id, 5)
+#	if game_on and bolts_in_game.size() <= 4:
+#		if Input.is_key_pressed(KEY_5):
+#			spawn_bolt(enemy_bolt, level_positions[1].global_position, Pro.Bolts.ENEMY, 5)
 
 
 func _ready() -> void:
 	
 	Ref.game_manager = self	
-	printt("Game Manager")
+	printt("GM")
 	
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
-	spawn_bolt(player_bolt, level_positions[0].global_position, player1_id, 1)	
-	spawn_bolt(player_bolt, level_positions[1].global_position, player2_id, 2)	
-#	spawn_bolt(enemy_bolt, level_positions[2].global_position, enemy_id, 5)
-#	spawn_bolt(player_bolt,level_positions[2].global_position, player3_id, 3)	
+	spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)	
+	spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)	
+#	spawn_bolt(enemy_bolt, level_positions[2].global_position, Pro.Bolts.ENEMY, 5)
+#	spawn_bolt(player_bolt,level_positions[2].global_position, Pro.Bolts.P3, 3)	
 
 
 func _process(delta: float) -> void:
@@ -108,17 +101,18 @@ func set_level(): # kliče main.gd pred fajdinom igre
 	level_to_release.free()
 
 	# spawn new level
-#	var Level = ResourceLoader.load(level_to_load_path)
-#	var new_level = Level.instance()
+	# var Level = ResourceLoader.load(level_to_load_path)
+	# var new_level = Level.instance()
 	var new_level = NewLevel.instance()
 	# new_level.z_index = level_z_index
 	new_level.connect( "level_is_set", self, "_on_level_is_set")
+	
 	Ref.node_creation_parent.add_child(new_level)
+
 	
 func set_game(): # kliče main.gd pred fejdin igre
 	print("set game")
 	
-	Ref.current_camera.follow_target = level_positions[0]
 	
 	# set_game_view()
 	# set_players() # da je plejer viden že na fejdin
@@ -143,14 +137,13 @@ func set_game(): # kliče main.gd pred fejdin igre
 #	Global.hud.slide_in(start_players_count)
 	
 	if Ref.hud:
+		# Ref.hud.set_hud	()
 		Ref.hud.start_countdown.start_countdown()
 		yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
-		
 	start_game()
 
 
 func start_game():
-	printt ("follow_target", Ref.current_camera.follow_target)
 	# nitro je kao start_race :)
 	print("start game")
 	
@@ -162,7 +155,6 @@ func start_game():
 	if Ref.hud:
 		Ref.hud.on_game_start()
 	game_on = true
-	printt ("follow_target 2", Ref.current_camera.follow_target)
 		
 		
 func game_over(gameover_reason: int):
@@ -171,20 +163,23 @@ func game_over(gameover_reason: int):
 		return
 	game_on = false
 
-	printt ("RANK", bolts_across_finish_line)
-#	yield(get_tree().create_timer(2), "timeout") # za dojet
+	yield(get_tree().create_timer(2), "timeout") # za dojet
 	if Ref.hud:
 		Ref.hud.on_game_over()
 	
-#	yield(get_tree().create_timer(1), "timeout") # za dojet
+	yield(get_tree().create_timer(1), "timeout") # za dojet
 	get_tree().call_group(Ref.group_bolts, "set_physics_process", false)
 	
 	if gameover_reason == GameoverReason.SUCCES:
-		print("GO Succ")
+		printt("SUCCESS", bolts_across_finish_line.size())
+		for bolt_across_finish_line in bolts_across_finish_line:
+			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
+		
 	elif gameover_reason == GameoverReason.FAIL:
-		print("GO fail")
+		print("FAIL")
+		
 #	stop_game_elements()
-#	Global.gameover_menu.open_gameover(gameover_reason)
+	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line)
 	
 	# če v grupi bolts obstaja kakšen bolt
 	if not bolts_in_game.empty():
@@ -194,7 +189,6 @@ func game_over(gameover_reason: int):
 		for p in pickables_in_game:
 			p.queue_free()
 #	$"../UI/HUD".hide_player_stats()
-	spawned_bolt_index = 0
 	Ref.current_camera.follow_target = null
 
 
@@ -210,20 +204,18 @@ func check_for_game_over(): # za preverjanje pogojev za game over (vsakič ko bo
 	if active_bolts.empty():
 		# preverjam uspeh
 		if not bolts_across_finish_line.empty(): # lahko so vsi izven cilja
-			for bolt in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
-				if bolt is Player:
+			for bolt_across_finish_line in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
+				if bolt_across_finish_line[0] is Player:
 					game_over(GameoverReason.SUCCES)		
 					return # dovolj je en uspeh
 		# če ni uspeha
 		game_over(GameoverReason.FAIL)	
 
 
-func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
+func spawn_bolt(NewBolt: PackedScene, spawned_position: Vector2, spawned_bolt_id: int, spawned_bolt_index: int):
 
-	spawned_bolt_index += 1
-
-	var new_bolt = bolt.instance()
-	new_bolt.bolt_owner = spawned_player_id
+	var new_bolt = NewBolt.instance()
+	new_bolt.bolt_id = spawned_bolt_id
 	new_bolt.global_position = spawned_position
 	new_bolt.rotation_degrees = -90
 	Ref.node_creation_parent.add_child(new_bolt)
@@ -237,7 +229,7 @@ func spawn_bolt(bolt, spawned_position, spawned_player_id, bolt_index):
 		new_bolt.connect("path_changed", self, "_on_Enemy_path_changed") # samo za prikaz nav linije
 	elif new_bolt is Player:
 		new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # statistika med boltom in hudom
-		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_player_id) # pošljem na hud, da prižge stat line in ga napolne
+		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
 		# Ref.current_camera.follow_target = new_bolt
 
 
@@ -272,7 +264,11 @@ func spawn_pickable():
 
 func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finish line
 	
-	bolts_across_finish_line.append(bolt_finished)
+#	bolts_across_finish_line.append(bolt_finished)
+	printt ("TIME", Ref.hud.game_timer.time_since_start)
+	
+	var bolt_time: float = Ref.hud.game_timer.time_since_start
+	bolts_across_finish_line.append([bolt_finished, bolt_time])
 	bolt_finished.bolt_active = false
 
 	
@@ -392,8 +388,11 @@ func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, t
 	navigation_area = tilemap_navigation_cells
 	navigation_positions = tilemap_navigation_cells_positions
 	current_racing_line = Ref.current_level.racing_line.draw_racing_line()
-	position_indikator = Met.spawn_indikator(level_positions[0].global_position, 0)
-	
+	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
+
+#	Ref.current_camera.follow_target = level_positions[0]	
+	Ref.current_camera.position = level_positions[0].global_position
+
 	
 func _on_Enemy_path_changed(path: Array) -> void:
 	# ta funkcija je vezana na signal bolta

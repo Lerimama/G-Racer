@@ -5,7 +5,7 @@ extends ViewportContainer
 ### koda resiza kamero glede na št igralcev ... se mi zdi
 ### trenutno ne delas nič ... bomo videli ko bo več igralcev
 
-var player_id:int setget update_camera # vsakič ko se plejer id zamenja apdejta kamero
+var player_id: int setget update_camera # vsakič ko se plejer id zamenja apdejta kamero
 var viewport_id
 
 

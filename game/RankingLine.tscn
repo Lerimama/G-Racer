@@ -1,0 +1,28 @@
+[gd_scene format=2]
+
+[node name="Line" type="HBoxContainer"]
+margin_left = 289.0
+margin_top = 30.0
+margin_right = 350.0
+margin_bottom = 43.0
+size_flags_horizontal = 4
+
+[node name="Rank" type="Label" parent="."]
+margin_right = 28.0
+margin_bottom = 14.0
+size_flags_vertical = 0
+text = "P1 : "
+
+[node name="Bolt" type="Label" parent="."]
+margin_left = 32.0
+margin_right = 60.0
+margin_bottom = 14.0
+size_flags_vertical = 0
+text = "P1 : "
+
+[node name="Result" type="Label" parent="."]
+margin_left = 64.0
+margin_right = 103.0
+margin_bottom = 14.0
+size_flags_vertical = 0
+text = "krneki"

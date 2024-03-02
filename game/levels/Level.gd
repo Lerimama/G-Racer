@@ -3,6 +3,9 @@ extends Node2D
 
 signal level_is_set(navigation, spawn_positions, other_)
 
+
+var non_navigation_cell_positions: Array # elemnti, kjer navigacija ne sme potekati
+
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
@@ -14,10 +17,10 @@ onready var racing_line: Node2D = $RacingLine
 func _ready() -> void:
 	
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
-	printt("Level ")
+	printt("LEVEL")
 	set_level_floor()
-	set_level_edge()
 	set_level_elements()
+	set_level_edge() # more bit po elementsih zato, da se prilagodi navigacija
 
 
 func get_tilemap_cells(tilemap: TileMap):
@@ -74,29 +77,36 @@ func set_level_elements():
 			6: # goal pillar
 				spawn_element(cell_global_position, goal_pillar, Vector2(13,12))
 				tilemap_elements.set_cellv(cell, -1)
+				non_navigation_cell_positions.append(cell_global_position)
 				
 			7: # brick ghost
 				spawn_element(cell_global_position, brick_ghost, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
+				non_navigation_cell_positions.append(cell_global_position)
 			8: # brick bouncer
 				spawn_element(cell_global_position, brick_bouncer, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
+				non_navigation_cell_positions.append(cell_global_position)
 			9: # brick magnet
 				spawn_element(cell_global_position, brick_magnet, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
+				non_navigation_cell_positions.append(cell_global_position)
 			10: # brick target
 				spawn_element(cell_global_position, brick_target, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
+				non_navigation_cell_positions.append(cell_global_position)
 			11: # brick light
 				spawn_element(cell_global_position, brick_light, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
 				
 			12: # area nitro
 				spawn_element(cell_global_position, area_nitro, Vector2(5,4))
-			13: # area magnet
+			13: # area gravel
 				spawn_element(cell_global_position, area_gravel, Vector2(5,4))
+				non_navigation_cell_positions.append(cell_global_position)
 			23: # area finish
 				spawn_element(cell_global_position, area_finish, Vector2(9,8))
+				non_navigation_cell_positions.append(cell_global_position)
 #				tilemap_elements.set_cellv(cell, -1)
 				
 			14: # pickable bullet
@@ -142,7 +152,6 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 
 
 func set_level_edge():
-	
 	var edge_cells = get_tilemap_cells(tilemap_elements) # celice v obliki grid koordinat
 
 	var navigation_cells: Array
@@ -158,6 +167,10 @@ func set_level_edge():
 			tilemap_edge.set_cellv(cell, 13)
 			navigation_cells.append(cell) # grid pozicije
 			navigation_cells_positions.append(cell_global_position)
+			
+			# izločitev 
+			if non_navigation_cell_positions.has(cell_global_position):
+				print("non_navigation_cell_positions")
 			
 	# odstrani zunanje rob navigacije (rob je vsaka, ki ima eno od sosednjih celic prazno
 #	var navigation_cell_index = 0

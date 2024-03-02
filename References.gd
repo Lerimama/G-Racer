@@ -9,6 +9,7 @@ var hud = null
 var sound_manager = null
 var data_manager = null
 var main_node = null
+var game_over = null
 #var effects_creation_parent = null
 #var game_timer = null
 #var start_countdown = null

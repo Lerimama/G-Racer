@@ -4,7 +4,6 @@ class_name Enemy
 signal path_changed (path)
 # signal target_reached
 
-var player_id: String # = "E1" # drugače ga pošlje spawner
 var player_profile: Dictionary
 
 # idle
@@ -48,7 +47,7 @@ func _ready() -> void:
 	
 	# player setup
 #	name = player_name _temp off
-	player_profile = Pro.default_player_profiles[bolt_owner]
+	player_profile = Pro.default_player_profiles[bolt_id]
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
 	bolt_sprite.modulate = bolt_color
 	

@@ -10,8 +10,8 @@ onready var ExplodingEdge: PackedScene = preload("res://game/arena/ExplodingEdge
 
 func _ready() -> void:
 	
-	print("Level edge, Z-index ", z_index)
-	
+	printt("LEVEL EDGE")
+	pass
 	
 func on_hit (collision_object):
 			

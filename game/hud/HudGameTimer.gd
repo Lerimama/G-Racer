@@ -5,8 +5,8 @@ signal sudden_death_active # pošlje se v hud, ki javi game managerju
 signal gametime_is_up # pošlje se v hud, ki javi game managerju
 
 var current_second: int # trenutna sekunda znotraj minutnega kroga ... ia izpis na uri
-var game_time_seconds: int # čas v tajmerju v sekundah ... GLAVNI TIMER, po katerem se vse umerja
-var time_since_start: float # ne glede na mode, vedno želiš vedet koliko sekund je porabljeno od začetka ... za statistiko
+var game_time_seconds: int # čas v tajmerju v sekundah ... GLAVNI TIMER, po katerem se vse umerja ... zadelovanje timerja
+var time_since_start: float # ne glede na smer timerja želiš vedet čas trajanja igre  ... za statistiko
 var limitless_mode: bool # če je gejm tajm 0 in je count-up mode
 
 onready var game_time_limit: int = Set.default_game_settings["game_time_limit"]
@@ -104,8 +104,8 @@ func stop_timer():
 	
 	$Timer.stop()
 	modulate = Set.color_red
+	
 		
-
 func _on_Timer_timeout() -> void:
 	
 	time_since_start += 1

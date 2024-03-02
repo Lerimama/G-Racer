@@ -47,6 +47,17 @@ custom_fonts/font = ExtResource( 3 )
 text = "00"
 valign = 2
 
+[node name="Hunds" type="Label" parent="."]
+visible = false
+margin_left = 82.0
+margin_right = 114.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 32, 0 )
+size_flags_vertical = 8
+custom_fonts/font = ExtResource( 3 )
+text = "00"
+valign = 2
+
 [node name="Timer" type="Timer" parent="."]
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

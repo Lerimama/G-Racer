@@ -34,7 +34,7 @@ var loading_time: float = 0.5 # pred prikazom nbaj se v miru postavi
 
 # neu
 onready var game_timer: Control = $"%GameTimer"
-onready var game_over: Control = $"%GameOver"
+#onready var game_over: Control = $"%GameOver"
 onready var start_countdown: Control = $"%StartCountdown"
 
 func _input(event: InputEvent) -> void:
@@ -42,6 +42,7 @@ func _input(event: InputEvent) -> void:
 #	if Input.is_action_just_released("ui_cancel"):
 #		toggle_pause()
 	pass
+	
 	
 func _ready() -> void:
 	
@@ -55,44 +56,49 @@ func _ready() -> void:
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false
 #	game_time.visible = false
-	game_over.visible = false
+#	game_over.visible = false
 
-	# Global.game_manager.connect("stat_change_received", self, "on_stat_change_received") # signal pride iz GM in pošlje spremenjeno statistiko
-#	Ref.game_manager.connect("stat_change_received", self, "_on_stat_changed") # signal pride iz GM in pošlje spremenjeno statistiko
-	Ref.game_manager.connect("new_bolt_spawned", self, "_on_new_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+	Ref.game_manager.connect("new_bolt_spawned", self, "_set_spawned_bolt_hud") # signal pride iz GM in pošlje spremenjeno statistiko
 	
-	# pavza
-#	pavza_btn.connect("pressed", self, "_on_pavza_btn_pressed")
-	pavza_restart_btn.connect("pressed", self, "_on_pavza_restart_btn_pressed")	
-	pavza_back_btn.connect("pressed", self, "_on_pavza_back_btn_pressed")
-	pavza_quit_btn.connect("pressed", self, "_on_pavza_quit_btn_pressed")
-	pause_ui.visible = false
-
 	# gameover
-	gameover_restart_btn.connect("pressed", self, "_on_gameover_restart_btn_pressed")
-	gameover_high_score_btn.connect("pressed", self, "_on_gameover_high_score_btn_pressed")
-	gameover_quit_btn.connect("pressed", self, "_on_gameover_quit_btn_pressed")
-	game_over_ui.visible = false
-
+#	gameover_restart_btn.connect("pressed", self, "_on_gameover_restart_btn_pressed")
+#	gameover_high_score_btn.connect("pressed", self, "_on_gameover_high_score_btn_pressed")
+#	gameover_quit_btn.connect("pressed", self, "_on_gameover_quit_btn_pressed")
+#	game_over_ui.visible = false
 
 
 func on_game_start():
+	
 #	game_start.visible = false
 #	game_time.visible = true
-	game_over.visible = false
+#	game_over.visible = false
 	game_stats.show()
 	game_timer.start_timer()
 
 
 func on_game_over():
+	
 	game_timer.stop_timer()
 #	game_start.visible = false
 #	game_time.visible = false
-	game_over.visible = true
+#	game_over.visible = true
 	
 	hide_player_stats()
 	
 
+func hide_player_stats():
+	# skrij statistiko
+	
+	stat_line_topL.visible = false
+	stat_line_topR.visible = false
+	stat_line_btmL.visible = false
+	stat_line_btmR.visible = false	
+	game_stats.hide()
+
+	
+# PRIVAT ------------------------------------------------------------------------------------------------------------
+
+	
 func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
 	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
@@ -115,9 +121,9 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
 		"gas_count":
 			stat_line_to_change.stat_gas.current_stat_value = new_stat_value # setget
-
 	
-func _on_new_bolt_spawned(bolt_index, player_id):
+	
+func _set_spawned_bolt_hud(bolt_index, bolt_id):
 	
 	var current_stat_line: Control
 	
@@ -125,16 +131,16 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 	match bolt_index:
 		1:
 			current_stat_line = stat_line_topL
-			stat_lines_owners[player_id] = stat_line_topL 
+			stat_lines_owners[bolt_id] = stat_line_topL 
 		2:
 			current_stat_line = stat_line_topR
-			stat_lines_owners[player_id] = stat_line_topR 
+			stat_lines_owners[bolt_id] = stat_line_topR 
 		3:
 			current_stat_line = stat_line_btmL
-			stat_lines_owners[player_id] = stat_line_btmL 
+			stat_lines_owners[bolt_id] = stat_line_btmL 
 		4:
 			current_stat_line = stat_line_btmR
-			stat_lines_owners[player_id] = stat_line_btmR 
+			stat_lines_owners[bolt_id] = stat_line_btmR 
 	
 	# data
 
@@ -142,8 +148,8 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 	var player_stats: Dictionary = Pro.default_player_stats
 	var player_profiles: Dictionary = Pro.default_player_profiles
 	
-	current_stat_line.stat_line_color = player_profiles[player_id]["player_color"]
-	current_stat_line.stat_name.text = player_profiles[player_id]["player_name"]
+	current_stat_line.stat_line_color = player_profiles[bolt_id]["player_color"]
+	current_stat_line.stat_name.text = player_profiles[bolt_id]["player_name"]
 	
 	# bolt stats
 	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
@@ -160,25 +166,10 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 	current_stat_line.visible = true
 
 	
-func hide_player_stats():
-	# skrij statistiko
-	stat_line_topL.visible = false
-	stat_line_topR.visible = false
-	stat_line_btmL.visible = false
-	stat_line_btmR.visible = false	
-	game_stats.hide()
+
 
 
 # BTNS ------------------------------------------------------------------------------------------------------------
-
-
-
-# pavza
-onready var pause_ui: Control = $"../PauseUI"
-#onready var pavza_btn: Button = $PavzaBtn
-onready var pavza_back_btn: Button = $"../PauseUI/BackBtn"
-onready var pavza_restart_btn: Button = $"../PauseUI/RestartBtn"
-onready var pavza_quit_btn: Button = $"../PauseUI/QuitBtn"
 
 # gameover
 onready var game_over_ui: Control = $"../GameOverUI"
@@ -199,24 +190,3 @@ func _on_gameover_quit_btn_pressed():
 	
 func _on_gameover_high_score_btn_pressed():
 	game_over_ui.visible = false
-
-
-func _on_pavza_btn_pressed():
-	toggle_pause()
-	
-func toggle_pause():
-	pause_ui.visible = not pause_ui.visible
-	scene_tree.paused = not scene_tree.paused
-#	pavza_btn.visible = not pavza_btn.visible
-	scene_tree.set_input_as_handled()
-	
-func _on_pavza_back_btn_pressed():
-	toggle_pause()
-	
-func _on_pavza_restart_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://game/arena/Arena.tscn")
-	
-func _on_pavza_quit_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://home/Home.tscn")

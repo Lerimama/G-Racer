@@ -2,7 +2,6 @@ extends Bolt
 class_name Player
 
 
-var player_id: String # P1, P2, ENEMY
 var player_name: String # za opredelitev statistike
 var player_color: Color
 var player_profile: Dictionary
@@ -27,7 +26,7 @@ func _ready() -> void:
 	
 	# player setup
 #	name = player_name _temp off
-	player_profile = Pro.default_player_profiles[bolt_owner]
+	player_profile = Pro.default_player_profiles[bolt_id]
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
@@ -107,9 +106,6 @@ func pull_bolt_on_screen(pull_position: Vector2):
 #	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	
 	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
-#	gas_count -= Ref.game_manager.game_settings["pull_penalty_gas"]
-#	gas_count = clamp(gas_count, 0, gas_count)
-#	emit_signal("stat_changed", bolt_owner, "gas_count", gas_count)
 	
 	# ugasnem trail
 	if bolt_trail_active:

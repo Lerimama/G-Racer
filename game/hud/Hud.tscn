@@ -1,11 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/hud/Hud.gd" type="Script" id=3]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=4]
 [ext_resource path="res://game/hud/StatLineRacer.tscn" type="PackedScene" id=5]
-[ext_resource path="res://game/hud/GameOver.tscn" type="PackedScene" id=6]
 [ext_resource path="res://game/hud/GameTime.gd" type="Script" id=7]
 [ext_resource path="res://game/hud/HudGameTimer.tscn" type="PackedScene" id=8]
 [ext_resource path="res://game/hud/StartCountdown.tscn" type="PackedScene" id=9]
@@ -106,5 +105,3 @@ margin_right = 122.5
 custom_fonts/font = ExtResource( 1 )
 text = "DEAD!!!"
 align = 1
-
-[node name="GameOver" parent="Popups" instance=ExtResource( 6 )]

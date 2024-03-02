@@ -67,20 +67,20 @@ func game_in():
 	
 #	game_scene_path = Profiles.current_game_data["game_scene_path"]	
 	
-	get_viewport().set_disable_input(false) # anti dablklik
+	get_viewport().set_disable_input(false)
 	get_tree().set_pause(false)
 	
 	Met.spawn_new_scene(game_scene_path, self)
 	Met.current_scene.modulate = Color.black
 	# tukaj se seta GM glede na izbiro igre
 	
-#	Ref.game_manager.set_game()
 	Ref.game_manager.set_level()
+#	Ref.game_manager.set_game()
 #	Met.game_manager.set_tilemap()
 #	Met.game_manager.set_game_view()
 #	Met.game_manager.set_players()
 	
-	yield(get_tree().create_timer(0.5), "timeout") # da se kamera centrira (na restart)
+	yield(get_tree().create_timer(1), "timeout") # da se kamera centrira (na restart)
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_property(Met.current_scene, "modulate", Color.white, fade_time).from(Color.black)

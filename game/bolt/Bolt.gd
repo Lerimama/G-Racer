@@ -4,7 +4,7 @@ class_name Bolt, "res://assets/class_icons/bolt_icon.png"
 
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
 
-var bolt_owner: int
+var bolt_id: int # ga seta spawner
 var bolt_color: Color = Color.white
 var trail_pseudodecay_color = Color.white
 var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
@@ -90,7 +90,7 @@ var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za poši
 
 func _ready() -> void:
 
-	printt("Bolt", name, bolt_owner)
+	printt("BOLT", bolt_id)
 	
 	# bolt 
 	add_to_group(Ref.group_bolts)	
@@ -214,7 +214,7 @@ func manage_gas(gas_amount: float):
 	
 	gas_count += gas_amount
 	gas_count = clamp(gas_count, 0, gas_count)
-	emit_signal("stat_changed", bolt_owner, "gas_count", gas_count)	
+	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
 	
 				
 func motion_fx():
@@ -329,7 +329,7 @@ func lose_life():
 	Ref.node_creation_parent.add_child(new_exploding_bolt)
 	
 	player_life -= 1
-	emit_signal("stat_changed", bolt_owner, "player_life", player_life)
+	emit_signal("stat_changed", bolt_id, "player_life", player_life)
 	
 	bolt_collision.disabled = true
 	visible = false
@@ -393,7 +393,7 @@ func shooting(weapon: String) -> void:
 				new_bullet.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_bullet)
 				bullet_count -= 1
-				emit_signal("stat_changed", bolt_owner, "bullet_count", bullet_count) # do GMa
+				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) # do GMa
 				bullet_reloaded = false
 				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
 				bullet_reloaded= true
@@ -408,7 +408,7 @@ func shooting(weapon: String) -> void:
 				new_misile.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_misile)
 				misile_count -= 1
-				emit_signal("stat_changed", bolt_owner, "misile_count", misile_count) # do GMa
+				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) # do GMa
 				misile_reloaded = false
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
 				misile_reloaded= true
@@ -422,7 +422,7 @@ func shooting(weapon: String) -> void:
 				new_shocker.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_shocker)
 				shocker_count -= 1
-				emit_signal("stat_changed", bolt_owner, "shocker_count", shocker_count) # do GMa
+				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) # do GMa
 				shocker_reloaded = false
 				yield(get_tree().create_timer(new_shocker.reload_time / reload_ability), "timeout")
 				shocker_reloaded= true
@@ -521,7 +521,7 @@ func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
 	
 	player_points += points_added
 	player_points = clamp(player_points, 0, player_points)
-	emit_signal("stat_changed", bolt_owner, "player_points", player_points) # do GMa
+	emit_signal("stat_changed", bolt_id, "player_points", player_points) # do GMa
 	
 
 func take_damage(hit_by: Node):
@@ -533,7 +533,7 @@ func take_damage(hit_by: Node):
 	energy_bar.scale.x = energy/10
 	
 	# za damage
-	emit_signal("stat_changed", bolt_owner, "energy", energy) # do GMa
+	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
 	
 	if energy <= 0:
 		lose_life()
@@ -547,13 +547,13 @@ func item_picked(pickable_type_key: String):
 	match pickable_type_key:
 		"BULLET":
 			bullet_count += pickable_value
-			emit_signal("stat_changed", bolt_owner, "bullet_count", bullet_count) 
+			emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
 		"MISILE":
 			misile_count += pickable_value
-			emit_signal("stat_changed", bolt_owner, "misile_count", misile_count) 
+			emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
 		"SHOCKER":
 			shocker_count += pickable_value
-			emit_signal("stat_changed", bolt_owner, "shocker_count", shocker_count) 
+			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 		"SHIELD":
 			shield_loops_limit = pickable_value
 			activate_shield()
@@ -561,10 +561,10 @@ func item_picked(pickable_type_key: String):
 			energy = max_energy
 		"GAS":
 			gas_count += pickable_value
-			emit_signal("stat_changed", bolt_owner, "gas_count", gas_count)
+			emit_signal("stat_changed", bolt_id, "gas_count", gas_count)
 		"LIFE":
 			player_life += pickable_value
-			emit_signal("stat_changed", bolt_owner, "player_life", player_life)
+			emit_signal("stat_changed", bolt_id, "player_life", player_life)
 		"NITRO":
 			activate_nitro(pickable_value, pickable_time)
 		"TRACKING":

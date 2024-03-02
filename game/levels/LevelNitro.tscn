@@ -21,7 +21,7 @@ tile_data = PoolIntArray( 0, 0, 65536, 1, 0, 65537, 2, 0, 65537, 3, 0, 65537, 4,
 position = Vector2( 576, 116 )
 
 [node name="CameraStartPosition" parent="Positions" index="0"]
-position = Vector2( 961, 726 )
+position = Vector2( 969, 1124 )
 
 [node name="SpawnPosition1" parent="Positions" index="1"]
 position = Vector2( 912, 1092 )
