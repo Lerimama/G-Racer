@@ -82,11 +82,10 @@ onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_d
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_quo: float = Pro.bolt_profiles[bolt_type]["drag_force_quo"] 
-var bolt_active: bool = false
 enum MotionStates {FWD, REV, IDLE} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
 var current_active_trail: Line2D
-#var drag_force_quo: float = 100 # vpliva na pospešek oz. pojemek (rast upora glede na hitrost)
+var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 
 
 func _ready() -> void:
@@ -130,7 +129,7 @@ func _physics_process(delta: float) -> void:
 	
 	if bolt_active:
 		if gas_count <= 0: # če zmanjka bencina je deaktiviran
-			bolt_active = false
+			self.bolt_active = false
 	else: 	
 		drag_force_quo = lerp(drag_force_quo, 1, 0.05) # če je deaktiviran povečam drag in ga postopoma ustavim
 	
@@ -220,8 +219,6 @@ func manage_gas(gas_amount: float):
 				
 func motion_fx():
 
-# positions
-
 	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
 	var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
 	var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)	
@@ -237,7 +234,6 @@ func motion_fx():
 		# spawn trail if not active
 		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 			current_active_trail = spawn_new_trail()
-		print("delam")
 	elif current_motion_state == MotionStates.REV:
 		engine_particles_front_left.modulate.a = velocity.length()/10
 		engine_particles_front_left.set_emitting(true)
@@ -582,7 +578,18 @@ func item_picked(pickable_type_key: String):
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
 			item_picked(random_pickable_key) # pick selected
 			
+			
+# PRIVAT ------------------------------------------------------------------------------------------------
+
+signal bolt_activity_changed (bolt_is_active)
+
+func _on_bolt_active_changed(bolt_is_active: bool):
 	
+	bolt_active = bolt_is_active
+	emit_signal("bolt_activity_changed", self)
+#	print ("ACT", is_bolt_active)
+
+
 func _on_shield_animation_finished(anim_name: String) -> void:
 	
 	shield_loops_counter += 1

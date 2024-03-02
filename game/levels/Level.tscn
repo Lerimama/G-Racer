@@ -61,6 +61,9 @@ script = ExtResource( 6 )
 
 [node name="Positions" type="Node2D" parent="."]
 
+[node name="CameraStartPosition" type="Position2D" parent="Positions"]
+position = Vector2( 97, 72 )
+
 [node name="SpawnPosition1" type="Position2D" parent="Positions"]
 position = Vector2( 97, 72 )
 

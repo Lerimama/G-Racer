@@ -74,6 +74,7 @@ func game_in():
 	Met.current_scene.modulate = Color.black
 	# tukaj se seta GM glede na izbiro igre
 	
+#	Ref.game_manager.set_game()
 	Ref.game_manager.set_level()
 #	Met.game_manager.set_tilemap()
 #	Met.game_manager.set_game_view()

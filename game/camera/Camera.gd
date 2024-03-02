@@ -24,11 +24,10 @@ func _process(delta: float) -> void:
 
 
 func _on_follow_target_change(new_follow_target):
+	print ("FLW")
 	set_follow_smoothing(3)
 	follow_target = new_follow_target
 	
-
-
 	
 func shake_camera(shake_power: float):
 	# time, power in nivo popuščanja

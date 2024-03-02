@@ -36,7 +36,7 @@ var pickable_profiles: Dictionary = {
 	},
 	"NITRO": { # NITRO
 		"pickable_value": 700,
-		"pickable_time": 10, # sekunde
+		"pickable_time": 1, # sekunde
 	},
 	"TRACKING": { # TRACKING
 		"pickable_value": 0.7,
@@ -106,16 +106,16 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_name" : "Dot",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
 		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
-		"controller_profile" : "ARROWS",
-#		"controller_profile" : "JP1",
+#		"controller_profile" : "ARROWS",
+		"controller_profile" : "JP1",
 		"bolt_type:": BoltTypes.BASIC,
 	},
 	Players.P4 : {
 		"player_name" : "Jax",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
 		"player_color" : Set.color_green,
-#		"controller_profile" : "JP2",
-		"controller_profile" : "WASD",
+		"controller_profile" : "JP2",
+#		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
 	},
 	Players.ENEMY : {
@@ -158,7 +158,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"bullet_count" : 30,
 	"misile_count" : 5,
 	"shocker_count" : 5,
-	"gas_count" : 50,
+	"gas_count" : 300, # 300 je kul
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti

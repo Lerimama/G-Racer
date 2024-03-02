@@ -24,18 +24,13 @@ var target_location: Vector2
 var target_speed_slow = 25
 var shocker_delay_time: float = 1.5
 
-# ---------------------------------------------------------------------------------------
-
+# vision
 onready var navigation_agent = $NavigationAgent2D
 onready var seek_ray = $SeekRay
 onready var vision_ray_front = $VisionFront
 onready var vision_ray_rear = $VisionRear
 onready var vision_ray_left = $VisionLeft # poz kot
 onready var vision_ray_right = $VisionRight # neg kot
-
-onready var rear_engine_position = $Bolt/RearEnginePosition
-onready var front_engine_position_L = $Bolt/FrontEnginePositionL
-onready var front_engine_position_R = $Bolt/FrontEnginePositionR
 
 # enemy profil
 onready var aim_time = Pro.enemy_profile["aim_time"]
@@ -54,7 +49,6 @@ func _ready() -> void:
 	# player setup
 #	name = player_name _temp off
 	player_profile = Pro.default_player_profiles[bolt_owner]
-#	player_profile = Pro.default_player_profiles[player_id]
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
 	bolt_sprite.modulate = bolt_color
 	

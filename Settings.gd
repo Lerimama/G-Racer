@@ -42,7 +42,7 @@ var default_game_settings: Dictionary = {
 	"sudden_death_limit": 20,
 	"timer_mode_countdown": false,
 	"gameover_countdown_duration": 5,
-	"start_countdown": false,
+	"start_countdown": true,
 	# points and arena values
 	"goal_points": 1000,
 	"light_points": 10,
@@ -51,7 +51,7 @@ var default_game_settings: Dictionary = {
 	"bouncer_brick_points": 10,
 	"magnet_brick_points": -1,
 	"area_tracking_value": 1, # 1 = 100%
-	"pull_penalty_gas": -200,
+	"pull_penalty_gas": -20,
 #	"area_nitro_value": 700,
 }
 
@@ -59,10 +59,15 @@ enum Levels {TRAINING, NITRO}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
+		"level": Levels.TRAINING,
+		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		},
 	Levels.NITRO: {
+		"level": Levels.NITRO,
 #		"level_path": "res://game/levels/LevelNitroOne.tscn",
+		"level_scene": preload("res://game/levels/LevelNitroOne.tscn"),
+#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
 		"level_path": "res://game/levels/LevelNitro.tscn",
 		} 
 }
@@ -91,8 +96,10 @@ func set_game_settings(selected_level) -> void:
 		Levels.TRAINING: 
 			current_level_settings = level_settings[Levels.TRAINING]
 #			current_game_settings["area_nitro_value"] = 0
+			current_game_settings["start_countdown"] = false
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
+			current_game_settings["start_countdown"] = false
 
 
 

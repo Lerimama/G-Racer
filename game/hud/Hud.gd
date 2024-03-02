@@ -39,8 +39,9 @@ onready var start_countdown: Control = $"%StartCountdown"
 
 func _input(event: InputEvent) -> void:
 	
-	if Input.is_action_just_released("ui_cancel"):
-		toggle_pause()
+#	if Input.is_action_just_released("ui_cancel"):
+#		toggle_pause()
+	pass
 	
 func _ready() -> void:
 	
@@ -79,6 +80,7 @@ func on_game_start():
 #	game_start.visible = false
 #	game_time.visible = true
 	game_over.visible = false
+	game_stats.show()
 	game_timer.start_timer()
 
 

@@ -94,8 +94,8 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	if not bolt_active:
 		return
 		
-	bolt_collision.disabled = true
-	shield_collision.disabled = true
+#	bolt_collision.disabled = true
+#	shield_collision.disabled = true
 	
 	var pull_time: float = 0.2
 	
@@ -104,7 +104,7 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	pull_tween.tween_property(self, "global_position", pull_position, pull_time).set_ease(Tween.EASE_OUT)
 	pull_tween.parallel().tween_property(self, "modulate:a", 0.2, pull_time/2).set_ease(Tween.EASE_OUT)
 	pull_tween.parallel().tween_property(self, "modulate:a", 1, pull_time/2).set_delay(pull_time/2).set_ease(Tween.EASE_IN)
-	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
+#	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	
 	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
 #	gas_count -= Ref.game_manager.game_settings["pull_penalty_gas"]

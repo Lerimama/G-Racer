@@ -7,7 +7,7 @@ onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
 
-onready var spawn_positions: Array = $Positions.get_children()
+onready var positions: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
 
 
@@ -97,7 +97,7 @@ func set_level_elements():
 				spawn_element(cell_global_position, area_gravel, Vector2(5,4))
 			23: # area finish
 				spawn_element(cell_global_position, area_finish, Vector2(9,8))
-				tilemap_elements.set_cellv(cell, -1)
+#				tilemap_elements.set_cellv(cell, -1)
 				
 			14: # pickable bullet
 				spawn_element(cell_global_position, pickable_bullet, Vector2(9,8))
@@ -173,7 +173,7 @@ func set_level_edge():
 #		navigation_cell_index += 1
 #	yield(get_tree().create_timer(0.1), "timeout")
 	
-	emit_signal("level_is_set", spawn_positions, navigation_cells, navigation_cells_positions)
+	emit_signal("level_is_set", positions, navigation_cells, navigation_cells_positions)
 
 
 

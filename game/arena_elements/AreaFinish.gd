@@ -2,14 +2,14 @@ extends Area2D
 
 
 func _on_AreaFinish_body_entered(body: Node) -> void:
+	# more bit ob prihodu, da ni možnosti, da greš ven na napačni strani in se šteje, da si prečkal
 	
 	if body is Bolt:
-		body.modulate = Color.red
+		body.modulate = Color.green
+		if body.bolt_active:
+			Ref.game_manager.on_bolt_across_finish_line(body)
 	
 
 func _on_AreaFinish_body_exited(body: Node) -> void:
 	
-	if body is Bolt:
-		body.modulate = Color.green
-		yield(get_tree().create_timer(0.5), "timeout")
-		Ref.game_manager.game_over(0)
+	pass
