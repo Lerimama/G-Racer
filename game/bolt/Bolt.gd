@@ -453,19 +453,23 @@ func activate_shield():
 		# shields_on in collisions_setup premaknjena dol na konec animacije
 		shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
 
+var bolt_on_nitro_count: int = 0
+var bolt_on_hole_count: int = 0
+var bolt_on_gravel_count: int = 0
+var bolt_on_tracking_count: int = 0
+
 
 func activate_nitro(nitro_power: float, nitro_time: float):
 
-	#	fwd_engine_power = nitro_power # vhodni fwd_engine_power spremenim, ker se ne seta na vsak frame (reset na po timerju)
-	#	# pospešek
-	#	var nitro_tween = get_tree().create_tween()
-	#	nitro_tween.tween_property(self, "engine_power", nitro_power, 1) # pospešek spreminja engine_power, na katereg input ne vpliva
-	#	nitro_tween.tween_property(self, "nitro_active", true, 0)
-	#	# trajanje
-	#	yield(get_tree().create_timer(nitro_time), "timeout")
-	#	fwd_engine_power = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
-	
 	if bolt_active: # če ni aktiven se sam od sebe ustavi
+		#		fwd_engine_power = nitro_power # vhodni fwd_engine_power spremenim, ker se ne seta na vsak frame (reset na po timerju)
+		#		# pospešek
+		#		var nitro_tween = get_tree().create_tween()
+		#		nitro_tween.tween_property(self, "engine_power", nitro_power, 1) # pospešek spreminja engine_power, na katereg input ne vpliva
+		#		nitro_tween.tween_property(self, "nitro_active", true, 0)
+		#		# trajanje
+		#		yield(get_tree().create_timer(nitro_time), "timeout")
+		#		fwd_engine_power = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 		drag_force_quo = Pro.bolt_profiles[bolt_type]["drag_force_quo_nitro"]	
 		yield(get_tree().create_timer(nitro_time), "timeout")
 		drag_force_quo = Pro.bolt_profiles[bolt_type]["drag_force_quo"]	
@@ -551,7 +555,7 @@ func take_damage(hit_by: Node):
 		lose_life()
 
 	
-func item_picked(pickable_type_key: String):
+func on_item_picked(pickable_type_key: String):
 	
 	var pickable_value: float = Pro.pickable_profiles[pickable_type_key]["pickable_value"]
 	var pickable_time: float = Pro.pickable_profiles[pickable_type_key]["pickable_time"]
@@ -588,7 +592,7 @@ func item_picked(pickable_type_key: String):
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
-			item_picked(random_pickable_key) # pick selected
+			on_item_picked(random_pickable_key) # pick selected
 			
 			
 # PRIVAT ------------------------------------------------------------------------------------------------

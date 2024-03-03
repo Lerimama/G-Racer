@@ -2,10 +2,10 @@
 
 [ext_resource path="res://game/GameViewGrid.gd" type="Script" id=1]
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=2]
-[ext_resource path="res://game/GameOver.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/ui/GameOver.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/Game.gd" type="Script" id=5]
-[ext_resource path="res://game/PauseGame.tscn" type="PackedScene" id=7]
-[ext_resource path="res://game/hud/Hud.tscn" type="PackedScene" id=8]
+[ext_resource path="res://game/ui/PauseGame.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/ui/hud/Hud.tscn" type="PackedScene" id=8]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 5 )

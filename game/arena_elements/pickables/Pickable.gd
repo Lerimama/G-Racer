@@ -22,6 +22,6 @@ func _ready() -> void:
 	
 func _on_Item_body_entered(body: Node) -> void:
 	
-	if body.has_method("item_picked"):
-		body.item_picked(pickable_type_key)
+	if body.has_method("on_item_picked"):
+		body.on_item_picked(pickable_type_key)
 		queue_free()	

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
 [ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=2]
-[ext_resource path="res://game/hud/statline_stats/Stat.gd" type="Script" id=3]
+[ext_resource path="res://game/ui/hud/statline_stats/Stat.gd" type="Script" id=3]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 2 )

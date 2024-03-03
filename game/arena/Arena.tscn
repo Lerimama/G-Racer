@@ -49,6 +49,7 @@ width = 2.0
 default_color = Color( 1, 0.752941, 0.0156863, 0.392157 )
 
 [node name="ScreenArea" type="Area2D" parent="."]
+visible = false
 position = Vector2( 320, 184 )
 z_index = 5
 script = ExtResource( 3 )
@@ -73,8 +74,6 @@ current = true
 
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 7 )
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [connection signal="body_entered" from="ScreenArea" to="GameManager" method="_on_ScreenArea_body_entered"]
 [connection signal="body_exited" from="ScreenArea" to="GameManager" method="_on_ScreenArea_body_exited"]

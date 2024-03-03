@@ -32,7 +32,7 @@ _global_script_classes=[ {
 "base": "Control",
 "class": "GameOver",
 "language": "GDScript",
-"path": "res://game/GameOver_izpa.gd"
+"path": "res://_izPA/GameOver_izpa.gd"
 }, {
 "base": "TileMap",
 "class": "GameTilemap",

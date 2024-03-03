@@ -5,14 +5,19 @@ func _on_AreaNitro_body_entered(body: Node) -> void:
 
 	if body is Bolt:
 		if body.bolt_active: # če ni aktiven se sam od sebe ustavi
-			body.modulate = Color.green
-			body.drag_force_quo = Pro.bolt_profiles[body.bolt_type]["drag_force_quo_nitro"]
-
-
+			if body.bolt_on_nitro_count == 0: # vklopiš samo na prvi
+#				body.modulate = Color.green
+				body.drag_force_quo = Pro.bolt_profiles[body.bolt_type]["drag_force_quo_nitro"]
+			body.bolt_on_nitro_count += 1 
+#	printt("in", body.bolt_in_nitro_count)
+			
+			
 func _on_AreaNitro_body_exited(body: Node) -> void:
 	
 	if body is Bolt:
-#		if body.bolt_active: # če ni aktiven se sam od sebe ustavi
-		body.modulate = Color.white
-#		body.drag = Pro.bolt_profiles[body.bolt_type]["drag"]
-		body.drag_force_quo = Pro.bolt_profiles[body.bolt_type]["drag_force_quo"]
+		# yield(get_tree().create_timer(1), "timeout")
+		body.bolt_on_nitro_count -= 1 
+		if body.bolt_on_nitro_count == 0: # izklopiš, ko bolta ni v nobeni več
+#			body.modulate = Color.white 
+			body.drag_force_quo = Pro.bolt_profiles[body.bolt_type]["drag_force_quo"]
+#	printt("out", body.bolt_in_nitro_count)

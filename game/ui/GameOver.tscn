@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://game/GameOver.gd" type="Script" id=1]
+[ext_resource path="res://game/ui/GameOver.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=3]
-[ext_resource path="res://game/RankingLine.tscn" type="PackedScene" id=4]
+[ext_resource path="res://game/ui/RankingLine.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=6]
 
 [sub_resource type="StyleBoxEmpty" id=1]

@@ -1,7 +1,7 @@
 extends Control
 
 
-onready var RankingLine: PackedScene = preload("res://game/RankingLine.tscn")
+onready var RankingLine: PackedScene = preload("res://game/ui/RankingLine.tscn")
 
 
 func _ready() -> void:

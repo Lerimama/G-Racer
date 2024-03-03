@@ -3,7 +3,7 @@ class_name Player
 
 
 var player_name: String # za opredelitev statistike
-var player_color: Color
+#var player_color: Color
 var player_profile: Dictionary
 
 var controller_profile_name: String

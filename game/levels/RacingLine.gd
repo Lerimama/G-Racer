@@ -1,18 +1,10 @@
 extends Node2D
 
 
-signal racing_line_changed (path)
-
 onready var start_position: Position2D = $StartPosition
 onready var finish_position: Position2D = $FinishPosition
 onready var navigation_agent: NavigationAgent2D = $NavigationAgent2D
 onready var racing_path: Line2D = $RacingPath
-
-
-#func _input(event: InputEvent) -> void:
-#
-#	if Input.is_action_just_pressed("x"):
-#		split_line()
 
 
 func _ready() -> void:
@@ -61,9 +53,3 @@ func split_line():
 			
 			Met.spawn_indikator(new_point, 0)
 		
-
-func _on_NavigationAgent2D_path_changed() -> void:
-	return
-#	emit_signal("racing_line_changed", navigation_agent.get_nav_path())
-#	printt("path", navigation_agent.get_nav_path().size())
-	

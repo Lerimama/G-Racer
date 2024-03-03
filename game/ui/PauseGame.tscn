@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=2]
-[ext_resource path="res://game/PauseGame.gd" type="Script" id=4]
+[ext_resource path="res://game/ui/PauseGame.gd" type="Script" id=4]
 
 [node name="PauseGame" type="Control"]
 pause_mode = 2

@@ -384,13 +384,14 @@ func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, t
 #	Ref.current_camera.follow_target = level_positions[0]	
 	Ref.current_camera.position = level_positions[0].global_position
 
-	
+
 func _on_Enemy_path_changed(path: Array) -> void:
 	# ta funkcija je vezana na signal bolta
 	# inline connect za primer, če je bolt spawnan
 	# def signal connect za primer, če je bolt "in-tree" node
-	navigation_line.points = path
 	
+	navigation_line.points = path
+
 
 func _on_ScreenArea_body_exited(body: Node) -> void:
 	
@@ -403,17 +404,3 @@ func _on_ScreenArea_body_exited(body: Node) -> void:
 
 func _on_ScreenArea_body_entered(body: Node) -> void:
 	pass
-
-
-	
-#func check_neighbour_cells(cell_grid_position, area_span):
-#
-#	var selected_cells: Array # = []
-#	var neighbour_in_check: Vector2
-#
-#	# preveri vse celice v erase_area_span
-#	for y in area_span:
-#		for x in area_span:
-#			neighbour_in_check = cell_grid_position + Vector2(x - 1, y - 1)
-#			selected_cells.append(neighbour_in_check)
-#	return selected_cells

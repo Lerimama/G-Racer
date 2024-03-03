@@ -65,11 +65,11 @@ var bolt_profiles: Dictionary = {
 		"side_traction": 0.05, # 0 - 1
 		"bounce_size": 0.3, # 0 - 1 
 		"inertia": 5, # kg
-		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
+		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
 		"drag_force_quo": 100.0, # večji pomeni nižjo drag force
 		"drag_force_quo_gravel": 25.0, 
 		"drag_force_quo_hole": 5.0,
-		"drag_force_quo_nitro": 1000.0,
+		"drag_force_quo_nitro": 500.0,
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
 		# v1

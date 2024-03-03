@@ -4,6 +4,7 @@ class_name Enemy
 signal path_changed (path)
 # signal target_reached
 
+var player_name: String # za opredelitev statistike
 var player_profile: Dictionary
 
 # idle
@@ -46,8 +47,8 @@ func _ready() -> void:
 	randomize()
 	
 	# player setup
-#	name = player_name _temp off
 	player_profile = Pro.default_player_profiles[bolt_id]
+	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
 	bolt_sprite.modulate = bolt_color
 	
@@ -235,3 +236,4 @@ func set_target_location (target: Vector2):
 
 func _on_NavigationAgent2D_path_changed() -> void:
 	emit_signal("path_changed", navigation_agent.get_nav_path()) # levelu preko arene pošljemo točke poti do cilja
+	pass
