@@ -13,6 +13,7 @@ var leading_player: KinematicBody2D # trenutno vodilni igralec
 
 var bolts_in_game: Array
 var pickables_in_game: Array
+var bolt_names_on_start: Array # da GO lahko naredi poročilo o vseh, ki so bili na štaru
 
 # level
 #onready var tilemap_floor_cells: Array
@@ -113,7 +114,6 @@ func set_level(): # kliče main.gd pred fajdinom igre
 func set_game(): # kliče main.gd pred fejdin igre
 	print("set game")
 	
-	
 	# set_game_view()
 	# set_players() # da je plejer viden že na fejdin
 	
@@ -136,15 +136,13 @@ func set_game(): # kliče main.gd pred fejdin igre
 #
 #	Global.hud.slide_in(start_players_count)
 	
-	if Ref.hud:
-		# Ref.hud.set_hud	()
+	if Ref.hud: # debug
 		Ref.hud.start_countdown.start_countdown()
 		yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
 	start_game()
 
 
 func start_game():
-	# nitro je kao start_race :)
 	print("start game")
 	
 	for bolt in bolts_in_game:
@@ -152,7 +150,7 @@ func start_game():
 		bolt.bolt_active = true
 #		Ref.sound_manager.play_music("game_music")
 
-	if Ref.hud:
+	if Ref.hud: # debug
 		Ref.hud.on_game_start()
 	game_on = true
 		
@@ -164,34 +162,25 @@ func game_over(gameover_reason: int):
 	game_on = false
 
 	yield(get_tree().create_timer(2), "timeout") # za dojet
-	if Ref.hud:
+	if Ref.hud: # debug
 		Ref.hud.on_game_over()
 	
-	yield(get_tree().create_timer(1), "timeout") # za dojet
-	get_tree().call_group(Ref.group_bolts, "set_physics_process", false)
+	for bolt in bolts_in_game:
+		bolt.bolt_active = false # načeloma bi moralo že veljati za vse ... zazih
 	
 	if gameover_reason == GameoverReason.SUCCES:
 		printt("SUCCESS", bolts_across_finish_line.size())
 		for bolt_across_finish_line in bolts_across_finish_line:
 			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
-		
 	elif gameover_reason == GameoverReason.FAIL:
 		print("FAIL")
 		
 #	stop_game_elements()
-	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line)
+	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolt_names_on_start)
 	
-	# če v grupi bolts obstaja kakšen bolt
-	if not bolts_in_game.empty():
-		for bolt in bolts_in_game:
-			bolt.queue_free()
-	if not pickables_in_game.empty():
-		for p in pickables_in_game:
-			p.queue_free()
-#	$"../UI/HUD".hide_player_stats()
 	Ref.current_camera.follow_target = null
 
-
+	
 func check_for_game_over(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
 	
 	var active_bolts: Array
@@ -231,6 +220,8 @@ func spawn_bolt(NewBolt: PackedScene, spawned_position: Vector2, spawned_bolt_id
 		new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # statistika med boltom in hudom
 		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
 		# Ref.current_camera.follow_target = new_bolt
+	
+	bolt_names_on_start.append(new_bolt.player_name)
 
 
 func spawn_pickable():
@@ -295,13 +286,13 @@ func get_ingame_ranking():
 		var leading_player_racing_point_index: int = leading_player_on_racing_line[1]
 		if not Ref.current_camera.follow_target == leading_player: # da kamera ne reagira, če je že setan isti plejer
 			Ref.current_camera.follow_target = leading_player
+		# posledice	
+		position_indikator.scale = Vector2(3,3)
+		position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
+		position_indikator.modulate = leading_player.bolt_color
 	# če so vsi neaktivni, lokacija kamere ostane ista
 	else:
 		Ref.current_camera.follow_target = null
-	# posledice	
-	#	position_indikator.scale = Vector2(3,3)
-	#	position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
-	#	position_indikator.modulate = leading_player.bolt_color
 
 
 func sort_ascending(array_1, array_2):

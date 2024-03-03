@@ -20,10 +20,6 @@ func _ready() -> void:
 	pickable_value = Pro.pickable_profiles[pickable_type_key]["pickable_value"]
 	
 	
-func _process(delta: float) -> void:
-	pass
-
-
 func _on_Item_body_entered(body: Node) -> void:
 	
 	if body.has_method("item_picked"):

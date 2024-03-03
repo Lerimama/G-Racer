@@ -83,7 +83,8 @@ onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_d
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_quo: float = Pro.bolt_profiles[bolt_type]["drag_force_quo"] 
-enum MotionStates {FWD, REV, IDLE} # glede na moč motorja
+
+enum MotionStates {FWD, REV, IDLE, DISARRAY} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
 var current_active_trail: Line2D
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
@@ -141,7 +142,7 @@ func _physics_process(delta: float) -> void:
 	acceleration -= drag_force
 	velocity += acceleration * delta
 	rotation_angle = rotation_dir * deg2rad(turn_angle)
-	
+	# print(velocity.length(), drag_force)
 	rotate(delta * rotation_angle)
 	steering(delta)	# vpliva na ai !!!
 	
@@ -475,54 +476,54 @@ func on_hit(hit_by: Node):
 	if not shields_on:
 		
 		if hit_by.is_in_group(Ref.group_bullets):
-			# shake camera
 			Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
-			# take damage
 			take_damage(hit_by)
 			# push
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-			# utripne	
+			# efekt	
 			modulate.a = 0.2
 			var blink_tween = get_tree().create_tween()
 			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			
 		elif hit_by.is_in_group(Ref.group_misiles):
 			set_process_input(false)
-			# shake camera
 			Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
-			# take damage
 			take_damage(hit_by)
 			# push
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-			# utripne	
+			# efekt	
 			modulate.a = 0.2
 			var blink_tween = get_tree().create_tween()
 			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
-			# disabled
+			# disarray
+			current_motion_state = MotionStates.DISARRAY
+			rotation_dir = -10
+#			on_hit_disabled_time = on_hit_disabled_time * 1.5
 			var disabled_tween = get_tree().create_tween()
 			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
+			disabled_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
 			yield(disabled_tween, "finished")
+			rotation_dir = 0
+			current_motion_state = MotionStates.IDLE
 			set_process_input(true)
 			
 		elif hit_by.is_in_group(Ref.group_shockers):
 			set_process_input(false)
-			# take damage
 			take_damage(hit_by)		
-			# catch
+			# efekt
 			var catch_tween = get_tree().create_tween()
 			catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
 			catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
 			catch_tween.parallel().tween_property(bolt_sprite, "modulate:a", 0.5, 0.5)
 			bolt_sprite.material.set_shader_param("noise_factor", 2.0)
 			bolt_sprite.material.set_shader_param("speed", 0.7)
-			# controlls off time	
-			yield(get_tree().create_timer(hit_by.shock_time), "timeout")
-			#releaase
+			yield(get_tree().create_timer(hit_by.shock_time), "timeout") # controlls off time
+			# releaase
 			var relase_tween = get_tree().create_tween()
 			relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
 			relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
 			yield(relase_tween, "finished")
-			# reset shsder
+			# reset shader
 			bolt_sprite.material.set_shader_param("noise_factor", 0.0)
 			bolt_sprite.material.set_shader_param("speed", 0.0)
 			set_process_input(true)

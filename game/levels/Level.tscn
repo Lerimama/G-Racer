@@ -87,7 +87,7 @@ script = ExtResource( 4 )
 
 [node name="RacingPath" type="Line2D" parent="RacingLine"]
 width = 2.0
-default_color = Color( 0.4, 0.501961, 1, 0.0588235 )
+default_color = Color( 0.4, 0.501961, 1, 1 )
 
 [connection signal="navigation_completed" from="Edge" to="." method="_on_Edge_navigation_completed"]
 [connection signal="path_changed" from="RacingLine/NavigationAgent2D" to="RacingLine" method="_on_NavigationAgent2D_path_changed"]

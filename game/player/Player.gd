@@ -60,7 +60,8 @@ func _input(event: InputEvent) -> void:
 		engine_power = 0
 	
 	# rotation
-	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0	
+	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali
+	# rotation_angle se računa na inputu ... rotation_dir * deg2rad(turn_angle)
 	
 	# shooting
 	if Input.is_action_just_pressed(shoot_bullet_action):
@@ -83,7 +84,6 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	
 	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
-	
 	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 

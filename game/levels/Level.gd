@@ -99,9 +99,9 @@ func set_level_elements():
 				spawn_element(cell_global_position, brick_light, Vector2(5,4))
 				tilemap_elements.set_cellv(cell, -1)
 				
-			12: # area nitro
+			28: # area nitro ... 12
 				spawn_element(cell_global_position, area_nitro, Vector2(5,4))
-			13: # area gravel
+			29: # area gravel ... 13
 				spawn_element(cell_global_position, area_gravel, Vector2(5,4))
 				non_navigation_cell_positions.append(cell_global_position)
 			23: # area finish
@@ -187,7 +187,6 @@ func set_level_edge():
 #	yield(get_tree().create_timer(0.1), "timeout")
 	
 	emit_signal("level_is_set", positions, navigation_cells, navigation_cells_positions)
-
 
 
 # FLOOR --------------------------------------------------------------------------------------------------------------------------------
