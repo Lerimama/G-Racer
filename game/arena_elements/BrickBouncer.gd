@@ -15,16 +15,19 @@ func _ready() -> void:
 func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body is Bolt:
-		body.bolt_active = false
+		body.set_process_input(false)
 		body.bounce_size = bouncer_bounce_strenght
 		sprite.modulate = Color.white
-
-
+		
+		# varovalka, da ne obtiči
+		yield(get_tree().create_timer(0.2), "timeout")
+		body.set_process_input(true)
+		
 func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if body is Bolt:
 		# sprite.modulate = bouncer_color
 		body.bounce_size = Pro.bolt_profiles[body.bolt_type]["bounce_size"]
-		body.bolt_active = true
+		body.set_process_input(true)
 		body.get_points(bouncer_points)
 		sprite.modulate = bouncer_color

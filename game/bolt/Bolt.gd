@@ -3,6 +3,7 @@ class_name Bolt, "res://assets/class_icons/bolt_icon.png"
 
 
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
+signal bolt_activity_changed (bolt_is_active)
 
 var bolt_id: int # ga seta spawner
 var bolt_color: Color = Color.white
@@ -15,7 +16,7 @@ var velocity: Vector2 = Vector2.ZERO
 var rotation_angle: float
 var rotation_dir: float
 var collision: KinematicCollision2D
-var lose_life_time: float = 2
+var reset_time: float = 2
 
 # weapons
 var bullet_reloaded: bool = true
@@ -331,10 +332,20 @@ func lose_life():
 	player_life -= 1
 	emit_signal("stat_changed", bolt_id, "player_life", player_life)
 	
-	bolt_collision.disabled = true
-	visible = false
-	set_physics_process(false)
-	yield(get_tree().create_timer(lose_life_time), "timeout")
+#	bolt_collision.disabled = true
+#	visible = false
+#	set_physics_process(false)
+	
+	if player_life > 0:
+		reset_bolt()
+	else:
+		self.bolt_active = false
+		queue_free()
+		
+		
+func reset_bolt():
+	
+	yield(get_tree().create_timer(reset_time), "timeout")
 	
 	# on new life
 	bolt_collision.disabled = false
@@ -345,7 +356,7 @@ func lose_life():
 	set_physics_process(true)
 	visible = true
 	
-	
+		
 func engines_setup():
 	
 	engine_particles_rear = EngineParticles.instance()
@@ -476,7 +487,7 @@ func on_hit(hit_by: Node):
 			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			
 		elif hit_by.is_in_group(Ref.group_misiles):
-			bolt_active = false
+			set_process_input(false)
 			# shake camera
 			Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 			# take damage
@@ -491,10 +502,10 @@ func on_hit(hit_by: Node):
 			var disabled_tween = get_tree().create_tween()
 			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
 			yield(disabled_tween, "finished")
-			bolt_active = true
+			set_process_input(true)
 			
 		elif hit_by.is_in_group(Ref.group_shockers):
-			bolt_active = false
+			set_process_input(false)
 			# take damage
 			take_damage(hit_by)		
 			# catch
@@ -514,7 +525,7 @@ func on_hit(hit_by: Node):
 			# reset shsder
 			bolt_sprite.material.set_shader_param("noise_factor", 0.0)
 			bolt_sprite.material.set_shader_param("speed", 0.0)
-			bolt_active = true
+			set_process_input(true)
 
 
 func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
@@ -581,7 +592,6 @@ func item_picked(pickable_type_key: String):
 			
 # PRIVAT ------------------------------------------------------------------------------------------------
 
-signal bolt_activity_changed (bolt_is_active)
 
 func _on_bolt_active_changed(bolt_is_active: bool):
 	

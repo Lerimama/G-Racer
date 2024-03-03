@@ -403,9 +403,11 @@ func _on_Enemy_path_changed(path: Array) -> void:
 
 func _on_ScreenArea_body_exited(body: Node) -> void:
 	
-	if body is Player:
-		var bolt_pull_position = get_bolt_pull_position(body)
-		body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
+	if level_settings.level == Set.Levels.NITRO:
+	
+		if body is Player:
+			var bolt_pull_position = get_bolt_pull_position(body)
+			body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
 
 
 func _on_ScreenArea_body_entered(body: Node) -> void:
