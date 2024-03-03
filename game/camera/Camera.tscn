@@ -29,7 +29,6 @@ script = ExtResource( 3 )
 
 [node name="TestUI" type="CanvasLayer" parent="."]
 layer = 3
-visible = false
 script = ExtResource( 4 )
 noise = ExtResource( 1 )
 

@@ -12,6 +12,7 @@ onready var tilemap_edge: TileMap = $Edge
 
 onready var positions: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
+#onready var racing_line: Line2D = $RacingLine
 
 
 func _ready() -> void:

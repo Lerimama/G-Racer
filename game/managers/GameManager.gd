@@ -36,8 +36,8 @@ onready var NewLevel: PackedScene = level_settings["level_scene"]
 
 func _input(event: InputEvent) -> void:
 
-	if Input.is_action_just_pressed("x"):
-		spawn_pickable()
+#	if Input.is_action_just_pressed("x"):
+#		spawn_pickable()
 	if Input.is_action_just_released("r"):
 		call_deferred("game_over", GameoverReason.SUCCES)	
 	if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
