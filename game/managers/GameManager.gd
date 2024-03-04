@@ -36,8 +36,8 @@ onready var NewLevel: PackedScene = level_settings["level_scene"]
 
 func _input(event: InputEvent) -> void:
 
-#	if Input.is_action_just_pressed("x"):
-#		spawn_pickable()
+	if Input.is_action_just_pressed("x"):
+		spawn_pickable()
 	if Input.is_action_just_released("r"):
 		call_deferred("game_over", GameoverReason.SUCCES)	
 	if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
@@ -230,7 +230,7 @@ func spawn_bolt(NewBolt: PackedScene, spawned_position: Vector2, spawned_bolt_id
 
 
 func spawn_pickable():
-	
+	print(available_pickable_positions.size())
 	# uteži
 	if not available_pickable_positions.empty():
 

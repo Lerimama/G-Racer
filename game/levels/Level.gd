@@ -12,7 +12,64 @@ onready var tilemap_edge: TileMap = $Edge
 
 onready var positions: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
-#onready var racing_line: Line2D = $RacingLine
+
+# elements
+onready var goal_pillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
+onready var brick_ghost: PackedScene = preload("res://game/arena_elements/BrickGhost.tscn")
+onready var brick_bouncer: PackedScene = preload("res://game/arena_elements/BrickBouncer.tscn")
+onready var brick_magnet: PackedScene = preload("res://game/arena_elements/BrickMagnet.tscn")
+onready var brick_target: PackedScene = preload("res://game/arena_elements/BrickTarget.tscn")
+onready var brick_light: PackedScene = preload("res://game/arena_elements/BrickLight.tscn")
+onready var area_nitro: PackedScene = preload("res://game/arena_elements/AreaNitro.tscn")
+onready var area_tracking: PackedScene = preload("res://game/arena_elements/AreaTracking.tscn")
+onready var area_gravel: PackedScene = preload("res://game/arena_elements/AreaGravel.tscn")
+onready var area_finish: PackedScene = preload("res://game/arena_elements/AreaFinish.tscn")
+# pickables
+onready var pickable_energy: PackedScene = preload("res://game/arena_elements/pickables/PickableEnergy.tscn")
+onready var pickable_life: PackedScene = preload("res://game/arena_elements/pickables/PickableLife.tscn")
+onready var pickable_bullet: PackedScene = preload("res://game/arena_elements/pickables/PickableBullet.tscn")
+onready var pickable_misile: PackedScene = preload("res://game/arena_elements/pickables/PickableMisile.tscn")
+onready var pickable_shocker: PackedScene = preload("res://game/arena_elements/pickables/PickableShocker.tscn")
+onready var pickable_shield: PackedScene = preload("res://game/arena_elements/pickables/PickableShield.tscn")
+onready var pickable_nitro: PackedScene = preload("res://game/arena_elements/pickables/PickableNitro.tscn")
+onready var pickable_tracking: PackedScene = preload("res://game/arena_elements/pickables/PickableTracking.tscn")
+onready var pickable_random: PackedScene = preload("res://game/arena_elements/pickables/PickableRandom.tscn")
+onready var pickable_gas: PackedScene = preload("res://game/arena_elements/pickables/PickableGas.tscn")
+# floor
+var corner_cell_TopL_regions: Array = [
+	Vector2(2,3), Vector2(1,5),
+	Vector2(8,6), Vector2(10,6), Vector2(12,6), Vector2(14,6),
+	Vector2(3,8), Vector2(5,8), Vector2(14,8),
+	Vector2(2,13), Vector2(8,13), Vector2(14,13),
+	Vector2(9,15), Vector2(11,15),
+	Vector2(9,17), Vector2(11,17)
+	]
+var corner_cell_TopR_regions: Array =[
+	Vector2(0,3), Vector2(5,5),
+	Vector2(7,6), Vector2(9,6), Vector2(11,6), Vector2(13,6),
+	Vector2(2,8), Vector2(4,8), Vector2(13,8),
+	Vector2(1,13), Vector2(7,13), Vector2(13,13),
+	Vector2(8,15), Vector2(10,15),
+	Vector2(8,17), Vector2(10,17)
+	]
+var corner_cell_BtmL_regions: Array = [
+	Vector2(2,1), Vector2(1,9),
+	Vector2(8,5), Vector2(10,5), Vector2(12,5), Vector2(14,5),
+	Vector2(3,7), Vector2(5,7), Vector2(14,7),
+	Vector2(2,12), Vector2(8,12), Vector2(14,12),
+	Vector2(9,14), Vector2(11,14),
+	Vector2(9,16), Vector2(11,16)
+	]
+var corner_cell_BtmR_regions: Array = [
+	Vector2(0,1), Vector2(5,9),
+	Vector2(7,5), Vector2(9,5), Vector2(11,5), Vector2(13,5),
+	Vector2(2,7), Vector2(4,7), Vector2(13,7),
+	Vector2(1,12), Vector2(7,12), Vector2(13,12),
+	Vector2(8,14), Vector2(10,14),
+	Vector2(8,16), Vector2(10,16)
+	]
+onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
+onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 
 
 func _ready() -> void:
@@ -37,30 +94,42 @@ func get_tilemap_cells(tilemap: TileMap):
 	return tilemap_cells
 
 
+# EDGE ---------------------------------------------------------------------------------------------------------------------------------
+
+
+func set_level_edge():
+	
+	var edge_cells = get_tilemap_cells(tilemap_elements) # celice v obliki grid koordinat
+	var navigation_cells: Array
+	var navigation_cells_positions: Array
+	
+	for cell in edge_cells:
+		var cell_index = tilemap_edge.get_cellv(cell)
+		var cell_local_position = tilemap_edge.map_to_world(cell)
+		var cell_global_position = tilemap_edge.to_global(cell_local_position)
+		
+		# če je prazna in zasedena z elemenotom, jo zamenjam z navigacijsko celico
+		if cell_index == -1 and not non_navigation_cell_positions.has(cell_global_position): # da le ni element
+			tilemap_edge.set_cellv(cell, 13)
+			navigation_cells.append(cell) # grid pozicije
+			navigation_cells_positions.append(cell_global_position)
+			
+	# odstrani zunanji rob navigacije ob steni (to je vsaka, ki ima vsaj eno od sosednjih celic prazno)
+	for cell in navigation_cells:
+		var navigation_cell_index = navigation_cells.find(cell)
+		var cell_in_check: Vector2
+		# pregledam 5 celic v ver in hor smeri
+		for y in 5: 
+			for x in 5:
+				cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
+				if tilemap_edge.get_cellv(cell_in_check) == 0:
+					tilemap_edge.set_cellv (cell, -1)
+					break # ko je ena prazna, ne rabi več čekirat
+	
+	emit_signal("level_is_set", positions, navigation_cells, navigation_cells_positions)
+
+
 # ELEMENTS ---------------------------------------------------------------------------------------------------------------------------------
-
-
-onready var goal_pillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
-onready var brick_ghost: PackedScene = preload("res://game/arena_elements/BrickGhost.tscn")
-onready var brick_bouncer: PackedScene = preload("res://game/arena_elements/BrickBouncer.tscn")
-onready var brick_magnet: PackedScene = preload("res://game/arena_elements/BrickMagnet.tscn")
-onready var brick_target: PackedScene = preload("res://game/arena_elements/BrickTarget.tscn")
-onready var brick_light: PackedScene = preload("res://game/arena_elements/BrickLight.tscn")
-onready var area_nitro: PackedScene = preload("res://game/arena_elements/AreaNitro.tscn")
-onready var area_tracking: PackedScene = preload("res://game/arena_elements/AreaTracking.tscn")
-onready var area_gravel: PackedScene = preload("res://game/arena_elements/AreaGravel.tscn")
-onready var area_finish: PackedScene = preload("res://game/arena_elements/AreaFinish.tscn")
-
-onready var pickable_energy: PackedScene = preload("res://game/arena_elements/pickables/PickableEnergy.tscn")
-onready var pickable_life: PackedScene = preload("res://game/arena_elements/pickables/PickableLife.tscn")
-onready var pickable_bullet: PackedScene = preload("res://game/arena_elements/pickables/PickableBullet.tscn")
-onready var pickable_misile: PackedScene = preload("res://game/arena_elements/pickables/PickableMisile.tscn")
-onready var pickable_shocker: PackedScene = preload("res://game/arena_elements/pickables/PickableShocker.tscn")
-onready var pickable_shield: PackedScene = preload("res://game/arena_elements/pickables/PickableShield.tscn")
-onready var pickable_nitro: PackedScene = preload("res://game/arena_elements/pickables/PickableNitro.tscn")
-onready var pickable_tracking: PackedScene = preload("res://game/arena_elements/pickables/PickableTracking.tscn")
-onready var pickable_random: PackedScene = preload("res://game/arena_elements/pickables/PickableRandom.tscn")
-onready var pickable_gas: PackedScene = preload("res://game/arena_elements/pickables/PickableGas.tscn")
 
 
 func set_level_elements():
@@ -149,85 +218,9 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 	add_child(new_element_scene)	
 
 
-# EDGE ---------------------------------------------------------------------------------------------------------------------------------
-
-
-func set_level_edge():
-	
-	var edge_cells = get_tilemap_cells(tilemap_elements) # celice v obliki grid koordinat
-	var navigation_cells: Array
-	var navigation_cells_positions: Array
-
-	for cell in edge_cells:
-		var cell_index = tilemap_edge.get_cellv(cell)
-		var cell_local_position = tilemap_edge.map_to_world(cell)
-		var cell_global_position = tilemap_edge.to_global(cell_local_position)
-
-		# če je prazna, jo zamenjam z navigacijsko celico
-		if cell_index == -1:
-			tilemap_edge.set_cellv(cell, 13)
-			navigation_cells.append(cell) # grid pozicije
-			navigation_cells_positions.append(cell_global_position)
-			
-			# izločitev 
-#			if non_navigation_cell_positions.has(cell_global_position):
-#				print("non_navigation_cell_positions")
-			
-	# odstrani zunanje rob navigacije (rob je vsaka, ki ima eno od sosednjih celic prazno
-#	var navigation_cell_index = 0
-#	for cell in navigation_cells:
-#		var cell_in_check: Vector2
-#		# pregledam 5 celic v ver in hor smeri
-#		for y in 5: 
-#			for x in 5:
-#				cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
-#				if tilemap_edge.get_cellv(cell_in_check) == 0:
-#					tilemap_edge.set_cellv (cell, -1)
-#					break # ko je ena prazna, ne rabi več čekirat
-#		navigation_cell_index += 1
-#	yield(get_tree().create_timer(0.1), "timeout")
-	
-	emit_signal("level_is_set", positions, navigation_cells, navigation_cells_positions)
-
-
 # FLOOR --------------------------------------------------------------------------------------------------------------------------------
 
 
-var corner_cell_TopL_regions: Array = [
-	Vector2(2,3), Vector2(1,5),
-	Vector2(8,6), Vector2(10,6), Vector2(12,6), Vector2(14,6),
-	Vector2(3,8), Vector2(5,8), Vector2(14,8),
-	Vector2(2,13), Vector2(8,13), Vector2(14,13),
-	Vector2(9,15), Vector2(11,15),
-	Vector2(9,17), Vector2(11,17)
-	]
-var corner_cell_TopR_regions: Array =[
-	Vector2(0,3), Vector2(5,5),
-	Vector2(7,6), Vector2(9,6), Vector2(11,6), Vector2(13,6),
-	Vector2(2,8), Vector2(4,8), Vector2(13,8),
-	Vector2(1,13), Vector2(7,13), Vector2(13,13),
-	Vector2(8,15), Vector2(10,15),
-	Vector2(8,17), Vector2(10,17)
-	]
-var corner_cell_BtmL_regions: Array = [
-	Vector2(2,1), Vector2(1,9),
-	Vector2(8,5), Vector2(10,5), Vector2(12,5), Vector2(14,5),
-	Vector2(3,7), Vector2(5,7), Vector2(14,7),
-	Vector2(2,12), Vector2(8,12), Vector2(14,12),
-	Vector2(9,14), Vector2(11,14),
-	Vector2(9,16), Vector2(11,16)
-	]
-var corner_cell_BtmR_regions: Array = [
-	Vector2(0,1), Vector2(5,9),
-	Vector2(7,5), Vector2(9,5), Vector2(11,5), Vector2(13,5),
-	Vector2(2,7), Vector2(4,7), Vector2(13,7),
-	Vector2(1,12), Vector2(7,12), Vector2(13,12),
-	Vector2(8,14), Vector2(10,14),
-	Vector2(8,16), Vector2(10,16)
-	]
-
-onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
-onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 	
 	
 func set_level_floor():
@@ -245,39 +238,22 @@ func set_level_floor():
 			var cell_local_position = tilemap_floor.map_to_world(cell)
 			var cell_global_position = tilemap_floor.to_global(cell_local_position)
 			
-			printt ("floor", floor_cells.size(),floor_cells.empty())
 			if cell_index == -1:
 				spawn_hole(cell_global_position)
 			
 			# če ni prazen, ampak ima id podn tajla
-#			elif cell_index == 0:
-#				# spawn_corner
-#				var cell_autotile_region = tilemap_floor.get_cell_autotile_coord(cell.x, cell.y) # položaj celice v autotile regiji
-#	#			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
-#				if corner_cell_TopL_regions.has(cell_autotile_region):
-#					spawn_corner(cell_global_position, "TopL")
-#				if corner_cell_TopR_regions.has(cell_autotile_region):
-#					spawn_corner(cell_global_position, "TopR")
-#				if corner_cell_BtmL_regions.has(cell_autotile_region):
-#					spawn_corner(cell_global_position, "BtmL")
-#				if corner_cell_BtmR_regions.has(cell_autotile_region):
-#					spawn_corner(cell_global_position, "BtmR")	
-
-	
-func spawn_corner(global_pos, corner_type):
-	
-	var new_corner_tile = corner_tile.instance()
-	new_corner_tile.global_position = global_pos + Vector2(5,4) # dodan zamik centra
-	get_parent().call_deferred("add_child",new_corner_tile )
-	match corner_type:
-		"TopL":
-			new_corner_tile.rotation_degrees = 0
-		"TopR":
-			new_corner_tile.rotation_degrees = 90
-		"BtmL":
-			new_corner_tile.rotation_degrees = -90
-		"BtmR":
-			new_corner_tile.rotation_degrees = 180
+	#			elif cell_index == 0:
+	#				# spawn_hole_corner
+	#				var cell_autotile_region = tilemap_floor.get_cell_autotile_coord(cell.x, cell.y) # položaj celice v autotile regiji
+	#	#			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
+	#				if corner_cell_TopL_regions.has(cell_autotile_region):
+	#					spawn_hole_corner(cell_global_position, "TopL")
+	#				if corner_cell_TopR_regions.has(cell_autotile_region):
+	#					spawn_hole_corner(cell_global_position, "TopR")
+	#				if corner_cell_BtmL_regions.has(cell_autotile_region):
+	#					spawn_hole_corner(cell_global_position, "BtmL")
+	#				if corner_cell_BtmR_regions.has(cell_autotile_region):
+	#					spawn_hole_corner(cell_global_position, "BtmR")	
 
 
 func spawn_hole(global_pos):
@@ -286,3 +262,18 @@ func spawn_hole(global_pos):
 	new_tile.global_position = global_pos + Vector2(5,4)
 	get_parent().call_deferred("add_child",new_tile)
 
+
+#func spawn_hole_corner(global_pos, corner_type):
+#
+#	var new_corner_tile = corner_tile.instance()
+#	new_corner_tile.global_position = global_pos + Vector2(5,4) # dodan zamik centra
+#	get_parent().call_deferred("add_child",new_corner_tile )
+#	match corner_type:
+#		"TopL":
+#			new_corner_tile.rotation_degrees = 0
+#		"TopR":
+#			new_corner_tile.rotation_degrees = 90
+#		"BtmL":
+#			new_corner_tile.rotation_degrees = -90
+#		"BtmR":
+#			new_corner_tile.rotation_degrees = 180
