@@ -9,42 +9,52 @@ var pickable_profiles: Dictionary = {
 	"BULLET": { # BULLET
 		"pickable_value": 20,
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"),
 	},
 	"MISILE": { # MISILE
 		"pickable_value": 2,
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
 	}, 
 	"SHOCKER": { # SHOCKER
 		"pickable_value": 3,
 		"pickable_time": 10, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 	}, 
 	"SHIELD": { # SHIELD
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
 	},
 	"ENERGY": { # ENERGY
 		"pickable_value": 0,
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableEnergy.tscn"),
 	},
 	"GAS": { # GAS
 		"pickable_value": 200,
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableGas.tscn"),
 	},
 	"LIFE": { # LIFE
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableLife.tscn"),
 	},
 	"NITRO": { # NITRO
 		"pickable_value": 700,
 		"pickable_time": 1, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
 	},
 	"TRACKING": { # TRACKING
 		"pickable_value": 0.7,
 		"pickable_time": 10, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
 	"RANDOM": { # RANDOM
 		"pickable_value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableRandom.tscn"),
 	},
 }
 
@@ -84,7 +94,7 @@ var bolt_profiles: Dictionary = {
 		},
 }
 
-enum Bolts {P1 = 1, P2, P3, P4, ENEMY}
+enum Bolts {P1, P2, P3, P4, ENEMY}
 
 var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
 	Bolts.P1 : { # ključi bodo kasneje samo indexi
@@ -155,9 +165,9 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"life" : 5,
 	"energy" : 10,
 	"bullet_power" : 0.1,
-	"bullet_count" : 30,
-	"misile_count" : 5,
-	"shocker_count" : 5,
+	"bullet_count" : 1,
+	"misile_count" : 1,
+	"shocker_count" : 1,
 	"gas_count" : 300, # 300 je kul
 }
 
@@ -165,7 +175,7 @@ var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 # statse ima tudi enemy
 #	"player_active" : true,
 	"player_life" : 5,
-	"player_points" : 10,
+	"player_points" : 0,
 	"player_wins" : 2,
 }
 
@@ -180,7 +190,7 @@ var weapon_profiles : Dictionary = {
 	},
 	"misile": {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"hit_damage": 10,
+		"hit_damage": 5,
 		"speed": 150,
 		"lifetime": 1.0, #domet vedno merim s časom
 		"inertia": 100,
@@ -199,22 +209,24 @@ var weapon_profiles : Dictionary = {
 # v plejerja pošljem imena akcij iz input mapa
 var default_controller_actions : Dictionary = {
 	"ARROWS" : {
-		fwd_action = "forward", 
-		rev_action = "reverse",
-		left_action = "left",
-		right_action = "right",
-		shoot_bullet_action = "ctrl",
-		shoot_misile_action = "shift",
-		shoot_shocker_action = "alt",
+		fwd_action = "p1_fwd", 
+		rev_action = "p1_rev",
+		left_action = "p1_left",
+		right_action = "p1_right",
+		shoot_bullet_action = "p1_bullet",
+		shoot_misile_action = "p1_misile",
+		shoot_shocker_action = "p1_shocker",
+		select_feat_action = "p1_select_feat",
 		},
 	"WASD" : {
-		fwd_action = "w",
-		rev_action = "s",
-		left_action = "a",
-		right_action = "d",
-		shoot_bullet_action = "v",
-		shoot_misile_action = "g",
-		shoot_shocker_action = "space",
+		fwd_action = "p2_fwd", 
+		rev_action = "p2_rev",
+		left_action = "p2_left",
+		right_action = "p2_right",
+		shoot_bullet_action = "p2_bullet",
+		shoot_misile_action = "p2_misile",
+		shoot_shocker_action = "p2_shocker",
+		select_feat_action = "p2_select_feat",
 	},
 	"JP1" : {
 		fwd_action = "jp1_fwd",
@@ -224,6 +236,7 @@ var default_controller_actions : Dictionary = {
 		shoot_bullet_action = "jp1_bullet",
 		shoot_misile_action = "jp1_misile",
 		shoot_shocker_action = "jp1_shocker",
+		select_feat_action = "jp1_select_feat",
 	},
 	"JP2" : {
 		fwd_action = "jp2_fwd",
@@ -233,6 +246,7 @@ var default_controller_actions : Dictionary = {
 		shoot_bullet_action = "jp2_bullet",
 		shoot_misile_action = "jp2_misile",
 		shoot_shocker_action = "jp2_shocker",
+		select_feat_action = "jp2_select_feat",
 	},
 }
 

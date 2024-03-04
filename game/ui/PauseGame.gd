@@ -1,6 +1,6 @@
 extends Control
 
-onready var title: Label = $Title
+#onready var title: Label = $Title
 
 func _input(event: InputEvent) -> void:
 	

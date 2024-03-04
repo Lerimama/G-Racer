@@ -1,10 +1,13 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://assets/bolt/bolt.png" type="Texture" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
 [ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=3]
 [ext_resource path="res://assets/shaders/bolt_wiggle_texture.gdshader" type="Shader" id=4]
 [ext_resource path="res://game/player/Player.gd" type="Script" id=5]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=6]
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=7]
+[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=8]
 
 [sub_resource type="OpenSimplexNoise" id=115]
 seed = 1
@@ -149,6 +152,22 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.6, 1.2 )
 }
 
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 8 )
+region = Rect2( 0, 0, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=118]
+atlas = ExtResource( 6 )
+region = Rect2( 48, 8, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=119]
+atlas = ExtResource( 8 )
+region = Rect2( 8, 0, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=120]
+atlas = ExtResource( 8 )
+region = Rect2( 16, 0, 8, 8 )
+
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 5 )
 
@@ -239,5 +258,48 @@ position = Vector2( -3.5, 0 )
 color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
 polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
 
+[node name="FeatSelector" type="Node2D" parent="."]
+
+[node name="Icons" type="Control" parent="FeatSelector"]
+margin_left = -4.0
+margin_right = 4.0
+margin_bottom = 8.0
+theme = ExtResource( 7 )
+
+[node name="IconBullet" type="TextureRect" parent="FeatSelector/Icons"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 1 )
+
+[node name="IconEdge" type="TextureRect" parent="FeatSelector/Icons/IconBullet"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 118 )
+
+[node name="IconMisile" type="TextureRect" parent="FeatSelector/Icons"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 119 )
+
+[node name="IconEdge2" type="TextureRect" parent="FeatSelector/Icons/IconMisile"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 118 )
+
+[node name="IconShocker" type="TextureRect" parent="FeatSelector/Icons"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 120 )
+
+[node name="IconEdge3" type="TextureRect" parent="FeatSelector/Icons/IconShocker"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 118 )
+
+[node name="SelectorTimer" type="Timer" parent="FeatSelector"]
+
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_started"]
+[connection signal="timeout" from="FeatSelector/SelectorTimer" to="." method="_on_SelectorTimer_timeout"]

@@ -5,17 +5,8 @@ var magnet_color: Color = Set.color_gray5
 
 var magnet_on: bool
 
-var x_to_magnet: float
-var y_to_magnet: float
-
-var direction_to_magnet: float # atan2(y_to_magnet, x_to_magnet) ... kot od telesa do magneta (glede na x os) ... radiani
-var distance_to_magnet: float # diagonala od telesa do magneta ... c2 = a2 + b2 ... var c = sqrt ((a * a) + (b * b))
-
-var gravity_velocity: float # hitrost glede na distanco od magneta ...gravitacijski pospešek
-var gravity_force: float = 70.0 # sila gravitacije
-
-var velocity: Vector2 = Vector2()
 var def_particle_speed: float = 0.5
+var gravity_force: float = 70.0 # sila gravitacije
 
 var time: float = 0
 var off_time: float = 2
@@ -46,14 +37,12 @@ func _physics_process(delta: float) -> void:
 
 	if magnet_on:
 		var detected_bodies = force_field.get_overlapping_bodies()
-		
 		for body in detected_bodies:
 			if body is Bolt:
-#			if body.is_in_group(Ref.group_bolts):
-				direction_to_magnet = Met.get_direction_to(body.global_position, global_position)
-				distance_to_magnet = Met.get_distance_to(body.global_position, global_position)
-				gravity_velocity = gravity_force / (distance_to_magnet * 1)
-				body.velocity += Vector2(gravity_velocity, 0).rotated(direction_to_magnet)
+				var vector_to_magnet: Vector2 = body.global_position.direction_to(global_position)
+				var distance_to_magnet: float = body.global_position.distance_to(global_position)
+				var gravity_velocity: float = gravity_force / (distance_to_magnet * 1)
+				body.velocity += Vector2(gravity_velocity, 0).rotated(vector_to_magnet.angle())
 				body.get_points(magnet_points)
 		
 

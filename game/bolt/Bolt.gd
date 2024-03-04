@@ -5,18 +5,23 @@ class_name Bolt, "res://assets/class_icons/bolt_icon.png"
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
 signal bolt_activity_changed (bolt_is_active)
 
+enum MotionStates {FWD, REV, IDLE, DISARRAY} # glede na moč motorja
+var current_motion_state: int = MotionStates.IDLE
+var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
+
 var bolt_id: int # ga seta spawner
 var bolt_color: Color = Color.white
-var trail_pseudodecay_color = Color.white
-var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
-var axis_distance: float # določen glede na širino sprajta
 var input_power: float
 var acceleration: Vector2
 var velocity: Vector2 = Vector2.ZERO
+var collision: KinematicCollision2D
+
+var axis_distance: float # določen glede na širino sprajta
 var rotation_angle: float
 var rotation_dir: float
-var collision: KinematicCollision2D
-var reset_time: float = 2
+var disarray_rotation_dir = 6
+var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
+var revive_time: float = 2
 
 # weapons
 var bullet_reloaded: bool = true
@@ -30,12 +35,20 @@ var shield_loops_limit: int = 1 # poberem jo iz profilov, ali pa kot veleva pick
 # trail
 var bolt_trail_active: bool = false # aktivna je ravno spawnana, neaktiva je "odklopljena"
 var bolt_trail_alpha = 0.05
+var trail_pseudodecay_color = Color.white
+var current_active_trail: Line2D
 
 # engine
 var engine_power = 0 # ob štartu je noga z gasa
 var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
 var engine_particles_front_right : CPUParticles2D
+
+# za area efekte
+var bolt_on_nitro_count: int = 0
+var bolt_on_hole_count: int = 0
+var bolt_on_gravel_count: int = 0
+var bolt_on_tracking_count: int = 0
 
 onready var bolt_sprite: Sprite = $Bolt
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
@@ -44,7 +57,6 @@ onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var energy_bar_holder: Node2D = $EnergyBar
 onready var energy_bar: Polygon2D = $EnergyBar/Bar
-
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://game/bolt/EngineParticles.tscn") 
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
@@ -52,7 +64,10 @@ onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
 onready var Bullet: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var Misile: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://game/weapons/Shocker.tscn")
-
+# player stats
+onready var player_life: int = Pro.default_player_stats["player_life"]
+onready var player_points: int = Pro.default_player_stats["player_points"]
+onready var player_wins: int = Pro.default_player_stats["player_wins"]
 # bolt stats
 onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
 onready var energy: float = Pro.default_bolt_stats["energy"]
@@ -61,10 +76,6 @@ onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
 onready var bullet_power: float = Pro.default_bolt_stats["bullet_power"]
 onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
 onready var shocker_count: float = Pro.default_bolt_stats["shocker_count"]
-# player stats
-onready var player_life: int = Pro.default_player_stats["player_life"]
-onready var player_points: int = Pro.default_player_stats["player_points"]
-onready var player_wins: int = Pro.default_player_stats["player_wins"]
 # bolt profil ... default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
 onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
@@ -78,23 +89,9 @@ onready var bounce_size: float = Pro.bolt_profiles[bolt_type]["bounce_size"]
 onready var inertia: float = Pro.bolt_profiles[bolt_type]["inertia"]
 onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability"]  # reload def gre v weapons
 onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
-
-#NEU
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_quo: float = Pro.bolt_profiles[bolt_type]["drag_force_quo"] 
-
-enum MotionStates {FWD, REV, IDLE, DISARRAY} # glede na moč motorja
-var current_motion_state: int = MotionStates.IDLE
-var current_active_trail: Line2D
-var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
-var disarray_rotation_dir = 6
-
-# za area efekte
-var bolt_on_nitro_count: int = 0
-var bolt_on_hole_count: int = 0
-var bolt_on_gravel_count: int = 0
-var bolt_on_tracking_count: int = 0
 
 
 func _ready() -> void:
@@ -159,7 +156,7 @@ func _physics_process(delta: float) -> void:
 	
 	motion_fx()
 
-	if Ref.game_manager.level_settings.level == Set.Levels.TRAINING:
+	if Ref.game_manager.game_settings["fight_mode"]:
 		update_energy_bar()
 	
 	
@@ -293,7 +290,7 @@ func update_gas(gas_amount: float):
 	gas_count = clamp(gas_count, 0, gas_count)
 	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
 	
-	
+
 func update_energy_bar():
 	
 	if not energy_bar_holder.visible:
@@ -304,10 +301,10 @@ func update_energy_bar():
 	energy_bar_holder.global_position = global_position + Vector2(0, 8) # negiramo rotacijo bolta, da je pri miru
 
 	energy_bar.scale.x = energy / max_energy
-	if energy_bar.scale.x < 0.5:
-		energy_bar.color = Color.indianred
+	if energy_bar.scale.x <= 0.5:
+		energy_bar.color = Set.color_red
 	else:
-		energy_bar.color = Color.aquamarine		
+		energy_bar.color = Set.color_green
 			
 
 # LIFE CYCLE ----------------------------------------------------------------------------
@@ -333,7 +330,7 @@ func on_hit(hit_by: Node):
 			# efekt	
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia # push
 			explode()
-			if Ref.game_manager.level_settings.level == Set.Levels.NITRO:
+			if Ref.game_manager.game_settings["fight_mode"]:
 				take_damage(hit_by)
 			else:
 				in_disarray()
@@ -432,7 +429,7 @@ func lose_life():
 
 func revive_bolt():
 	
-	yield(get_tree().create_timer(reset_time), "timeout")
+	yield(get_tree().create_timer(revive_time), "timeout")
 	
 	# on new life
 	bolt_collision.disabled = false

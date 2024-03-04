@@ -3,28 +3,22 @@ extends Node2D
 ## metode in njihove variable ... bivši global
 
 
-func _ready():
+#func _ready():
+#
+#	# za menjavo scen
+#	var root = get_tree().root
+#	current_scene = root.get_child(root.get_child_count() - 1)
+#	print ("root: ", root)
+#	print ("current_scene: ", current_scene)
+
 	
-	# za menjavo scen
-	var root = get_tree().root
-	current_scene = root.get_child(root.get_child_count() - 1)
-	
-	print ("root: ", root)
-	print ("current_scene: ", current_scene)
-
-
-
-func moj_print(variabla):
-	print ("current_scene: ", current_scene)
-	
-func get_random_member_index(group_of_elements):
-
+func get_random_member(group_of_elements):
+		
 		var random_range = group_of_elements.size()
 		var selected_int = randi() % int(random_range)
-#		var selected_value = current_array[random_int]
+		# printt ("Random:", group_of_elements.size(), selected_int, group_of_elements[selected_int])
 		
-#		printt(current_array, random_range, random_int, selected_int)
-		return selected_int
+		return group_of_elements[selected_int]
 	
 onready var indikator: PackedScene = preload("res://game/DebugIndikator.tscn")
 
@@ -108,54 +102,54 @@ func spawn_new_scene(scene_path, parent_node): # spawn scene
 
 
 
-func instance_node (node, location, direction, parent):
-# uporaba -> var bullet = instance_node(bullet_instance, global_position, get_parent()) -> bullet.scale = Vector(1,1)
-
-	var node_instance = node.instance()
-	parent.add_child(node_instance) # instance je uvrščen v določenega starša
-	node_instance.global_position = location
-	node_instance.global_rotation = direction # dodal samostojno
-
-	node_instance.set_name(str(node_instance.name))  # dodal samostojno, da nima generičnega imena  z @ znakci
-	print("ustvarjen node: %s" % node_instance.name)
-
-#	add_child manjka? ... pomoje ga v funkciji dodaš
-	return node_instance
-
-
-func get_random_position():
-# uporaba -> object.global_position = Global.get_random_position()
- 
-	randomize() # vedno če hočeš randomizirat
-	var random_position = Vector2(rand_range(50, get_viewport_rect().size.x - 100), rand_range(50, get_viewport_rect().size.y - 100))
-	return random_position
+#func instance_node (node, location, direction, parent):
+## uporaba -> var bullet = instance_node(bullet_instance, global_position, get_parent()) -> bullet.scale = Vector(1,1)
+#
+#	var node_instance = node.instance()
+#	parent.add_child(node_instance) # instance je uvrščen v določenega starša
+#	node_instance.global_position = location
+#	node_instance.global_rotation = direction # dodal samostojno
+#
+#	node_instance.set_name(str(node_instance.name))  # dodal samostojno, da nima generičnega imena  z @ znakci
+#	print("ustvarjen node: %s" % node_instance.name)
+#
+##	add_child manjka? ... pomoje ga v funkciji dodaš
+#	return node_instance
 
 
-func get_random_rotation():
-
-	randomize() # vedno če hočeš randomizirat
-	var random_rotation = rand_range(-3, 3)
-	return random_rotation
-
-
-func get_direction_to (A_position, B_position):
-
-	var x_to_B = B_position.x - A_position.x
-	var y_to_B = B_position.y - A_position.y
-
-	var A_direction_to_B = atan2(y_to_B, x_to_B)
-
-	return A_direction_to_B
+#func get_random_position():
+## uporaba -> object.global_position = Global.get_random_position()
+#
+#	randomize() # vedno če hočeš randomizirat
+#	var random_position = Vector2(rand_range(50, get_viewport_rect().size.x - 100), rand_range(50, get_viewport_rect().size.y - 100))
+#	return random_position
 
 
-func get_distance_to (A_position, B_position):
+#func get_random_rotation():
+#
+#	randomize() # vedno če hočeš randomizirat
+#	var random_rotation = rand_range(-3, 3)
+#	return random_rotation
 
-	var x_to_B = B_position.x - A_position.x
-	var y_to_B = B_position.y - A_position.y
 
-	var A_distance_to_B = sqrt ((y_to_B * y_to_B) + (x_to_B * x_to_B))
+#func get_direction_to (A_position, B_position):
+#
+#	var x_to_B = B_position.x - A_position.x
+#	var y_to_B = B_position.y - A_position.y
+#
+#	var A_direction_to_B = atan2(y_to_B, x_to_B)
+#
+#	return A_direction_to_B
 
-	return A_distance_to_B
+
+#func get_distance_to (A_position, B_position):
+#
+#	var x_to_B = B_position.x - A_position.x
+#	var y_to_B = B_position.y - A_position.y
+#
+#	var A_distance_to_B = sqrt ((y_to_B * y_to_B) + (x_to_B * x_to_B))
+#
+#	return A_distance_to_B
 
 
 ## INSTANCE FROM TILEMAPS ---------------------------------------------------------------------------

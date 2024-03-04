@@ -82,7 +82,7 @@ func _ready() -> void:
 
 
 func get_tilemap_cells(tilemap: TileMap):
-
+	# kadar me zanimajo tudi prazne celice
 	
 	var tilemap_cells: Array # celice v gridu
 	
@@ -99,7 +99,7 @@ func get_tilemap_cells(tilemap: TileMap):
 
 func set_level_edge():
 	
-	var edge_cells = get_tilemap_cells(tilemap_elements) # celice v obliki grid koordinat
+	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
 	var navigation_cells: Array
 	var navigation_cells_positions: Array
 	
@@ -108,23 +108,23 @@ func set_level_edge():
 		var cell_local_position = tilemap_edge.map_to_world(cell)
 		var cell_global_position = tilemap_edge.to_global(cell_local_position)
 		
-		# če je prazna in zasedena z elemenotom, jo zamenjam z navigacijsko celico
-		if cell_index == -1 and not non_navigation_cell_positions.has(cell_global_position): # da le ni element
+		# če je prazna in ni zasedena z elemenotom, jo zamenjam z navigacijsko celico
+		if cell_index == -1 and not non_navigation_cell_positions.has(cell_global_position):
 			tilemap_edge.set_cellv(cell, 13)
 			navigation_cells.append(cell) # grid pozicije
 			navigation_cells_positions.append(cell_global_position)
 			
-	# odstrani zunanji rob navigacije ob steni (to je vsaka, ki ima vsaj eno od sosednjih celic prazno)
-	for cell in navigation_cells:
-		var navigation_cell_index = navigation_cells.find(cell)
-		var cell_in_check: Vector2
-		# pregledam 5 celic v ver in hor smeri
-		for y in 5: 
-			for x in 5:
-				cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
-				if tilemap_edge.get_cellv(cell_in_check) == 0:
-					tilemap_edge.set_cellv (cell, -1)
-					break # ko je ena prazna, ne rabi več čekirat
+			# če ima za soseda rob, potem jo odstranim
+			var cell_in_check: Vector2
+			for y in 5: # pregledam 5 celic v ver in hor smeri
+				for x in 5:
+					cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
+					if tilemap_edge.get_cellv(cell_in_check) == 0:
+						tilemap_edge.set_cellv (cell, -1)
+						# zbrišem iz arrayev navigacije
+						navigation_cells.erase(cell)
+						navigation_cells_positions.erase(cell_global_position)
+						break
 	
 	emit_signal("level_is_set", positions, navigation_cells, navigation_cells_positions)
 
@@ -135,9 +135,11 @@ func set_level_edge():
 func set_level_elements():
 	
 
-	var element_cells = get_tilemap_cells(tilemap_edge) # poberem celice edga, da je prave velikosti
-	
-	for cell in element_cells:
+#	var element_cells = get_tilemap_cells(tilemap_edge) # poberem celice edga, da je prave velikosti
+	if tilemap_elements.get_used_cells().empty():
+		return
+		
+	for cell in tilemap_elements.get_used_cells():
 		
 		var cell_index = tilemap_elements.get_cellv(cell)
 		var cell_local_position = tilemap_elements.map_to_world(cell)
@@ -219,42 +221,26 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 
 
 # FLOOR --------------------------------------------------------------------------------------------------------------------------------
-
-
 	
 	
 func set_level_floor():
-	# poberi vse celice podna
-	# vse ki so prazne so del luknje
+	# poberi vse celice podna, tudi prazne
 	# vsem praznim pripiši luknjo
-	# vse vogalne, ki so index X in outotile koordinate Y ... so del luknje
-	# vsem v autotiletu pripiši GapRL, ...
 	# vse ostale so background	
 	
 	var floor_cells = get_tilemap_cells(tilemap_floor)
-	if not floor_cells.empty(): # če je prazen se navigacija ne seta
-		for cell in floor_cells:
-			var cell_index = tilemap_floor.get_cellv(cell)
-			var cell_local_position = tilemap_floor.map_to_world(cell)
-			var cell_global_position = tilemap_floor.to_global(cell_local_position)
-			
-			if cell_index == -1:
-				spawn_hole(cell_global_position)
-			
-			# če ni prazen, ampak ima id podn tajla
-	#			elif cell_index == 0:
-	#				# spawn_hole_corner
-	#				var cell_autotile_region = tilemap_floor.get_cell_autotile_coord(cell.x, cell.y) # položaj celice v autotile regiji
-	#	#			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
-	#				if corner_cell_TopL_regions.has(cell_autotile_region):
-	#					spawn_hole_corner(cell_global_position, "TopL")
-	#				if corner_cell_TopR_regions.has(cell_autotile_region):
-	#					spawn_hole_corner(cell_global_position, "TopR")
-	#				if corner_cell_BtmL_regions.has(cell_autotile_region):
-	#					spawn_hole_corner(cell_global_position, "BtmL")
-	#				if corner_cell_BtmR_regions.has(cell_autotile_region):
-	#					spawn_hole_corner(cell_global_position, "BtmR")	
-
+	
+	if floor_cells.empty(): # če je prazen se navigacija ne seta
+		return
+		
+	for cell in floor_cells:
+		var cell_index = tilemap_floor.get_cellv(cell)
+		var cell_local_position = tilemap_floor.map_to_world(cell)
+		var cell_global_position = tilemap_floor.to_global(cell_local_position)
+		
+		if cell_index == -1:
+			spawn_hole(cell_global_position)
+		
 
 func spawn_hole(global_pos):
 	
@@ -263,17 +249,5 @@ func spawn_hole(global_pos):
 	get_parent().call_deferred("add_child",new_tile)
 
 
-#func spawn_hole_corner(global_pos, corner_type):
-#
-#	var new_corner_tile = corner_tile.instance()
-#	new_corner_tile.global_position = global_pos + Vector2(5,4) # dodan zamik centra
-#	get_parent().call_deferred("add_child",new_corner_tile )
-#	match corner_type:
-#		"TopL":
-#			new_corner_tile.rotation_degrees = 0
-#		"TopR":
-#			new_corner_tile.rotation_degrees = 90
-#		"BtmL":
-#			new_corner_tile.rotation_degrees = -90
-#		"BtmR":
-#			new_corner_tile.rotation_degrees = 180
+func _on_Edge_navigation_completed() -> void:
+	pass # Replace with function body.

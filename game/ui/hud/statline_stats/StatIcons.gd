@@ -1,5 +1,6 @@
 extends HBoxContainer
 
+
 export var icon_texture: AtlasTexture  # ta se upšorabi na vseh ikona
 
 var current_stat_value: int setget _on_stat_change
@@ -20,7 +21,6 @@ func _ready() -> void:
 		icon.get_node("OnIcon").texture = icon_texture
 		icon.get_node("OffIcon").texture = icon_texture
 
-	
 
 func _on_stat_change(new_value: int): # ne rabim parametra
 

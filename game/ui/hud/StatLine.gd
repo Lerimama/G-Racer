@@ -4,11 +4,9 @@ extends Control
 # hud colors
 var stat_line_color: Color = Color.white setget _on_bolt_color_set
 
-
 # values
 var def_stat_value: int = 000
 var current_stat_value: int
-
 
 onready var stat_avatar: TextureRect = $Avatar
 onready var stat_name: Label = $PlayerLine/PlayerName

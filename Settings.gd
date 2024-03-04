@@ -53,15 +53,20 @@ var default_game_settings: Dictionary = {
 	"area_tracking_value": 1, # 1 = 100%
 	"pull_penalty_gas": -20,
 #	"area_nitro_value": 700,
+	# modes
+	"fight_mode": true, # take damage, energy
+	"race_mode": false # ranking, gas use
+#	"dogfight_mode": false,
+#	"use_gas_mode": false,
 }
 
-enum Levels {TRAINING, NITRO}
+enum Levels {TRAINING, NITRO, DOGFIGHT}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
 		"level": Levels.TRAINING,
-		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		"level_path": "res://game/levels/LevelTraining.tscn",
+		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		},
 	Levels.NITRO: {
 		"level": Levels.NITRO,
@@ -69,6 +74,12 @@ var level_settings: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelNitroOrig.tscn"),
 #		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
 #		"level_path": "res://game/levels/LevelNitro.tscn",
+		},
+	Levels.DOGFIGHT: {
+		"level": Levels.DOGFIGHT,
+		"level_path": "res://game/levels/LevelDogfight.tscn",
+#		"level_scene": preload("res://game/levels/LevelDogfight.tscn"),
+		"level_scene": preload("res://game/levels/LevelDogfight.tscn"),
 		} 
 }
 
@@ -83,8 +94,9 @@ var selected_level: int
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
-	var debug_level = Levels.NITRO
+#	var debug_level = Levels.NITRO
 #	var debug_level = Levels.TRAINING
+	var debug_level = Levels.DOGFIGHT
 	set_game_settings(debug_level)
 	
 	
@@ -97,10 +109,18 @@ func set_game_settings(selected_level) -> void:
 			current_level_settings = level_settings[Levels.TRAINING]
 #			current_game_settings["area_nitro_value"] = 0
 			current_game_settings["start_countdown"] = false
+			current_game_settings["race_mode"] = false
+			current_game_settings["fight_mode"] = true			
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
 			current_game_settings["start_countdown"] = false
-
+			current_game_settings["race_mode"] = true
+			current_game_settings["fight_mode"] = false
+		Levels.DOGFIGHT: 
+			current_level_settings = level_settings[Levels.DOGFIGHT]
+			current_game_settings["start_countdown"] = false
+			current_game_settings["race_mode"] = false
+			current_game_settings["fight_mode"] = true
 
 
 #

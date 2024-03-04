@@ -1,7 +1,7 @@
 extends StaticBody2D
 
 
-var ghost_color = Set.color_green
+var ghost_color = Set.color_red
 var ghost_brake = 10
 
 var def_particle_speed: float = 6

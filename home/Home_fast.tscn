@@ -175,8 +175,8 @@ margin_right = 473.0
 margin_bottom = 260.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
-disabled = true
-text = "P proti P"
+text = "FAJT"
 
 [connection signal="pressed" from="HomeUI/ConfirmBtn" to="." method="_on_ConfirmBtn_pressed"]
 [connection signal="pressed" from="HomeUI/ConfirmBtn2" to="." method="_on_ConfirmBtn2_pressed"]
+[connection signal="pressed" from="HomeUI/ConfirmBtn3" to="." method="_on_ConfirmBtn3_pressed"]

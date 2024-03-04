@@ -68,3 +68,7 @@ func explode_tile(current_cell):
 
 
 
+
+
+func _on_Edge_navigation_completed() -> void:
+	pass # Replace with function body.

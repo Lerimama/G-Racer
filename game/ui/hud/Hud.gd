@@ -1,77 +1,46 @@
 extends Control
 
 
-#var spawned_player_profile
-#var playerstats_index: int = 0 # index znotraj ene runde
-#var playerstats_round: int = 0 # ena runda so 4 hudi
+var stat_lines_owners: Dictionary = {}
+var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
 
-#onready var bolt_stats: = Pro.default_bolt_stats
-#onready var driver_stats: = Pro.default_player_stats
-#onready var driver_profiles: = Pro.default_player_profiles
-#onready var player_name = Profiles.default_player_profiles["player_name"]
-
-#onready var stat_line_topL: Control = $StatLineTopL
-#onready var stat_line_topR: Control = $StatLineTopR
-#onready var stat_line_btmL: Control = $StatLineBtmL
-#onready var stat_line_btmR: Control = $StatLineBtmR
 onready var stat_line_topL: Control = $StatLineRacer1
 onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
 onready var game_stats: HBoxContainer = $GameStats
-
-#onready var game_time: Control = $GameTime
-#onready var game_over: Control = $Popups/GameOver
-#onready var game_start: Control = $Popups/GameStart
-
-var stat_line_topL_active: bool = false
-var stat_line_topR_active: bool = false
-var stat_line_btmL_active: bool = false
-var stat_line_btmR_active: bool = false
-
-var stat_lines_owners: Dictionary = {}
-var loading_time: float = 0.5 # pred prikazom nbaj se v miru postavi
-
-# neu
 onready var game_timer: Control = $"%GameTimer"
-#onready var game_over: Control = $"%GameOver"
 onready var start_countdown: Control = $"%StartCountdown"
 
-func _input(event: InputEvent) -> void:
-	
-#	if Input.is_action_just_released("ui_cancel"):
-#		toggle_pause()
-	pass
-	
-	
+
 func _ready() -> void:
 	
 	print("HUD")
 	
 	Ref.hud = self	
 	
-	# skrij statistiko
+	# skrij statistiko, ki se prikaže ponovno, ob spawnu bolta
 	stat_line_topL.visible = false
 	stat_line_topR.visible = false
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false
-#	game_time.visible = false
-#	game_over.visible = false
 
 	Ref.game_manager.connect("new_bolt_spawned", self, "_set_spawned_bolt_hud") # signal pride iz GM in pošlje spremenjeno statistiko
 	
-	# gameover
-#	gameover_restart_btn.connect("pressed", self, "_on_gameover_restart_btn_pressed")
-#	gameover_high_score_btn.connect("pressed", self, "_on_gameover_high_score_btn_pressed")
-#	gameover_quit_btn.connect("pressed", self, "_on_gameover_quit_btn_pressed")
-#	game_over_ui.visible = false
-
-
+	# stats setup
+	var stat_lines: Array = [$StatLineRacer1, $StatLineRacer2, $StatLineRacer3, $StatLineRacer4]
+	for stat_line in stat_lines:
+		if Ref.game_manager.game_settings["race_mode"]:
+			stat_line.stat_life.hide()
+			stat_line.stat_wins.hide()
+		else:
+			stat_line.stat_wins.hide()
+			stat_line.stat_points.hide()
+			stat_line.stat_gas.hide()
+			
+			
 func on_game_start():
 	
-#	game_start.visible = false
-#	game_time.visible = true
-#	game_over.visible = false
 	game_stats.show()
 	game_timer.start_timer()
 
@@ -79,10 +48,6 @@ func on_game_start():
 func on_game_over():
 	
 	game_timer.stop_timer()
-#	game_start.visible = false
-#	game_time.visible = false
-#	game_over.visible = true
-	
 	hide_player_stats()
 	
 
@@ -143,12 +108,12 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 			stat_lines_owners[bolt_id] = stat_line_btmR 
 	
 	# data
-
 	var bolt_stats: Dictionary = Pro.default_bolt_stats
 	var player_stats: Dictionary = Pro.default_player_stats
 	var player_profiles: Dictionary = Pro.default_player_profiles
 	
-	current_stat_line.stat_line_color = player_profiles[bolt_id]["player_color"]
+	# current_stat_line.stat_line_color = player_profiles[bolt_id]["player_color"]
+	current_stat_line.stat_name.modulate = player_profiles[bolt_id]["player_color"]
 	current_stat_line.stat_name.text = player_profiles[bolt_id]["player_name"]
 	
 	# bolt stats

@@ -10,9 +10,9 @@ func _ready() -> void:
 	visible = false
 
 
-func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolt_names_on_start: Array):
+func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolts_on_start: Array):
 	
-	set_scorelist(bolts_on_finish_line, bolt_names_on_start)
+	set_scorelist(bolts_on_finish_line, bolts_on_start)
 	
 	var background_fadein_transparency: float = 0.9
 	
@@ -27,7 +27,7 @@ func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolt_names
 	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)	
 	
 	
-func set_scorelist(bolts_on_finish_line: Array, bolt_names_on_start: Array):
+func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
 	var results: VBoxContainer = $VBoxContainer/Results
 	
@@ -42,16 +42,16 @@ func set_scorelist(bolts_on_finish_line: Array, bolt_names_on_start: Array):
 		new_ranking_line.get_node("Result").text = str(bolt_on_finish_line[1]) + " seconds"
 		results.add_child(new_ranking_line)
 		
-		# izbrišem iz arraya imen, da ga ne upošteva
-		if bolt_names_on_start.has(bolt_on_finish_line[0].player_name):
-			bolt_names_on_start.erase(bolt_on_finish_line[0].player_name)
+		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
+		if bolts_on_start.has(bolt_on_finish_line[0]):
+			bolts_on_start.erase(bolt_on_finish_line[0])
 			
 	# neuvrščeni
-	for bolt_name in bolt_names_on_start: # array je že brez uvrščenih
-		if not bolts_on_finish_line.has(bolt_name):
+	for bolt in bolts_on_start: # array je že brez uvrščenih
+		if not bolts_on_finish_line.has(bolt):
 			var new_ranking_line = RankingLine.instance() # spawn ranking line
 			new_ranking_line.get_node("Rank").text = "NN"
-			new_ranking_line.get_node("Bolt").text = str(bolt_name)
+			new_ranking_line.get_node("Bolt").text = str(bolt.player_name)
 			new_ranking_line.get_node("Result").text = "did no finish"
 			results.add_child(new_ranking_line)
 			

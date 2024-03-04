@@ -10,16 +10,16 @@ var game_on: bool
 
 var level_positions: Array # dobi od tilemapa
 var leading_player: KinematicBody2D # trenutno vodilni igralec
-
 var bolts_in_game: Array
 var pickables_in_game: Array
-var bolt_names_on_start: Array # da GO lahko naredi poročilo o vseh, ki so bili na štaru
+var bolts_on_start: Array # GO naredi poročilo o vseh, ki so bili na štaru
+var bolts_across_finish_line: Array # array boltov skupaj s časom
 
 # level
-#onready var tilemap_floor_cells: Array
 var navigation_area: Array # vsi navigation tileti
 var navigation_positions: Array # pozicije vseh navigation tiletov
 var current_racing_line: Array # linija za ranking (array točk oz. pozicij)
+var available_pickable_positions: Array # za random spawn
 
 onready var navigation_line: Line2D = $"../NavigationPath"
 onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
@@ -27,10 +27,8 @@ onready var game_settings: Dictionary = Set.current_game_settings # ga med igro 
 onready var player_bolt = preload("res://game/player/Player.tscn")
 onready var enemy_bolt = preload("res://game/enemies/Enemy.tscn")
 
-# NEU (temp)
+# temp
 var position_indikator: Node2D	# debug
-var available_pickable_positions: Array
-var bolts_across_finish_line: Array # array boltov skupaj s časom
 onready var NewLevel: PackedScene = level_settings["level_scene"]
 
 
@@ -76,10 +74,11 @@ func _ready() -> void:
 	
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
-	spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)	
-#	spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)	
+	spawn_bolt(player_bolt, level_positions[1], Pro.Bolts.P1, 1)	
+#	spawn_bolt(player_bolt, level_positions[2], Pro.Bolts.P2, 2)	
+#	spawn_bolt(player_bolt,level_positions[3], Pro.Bolts.P3, 3)	
+	spawn_bolt(player_bolt, level_positions[4], Pro.Bolts.P4, 4)	
 #	spawn_bolt(enemy_bolt, level_positions[2].global_position, Pro.Bolts.ENEMY, 5)
-#	spawn_bolt(player_bolt,level_positions[2].global_position, Pro.Bolts.P3, 3)	
 
 
 func _process(delta: float) -> void:
@@ -87,7 +86,7 @@ func _process(delta: float) -> void:
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickups)	
 
-	if game_on and level_settings["level"] == Set.Levels.NITRO:
+	if game_on and game_settings["race_mode"]:
 		get_ingame_ranking()
 	
 	
@@ -114,6 +113,7 @@ func set_level(): # kliče main.gd pred fajdinom igre
 	
 	Ref.node_creation_parent.add_child(new_level)
 	Ref.current_camera.set_camera_limits()
+	available_pickable_positions = navigation_area.duplicate()
 	
 	
 func set_game(): # kliče main.gd pred fejdin igre
@@ -181,7 +181,7 @@ func game_over(gameover_reason: int):
 		print("FAIL")
 		
 #	stop_game_elements()
-	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolt_names_on_start)
+	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 	
 	Ref.current_camera.follow_target = null
 
@@ -206,13 +206,13 @@ func check_for_game_over(): # za preverjanje pogojev za game over (vsakič ko bo
 		game_over(GameoverReason.FAIL)	
 
 
-func spawn_bolt(NewBolt: PackedScene, spawned_position: Vector2, spawned_bolt_id: int, spawned_bolt_index: int):
+func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_id: int, spawned_bolt_index: int):
 
 	var new_bolt = NewBolt.instance()
 	new_bolt.bolt_id = spawned_bolt_id
-	new_bolt.global_position = spawned_position
-	new_bolt.rotation_degrees = -90
+	new_bolt.global_position = spawn_position_node.global_position
 	Ref.node_creation_parent.add_child(new_bolt)
+	new_bolt.rotation_degrees = spawn_position_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	
 	# new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
 	
@@ -226,33 +226,30 @@ func spawn_bolt(NewBolt: PackedScene, spawned_position: Vector2, spawned_bolt_id
 		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
 		# Ref.current_camera.follow_target = new_bolt
 	
-	bolt_names_on_start.append(new_bolt.player_name)
+	bolts_on_start.append(new_bolt)
 
 
 func spawn_pickable():
-	print(available_pickable_positions.size())
-	# uteži
+	
 	if not available_pickable_positions.empty():
-
-		var pickables_array = Pro.Pickables_names # samo za evidenco pri debugingu
 
 		# žrebanje tipa
 		var pickables_dict = Pro.pickable_profiles
-		var selected_pickable_index: int = Met.get_random_member_index(pickables_dict)
-		var selected_pickable_name = Pro.Pickables_names[selected_pickable_index]
-		var selected_pickable_path = pickables_dict[selected_pickable_index]["path"]
+		var random_pickables_key: String = Met.get_random_member(pickables_dict.keys())
+		var random_pickable_path = pickables_dict[random_pickables_key]["scene_path"]
+		print(random_pickables_key)
 
 		# žrebanje pozicije
-		var selected_cell_index: int = Met.get_random_member_index(navigation_area)
-		var selected_cell_position = navigation_area[selected_cell_index]
+		var random_cell_position: Vector2 = Met.get_random_member(navigation_positions)
 
 		# spawn
-		var new_pickable = selected_pickable_path.instance()
-		new_pickable.global_position = selected_cell_position
+		var new_pickable = random_pickable_path.instance()
+		new_pickable.global_position = random_cell_position
 		add_child(new_pickable)
 
-		# odstranim celico iz arraya
-		available_pickable_positions.remove(selected_cell_index)		
+		# odstranim celico iz arraya tistih na voljo
+		var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
+		available_pickable_positions.remove(random_cell_position_index)		
 
 		
 # RANKING ---------------------------------------------------------------------------------------------
@@ -400,8 +397,7 @@ func _on_Enemy_path_changed(path: Array) -> void:
 
 func _on_ScreenArea_body_exited(body: Node) -> void:
 	
-	if level_settings.level == Set.Levels.NITRO:
-	
+	if game_settings["race_mode"]:
 		if body is Player:
 			var bolt_pull_position = get_bolt_pull_position(body)
 			body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
