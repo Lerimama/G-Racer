@@ -47,17 +47,16 @@ func _physics_process(delta: float) -> void:
 		
 
 func intro():
-		magnet_on = true
 #		blackhole_particles.emitting = true
 		blackhole_particles.speed_scale = def_particle_speed
 		animation_player.play("intro")
 
 
 func outro():
+		magnet_on = false
 		animation_player.play("outro")
 		blackhole_particles.speed_scale = 0.7
 		blackhole_particles.emitting = false
-		magnet_on = false
 		
 
 func pause_me():
@@ -71,3 +70,11 @@ func unpause_me():
 	blackhole_particles.speed_scale = def_particle_speed
 	animation_player.play()
 
+
+
+func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
+	
+	match anim_name:
+		"intro":
+			magnet_on = true
+			
