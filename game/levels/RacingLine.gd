@@ -21,7 +21,7 @@ func draw_racing_line():
 func split_line():
 	
 	var cut_distance: float = 5 # dolžina, ki jo želim med pikami
-	var cut_count_limit: int = 100 # največ tolikokrat razreže vsak segment
+	var cut_count_limit: int = 1000 # največ tolikokrat razreže vsak segment
 	
 	# za vsako piko v original liniji, razdelim njen vektor do naslednje pike
 	var original_racing_line_points: Array = racing_path.get_points()
@@ -51,5 +51,5 @@ func split_line():
 			var new_point_index: int = updated_original_point_index + cut_count + 1
 			racing_path.add_point(new_point, new_point_index)
 			
-			Met.spawn_indikator(new_point, 0)
+#			Met.spawn_indikator(new_point, 0)
 		

@@ -105,7 +105,7 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	pull_tween.parallel().tween_property(self, "modulate:a", 1, pull_time/2).set_delay(pull_time/2).set_ease(Tween.EASE_IN)
 #	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	
-	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
+	update_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
 	
 	# ugasnem trail
 	if bolt_trail_active:

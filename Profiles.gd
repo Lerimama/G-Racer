@@ -63,7 +63,7 @@ var bolt_profiles: Dictionary = {
 		"turn_angle": 15, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
 		"side_traction": 0.05, # 0 - 1
-		"bounce_size": 0.3, # 0 - 1 
+		"bounce_size": 0.5, # 0 - 1 
 		"inertia": 5, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
 		"drag_force_quo": 100.0, # večji pomeni nižjo drag force
@@ -152,8 +152,8 @@ var enemy_profile: Dictionary = {
 
 var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"player_start_position" : Vector2(0, 0),
-	"life" : 5,
-	"energy" : 2,
+#	"life" : 5,
+	"energy" : 10,
 	"bullet_power" : 0.1,
 	"bullet_count" : 30,
 	"misile_count" : 5,
@@ -164,7 +164,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 # statse ima tudi enemy
 #	"player_active" : true,
-	"player_life" : 2,
+	"player_life" : 5,
 	"player_points" : 10,
 	"player_wins" : 2,
 }
@@ -180,7 +180,7 @@ var weapon_profiles : Dictionary = {
 	},
 	"misile": {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"hit_damage": 4,
+		"hit_damage": 10,
 		"speed": 150,
 		"lifetime": 1.0, #domet vedno merim s časom
 		"inertia": 100,
@@ -188,7 +188,7 @@ var weapon_profiles : Dictionary = {
 	},
 	"shocker": {
 		"reload_time": 1.0, #
-		"hit_damage": 1,
+		"hit_damage": 2,
 		"speed": 50,
 		"lifetime": 10, #domet vedno merim s časom
 		"inertia": 1,

@@ -41,7 +41,6 @@ tile_data = PoolIntArray( -917520, 0, 65536, -917519, 0, 65537, -917518, 0, 6553
 
 [node name="Elements" type="TileMap" parent="."]
 material = SubResource( 509 )
-position = Vector2( 0, -1 )
 z_index = -2
 tile_set = ExtResource( 8 )
 cell_size = Vector2( 8, 8 )

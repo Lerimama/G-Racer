@@ -71,12 +71,13 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 	
 	Ref.game_manager = self	
+	Ref.current_level = null
 	printt("GM")
 	
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
 	spawn_bolt(player_bolt, level_positions[1].global_position, Pro.Bolts.P1, 1)	
-	spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)	
+#	spawn_bolt(player_bolt, level_positions[2].global_position, Pro.Bolts.P2, 2)	
 #	spawn_bolt(enemy_bolt, level_positions[2].global_position, Pro.Bolts.ENEMY, 5)
 #	spawn_bolt(player_bolt,level_positions[2].global_position, Pro.Bolts.P3, 3)	
 
@@ -93,13 +94,16 @@ func _process(delta: float) -> void:
 func set_level(): # kliče main.gd pred fajdinom igre
 	
 	print("set level")
-	var level_to_release: Node2D = Ref.current_level # trenutno naložen v areni (holder)
-	var level_to_load_path: String = level_settings["level_path"]
-	var level_z_index: int = Ref.current_level.z_index
-	
-	# release default level	
-	level_to_release.set_physics_process(false)
-	level_to_release.free()
+	if Ref.current_level == null:
+		pass
+	else:
+		var level_to_release: Node2D = Ref.current_level # trenutno naložen v areni (holder)
+		var level_to_load_path: String = level_settings["level_path"]
+		var level_z_index: int = Ref.current_level.z_index
+		
+		# release default level	
+		level_to_release.set_physics_process(false)
+		level_to_release.free()
 
 	# spawn new level
 	# var Level = ResourceLoader.load(level_to_load_path)
@@ -109,7 +113,8 @@ func set_level(): # kliče main.gd pred fajdinom igre
 	new_level.connect( "level_is_set", self, "_on_level_is_set")
 	
 	Ref.node_creation_parent.add_child(new_level)
-
+	Ref.current_camera.set_camera_limits()
+	
 	
 func set_game(): # kliče main.gd pred fejdin igre
 	print("set game")
@@ -256,7 +261,7 @@ func spawn_pickable():
 func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finish line
 	
 #	bolts_across_finish_line.append(bolt_finished)
-	printt ("TIME", Ref.hud.game_timer.time_since_start)
+	printt ("GO TIME", Ref.hud.game_timer.time_since_start)
 	
 	var bolt_time: float = Ref.hud.game_timer.time_since_start
 	bolts_across_finish_line.append([bolt_finished, bolt_time])
@@ -287,9 +292,9 @@ func get_ingame_ranking():
 		if not Ref.current_camera.follow_target == leading_player: # da kamera ne reagira, če je že setan isti plejer
 			Ref.current_camera.follow_target = leading_player
 		# posledice	
-		position_indikator.scale = Vector2(3,3)
-		position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
-		position_indikator.modulate = leading_player.bolt_color
+#		position_indikator.scale = Vector2(3,3)
+#		position_indikator.global_position = current_racing_line[leading_player_racing_point_index]
+#		position_indikator.modulate = leading_player.bolt_color
 	# če so vsi neaktivni, lokacija kamere ostane ista
 	else:
 		Ref.current_camera.follow_target = null
@@ -297,7 +302,7 @@ func get_ingame_ranking():
 
 func sort_ascending(array_1, array_2):
 	
-	if array_1[1] < array_2[1]:
+	if array_1[1] > array_2[1]:
 	    return true
 	return false
 
@@ -379,9 +384,9 @@ func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, t
 	navigation_area = tilemap_navigation_cells
 	navigation_positions = tilemap_navigation_cells_positions
 	current_racing_line = Ref.current_level.racing_line.draw_racing_line()
-	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
+	#	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
 
-#	Ref.current_camera.follow_target = level_positions[0]	
+	#	Ref.current_camera.follow_target = level_positions[0]	
 	Ref.current_camera.position = level_positions[0].global_position
 
 

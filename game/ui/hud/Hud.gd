@@ -164,29 +164,3 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 	
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	current_stat_line.visible = true
-
-	
-
-
-
-# BTNS ------------------------------------------------------------------------------------------------------------
-
-# gameover
-onready var game_over_ui: Control = $"../GameOverUI"
-onready var gameover_restart_btn: Button = $"../GameOverUI/RestartBtn"
-onready var gameover_high_score_btn: Button = $"../GameOverUI/HighScoreBtn"
-onready var gameover_quit_btn: Button = $"../GameOverUI/QuitBtn"
-
-onready var scene_tree: = get_tree()
-
-		
-func _on_gameover_restart_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://game/arena/Arena.tscn")
-	
-func _on_gameover_quit_btn_pressed():
-#	yield(get_tree().create_timer(2), "timeout")
-	Met.switch_to_scene("res://home/Home.tscn")
-	
-func _on_gameover_high_score_btn_pressed():
-	game_over_ui.visible = false

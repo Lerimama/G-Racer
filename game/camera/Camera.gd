@@ -14,8 +14,9 @@ func _ready():
 	
 	print("KAMERA")
 	Ref.current_camera = self
-	set_camera_limits()
 #	position = Ref.game_manager.level_positions[0].global_position
+#	zoom = Vector2.ONE * 0.5
+
 
 func _process(delta: float) -> void:
 	

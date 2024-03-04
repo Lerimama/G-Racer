@@ -65,10 +65,10 @@ var level_settings: Dictionary = {
 		},
 	Levels.NITRO: {
 		"level": Levels.NITRO,
-#		"level_path": "res://game/levels/LevelNitroOne.tscn",
-#		"level_scene": preload("res://game/levels/LevelNitroOne.tscn"),
-		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
-		"level_path": "res://game/levels/LevelNitro.tscn",
+		"level_path": "res://game/levels/LevelNitroOrig.tscn",
+		"level_scene": preload("res://game/levels/LevelNitroOrig.tscn"),
+#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+#		"level_path": "res://game/levels/LevelNitro.tscn",
 		} 
 }
 

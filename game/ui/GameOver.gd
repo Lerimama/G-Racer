@@ -16,6 +16,8 @@ func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolt_names
 	
 	var background_fadein_transparency: float = 0.9
 	
+	$VBoxContainer/Menu/RestartBtn.grab_focus()
+	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_callback(self, "show")
 	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)

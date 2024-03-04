@@ -153,8 +153,8 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 
 
 func set_level_edge():
+	
 	var edge_cells = get_tilemap_cells(tilemap_elements) # celice v obliki grid koordinat
-
 	var navigation_cells: Array
 	var navigation_cells_positions: Array
 
@@ -170,8 +170,8 @@ func set_level_edge():
 			navigation_cells_positions.append(cell_global_position)
 			
 			# izločitev 
-			if non_navigation_cell_positions.has(cell_global_position):
-				print("non_navigation_cell_positions")
+#			if non_navigation_cell_positions.has(cell_global_position):
+#				print("non_navigation_cell_positions")
 			
 	# odstrani zunanje rob navigacije (rob je vsaka, ki ima eno od sosednjih celic prazno
 #	var navigation_cell_index = 0
@@ -239,28 +239,29 @@ func set_level_floor():
 	# vse ostale so background	
 	
 	var floor_cells = get_tilemap_cells(tilemap_floor)
-	
-	for cell in floor_cells:
-		var cell_index = tilemap_floor.get_cellv(cell)
-		var cell_local_position = tilemap_floor.map_to_world(cell)
-		var cell_global_position = tilemap_floor.to_global(cell_local_position)
-		
-		if cell_index == -1:
-			spawn_hole(cell_global_position)
-		
-		# če ni prazen, ampak ima id podn tajla
-		elif cell_index == 0:
-			# spawn_corner
-			var cell_autotile_region = tilemap_floor.get_cell_autotile_coord(cell.x, cell.y) # položaj celice v autotile regiji
-#			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
-			if corner_cell_TopL_regions.has(cell_autotile_region):
-				spawn_corner(cell_global_position, "TopL")
-			if corner_cell_TopR_regions.has(cell_autotile_region):
-				spawn_corner(cell_global_position, "TopR")
-			if corner_cell_BtmL_regions.has(cell_autotile_region):
-				spawn_corner(cell_global_position, "BtmL")
-			if corner_cell_BtmR_regions.has(cell_autotile_region):
-				spawn_corner(cell_global_position, "BtmR")	
+	if not floor_cells.empty(): # če je prazen se navigacija ne seta
+		for cell in floor_cells:
+			var cell_index = tilemap_floor.get_cellv(cell)
+			var cell_local_position = tilemap_floor.map_to_world(cell)
+			var cell_global_position = tilemap_floor.to_global(cell_local_position)
+			
+			printt ("floor", floor_cells.size(),floor_cells.empty())
+			if cell_index == -1:
+				spawn_hole(cell_global_position)
+			
+			# če ni prazen, ampak ima id podn tajla
+#			elif cell_index == 0:
+#				# spawn_corner
+#				var cell_autotile_region = tilemap_floor.get_cell_autotile_coord(cell.x, cell.y) # položaj celice v autotile regiji
+#	#			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
+#				if corner_cell_TopL_regions.has(cell_autotile_region):
+#					spawn_corner(cell_global_position, "TopL")
+#				if corner_cell_TopR_regions.has(cell_autotile_region):
+#					spawn_corner(cell_global_position, "TopR")
+#				if corner_cell_BtmL_regions.has(cell_autotile_region):
+#					spawn_corner(cell_global_position, "BtmL")
+#				if corner_cell_BtmR_regions.has(cell_autotile_region):
+#					spawn_corner(cell_global_position, "BtmR")	
 
 	
 func spawn_corner(global_pos, corner_type):

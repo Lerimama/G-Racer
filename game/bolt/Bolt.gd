@@ -88,6 +88,13 @@ enum MotionStates {FWD, REV, IDLE, DISARRAY} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
 var current_active_trail: Line2D
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
+var disarray_rotation_dir = 6
+
+# za area efekte
+var bolt_on_nitro_count: int = 0
+var bolt_on_hole_count: int = 0
+var bolt_on_gravel_count: int = 0
+var bolt_on_tracking_count: int = 0
 
 
 func _ready() -> void:
@@ -110,7 +117,6 @@ func _ready() -> void:
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
 	energy_bar_holder.hide()
 	
-	
 
 func _physics_process(delta: float) -> void:
 	# aktivacija pospeška je setana na vozniku
@@ -120,10 +126,10 @@ func _physics_process(delta: float) -> void:
 	# set motion states
 	if engine_power > 0:
 		current_motion_state = MotionStates.FWD
-		manage_gas(fwd_gas_usage)
+		update_gas(fwd_gas_usage)
 	elif engine_power < 0:
 		current_motion_state = MotionStates.REV
-		manage_gas(rev_gas_usage)
+		update_gas(rev_gas_usage)
 	elif engine_power == 0:
 		current_motion_state = MotionStates.IDLE
 		
@@ -150,12 +156,14 @@ func _physics_process(delta: float) -> void:
 
 	if collision:
 		on_collision()	
-				
+	
 	motion_fx()
-	update_energy_bar()
+
+	if Ref.game_manager.level_settings.level == Set.Levels.TRAINING:
+		update_energy_bar()
 	
 	
-# IZ FP ----------------------------------------------------------------------------
+# IZ PROCESA ----------------------------------------------------------------------------
 
 	
 func on_collision():
@@ -177,48 +185,28 @@ func on_collision():
 		bolt_trail_active = false
 
 
-func spawn_new_trail():
+func steering(delta: float) -> void:
 	
-	var new_bolt_trail: Object
-	new_bolt_trail = BoltTrail.instance()
-	new_bolt_trail.modulate.a = bolt_trail_alpha
-	new_bolt_trail.z_index = z_index + Set.trail_z_index
-	Ref.node_creation_parent.add_child(new_bolt_trail)
+	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
+	var front_axis_position = position + transform.x * axis_distance / 2.0 # sredinska pozicija vozila plus polovica medosne razdalje
 	
-	bolt_trail_active = true	
+	# sprememba lokacije osi ob gibanju (per frame)
+	rear_axis_position += velocity * delta	
+	front_axis_position += velocity.rotated(rotation_angle) * delta
 	
-	return new_bolt_trail
+	var new_heading = (front_axis_position - rear_axis_position).normalized()
 	
+	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction" ... 10 je za adaptacijo inputa	
+	# if current_motion_state == MotionStates.FWD:
+	# if fwd_motion:
+	#	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction"	
+	# elif current_motion_state == MotionStates.REV:
+	# elif rev_motion:
+	#	velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.5) # željeno smer gibanja doseže z zamikom "side-traction"	
 	
-func manage_trail():
-	# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
-	
-	if velocity.length() > 0:
-		
-		current_active_trail.add_points(global_position)
-		current_active_trail.gradient.colors[1] = trail_pseudodecay_color
-		
-		if velocity.length() > stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
-			# če se premikam in se je tril že začel skrivat ga prikažem
-			var trail_grad = get_tree().create_tween()
-			trail_grad.tween_property(current_active_trail, "modulate:a", bolt_trail_alpha, 0.5)
-		else:
-			# če grem počasi ga skrijem
-			var trail_grad = get_tree().create_tween()
-			trail_grad.tween_property(current_active_trail, "modulate:a", 0, 0.5)
-	# če sem pri mirua deaktiviram trail ... ob ponovnem premiku se kreira nova 
-	else:
-		current_active_trail.start_decay() # trail decay tween start
-		bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena	
-	
+	rotation = new_heading.angle() # sprite se obrne v smeri	
 
-func manage_gas(gas_amount: float):
-	
-	gas_count += gas_amount
-	gas_count = clamp(gas_count, 0, gas_count)
-	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
-	
-				
+
 func motion_fx():
 
 	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
@@ -262,29 +250,49 @@ func motion_fx():
 		engine_particles_rear.modulate.a = 1
 		engine_particles_front_left.modulate.a = 1
 		engine_particles_front_right.modulate.a = 1
-	
 
-func steering(delta: float) -> void:
-	
-	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
-	var front_axis_position = position + transform.x * axis_distance / 2.0 # sredinska pozicija vozila plus polovica medosne razdalje
-	
-	# sprememba lokacije osi ob gibanju (per frame)
-	rear_axis_position += velocity * delta	
-	front_axis_position += velocity.rotated(rotation_angle) * delta
-	
-	var new_heading = (front_axis_position - rear_axis_position).normalized()
-	
-	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction" ... 10 je za adaptacijo inputa	
-	# if current_motion_state == MotionStates.FWD:
-	# if fwd_motion:
-	#	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction"	
-	# elif current_motion_state == MotionStates.REV:
-	# elif rev_motion:
-	#	velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.5) # željeno smer gibanja doseže z zamikom "side-traction"	
-	
-	rotation = new_heading.angle() # sprite se obrne v smeri
 
+func spawn_new_trail():
+	
+	var new_bolt_trail: Object
+	new_bolt_trail = BoltTrail.instance()
+	new_bolt_trail.modulate.a = bolt_trail_alpha
+	new_bolt_trail.z_index = z_index + Set.trail_z_index
+	Ref.node_creation_parent.add_child(new_bolt_trail)
+	
+	bolt_trail_active = true	
+	
+	return new_bolt_trail
+	
+	
+func manage_trail():
+	# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
+	
+	if velocity.length() > 0:
+		
+		current_active_trail.add_points(global_position)
+		current_active_trail.gradient.colors[1] = trail_pseudodecay_color
+		
+		if velocity.length() > stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
+			# če se premikam in se je tril že začel skrivat ga prikažem
+			var trail_grad = get_tree().create_tween()
+			trail_grad.tween_property(current_active_trail, "modulate:a", bolt_trail_alpha, 0.5)
+		else:
+			# če grem počasi ga skrijem
+			var trail_grad = get_tree().create_tween()
+			trail_grad.tween_property(current_active_trail, "modulate:a", 0, 0.5)
+	# če sem pri mirua deaktiviram trail ... ob ponovnem premiku se kreira nova 
+	else:
+		current_active_trail.start_decay() # trail decay tween start
+		bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
+
+
+func update_gas(gas_amount: float):
+	
+	gas_count += gas_amount
+	gas_count = clamp(gas_count, 0, gas_count)
+	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
+	
 	
 func update_energy_bar():
 	
@@ -302,25 +310,85 @@ func update_energy_bar():
 		energy_bar.color = Color.aquamarine		
 			
 
-# UTILITY ----------------------------------------------------------------------------
+# LIFE CYCLE ----------------------------------------------------------------------------
 
 
-func lose_life():
+func on_hit(hit_by: Node):
 	
-	# shake camera
+	if not shields_on:
+		
+		if hit_by.is_in_group(Ref.group_bullets):
+			Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
+			take_damage(hit_by)
+			# push
+			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
+			# efekt	
+			modulate.a = 0.2
+			var blink_tween = get_tree().create_tween()
+			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
+			
+		elif hit_by.is_in_group(Ref.group_misiles):
+			set_process_input(false)
+			Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
+			# efekt	
+			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia # push
+			explode()
+			if Ref.game_manager.level_settings.level == Set.Levels.NITRO:
+				take_damage(hit_by)
+			else:
+				in_disarray()
+			
+		elif hit_by.is_in_group(Ref.group_shockers):
+			set_process_input(false)
+			take_damage(hit_by)		
+			# efekt
+			var catch_tween = get_tree().create_tween()
+			catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
+			catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
+			catch_tween.parallel().tween_property(bolt_sprite, "modulate:a", 0.5, 0.5)
+			bolt_sprite.material.set_shader_param("noise_factor", 2.0)
+			bolt_sprite.material.set_shader_param("speed", 0.7)
+			yield(get_tree().create_timer(hit_by.shock_time), "timeout") # controlls off time
+			# releaase
+			var relase_tween = get_tree().create_tween()
+			relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
+			relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
+			yield(relase_tween, "finished")
+			# reset shader
+			bolt_sprite.material.set_shader_param("noise_factor", 0.0)
+			bolt_sprite.material.set_shader_param("speed", 0.0)
+			set_process_input(true)
+
+
+func in_disarray():
+	
+	# random disarray direction
+	current_motion_state = MotionStates.DISARRAY
+	var dissaray_random_direction = randi() % 2
+	if dissaray_random_direction == 0:
+		rotation_dir = - disarray_rotation_dir
+	else:
+		rotation_dir = disarray_rotation_dir
+	var disabled_tween = get_tree().create_tween()
+	disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
+	disabled_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
+	yield(disabled_tween, "finished")
+	current_motion_state = MotionStates.IDLE
+	energy = max_energy
+	set_process_input(true)		
+	
+	
+func explode():
+	
+	# efekti in posledice
 	Ref.current_camera.shake_camera(Ref.current_camera.bolt_explosion_shake)
-	
-	# ugasni tejl
-	if bolt_trail_active:
+	if bolt_trail_active: # ugasni tejl
 		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false
-	
-	# "ugasni" motorje
-#	engine_particles_rear.visible = false
-#	engine_particles_front_left.visible = false
-#	engine_particles_front_right.visible = false
-	
-	# spawnaj eksplozijo
+	# engine_particles_rear.visible = false
+	# engine_particles_front_left.visible = false
+	# engine_particles_front_right.visible = false
+	# spawn eksplozije
 	var new_exploding_bolt = ExplodingBolt.instance()
 	new_exploding_bolt.global_position = global_position
 	new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
@@ -328,23 +396,41 @@ func lose_life():
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
 	new_exploding_bolt.spawned_by_color = bolt_color
 	new_exploding_bolt.z_index = z_index + Set.explosion_z_index
-	Ref.node_creation_parent.add_child(new_exploding_bolt)
+	Ref.node_creation_parent.add_child(new_exploding_bolt)	
+
+
+func take_damage(hit_by: Node):
 	
+	var damage_amount: float = hit_by.hit_damage
+	
+	energy -= damage_amount
+	energy = clamp(energy, 0, max_energy)
+	energy_bar.scale.x = energy/10
+	
+	# za damage
+	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
+	
+	if energy <= 0:
+		lose_life()
+			
+	
+func lose_life():
+	
+	# stats
 	player_life -= 1
 	emit_signal("stat_changed", bolt_id, "player_life", player_life)
 	
-#	bolt_collision.disabled = true
-#	visible = false
-#	set_physics_process(false)
-	
+	bolt_collision.disabled = true
+	visible = false
+	set_physics_process(false)
 	if player_life > 0:
-		reset_bolt()
+		revive_bolt()
 	else:
 		self.bolt_active = false
 		queue_free()
-		
-		
-func reset_bolt():
+	
+
+func revive_bolt():
 	
 	yield(get_tree().create_timer(reset_time), "timeout")
 	
@@ -357,6 +443,9 @@ func reset_bolt():
 	set_physics_process(true)
 	visible = true
 	
+
+# UTILITY ----------------------------------------------------------------------------
+
 		
 func engines_setup():
 	
@@ -453,11 +542,6 @@ func activate_shield():
 		# shields_on in collisions_setup premaknjena dol na konec animacije
 		shield_loops_counter = shield_loops_limit # imitiram zaključek loop tajmerja
 
-var bolt_on_nitro_count: int = 0
-var bolt_on_hole_count: int = 0
-var bolt_on_gravel_count: int = 0
-var bolt_on_tracking_count: int = 0
-
 
 func activate_nitro(nitro_power: float, nitro_time: float):
 
@@ -473,64 +557,6 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_force_quo = Pro.bolt_profiles[bolt_type]["drag_force_quo_nitro"]	
 		yield(get_tree().create_timer(nitro_time), "timeout")
 		drag_force_quo = Pro.bolt_profiles[bolt_type]["drag_force_quo"]	
-	
-
-func on_hit(hit_by: Node):
-	
-	if not shields_on:
-		
-		if hit_by.is_in_group(Ref.group_bullets):
-			Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
-			take_damage(hit_by)
-			# push
-			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-			# efekt	
-			modulate.a = 0.2
-			var blink_tween = get_tree().create_tween()
-			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
-			
-		elif hit_by.is_in_group(Ref.group_misiles):
-			set_process_input(false)
-			Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
-			take_damage(hit_by)
-			# push
-			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-			# efekt	
-			modulate.a = 0.2
-			var blink_tween = get_tree().create_tween()
-			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
-			# disarray
-			current_motion_state = MotionStates.DISARRAY
-			rotation_dir = -10
-#			on_hit_disabled_time = on_hit_disabled_time * 1.5
-			var disabled_tween = get_tree().create_tween()
-			disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
-			disabled_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
-			yield(disabled_tween, "finished")
-			rotation_dir = 0
-			current_motion_state = MotionStates.IDLE
-			set_process_input(true)
-			
-		elif hit_by.is_in_group(Ref.group_shockers):
-			set_process_input(false)
-			take_damage(hit_by)		
-			# efekt
-			var catch_tween = get_tree().create_tween()
-			catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
-			catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
-			catch_tween.parallel().tween_property(bolt_sprite, "modulate:a", 0.5, 0.5)
-			bolt_sprite.material.set_shader_param("noise_factor", 2.0)
-			bolt_sprite.material.set_shader_param("speed", 0.7)
-			yield(get_tree().create_timer(hit_by.shock_time), "timeout") # controlls off time
-			# releaase
-			var relase_tween = get_tree().create_tween()
-			relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
-			relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
-			yield(relase_tween, "finished")
-			# reset shader
-			bolt_sprite.material.set_shader_param("noise_factor", 0.0)
-			bolt_sprite.material.set_shader_param("speed", 0.0)
-			set_process_input(true)
 
 
 func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
@@ -539,21 +565,6 @@ func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
 	player_points = clamp(player_points, 0, player_points)
 	emit_signal("stat_changed", bolt_id, "player_points", player_points) # do GMa
 	
-
-func take_damage(hit_by: Node):
-	
-	var damage_amount: float = hit_by.hit_damage
-	
-	energy -= damage_amount
-	energy = clamp(energy, 0, max_energy)
-	energy_bar.scale.x = energy/10
-	
-	# za damage
-	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
-	
-	if energy <= 0:
-		lose_life()
-
 	
 func on_item_picked(pickable_type_key: String):
 	
@@ -602,7 +613,6 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 	
 	bolt_active = bolt_is_active
 	emit_signal("bolt_activity_changed", self)
-#	print ("ACT", is_bolt_active)
 
 
 func _on_shield_animation_finished(anim_name: String) -> void:
