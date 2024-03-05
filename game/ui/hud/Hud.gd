@@ -35,7 +35,7 @@ func _ready() -> void:
 			stat_line.stat_wins.hide()
 		else:
 			stat_line.stat_wins.hide()
-			stat_line.stat_points.hide()
+#			stat_line.stat_points.hide()
 			stat_line.stat_gas.hide()
 			
 			

@@ -38,24 +38,26 @@ var explosion_z_index = 1
 
 var default_game_settings: Dictionary = {
 	"game_time_limit": 0, # če je 0 ni omejitve
-	"suddent_death_mode": false,
-	"sudden_death_limit": 20,
 	"timer_mode_countdown": false,
 	"gameover_countdown_duration": 5,
 	"start_countdown": true,
-	# points and arena values
+	# bricks and area values
 	"goal_points": 1000,
 	"light_points": 10,
 	"target_brick_points": 100,
 	"ghost_brick_points": 30,
 	"bouncer_brick_points": 10,
-	"magnet_brick_points": -1,
+	"magnet_brick_points": 0,
 	"area_tracking_value": 1, # 1 = 100%
+	"area_gravel_drag_force_div": 25.0, 
+	"area_hole_drag_force_div": 5.0,
+	"area_nitro_drag_force_div": 500.0,
 	"pull_penalty_gas": -20,
-#	"area_nitro_value": 700,
 	# modes
 	"fight_mode": true, # take damage, energy
-	"race_mode": false # ranking, gas use
+	"race_mode": false, # ranking, gas use
+	"suddent_death_mode": false,
+	"sudden_death_limit": 20,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false,
 }

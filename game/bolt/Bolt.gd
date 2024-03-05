@@ -91,7 +91,7 @@ onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability
 onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
-onready var drag_force_quo: float = Pro.bolt_profiles[bolt_type]["drag_force_quo"] 
+onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
 
 
 func _ready() -> void:
@@ -103,7 +103,7 @@ func _ready() -> void:
 	bolt_sprite.texture = bolt_sprite_texture
 	axis_distance = bolt_sprite_texture.get_width()
 
-	engines_setup() # postavi partikle za pogon
+	set_engines() # postavi partikle za pogon
 	
 	# shield
 	shield.modulate.a = 0 
@@ -136,10 +136,10 @@ func _physics_process(delta: float) -> void:
 		if gas_count <= 0: # če zmanjka bencina je deaktiviran
 			self.bolt_active = false
 	else: 	
-		drag_force_quo = lerp(drag_force_quo, 1, 0.05) # če je deaktiviran povečam drag in ga postopoma ustavim
+		drag_force_div = lerp(drag_force_div, 1, 0.05) # če je deaktiviran povečam drag in ga postopoma ustavim
 	
 	# sila upora raste s hitrostjo		
-	var drag_force = drag * velocity * velocity.length() / drag_force_quo # množenje z velocity nam da obliko vektorja
+	var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
 		
 	# hitrost je pospešek s časom
 	acceleration -= drag_force
@@ -206,9 +206,18 @@ func steering(delta: float) -> void:
 
 func motion_fx():
 
-	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
-	var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
-	var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)	
+	# position2D
+	# var rear_engine_pos: Vector2 = bolt_sprite.get_node("RearEnginePosition").position
+	# var front_engine_pos_L: Vector2 = bolt_sprite.get_node("FrontEnginePositionL").position
+	# var front_engine_pos_R: Vector2 = bolt_sprite.get_node("FrontEnginePositionR").position
+	# old
+	# var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
+	# var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
+	# var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)
+	# new
+	var rear_engine_pos: Vector2 = Vector2(-2.7, 0.5)
+	var front_engine_pos_L: Vector2 = Vector2(3, -4)
+	var front_engine_pos_R: Vector2 = Vector2(3, 4.5)	
 	
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
 	
@@ -444,32 +453,35 @@ func revive_bolt():
 # UTILITY ----------------------------------------------------------------------------
 
 		
-func engines_setup():
-	
+func set_engines():
+	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
+	var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
+	var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)	
+		
 	engine_particles_rear = EngineParticles.instance()
-	# rotacija se seta v FP
+	# rotacija in pozicija se morata apdejta vsak frejm ... FP
 	engine_particles_rear.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_rear)
 	engine_particles_rear.modulate.a = 0
 	
 	engine_particles_front_left = EngineParticles.instance()
+	# rotacija in pozicija se morata apdejta vsak frejm ... FP
 	engine_particles_front_left.emission_rect_extents = Vector2.ZERO
 	engine_particles_front_left.amount = 20
 	engine_particles_front_left.initial_velocity = 50
 	engine_particles_front_left.lifetime = 0.05
 	engine_particles_front_left.modulate.a = 0
-	# rotacija se seta v FP
 	engine_particles_front_left.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_front_left)
 	
 	engine_particles_front_right = EngineParticles.instance()
+	# rotacija in pozicija se morata apdejta vsak frejm ... FP
 	engine_particles_front_right.emission_rect_extents = Vector2.ZERO
 	engine_particles_front_right.amount = 20
 	engine_particles_front_right.initial_velocity = 50
 	engine_particles_front_right.lifetime = 0.05
 	engine_particles_front_right.modulate.a = 0
 	engine_particles_front_right.z_index = z_index + Set.engine_z_index
-	# rotacija se seta v FP
 	Ref.node_creation_parent.add_child(engine_particles_front_right)
 
 		
@@ -551,9 +563,9 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		#		# trajanje
 		#		yield(get_tree().create_timer(nitro_time), "timeout")
 		#		fwd_engine_power = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
-		drag_force_quo = Pro.bolt_profiles[bolt_type]["drag_force_quo_nitro"]	
+		drag_force_div = Ref.game_manager.game_settings["area_nitro_drag_force_div"]
 		yield(get_tree().create_timer(nitro_time), "timeout")
-		drag_force_quo = Pro.bolt_profiles[bolt_type]["drag_force_quo"]	
+		drag_force_div = Pro.bolt_profiles[bolt_type]["drag_force_div"]	
 
 
 func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
@@ -596,6 +608,9 @@ func on_item_picked(pickable_type_key: String):
 			side_traction = pickable_value
 			yield(get_tree().create_timer(pickable_time), "timeout")
 			side_traction = default_traction
+		"POINTS":
+			player_points += pickable_value
+			emit_signal("stat_changed", bolt_id, "player_points", player_points)
 		"RANDOM":
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range

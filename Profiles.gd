@@ -9,49 +9,54 @@ var pickable_profiles: Dictionary = {
 	"BULLET": { # BULLET
 		"pickable_value": 20,
 		"pickable_time": 0, # sekunde
-		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"),
+		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"), # pot rabim samo pri random spawnanju
 	},
-	"MISILE": { # MISILE
+	"MISILE": {
 		"pickable_value": 2,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
 	}, 
-	"SHOCKER": { # SHOCKER
+	"SHOCKER": {
 		"pickable_value": 3,
 		"pickable_time": 10, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 	}, 
-	"SHIELD": { # SHIELD
+	"SHIELD": {
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
 	},
-	"ENERGY": { # ENERGY
+	"ENERGY": {
 		"pickable_value": 0,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableEnergy.tscn"),
 	},
-	"GAS": { # GAS
+	"GAS": {
 		"pickable_value": 200,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableGas.tscn"),
 	},
-	"LIFE": { # LIFE
+	"LIFE": {
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableLife.tscn"),
 	},
-	"NITRO": { # NITRO
+	"NITRO": {
 		"pickable_value": 700,
 		"pickable_time": 1, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
 	},
-	"TRACKING": { # TRACKING
+	"TRACKING": {
 		"pickable_value": 0.7,
 		"pickable_time": 10, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
-	"RANDOM": { # RANDOM
+	"POINTS": {
+		"pickable_value": 100, # nepomebno, ker random range je število ključev v tem slovarju
+		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickablePoints.tscn"),
+	},
+	"RANDOM": {
 		"pickable_value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableRandom.tscn"),
@@ -63,7 +68,9 @@ var current_bolt_type
 
 var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
-		"bolt_texture": preload("res://assets/bolt/bolt_basic.png"),
+#		"bolt_texture": preload("res://assets/bolt/bolt.png"),
+#		"bolt_texture": preload("res://assets/bolt/bolt_varz/boltbolt_alter.png"),
+		"bolt_texture": preload("res://assets/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"shield_loops_limit": 3,
@@ -76,10 +83,7 @@ var bolt_profiles: Dictionary = {
 		"bounce_size": 0.5, # 0 - 1 
 		"inertia": 5, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
-		"drag_force_quo": 100.0, # večji pomeni nižjo drag force
-		"drag_force_quo_gravel": 25.0, 
-		"drag_force_quo_hole": 5.0,
-		"drag_force_quo_nitro": 500.0,
+		"drag_force_div": 100.0, # večji pomeni nižjo drag force
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
 		# v1

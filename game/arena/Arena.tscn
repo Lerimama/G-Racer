@@ -27,7 +27,6 @@ border_width_right = 2
 border_width_bottom = 2
 
 [node name="Arena" type="Node2D"]
-position = Vector2( -1, 0 )
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_horizontal_guides_": [ -64.0 ]

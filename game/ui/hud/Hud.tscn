@@ -26,30 +26,37 @@ margin_right = 49.0
 margin_bottom = 121.0
 
 [node name="StatLineRacer2" parent="." instance=ExtResource( 5 )]
-margin_left = 597.0
-margin_top = 5.0
-margin_right = 637.0
-margin_bottom = 121.0
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -40.0
+margin_top = 0.0
+margin_right = 0.0
+margin_bottom = 124.0
 
 [node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
-margin_left = 8.0
-margin_top = 229.0
-margin_right = 48.0
-margin_bottom = 345.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -131.0
+margin_bottom = -7.0
 alignment = 2
 
 [node name="StatLineRacer4" parent="." instance=ExtResource( 5 )]
-margin_left = 598.0
-margin_top = 229.0
-margin_right = 638.0
-margin_bottom = 345.0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -40.0
+margin_top = -131.0
+margin_right = 0.0
+margin_bottom = -7.0
 alignment = 2
 
 [node name="GameStats" type="HBoxContainer" parent="."]
-margin_left = 189.0
-margin_top = -1.0
-margin_right = 390.0
-margin_bottom = 25.0
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -161.5
+margin_right = 39.5
+margin_bottom = 26.0
 grow_horizontal = 0
 theme = ExtResource( 2 )
 alignment = 2

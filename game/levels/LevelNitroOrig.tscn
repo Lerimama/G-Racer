@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
 [ext_resource path="res://_materiali/nitro_prva_proga.png" type="Texture" id=2]
-[ext_resource path="res://assets/bolt/bolt_basic.png" type="Texture" id=3]
 
 [node name="LevelNitro" instance=ExtResource( 1 )]
 
@@ -57,9 +56,3 @@ points = PoolVector2Array( 440, 1184, 464, 1016, 632, 1008, 792, 1168, 904, 1160
 width = 10.0
 default_color = Color( 0.4, 0.501961, 1, 0.145098 )
 antialiased = true
-
-[node name="BoltBasic" type="Sprite" parent="." index="8"]
-visible = false
-position = Vector2( 416, 1160 )
-rotation = -1.57079
-texture = ExtResource( 3 )

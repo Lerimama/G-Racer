@@ -10,13 +10,12 @@ rect_min_size = Vector2( 640, 360 )
 rect_clip_content = true
 size_flags_horizontal = 3
 size_flags_vertical = 3
-stretch = true
 script = ExtResource( 1 )
 
 [node name="Viewport" type="Viewport" parent="."]
 size = Vector2( 640, 360 )
+own_world = true
 handle_input_locally = false
-hdr = false
 disable_3d = true
 render_target_update_mode = 3
 
