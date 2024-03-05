@@ -45,10 +45,7 @@ position = Vector2( 416, 1200 )
 [node name="SpawnPosition4" parent="Positions" index="4"]
 position = Vector2( 464, 1200 )
 
-[node name="IdleTarget" type="Position2D" parent="." index="6"]
-position = Vector2( 136, 57 )
-
-[node name="RacingLine" parent="." index="7"]
+[node name="RacingLine" parent="." index="6"]
 visible = false
 
 [node name="RacingPath" parent="RacingLine" index="3"]
@@ -56,3 +53,6 @@ points = PoolVector2Array( 440, 1184, 464, 1016, 632, 1008, 792, 1168, 904, 1160
 width = 10.0
 default_color = Color( 0.4, 0.501961, 1, 0.145098 )
 antialiased = true
+
+[node name="IdleTarget" parent="." index="7"]
+position = Vector2( 440, 984 )

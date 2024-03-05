@@ -18,8 +18,18 @@ onready var shoot_bullet_action: String = controller_actions["shoot_bullet_actio
 onready var shoot_misile_action: String = controller_actions["shoot_misile_action"]
 onready var shoot_shocker_action: String = controller_actions["shoot_shocker_action"]
 onready var select_feat_action: String = controller_actions["select_feat_action"]
-	
-	
+
+# neu
+var feat_selector_alpha: float = 0.3			
+onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
+onready var selected_feat_index: int = 0
+var available_features: Array
+
+# debug
+onready var ray_cast_2d: RayCast2D = $RayCast2D
+onready var ray_cast_2d_2: RayCast2D = $RayCast2D2	
+
+
 func _input(event: InputEvent) -> void:
 	
 	if not bolt_active:
@@ -36,24 +46,43 @@ func _input(event: InputEvent) -> void:
 		engine_power = 0
 	
 	# rotation
-	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	# rotation_angle se računa na inputu ... rotation_dir * deg2rad(turn_angle)
+	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
 	# shooting
 	if Input.is_action_just_pressed(select_feat_action):
 		select_feature()
 #		shooting("bullet")
 	if Input.is_action_just_pressed(shoot_bullet_action):
-		shooting("bullet")
-	if Input.is_action_just_released(shoot_misile_action):	
-		shooting("misile")
+		select_shooting()
+#		shooting("bullet")
+	if Input.is_action_just_released(shoot_misile_action):
+		tilt_bolt(Vector2.LEFT)
+#		shooting("misile")
+		pass
 	if Input.is_action_just_released(shoot_shocker_action):	
-		shooting("shocker")
+		tilt_bolt(Vector2.RIGHT)
+#		shooting("misile")
+		pass
+#		shooting("shocker")
+		pass
 	if Input.is_action_just_released("pavza"):	
 		shield_loops_limit = Pro.bolt_profiles[bolt_type]["shield_loops_limit"] 
 		activate_shield()
 
-
+	
+func select_shooting():
+	
+	match selected_feat_index:
+		0: # bullet
+			shooting("bullet")
+		1: # misile
+			shooting("misile")
+		2: # shocker
+			shooting("shocker")
+			
+		
+	
 func _ready() -> void:
 	
 	add_to_group(Ref.group_players)
@@ -63,94 +92,46 @@ func _ready() -> void:
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
 	
-	feat_selector.modulate.a = feat_selector_alpha
-
-	
-	
-
-var feat_selector_alpha: float = 0.3			
-onready var feat_selector: Node2D = $FeatSelector
-onready var feat_selected: int = 0
-
+#	feat_selector.modulate.a = feat_selector_alpha
+	feat_selector.hide()
+	available_features.append(feat_selector.get_node("Icons/IconBullet"))
+	available_features.append(feat_selector.get_node("Icons/IconMisile"))
+	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
 func update_feature_selector():
+	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
 	
-	# postavitev
-	feat_selector.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-	feat_selector.global_position = global_position + Vector2(0, 8) # negiramo rotacijo bolta, da je pri miru
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
 	
-	# features na voljo?
-	if bullet_count <= 0:
-		available_features.erase(feat_selector.get_node("Icons/IconBullet"))
-	elif not available_features.has(feat_selector.get_node("Icons/IconBullet")):
-		available_features.append(feat_selector.get_node("Icons/IconBullet"))
-		feat_selector.get_node("Icons/IconBullet").show()
-	if misile_count <= 0:
-		available_features.erase(feat_selector.get_node("Icons/IconMisile"))
-		feat_selector.get_node("Icons/IconMisile").hide()
-#		feat_selector.get_node("Icons/IconShocker").show()
-	elif not available_features.has(feat_selector.get_node("Icons/IconMisile")):
-		available_features.append(feat_selector.get_node("Icons/IconMisile"))
-#		feat_selector.get_node("Icons/IconMisile").show()
-	if shocker_count <= 0:
-		available_features.erase(feat_selector.get_node("Icons/IconShocker"))
-		feat_selector.get_node("Icons/IconBullet").hide()
-	elif not available_features.has(feat_selector.get_node("Icons/IconShocker")):
-		available_features.append(feat_selector.get_node("Icons/IconShocker"))
-#		feat_selector.get_node("Icons/IconShocker").show()
-	
-	for feat in feat_selector.get_node("Icons").get_children():
-		if not available_features.has(feat):
-			feat.hide()
-			if not available_features.empty():
-				var feat_to_show = available_features[available_features.find(feat) + 1]
-				feat_to_show.show()
-#		else:	
-
-#			feat.show()
-		
-		
-
-	if available_features.empty():
-		feat_selector.hide()
-	else:
-		feat_selector.show()
-				
-		
-var available_features: Array
 
 func select_feature():
 	
-	var selector_timer: Timer = $FeatSelector/SelectorTimer
+	var selector_timer: Timer = $BoltHud/VBoxContainer/FeatSelector/SelectorTimer
 	var selector_visibily_time: float = 1
 	selector_timer.wait_time = selector_visibily_time
 	selector_timer.start()
 
-	# opredelim tiste, ki so na voljo
-#	var available_features: Array = feat_selector.get_node("Icons").get_children()
-#	available_features.erase(feat_selector.get_node("Empty"))
-#	if bullet_count <= 0:
-#		available_features.erase(feat_selector.get_node("Icons/IconBullet"))
-#	if misile_count <= 0:
-#		available_features.erase(feat_selector.get_node("Icons/IconMisile"))
-#	if shocker_count <= 0:
-#		available_features.erase(feat_selector.get_node("Icons/IconShocker"))
+	if not feat_selector.visible:
+		feat_selector.show() # samo prižgem
+	elif feat_selector.visible: # samo dvignem index
+		selected_feat_index += 1
 	
-	if not available_features.empty():
-#		if feat_selector.modulate.a == 1:
-		if feat_selector.visible:
-			feat_selected += 1
-			if feat_selected > available_features.size() - 1:
-				feat_selected = 0
-			# setam vidnost ikon
-			for feature in available_features:
-				if not feature == available_features[feat_selected]:
-					feature.hide()
-				else:
-					feature.show()		
-		if feat_selector.modulate.a < 1:
-			feat_selector.modulate.a = 1
-#			feat_selector.show()
+	
+	# reset indexa, če je prevelik
+	if selected_feat_index > available_features.size() - 1:
+		selected_feat_index = 0
+	
+	# setam vidnost ikon
+	for feature in available_features:
+		feature.hide() # najprej jo skrijem
+		if feature == available_features[selected_feat_index]: # potem pokažem izbrano 
+			feature.show()		
+			# udejtam količino
+#			feature.get_node("Label").text = "03"
+	
+	printt("hm", selected_feat_index, available_features.size() - 1)
 
 	
 
@@ -198,5 +179,5 @@ func pull_bolt_on_screen(pull_position: Vector2):
 
 func _on_SelectorTimer_timeout() -> void:
 	
-	feat_selector.modulate.a = feat_selector_alpha
-#	feat_selector.hide()
+#	feat_selector.modulate.a = feat_selector_alpha
+	feat_selector.hide()

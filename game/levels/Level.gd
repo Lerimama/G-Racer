@@ -152,7 +152,6 @@ func set_level_elements():
 		var single_tile_offset: Vector2 = Vector2(5,4)
 		var double_tile_offset: Vector2 = Vector2(9,8)
 		
-		print(cell_index)
 		match cell_index:
 			6: # goal pillar
 				pickable_scene = preload("res://game/arena_elements/GoalPillar.tscn")

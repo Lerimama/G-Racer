@@ -1,0 +1,139 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/bolt/Player.gd" type="Script" id=2]
+[ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=3]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=4]
+[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=5]
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=6]
+
+[sub_resource type="ShaderMaterial" id=1]
+resource_local_to_scene = true
+shader = ExtResource( 3 )
+shader_param/noise_intensity = 1.0
+shader_param/noise_layers = 5
+shader_param/noise_speed = 2.0
+shader_param/inverse_output = false
+shader_param/colorize = Color( 1, 1, 1, 1 )
+shader_param/color_to_cut = Color( 1, 1, 1, 1 )
+shader_param/color_intensity = 1.0
+shader_param/texture_size = Vector2( 32, 32 )
+
+[sub_resource type="AtlasTexture" id=121]
+atlas = ExtResource( 5 )
+region = Rect2( 0, 0, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=118]
+atlas = ExtResource( 4 )
+region = Rect2( 48, 8, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=119]
+atlas = ExtResource( 5 )
+region = Rect2( 8, 0, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=120]
+atlas = ExtResource( 5 )
+region = Rect2( 16, 0, 8, 8 )
+
+[node name="Player" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Shield" parent="." index="3"]
+material = SubResource( 1 )
+
+[node name="VBoxContainer" parent="BoltHud" index="0"]
+custom_constants/separation = 3
+
+[node name="EnergyBar" parent="BoltHud/VBoxContainer" index="0"]
+margin_left = 1.0
+margin_right = 7.0
+
+[node name="FeatSelector" type="Control" parent="BoltHud/VBoxContainer" index="1"]
+margin_top = 4.0
+margin_right = 8.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_horizontal = 4
+
+[node name="Icons" type="Control" parent="BoltHud/VBoxContainer/FeatSelector" index="0"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -4.0
+margin_right = 4.0
+margin_bottom = 8.0
+theme = ExtResource( 6 )
+
+[node name="IconBullet" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="0"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 121 )
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet" index="0"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 118 )
+
+[node name="Label" type="Label" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet" index="1"]
+margin_left = -7.5
+margin_top = 6.0
+margin_right = 16.5
+margin_bottom = 19.0
+grow_horizontal = 2
+text = "8888"
+align = 1
+
+[node name="IconMisile" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="1"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 119 )
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile" index="0"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 118 )
+
+[node name="Label" type="Label" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile" index="1"]
+margin_left = -7.5
+margin_top = 6.0
+margin_right = 16.5
+margin_bottom = 19.0
+grow_horizontal = 2
+text = "8888"
+align = 1
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="IconShocker" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="2"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 120 )
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker" index="0"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 118 )
+
+[node name="Label" type="Label" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker" index="1"]
+margin_left = -7.5
+margin_top = 6.0
+margin_right = 16.5
+margin_bottom = 19.0
+grow_horizontal = 2
+text = "8888"
+align = 1
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="SelectorTimer" type="Timer" parent="BoltHud/VBoxContainer/FeatSelector" index="1"]
+
+[node name="RayCast2D" type="RayCast2D" parent="." index="6"]
+cast_to = Vector2( 24, 0 )
+
+[node name="RayCast2D2" type="RayCast2D" parent="." index="7"]
+cast_to = Vector2( 37, 0 )
+
+[connection signal="timeout" from="BoltHud/VBoxContainer/FeatSelector/SelectorTimer" to="." method="_on_SelectorTimer_timeout"]

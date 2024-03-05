@@ -55,8 +55,8 @@ onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda
 onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var energy_bar_holder: Node2D = $EnergyBar
-onready var energy_bar: Polygon2D = $EnergyBar/Bar
+onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
+onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://game/bolt/EngineParticles.tscn") 
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
@@ -93,6 +93,9 @@ onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"]
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
 
+# neu
+onready var bolt_hud: Node2D = $BoltHud
+
 
 func _ready() -> void:
 
@@ -112,7 +115,8 @@ func _ready() -> void:
 	
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
-	energy_bar_holder.hide()
+#	energy_bar_holder.hide()
+	bolt_hud.hide()
 	
 
 func _physics_process(delta: float) -> void:
@@ -155,10 +159,9 @@ func _physics_process(delta: float) -> void:
 		on_collision()	
 	
 	motion_fx()
-
+	update_bolt_hud()
 	if Ref.game_manager.game_settings["fight_mode"]:
-		update_energy_bar()
-	
+		energy_bar_holder.show()
 	
 # IZ PROCESA ----------------------------------------------------------------------------
 
@@ -180,6 +183,17 @@ func on_collision():
 	if bolt_trail_active:
 		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false
+
+
+func tilt_bolt(tilt_direction):
+	
+	var tilt_speed: float = 150#Pro.bolt_profiles[bolt_type]["tilt_speed"]
+	var tilt_time: float = 0.05
+	var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
+	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
+	var tilt_tween = get_tree().create_tween()
+	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+	printt("tilt", global_rotation, tilt_vector)
 
 
 func steering(delta: float) -> void:
@@ -299,6 +313,23 @@ func update_gas(gas_amount: float):
 	gas_count = clamp(gas_count, 0, gas_count)
 	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
 	
+
+func update_bolt_hud():
+	
+	if not bolt_hud.visible:
+		bolt_hud.show()
+		
+	# energy_bar
+	bolt_hud.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
+	bolt_hud.global_position = global_position + Vector2(0, 8)
+
+	if energy_bar_holder.visible:
+		energy_bar.scale.x = energy / max_energy
+		if energy_bar.scale.x <= 0.5:
+			energy_bar.color = Set.color_red
+		else:
+			energy_bar.color = Set.color_green
+
 
 func update_energy_bar():
 	

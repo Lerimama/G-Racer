@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Bolt",
 "class": "Enemy",
 "language": "GDScript",
-"path": "res://game/enemies/Enemy.gd"
+"path": "res://game/bolt/Enemy.gd"
 }, {
 "base": "Node",
 "class": "GameManager",
@@ -52,7 +52,7 @@ _global_script_classes=[ {
 "base": "Bolt",
 "class": "Player",
 "language": "GDScript",
-"path": "res://game/player/Player.gd"
+"path": "res://game/bolt/Player.gd"
 }, {
 "base": "Node2D",
 "class": "Shocker",

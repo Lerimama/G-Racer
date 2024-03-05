@@ -55,11 +55,11 @@ var default_game_settings: Dictionary = {
 	"pull_penalty_gas": -20,
 	# modes
 	"fight_mode": true, # take damage, energy
-	"race_mode": false, # ranking, gas use
+	"race_mode": false, # ranking, gas use, enemy AI
 	"suddent_death_mode": false,
 	"sudden_death_limit": 20,
 #	"dogfight_mode": false,
-#	"use_gas_mode": false,
+	"use_gas_mode": false, # beleženje statistike in statistika na hudu
 }
 
 enum Levels {TRAINING, NITRO, DOGFIGHT}
@@ -80,9 +80,8 @@ var level_settings: Dictionary = {
 	Levels.DOGFIGHT: {
 		"level": Levels.DOGFIGHT,
 		"level_path": "res://game/levels/LevelDogfight.tscn",
-#		"level_scene": preload("res://game/levels/LevelDogfight.tscn"),
 		"level_scene": preload("res://game/levels/LevelDogfight.tscn"),
-		} 
+		}
 }
 
 

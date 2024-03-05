@@ -86,6 +86,7 @@ var bolt_profiles: Dictionary = {
 		"drag_force_div": 100.0, # večji pomeni nižjo drag force
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
+		"tilt_speed": 100,
 		# v1
 #		"fwd_engine_power": 300, # 1 - 500 konjev 
 #		"rev_engine_power": 150, # 1 - 500 konjev 
@@ -169,8 +170,8 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"life" : 5,
 	"energy" : 10,
 	"bullet_power" : 0.1,
-	"bullet_count" : 1,
-	"misile_count" : 1,
+	"bullet_count" : 100,
+	"misile_count" : 3,
 	"shocker_count" : 1,
 	"gas_count" : 300, # 300 je kul
 }

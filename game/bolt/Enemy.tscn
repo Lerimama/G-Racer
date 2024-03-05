@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/bolt/Enemy.gd" type="Script" id=2]
+[ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=3]
+
+[sub_resource type="ShaderMaterial" id=1]
+resource_local_to_scene = true
+shader = ExtResource( 3 )
+shader_param/noise_intensity = 1.0
+shader_param/noise_layers = 5
+shader_param/noise_speed = 2.0
+shader_param/inverse_output = false
+shader_param/colorize = Color( 1, 1, 1, 1 )
+shader_param/color_to_cut = Color( 1, 1, 1, 1 )
+shader_param/color_intensity = 1.0
+shader_param/texture_size = Vector2( 32, 32 )
+
+[node name="Enemy" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Shield" parent="." index="3"]
+material = SubResource( 1 )
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="7"]
+
+[node name="VisionFront" type="RayCast2D" parent="." index="8"]
+enabled = true
+cast_to = Vector2( 100, 0 )
+collide_with_areas = true
+
+[node name="VisionRear" type="RayCast2D" parent="." index="9"]
+enabled = true
+cast_to = Vector2( -50, 0 )
+collide_with_areas = true
+
+[node name="VisionLeft" type="RayCast2D" parent="." index="10"]
+enabled = true
+cast_to = Vector2( 10, -40 )
+collide_with_areas = true
+
+[node name="VisionRight" type="RayCast2D" parent="." index="11"]
+enabled = true
+cast_to = Vector2( 10, 40 )
+collide_with_areas = true
+
+[node name="SeekRay" type="RayCast2D" parent="." index="12"]
+enabled = true
+cast_to = Vector2( 90, 0 )
+collide_with_areas = true
+
+[connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]

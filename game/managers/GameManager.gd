@@ -24,8 +24,10 @@ var available_pickable_positions: Array # za random spawn
 onready var navigation_line: Line2D = $"../NavigationPath"
 onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
 onready var game_settings: Dictionary = Set.current_game_settings # ga med igro ne spreminjaš
-onready var player_bolt = preload("res://game/player/Player.tscn")
-onready var enemy_bolt = preload("res://game/enemies/Enemy.tscn")
+onready var player_bolt = preload("res://game/bolt/Player.tscn")
+#onready var player_bolt = preload("res://game/bolt/Player_orig.tscn")
+onready var enemy_bolt = preload("res://game/bolt/Enemy.tscn")
+#onready var enemy_bolt = preload("res://game/bolt/Enemy_orig.tscn")
 
 # temp
 var position_indikator: Node2D	# debug
@@ -75,10 +77,10 @@ func _ready() -> void:
 	yield(get_tree().create_timer(1), "timeout") # da se drevo naloži in lahko spawna bolta	(level global position)
 	set_game()
 	spawn_bolt(player_bolt, level_positions[1], Pro.Bolts.P1, 1)	
-#	spawn_bolt(player_bolt, level_positions[2], Pro.Bolts.P2, 2)	
+	spawn_bolt(player_bolt, level_positions[2], Pro.Bolts.P2, 2)	
 #	spawn_bolt(player_bolt,level_positions[3], Pro.Bolts.P3, 3)	
-	spawn_bolt(player_bolt, level_positions[4], Pro.Bolts.P4, 4)	
-#	spawn_bolt(enemy_bolt, level_positions[2].global_position, Pro.Bolts.ENEMY, 5)
+#	spawn_bolt(player_bolt, level_positions[4], Pro.Bolts.P4, 4)	
+#	spawn_bolt(enemy_bolt, level_positions[2], Pro.Bolts.ENEMY, 2)
 
 
 func _process(delta: float) -> void:
