@@ -157,8 +157,8 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	if not bolt_active:
 		return
 		
-#	bolt_collision.disabled = true
-#	shield_collision.disabled = true
+	bolt_collision.disabled = true
+	shield_collision.disabled = true
 	
 	var pull_time: float = 0.2
 	

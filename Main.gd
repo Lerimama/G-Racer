@@ -4,7 +4,8 @@ var fade_time = 0.7
 var camera_shake_on: bool =  true #_temp
 
 
-onready var home_scene_path: String = "res://home/Home_fast.tscn"
+#onready var home_scene_path: String = "res://home/Home_fast.tscn"
+onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
 #onready var game_scene_path: String = Profiles.current_game_data["game_scene_path"]
 
@@ -76,8 +77,8 @@ func game_in():
 	Met.current_scene.modulate = Color.black
 	# tukaj se seta GM glede na izbiro igre
 	
-	Ref.game_manager.set_level()
-#	Ref.game_manager.set_game()
+#	Ref.game_manager.set_level()
+	Ref.game_manager.set_game()
 #	Met.game_manager.set_tilemap()
 #	Met.game_manager.set_game_view()
 #	Met.game_manager.set_players()
@@ -86,7 +87,7 @@ func game_in():
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_property(Met.current_scene, "modulate", Color.white, fade_time).from(Color.black)
-#	fade_in.tween_callback(Met.game_manager, "set_game")
+#	fade_in.tween_callback(Ref.game_manager, "set_game")
 	
 
 func game_out():

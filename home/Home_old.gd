@@ -54,16 +54,31 @@ func _on_temp_back_btn_pressed():
 	
 func _ready() -> void:
 
+
 	# main
 	play_btn.connect("pressed", self, "_on_play_btn_pressed")
 	settings_btn.connect("pressed", self, "_on_settings_btn_pressed")
 	about_btn.connect("pressed", self, "_on_about_btn_pressed")
 	quit_btn.connect("pressed", self, "_on_quit_btn_pressed")
 
-	# back btnz
+	# about
 	about_back_btn.connect("pressed", self, "_on_about_back_btn_pressed")
+
+	# settings
 	settings_back_btn.connect("pressed", self, "_on_settings_back_btn_pressed")
+
+	#play
+	play1_confirm_btn.connect("pressed", self, "_on_play1_confirm_btn_pressed")
+	play2_confirm_btn.connect("pressed", self, "_on_play2_confirm_btn_pressed")
+	play3_confirm_btn.connect("pressed", self, "_on_play3_confirm_btn_pressed")
+	play4_confirm_btn.connect("pressed", self, "_on_play4_confirm_btn_pressed")
 	play_back_btn.connect("pressed", self, "_on_play_back_btn_pressed")
+
+	# players
+	players1_confirm_btn.connect("pressed", self, "_on_players1_confirm_btn_pressed")
+	players2_confirm_btn.connect("pressed", self, "_on_players2_confirm_btn_pressed")
+	players3_confirm_btn.connect("pressed", self, "_on_players3_confirm_btn_pressed")
+	players4_confirm_btn.connect("pressed", self, "_on_players4_confirm_btn_pressed")
 	players_back_btn.connect("pressed", self, "_on_players_back_btn_pressed")
 
 	# arena
@@ -81,13 +96,18 @@ func _on_settings_btn_pressed():
 	animation_player.play("settings_in")
 func _on_about_btn_pressed():
 	animation_player.play("about_in")
+
 # settings
 func _on_settings_back_btn_pressed():
 	animation_player.play_backwards("settings_in")
+
 # about
 func _on_about_back_btn_pressed():
 	animation_player.play_backwards("about_in")
+
 # play
+func _on_play1_confirm_btn_pressed():
+	animation_player.play("players_in")
 func _on_play_back_btn_pressed():
 	animation_player.play_backwards("play_in")
 
@@ -136,6 +156,7 @@ func _on_quit_btn_pressed():
 
 # --------------------------------------------------------------------------------------------------
 
+#onready var fejkarena: TileMap = $PseudoArena/Fejkarena
 var arena_save_name = "prva arena"
 	
 	
@@ -192,40 +213,3 @@ func _deferred_goto_scene(path, cells):
 		
 	current_arena_edge.update_bitmask_region(new_world.borders.position, new_world.borders.end)
 		
-
-
-func _on_ConfirmBtn_1_pressed() -> void:
-	Set.set_game_settings(Set.Levels.TRAINING)
-	animation_player.play("players_in")
-	pass # Replace with function body.
-
-
-func _on_ConfirmBtn_2_pressed() -> void:
-	Set.set_game_settings(Set.Levels.NITRO)
-	animation_player.play("players_in")
-	pass # Replace with function body.
-
-
-func _on_ConfirmBtn_3_pressed() -> void:
-	Set.set_game_settings(Set.Levels.DUEL)
-	animation_player.play("players_in")
-
-
-func _on_PlayersBtn_1_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 1
-	Ref.main_node.home_out()
-
-
-func _on_PlayersBtn_2_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 2
-	Ref.main_node.home_out()
-
-
-func _on_PlayersBtn_3_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 3
-	Ref.main_node.home_out()
-
-
-func _on_PlayersBtn_4_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 4
-	Ref.main_node.home_out()

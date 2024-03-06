@@ -37,6 +37,7 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 var default_game_settings: Dictionary = {
+	"start_player_count": 1,
 	"game_time_limit": 0, # če je 0 ni omejitve
 	"timer_mode_countdown": false,
 	"gameover_countdown_duration": 5,

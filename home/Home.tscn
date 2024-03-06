@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://assets/shaders/arena_colors_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://assets/sound/sfx/gui/key_3.wav" type="AudioStream" id=11]
 [ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=12]
 [ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=13]
+[ext_resource path="res://assets/fonts/big_font.tres" type="DynamicFont" id=14]
 [ext_resource path="res://assets/sound/music/track_upbeat.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sound/sfx/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sound/sfx/gui/btn_focus_change.wav" type="AudioStream" id=18]
@@ -625,6 +626,7 @@ tracks/3/keys = {
 [node name="Home" type="Node"]
 script = ExtResource( 6 )
 __meta__ = {
+"_edit_horizontal_guides_": [ 296.0 ],
 "_edit_vertical_guides_": [ 225.0 ]
 }
 
@@ -892,9 +894,6 @@ margin_right = 1288.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 theme = ExtResource( 3 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Title" type="Label" parent="HomeUI/Play"]
 modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
@@ -907,33 +906,25 @@ custom_fonts/font = ExtResource( 5 )
 text = "Select game"
 align = 1
 
-[node name="ItemList" type="ItemList" parent="HomeUI/Play"]
-self_modulate = Color( 1, 1, 1, 0 )
-margin_left = 224.0
-margin_top = 104.0
-margin_right = 544.0
-margin_bottom = 312.0
-select_mode = 1
-max_columns = 2
-same_column_width = true
-
-[node name="thumb" type="Panel" parent="HomeUI/Play/ItemList"]
+[node name="thumb" type="Panel" parent="HomeUI/Play"]
 self_modulate = Color( 0.294118, 0.623529, 1, 1 )
-margin_left = 8.0
-margin_right = 160.0
-margin_bottom = 96.0
+margin_left = 160.0
+margin_top = 104.0
+margin_right = 312.0
+margin_bottom = 296.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/ItemList/thumb"]
+[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/thumb"]
 margin_left = 7.0
-margin_top = 5.0
+margin_top = 8.0
 margin_right = 146.0
-margin_bottom = 31.0
+margin_bottom = 184.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
-text = "PReteP"
+text = "TRENING"
 
-[node name="text" type="Label" parent="HomeUI/Play/ItemList/thumb"]
+[node name="text" type="Label" parent="HomeUI/Play/thumb"]
+visible = false
 margin_left = 19.0
 margin_top = 37.0
 margin_right = 138.0
@@ -942,25 +933,27 @@ size_flags_vertical = 0
 text = "If you're looking for a term that refers specifically to the."
 autowrap = true
 
-[node name="thumb2" type="Panel" parent="HomeUI/Play/ItemList"]
+[node name="thumb2" type="Panel" parent="HomeUI/Play"]
 self_modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -160.0
-margin_right = -8.0
-margin_bottom = 96.0
+margin_left = -328.0
+margin_top = 104.0
+margin_right = -176.0
+margin_bottom = 296.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/ItemList/thumb2"]
+[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/thumb2"]
 margin_left = 7.0
-margin_top = 6.0
+margin_top = 8.0
 margin_right = 146.0
-margin_bottom = 32.0
+margin_bottom = 184.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
-text = "Nitro"
+text = "NITRO"
 
-[node name="text" type="Label" parent="HomeUI/Play/ItemList/thumb2"]
+[node name="text" type="Label" parent="HomeUI/Play/thumb2"]
+visible = false
 margin_left = 19.0
 margin_top = 38.0
 margin_right = 138.0
@@ -969,60 +962,31 @@ size_flags_vertical = 0
 text = "If you're looking for a term that refers specifically to the."
 autowrap = true
 
-[node name="thumb3" type="Panel" parent="HomeUI/Play/ItemList"]
+[node name="thumb3" type="Panel" parent="HomeUI/Play"]
 self_modulate = Color( 0.368627, 1, 0.662745, 1 )
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = -112.0
-margin_right = 160.0
-margin_bottom = -16.0
+margin_left = 464.0
+margin_top = -256.0
+margin_right = 616.0
+margin_bottom = -64.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/ItemList/thumb3"]
+[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/thumb3"]
 margin_left = 7.0
-margin_top = 5.0
+margin_top = 8.0
 margin_right = 146.0
-margin_bottom = 31.0
+margin_bottom = 184.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
-text = "P proti P >"
+text = "DUEL"
 
-[node name="text" type="Label" parent="HomeUI/Play/ItemList/thumb3"]
+[node name="text" type="Label" parent="HomeUI/Play/thumb3"]
+visible = false
 margin_left = 19.0
 margin_top = 37.0
 margin_right = 138.0
 margin_bottom = 85.0
-size_flags_vertical = 0
-text = "If you're looking for a term that refers specifically to the."
-autowrap = true
-
-[node name="thumb4" type="Panel" parent="HomeUI/Play/ItemList"]
-self_modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -160.0
-margin_top = -112.0
-margin_right = -8.0
-margin_bottom = -16.0
-custom_styles/panel = SubResource( 777 )
-
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Play/ItemList/thumb4"]
-margin_left = 7.0
-margin_top = 6.0
-margin_right = 146.0
-margin_bottom = 32.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 5 )
-text = "P proti P >"
-
-[node name="text" type="Label" parent="HomeUI/Play/ItemList/thumb4"]
-margin_left = 19.0
-margin_top = 38.0
-margin_right = 138.0
-margin_bottom = 86.0
 size_flags_vertical = 0
 text = "If you're looking for a term that refers specifically to the."
 autowrap = true
@@ -1043,9 +1007,6 @@ margin_right = 1728.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 theme = ExtResource( 3 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Title" type="Label" parent="HomeUI/Players"]
 modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
@@ -1075,23 +1036,14 @@ margin_right = 160.0
 margin_bottom = 96.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Players/ItemList/thumb"]
-margin_left = 7.0
-margin_top = 5.0
+[node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb"]
+margin_left = 8.0
+margin_top = 8.0
 margin_right = 146.0
-margin_bottom = 31.0
+margin_bottom = 80.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 5 )
-text = "P proti P >"
-
-[node name="text" type="Label" parent="HomeUI/Players/ItemList/thumb"]
-margin_left = 19.0
-margin_top = 37.0
-margin_right = 138.0
-margin_bottom = 85.0
-size_flags_vertical = 0
-text = "If you're looking for a term that refers specifically to the."
-autowrap = true
+custom_fonts/font = ExtResource( 14 )
+text = "1"
 
 [node name="thumb2" type="Panel" parent="HomeUI/Players/ItemList"]
 self_modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
@@ -1102,23 +1054,14 @@ margin_right = -8.0
 margin_bottom = 96.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Players/ItemList/thumb2"]
-margin_left = 7.0
-margin_top = 6.0
-margin_right = 146.0
-margin_bottom = 32.0
+[node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb2"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 144.0
+margin_bottom = 80.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 5 )
-text = "P proti P >"
-
-[node name="text" type="Label" parent="HomeUI/Players/ItemList/thumb2"]
-margin_left = 19.0
-margin_top = 38.0
-margin_right = 138.0
-margin_bottom = 86.0
-size_flags_vertical = 0
-text = "If you're looking for a term that refers specifically to the."
-autowrap = true
+custom_fonts/font = ExtResource( 14 )
+text = "2"
 
 [node name="thumb3" type="Panel" parent="HomeUI/Players/ItemList"]
 self_modulate = Color( 0.368627, 1, 0.662745, 1 )
@@ -1130,23 +1073,14 @@ margin_right = 160.0
 margin_bottom = -16.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Players/ItemList/thumb3"]
-margin_left = 7.0
-margin_top = 5.0
-margin_right = 146.0
-margin_bottom = 31.0
+[node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb3"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 144.0
+margin_bottom = 80.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 5 )
-text = "P proti P >"
-
-[node name="text" type="Label" parent="HomeUI/Players/ItemList/thumb3"]
-margin_left = 19.0
-margin_top = 37.0
-margin_right = 138.0
-margin_bottom = 85.0
-size_flags_vertical = 0
-text = "If you're looking for a term that refers specifically to the."
-autowrap = true
+custom_fonts/font = ExtResource( 14 )
+text = "3"
 
 [node name="thumb4" type="Panel" parent="HomeUI/Players/ItemList"]
 self_modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
@@ -1160,23 +1094,14 @@ margin_right = -8.0
 margin_bottom = -16.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="ConfirmBtn" type="Button" parent="HomeUI/Players/ItemList/thumb4"]
-margin_left = 7.0
-margin_top = 6.0
-margin_right = 146.0
-margin_bottom = 32.0
+[node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb4"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 144.0
+margin_bottom = 80.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 5 )
-text = "P proti P >"
-
-[node name="text" type="Label" parent="HomeUI/Players/ItemList/thumb4"]
-margin_left = 19.0
-margin_top = 38.0
-margin_right = 138.0
-margin_bottom = 86.0
-size_flags_vertical = 0
-text = "If you're looking for a term that refers specifically to the."
-autowrap = true
+custom_fonts/font = ExtResource( 14 )
+text = "4"
 
 [node name="BackBtn" type="Button" parent="HomeUI/Players"]
 margin_left = 47.0
@@ -1413,4 +1338,11 @@ stream = ExtResource( 22 )
 volume_db = -13.0
 pitch_scale = 1.1
 
+[connection signal="pressed" from="HomeUI/Play/thumb/ConfirmBtn" to="." method="_on_ConfirmBtn_1_pressed"]
+[connection signal="pressed" from="HomeUI/Play/thumb2/ConfirmBtn" to="." method="_on_ConfirmBtn_2_pressed"]
+[connection signal="pressed" from="HomeUI/Play/thumb3/ConfirmBtn" to="." method="_on_ConfirmBtn_3_pressed"]
+[connection signal="pressed" from="HomeUI/Players/ItemList/thumb/PlayersBtn" to="." method="_on_PlayersBtn_1_pressed"]
+[connection signal="pressed" from="HomeUI/Players/ItemList/thumb2/PlayersBtn" to="." method="_on_PlayersBtn_2_pressed"]
+[connection signal="pressed" from="HomeUI/Players/ItemList/thumb3/PlayersBtn" to="." method="_on_PlayersBtn_3_pressed"]
+[connection signal="pressed" from="HomeUI/Players/ItemList/thumb4/PlayersBtn" to="." method="_on_PlayersBtn_4_pressed"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

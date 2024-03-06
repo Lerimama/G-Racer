@@ -5,7 +5,6 @@
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=4]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=5]
-[ext_resource path="res://home/Home_fast.gd" type="Script" id=6]
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=7]
 [ext_resource path="res://_materiali/GB_printskin_menu.png" type="Texture" id=8]
 [ext_resource path="res://assets/sound/sfx/gui/key_2.wav" type="AudioStream" id=9]
@@ -42,6 +41,28 @@
 [ext_resource path="res://assets/sound/sfx/gui/key_1.wav" type="AudioStream" id=40]
 [ext_resource path="res://assets/sound/sfx/gui/key_4.wav" type="AudioStream" id=41]
 [ext_resource path="res://assets/sound/sfx/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=42]
+
+[sub_resource type="GDScript" id=789]
+script/source = "extends Node
+
+
+
+func _on_ConfirmBtn_pressed() -> void:
+	
+	Set.set_game_settings(Set.Levels.TRAINING)
+	Ref.main_node.home_out()
+
+
+func _on_ConfirmBtn2_pressed() -> void:
+	
+	Set.set_game_settings(Set.Levels.NITRO)
+	Ref.main_node.home_out()
+
+
+func _on_ConfirmBtn3_pressed() -> void:
+	Set.set_game_settings(Set.Levels.DUEL)
+	Ref.main_node.home_out()
+"
 
 [sub_resource type="ShaderMaterial" id=775]
 shader = ExtResource( 1 )
@@ -183,7 +204,7 @@ audio_stream = ExtResource( 11 )
 random_pitch = 1.2
 
 [node name="Home" type="Node"]
-script = ExtResource( 6 )
+script = SubResource( 789 )
 __meta__ = {
 "_edit_vertical_guides_": [ 225.0 ]
 }
