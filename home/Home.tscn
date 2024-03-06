@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://assets/shaders/arena_colors_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=2]
@@ -9,6 +9,24 @@
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=7]
 [ext_resource path="res://_materiali/GB_printskin_menu.png" type="Texture" id=8]
 [ext_resource path="res://_materiali/GB_printskin_game.png" type="Texture" id=9]
+[ext_resource path="res://assets/sound/sfx/gui/key_2.wav" type="AudioStream" id=10]
+[ext_resource path="res://assets/sound/sfx/gui/key_3.wav" type="AudioStream" id=11]
+[ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=12]
+[ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=13]
+[ext_resource path="res://assets/sound/music/track_upbeat.wav" type="AudioStream" id=15]
+[ext_resource path="res://assets/sound/sfx/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=17]
+[ext_resource path="res://assets/sound/sfx/gui/btn_focus_change.wav" type="AudioStream" id=18]
+[ext_resource path="res://assets/sound/sfx/gui/key_5.wav" type="AudioStream" id=20]
+[ext_resource path="res://assets/sound/sfx/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=21]
+[ext_resource path="res://assets/sound/sfx/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=22]
+[ext_resource path="res://assets/sound/music/track_tictac.wav" type="AudioStream" id=23]
+[ext_resource path="res://SoundManager.gd" type="Script" id=24]
+[ext_resource path="res://assets/sound/sfx/gui/key_1.wav" type="AudioStream" id=25]
+[ext_resource path="res://assets/sound/sfx/gui/key_4.wav" type="AudioStream" id=26]
+[ext_resource path="res://assets/sound/music/POL-the-foyer-short.wav" type="AudioStream" id=27]
+[ext_resource path="res://assets/sound/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=29]
+[ext_resource path="res://assets/sound/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=30]
+[ext_resource path="res://assets/sound/sfx/gui/screen_slide.wav" type="AudioStream" id=31]
 
 [sub_resource type="ShaderMaterial" id=775]
 shader = ExtResource( 1 )
@@ -1309,5 +1327,90 @@ anims/play_in = SubResource( 781 )
 anims/players_in = SubResource( 782 )
 anims/settings_in = SubResource( 780 )
 anims/start_game = SubResource( 784 )
+
+[node name="Sounds" type="Node" parent="."]
+pause_mode = 2
+script = ExtResource( 24 )
+
+[node name="HomeMusic" type="Node2D" parent="Sounds"]
+
+[node name="Track8_5" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 12 )
+volume_db = -12.0
+
+[node name="Track12_5" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 30 )
+volume_db = -6.0
+
+[node name="Track4_4" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 29 )
+volume_db = -6.0
+
+[node name="Track1_3" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 13 )
+volume_db = -7.0
+
+[node name="Track5_3-4" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 23 )
+volume_db = -7.0
+
+[node name="Track6_3-4" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 15 )
+volume_db = -10.0
+
+[node name="Track19_4" type="AudioStreamPlayer" parent="Sounds/HomeMusic"]
+stream = ExtResource( 27 )
+volume_db = -5.0
+
+[node name="GuiSfx" type="Node2D" parent="Sounds"]
+
+[node name="Typing" type="Node2D" parent="Sounds/GuiSfx"]
+
+[node name="Key1" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Typing"]
+stream = ExtResource( 25 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key2" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Typing"]
+stream = ExtResource( 10 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key3" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Typing"]
+stream = ExtResource( 11 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key4" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Typing"]
+stream = ExtResource( 26 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key5" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Typing"]
+stream = ExtResource( 20 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="BtnFocus" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 18 )
+volume_db = -30.0
+pitch_scale = 0.7
+
+[node name="BtnConfirm" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 17 )
+volume_db = -25.0
+
+[node name="BtnCancel" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 21 )
+volume_db = -25.0
+
+[node name="ScreenSlide" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 31 )
+pitch_scale = 0.9
+
+[node name="TutorialStageDone" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 22 )
+volume_db = -13.0
+pitch_scale = 1.1
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

@@ -1,7 +1,9 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=1]
 [ext_resource path="res://game/arena_elements/BrickTarget.gd" type="Script" id=2]
+[ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sound/sfx/skills/skill_cling.wav" type="AudioStream" id=4]
 
 [sub_resource type="PhysicsMaterial" id=14]
 
@@ -104,6 +106,10 @@ orbit_velocity_random = 0.0
 radial_accel = 30.0
 color_ramp = SubResource( 9 )
 
+[sub_resource type="AudioStreamRandomPitch" id=25]
+audio_stream = ExtResource( 3 )
+random_pitch = 1.05
+
 [node name="TargetBrick" type="StaticBody2D"]
 physics_material_override = SubResource( 14 )
 script = ExtResource( 2 )
@@ -132,5 +138,17 @@ speed_scale = 4.0
 explosiveness = 0.6
 randomness = 1.0
 process_material = SubResource( 23 )
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="HitBulletBrick" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 4 )
+volume_db = -7.0
+bus = "GameSfx"
+
+[node name="HitMisile" type="AudioStreamPlayer" parent="Sounds"]
+stream = SubResource( 25 )
+volume_db = -10.0
+bus = "GameSfx"
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

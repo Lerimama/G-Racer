@@ -15,5 +15,5 @@ func _on_ConfirmBtn2_pressed() -> void:
 
 
 func _on_ConfirmBtn3_pressed() -> void:
-	Set.set_game_settings(Set.Levels.DOGFIGHT)
+	Set.set_game_settings(Set.Levels.DUEL)
 	Ref.main_node.home_out()

@@ -64,11 +64,13 @@ margin_bottom = 8.0
 theme = ExtResource( 6 )
 
 [node name="IconBullet" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="0"]
+visible = false
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 121 )
 
 [node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet" index="0"]
+visible = false
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 118 )
@@ -89,6 +91,7 @@ margin_bottom = 8.0
 texture = SubResource( 119 )
 
 [node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile" index="0"]
+visible = false
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 118 )
@@ -112,6 +115,7 @@ margin_bottom = 8.0
 texture = SubResource( 120 )
 
 [node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker" index="0"]
+visible = false
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 118 )

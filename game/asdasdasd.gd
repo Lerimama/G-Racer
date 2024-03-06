@@ -220,11 +220,10 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 	
 	new_bolt.set_physics_process(false)
 	new_bolt.connect("bolt_activity_changed", self, "_on_Bolt_activity_changed")
-	if new_bolt.is_in_group(Ref.group_enemies):
-	# if new_bolt is Enemy: ..script error or cycling dependancy
+	if new_bolt is Enemy:
 		new_bolt.navigation_cells = navigation_area
 		new_bolt.connect("path_changed", self, "_on_Enemy_path_changed") # samo za prikaz nav linije
-	if new_bolt.is_in_group(Ref.group_players):
+	elif new_bolt is Player:
 		new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # statistika med boltom in hudom
 		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
 		# Ref.current_camera.follow_target = new_bolt
@@ -306,105 +305,3 @@ func sort_ascending(array_1, array_2):
 	    return true
 	return false
 
-
-func get_racing_line_bolts():
-	
-	var bolts_on_racing_line: Array	# paketi podatkov o boltu in njegovi pozicij na racing liniji	
-		
-	# najprej čekiram najbližje točke za vsakega na progi
-	for bolt in bolts_in_game:
-		
-		# naberem razdalje vseh točk do bolta
-		var distances: Array
-		var current_shortest_distance: float = 0
-		var current_closest_racing_line_point: Vector2
-		for line_point in current_racing_line:
-			var distance_to_point: float = bolt.global_position.distance_to(line_point)
-			# če je prva distance jo štejem in zapišem lokacijo točke na liniji
-			if current_shortest_distance == 0:
-				current_shortest_distance = distance_to_point
-				current_closest_racing_line_point = line_point
-			# če je nižja od trenutne jo zamenjam in zapišem lokacijo točke na liniji
-			elif distance_to_point < current_shortest_distance:
-				current_shortest_distance = distance_to_point
-				current_closest_racing_line_point = line_point
-		
-		# ko pregleda vse točke na racing liniji ... določim najbližko točko na racing liniji
-		var closest_racing_line_point = current_closest_racing_line_point
-		# določim še index te točke v racing liniji
-		var bolt_racing_line_point_index = current_racing_line.find(closest_racing_line_point)
-		# zapišem najbližjo racing line točko k boltu
-		var bolt_on_racing_line: Array = [bolt, bolt_racing_line_point_index, closest_racing_line_point]
-		# podatek pripnem k vsem boltom na racing liniji 	
-		bolts_on_racing_line.append(bolt_on_racing_line)
-	
-	return bolts_on_racing_line
-				
-
-func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
-	
-	if game_on:
-		var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja  
-
-		# vektor od pullanega do vodilnega
-		var vector_to_leading_player = leading_player.global_position - bolt_to_pull.global_position
-		var vector_to_pull_position = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
-		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
-		
-		# čekiranje navigacije, da ga ne dam s proge
-		var pull_position_distance_to_navigation: float # razdalja do pozicija navigacijske celice 
-		var pull_position_on_navigation: Vector2 # pull pozicija znotraj navigacijske celice
-		for cell_position in navigation_positions:
-			var distance_to_navigation_cell = cell_position.distance_to(bolt_pull_position)
-			# če še opredeljena nova pull pozicija
-			if pull_position_on_navigation == Vector2.ZERO:
-				pull_position_on_navigation = cell_position 
-			# če je razdalja od navigacijske celice do trenutne pull pozicije na navigaciji manjša od trenutno opredeljene pull pozicije
-			elif distance_to_navigation_cell < pull_position_on_navigation.distance_to(bolt_pull_position):
-				# in če je dovolj stran od vodilnega, da se ne zaleti vanj
-				if cell_position.distance_to(leading_player.global_position) > pull_position_distance_from_leader:
-					pull_position_on_navigation = cell_position
-		
-		# na koncu mam najbližjo pozicijo, ki upošteva razdaljo do vodilnega
-		return pull_position_on_navigation	
-
-
-# PRIVAT ----------------------------------------------------------------------------------------------------
-
-
-func _on_Bolt_activity_changed(bolt: KinematicBody2D):
-	
-	if bolt.bolt_active == false:
-		check_for_game_over()
-	
-	
-func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
-	
-	level_positions = spawn_positions
-	navigation_area = tilemap_navigation_cells
-	navigation_positions = tilemap_navigation_cells_positions
-	current_racing_line = Ref.current_level.racing_line.draw_racing_line()
-	#	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
-
-	#	Ref.current_camera.follow_target = level_positions[0]	
-	Ref.current_camera.position = level_positions[0].global_position
-
-
-func _on_Enemy_path_changed(path: Array) -> void:
-	# ta funkcija je vezana na signal bolta
-	# inline connect za primer, če je bolt spawnan
-	# def signal connect za primer, če je bolt "in-tree" node
-	
-	navigation_line.points = path
-
-
-func _on_ScreenArea_body_exited(body: Node) -> void:
-	
-	if game_settings["race_mode"]:
-		if body is Player:
-			var bolt_pull_position = get_bolt_pull_position(body)
-			body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
-
-
-func _on_ScreenArea_body_entered(body: Node) -> void:
-	pass

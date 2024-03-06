@@ -5,7 +5,7 @@ class_name Bolt, "res://assets/class_icons/bolt_icon.png"
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
 signal bolt_activity_changed (bolt_is_active)
 
-enum MotionStates {FWD, REV, IDLE, DISARRAY} # glede na moč motorja
+enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 
@@ -96,6 +96,16 @@ onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div
 # neu
 onready var bolt_hud: Node2D = $BoltHud
 
+onready var sounds: Node = $Sounds
+onready var shoot_bullet: AudioStreamPlayer = $Sounds/ShootBullet
+onready var shoot_misile: AudioStreamPlayer = $Sounds/ShootMisile
+onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
+onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
+onready var tilt: AudioStreamPlayer = $Sounds/Tilt
+onready var dizzy: AudioStreamPlayer = $Sounds/Dizzy
+onready var shocked: AudioStreamPlayer = $Sounds/Shocked
+onready var heartbeat: AudioStreamPlayer = $Sounds/Heartbeat
+
 
 func _ready() -> void:
 
@@ -127,20 +137,22 @@ func _physics_process(delta: float) -> void:
 	# set motion states
 	if engine_power > 0:
 		current_motion_state = MotionStates.FWD
-		update_gas(fwd_gas_usage)
+		if Ref.game_manager.game_settings["race_mode"]:
+			update_gas(fwd_gas_usage)
 	elif engine_power < 0:
 		current_motion_state = MotionStates.REV
-		update_gas(rev_gas_usage)
+		if Ref.game_manager.game_settings["race_mode"]:
+			update_gas(rev_gas_usage)
 	elif engine_power == 0:
 		current_motion_state = MotionStates.IDLE
-		
-	gas_count = clamp(gas_count, 0, gas_count)
 	
-	if bolt_active:
-		if gas_count <= 0: # če zmanjka bencina je deaktiviran
-			self.bolt_active = false
-	else: 	
-		drag_force_div = lerp(drag_force_div, 1, 0.05) # če je deaktiviran povečam drag in ga postopoma ustavim
+	if Ref.game_manager.game_settings["race_mode"]:
+		gas_count = clamp(gas_count, 0, gas_count)
+		if bolt_active:
+			if gas_count <= 0: # če zmanjka bencina je deaktiviran
+				self.bolt_active = false
+		else: 	
+			drag_force_div = lerp(drag_force_div, 1, 0.05) # če je deaktiviran povečam drag in ga postopoma ustavim
 	
 	# sila upora raste s hitrostjo		
 	var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
@@ -187,7 +199,7 @@ func on_collision():
 
 func tilt_bolt(tilt_direction):
 	
-	var tilt_speed: float = 150#Pro.bolt_profiles[bolt_type]["tilt_speed"]
+	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
 	var tilt_time: float = 0.05
 	var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
 	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed

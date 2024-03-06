@@ -147,119 +147,107 @@ func set_level_elements():
 		var cell_local_position = tilemap_elements.map_to_world(cell)
 		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
 		var pickable_scene: PackedScene
-		var origin_offset: Vector2
-		
 		var single_tile_offset: Vector2 = Vector2(5,4)
 		var double_tile_offset: Vector2 = Vector2(9,8)
 		
 		match cell_index:
 			6: # goal pillar
 				pickable_scene = preload("res://game/arena_elements/GoalPillar.tscn")
-				origin_offset = Vector2(13,12)
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, Vector2(13,12))
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			7: # brick ghost
 				pickable_scene = preload("res://game/arena_elements/BrickGhost.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			8: # brick bouncer
 				pickable_scene = preload("res://game/arena_elements/BrickBouncer.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			9: # brick magnet
 				pickable_scene = preload("res://game/arena_elements/BrickMagnet.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			10: # brick target
 				pickable_scene = preload("res://game/arena_elements/BrickTarget.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			11: # brick light
 				pickable_scene = preload("res://game/arena_elements/BrickLight.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				
 			28: # area nitro ... 12
 				pickable_scene = preload("res://game/arena_elements/AreaNitro.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 			29: # area gravel ... 13
 				pickable_scene = preload("res://game/arena_elements/AreaGravel.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				non_navigation_cell_positions.append(cell_global_position)
 			23: # area finish
 				pickable_scene = preload("res://game/arena_elements/AreaFinish.tscn")
-				origin_offset = single_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, single_tile_offset)
 				non_navigation_cell_positions.append(cell_global_position)
 #				tilemap_elements.set_cellv(cell, -1)
 			14: # pickable bullet
 				pickable_scene = Pro.pickable_profiles["BULLET"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			15: # pickable misile
 				pickable_scene = Pro.pickable_profiles["MISILE"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			16: # pickable shocker
 				pickable_scene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			17: # pickable shield
 				pickable_scene = Pro.pickable_profiles["SHIELD"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			18: # pickable energy
 				pickable_scene = Pro.pickable_profiles["ENERGY"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			19: # pickable life
 				pickable_scene = Pro.pickable_profiles["LIFE"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			20: # pickable nitro
 				pickable_scene = Pro.pickable_profiles["NITRO"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			21: # pickable tracking
 				pickable_scene = Pro.pickable_profiles["TRACKING"]["scene_path"]
-				origin_offset = double_tile_offset
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
 			22: # pickable random
 				pickable_scene = Pro.pickable_profiles["RANDOM"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			27: # pickable gas
 				pickable_scene = Pro.pickable_profiles["GAS"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			30: # pickable points
 				pickable_scene = Pro.pickable_profiles["POINTS"]["scene_path"]
-				origin_offset = double_tile_offset
-				spawn_element(cell_global_position, pickable_scene, origin_offset)
+				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
+onready var sounds: Node = $Sounds
 				
+onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
+onready var hit_bullet_wall: AudioStreamPlayer = $Sounds/HitBulletWall
+onready var hit_bullet_brick: AudioStreamPlayer = $Sounds/HitBulletBrick
+onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
+onready var nitro: AudioStreamPlayer = $Sounds/Nitro
+onready var de_nitro: AudioStreamPlayer = $Sounds/DeNitro
+onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
+onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
+onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
 func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):
 	

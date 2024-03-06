@@ -59,10 +59,11 @@ var default_game_settings: Dictionary = {
 	"suddent_death_mode": false,
 	"sudden_death_limit": 20,
 #	"dogfight_mode": false,
-	"use_gas_mode": false, # beleženje statistike in statistika na hudu
+#	"use_gas_mode": false, # beleženje statistike in statistika na hudu
+	
 }
 
-enum Levels {TRAINING, NITRO, DOGFIGHT}
+enum Levels {TRAINING, NITRO, DUEL}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
@@ -77,10 +78,10 @@ var level_settings: Dictionary = {
 #		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
 #		"level_path": "res://game/levels/LevelNitro.tscn",
 		},
-	Levels.DOGFIGHT: {
-		"level": Levels.DOGFIGHT,
-		"level_path": "res://game/levels/LevelDogfight.tscn",
-		"level_scene": preload("res://game/levels/LevelDogfight.tscn"),
+	Levels.DUEL: {
+		"level": Levels.DUEL,
+		"level_path": "res://game/levels/LevelDuel.tscn",
+		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
 		}
 }
 
@@ -97,7 +98,7 @@ func _ready() -> void:
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.TRAINING
-	var debug_level = Levels.DOGFIGHT
+	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	
@@ -117,8 +118,8 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["fight_mode"] = false
-		Levels.DOGFIGHT: 
-			current_level_settings = level_settings[Levels.DOGFIGHT]
+		Levels.DUEL: 
+			current_level_settings = level_settings[Levels.DUEL]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = false
 			current_game_settings["fight_mode"] = true

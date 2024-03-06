@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 
 
 var game_sfx_set_to_off: bool = false
@@ -7,9 +7,9 @@ var game_music_set_to_off: bool = false
 
 var currently_playing_track_index: int = 1 # ga ne resetiraš, da ostane v spominu skozi celo igro
 
-onready var game_music: Node2D = $Music/GameMusic
-onready var menu_music: AudioStreamPlayer = $Music/MenuMusic/WarmUpShort
-onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
+onready var game_music: Node2D# = $Music/GameMusic
+#onready var menu_music: AudioStreamPlayer = $Music/MenuMusic/WarmUpShort
+#onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
 
 	
 func _ready() -> void:
@@ -19,16 +19,6 @@ func _ready() -> void:
 
 	
 # SFX --------------------------------------------------------------------------------------------------------
-
-	
-func play_stepping_sfx(current_player_energy_part: float): # za intro in scrollerje
-
-		if game_sfx_set_to_off:
-			return		
-
-		var selected_tap = select_random_sfx($GameSfx/Stepping)
-		selected_tap.pitch_scale = clamp(current_player_energy_part, 0.6, 1)
-		selected_tap.play()
 	
 	
 func play_sfx(effect_for: String):
@@ -40,8 +30,8 @@ func play_sfx(effect_for: String):
 		"stray_step":
 			$GameSfx/StraySlide.play()
 		"blinking": # GM na strays spawn, ker se bolje sliši
-			select_random_sfx($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
-			select_random_sfx($GameSfx/BlinkingStatic).play()
+			Met.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
+			Met.get_random_member($GameSfx/BlinkingStatic).play()
 		"thunder_strike": # intro in GM na strays spawn
 			$GameSfx/Burst.play()
 			
@@ -68,7 +58,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			select_random_sfx($GuiSfx/Inputs/Typing).play()
+			Met.get_random_member($GuiSfx/Inputs/Typing).play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":
@@ -83,40 +73,22 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/ScreenSlide.play()
 		
 
-func select_random_sfx(sound_group: Node2D):
-	
-	var random_index = randi() % sound_group.get_child_count()
-	var selected_sound = sound_group.get_child(random_index)
-	
-	return selected_sound
-	
-		
 # MUSKA --------------------------------------------------------------------------------------------------------
 		
 
-func play_music(music_for: String):
+func play_music():
 	
-#	return
-	match music_for:
-		"menu_music":
-			if menu_music_set_to_off:
-				return
-			menu_music.play()
+	if game_music_set_to_off:
+		return
 
-		"game_music":
-			if game_music_set_to_off:
-				return
-			# set track
-			var current_track = game_music.get_child(currently_playing_track_index - 1)
-			current_track.play()
-			
+	# set track
+	var current_track = game_music.get_child(currently_playing_track_index - 1)
+	current_track.play()	
 
-func stop_music(music_to_stop: String):
+
+func stop_music(stop_reason: String):
 	
-	match music_to_stop:
-		
-		"menu_music":
-			menu_music.stop()
+	match stop_reason:
 		"game_music":
 			for music in game_music.get_children():
 				if music.is_playing():

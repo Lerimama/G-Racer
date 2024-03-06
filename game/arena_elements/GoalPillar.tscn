@@ -1,9 +1,14 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://game/arena_elements/GoalPillar.gd" type="Script" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
 [ext_resource path="res://assets/arena/pillar_detec_area.png" type="Texture" id=3]
 [ext_resource path="res://assets/light.png" type="Texture" id=4]
+[ext_resource path="res://assets/sound/sfx/skills/teleport_in_v2.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/sfx/skills/teleport_out_v2.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sound/sfx/skills/teleport_loop_v2.wav" type="AudioStream" id=7]
+[ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=8]
+[ext_resource path="res://assets/sound/sfx/burst/hit_stray_v2.wav" type="AudioStream" id=9]
 
 [sub_resource type="CircleShape2D" id=559]
 radius = 37.054
@@ -15,6 +20,13 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 } ]
+
+[sub_resource type="AudioStreamRandomPitch" id=561]
+audio_stream = ExtResource( 9 )
+
+[sub_resource type="AudioStreamRandomPitch" id=562]
+audio_stream = ExtResource( 8 )
+random_pitch = 1.05
 
 [node name="GoalPillar" type="StaticBody2D"]
 position = Vector2( 102, 107 )
@@ -51,6 +63,34 @@ polygon = PoolVector2Array( -3, -2, -4, -2, -4, 2, -3, 2, -3, 3, -2, 3, -2, 4, 2
 scale = Vector2( 0.13986, 0.13986 )
 texture = ExtResource( 4 )
 mode = 2
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="HitBullet" type="AudioStreamPlayer" parent="Sounds"]
+stream = SubResource( 561 )
+volume_db = -10.0
+pitch_scale = 0.9
+bus = "GameSfx"
+
+[node name="HitMisile" type="AudioStreamPlayer" parent="Sounds"]
+stream = SubResource( 562 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetIn" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetLoop" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 7 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetOut" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 6 )
+volume_db = -10.0
+bus = "GameSfx"
 
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]

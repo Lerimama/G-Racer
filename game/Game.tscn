@@ -1,16 +1,241 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=43 format=2]
 
 [ext_resource path="res://game/GameViewGrid.gd" type="Script" id=1]
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/ui/GameOver.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/Game.gd" type="Script" id=5]
+[ext_resource path="res://assets/sound/sfx/gui/key_2.wav" type="AudioStream" id=6]
 [ext_resource path="res://game/ui/PauseGame.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/ui/hud/Hud.tscn" type="PackedScene" id=8]
+[ext_resource path="res://assets/sound/sfx/gui/key_3.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/sound/sfx/skills/pull.wav" type="AudioStream" id=10]
+[ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=11]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_3.wav" type="AudioStream" id=12]
+[ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
+[ext_resource path="res://assets/sound/sfx/events/countdown-b.ogg" type="AudioStream" id=16]
+[ext_resource path="res://assets/sound/sfx/gui/screen_slide.wav" type="AudioStream" id=20]
+[ext_resource path="res://assets/sound/sfx/gui/menu_fade.wav" type="AudioStream" id=21]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_2.wav" type="AudioStream" id=26]
+[ext_resource path="res://assets/sound/music/track_upbeat.wav" type="AudioStream" id=27]
+[ext_resource path="res://assets/sound/sfx/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
+[ext_resource path="res://assets/sound/sfx/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=36]
+[ext_resource path="res://assets/sound/sfx/gui/btn_focus_change.wav" type="AudioStream" id=38]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_4.wav" type="AudioStream" id=39]
+[ext_resource path="res://assets/sound/sfx/events/countdown-a.ogg" type="AudioStream" id=46]
+[ext_resource path="res://assets/sound/sfx/gui/key_5.wav" type="AudioStream" id=47]
+[ext_resource path="res://assets/sound/sfx/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=48]
+[ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=49]
+[ext_resource path="res://assets/sound/sfx/blinking/blink_1.wav" type="AudioStream" id=50]
+[ext_resource path="res://assets/sound/sfx/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=53]
+[ext_resource path="res://assets/sound/music/track_tictac.wav" type="AudioStream" id=54]
+[ext_resource path="res://SoundManager.gd" type="Script" id=57]
+[ext_resource path="res://assets/sound/sfx/gui/key_1.wav" type="AudioStream" id=60]
+[ext_resource path="res://assets/sound/sfx/gui/key_4.wav" type="AudioStream" id=61]
+[ext_resource path="res://assets/sound/music/POL-the-foyer-short.wav" type="AudioStream" id=62]
+[ext_resource path="res://assets/sound/sfx/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=65]
+[ext_resource path="res://assets/sound/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=66]
+[ext_resource path="res://assets/sound/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=68]
+[ext_resource path="res://DataManager.gd" type="Script" id=69]
+
+[sub_resource type="AudioStreamRandomPitch" id=12]
+audio_stream = ExtResource( 10 )
+random_pitch = 1.2
+
+[sub_resource type="AudioStreamRandomPitch" id=11]
+audio_stream = ExtResource( 49 )
+random_pitch = 1.05
+
+[sub_resource type="AudioStreamRandomPitch" id=1]
+audio_stream = ExtResource( 50 )
+
+[sub_resource type="AudioStreamRandomPitch" id=2]
+audio_stream = ExtResource( 26 )
+random_pitch = 1.0
+
+[sub_resource type="AudioStreamRandomPitch" id=3]
+audio_stream = ExtResource( 12 )
+
+[sub_resource type="AudioStreamRandomPitch" id=4]
+audio_stream = ExtResource( 39 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 5 )
 
 [node name="GameManager" type="Node" parent="."]
+
+[node name="DataManager" type="Node" parent="."]
+script = ExtResource( 69 )
+
+[node name="Sounds" type="Node" parent="."]
+pause_mode = 2
+script = ExtResource( 57 )
+
+[node name="GameSfx" type="Node2D" parent="Sounds"]
+
+[node name="StraySlide" type="AudioStreamPlayer" parent="Sounds/GameSfx"]
+stream = SubResource( 12 )
+volume_db = -25.0
+pitch_scale = 0.8
+bus = "GameSfx"
+
+[node name="Burst" type="AudioStreamPlayer" parent="Sounds/GameSfx"]
+stream = SubResource( 11 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="Bricks" type="Node2D" parent="Sounds/GameSfx"]
+
+[node name="Blink1" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+stream = SubResource( 1 )
+bus = "GameSfx"
+
+[node name="Blink2" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+stream = SubResource( 2 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="Blink3" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+stream = SubResource( 3 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="Blink4_mute" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+stream = SubResource( 4 )
+volume_db = -80.0
+bus = "GameSfx"
+
+[node name="Blink5_mute" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+stream = SubResource( 4 )
+volume_db = -80.0
+bus = "GameSfx"
+
+[node name="Blink6_mute" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+stream = SubResource( 4 )
+volume_db = -80.0
+bus = "GameSfx"
+
+[node name="GameMusic" type="Node2D" parent="Sounds"]
+
+[node name="Track8_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 11 )
+volume_db = -12.0
+bus = "GameMusic"
+
+[node name="Track12_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 68 )
+volume_db = -6.0
+bus = "GameMusic"
+
+[node name="Track4_4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 66 )
+volume_db = -6.0
+bus = "GameMusic"
+
+[node name="Track1_3" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 15 )
+volume_db = -7.0
+bus = "GameMusic"
+
+[node name="Track5_3-4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 54 )
+volume_db = -7.0
+bus = "GameMusic"
+
+[node name="Track6_3-4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 27 )
+volume_db = -10.0
+bus = "GameMusic"
+
+[node name="Track19_4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 62 )
+volume_db = -5.0
+bus = "GameMusic"
+
+[node name="GuiSfx" type="Node2D" parent="Sounds"]
+
+[node name="Inputs" type="Node2D" parent="Sounds/GuiSfx"]
+
+[node name="Typing" type="Node2D" parent="Sounds/GuiSfx/Inputs"]
+
+[node name="Key1" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 60 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key2" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 6 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key3" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 9 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key4" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 61 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="Key5" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 47 )
+volume_db = -15.0
+pitch_scale = 0.6
+
+[node name="BtnFocus" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs"]
+stream = ExtResource( 38 )
+volume_db = -30.0
+pitch_scale = 0.7
+
+[node name="BtnConfirm" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs"]
+stream = ExtResource( 36 )
+volume_db = -25.0
+
+[node name="BtnCancel" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs"]
+stream = ExtResource( 48 )
+volume_db = -25.0
+
+[node name="Events" type="Node2D" parent="Sounds/GuiSfx"]
+
+[node name="Win" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 29 )
+volume_db = -15.0
+
+[node name="Loose" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 65 )
+volume_db = -5.0
+
+[node name="GameCoundownA" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 46 )
+volume_db = -25.0
+pitch_scale = 0.8
+
+[node name="GameCoundownB" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 16 )
+volume_db = -15.0
+pitch_scale = 0.7
+
+[node name="StartCoundownA" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 46 )
+volume_db = -25.0
+
+[node name="StartCoundownB" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 16 )
+volume_db = -15.0
+
+[node name="TutorialStageDone" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+stream = ExtResource( 53 )
+volume_db = -13.0
+pitch_scale = 1.1
+
+[node name="MenuFade" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 21 )
+volume_db = -15.0
+pitch_scale = 0.93
+
+[node name="ScreenSlide" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+stream = ExtResource( 20 )
+pitch_scale = 0.9
 
 [node name="GameViewGrid" type="GridContainer" parent="."]
 anchor_right = 1.0

@@ -54,8 +54,10 @@ func home_in_from_game():
 
 func home_out():
 	
-	if not Ref.sound_manager.menu_music_set_to_off: # če muzka ni setana na off
-		Ref.sound_manager.stop_music("menu_music")
+	$Sounds/MenuFade.play()	
+	
+#	if not Ref.sound_manager.menu_music_set_to_off: # če muzka ni setana na off
+#		Ref.sound_manager.stop_music("menu_music")
 	
 	var fade_out = get_tree().create_tween()
 #	fade_out.tween_property(Met.current_scene, "modulate", Color.black, 1)
@@ -94,7 +96,7 @@ func game_out():
 #	Global.player1_camera = null
 #	Global.player2_camera = null
 #
-	Ref.sound_manager.play_gui_sfx("menu_fade")
+	$Sounds/MenuFade.play()	
 	
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(Met.current_scene, "modulate", Color.black, fade_time)
@@ -110,7 +112,7 @@ func reload_game(): # game out z drugačnim zaključkom
 #	Global.player1_camera = null
 #	Global.player2_camera = null
 	
-	Ref.sound_manager.play_gui_sfx("menu_fade")
+	$Sounds/ScreenSlide.play()	
 
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(Met.current_scene, "modulate", Color.black, fade_time)
