@@ -19,3 +19,6 @@ tile_data = PoolIntArray( 0, 0, 65536, 1, 0, 65537, 2, 0, 65537, 3, 0, 65537, 4,
 
 [node name="Positions" parent="." index="4"]
 position = Vector2( 128, 116 )
+
+[node name="RacingPath" parent="RacingLine" index="0"]
+points = PoolVector2Array( 156, 132 )

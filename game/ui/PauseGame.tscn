@@ -18,10 +18,10 @@ __meta__ = {
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.713726 )
+color = Color( 0, 0, 0, 0.858824 )
 
 [node name="Panel" type="Panel" parent="."]
-modulate = Color( 1, 1, 1, 0.941176 )
+modulate = Color( 1, 1, 1, 0.784314 )
 margin_right = 640.0
 margin_bottom = 360.0
 

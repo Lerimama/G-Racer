@@ -97,12 +97,6 @@ position = Vector2( 545, 272 )
 [node name="RacingLine" type="Node2D" parent="."]
 script = ExtResource( 9 )
 
-[node name="StartPosition" type="Position2D" parent="RacingLine"]
-
-[node name="FinishPosition" type="Position2D" parent="RacingLine"]
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="RacingLine"]
-
 [node name="RacingPath" type="Line2D" parent="RacingLine"]
 width = 2.0
 default_color = Color( 0.4, 0.501961, 1, 1 )

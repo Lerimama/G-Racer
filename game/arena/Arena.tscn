@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
+[ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/arena/ScreenArea.gd" type="Script" id=3]
 [ext_resource path="res://game/arena/Arena.gd" type="Script" id=4]
@@ -73,5 +74,14 @@ current = true
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 7 )
 
+[node name="Sounds" type="Node" parent="."]
+
+[node name="NitroMusic" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 1 )
+bus = "GameMusic"
+
+[node name="PickableTimer" type="Timer" parent="."]
+
 [connection signal="body_entered" from="ScreenArea" to="GameManager" method="_on_ScreenArea_body_entered"]
 [connection signal="body_exited" from="ScreenArea" to="GameManager" method="_on_ScreenArea_body_exited"]
+[connection signal="timeout" from="PickableTimer" to="GameManager" method="_on_PickableTimer_timeout"]

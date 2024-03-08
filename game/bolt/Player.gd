@@ -47,41 +47,36 @@ func _input(event: InputEvent) -> void:
 	
 	# rotation
 	# rotation_angle se računa na inputu ... rotation_dir * deg2rad(turn_angle)
-	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
+	if tilt_ready:
+		rotation_dir = 0
+		var tilt_dir = Input.get_axis(left_action, right_action)
+		if tilt_dir == -1:
+			tilt_bolt(Vector2.LEFT)
+		if tilt_dir == 1:
+			tilt_bolt(Vector2.RIGHT)
+			
+	else:
+		rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
 	# shooting
 	if Input.is_action_just_pressed(select_feat_action):
-		select_feature()
-#		shooting("bullet")
+		if Ref.game_manager.game_settings["select_feature_mode"]:
+			select_feature()
+	if Input.is_action_pressed(select_feat_action):
+		tilt_ready = true
+	else:
+		tilt_ready = false
 	if Input.is_action_just_pressed(shoot_bullet_action):
-		select_shooting()
-#		shooting("bullet")
+		shoot() 
 	if Input.is_action_just_released(shoot_misile_action):
-		tilt_bolt(Vector2.LEFT)
-#		shooting("misile")
-		pass
-	if Input.is_action_just_released(shoot_shocker_action):	
+		tilt_bolt(Vector2.LEFT) 
+	if Input.is_action_just_released(shoot_shocker_action):
 		tilt_bolt(Vector2.RIGHT)
-#		shooting("misile")
-		pass
-#		shooting("shocker")
-		pass
 	if Input.is_action_just_released("pavza"):	
 		shield_loops_limit = Pro.bolt_profiles[bolt_type]["shield_loops_limit"] 
 		activate_shield()
-
-	
-func select_shooting():
-	
-	match selected_feat_index:
-		0: # bullet
-			shooting("bullet")
-		1: # misile
-			shooting("misile")
-		2: # shocker
-			shooting("shocker")
-			
 		
+var tilt_ready: bool
 	
 func _ready() -> void:
 	
@@ -98,13 +93,46 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
-func update_feature_selector():
+
+func _process(delta: float) -> void:
 	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
+	
+#	if camera_follow:
+#		camera.position = position
+
+		
+	if Ref.game_manager.game_settings["select_feature_mode"]:
+		update_feature_selector()
+
+	
+func _physics_process(delta: float) -> void:
+	
+	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
+	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
+		rotate(delta * rotation_angle * free_rotation_multiplier)
+
+
+
+
+func update_feature_selector():
 	
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
 	
+
+	
+func shoot():
+	
+	match selected_feat_index:
+		0: # bullet
+			shooting("bullet")
+		1: # misile
+			shooting("misile")
+		2: # shocker
+			shooting("shocker")
+			
+
 
 func select_feature():
 	
@@ -135,21 +163,6 @@ func select_feature():
 
 	
 
-func _process(delta: float) -> void:
-	
-#	if camera_follow:
-#		camera.position = position
-
-		
-#	if feat_selector.visible:
-	update_feature_selector()
-	pass
-	
-func _physics_process(delta: float) -> void:
-	
-	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
-	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
-		rotate(delta * rotation_angle * free_rotation_multiplier)
 
 
 func pull_bolt_on_screen(pull_position: Vector2):
@@ -167,7 +180,7 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	pull_tween.tween_property(self, "global_position", pull_position, pull_time).set_ease(Tween.EASE_OUT)
 	pull_tween.parallel().tween_property(self, "modulate:a", 0.2, pull_time/2).set_ease(Tween.EASE_OUT)
 	pull_tween.parallel().tween_property(self, "modulate:a", 1, pull_time/2).set_delay(pull_time/2).set_ease(Tween.EASE_IN)
-#	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
+	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	
 	update_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
 	

@@ -134,6 +134,9 @@ func _physics_process(delta: float) -> void:
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
 	
+	# animiran bolt
+#	bolt_sprite.rotation = - global_rotation
+	
 	# set motion states
 	if engine_power > 0:
 		current_motion_state = MotionStates.FWD
@@ -172,7 +175,7 @@ func _physics_process(delta: float) -> void:
 	
 	motion_fx()
 	update_bolt_hud()
-	if Ref.game_manager.game_settings["fight_mode"]:
+	if not Ref.game_manager.game_settings["race_mode"]:
 		energy_bar_holder.show()
 	
 # IZ PROCESA ----------------------------------------------------------------------------
@@ -205,7 +208,6 @@ func tilt_bolt(tilt_direction):
 	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
 	var tilt_tween = get_tree().create_tween()
 	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
-	printt("tilt", global_rotation, tilt_vector)
 
 
 func steering(delta: float) -> void:
@@ -382,10 +384,10 @@ func on_hit(hit_by: Node):
 			# efekt	
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia # push
 			explode()
-			if Ref.game_manager.game_settings["fight_mode"]:
-				take_damage(hit_by)
-			else:
+			if Ref.game_manager.game_settings["race_mode"]:
 				in_disarray()
+			else:
+				take_damage(hit_by)
 			
 		elif hit_by.is_in_group(Ref.group_shockers):
 			set_process_input(false)

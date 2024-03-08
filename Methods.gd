@@ -11,6 +11,22 @@ extends Node2D
 #	print ("root: ", root)
 #	print ("current_scene: ", current_scene)
 
+func sound_stop_fade_out(sound, fade_time: float):
+
+	var current_sound_volume = sound.volume_db
+	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_out.tween_property(sound, "volume_db", -80, fade_time)
+	fade_out.tween_callback(sound, "stop")
+	yield(fade_out, "finished")
+	# volume reset
+	sound.volume_db = current_sound_volume
+
+func sound_play_fade_in(sound, new_volume: int, fade_time: float):
+	print(sound, new_volume, fade_time)
+	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_out.tween_callback(sound, "play")
+	fade_out.tween_property(sound, "volume_db", new_volume, fade_time)
+	
 	
 func get_random_member(group_of_elements):
 		

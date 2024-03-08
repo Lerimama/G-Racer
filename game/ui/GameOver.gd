@@ -29,7 +29,7 @@ func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolts_on_s
 	
 func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
-	var results: VBoxContainer = $VBoxContainer/Results
+	var results: VBoxContainer = $VBoxContainer/Content/Results
 	
 	# uvrščeni
 	for bolt_on_finish_line in bolts_on_finish_line:

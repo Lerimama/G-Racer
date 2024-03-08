@@ -7,56 +7,78 @@ var pickable_profiles: Dictionary = {
 	# imena so ista kot enum ključi v pickables
 	
 	"BULLET": { # BULLET
+		"for_random_selection": true,
+		"pickable_color": Set.color_gray0,
 		"pickable_value": 20,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"), # pot rabim samo pri random spawnanju
 	},
 	"MISILE": {
+		"for_random_selection": true,
+		"pickable_color": Set.color_gray0,
 		"pickable_value": 2,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
 	}, 
 	"SHOCKER": {
+		"for_random_selection": true,
+		"pickable_color": Set.color_gray0,
 		"pickable_value": 3,
 		"pickable_time": 10, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 	}, 
 	"SHIELD": {
+		"for_random_selection": true,
+		"pickable_color": Set.color_gray0,
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
 	},
 	"ENERGY": {
+		"for_random_selection": true,
+		"pickable_color": Set.color_red,
 		"pickable_value": 0,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableEnergy.tscn"),
 	},
-	"GAS": {
-		"pickable_value": 200,
-		"pickable_time": 0, # sekunde
-		"scene_path": preload("res://game/arena_elements/pickables/PickableGas.tscn"),
-	},
 	"LIFE": {
+		"for_random_selection": true,
+		"pickable_color": Set.color_blue,
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableLife.tscn"),
 	},
+	"GAS": {
+		"for_random_selection": false,
+		"pickable_color": Set.color_red,
+		"pickable_value": 200,
+		"pickable_time": 0, # sekunde
+		"scene_path": preload("res://game/arena_elements/pickables/PickableGas.tscn"),
+	},
 	"NITRO": {
+		"for_random_selection": false,
+		"pickable_color": Set.color_yellow,
 		"pickable_value": 700,
 		"pickable_time": 1, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
 	},
 	"TRACKING": {
+		"for_random_selection": false,
+		"pickable_color": Color.white,
 		"pickable_value": 0.7,
 		"pickable_time": 10, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
 	"POINTS": {
+		"for_random_selection": true,
+		"pickable_color": Color.blue,
 		"pickable_value": 100, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickablePoints.tscn"),
 	},
 	"RANDOM": {
+		"for_random_selection": false,
+		"pickable_color": Color.white,
 		"pickable_value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableRandom.tscn"),
@@ -75,11 +97,11 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 		"shield_loops_limit": 3,
 		# orig
-		"fwd_engine_power": 300, # 1 - 500 konjev 
+		"fwd_engine_power": 320, # 1 - 500 konjev 
 		"rev_engine_power": 150, # 1 - 500 konjev 
-		"turn_angle": 15, # deg per frame
+		"turn_angle": 10, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
-		"side_traction": 0.05, # 0 - 1
+		"side_traction": 0.01, # 0 - 1
 		"bounce_size": 0.5, # 0 - 1 
 		"inertia": 5, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo

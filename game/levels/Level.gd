@@ -13,29 +13,6 @@ onready var tilemap_edge: TileMap = $Edge
 onready var positions: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
 
-# elements
-#onready var goal_pillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
-#onready var brick_ghost: PackedScene = preload("res://game/arena_elements/BrickGhost.tscn")
-#onready var brick_bouncer: PackedScene = preload("res://game/arena_elements/BrickBouncer.tscn")
-#onready var brick_magnet: PackedScene = preload("res://game/arena_elements/BrickMagnet.tscn")
-#onready var brick_target: PackedScene = preload("res://game/arena_elements/BrickTarget.tscn")
-#onready var brick_light: PackedScene = preload("res://game/arena_elements/BrickLight.tscn")
-#onready var area_nitro: PackedScene = preload("res://game/arena_elements/AreaNitro.tscn")
-#onready var area_tracking: PackedScene = preload("res://game/arena_elements/AreaTracking.tscn")
-#onready var area_gravel: PackedScene = preload("res://game/arena_elements/AreaGravel.tscn")
-#onready var area_finish: PackedScene = preload("res://game/arena_elements/AreaFinish.tscn")
-# pickables
-#onready var pickable_energy: PackedScene = preload("res://game/arena_elements/pickables/PickableEnergy.tscn")
-#onready var pickable_life: PackedScene = preload("res://game/arena_elements/pickables/PickableLife.tscn")
-#onready var pickable_bullet: PackedScene = preload("res://game/arena_elements/pickables/PickableBullet.tscn")
-#onready var pickable_misile: PackedScene = preload("res://game/arena_elements/pickables/PickableMisile.tscn")
-#onready var pickable_shocker: PackedScene = preload("res://game/arena_elements/pickables/PickableShocker.tscn")
-#onready var pickable_shield: PackedScene = preload("res://game/arena_elements/pickables/PickableShield.tscn")
-#onready var pickable_nitro: PackedScene = preload("res://game/arena_elements/pickables/PickableNitro.tscn")
-#onready var pickable_tracking: PackedScene = preload("res://game/arena_elements/pickables/PickableTracking.tscn")
-#onready var pickable_random: PackedScene = preload("res://game/arena_elements/pickables/PickableRandom.tscn")
-#onready var pickable_gas: PackedScene = preload("res://game/arena_elements/pickables/PickableGas.tscn")
-#onready var pickable_points: PackedScene = preload("res://game/arena_elements/pickables/PickablePoints.tscn")
 # floor
 var corner_cell_TopL_regions: Array = [
 	Vector2(2,3), Vector2(1,5),
@@ -72,6 +49,17 @@ var corner_cell_BtmR_regions: Array = [
 onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
 onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 
+# sounds
+onready var sounds: Node = $Sounds
+onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
+onready var hit_bullet_wall: AudioStreamPlayer = $Sounds/HitBulletWall
+onready var hit_bullet_brick: AudioStreamPlayer = $Sounds/HitBulletBrick
+onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
+onready var nitro: AudioStreamPlayer = $Sounds/Nitro
+onready var de_nitro: AudioStreamPlayer = $Sounds/DeNitro
+onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
+onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
+onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
 func _ready() -> void:
 	
@@ -147,13 +135,13 @@ func set_level_elements():
 		var cell_local_position = tilemap_elements.map_to_world(cell)
 		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
 		var pickable_scene: PackedScene
-		var single_tile_offset: Vector2 = Vector2(5,4)
-		var double_tile_offset: Vector2 = Vector2(9,8)
+		var single_tile_offset: Vector2 = Vector2(4,4)
+		var double_tile_offset: Vector2 = Vector2(8,8)
 		
 		match cell_index:
 			6: # goal pillar
 				pickable_scene = preload("res://game/arena_elements/GoalPillar.tscn")
-				spawn_element(cell_global_position, pickable_scene, Vector2(13,12))
+				spawn_element(cell_global_position, pickable_scene, Vector2(36,36))
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			7: # brick ghost
@@ -237,17 +225,7 @@ func set_level_elements():
 				pickable_scene = Pro.pickable_profiles["POINTS"]["scene_path"]
 				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
-onready var sounds: Node = $Sounds
-				
-onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
-onready var hit_bullet_wall: AudioStreamPlayer = $Sounds/HitBulletWall
-onready var hit_bullet_brick: AudioStreamPlayer = $Sounds/HitBulletBrick
-onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
-onready var nitro: AudioStreamPlayer = $Sounds/Nitro
-onready var de_nitro: AudioStreamPlayer = $Sounds/DeNitro
-onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
-onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
-onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
+
 
 func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):
 	

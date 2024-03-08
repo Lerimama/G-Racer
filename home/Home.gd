@@ -73,7 +73,9 @@ func _ready() -> void:
 	arena_back_btn.connect("pressed", self, "_on_arena_back_btn_pressed")
 
 	temp_back_btn.connect("pressed", self, "_on_temp_back_btn_pressed")
-
+	
+	play_btn.grab_focus()
+	
 # main
 func _on_play_btn_pressed():
 	animation_player.play("play_in")
@@ -212,20 +214,24 @@ func _on_ConfirmBtn_3_pressed() -> void:
 
 
 func _on_PlayersBtn_1_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 1
+#	Set.current_game_settings["start_player_count"] = 1
+	Set.bolts_activated = [Pro.Bolts.P1]
 	Ref.main_node.home_out()
 
 
 func _on_PlayersBtn_2_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 2
+#	Set.current_game_settings["start_player_count"] = 2
+	Set.bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2]
 	Ref.main_node.home_out()
 
 
 func _on_PlayersBtn_3_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 3
+#	Set.current_game_settings["start_player_count"] = 3
+	Set.bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3]
 	Ref.main_node.home_out()
 
 
 func _on_PlayersBtn_4_pressed() -> void:
-	Set.current_game_settings["start_player_count"] = 4
+	Set.bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
+#	Set.current_game_settings["start_player_count"] = 4
 	Ref.main_node.home_out()

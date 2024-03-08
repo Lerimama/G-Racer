@@ -16,7 +16,7 @@ theme = ExtResource( 2 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_horizontal_guides_": [ 360.0, 16.0 ],
-"_edit_vertical_guides_": [ 640.0, 0.0, 320.0 ]
+"_edit_vertical_guides_": [ 640.0, 0.0, 320.0, 8.0 ]
 }
 
 [node name="StatLineRacer1" parent="." instance=ExtResource( 5 )]
@@ -29,14 +29,16 @@ margin_bottom = 121.0
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -40.0
-margin_top = 0.0
+margin_top = 5.0
 margin_right = 0.0
-margin_bottom = 124.0
+margin_bottom = 129.0
 
 [node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
+margin_left = 8.0
 margin_top = -131.0
+margin_right = 48.0
 margin_bottom = -7.0
 alignment = 2
 

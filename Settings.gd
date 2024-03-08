@@ -23,7 +23,6 @@ var color_blue = Color("#4b9fff")
 var color_yellow = Color("#fef98b")
 var color_hud_base = Color("#ffffff")
 
-
 ## temp_
 var odmik_od_roba = 20
 var playerstats_w = 500
@@ -54,17 +53,18 @@ var default_game_settings: Dictionary = {
 	"area_hole_drag_force_div": 5.0,
 	"area_nitro_drag_force_div": 500.0,
 	"pull_penalty_gas": -20,
+	"pickables_count_limit": 3,
 	# modes
-	"fight_mode": true, # take damage, energy
 	"race_mode": false, # ranking, gas use, enemy AI
 	"suddent_death_mode": false,
 	"sudden_death_limit": 20,
+	"select_feature_mode": false,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu
 	
 }
 
-enum Levels {TRAINING, NITRO, DUEL}
+enum Levels {TRAINING, NITRO, DUEL, DEBUG}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
@@ -77,12 +77,18 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelNitroOrig.tscn",
 		"level_scene": preload("res://game/levels/LevelNitroOrig.tscn"),
 #		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
 #		"level_path": "res://game/levels/LevelNitro.tscn",
 		},
 	Levels.DUEL: {
 		"level": Levels.DUEL,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
+		},
+	Levels.DEBUG: {
+		"level": Levels.DEBUG,
+		"level_path": "res://game/levels/LevelDuel.tscn",
+		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
 		}
 }
 
@@ -93,13 +99,16 @@ var level_settings: Dictionary = {
 var current_game_settings: Dictionary = {} # ta je uporabljen ob štartu igre
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 var selected_level: int
+var bolts_activated: Array # napolne so ob izbiri
+
 
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
+	var debug_level = Levels.DEBUG
 #	var debug_level = Levels.TRAINING
-	var debug_level = Levels.DUEL
+#	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	
@@ -110,21 +119,23 @@ func set_game_settings(selected_level) -> void:
 	match selected_level:
 		Levels.TRAINING: 
 			current_level_settings = level_settings[Levels.TRAINING]
-#			current_game_settings["area_nitro_value"] = 0
 			current_game_settings["start_countdown"] = false
-			current_game_settings["race_mode"] = false
-			current_game_settings["fight_mode"] = true			
+#			current_game_settings["race_mode"] = false
+			current_game_settings["select_feature_mode"] = true			
+			current_game_settings["race_mode"] = true
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
-			current_game_settings["fight_mode"] = false
 		Levels.DUEL: 
 			current_level_settings = level_settings[Levels.DUEL]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = false
-			current_game_settings["fight_mode"] = true
-
+			current_game_settings["select_feature_mode"] = true
+		Levels.DEBUG: 
+			current_level_settings = level_settings[Levels.DEBUG]
+			current_game_settings["start_countdown"] = false
+			current_game_settings["race_mode"] = true
 
 #
 #var default_game_settings: Dictionary = {
