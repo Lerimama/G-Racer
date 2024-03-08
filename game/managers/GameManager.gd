@@ -72,6 +72,7 @@ func set_game(): # kliče main.gd pred fejdin igre
 	spawn_level()	
 #	game_settings["start_player_count"] = 1
 	var current_bolts_activated: Array = Set.bolts_activated
+	printt("CA", current_bolts_activated)
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1]#, Pro.Bolts.P2] 
 		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
@@ -83,10 +84,13 @@ func set_game(): # kliče main.gd pred fejdin igre
 		spawn_bolt(player_bolt, level_positions[bolt_index], current_bolts_activated[bolt_index - 1], bolt_index)	
 		
 		
-		
-	if Ref.hud: # debug
-		Ref.hud.start_countdown.start_countdown()
-		yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
+	if Ref.current_level.start_lights:
+		Ref.current_level.start_lights.start_countdown()
+		yield(Ref.current_level.start_lights, "countdown_finished") # sproži ga hud po slide-inu
+	else:
+		if Ref.hud: # debug
+			Ref.hud.start_countdown.start_countdown()
+			yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
 	start_game()
 
 
@@ -124,11 +128,11 @@ func game_over(gameover_reason: int):
 		bolt.bolt_active = false # načeloma bi moralo že veljati za vse ... zazih
 	
 	if gameover_reason == GameoverReason.SUCCES:
-		printt("SUCCESS", bolts_across_finish_line.size())
+		printt("GO SUCCESS", bolts_across_finish_line.size())
 		for bolt_across_finish_line in bolts_across_finish_line:
 			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
 	elif gameover_reason == GameoverReason.FAIL:
-		print("FAIL")
+		print("GO FAIL")
 		
 #	stop_game_elements()
 	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
@@ -189,7 +193,7 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 
 
 func spawn_pickable():
-	print(pickables_in_game.size())
+	
 	if available_pickable_positions.empty():
 		return
 	
@@ -293,12 +297,13 @@ func get_ingame_ranking():
 		leading_racing_line = level_racing_lines[leading_player_on_racing_line[2]]
 		
 		# debug ... indikator
-		var leading_point_index: int = leading_player_on_racing_line[1]
-		var leading_point: Vector2 = level_racing_points[leading_point_index]
-		position_indikator.global_position = leading_point
-		position_indikator.scale = Vector2(3,3)
-		position_indikator.modulate = leading_player.bolt_color
-		
+		if level_settings["level"] == Set.Levels.DEBUG:
+			var leading_point_index: int = leading_player_on_racing_line[1]
+			var leading_point: Vector2 = level_racing_points[leading_point_index]
+			position_indikator.global_position = leading_point
+			position_indikator.scale = Vector2(3,3)
+			position_indikator.modulate = leading_player.bolt_color
+			
 		# camera follow
 		if not Ref.current_camera.follow_target == leading_player: # da kamera ne reagira, če je že setan isti plejer
 			Ref.current_camera.follow_target = leading_player
@@ -314,7 +319,6 @@ func sort_ascending(array_1, array_2):
 	    return true
 	return false
 
-	
 
 func get_racing_line_bolts():
 # za vsakega aktivnega bolta naberem najbližje točke na racing liniji 
@@ -375,7 +379,6 @@ func get_racing_line_bolts():
 	
 	return bolts_on_racing_line
 
-	
 	
 func get_racing_line_bolts_v1():
 	
@@ -487,6 +490,7 @@ func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, t
 
 	# kamera
 	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
+	position_indikator.modulate.a = 0
 	Ref.current_camera.position = level_positions[0].global_position
 	Ref.current_camera.set_camera_limits()	
 

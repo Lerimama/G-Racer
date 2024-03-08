@@ -140,4 +140,8 @@ cast_to = Vector2( 24, 0 )
 [node name="RayCast2D2" type="RayCast2D" parent="." index="7"]
 cast_to = Vector2( 37, 0 )
 
+[node name="TiltTimer" type="Timer" parent="." index="9"]
+one_shot = true
+
 [connection signal="timeout" from="BoltHud/VBoxContainer/FeatSelector/SelectorTimer" to="." method="_on_SelectorTimer_timeout"]
+[connection signal="timeout" from="TiltTimer" to="." method="_on_TiltTimer_timeout"]

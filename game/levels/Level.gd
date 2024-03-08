@@ -4,7 +4,8 @@ extends Node2D
 signal level_is_set(navigation, spawn_positions, other_)
 
 
-var non_navigation_cell_positions: Array # elemnti, kjer navigacija ne sme potekati
+var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
+var start_lights: Node2D # opredeli se, če je semafor spawnan (če je na tilemapu)
 
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
@@ -60,6 +61,7 @@ onready var de_nitro: AudioStreamPlayer = $Sounds/DeNitro
 onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
+
 
 func _ready() -> void:
 	
@@ -225,13 +227,20 @@ func set_level_elements():
 				pickable_scene = Pro.pickable_profiles["POINTS"]["scene_path"]
 				spawn_element(cell_global_position, pickable_scene, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
+			32: # semafor
+				pickable_scene = preload("res://game/arena_elements/StartLights.tscn")
+				start_lights = spawn_element(cell_global_position, pickable_scene, double_tile_offset)
+#				start_lights = pickable_scene
+				tilemap_elements.set_cellv(cell, -1)
 
 
 func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):
 	
 	var new_element_scene = element_scene.instance() #
 	new_element_scene.position = element_global_position + element_center_offset
-	add_child(new_element_scene)	
+	add_child(new_element_scene)
+	
+	return new_element_scene
 
 
 # FLOOR --------------------------------------------------------------------------------------------------------------------------------

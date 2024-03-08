@@ -14,7 +14,6 @@ func _ready() -> void:
 	
 func start_countdown():
 	
-#	if Set.default_game_settings["stawwrt_countdown"]:
 	if Ref.game_manager.game_settings["start_countdown"]:
 		modulate.a = 0
 		visible = true

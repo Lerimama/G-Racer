@@ -134,7 +134,7 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["select_feature_mode"] = true
 		Levels.DEBUG: 
 			current_level_settings = level_settings[Levels.DEBUG]
-			current_game_settings["start_countdown"] = false
+#			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 
 #

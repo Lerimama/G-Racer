@@ -14,16 +14,15 @@ onready var fwd_action: String = controller_actions["fwd_action"]
 onready var rev_action: String = controller_actions["rev_action"]
 onready var left_action: String = controller_actions["left_action"]
 onready var right_action: String = controller_actions["right_action"]
-onready var shoot_bullet_action: String = controller_actions["shoot_bullet_action"]
-onready var shoot_misile_action: String = controller_actions["shoot_misile_action"]
-onready var shoot_shocker_action: String = controller_actions["shoot_shocker_action"]
-onready var select_feat_action: String = controller_actions["select_feat_action"]
+onready var shoot_action: String = controller_actions["shoot_action"]
+onready var feature_action: String = controller_actions["feature_action"]
 
 # neu
 var feat_selector_alpha: float = 0.3			
 onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
 onready var selected_feat_index: int = 0
 var available_features: Array
+onready var tilt_timer: Timer = $TiltTimer
 
 # debug
 onready var ray_cast_2d: RayCast2D = $RayCast2D
@@ -47,34 +46,72 @@ func _input(event: InputEvent) -> void:
 	
 	# rotation
 	# rotation_angle se računa na inputu ... rotation_dir * deg2rad(turn_angle)
-	if tilt_ready:
-		rotation_dir = 0
-		var tilt_dir = Input.get_axis(left_action, right_action)
-		if tilt_dir == -1:
-			tilt_bolt(Vector2.LEFT)
-		if tilt_dir == 1:
-			tilt_bolt(Vector2.RIGHT)
+	if Ref.game_manager.game_settings["select_feature_mode"]:
+		var tilt_time: float = 0.1
+		if Input.is_action_pressed(left_action):
+			if tilt_timer.is_stopped() and rotation_dir == 0:
+				tilt_timer.start(tilt_time)
+			rotation_dir = -1
+		elif Input.is_action_just_released(left_action):
+			rotation_dir = 0
+			if not tilt_timer.is_stopped():
+				tilt_timer.stop()				
+				tilt_bolt(Vector2.LEFT)
+				
+		if Input.is_action_pressed(right_action):
+			if tilt_timer.is_stopped() and rotation_dir == 0:
+				tilt_timer.start(tilt_time)
+			rotation_dir = 1
+		elif Input.is_action_just_released(right_action):
+			rotation_dir = 0
+			if not tilt_timer.is_stopped():
+				tilt_timer.stop()				
+				tilt_bolt(Vector2.RIGHT)
 			
-	else:
-		rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
+#		elif Input.is_action_pressed(right_action):
+#			rotation_dir = 1
+#		elif not Input.is_action_pressed(right_action) and not Input.is_action_pressed(right_action):
+#			rotation_dir = 0
+			
+			
+#		if Input.get_axis(left_action, right_action) > 0:
+#			rotation_dir = Input.get_axis(left_action, right_action)
+##			input_dir = Input.get_axis(left_action, right_action)
+##			tilt_timer.start()
+#		elif Input.get_axis(left_action, right_action) > 0:
+##		elif Input.get_axis(left_action, right_action) > 0 and not tilt_timer.is_stopped():
+#			if input_dir == -1:
+#				tilt_bolt(Vector2.LEFT)
+#			if input_dir == 1:
+#				tilt_bolt(Vector2.RIGHT)
+#			input_dir = 0
 	
-	# shooting
-	if Input.is_action_just_pressed(select_feat_action):
-		if Ref.game_manager.game_settings["select_feature_mode"]:
-			select_feature()
-	if Input.is_action_pressed(select_feat_action):
-		tilt_ready = true
+		
 	else:
-		tilt_ready = false
-	if Input.is_action_just_pressed(shoot_bullet_action):
-		shoot() 
-	if Input.is_action_just_released(shoot_misile_action):
-		tilt_bolt(Vector2.LEFT) 
-	if Input.is_action_just_released(shoot_shocker_action):
-		tilt_bolt(Vector2.RIGHT)
-	if Input.is_action_just_released("pavza"):	
-		shield_loops_limit = Pro.bolt_profiles[bolt_type]["shield_loops_limit"] 
-		activate_shield()
+		if tilt_ready:
+			rotation_dir = 0
+			var tilt_dir = Input.get_axis(left_action, right_action)
+			if tilt_dir == -1:
+				tilt_bolt(Vector2.LEFT)
+			if tilt_dir == 1:
+				tilt_bolt(Vector2.RIGHT)
+			
+		else:
+			rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
+	
+	if Ref.game_manager.game_settings["select_feature_mode"]:
+		if Input.is_action_just_pressed(feature_action):
+				select_feature()
+		if Input.is_action_just_pressed(shoot_action):
+				shoot()
+	else:
+		if Input.is_action_pressed(feature_action):
+			tilt_ready = true
+		else:
+			tilt_ready = false
+		if Input.is_action_just_pressed(shoot_action):
+			shoot() 
+			
 		
 var tilt_ready: bool
 	
@@ -156,13 +193,6 @@ func select_feature():
 		feature.hide() # najprej jo skrijem
 		if feature == available_features[selected_feat_index]: # potem pokažem izbrano 
 			feature.show()		
-			# udejtam količino
-#			feature.get_node("Label").text = "03"
-	
-	printt("hm", selected_feat_index, available_features.size() - 1)
-
-	
-
 
 
 func pull_bolt_on_screen(pull_position: Vector2):
@@ -194,3 +224,8 @@ func _on_SelectorTimer_timeout() -> void:
 	
 #	feat_selector.modulate.a = feat_selector_alpha
 	feat_selector.hide()
+
+
+func _on_TiltTimer_timeout() -> void:
+	tilt_timer.stop()
+	pass # Replace with function body.

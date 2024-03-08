@@ -203,11 +203,27 @@ func on_collision():
 func tilt_bolt(tilt_direction):
 	
 	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
+	tilt_speed = 20
+	var max_tilt_speed = 100
 	var tilt_time: float = 0.05
 	var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
 	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
-	var tilt_tween = get_tree().create_tween()
-	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+	velocity = velocity + tilt_vector.rotated(global_rotation)
+	tilt_speed = 0
+#	var tilt_tween = get_tree().create_tween()
+##	tilt_tween.tween_property(self, "tilt_speed", max_tilt_speed, tilt_time)#.set_ease(Tween.EASE_IN_OUT)
+#	tilt_tween.tween_property(self, "tilt_speed", 0, 0.1)#.set_ease(Tween.EASE_IN_OUT)
+	
+#	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+
+#	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
+#	tilt_speed = 100
+#	var tilt_time: float = 0.05
+#	var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
+#	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
+#	var tilt_tween = get_tree().create_tween()
+#	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+#	tilt_tween.tween_property(self, "tilt_speed", 0, 0)#.set_ease(Tween.EASE_IN_OUT)
 
 
 func steering(delta: float) -> void:
