@@ -133,19 +133,23 @@ func _on_players_back_btn_pressed():
 
 
 # play
-func _on_ConfirmBtn_1_pressed() -> void:
-	Set.set_game_settings(Set.Levels.TRAINING)
-	animation_player.play("players_in")
-	pass # Replace with function body.
 func _on_ConfirmBtn_2_pressed() -> void:
 	Set.set_game_settings(Set.Levels.NITRO)
 	animation_player.play("players_in")
-	pass # Replace with function body.
+	
+	
 func _on_ConfirmBtn_3_pressed() -> void:
 	Set.set_game_settings(Set.Levels.DUEL)
 	animation_player.play("players_in")
+
+# debug
+func _on_ConfirmBtn_1_pressed() -> void:
+	Set.set_game_settings(Set.Levels.DEBUG_DUEL)
+	animation_player.play("players_in")
+	
+	
 func _on_ConfirmBtn_4_pressed() -> void:
-	Set.set_game_settings(Set.Levels.DEBUG)
+	Set.set_game_settings(Set.Levels.DEBUG_RACE)
 	animation_player.play("players_in")
 
 # players

@@ -6,7 +6,6 @@ var bolt_explosion_shake
 var bullet_hit_shake
 var misile_hit_shake
 
-
 #var player_name: String = "P1"
 
 # game colors
@@ -38,7 +37,8 @@ var explosion_z_index = 1
 var default_game_settings: Dictionary = {
 	"start_player_count": 1,
 	"game_time_limit": 0, # če je 0 ni omejitve
-	"timer_mode_countdown": false,
+	"stopwatch_mode": true,
+#	"timer_mode_countdown": false,
 	"gameover_countdown_duration": 5,
 	"start_countdown": true,
 	# bricks and area values
@@ -59,37 +59,47 @@ var default_game_settings: Dictionary = {
 	"suddent_death_mode": false,
 	"sudden_death_limit": 20,
 	"select_feature_mode": false,
+#	"lap_mode": false,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu
-	
 }
 
-enum Levels {TRAINING, NITRO, DUEL, DEBUG}
+enum Levels {TRAINING, NITRO, OSMICA, DUEL, DEBUG_RACE, DEBUG_DUEL}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
 		"level": Levels.TRAINING,
 		"level_path": "res://game/levels/LevelTraining.tscn",
-		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
+#		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
 		},
 	Levels.NITRO: {
 		"level": Levels.NITRO,
-		"level_path": "res://game/levels/LevelNitroOrig.tscn",
-		"level_scene": preload("res://game/levels/LevelNitroOrig.tscn"),
-#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
-#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
-#		"level_path": "res://game/levels/LevelNitro.tscn",
+		"level_path": "res://game/levels/LevelNitro.tscn",
+		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+		"lap_limit": 1,
+		},
+	Levels.OSMICA: {
+		"level": Levels.OSMICA,
+		"level_path": "res://game/levels/Level8.tscn",
+		"level_scene": preload("res://game/levels/Level8.tscn"),
+		"lap_limit": 2,
 		},
 	Levels.DUEL: {
 		"level": Levels.DUEL,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
 		},
-	Levels.DEBUG: {
-		"level": Levels.DEBUG,
+	Levels.DEBUG_RACE: {
+		"level": Levels.DEBUG_RACE,
 		"level_path": "res://game/levels/LevelDuel.tscn",
-		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
-		}
+		"level_scene": preload("res://game/levels/LevelDebugRace.tscn"),
+		"lap_limit": 1,
+		},
+	Levels.DEBUG_DUEL: {
+		"level": Levels.DEBUG_DUEL,
+		"level_path": "res://game/levels/LevelTraining.tscn",
+		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
+		},
 }
 
 
@@ -105,8 +115,10 @@ var bolts_activated: Array # napolne so ob izbiri
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
-#	var debug_level = Levels.NITRO
-	var debug_level = Levels.DEBUG
+	var debug_level = Levels.NITRO
+#	var debug_level = Levels.DEBUG_RACE
+#	var debug_level = Levels.DEBUG_DUEL
+#	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
 #	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
@@ -127,15 +139,23 @@ func set_game_settings(selected_level) -> void:
 			current_level_settings = level_settings[Levels.NITRO]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
+		Levels.OSMICA: 
+			current_level_settings = level_settings[Levels.OSMICA]
+			current_game_settings["start_countdown"] = false
+			current_game_settings["race_mode"] = true
+#			current_game_settings["lap_mode"] = true
 		Levels.DUEL: 
 			current_level_settings = level_settings[Levels.DUEL]
 			current_game_settings["start_countdown"] = false
-			current_game_settings["race_mode"] = false
 			current_game_settings["select_feature_mode"] = true
-		Levels.DEBUG: 
-			current_level_settings = level_settings[Levels.DEBUG]
-#			current_game_settings["start_countdown"] = false
+		Levels.DEBUG_RACE: 
+			current_level_settings = level_settings[Levels.DEBUG_RACE]
+			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
+		Levels.DEBUG_DUEL: 
+			current_level_settings = level_settings[Levels.DEBUG_DUEL]
+			current_game_settings["start_countdown"] = false
+			current_game_settings["select_feature_mode"] = true			
 
 #
 #var default_game_settings: Dictionary = {

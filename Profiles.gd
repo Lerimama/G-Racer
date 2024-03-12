@@ -3,6 +3,44 @@ extends Node
 ## lastnosti entitet, pikablov, boltov, plejerja, ai ...
 
 
+enum BoltTypes {SMALL, BASIC, BIG}
+var current_bolt_type
+
+
+var bolt_profiles: Dictionary = {
+	BoltTypes.BASIC: {
+#		"bolt_texture": preload("res://assets/bolt/bolt.png"),
+#		"bolt_texture": preload("res://assets/bolt/bolt_varz/boltbolt_alter.png"),
+		"bolt_texture": preload("res://assets/bolt/bolt_alt.png"),
+		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
+		"on_hit_disabled_time": 2,
+		"shield_loops_limit": 3,
+		# orig
+		"fwd_engine_power": 320, # 1 - 500 konjev 
+		"rev_engine_power": 150, # 1 - 500 konjev 
+		"turn_angle": 10, # deg per frame
+		"free_rotation_multiplier": 15, # rotacija kadar miruje
+		"side_traction": 0.01, # 0 - 1
+		"bounce_size": 0.5, # 0 - 1 
+		"inertia": 5, # kg
+		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
+		"drag_force_div": 100.0, # večji pomeni nižjo drag force
+		"fwd_gas_usage": -0.1, # per fram
+		"rev_gas_usage": -0.05, # per fram
+		"tilt_speed": 150,
+		# v1
+#		"fwd_engine_power": 300, # 1 - 500 konjev 
+#		"rev_engine_power": 150, # 1 - 500 konjev 
+#		"turn_angle": 15, # deg per frame
+#		"free_rotation_multiplier": 15, # rotacija kadar miruje
+#		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
+#		"side_traction": 0.05, # 0 - 1
+#		"bounce_size": 0.3, # 0 - 1 
+#		"inertia": 5, # kg
+		},
+}
+
+
 var pickable_profiles: Dictionary = {
 	# imena so ista kot enum ključi v pickables
 	
@@ -85,41 +123,6 @@ var pickable_profiles: Dictionary = {
 	},
 }
 
-enum BoltTypes {SMALL, BASIC, BIG}
-var current_bolt_type
-
-var bolt_profiles: Dictionary = {
-	BoltTypes.BASIC: {
-#		"bolt_texture": preload("res://assets/bolt/bolt.png"),
-#		"bolt_texture": preload("res://assets/bolt/bolt_varz/boltbolt_alter.png"),
-		"bolt_texture": preload("res://assets/bolt/bolt_alt.png"),
-		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
-		"on_hit_disabled_time": 2,
-		"shield_loops_limit": 3,
-		# orig
-		"fwd_engine_power": 320, # 1 - 500 konjev 
-		"rev_engine_power": 150, # 1 - 500 konjev 
-		"turn_angle": 10, # deg per frame
-		"free_rotation_multiplier": 15, # rotacija kadar miruje
-		"side_traction": 0.01, # 0 - 1
-		"bounce_size": 0.5, # 0 - 1 
-		"inertia": 5, # kg
-		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
-		"drag_force_div": 100.0, # večji pomeni nižjo drag force
-		"fwd_gas_usage": -0.1, # per fram
-		"rev_gas_usage": -0.05, # per fram
-		"tilt_speed": 150,
-		# v1
-#		"fwd_engine_power": 300, # 1 - 500 konjev 
-#		"rev_engine_power": 150, # 1 - 500 konjev 
-#		"turn_angle": 15, # deg per frame
-#		"free_rotation_multiplier": 15, # rotacija kadar miruje
-#		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
-#		"side_traction": 0.05, # 0 - 1
-#		"bounce_size": 0.3, # 0 - 1 
-#		"inertia": 5, # kg
-		},
-}
 
 enum Bolts {P1, P2, P3, P4, ENEMY}
 
@@ -163,14 +166,6 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"controller_profile" : "AI",
 		"bolt_type:": BoltTypes.BASIC,
 	},
-#	"E2" : {
-#		"player_name" : "Bub",
-#		# "player_controller" : "W/A/S/D/Sp",
-#		"player_avatar" : preload("res://assets/sprites/avatars/avatar_06.png"),
-#		"player_color" : Set.color_gray0,
-#		"controller_profile" : "AI",
-#		"bolt_type:": BoltTypes.BASIC,
-#	},
 }
 
 
@@ -189,7 +184,7 @@ var enemy_profile: Dictionary = {
 
 var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"player_start_position" : Vector2(0, 0),
-#	"life" : 5,
+	"life" : 5,
 	"energy" : 10,
 	"bullet_power" : 0.1,
 	"bullet_count" : 100,
@@ -201,9 +196,14 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 # statse ima tudi enemy
 #	"player_active" : true,
-	"player_life" : 5,
-	"player_points" : 0,
-	"player_wins" : 2,
+	"fastest_lap_time" : 0,
+	"laps_finished" : 0,
+	"race_time": 0,
+#	"player_lap_time" : 0,
+#	"player_laps" : 0,
+#	"player_life" : 5,
+	"points" : 0,
+	"wins" : 2,
 }
 
 var weapon_profiles : Dictionary = {

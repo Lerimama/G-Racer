@@ -18,6 +18,9 @@ onready var stat_points: NinePatchRect = $StatPoints
 onready var stat_bullet: NinePatchRect = $StatBullet
 onready var stat_gas: NinePatchRect = $StatGas
 
+#neu
+onready var stat_laps_count: NinePatchRect = $StatLapsCount
+onready var stat_fastest_lap: NinePatchRect = $StatFastestLap
 
 var player_name: String = "NN"
 
@@ -42,5 +45,7 @@ func _on_bolt_color_set(bolt_color):
 	stat_points.def_stat_color = bolt_color # setget
 	stat_bullet.def_stat_color = bolt_color # setget
 	stat_gas.def_stat_color = bolt_color # setget
-	
+	stat_laps_count.def_stat_color = bolt_color
+	stat_fastest_lap.def_stat_color = bolt_color	
+
 

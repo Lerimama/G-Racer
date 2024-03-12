@@ -28,18 +28,20 @@ margin_bottom = 121.0
 [node name="StatLineRacer2" parent="." instance=ExtResource( 5 )]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -40.0
+margin_left = -56.0
 margin_top = 5.0
-margin_right = 0.0
-margin_bottom = 129.0
+margin_right = -16.0
+margin_bottom = 161.0
+grow_horizontal = 0
 
 [node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0
-margin_top = -131.0
-margin_right = 48.0
+margin_top = -163.0
+margin_right = 56.0
 margin_bottom = -7.0
+grow_vertical = 0
 alignment = 2
 
 [node name="StatLineRacer4" parent="." instance=ExtResource( 5 )]
@@ -47,27 +49,27 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -40.0
-margin_top = -131.0
-margin_right = 0.0
+margin_left = -56.0
+margin_top = -163.0
+margin_right = -16.0
 margin_bottom = -7.0
+grow_horizontal = 0
+grow_vertical = 0
 alignment = 2
 
 [node name="GameStats" type="HBoxContainer" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -161.5
-margin_right = 39.5
+margin_left = -111.0
+margin_right = 140.0
 margin_bottom = 26.0
-grow_horizontal = 0
+grow_horizontal = 2
 theme = ExtResource( 2 )
-alignment = 2
 script = ExtResource( 7 )
 
 [node name="LevelName" type="Label" parent="GameStats"]
-margin_left = 60.0
 margin_top = 6.0
-margin_right = 119.0
+margin_right = 59.0
 margin_bottom = 19.0
 text = "Prva runda"
 __meta__ = {
@@ -76,8 +78,19 @@ __meta__ = {
 
 [node name="GameTimer" parent="GameStats" instance=ExtResource( 8 )]
 unique_name_in_owner = true
-margin_left = 123.0
-margin_right = 201.0
+margin_left = 63.0
+margin_right = 161.0
+
+[node name="RecordLap" type="Label" parent="GameStats"]
+margin_left = 165.0
+margin_top = 6.0
+margin_right = 251.0
+margin_bottom = 19.0
+text = "Record: 00:00:00"
+uppercase = true
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Popups" type="Control" parent="."]
 anchor_right = 1.0

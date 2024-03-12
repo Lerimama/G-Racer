@@ -1,5 +1,5 @@
 extends KinematicBody2D
-class_name Player
+#class_name Player
 
 
 signal stat_changed # spremenjeno statistiko javi v hud

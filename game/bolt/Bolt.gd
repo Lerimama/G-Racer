@@ -65,13 +65,15 @@ onready var Bullet: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var Misile: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://game/weapons/Shocker.tscn")
 # player stats
-onready var player_life: int = Pro.default_player_stats["player_life"]
-onready var player_points: int = Pro.default_player_stats["player_points"]
-onready var player_wins: int = Pro.default_player_stats["player_wins"]
+#onready var player_life: int = Pro.default_player_stats["player_life"]
+onready var points: int = Pro.default_player_stats["points"]
+onready var wins: int = Pro.default_player_stats["wins"]
+
 # bolt stats
-onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
+onready var life: int = Pro.default_bolt_stats["life"]
 onready var energy: float = Pro.default_bolt_stats["energy"]
 onready var max_energy: float = Pro.default_bolt_stats["energy"] # zato, da se lahko resetira
+onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
 onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
 onready var bullet_power: float = Pro.default_bolt_stats["bullet_power"]
 onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
@@ -94,8 +96,14 @@ onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"]
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
 
 # neu
-onready var bolt_hud: Node2D = $BoltHud
+var tilt_speed_call: int = 0 
+var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pogoji za krog
+var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
+var current_lap_time: float # statistika
+var fastest_lap_time: float # statistika
 
+onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
+onready var bolt_hud: Node2D = $BoltHud
 onready var sounds: Node = $Sounds
 onready var shoot_bullet: AudioStreamPlayer = $Sounds/ShootBullet
 onready var shoot_misile: AudioStreamPlayer = $Sounds/ShootMisile
@@ -135,7 +143,7 @@ func _physics_process(delta: float) -> void:
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
 	
 	# animiran bolt
-#	bolt_sprite.rotation = - global_rotation
+	#bolt_sprite.rotation = - global_rotation
 	
 	# set motion states
 	if engine_power > 0:
@@ -203,27 +211,29 @@ func on_collision():
 func tilt_bolt(tilt_direction):
 	
 	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
-	tilt_speed = 20
-	var max_tilt_speed = 100
-	var tilt_time: float = 0.05
-	var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
-	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
-	velocity = velocity + tilt_vector.rotated(global_rotation)
-	tilt_speed = 0
-#	var tilt_tween = get_tree().create_tween()
-##	tilt_tween.tween_property(self, "tilt_speed", max_tilt_speed, tilt_time)#.set_ease(Tween.EASE_IN_OUT)
-#	tilt_tween.tween_property(self, "tilt_speed", 0, 0.1)#.set_ease(Tween.EASE_IN_OUT)
 	
-#	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+	# način, ko feature tipka drži funkcijo
+	if Ref.game_manager.game_settings["race_mode"]:
+		tilt_speed_call += 1 # resetira ga input na plejerju
+		
+		if tilt_speed_call == 1:
+			tilt_speed = 150
+		else:
+			tilt_speed = 20
+			
+		var tilt_vector: Vector2 = tilt_direction.rotated(deg2rad(90)) * tilt_speed
+		velocity = velocity + tilt_vector.rotated(global_rotation)
 
-#	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
-#	tilt_speed = 100
-#	var tilt_time: float = 0.05
-#	var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
-#	var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
-#	var tilt_tween = get_tree().create_tween()
-#	tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
-#	tilt_tween.tween_property(self, "tilt_speed", 0, 0)#.set_ease(Tween.EASE_IN_OUT)
+	# način na hitri klik v smeri
+	else:
+
+		tilt_speed = 100
+		var tilt_time: float = 0.05
+		var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
+		var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
+		var tilt_tween = get_tree().create_tween()
+		tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+		tilt_tween.tween_property(self, "tilt_speed", 0, 0)#.set_ease(Tween.EASE_IN_OUT)
 
 
 func steering(delta: float) -> void:
@@ -484,13 +494,13 @@ func take_damage(hit_by: Node):
 func lose_life():
 	
 	# stats
-	player_life -= 1
-	emit_signal("stat_changed", bolt_id, "player_life", player_life)
+	life -= 1
+	emit_signal("stat_changed", bolt_id, "life", life)
 	
 	bolt_collision.disabled = true
 	visible = false
 	set_physics_process(false)
-	if player_life > 0:
+	if life > 0:
 		revive_bolt()
 	else:
 		self.bolt_active = false
@@ -503,14 +513,67 @@ func revive_bolt():
 	
 	# on new life
 	bolt_collision.disabled = false
-#	engine_particles_rear.visible = true
-#	engine_particles_front_left.visible = true
-#	engine_particles_front_right.visible = true
+	#	engine_particles_rear.visible = true
+	#	engine_particles_front_left.visible = true
+	#	engine_particles_front_right.visible = true
 	energy = max_energy
 	set_physics_process(true)
 	visible = true
 	
 
+# RACE ----------------------------------------------------------------------------
+
+
+func on_lap_finished(current_race_time: float):
+
+	
+	# čas kroga
+	if laps_finished == 0: # če je prvi krog
+		current_lap_time = current_race_time
+		fastest_lap_time = current_lap_time	
+	else: # če že ima vpisanega, ga odštejem od trenutnega časa
+		current_lap_time = current_race_time - current_lap_time
+		# je najhitrejši krog?
+		if current_lap_time < fastest_lap_time:
+			fastest_lap_time = current_lap_time
+			
+	# prištejem krog in mu zbrišem čekpointe
+	laps_finished += 1
+	checkpoints_reached.clear()
+	
+	spawn_floating_tag(current_lap_time)
+	emit_signal("stat_changed", bolt_id, "lap_finished", [laps_finished, fastest_lap_time]) 
+
+
+func on_checkpoint_reached(checkpoint: Area2D):
+	if not checkpoints_reached.has(checkpoint): # če še ni dodana
+		checkpoints_reached.append(checkpoint)
+	
+
+func spawn_floating_tag(value = 0):
+	
+	if value == 0:
+		return
+		
+	var current_lap_time: Array = Met.get_clock_time(value)
+	var current_lap_time_on_clock: String = "%02d" % current_lap_time[0] + ":" + "%02d" % current_lap_time[1] + ":" + "%02d" % current_lap_time[2]	
+	value = current_lap_time_on_clock
+	
+	var new_floating_tag = FloatingTag.instance()
+	new_floating_tag.z_index = 4 # višje od straysa in playerja
+	new_floating_tag.global_position = global_position
+	new_floating_tag.tag_owner = self
+	Ref.node_creation_parent.add_child(new_floating_tag)
+	
+	if value is String:
+		new_floating_tag.label.text = current_lap_time_on_clock
+	elif value < 0:
+		new_floating_tag.modulate = Set.color_red
+		new_floating_tag.label.text = str(value)
+	elif value > 0:
+		new_floating_tag.label.text = "+" + str(value)
+		
+		
 # UTILITY ----------------------------------------------------------------------------
 
 		
@@ -631,9 +694,9 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 
 func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
 	
-	player_points += points_added
-	player_points = clamp(player_points, 0, player_points)
-	emit_signal("stat_changed", bolt_id, "player_points", player_points) # do GMa
+	points += points_added
+	points = clamp(points, 0, points)
+	emit_signal("stat_changed", bolt_id, "points", points) # do GMa
 	
 	
 func on_item_picked(pickable_type_key: String):
@@ -660,8 +723,8 @@ func on_item_picked(pickable_type_key: String):
 			gas_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "gas_count", gas_count)
 		"LIFE":
-			player_life += pickable_value
-			emit_signal("stat_changed", bolt_id, "player_life", player_life)
+			life += pickable_value
+			emit_signal("stat_changed", bolt_id, "life", life)
 		"NITRO":
 			activate_nitro(pickable_value, pickable_time)
 		"TRACKING":
@@ -670,8 +733,8 @@ func on_item_picked(pickable_type_key: String):
 			yield(get_tree().create_timer(pickable_time), "timeout")
 			side_traction = default_traction
 		"POINTS":
-			player_points += pickable_value
-			emit_signal("stat_changed", bolt_id, "player_points", player_points)
+			points += pickable_value
+			emit_signal("stat_changed", bolt_id, "points", points)
 		"RANDOM":
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range

@@ -8,6 +8,9 @@ onready var stat_line_topL: Control = $StatLineRacer1
 onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
+
+var current_record_lap_time: int = 0# stotinke
+onready var record_lap_label: Label = $GameStats/RecordLap
 onready var game_stats: HBoxContainer = $GameStats
 onready var game_timer: Control = $"%GameTimer"
 onready var start_countdown: Control = $"%StartCountdown"
@@ -71,13 +74,24 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	match stat_name:
 		# value se preračun na plejerju
 		# player stats
-		"player_points":
+		"lap_finished":
+			# laps count
+			stat_line_to_change.stat_laps_count.current_stat_value = new_stat_value[0]
+			# fast time
+			var fastest_lap_time: Array = Met.get_clock_time(new_stat_value[1])
+			var fastest_lap_time_on_clock: String = "%02d" % fastest_lap_time[0] + ":" + "%02d" % fastest_lap_time[1] + ":" + "%02d" % fastest_lap_time[2]
+			stat_line_to_change.stat_fastest_lap.current_stat_value = fastest_lap_time_on_clock
+			
+			if current_record_lap_time == 0:
+				record_lap_label.text = "Record: 00:00:00"
+			
+		"points":
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
-		"player_life": 
-			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
-		"player_wins": 
+		"wins": 
 			stat_line_to_change.stat_wins.current_stat_value = new_stat_value # setget
 		# bolt stats
+		"life": 
+			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
 		"bullet_count": 
 			stat_line_to_change.stat_bullet.current_stat_value = new_stat_value # setget
 		"misile_count": 
@@ -121,11 +135,11 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
 	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
+	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
 	
 	# player stats
-	current_stat_line.stat_points.current_stat_value = player_stats["player_points"]
-	current_stat_line.stat_life.current_stat_value = player_stats["player_life"]
-	current_stat_line.stat_wins.current_stat_value = player_stats["player_wins"]
+	current_stat_line.stat_points.current_stat_value = player_stats["points"]
+	current_stat_line.stat_wins.current_stat_value = player_stats["wins"]
 	
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	current_stat_line.visible = true

@@ -37,11 +37,15 @@ var position_indikator: Node2D	# debug
 onready var NewLevel: PackedScene = level_settings["level_scene"]
 onready var game_music: AudioStreamPlayer = $"../Sounds/NitroMusic"
 
-# neu
-
 
 func _input(event: InputEvent) -> void:
 
+	
+	if Input.is_action_just_pressed("m"):
+		var bus_index: int = AudioServer.get_bus_index("GameMusic")
+		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
+		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
+			
 	if not game_on:
 		if Input.is_action_just_pressed("x"):
 			spawn_pickable()
@@ -74,8 +78,8 @@ func set_game(): # kliče main.gd pred fejdin igre
 	var current_bolts_activated: Array = Set.bolts_activated
 	printt("CA", current_bolts_activated)
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
-#		current_bolts_activated = [Pro.Bolts.P1]#, Pro.Bolts.P2] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+		current_bolts_activated = [Pro.Bolts.P1] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
 	var bolt_index: int = 0
@@ -247,17 +251,59 @@ func spawn_level():
 		
 # RANKING ---------------------------------------------------------------------------------------------
 
+#var laps_limit: int = 30
+#var bolts_across_checkpoint: Array = [] # da ne dupliciram prevoženih čekpointov
+var laps_finished: int
+var checkpoints_per_lap: int
 
+
+
+		
+		
 func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finish line
 	
-#	bolts_across_finish_line.append(bolt_finished)
-	printt ("GO TIME", Ref.hud.game_timer.time_since_start)
+	var time_to_finish: float = 2 # čas za druge, da dosežejo cilj
+	var laps_limit: int = level_settings["lap_limit"]
+#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
 	
-	var bolt_time: float = Ref.hud.game_timer.time_since_start
-	bolts_across_finish_line.append([bolt_finished, bolt_time])
-	bolt_finished.bolt_active = false
+	var current_race_time: float  = Ref.hud.game_timer.current_game_time # skupne stotinke
+	
+	
+	laps_limit = 2
+	
+	# LAP
+	# če je prevozil vse čekpointe v krogu, mu štejem krog
+	if bolt_finished.checkpoints_reached.size() >= checkpoints_per_lap:
+		bolt_finished.on_lap_finished(current_race_time)
+	
+	# FINISH
+	# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
+	if bolt_finished.laps_finished >= laps_limit:
+		# deaktiviram plejerja in zabležim statistiko 
+		var race_finished_time: float = current_race_time
+		bolt_finished.bolt_active = false
+		bolts_across_finish_line.append([bolt_finished, race_finished_time])
+		# GO timer se sproži ko je prvi čez
+		if bolts_across_finish_line.size() == 1: 
+			# timer postane limited in določim mu limit
+			Ref.hud.game_timer.limitless_mode = false
+			Ref.hud.game_timer.game_time_limit = race_finished_time + time_to_finish
+			for bolt in bolts_in_game:
+				if bolt.bolt_active:
+					bolt.bolt_active = false
+			# sprožim time floating tag
+			printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.current_game_time)
+			
 
-	
+#func on_bolt_across_checkpoint(bolt_checked: KinematicBody2D):
+#
+#	# če je čekpoint prevožen prvič v krogu
+##	if not bolts_across_checkpoint.has(bolt_checked):
+##		bolts_across_checkpoint.append(bolt_checked)
+#		# mu povečam št prevoženih čekpointov
+#	bolt_checked.checkpoints_reached += 1
+		
+
 func get_ingame_ranking():
 # najbližje točke vseh boltov primerjam (po indexu na vodilni racing liniji) 
 ## problem ... trenutnega načina je da rangira plejerje glede na index točke znotraj njene linije
@@ -297,7 +343,7 @@ func get_ingame_ranking():
 		leading_racing_line = level_racing_lines[leading_player_on_racing_line[2]]
 		
 		# debug ... indikator
-		if level_settings["level"] == Set.Levels.DEBUG:
+		if level_settings["level"] == Set.Levels.DEBUG_RACE:
 			var leading_point_index: int = leading_player_on_racing_line[1]
 			var leading_point: Vector2 = level_racing_points[leading_point_index]
 			position_indikator.global_position = leading_point
@@ -475,24 +521,32 @@ func _on_Bolt_activity_changed(bolt: KinematicBody2D):
 		check_for_game_over()
 	
 	
-func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
+func _on_level_is_set(spawn_positions: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array, level_checkpoints_count: int):
 	
-	level_positions = spawn_positions
+	# navigacija za enemy AI
 	navigation_area = tilemap_navigation_cells
 	navigation_positions = tilemap_navigation_cells_positions
+	
+	# random pickable pozicije 
 	available_pickable_positions = navigation_area.duplicate()
 	
-#	level_racing_points = Ref.current_level.racing_line.draw_racing_lines()
+	# racing linije
 	level_racing_lines = Ref.current_level.racing_line.draw_racing_lines()
 	for line in level_racing_lines:
 		level_racing_points.append_array(line.get_points())
 		
-
+	# pozicije boltov in kamere
+	level_positions = spawn_positions
 	# kamera
-	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
-	position_indikator.modulate.a = 0
 	Ref.current_camera.position = level_positions[0].global_position
 	Ref.current_camera.set_camera_limits()	
+	
+	# čekpointi
+	checkpoints_per_lap = level_checkpoints_count
+	
+	# debug
+	position_indikator = Met.spawn_indikator(level_positions[1].global_position, 0)
+	position_indikator.modulate.a = 0
 
 
 func _on_Enemy_path_changed(path: Array) -> void:
