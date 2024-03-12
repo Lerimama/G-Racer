@@ -13,7 +13,8 @@ onready var sprite: Sprite = $Sprite
 onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
 onready var animated_sprite: AnimatedSprite = $AnimatedSprite
 
-onready var sound_picked: AudioStreamPlayer = $Sounds/Picked
+onready var sounds: Node = $Sounds
+onready var sound_picked: AudioStreamPlayer = $Sounds/PickedDefault
 
 func _ready() -> void:
 	
@@ -23,9 +24,20 @@ func _ready() -> void:
 	pickable_color = Pro.pickable_profiles[pickable_type_key]["pickable_color"]
 	modulate = pickable_color
 	
+	
 func _on_Item_body_entered(body: Node) -> void:
 	
+	# če je med soundi kakšen poleg defaultnega, potem zaigraj tistega
+	if sounds.get_children().size() > 1:
+		sound_picked = sounds.get_children()[1] 
+
 	if body.has_method("on_item_picked"):
 		sound_picked.play()
 		body.on_item_picked(pickable_type_key)
-		queue_free()	
+		modulate.a = 0
+		monitorable = false
+		monitoring = false
+
+
+func _on_Picked_finished() -> void:
+	queue_free()	

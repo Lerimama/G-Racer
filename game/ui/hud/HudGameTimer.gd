@@ -31,7 +31,9 @@ func _ready() -> void:
 	if not stopwatch_mode:
 		$Mins.text = "%02d" % (game_time_limit / 60)
 		$Secs.text = "%02d" % (game_time_limit % 60)
-		hundreds_mode
+		$Dots2.hide()
+		$Hunds.hide()
+	if not hundreds_mode:
 		$Dots2.hide()
 		$Hunds.hide()
 	elif game_time_limit == 0:
@@ -48,7 +50,7 @@ func _process(delta: float) -> void:
 	# game time
 	current_game_time += delta * 100 # stotinke
 	var current_clock_time: Array = Met.get_clock_time(current_game_time)
-	printt("current_clock_time", current_clock_time)
+#	printt("current_clock_time", current_clock_time)
 	
 	# display
 	$Mins.text = "%02d" % current_clock_time[0]
@@ -129,6 +131,7 @@ func stop_timer():
 		
 func _on_Timer_timeout() -> void:
 	
+	return
 	if not hundreds_mode:
 		print("Timer second")
 		add_time_seconds(1)

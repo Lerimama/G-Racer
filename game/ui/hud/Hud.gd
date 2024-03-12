@@ -39,7 +39,13 @@ func _ready() -> void:
 		else:
 			stat_line.stat_wins.hide()
 #			stat_line.stat_points.hide()
+			stat_line.stat_laps_count.hide()
+			stat_line.stat_fastest_lap.hide()
 			stat_line.stat_gas.hide()
+			record_lap_label.hide()
+			game_timer.hundreds_mode = false
+			game_timer.get_node("Dots2").hide()
+			game_timer.get_node("Hunds").hide()
 			
 			
 func on_game_start():

@@ -30,3 +30,7 @@ position = Vector2( -3, 0 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
 position = Vector2( 5.96046e-08, 0 )
 shape = SubResource( 3 )
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 13, 0 )

@@ -39,10 +39,10 @@ polygon = PoolVector2Array( -1, -8, -7, -2, -7, 0, -1, 6, 1, 6, 7, 0, 7, -2, 1, 
 [node name="Sounds" type="Node" parent="."]
 pause_mode = 2
 
-[node name="Picked" type="AudioStreamPlayer" parent="Sounds"]
+[node name="PickedDefault" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 3 )
-volume_db = -13.0
-pitch_scale = 1.2
+volume_db = -15.0
 bus = "GameSfx"
 
 [connection signal="body_entered" from="." to="." method="_on_Item_body_entered"]
+[connection signal="finished" from="Sounds/PickedDefault" to="." method="_on_Picked_finished"]

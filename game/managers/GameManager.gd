@@ -76,10 +76,9 @@ func set_game(): # kliče main.gd pred fejdin igre
 	spawn_level()	
 #	game_settings["start_player_count"] = 1
 	var current_bolts_activated: Array = Set.bolts_activated
-	printt("CA", current_bolts_activated)
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
-		current_bolts_activated = [Pro.Bolts.P1] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+#		current_bolts_activated = [Pro.Bolts.P1] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
 	var bolt_index: int = 0

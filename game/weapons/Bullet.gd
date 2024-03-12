@@ -25,7 +25,8 @@ onready var HitParticles: PackedScene = preload("res://game/weapons/BulletHitPar
 var bullet_momentum: float # je zmnožek hitrosti in teže
 var collider_momentum: float # je zmnožek hitrosti in teže
 
-# NEW
+# neu
+var force: float
 
 onready var weapon_profile: Dictionary = Pro.weapon_profiles["bullet"]
 onready var reload_time: float = weapon_profile["reload_time"]
@@ -34,8 +35,8 @@ onready var speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var inertia: float = weapon_profile["inertia"]
 #onready var direction_start_range: Array = misile_profile["direction_start_range"] # natančnost misile
+onready var vision_ray: RayCast2D = $RayCast2D
 
-var force: float
 
 func _ready() -> void:
 	
@@ -53,14 +54,16 @@ func _ready() -> void:
 #	Ref.effects_creation_parent.add_child(new_bullet_trail)
 	Ref.node_creation_parent.add_child(new_bullet_trail)
 	
+	speed = 10
 	velocity = direction * speed	# velocity is the velocity vector in pixels per second?
 	
 	
 func _physics_process(delta: float) -> void:
+	vision_ray.cast_to = Vector2.RIGHT * 10
 	
 	time += delta
 	
-	new_bullet_trail.add_points(trail_position.global_position) # premaknjeno iz process
+#	new_bullet_trail.add_points(trail_position.global_position) # premaknjeno iz process
 	
 	# detect avtorja ... prva je zato, ker se zgodi hitreje
 	for body in spawner_detect.get_overlapping_bodies():

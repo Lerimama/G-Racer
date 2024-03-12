@@ -104,15 +104,6 @@ var fastest_lap_time: float # statistika
 
 onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var bolt_hud: Node2D = $BoltHud
-onready var sounds: Node = $Sounds
-onready var shoot_bullet: AudioStreamPlayer = $Sounds/ShootBullet
-onready var shoot_misile: AudioStreamPlayer = $Sounds/ShootMisile
-onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
-onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
-onready var tilt: AudioStreamPlayer = $Sounds/Tilt
-onready var dizzy: AudioStreamPlayer = $Sounds/Dizzy
-onready var shocked: AudioStreamPlayer = $Sounds/Shocked
-onready var heartbeat: AudioStreamPlayer = $Sounds/Heartbeat
 
 
 func _ready() -> void:
@@ -405,7 +396,6 @@ func on_hit(hit_by: Node):
 			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
 			
 		elif hit_by.is_in_group(Ref.group_misiles):
-			set_process_input(false)
 			Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 			# efekt	
 			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia # push
@@ -416,8 +406,8 @@ func on_hit(hit_by: Node):
 				take_damage(hit_by)
 			
 		elif hit_by.is_in_group(Ref.group_shockers):
-			set_process_input(false)
 			take_damage(hit_by)		
+			set_process_input(false)
 			# efekt
 			var catch_tween = get_tree().create_tween()
 			catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
@@ -439,6 +429,7 @@ func on_hit(hit_by: Node):
 
 func in_disarray():
 	
+	set_process_input(false)		
 	# random disarray direction
 	current_motion_state = MotionStates.DISARRAY
 	var dissaray_random_direction = randi() % 2
@@ -508,7 +499,7 @@ func lose_life():
 	
 
 func revive_bolt():
-	
+	print("revieve")
 	yield(get_tree().create_timer(revive_time), "timeout")
 	
 	# on new life
@@ -518,8 +509,9 @@ func revive_bolt():
 	#	engine_particles_front_right.visible = true
 	energy = max_energy
 	set_physics_process(true)
-	visible = true
 	
+	visible = true
+	bolt_active = true
 
 # RACE ----------------------------------------------------------------------------
 
