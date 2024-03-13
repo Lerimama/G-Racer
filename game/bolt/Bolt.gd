@@ -101,6 +101,8 @@ var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pog
 var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
 var current_lap_time: float # statistika
 var fastest_lap_time: float # statistika
+#onready var selected_feature_index: int = 0
+onready var selected_feat_index: int = 0
 
 onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var bolt_hud: Node2D = $BoltHud
@@ -174,8 +176,18 @@ func _physics_process(delta: float) -> void:
 	
 	motion_fx()
 	update_bolt_hud()
-	if not Ref.game_manager.game_settings["race_mode"]:
+	if Ref.game_manager.game_settings["race_mode"]:
+		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
+		if bullet_count > 0:
+			selected_feat_index = 0
+		if misile_count > 0:
+			selected_feat_index = 1
+		if shocker_count > 0:
+			selected_feat_index = 2
+	else:
 		energy_bar_holder.show()
+			
+		
 	
 # IZ PROCESA ----------------------------------------------------------------------------
 
@@ -547,8 +559,9 @@ func spawn_floating_tag(value = 0):
 	if value == 0:
 		return
 		
-	var current_lap_time: Array = Met.get_clock_time(value)
-	var current_lap_time_on_clock: String = "%02d" % current_lap_time[0] + ":" + "%02d" % current_lap_time[1] + ":" + "%02d" % current_lap_time[2]	
+	var current_lap_time_on_clock: String = Met.get_clock_time(value)
+#	var current_lap_time: Array = Met.get_clock_time(value)
+#	var current_lap_time_on_clock: String = "%02d" % current_lap_time[0] + ":" + "%02d" % current_lap_time[1] + ":" + "%02d" % current_lap_time[2]	
 	value = current_lap_time_on_clock
 	
 	var new_floating_tag = FloatingTag.instance()
@@ -701,12 +714,33 @@ func on_item_picked(pickable_type_key: String):
 		"BULLET":
 			bullet_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+			selected_feat_index = 0
+			
+			if Ref.game_manager.game_settings["race_mode"]:
+				misile_count = 0
+				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
+				shocker_count = 0
+				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 		"MISILE":
 			misile_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
+			selected_feat_index = 1
+			
+			if Ref.game_manager.game_settings["race_mode"]:
+				bullet_count = 0
+				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+				shocker_count = 0
+				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 		"SHOCKER":
 			shocker_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
+			selected_feat_index = 2
+			
+			if Ref.game_manager.game_settings["race_mode"]:
+				bullet_count = 0
+				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+				misile_count = 0
+				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
 		"SHIELD":
 			shield_loops_limit = pickable_value
 			activate_shield()

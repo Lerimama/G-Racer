@@ -24,7 +24,6 @@ margin_top = -3.0
 margin_right = 48.0
 margin_bottom = 153.0
 theme = ExtResource( 2 )
-custom_constants/separation = 8
 script = ExtResource( 7 )
 
 [node name="Avatar" type="TextureRect" parent="."]
@@ -70,68 +69,76 @@ __meta__ = {
 }
 
 [node name="StatIconsWins" parent="." instance=ExtResource( 5 )]
-margin_top = 20.0
+visible = false
+margin_top = 16.0
 margin_right = 48.0
-margin_bottom = 28.0
+margin_bottom = 24.0
 
 [node name="StatIconsLife" parent="." instance=ExtResource( 8 )]
-margin_top = 36.0
+margin_top = 16.0
 margin_right = 48.0
-margin_bottom = 44.0
+margin_bottom = 24.0
 icon_texture = SubResource( 147 )
-
-[node name="StatPoints" parent="." instance=ExtResource( 4 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 0.0
-margin_top = 52.0
-margin_right = 48.0
-margin_bottom = 60.0
 
 [node name="StatBullet" parent="." instance=ExtResource( 9 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 68.0
+margin_top = 28.0
 margin_right = 48.0
-margin_bottom = 76.0
+margin_bottom = 41.0
+rect_min_size = Vector2( 24, 8 )
 
 [node name="StatMisile" parent="." instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 84.0
+margin_top = 45.0
 margin_right = 48.0
-margin_bottom = 92.0
+margin_bottom = 58.0
+rect_min_size = Vector2( 24, 8 )
 
 [node name="StatShocker" parent="." instance=ExtResource( 6 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 100.0
+margin_top = 62.0
 margin_right = 48.0
-margin_bottom = 108.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 24, 8 )
+
+[node name="StatPoints" parent="." instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 0.0
+margin_top = 79.0
+margin_right = 48.0
+margin_bottom = 92.0
+rect_min_size = Vector2( 24, 8 )
 
 [node name="StatGas" parent="." instance=ExtResource( 11 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 116.0
+margin_top = 96.0
 margin_right = 48.0
-margin_bottom = 124.0
+margin_bottom = 109.0
+rect_min_size = Vector2( 24, 8 )
 
 [node name="StatLapsCount" parent="." instance=ExtResource( 12 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 132.0
+margin_top = 113.0
 margin_right = 48.0
-margin_bottom = 140.0
+margin_bottom = 126.0
+rect_min_size = Vector2( 24, 8 )
 
 [node name="StatFastestLap" parent="." instance=ExtResource( 13 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 148.0
+margin_top = 130.0
 margin_right = 48.0
-margin_bottom = 156.0
+margin_bottom = 143.0
+rect_min_size = Vector2( 24, 8 )

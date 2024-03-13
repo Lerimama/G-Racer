@@ -1,4 +1,4 @@
-extends NinePatchRect
+extends HBoxContainer
 
 
 var def_stat_value: int = 0

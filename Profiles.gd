@@ -108,7 +108,7 @@ var pickable_profiles: Dictionary = {
 		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
 	"POINTS": {
-		"for_random_selection": true,
+		"for_random_selection": false,
 		"pickable_color": Set.color_blue,
 		"pickable_value": 100, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde

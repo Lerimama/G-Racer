@@ -10,16 +10,12 @@ visible = false
 margin_left = 46.0
 margin_right = 54.0
 
-[node name="Label" parent="." index="1"]
-margin_left = 25.0
-margin_right = 37.0
-
-[node name="Label2" type="Label" parent="." index="3"]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = 1.0
-margin_top = -8.0
-margin_right = 13.0
-margin_bottom = 5.0
+[node name="Name" type="Label" parent="." index="1"]
+margin_right = 18.0
+margin_bottom = 13.0
 theme = ExtResource( 2 )
 text = "LAP"
+
+[node name="Label" parent="." index="2"]
+margin_left = 22.0
+margin_right = 34.0

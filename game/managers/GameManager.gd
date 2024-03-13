@@ -4,7 +4,7 @@ extends Node
 signal stat_change_received (player_index, changed_stat, stat_new_value)
 signal new_bolt_spawned (name, other)
 
-enum GameoverReason {SUCCES, FAIL} # ali kdo od plejerjev napreduje, ali pa ne
+enum GameoverReason {SUCCES, FAIL, TIME} # ali kdo od plejerjev napreduje, ali pa ne
 
 var game_on: bool
 
@@ -113,7 +113,7 @@ func start_game():
 	if Ref.hud: # debug
 		Ref.hud.on_game_start()
 	
-	if not game_settings["spawn_pickables_mode"]:
+	if game_settings["spawn_pickables_mode"]:
 		spawn_pickable()
 		
 	game_on = true
@@ -139,7 +139,8 @@ func game_over(gameover_reason: int):
 			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
 	elif gameover_reason == GameoverReason.FAIL:
 		print("GO FAIL")
-		
+	elif gameover_reason == GameoverReason.FAIL:
+		print("GO TIME")
 #	stop_game_elements()
 	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 	
@@ -564,4 +565,5 @@ func _on_ScreenArea_body_entered(body: Node) -> void:
 
 
 func _on_PickableTimer_timeout() -> void:
-	spawn_pickable()
+#	spawn_pickable()
+	pass

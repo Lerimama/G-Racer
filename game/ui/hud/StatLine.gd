@@ -12,15 +12,16 @@ onready var stat_avatar: TextureRect = $Avatar
 onready var stat_name: Label = $PlayerLine/PlayerName
 onready var stat_wins: Control = $StatIconsWins
 onready var stat_life: Control = $StatIconsLife
-onready var stat_misile: NinePatchRect = $StatMisile
-onready var stat_shocker: NinePatchRect = $StatShocker
-onready var stat_points: NinePatchRect = $StatPoints
-onready var stat_bullet: NinePatchRect = $StatBullet
-onready var stat_gas: NinePatchRect = $StatGas
+onready var stat_misile: HBoxContainer = $StatMisile
+onready var stat_shocker: HBoxContainer = $StatShocker
+onready var stat_points: HBoxContainer = $StatPoints
+onready var stat_bullet: HBoxContainer = $StatBullet
+onready var stat_gas: HBoxContainer = $StatGas
 
 #neu
-onready var stat_laps_count: NinePatchRect = $StatLapsCount
-onready var stat_fastest_lap: NinePatchRect = $StatFastestLap
+onready var stat_laps_count: HBoxContainer = $StatLapsCount
+onready var stat_fastest_lap: HBoxContainer = $StatFastestLap
+onready var player_line: Control = $PlayerLine
 
 var player_name: String = "NN"
 

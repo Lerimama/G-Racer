@@ -56,8 +56,8 @@ var default_game_settings: Dictionary = {
 	"pickables_count_limit": 5,
 	# modes
 	"race_mode": false, # ranking, gas use, enemy AI
-	"suddent_death_mode": false,
-	"sudden_death_limit": 20,
+	"sudden_death_mode": false,
+	"sudden_death_limit": 2, # koliko pred koncem
 	"select_feature_mode": false,
 	"spawn_pickables_mode": true,
 #	"lap_mode": false,
@@ -72,6 +72,7 @@ var level_settings: Dictionary = {
 		"level": Levels.TRAINING,
 		"level_path": "res://game/levels/LevelTraining.tscn",
 #		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
+		"time_limit": 10,
 		},
 	Levels.NITRO: {
 		"level": Levels.NITRO,
@@ -89,6 +90,7 @@ var level_settings: Dictionary = {
 		"level": Levels.DUEL,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
+		"time_limit": 100,
 		},
 	Levels.DEBUG_RACE: {
 		"level": Levels.DEBUG_RACE,
@@ -100,6 +102,7 @@ var level_settings: Dictionary = {
 		"level": Levels.DEBUG_DUEL,
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
+		"time_limit": 10,
 		},
 }
 
@@ -112,16 +115,15 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 var selected_level: int
 var bolts_activated: Array # napolne so ob izbiri
 
-
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-	var debug_level = Levels.OSMICA
+#	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
-#	var debug_level = Levels.DUEL
+	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	
@@ -133,7 +135,6 @@ func set_game_settings(selected_level) -> void:
 		Levels.TRAINING: 
 			current_level_settings = level_settings[Levels.TRAINING]
 			current_game_settings["start_countdown"] = false
-#			current_game_settings["race_mode"] = false
 			current_game_settings["select_feature_mode"] = true			
 			current_game_settings["race_mode"] = true
 		Levels.NITRO: 
@@ -146,11 +147,13 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = false
-#			current_game_settings["lap_mode"] = true
 		Levels.DUEL: 
 			current_level_settings = level_settings[Levels.DUEL]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["select_feature_mode"] = true
+			current_game_settings["spawn_pickables_mode"] = true
+			current_game_settings["sudden_death_mode"] = true
+			current_game_settings["stopwatch_mode"] = false		
 		Levels.DEBUG_RACE: 
 			current_level_settings = level_settings[Levels.DEBUG_RACE]
 			current_game_settings["start_countdown"] = false
@@ -159,6 +162,9 @@ func set_game_settings(selected_level) -> void:
 			current_level_settings = level_settings[Levels.DEBUG_DUEL]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["select_feature_mode"] = true			
+			current_game_settings["stopwatch_mode"] = false		
+			current_game_settings["sudden_death_mode"] = true
+			current_game_settings["spawn_pickables_mode"] = true
 
 #
 #var default_game_settings: Dictionary = {

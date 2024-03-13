@@ -9,11 +9,12 @@ onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
 
-var current_record_lap_time: int = 0# stotinke
+var current_record_lap_time: int = 0 setget _on_record_changed # stotinke 
 onready var record_lap_label: Label = $GameStats/RecordLap
-onready var game_stats: HBoxContainer = $GameStats
+onready var game_stats: VBoxContainer = $GameStats
 onready var game_timer: Control = $"%GameTimer"
 onready var start_countdown: Control = $"%StartCountdown"
+onready var level_name: Label = $LevelName
 
 
 func _ready() -> void:
@@ -27,26 +28,39 @@ func _ready() -> void:
 	stat_line_topR.visible = false
 	stat_line_btmL.visible = false
 	stat_line_btmR.visible = false
-
+	
 	Ref.game_manager.connect("new_bolt_spawned", self, "_set_spawned_bolt_hud") # signal pride iz GM in pošlje spremenjeno statistiko
 	
 	# stats setup
+	level_name.text = str(Set.Levels.keys()[Ref.game_manager.level_settings["level"]])
 	var stat_lines: Array = [$StatLineRacer1, $StatLineRacer2, $StatLineRacer3, $StatLineRacer4]
 	for stat_line in stat_lines:
+		# najprej skrijem vse in potem pokažem glede na igro
+		for stat in stat_line.get_children():
+			stat.hide()
+		stat_line.player_line.show()
+			
 		if Ref.game_manager.game_settings["race_mode"]:
-			stat_line.stat_life.hide()
-			stat_line.stat_wins.hide()
-		else:
-			stat_line.stat_wins.hide()
-#			stat_line.stat_points.hide()
-			stat_line.stat_laps_count.hide()
+			# player stats
+			stat_line.stat_gas.show()
+			stat_line.stat_laps_count.show()
+			# prikaže se med igro
 			stat_line.stat_fastest_lap.hide()
-			stat_line.stat_gas.hide()
+			stat_line.stat_bullet.hide()	
+			stat_line.stat_misile.hide()	
+			stat_line.stat_shocker.hide()	
+			# game stats
+			if current_record_lap_time == 0:
+				record_lap_label.hide()
+		else:
+			stat_line.stat_life.show()
+			stat_line.stat_bullet.show()	
+			stat_line.stat_misile.show()	
+			stat_line.stat_shocker.show()	
 			record_lap_label.hide()
-			game_timer.hundreds_mode = false
 			game_timer.get_node("Dots2").hide()
 			game_timer.get_node("Hunds").hide()
-			
+		
 			
 func on_game_start():
 	
@@ -72,6 +86,14 @@ func hide_player_stats():
 	
 # PRIVAT ------------------------------------------------------------------------------------------------------------
 
+func _on_record_changed(new_record_time: int): # stotinke 
+	
+	current_record_lap_time = new_record_time 
+	var new_record_lap_time_on_clock: String = Met.get_clock_time(new_record_time)
+	record_lap_label.text = new_record_lap_time_on_clock
+	if not record_lap_label.visible:
+		record_lap_label.show()
+
 	
 func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
@@ -80,17 +102,20 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	match stat_name:
 		# value se preračun na plejerju
 		# player stats
+		"feature_selected":
+			printt("FS",stat_owner_id, stat_name, new_stat_value)
+			
 		"lap_finished":
 			# laps count
 			stat_line_to_change.stat_laps_count.current_stat_value = new_stat_value[0]
 			# fast time
-			var fastest_lap_time: Array = Met.get_clock_time(new_stat_value[1])
-			var fastest_lap_time_on_clock: String = "%02d" % fastest_lap_time[0] + ":" + "%02d" % fastest_lap_time[1] + ":" + "%02d" % fastest_lap_time[2]
+			var fastest_lap_time: int = new_stat_value[1] # stotinke
+			var fastest_lap_time_on_clock: String = Met.get_clock_time(fastest_lap_time)
 			stat_line_to_change.stat_fastest_lap.current_stat_value = fastest_lap_time_on_clock
-			
-			if current_record_lap_time == 0:
-				record_lap_label.text = "Record: 00:00:00"
-			
+			if not stat_line_to_change.stat_fastest_lap.visible:
+				stat_line_to_change.stat_fastest_lap.show()
+			if fastest_lap_time < current_record_lap_time or current_record_lap_time == 0:
+				self.current_record_lap_time = fastest_lap_time
 		"points":
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
 		"wins": 
@@ -100,10 +125,25 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 			stat_line_to_change.stat_life.current_stat_value = new_stat_value # setget
 		"bullet_count": 
 			stat_line_to_change.stat_bullet.current_stat_value = new_stat_value # setget
+			if Ref.game_manager.game_settings["race_mode"]:
+				if new_stat_value == 0:
+					stat_line_to_change.stat_bullet.hide()
+				else:
+					stat_line_to_change.stat_bullet.show()	
 		"misile_count": 
 			stat_line_to_change.stat_misile.current_stat_value = new_stat_value # setget
+			if Ref.game_manager.game_settings["race_mode"]:
+				if new_stat_value == 0:
+					stat_line_to_change.stat_misile.hide()
+				else:
+					stat_line_to_change.stat_misile.show()	
 		"shocker_count": 
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
+			if Ref.game_manager.game_settings["race_mode"]:
+				if new_stat_value == 0:
+					stat_line_to_change.stat_shocker.hide()
+				else:
+					stat_line_to_change.stat_shocker.show()	
 		"gas_count":
 			stat_line_to_change.stat_gas.current_stat_value = new_stat_value # setget
 	
@@ -149,3 +189,8 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 	
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	current_stat_line.visible = true
+
+
+func _on_GameTimer_gametime_is_up() -> void:
+	Ref.game_manager.game_over(Ref.game_manager.GameoverReason.TIME)
+	pass # Replace with function body.

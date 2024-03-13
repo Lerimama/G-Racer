@@ -8,31 +8,30 @@
 atlas = ExtResource( 2 )
 region = Rect2( 24, 0, 8, 8 )
 
-[node name="Stat" type="NinePatchRect"]
+[node name="Stat" type="HBoxContainer"]
 anchor_right = 0.037
 anchor_bottom = 0.022
 margin_left = -1.0
-margin_right = -0.68
-margin_bottom = 0.0799994
+margin_top = -5.0
+margin_right = 16.32
+margin_bottom = 0.0799999
 grow_horizontal = 0
 grow_vertical = 0
-rect_min_size = Vector2( 24, 8 )
-patch_margin_right = 4
 script = ExtResource( 3 )
 
 [node name="Icon" type="TextureRect" parent="."]
-margin_left = 14.0
-margin_right = 22.0
-margin_bottom = 8.0
+margin_top = 4.0
+margin_right = 8.0
+margin_bottom = 13.0
+rect_min_size = Vector2( 0, 9 )
+size_flags_vertical = 8
 texture = SubResource( 1 )
 
 [node name="Label" type="Label" parent="."]
-anchor_top = 0.5
-anchor_bottom = 0.5
-margin_left = 1.0
-margin_top = -8.0
-margin_right = 13.0
-margin_bottom = 5.0
+margin_left = 12.0
+margin_right = 24.0
+margin_bottom = 13.0
+size_flags_vertical = 8
 theme = ExtResource( 1 )
 text = "00"
 align = 2

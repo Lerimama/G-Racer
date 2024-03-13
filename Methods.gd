@@ -16,8 +16,10 @@ func get_clock_time(time_to_split: int): # podane so stotinke
 	var minutes = floor(time_to_split/6000)
 	var seconds = floor(time_to_split/100) - minutes * 60
 	var hundreds = time_to_split - floor(time_to_split / 100) * 100 # od vseh stotink odštejem sotinke znotraj celih sekund
-	
-	return [minutes, seconds, hundreds]	
+
+	# return [minutes, seconds, hundreds]	
+	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds	
+	return time_on_clock
 	
 	
 func sound_stop_fade_out(sound, fade_time: float):

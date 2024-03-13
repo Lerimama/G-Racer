@@ -6,9 +6,11 @@
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 8, 8 )
-margin = Rect2( 0, 1, 0, 0 )
 
 [node name="StatBullet" instance=ExtResource( 3 )]
 
 [node name="Icon" parent="." index="0"]
 texture = SubResource( 1 )
+
+[node name="Label" parent="." index="1"]
+align = 0

@@ -57,36 +57,42 @@ grow_horizontal = 0
 grow_vertical = 0
 alignment = 2
 
-[node name="GameStats" type="HBoxContainer" parent="."]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -111.0
-margin_right = 140.0
-margin_bottom = 26.0
+[node name="LevelName" type="Label" parent="."]
+margin_left = 194.5
+margin_top = 341.0
+margin_right = 445.5
+margin_bottom = 354.0
 grow_horizontal = 2
-theme = ExtResource( 2 )
-script = ExtResource( 7 )
-
-[node name="LevelName" type="Label" parent="GameStats"]
-margin_top = 6.0
-margin_right = 59.0
-margin_bottom = 19.0
 text = "Prva runda"
+align = 1
 __meta__ = {
 "_edit_group_": true
 }
 
+[node name="GameStats" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -126.0
+margin_top = 2.0
+margin_right = 125.0
+margin_bottom = 45.0
+grow_horizontal = 2
+theme = ExtResource( 2 )
+custom_constants/separation = 1
+script = ExtResource( 7 )
+
 [node name="GameTimer" parent="GameStats" instance=ExtResource( 8 )]
 unique_name_in_owner = true
-margin_left = 63.0
-margin_right = 161.0
+margin_left = 0.0
+margin_right = 251.0
 
 [node name="RecordLap" type="Label" parent="GameStats"]
-margin_left = 165.0
-margin_top = 6.0
+margin_top = 27.0
 margin_right = 251.0
-margin_bottom = 19.0
+margin_bottom = 40.0
+grow_horizontal = 2
 text = "Record: 00:00:00"
+align = 1
 uppercase = true
 __meta__ = {
 "_edit_group_": true
@@ -129,3 +135,5 @@ margin_right = 122.5
 custom_fonts/font = ExtResource( 1 )
 text = "DEAD!!!"
 align = 1
+
+[connection signal="gametime_is_up" from="GameStats/GameTimer" to="." method="_on_GameTimer_gametime_is_up"]

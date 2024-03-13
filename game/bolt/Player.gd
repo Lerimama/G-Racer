@@ -20,7 +20,7 @@ onready var feature_action: String = controller_actions["feature_action"]
 # neu
 var feat_selector_alpha: float = 0.3			
 onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
-onready var selected_feat_index: int = 0
+#onready var selected_feat_index: int = 0
 var available_features: Array
 onready var tilt_input_timer: Timer = $TiltTimer
 var tilt_input_time: float = 0.12
@@ -47,29 +47,8 @@ func _input(event: InputEvent) -> void:
 		engine_power = 0
 	
 	# rotation ... rotation_angle se računa na inputu (turn_angle)
-	# tilt na timer
-	if not Ref.game_manager.game_settings["race_mode"]:
-		if Input.is_action_pressed(left_action):
-			if tilt_input_timer.is_stopped() and rotation_dir == 0:
-				tilt_input_timer.start(tilt_input_time)
-			rotation_dir = -1
-		elif Input.is_action_just_released(left_action):
-			rotation_dir = 0
-			if not tilt_input_timer.is_stopped():
-				tilt_input_timer.stop()				
-				tilt_bolt(Vector2.LEFT)
-				
-		if Input.is_action_pressed(right_action):
-			if tilt_input_timer.is_stopped() and rotation_dir == 0:
-				tilt_input_timer.start(tilt_input_time)
-			rotation_dir = 1
-		elif Input.is_action_just_released(right_action):
-			rotation_dir = 0
-			if not tilt_input_timer.is_stopped():
-				tilt_input_timer.stop()				
-				tilt_bolt(Vector2.RIGHT)
+	if Ref.game_manager.game_settings["race_mode"]:
 	# tilt na feature tipko	
-	else:
 		if tilt_ready:
 			rotation_dir = 0
 			var tilt_dir = Input.get_axis(left_action, right_action)
@@ -83,21 +62,43 @@ func _input(event: InputEvent) -> void:
 			
 		else:	
 			rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
-	
-	# select feature and shoot
-	if not Ref.game_manager.game_settings["race_mode"]:
-		if Input.is_action_just_pressed(feature_action):
-				select_feature()
-		if Input.is_action_just_pressed(shoot_action):
-				shoot()
-	# feature select is tilt
+	# tilt na timer
 	else:
+		rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
+		#		if Input.is_action_pressed(left_action):
+		#			if tilt_input_timer.is_stopped() and rotation_dir == 0:
+		#				tilt_input_timer.start(tilt_input_time)
+		#			rotation_dir = -1
+		#		elif Input.is_action_just_released(left_action):
+		#			rotation_dir = 0
+		#			if not tilt_input_timer.is_stopped():
+		#				tilt_input_timer.stop()				
+		#				tilt_bolt(Vector2.LEFT)
+		#
+		#		if Input.is_action_pressed(right_action):
+		#			if tilt_input_timer.is_stopped() and rotation_dir == 0:
+		#				tilt_input_timer.start(tilt_input_time)
+		#			rotation_dir = 1
+		#		elif Input.is_action_just_released(right_action):
+		#			rotation_dir = 0
+		#			if not tilt_input_timer.is_stopped():
+		#				tilt_input_timer.stop()				
+		#				tilt_bolt(Vector2.RIGHT)
+	
+	# feature select is tilt
+	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_pressed(feature_action):
 			tilt_ready = true
 		else:
 			tilt_ready = false
 		if Input.is_action_just_pressed(shoot_action):
 			shoot() 
+	# select feature and shoot
+	else:
+		if Input.is_action_just_pressed(feature_action):
+				select_feature()
+		if Input.is_action_just_pressed(shoot_action):
+				shoot()
 			
 		
 var tilt_ready: bool
@@ -147,7 +148,7 @@ func update_feature_selector():
 
 	
 func shoot():
-	
+	print("ŠUT")
 	match selected_feat_index:
 		0: # bullet
 			shooting("bullet")
