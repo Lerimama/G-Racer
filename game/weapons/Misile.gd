@@ -42,7 +42,7 @@ onready var MisileExplosion = preload("res://game/weapons/MisileExplosionParticl
 onready var MisileTrail = preload("res://game/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://game/weapons/MisileDropParticles.tscn")
 
-# NEW
+# NEU
 onready var weapon_profile: Dictionary = Pro.weapon_profiles["misile"]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
@@ -51,6 +51,8 @@ onready var lifetime: float = weapon_profile["lifetime"]
 onready var inertia: float = weapon_profile["inertia"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
+var misile_active: bool = true
+onready var vision_ray: RayCast2D = $RayCast2D
 
 func _ready() -> void:
 	
@@ -73,18 +75,13 @@ func _ready() -> void:
 	Ref.node_creation_parent.add_child(new_misile_trail)
 	
 
+				
+					
 func _physics_process(delta: float) -> void:
 	
 	time += delta
 	
-	# detect avtorja ... prva je zato, ker se zgodi hitreje
-	if spawner_detect.get_overlapping_bodies().empty() == true:
-		collision_shape.disabled = false
-	else:
-		for body in spawner_detect.get_overlapping_bodies():
-			if body == spawned_by:
-#			if body.name == spawned_by:
-				collision_shape.disabled = true
+
 	# pospeševanje
 	if time < lifetime:
 		var accelaration_tween = get_tree().create_tween()
@@ -110,16 +107,39 @@ func _physics_process(delta: float) -> void:
 	velocity = direction * speed
 	move_and_slide(velocity) 
 	
-	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
-	if get_slide_count() != 0:
-		collision = get_slide_collision(0) # we wan't to take the first collision
-		if collision.collider != spawned_by:
-#		if collision.collider.name != spawned_by:
-			explode()
-			if collision.collider.has_method("on_hit"):
-				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+	# način s kolizijami
+	#	# detect avtorja ... prva je zato, ker se zgodi hitreje
+	#	if spawner_detect.get_overlapping_bodies().empty() == true:
+	#		collision_shape.disabled = false
+	#	else:
+	#		for body in spawner_detect.get_overlapping_bodies():
+	#			if body == spawned_by:
+	##			if body.name == spawned_by:
+	#				collision_shape.disabled = true
+		
+	#	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
+	#	if get_slide_count() != 0:
+	#		collision = get_slide_collision(0) # we wan't to take the first collision
+	#		if collision.collider != spawned_by:
+	##		if collision.collider.name != spawned_by:
+	#			explode()
+	#			if collision.collider.has_method("on_hit"):
+	#				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
 			
-			
+	if vision_ray.is_colliding():
+		collide()
+		
+		
+func collide():
+	
+	modulate = Color.red
+	var current_collider = vision_ray.get_collider()
+	explode()
+	if current_collider.has_method("on_hit"):
+		current_collider.on_hit(self)
+	velocity = Vector2.ZERO
+	
+				
 func dissarm():
 	
 	# wigle

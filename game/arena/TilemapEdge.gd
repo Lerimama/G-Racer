@@ -13,9 +13,30 @@ func _ready() -> void:
 #	printt("LEVEL EDGE")
 	pass
 	
-func on_hit (collision_object):
 			
-	var collision_position = collision_object.collision.position + collision_object.velocity.normalized() # dodamo malo v smeri gibanja, zato, da je res izbran pravi tile
+#func on_hit (collision_object: Node2D, collision_position: Vector2, collision_normal: Vector2):
+# tilemap prevede pozicijo na najbližjo pozicijo tileta v tilempu  
+# to pomeni da lahko izbriše prazen tile
+# s tem ko poziciji dodamo nekaj malega v smeri gibanja izstrelka, poskrbimo, da je izbran pravi tile
+
+func on_hit (collision_object):
+#	var collision_position = collision_object.collision.position + collision_object.velocity.normalized() # dodamo malo v smeri gibanja, zato, da je res izbran pravi tile
+#	if collision_object is Bullet: # poškodovana zadeta celica
+		
+#	collision_position +=  collision_object.velocity.normalized() # dodamo malo v smeri gibanja, zato, da je res izbran pravi tile
+	
+	var collision_position: Vector2
+	var collision_normal: Vector2
+	
+	collision_position = collision_object.vision_ray.get_collision_point() + collision_object.velocity.normalized()
+	collision_normal = collision_object.vision_ray.get_collision_normal()
+#	if collision_object is Bullet: # poškodovana zadeta celica
+#		collision_position = collision_object.vision_ray.get_collision_point() + collision_object.velocity.normalized()
+#		collision_normal = collision_object.vision_ray.get_collision_normal()
+#	else:
+#		collision_position = collision_object.global_position + collision_object.velocity.normalized() * 1.1
+#		collision_normal = Vector2.ZERO
+		
 	var cell_position: Vector2 = world_to_map(collision_position) # katera celica je bila zadeta glede na global coords
 	var cell_index: int = get_cellv(cell_position) # index zadete celice na poziciji v grid koordinatah
 	
@@ -23,7 +44,8 @@ func on_hit (collision_object):
 		if collision_object is Bullet: # poškodovana zadeta celica
 			var cell_region_position = get_cell_autotile_coord(cell_position.x, cell_position.y) # položaj celice v autotile regiji
 			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
-			release_debris(collision_object.collision)
+			release_debris(collision_position, collision_normal)
+#			release_debris(collision_object.collision)
 		
 		elif collision_object is Misile: # uničena zadeta celica in poškodovane vse sosednje
 			set_cellv(cell_position, -1) # namestimo celico s prazno
@@ -31,15 +53,18 @@ func on_hit (collision_object):
 			explode_tile(cell_position)
 	
 
-func release_debris(collision):
+func release_debris(collision_position: Vector2, collision_normal: Vector2):
+#func release_debris(collision):
 
 	var new_debris_particles = DebrisParticles.instance() 
-	new_debris_particles.position = collision.position
-	new_debris_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
+	new_debris_particles.position = collision_position
+	new_debris_particles.rotation = collision_normal.angle() # rotacija partiklov glede na normalo površine 
+#	new_debris_particles.position = collision.position
+#	new_debris_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
 	new_debris_particles.color = light_color
 	new_debris_particles.z_index = z_index + Set.explosion_z_index
 	new_debris_particles.set_emitting(true)
-#	Ref.effects_creation_parent.add_child(new_debris_particles)
+#	Ref.node_creation_parent.add_child(new_debris_particles)
 	Ref.node_creation_parent.add_child(new_debris_particles)
 
 

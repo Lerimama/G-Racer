@@ -564,7 +564,8 @@ func spawn_floating_tag(value = 0):
 		new_floating_tag.label.text = str(value)
 	elif value > 0:
 		new_floating_tag.label.text = "+" + str(value)
-		
+	
+	
 		
 # UTILITY ----------------------------------------------------------------------------
 

@@ -37,6 +37,8 @@ var position_indikator: Node2D	# debug
 onready var NewLevel: PackedScene = level_settings["level_scene"]
 onready var game_music: AudioStreamPlayer = $"../Sounds/NitroMusic"
 
+# neu
+var checkpoints_per_lap: int
 
 func _input(event: InputEvent) -> void:
 
@@ -60,6 +62,7 @@ func _ready() -> void:
 	
 	Ref.game_manager = self	
 	Ref.current_level = null # da deluje reštart
+	
 	
 func _process(delta: float) -> void:
 	
@@ -110,7 +113,7 @@ func start_game():
 	if Ref.hud: # debug
 		Ref.hud.on_game_start()
 	
-	if not game_settings["race_mode"]:
+	if not game_settings["spawn_pickables_mode"]:
 		spawn_pickable()
 		
 	game_on = true
@@ -208,22 +211,22 @@ func spawn_pickable():
 				pickables_for_selection.append(pickable)
 		var random_pickables_key: String = Met.get_random_member(pickables_for_selection)
 		var random_pickable_path = Pro.pickable_profiles[random_pickables_key]["scene_path"]
-
 		# žrebanje pozicije
 		var random_cell_position: Vector2 = Met.get_random_member(navigation_positions)
-
 		# spawn
 		var new_pickable = random_pickable_path.instance()
 		new_pickable.global_position = random_cell_position
 		add_child(new_pickable)
-
 		# odstranim celico iz arraya tistih na voljo
 		var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
 		available_pickable_positions.remove(random_cell_position_index)		
 
 	# random timer reštart
-	var random_pickable_spawn_time: int = Met.get_random_member([1,2,3,4,5])
-	pickable_timer.start(random_pickable_spawn_time)
+	var random_pickable_spawn_time: int = Met.get_random_member([1,2,3])
+#	pickable_timer.start(random_pickable_spawn_time)
+	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # za dojet
+	spawn_pickable()
+	
 	
 
 func spawn_level():
@@ -252,8 +255,8 @@ func spawn_level():
 
 #var laps_limit: int = 30
 #var bolts_across_checkpoint: Array = [] # da ne dupliciram prevoženih čekpointov
-var laps_finished: int
-var checkpoints_per_lap: int
+#var laps_finished: int
+
 
 
 
@@ -267,8 +270,8 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 	
 	var current_race_time: float  = Ref.hud.game_timer.current_game_time # skupne stotinke
 	
+	laps_limit = 2 # debug
 	
-	laps_limit = 2
 	
 	# LAP
 	# če je prevozil vse čekpointe v krogu, mu štejem krog
@@ -293,15 +296,6 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 			# sprožim time floating tag
 			printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.current_game_time)
 			
-
-#func on_bolt_across_checkpoint(bolt_checked: KinematicBody2D):
-#
-#	# če je čekpoint prevožen prvič v krogu
-##	if not bolts_across_checkpoint.has(bolt_checked):
-##		bolts_across_checkpoint.append(bolt_checked)
-#		# mu povečam št prevoženih čekpointov
-#	bolt_checked.checkpoints_reached += 1
-		
 
 func get_ingame_ranking():
 # najbližje točke vseh boltov primerjam (po indexu na vodilni racing liniji) 

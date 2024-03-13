@@ -53,12 +53,13 @@ var default_game_settings: Dictionary = {
 	"area_hole_drag_force_div": 5.0,
 	"area_nitro_drag_force_div": 500.0,
 	"pull_penalty_gas": -20,
-	"pickables_count_limit": 3,
+	"pickables_count_limit": 5,
 	# modes
 	"race_mode": false, # ranking, gas use, enemy AI
 	"suddent_death_mode": false,
 	"sudden_death_limit": 20,
 	"select_feature_mode": false,
+	"spawn_pickables_mode": true,
 #	"lap_mode": false,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu
@@ -118,9 +119,9 @@ func _ready() -> void:
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-#	var debug_level = Levels.OSMICA
+	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
-	var debug_level = Levels.DUEL
+#	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	
@@ -139,10 +140,12 @@ func set_game_settings(selected_level) -> void:
 			current_level_settings = level_settings[Levels.NITRO]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
+			current_game_settings["spawn_pickables_mode"] = false
 		Levels.OSMICA: 
 			current_level_settings = level_settings[Levels.OSMICA]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
+			current_game_settings["spawn_pickables_mode"] = false
 #			current_game_settings["lap_mode"] = true
 		Levels.DUEL: 
 			current_level_settings = level_settings[Levels.DUEL]

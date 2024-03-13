@@ -7,8 +7,8 @@
 
 [sub_resource type="PhysicsMaterial" id=14]
 
-[sub_resource type="RectangleShape2D" id=6]
-extents = Vector2( 4, 4 )
+[sub_resource type="CircleShape2D" id=26]
+radius = 4.0
 
 [sub_resource type="Animation" id=24]
 length = 0.001
@@ -123,7 +123,7 @@ region_enabled = true
 region_rect = Rect2( 32, 8, 8, 8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 6 )
+shape = SubResource( 26 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 24 )

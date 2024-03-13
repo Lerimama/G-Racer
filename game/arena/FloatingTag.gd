@@ -13,7 +13,7 @@ onready var label: Label = $Tag/Label
 func _ready() -> void:
 
 	modulate.a = 1
-	animation_player.play("show_lap")
+	animation_player.play("float_lap")
 	# KVEFRI je v animaciji
 
 

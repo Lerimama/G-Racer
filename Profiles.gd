@@ -46,28 +46,28 @@ var pickable_profiles: Dictionary = {
 	
 	"BULLET": { # BULLET
 		"for_random_selection": true,
-		"pickable_color": Set.color_gray0,
+		"pickable_color": Set.color_green,
 		"pickable_value": 20,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"), # pot rabim samo pri random spawnanju
 	},
 	"MISILE": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_gray0,
+		"pickable_color": Set.color_green,
 		"pickable_value": 2,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
 	}, 
 	"SHOCKER": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_gray0,
+		"pickable_color": Set.color_green,
 		"pickable_value": 3,
 		"pickable_time": 10, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 	}, 
 	"SHIELD": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_gray0,
+		"pickable_color": Set.color_green,
 		"pickable_value": 1,
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
@@ -102,14 +102,14 @@ var pickable_profiles: Dictionary = {
 	},
 	"TRACKING": {
 		"for_random_selection": false,
-		"pickable_color": Color.white,
+		"pickable_color": Set.color_green,
 		"pickable_value": 0.7,
 		"pickable_time": 10, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
 	"POINTS": {
 		"for_random_selection": true,
-		"pickable_color": Color.blue,
+		"pickable_color": Set.color_blue,
 		"pickable_value": 100, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickablePoints.tscn"),
@@ -208,7 +208,7 @@ var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 
 var weapon_profiles : Dictionary = {
 	"bullet": {
-		"reload_time": 0.2,
+		"reload_time": 0.1,
 		"hit_damage": 1,
 		"speed": 1000,
 		"lifetime": 1.0, #domet vedno merim s časom
