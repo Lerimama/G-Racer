@@ -38,7 +38,6 @@ var default_game_settings: Dictionary = {
 	"start_player_count": 1,
 	"game_time_limit": 0, # če je 0 ni omejitve
 	"stopwatch_mode": true,
-#	"timer_mode_countdown": false,
 	"gameover_countdown_duration": 5,
 	"start_countdown": true,
 	# bricks and area values
@@ -57,7 +56,7 @@ var default_game_settings: Dictionary = {
 	# modes
 	"race_mode": false, # ranking, gas use, enemy AI
 	"sudden_death_mode": false,
-	"sudden_death_limit": 2, # koliko pred koncem
+	"sudden_death_limit": 10, # koliko pred koncem
 	"select_feature_mode": false,
 	"spawn_pickables_mode": true,
 #	"lap_mode": false,
@@ -77,7 +76,8 @@ var level_settings: Dictionary = {
 	Levels.NITRO: {
 		"level": Levels.NITRO,
 		"level_path": "res://game/levels/LevelNitro.tscn",
-		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
 		"lap_limit": 1,
 		},
 	Levels.OSMICA: {
@@ -90,7 +90,7 @@ var level_settings: Dictionary = {
 		"level": Levels.DUEL,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
-		"time_limit": 100,
+		"time_limit": 15,
 		},
 	Levels.DEBUG_RACE: {
 		"level": Levels.DEBUG_RACE,
@@ -121,9 +121,9 @@ func _ready() -> void:
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-#	var debug_level = Levels.OSMICA
+	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
-	var debug_level = Levels.DUEL
+#	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	

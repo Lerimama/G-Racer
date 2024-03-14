@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://game/ui/hud/HudGameTimer.gd" type="Script" id=1]
+[ext_resource path="res://game/ui/hud/HudGameTimer_with_timer_node.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=3]
 [ext_resource path="res://assets/fonts/menu_font.tres" type="DynamicFont" id=4]
@@ -73,3 +73,8 @@ size_flags_vertical = 8
 custom_fonts/font = ExtResource( 3 )
 text = "00"
 valign = 2
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 100.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

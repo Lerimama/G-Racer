@@ -58,8 +58,8 @@ func _ready() -> void:
 			stat_line.stat_misile.show()	
 			stat_line.stat_shocker.show()	
 			record_lap_label.hide()
-			game_timer.get_node("Dots2").hide()
-			game_timer.get_node("Hunds").hide()
+#			game_timer.get_node("Dots2").hide()
+#			game_timer.get_node("Hunds").hide()
 		
 			
 func on_game_start():

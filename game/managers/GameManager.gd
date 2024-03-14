@@ -30,7 +30,8 @@ onready var game_settings: Dictionary = Set.current_game_settings # ga med igro 
 onready var navigation_line: Line2D = $"../NavigationPath"
 onready var pickable_timer: Timer = $"../PickableTimer"
 onready var player_bolt = preload("res://game/bolt/Player.tscn")
-onready var enemy_bolt = load("res://game/bolt/Enemy.tscn")
+#onready var enemy_bolt = load("res://game/bolt/Enemy.tscn")
+onready var enemy_bolt = load("res://game/bolt/EnemyRacing.tscn")
 
 # temp 
 var position_indikator: Node2D	# debug
