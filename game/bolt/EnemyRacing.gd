@@ -1,5 +1,5 @@
 extends Bolt
-class_name Enemy
+#class_name Enemy
 
 signal path_changed (path)
 # signal target_reached
@@ -93,12 +93,12 @@ func _physics_process(delta: float) -> void:
 	collision = move_and_collide(velocity * delta, false)
 	if collision:
 		on_collision()
+#	print("visi")
 	
 	vision(delta)
 
 
 func vision(delta: float):
-	
 #	if control_enabled:
 	if bolt_active:
 		

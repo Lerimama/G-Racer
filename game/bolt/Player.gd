@@ -149,6 +149,7 @@ func update_feature_selector():
 	
 func shoot():
 	print("ŠUT")
+	selected_feat_index = 0 # debug
 	match selected_feat_index:
 		0: # bullet
 			shooting("bullet")

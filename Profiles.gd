@@ -134,6 +134,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile" : "ARROWS",
 		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/Player.tscn"),
 	},
 	Bolts.P2 : {
 		"player_name" : "Zed",
@@ -141,6 +142,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_color" : Set.color_red,
 		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/Player.tscn"),
 	},
 	Bolts.P3 : {
 		"player_name" : "Dot",
@@ -149,6 +151,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 #		"controller_profile" : "ARROWS",
 		"controller_profile" : "JP1",
 		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/Player.tscn"),
 	},
 	Bolts.P4 : {
 		"player_name" : "Jax",
@@ -157,6 +160,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"controller_profile" : "JP2",
 #		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/Player.tscn"),
 	},
 	Bolts.ENEMY : {
 		"player_name" : "Rat",
@@ -165,6 +169,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_color" : Set.color_gray0,
 		"controller_profile" : "AI",
 		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/Enemy.tscn"),
 	},
 }
 
@@ -266,6 +271,14 @@ var default_controller_actions : Dictionary = {
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		feature_action = "jp2_feature",
+	},
+	"AI" : {
+		fwd_action = "nn",
+		rev_action = "nn",
+		left_action = "nn",
+		right_action = "nn",
+		shoot_action = "nn",
+		feature_action = "nn",
 	},
 }
 

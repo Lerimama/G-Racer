@@ -5,7 +5,7 @@ class_name Bolt, "res://assets/class_icons/bolt_icon.png"
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
 signal bolt_activity_changed (bolt_is_active)
 
-enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY} # glede na moč motorja
+enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 

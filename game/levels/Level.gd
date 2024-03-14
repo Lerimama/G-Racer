@@ -11,7 +11,7 @@ onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
 
-onready var level_positions: Array = $Positions.get_children()
+onready var level_position_nodes: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
 
 # floor
@@ -86,9 +86,14 @@ func _ready() -> void:
 
 
 func on_all_is_set():
-		
-	emit_signal("level_is_set", level_positions, navigation_cells, navigation_cells_positions, checkpoints_count)
 	
+#	var level_positions: Array
+#	for node in level_position_nodes:
+#		level_positions.append(node.global_position)	
+	
+	emit_signal("level_is_set", level_position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
+#	print(level_position_nodes)
+#	print(level_positions)
 		
 func set_level_floor():
 	# poberi vse celice podna, tudi prazne

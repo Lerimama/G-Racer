@@ -94,7 +94,7 @@ script = ExtResource( 6 )
 
 [node name="Positions" type="Node2D" parent="."]
 
-[node name="CameraStartPosition" type="Position2D" parent="Positions"]
+[node name="StartPosition" type="Position2D" parent="Positions"]
 position = Vector2( 97, 72 )
 
 [node name="SpawnPosition1" type="Position2D" parent="Positions"]
@@ -108,6 +108,9 @@ position = Vector2( 97, 272 )
 
 [node name="SpawnPosition4" type="Position2D" parent="Positions"]
 position = Vector2( 545, 272 )
+
+[node name="GoalPosition" type="Position2D" parent="Positions"]
+position = Vector2( 144, 64 )
 
 [node name="RacingLine" type="Node2D" parent="."]
 script = ExtResource( 9 )
@@ -206,9 +209,6 @@ texture = SubResource( 1 )
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="FinishLine"]
 position = Vector2( 72, 4 )
 shape = SubResource( 514 )
-
-[node name="IdleTarget" type="Position2D" parent="."]
-position = Vector2( 144, 64 )
 
 [node name="Sounds" type="Node" parent="."]
 

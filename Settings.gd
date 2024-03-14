@@ -72,18 +72,21 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelTraining.tscn",
 #		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
 		"time_limit": 10,
+		"lap_limit": 0,
 		},
 	Levels.NITRO: {
 		"level": Levels.NITRO,
 		"level_path": "res://game/levels/LevelNitro.tscn",
-#		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
-		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
+		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+#		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
+		"time_limit": 0,
 		"lap_limit": 1,
 		},
 	Levels.OSMICA: {
 		"level": Levels.OSMICA,
 		"level_path": "res://game/levels/Level8.tscn",
 		"level_scene": preload("res://game/levels/Level8.tscn"),
+		"time_limit": 0,
 		"lap_limit": 2,
 		},
 	Levels.DUEL: {
@@ -91,11 +94,13 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
 		"time_limit": 15,
+		"lap_limit": 0,
 		},
 	Levels.DEBUG_RACE: {
 		"level": Levels.DEBUG_RACE,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDebugRace.tscn"),
+		"time_limit": 0,
 		"lap_limit": 1,
 		},
 	Levels.DEBUG_DUEL: {
@@ -103,6 +108,7 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
 		"time_limit": 10,
+		"lap_limit": 0,
 		},
 }
 

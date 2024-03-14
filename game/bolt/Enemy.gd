@@ -41,94 +41,257 @@ onready var engine_power_idle = Pro.enemy_profile["engine_power_idle"]
 onready var engine_power_battle = Pro.enemy_profile["engine_power_battle"]
 onready var shooting_ability = Pro.enemy_profile["shooting_ability"]
 
+# neu
+enum AIStates {
+	IDLE,
+	RACING,
+	FOLLOWING
+	# ni še
+	ATTACKING,
+	SEARCHING,
+	PATROLING,
+	WANDERING,
+	DYING,
+	DISSARAY,	
+}
+var current_ai_state: int = 0 setget _on_ai_state_change
 
-func _ready() -> void:
+onready var detect_area: Node2D = $DetectArea
+onready var detect_left: Area2D = $DetectArea/DetectLeft
+onready var detect_right: Area2D = $DetectArea/DetectRight
+onready var detect_front: Area2D = $DetectArea/DetectFront
+onready var detect_back: Area2D = $DetectArea/DetectBack
+
+var level_goal_position: Vector2 = Ref.game_manager.level_goal_position
+var detected_bodies: Array
+var detected_players: Array
 	
+	
+func _ready() -> void:
 	randomize()
 	
 	# player setup
 	player_profile = Pro.default_player_profiles[bolt_id]
 	player_name = player_profile["player_name"]
+	print(player_name)
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
 	bolt_sprite.modulate = bolt_color
 	
 	add_to_group(Ref.group_enemies)
+
+#	seek_ray.cast_to.x = seek_distance
+#	level_goal_position = Ref.game_manager.
+	seek_ray.cast_to = Vector2.ZERO
+
+
+
+func _physics_process(delta: float) -> void:
+
+
+#	print(target_location)
+	set_motion_states()
+	set_target_location(target_location) # tukaj setamo target reached na false
+	acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power # * 0
+	#	var drag_force = drag * velocity * velocity.length() / 100 # množenje z velocity nam da obliko vektorja
+	#	acceleration -= drag_force
 	
-	seek_ray.cast_to.x = seek_distance
+	if bolt_active:	# ai je kot kontrole pri plejerju
+#		velocity += acceleration * delta
+		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
+		# tole je načeloma nepomembno
+#		rotation_angle = rotation_dir * deg2rad(turn_angle)
+#		rotate(delta * rotation_angle)
+		steering(delta) # more bi pred rotacijo, da se upošteva
+		rotation = velocity.angle() 
+		
+		# seek ray
+		seek_ray.cast_to.x = global_position.distance_to(target_location)
+		seek_ray.look_at(target_location)
+		
+#		vision(delta)
+		set_ai_states()
+		
+		match current_ai_state:
+			AIStates.IDLE:
+				pass
+			AIStates.RACING:
+				pass
+			AIStates.FOLLOWING:
+				pass
+				
+	collision = move_and_collide(velocity * delta, false)
+	if collision:
+		on_collision()
 	
+
+var max_engine_power = 50
+var follow_angle_limit = 15
+var target_body
+
+func set_ai_states():
+#	printt("do plejerja", get_rotation_degrees())
+	
+	# če ni zaznal pleyerja
+	if detected_players.empty():
+		if not current_ai_state == AIStates.RACING:
+			self.current_ai_state = AIStates.RACING
+		return
+	
+	# če je plejer znotraj omejitev mu sledim (v obliki stožca, kjer je širina na oddaljenost
+	# če plejer ustreza parametrom
+	for detected_player in detected_players:
+		var distance_to_player: float = global_position.distance_to(detected_player.global_position) 
+		var vector_to_player: Vector2 = detected_player.global_position - global_position 
+		var angle_to_player: float = rad2deg(global_position.angle_to(vector_to_player)) - get_rotation_degrees() + 30
+#		printt("do plejerja", rad2deg(global_position.angle()), get_rotation_degrees() + 30, angle_to_player)
+		
+		# v limitah razdalje
+		if seek_ray.is_colliding():
+			if not seek_ray.get_collider() is Bolt:
+				printt ("COL", seek_ray.get_collider())	
+		if distance_to_player > 50:
+			# v limitah kota
+			if angle_to_player >  -follow_angle_limit and angle_to_player < follow_angle_limit:
+				if not current_ai_state == AIStates.FOLLOWING:
+					self.current_ai_state = AIStates.FOLLOWING
+				target_location = detected_player.global_position
+				# multiplejer izbira
+				return	
+				
+		# če funkcija ni returnana, preklopim na racing			
+		if not current_ai_state == AIStates.RACING:
+			self.current_ai_state = AIStates.RACING	
+	
+					
+#			var distance_to_target: float = global_position.distance_to(body.global_position) 
+#			var vector_to_target: Vector2 = global_position- body.global_position 
+#
+#			target_location = body.global_position
+#			if not current_ai_state == AIStates.FOLLOWING:
+#				self.current_ai_state = AIStates.FOLLOWING
+#				if angle_to_target >  - follow_angle and angle_to_target < follow_angle:
+#					print("inside")
+##					self.current_ai_state = AIStates.FOLLOWING
+##					target_location = body.global_position
+#				else:
+#					print("outside")
+##					self.current_ai_state = AIStates.RACING					
+#
+#				if distance_to_target < 10:
+#					if not current_ai_state == AIStates.RACING:
+#						self.current_ai_state = AIStates.RACING					
+			
+			
+			
+			
+#			# če telo ni player ga ignorira
+#		else:
+#			if not current_ai_state == AIStates.RACING:
+#					self.current_ai_state = AIStates.RACING					
+
+				
+
+
+
+func _on_ai_state_change (new_ai_state: int):
+	printt("new state", new_ai_state)
+	match new_ai_state:
+		AIStates.IDLE:
+			target_location = level_goal_position
+			bolt_sprite.modulate = Color.white
+		AIStates.RACING:
+			target_location = level_goal_position
+			bolt_sprite.modulate = Set.color_yellow
+			engine_power = 5
+			
+		AIStates.FOLLOWING:
+			bolt_sprite.modulate = Set.color_red
+			engine_power = 0
+	current_ai_state = new_ai_state
+	
+
+func _on_DetectArea_body_entered(body: Node) -> void:
+	detected_bodies.append(body)
+	if body is Player:
+		detected_players.append(body)
+
+func _on_DetectArea_body_exited(body: Node) -> void:
+	detected_bodies.erase(body)
+	detected_players.erase(body)
+	
+	
+
+
+
+
+
+
+
+
+
+
+func vision(delta: float):
+
+	# čekiraj ovire pred sabo
+	vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost
+	if vision_ray_front.is_colliding() and not vision_ray_front.get_collider().is_in_group(Ref.group_bolts):
+		velocity *= idle_brake_factor	
+#	# večno iskanje tarče
+#	if seek_ray.is_colliding() and seek_ray.get_collider().is_in_group(Ref.group_bolts):
+#		var collider = seek_ray.get_collider()
+#		target_location = collider.global_position
+#		if collider.velocity.length() < target_speed_slow:
+#			rotation = (target_location - global_position).angle() # kot vektorja AB = B - A
+#			look_at(target_location)
+#		seek_ray.look_at(target_location)
+#		battle(collider)
+#		bolt_sprite.modulate = Color.red
+#
+#	else:
+	idle() # vklopi idle režim
+	bolt_sprite.modulate = bolt_color
+#	seek_ray.rotation += seek_rotation_speed * delta
+#	if seek_ray.get_rotation_degrees() > seek_rotation_range or seek_ray.get_rotation_degrees() < - seek_rotation_range:
+#		seek_rotation_speed *= -1
+				
+##	if control_enabled:
+#	if bolt_active:
+#
+#		# čekiraj ovire pred sabo
+#		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost
+#		if vision_ray_front.is_colliding() and not vision_ray_front.get_collider().is_in_group(Ref.group_bolts):
+#			velocity *= idle_brake_factor
+#
+#		# večno iskanje tarče
+#		if seek_ray.is_colliding() and seek_ray.get_collider().is_in_group(Ref.group_bolts):
+#			var collider = seek_ray.get_collider()
+#			target_location = collider.global_position
+#			if collider.velocity.length() < target_speed_slow:
+#				rotation = (target_location - global_position).angle() # kot vektorja AB = B - A
+#				look_at(target_location)
+#			seek_ray.look_at(target_location)
+#			battle(collider)
+#			bolt_sprite.modulate = Color.red
+#
+#		else:
+#			idle() # vklopi idle režim
+#			bolt_sprite.modulate = bolt_color
+#			seek_ray.rotation += seek_rotation_speed * delta
+#			if seek_ray.get_rotation_degrees() > seek_rotation_range or seek_ray.get_rotation_degrees() < - seek_rotation_range:
+#				seek_rotation_speed *= -1
+#
+#	# reset vision ray
+#	elif not bolt_active:
+##	elif not control_enabled:
+#		seek_ray.rotation = 0
+
+
 	
 func set_motion_states():
 	
 	if velocity.length() > stop_speed:
 		current_motion_state = MotionStates.FWD
 #		fwd_motion = true # bolt var
-
-
-func _physics_process(delta: float) -> void:
-	
-#	print(target_location)
-	set_target_location(target_location) # tukaj setamo target reached na false
-	
-	set_motion_states()
-		
-	set_target_location(target_location) # tukaj setamo target reached na false
-	acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power # * 0
-
-#	var drag_force = drag * velocity * velocity.length() / 100 # množenje z velocity nam da obliko vektorja
-#	acceleration -= drag_force
-
-#	if control_enabled:
-	if bolt_active:
-#		velocity += acceleration * delta
-		navigation_agent.set_velocity(velocity) # vedno za kustom velocity izračunom
-
-		# tole je načeloma nepomembno
-#		rotation_angle = rotation_dir * deg2rad(turn_angle)
-#		rotate(delta * rotation_angle)
-
-		steering(delta) # more bi pred rotacijo, da se upošteva
-		rotation = velocity.angle() 
-
-
-	collision = move_and_collide(velocity * delta, false)
-	if collision:
-		on_collision()
-	
-	vision(delta)
-
-
-func vision(delta: float):
-	
-#	if control_enabled:
-	if bolt_active:
-		
-		# čekiraj ovire pred sabo
-		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost
-		if vision_ray_front.is_colliding() and not vision_ray_front.get_collider().is_in_group(Ref.group_bolts):
-			velocity *= idle_brake_factor
-		
-		# večno iskanje tarče
-		if seek_ray.is_colliding() and seek_ray.get_collider().is_in_group(Ref.group_bolts):
-			var collider = seek_ray.get_collider()
-			target_location = collider.global_position
-			if collider.velocity.length() < target_speed_slow:
-				rotation = (target_location - global_position).angle() # kot vektorja AB = B - A
-				look_at(target_location)
-			seek_ray.look_at(target_location)
-#			battle(collider)
-			bolt_sprite.modulate = Color.red
-			
-		else:
-			idle() # vklopi idle režim
-			bolt_sprite.modulate = bolt_color
-			seek_ray.rotation += seek_rotation_speed * delta
-			if seek_ray.get_rotation_degrees() > seek_rotation_range or seek_ray.get_rotation_degrees() < - seek_rotation_range:
-				seek_rotation_speed *= -1
-				
-	# reset vision ray
-	elif not bolt_active:
-#	elif not control_enabled:
-		seek_ray.rotation = 0
 
 
 func idle():
@@ -138,7 +301,7 @@ func idle():
 	var idle_target_cell: Vector2 = global_position # določena pozicija prve random celice
 	var idle_area: Array = []
 	
-	idle_target_cell = Ref.current_level.get_node("IdleTarget").global_position
+
 	
 	# position node
 #	target_location = idle_target_cell # boltova tarča je random tarča
@@ -237,3 +400,6 @@ func set_target_location (target: Vector2):
 func _on_NavigationAgent2D_path_changed() -> void:
 	emit_signal("path_changed", navigation_agent.get_nav_path()) # levelu preko arene pošljemo točke poti do cilja
 	pass
+
+
+
