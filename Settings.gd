@@ -64,7 +64,7 @@ var default_game_settings: Dictionary = {
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu
 }
 
-enum Levels {TRAINING, NITRO, OSMICA, DUEL, DEBUG_RACE, DEBUG_DUEL}
+enum Levels {TRAINING, NITRO, OSMICA, DUEL, DEBUG_RACE, DEBUG_DUEL, NITRO_STRAIGHT}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
@@ -78,6 +78,14 @@ var level_settings: Dictionary = {
 		"level": Levels.NITRO,
 		"level_path": "res://game/levels/LevelNitro.tscn",
 		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+#		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
+		"time_limit": 0,
+		"lap_limit": 1,
+		},
+	Levels.NITRO_STRAIGHT: {
+		"level": Levels.NITRO_STRAIGHT,
+#		"level_path": "res://game/levels/LevelNitro.tscn",
+		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
 #		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
 		"time_limit": 0,
 		"lap_limit": 1,
@@ -125,9 +133,10 @@ func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
+	var debug_level = Levels.NITRO_STRAIGHT
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-	var debug_level = Levels.OSMICA
+#	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
 #	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
@@ -145,6 +154,11 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["race_mode"] = true
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
+			current_game_settings["start_countdown"] = false
+			current_game_settings["race_mode"] = true
+			current_game_settings["spawn_pickables_mode"] = false
+		Levels.NITRO_STRAIGHT: 
+			current_level_settings = level_settings[Levels.NITRO_STRAIGHT]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = false

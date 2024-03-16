@@ -24,6 +24,7 @@ onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
 var available_features: Array
 onready var tilt_input_timer: Timer = $TiltTimer
 var tilt_input_time: float = 0.12
+var tilt_ready: bool
 
 # debug
 onready var ray_cast_2d: RayCast2D = $RayCast2D
@@ -101,7 +102,6 @@ func _input(event: InputEvent) -> void:
 				shoot()
 			
 		
-var tilt_ready: bool
 	
 func _ready() -> void:
 	
@@ -137,14 +137,11 @@ func _physics_process(delta: float) -> void:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 
 
-
-
 func update_feature_selector():
 	
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
-	
 
 	
 func shoot():
@@ -157,7 +154,6 @@ func shoot():
 			shooting("misile")
 		2: # shocker
 			shooting("shocker")
-			
 
 
 func select_feature():
@@ -201,7 +197,7 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	pull_tween.parallel().tween_property(self, "modulate:a", 1, pull_time/2).set_delay(pull_time/2).set_ease(Tween.EASE_IN)
 	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	
-	update_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
+	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
 	
 	# ugasnem trail
 	if bolt_trail_active:

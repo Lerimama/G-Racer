@@ -129,6 +129,18 @@ func _ready() -> void:
 #	energy_bar_holder.hide()
 	bolt_hud.hide()
 	
+func set_motion_states():
+	if engine_power > 0:
+		current_motion_state = MotionStates.FWD
+#		if Ref.game_manager.game_settings["race_mode"]:
+#			update_gas(fwd_gas_usage)
+	elif engine_power < 0:
+		current_motion_state = MotionStates.REV
+#		if Ref.game_manager.game_settings["race_mode"]:
+#			update_gas(rev_gas_usage)
+	elif engine_power == 0:
+		current_motion_state = MotionStates.IDLE	
+	
 
 func _physics_process(delta: float) -> void:
 	# aktivacija pospeška je setana na vozniku
@@ -137,45 +149,29 @@ func _physics_process(delta: float) -> void:
 	
 	# animiran bolt
 	#bolt_sprite.rotation = - global_rotation
-	
-	# set motion states
-	if engine_power > 0:
-		current_motion_state = MotionStates.FWD
-		if Ref.game_manager.game_settings["race_mode"]:
-			update_gas(fwd_gas_usage)
-	elif engine_power < 0:
-		current_motion_state = MotionStates.REV
-		if Ref.game_manager.game_settings["race_mode"]:
-			update_gas(rev_gas_usage)
-	elif engine_power == 0:
-		current_motion_state = MotionStates.IDLE
-	
-	if Ref.game_manager.game_settings["race_mode"]:
-		gas_count = clamp(gas_count, 0, gas_count)
-		if bolt_active:
-			if gas_count <= 0: # če zmanjka bencina je deaktiviran
-				self.bolt_active = false
-		else: 	
-			drag_force_div = lerp(drag_force_div, 1, 0.05) # če je deaktiviran povečam drag in ga postopoma ustavim
-	
+		
 	# sila upora raste s hitrostjo		
 	var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
-		
 	# hitrost je pospešek s časom
 	acceleration -= drag_force
 	velocity += acceleration * delta
 	rotation_angle = rotation_dir * deg2rad(turn_angle)
-	# print(velocity.length(), drag_force)
 	rotate(delta * rotation_angle)
 	steering(delta)	# vpliva na ai !!!
 	
 	collision = move_and_collide(velocity * delta, false)
-
 	if collision:
 		on_collision()	
+
+	set_motion_states()
+	if Ref.game_manager.game_settings["race_mode"]:
+		if current_motion_state == MotionStates.FWD:
+			manage_gas(fwd_gas_usage)
+		elif current_motion_state == MotionStates.REV:
+			manage_gas(rev_gas_usage)
+	manage_motion_fx()
+	manage_bolt_hud()
 	
-	motion_fx()
-	update_bolt_hud()
 	if Ref.game_manager.game_settings["race_mode"]:
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
@@ -261,7 +257,7 @@ func steering(delta: float) -> void:
 	rotation = new_heading.angle() # sprite se obrne v smeri	
 
 
-func motion_fx():
+func manage_motion_fx():
 
 	# position2D
 	# var rear_engine_pos: Vector2 = bolt_sprite.get_node("RearEnginePosition").position
@@ -315,19 +311,6 @@ func motion_fx():
 		engine_particles_front_right.modulate.a = 1
 
 
-func spawn_new_trail():
-	
-	var new_bolt_trail: Object
-	new_bolt_trail = BoltTrail.instance()
-	new_bolt_trail.modulate.a = bolt_trail_alpha
-	new_bolt_trail.z_index = z_index + Set.trail_z_index
-	Ref.node_creation_parent.add_child(new_bolt_trail)
-	
-	bolt_trail_active = true	
-	
-	return new_bolt_trail
-	
-	
 func manage_trail():
 	# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
 	
@@ -350,14 +333,18 @@ func manage_trail():
 		bolt_trail_active = false # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
 
 
-func update_gas(gas_amount: float):
-	
-	gas_count += gas_amount
+func manage_gas(gas_usage: float):
+				
+	gas_count += gas_usage
 	gas_count = clamp(gas_count, 0, gas_count)
+	
+	if gas_count == 0: # če zmanjka bencina je deaktiviran
+		self.bolt_active = false
+	
 	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
 	
 
-func update_bolt_hud():
+func manage_bolt_hud():
 	
 	if not bolt_hud.visible:
 		bolt_hud.show()
@@ -374,20 +361,20 @@ func update_bolt_hud():
 			energy_bar.color = Set.color_green
 
 
-func update_energy_bar():
-	
-	if not energy_bar_holder.visible:
-		energy_bar_holder.show()
-		
-	# energy_bar
-	energy_bar_holder.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-	energy_bar_holder.global_position = global_position + Vector2(0, 8) # negiramo rotacijo bolta, da je pri miru
-
-	energy_bar.scale.x = energy / max_energy
-	if energy_bar.scale.x <= 0.5:
-		energy_bar.color = Set.color_red
-	else:
-		energy_bar.color = Set.color_green
+#func update_energy_bar():
+#
+#	if not energy_bar_holder.visible:
+#		energy_bar_holder.show()
+#
+#	# energy_bar
+#	energy_bar_holder.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
+#	energy_bar_holder.global_position = global_position + Vector2(0, 8) # negiramo rotacijo bolta, da je pri miru
+#
+#	energy_bar.scale.x = energy / max_energy
+#	if energy_bar.scale.x <= 0.5:
+#		energy_bar.color = Set.color_red
+#	else:
+#		energy_bar.color = Set.color_green
 			
 
 # LIFE CYCLE ----------------------------------------------------------------------------
@@ -525,6 +512,7 @@ func revive_bolt():
 	visible = true
 	bolt_active = true
 
+
 # RACE ----------------------------------------------------------------------------
 
 
@@ -582,7 +570,20 @@ func spawn_floating_tag(value = 0):
 		
 # UTILITY ----------------------------------------------------------------------------
 
-		
+
+func spawn_new_trail():
+	
+	var new_bolt_trail: Object
+	new_bolt_trail = BoltTrail.instance()
+	new_bolt_trail.modulate.a = bolt_trail_alpha
+	new_bolt_trail.z_index = z_index + Set.trail_z_index
+	Ref.node_creation_parent.add_child(new_bolt_trail)
+	
+	bolt_trail_active = true	
+	
+	return new_bolt_trail
+	
+			
 func set_engines():
 	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
 	var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)

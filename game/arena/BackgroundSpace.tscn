@@ -30,6 +30,7 @@ color = Color( 0.0607605, 0.0675389, 0.0859375, 1 )
 position = Vector2( 735, 550 )
 rotation = 1.57079
 scale = Vector2( 1.2, 1.2 )
+emitting = false
 amount = 77
 lifetime = 10.0
 randomness = 1.0

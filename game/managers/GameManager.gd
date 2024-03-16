@@ -179,6 +179,7 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 
 	var new_bolt = NewBolt.instance()
 	new_bolt.bolt_id = spawned_bolt_id
+#	new_bolt.bolt_id = spawned_bolt_index
 	new_bolt.global_position = spawn_position_node.global_position
 	Ref.node_creation_parent.add_child(new_bolt)
 	new_bolt.rotation_degrees = spawn_position_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
@@ -188,10 +189,6 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 
 	
 #	new_bolt.set_physics_process(false)
-
-
-
-
 
 
 	new_bolt.connect("bolt_activity_changed", self, "_on_Bolt_activity_changed")
