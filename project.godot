@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Bolt",
 "class": "Enemy",
 "language": "GDScript",
-"path": "res://game/bolt/Enemy.gd"
+"path": "res://game/bolt/EnemyRacing.gd"
 }, {
 "base": "Node",
 "class": "GameManager",

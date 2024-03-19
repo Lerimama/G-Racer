@@ -149,6 +149,10 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
 	
 func _set_spawned_bolt_hud(bolt_index, bolt_id):
+	
+	if bolt_id == 4: # če je enemy ne pokažem statsov
+		return
+	
 	var current_stat_line: Control
 	
 	# poveži plejerja in stat line ... v slovarju

@@ -30,18 +30,32 @@ var tilt_ready: bool
 onready var ray_cast_2d: RayCast2D = $RayCast2D
 onready var ray_cast_2d_2: RayCast2D = $RayCast2D2	
 
+var in_fast_start: bool
+#onready var slow_start_engine_power: float = 0 # poveča se samo če zgrešiš start
+onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
+var fast_start_enabled: bool
+var in_start: bool
+
 
 func _input(event: InputEvent) -> void:
 	
 	if not bolt_active:
 		return
 	
-#	if Input.is_action_just_pressed("f"):
-#		on_item_picked("BULLET")
+	if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: #slow_start_engine_power == fwd_engine_power: # če še ni štartal (drugače bi bila slow start power še defoltna)
+			slow_start_engine_power = 0
+			 
+			print("fast start")
 
-	# velocity
+		
 	if Input.is_action_pressed(fwd_action):
-		engine_power = fwd_engine_power
+		if slow_start_engine_power == fwd_engine_power:
+			var slow_start_tween = get_tree().create_tween()
+			slow_start_tween.tween_property(self, "slow_start_engine_power", 0, 1).set_ease(Tween.EASE_IN)
+			print("slow start")
+			
+		engine_power = fwd_engine_power - slow_start_engine_power
+
 	elif Input.is_action_pressed(rev_action):
 		engine_power = - rev_engine_power
 	else:			
@@ -100,7 +114,6 @@ func _input(event: InputEvent) -> void:
 				select_feature()
 		if Input.is_action_just_pressed(shoot_action):
 				shoot()
-			
 		
 	
 func _ready() -> void:
@@ -120,11 +133,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
 	
-#	if camera_follow:
-#		camera.position = position
-
+	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
 		
 	if Ref.game_manager.game_settings["select_feature_mode"]:
 		update_feature_selector()

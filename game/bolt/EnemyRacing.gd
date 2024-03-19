@@ -1,5 +1,5 @@
 extends Bolt
-#class_name Enemy
+class_name Enemy
 
 signal path_changed (path)
 

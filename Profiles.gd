@@ -169,7 +169,8 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_color" : Set.color_gray0,
 		"controller_profile" : "AI",
 		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/Enemy.tscn"),
+#		"player_scene": preload("res://game/bolt/Enemy.tscn"),
+		"player_scene": preload("res://game/bolt/EnemyRacing.tscn"),
 	},
 }
 

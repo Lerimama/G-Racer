@@ -54,6 +54,7 @@ var default_game_settings: Dictionary = {
 	"pull_penalty_gas": -20,
 	"pickables_count_limit": 5,
 	# modes
+	"precision_start_drag_force_div": 500.0,
 	"race_mode": false, # ranking, gas use, enemy AI
 	"sudden_death_mode": false,
 	"sudden_death_limit": 10, # koliko pred koncem
@@ -133,8 +134,8 @@ func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
-	var debug_level = Levels.NITRO_STRAIGHT
-#	var debug_level = Levels.DEBUG_RACE
+#	var debug_level = Levels.NITRO_STRAIGHT
+	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
 #	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
@@ -159,7 +160,7 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["spawn_pickables_mode"] = false
 		Levels.NITRO_STRAIGHT: 
 			current_level_settings = level_settings[Levels.NITRO_STRAIGHT]
-			current_game_settings["start_countdown"] = false
+#			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = false
 		Levels.OSMICA: 
@@ -176,7 +177,8 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["stopwatch_mode"] = false		
 		Levels.DEBUG_RACE: 
 			current_level_settings = level_settings[Levels.DEBUG_RACE]
-			current_game_settings["start_countdown"] = false
+#			current_game_settings["start_countdown"] = false
+			current_game_settings["spawn_pickables_mode"] = false
 			current_game_settings["race_mode"] = true
 		Levels.DEBUG_DUEL: 
 			current_level_settings = level_settings[Levels.DEBUG_DUEL]

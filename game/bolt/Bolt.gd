@@ -101,6 +101,7 @@ var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pog
 var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
 var current_lap_time: float # statistika
 var fastest_lap_time: float # statistika
+var current_race_ranking: int # 
 #onready var selected_feature_index: int = 0
 onready var selected_feat_index: int = 0
 
@@ -143,6 +144,7 @@ func set_motion_states():
 	
 
 func _physics_process(delta: float) -> void:
+#	printt("RANK", current_race_ranking)
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power

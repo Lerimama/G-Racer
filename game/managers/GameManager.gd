@@ -29,9 +29,6 @@ onready var level_settings: Dictionary = Set.current_level_settings # ga med igr
 onready var game_settings: Dictionary = Set.current_game_settings # ga med igro ne spreminjaš
 onready var navigation_line: Line2D = $"../NavigationPath"
 onready var pickable_timer: Timer = $"../PickableTimer"
-#onready var player_bolt = preload("res://game/bolt/Player.tscn")
-#onready var enemy_bolt = load("res://game/bolt/Enemy.tscn")
-#onready var enemy_bolt = load("res://game/bolt/EnemyRacing.tscn")
 
 # temp 
 var position_indikator: Node2D	# debug
@@ -42,6 +39,7 @@ onready var game_music: AudioStreamPlayer = $"../Sounds/NitroMusic"
 var checkpoints_per_lap: int
 var level_goal_position: Vector2
 var level_start_position: Vector2
+var enemy_racing_point_offset: int = 50 # prediction points length ... č
 
 
 func _input(event: InputEvent) -> void:
@@ -75,7 +73,7 @@ func _process(delta: float) -> void:
 
 	if game_on: 
 		if game_settings["race_mode"]:
-			get_ingame_ranking()
+			get_game_ranking()
 	
 	
 func set_game(): # kliče main.gd pred fejdin igre
@@ -85,8 +83,10 @@ func set_game(): # kliče main.gd pred fejdin igre
 	var current_bolts_activated: Array = Set.bolts_activated
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
-		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.ENEMY] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+#		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
 	var bolt_index: int = 0
@@ -105,11 +105,15 @@ func set_game(): # kliče main.gd pred fejdin igre
 			yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
 	start_game()
 
+var fast_start_window: bool = false
+
+
 
 func start_game():
 	
 	if level_settings["level"] == Set.Levels.NITRO:
 		Met.sound_play_fade_in(game_music, 0, 2)
+	
 	for bolt in bolts_in_game:
 #		bolt.set_physics_process(true)
 		bolt.bolt_active = true
@@ -122,6 +126,11 @@ func start_game():
 		spawn_pickable()
 		
 	game_on = true
+	
+	# fast start
+	fast_start_window = true	
+	yield(get_tree().create_timer(0.5), "timeout") # za dojet
+	fast_start_window = false	
 		
 		
 func game_over(gameover_reason: int):
@@ -146,7 +155,7 @@ func game_over(gameover_reason: int):
 		print("GO FAIL")
 	elif gameover_reason == GameoverReason.FAIL:
 		print("GO TIME")
-#	stop_game_elements()
+	#	stop_game_elements()
 	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 	
 	Ref.current_camera.follow_target = null
@@ -185,11 +194,7 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 	new_bolt.rotation_degrees = spawn_position_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	
 	# new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
-
-
-	
 #	new_bolt.set_physics_process(false)
-
 
 	new_bolt.connect("bolt_activity_changed", self, "_on_Bolt_activity_changed")
 	if new_bolt.is_in_group(Ref.group_enemies):
@@ -204,10 +209,7 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 	
 	bolts_on_start.append(new_bolt)
 
-#	if game_on: 
-#		if game_settings["race_mode"]:
-#			get_ingame_ranking()
-	Ref.current_camera.follow_target = new_bolt
+	Ref.current_camera.follow_target = new_bolt # začasen holder, ki se obdrži, če se ob štartu ne seta posebej (racing se ...) 
 
 
 func spawn_pickable():
@@ -235,10 +237,8 @@ func spawn_pickable():
 
 	# random timer reštart
 	var random_pickable_spawn_time: int = Met.get_random_member([1,2,3])
-#	pickable_timer.start(random_pickable_spawn_time)
 	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # za dojet
 	spawn_pickable()
-	
 	
 
 func spawn_level():
@@ -270,7 +270,7 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 	
 	var time_to_finish: float = 2 # čas za druge, da dosežejo cilj
 	var laps_limit: int = level_settings["lap_limit"]
-#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
+	#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
 	
 	var current_race_time: float  = Ref.hud.game_timer.absolute_game_time # skupne stotinke
 	
@@ -301,11 +301,11 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 			printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.absolute_game_time)
 			
 
-func get_ingame_ranking():
-# najbližje točke vseh boltov primerjam (po indexu na vodilni racing liniji) 
-## problem ... trenutnega načina je da rangira plejerje glede na index točke znotraj njene linije
-## rad bi ... ko vodilni plejer zamenja linijo se le-ta zamenja
-## rešitev ... ko enkrat vem kdo je leading plejer, moram rangirat samo glede na njegovo linijo
+func get_game_ranking():
+	# najbližje točke vseh boltov primerjam (po indexu na vodilni racing liniji) 
+	## problem ... trenutnega načina je da rangira plejerje glede na index točke znotraj njene linije
+	## rad bi ... ko vodilni plejer zamenja linijo se le-ta zamenja
+	## rešitev ... ko enkrat vem kdo je leading plejer, moram rangirat samo glede na njegovo linijo
 	
 	# vodilna racing linija
 	if leading_racing_line == null:
@@ -317,28 +317,43 @@ func get_ingame_ranking():
 		else:
 			line.modulate = Color.white
 					
-	# za vse bolte
+	# VSI BOLTI
 	var all_bolts_on_racing_line: Array = get_racing_line_bolts() # array ima bolta, index najbližje točke na svoji liniji, točko (global position) in index linije
 	all_bolts_on_racing_line.sort_custom(self, "sort_ascending") # sortiram da dobim ven vodilnega
-	
 	# vodilni bolt
 	var leading_bolt_on_racing_line: Array = all_bolts_on_racing_line[0]
 	var leading_racing_point_index: int = leading_bolt_on_racing_line[1]
 	var leading_bolt: KinematicBody2D = leading_bolt_on_racing_line[0]
-	
-	# vsi bolti v lasti playerjev
+	# player ali enemy
 	var players_on_racing_line: Array
+	var enemies_on_racing_line: Array
 	for bolt_on_racing_line in all_bolts_on_racing_line:
+		# set bolt ranking
+		bolt_on_racing_line[0].current_race_ranking = all_bolts_on_racing_line.find(bolt_on_racing_line) + 1
+		# če je plejer ga dodam me plejerje
 		if bolt_on_racing_line[0] is Player and bolt_on_racing_line[0].bolt_active:
 			players_on_racing_line.append(bolt_on_racing_line)
+		elif bolt_on_racing_line[0] is Enemy and bolt_on_racing_line[0].bolt_active:
+			enemies_on_racing_line.append(bolt_on_racing_line)
 			
-	# vodilni player
-	# če je še kakšen aktiven player, mu kamera sledi
+	# ENEMIES ... setam nav target
+	var enemy_racing_line: Line2D = level_racing_lines[0]
+	for enemy_on_racing_line in enemies_on_racing_line:
+		var enemy_racing_line_point: Vector2 = enemy_racing_line.get_points()[enemy_on_racing_line[1]]
+		var enemy_racing_line_point_index: int = enemy_racing_line.get_points().find(enemy_racing_line_point)
+		# če je pika znotraj obsega minus offset, ji dodajam predikcijo
+		if enemy_racing_line_point_index <  enemy_racing_line.get_points().size() - enemy_racing_point_offset:
+			var enemy_racing_line_offset_point: Vector2 = enemy_racing_line.get_points()[enemy_on_racing_line[1] + enemy_racing_point_offset]
+			enemy_on_racing_line[0].navigation_target_position = enemy_racing_line_offset_point
+		# če ni, offset zmanjšam ... tako se na pride na 0
+		else:
+			enemy_racing_point_offset -= 1
+		
+	# PLAYERS ... setam vodilnega, vodilno linijo in tarčo kamere
 	if not players_on_racing_line.empty(): 
 		var leading_player_on_racing_line: Array = players_on_racing_line[0] # players_on_racing_line so že rangirani zato je 0 prvi
 		leading_player = leading_player_on_racing_line[0]
 		leading_racing_line = level_racing_lines[leading_player_on_racing_line[2]]
-		
 		# debug ... indikator
 		if level_settings["level"] == Set.Levels.DEBUG_RACE:
 			var leading_point_index: int = leading_player_on_racing_line[1]
@@ -346,11 +361,9 @@ func get_ingame_ranking():
 			position_indikator.global_position = leading_point
 			position_indikator.scale = Vector2(3,3)
 			position_indikator.modulate = leading_player.bolt_color
-			
 		# camera follow
 		if not Ref.current_camera.follow_target == leading_player: # da kamera ne reagira, če je že setan isti plejer
 			Ref.current_camera.follow_target = leading_player
-	
 	# če so vsi neaktivni, lokacija kamere ostane ista
 	else:
 		Ref.current_camera.follow_target = null
@@ -364,9 +377,9 @@ func sort_ascending(array_1, array_2):
 
 
 func get_racing_line_bolts():
-# za vsakega aktivnega bolta naberem najbližje točke na racing liniji 
-# za vodilnega preverjam vse racing linije
-# za ostale preverjam samo pozicijo na racing liniji
+	# za vsakega aktivnega bolta naberem najbližje točke na racing liniji 
+	# za vodilnega preverjam vse racing linije
+	# za ostale preverjam samo pozicijo na racing liniji
 
 	var bolts_on_racing_line: Array	# paketi podatkov o boltu in njegovi pozicij na racing liniji	
 	
@@ -397,7 +410,21 @@ func get_racing_line_bolts():
 				# na koncu imam vodilnemu boltu najbližjo točko in njeno linijo
 				# opredelim najbližjo linijo kot vodilno
 				leading_racing_line = closest_racing_line
-		# če ni vodilni, mu preverjam samo vodilno linijo					
+		# če je enemy mu preverjam samo glavno
+		elif bolt is Enemy:	
+			for line_point in level_racing_lines[0].get_points():
+				var distance_to_point: float = bolt.global_position.distance_to(line_point)
+				# če je prva distance jo štejem in zapišem lokacijo točke na liniji
+				if shortest_distance == 0:
+					shortest_distance = distance_to_point
+					closest_racing_line_point = line_point
+					closest_racing_line = leading_racing_line # nepotrebna vrstica ... da lahko kaj dam v boltov array na koncu
+				# če je nižja od trenutne jo zamenjam in zapišem lokacijo točke na liniji
+				elif distance_to_point < shortest_distance:
+					shortest_distance = distance_to_point
+					closest_racing_line_point = line_point
+					closest_racing_line = leading_racing_line # nepotrebna vrstica ... da lahko kaj dam v boltov array na koncu						
+		# če ni vodilni, mu preverjam samo vodilno linijo	
 		else:
 			for line_point in leading_racing_line.get_points():
 				var distance_to_point: float = bolt.global_position.distance_to(line_point)
@@ -422,40 +449,6 @@ func get_racing_line_bolts():
 	
 	return bolts_on_racing_line
 
-	
-func get_racing_line_bolts_v1():
-	
-	var bolts_on_racing_line: Array	# paketi podatkov o boltu in njegovi pozicij na racing liniji	
-		
-	# najprej čekiram najbližje točke za vsakega na progi
-	for bolt in bolts_in_game:
-		
-		# naberem razdalje vseh točk do bolta
-		var distances: Array
-		var current_shortest_distance: float = 0
-		var current_closest_racing_line_point: Vector2
-		for line_point in level_racing_points:
-			var distance_to_point: float = bolt.global_position.distance_to(line_point)
-			# če je prva distance jo štejem in zapišem lokacijo točke na liniji
-			if current_shortest_distance == 0:
-				current_shortest_distance = distance_to_point
-				current_closest_racing_line_point = line_point
-			# če je nižja od trenutne jo zamenjam in zapišem lokacijo točke na liniji
-			elif distance_to_point < current_shortest_distance:
-				current_shortest_distance = distance_to_point
-				current_closest_racing_line_point = line_point
-		
-		# ko pregleda vse točke na racing liniji ... določim najbližko točko na racing liniji
-		var closest_racing_line_point = current_closest_racing_line_point
-		# določim še index te točke v racing liniji
-		var bolt_racing_line_point_index = level_racing_points.find(closest_racing_line_point)
-		# zapišem najbližjo racing line točko k boltu
-		var bolt_on_racing_line: Array = [bolt, bolt_racing_line_point_index, closest_racing_line_point]
-		# podatek pripnem k vsem boltom na racing liniji 	
-		bolts_on_racing_line.append(bolt_on_racing_line)
-	
-	return bolts_on_racing_line
-				
 	
 func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 	# na koncu izbrana pull pozicija:
@@ -488,7 +481,7 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 					# preverim, da je dovolj stran od vodilnega
 					if cell_position.distance_to(leading_player.global_position) > pull_position_distance_from_leader:
 						available_navigation_pull_positions.append(cell_position)
-#						# nazadnje preverim, da se ne pokriva z območjem drugega plejerja ... ne deluje ravno
+						# nazadnje preverim, da se ne pokriva z območjem drugega plejerja ... ne deluje ravno
 						for area in bolt_areas:
 							if not area.has_point(cell_position):
 								navigation_position_as_pull_position = cell_position
@@ -516,6 +509,7 @@ func _on_Bolt_activity_changed(bolt: KinematicBody2D):
 	
 	if bolt.bolt_active == false:
 		check_for_game_over()
+
 	
 func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array, level_checkpoints_count: int):
 	

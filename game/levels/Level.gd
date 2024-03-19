@@ -1,6 +1,6 @@
 extends Node2D
 
-
+signal level_navigation_finished(navigation)
 signal level_is_set(navigation, spawn_positions, other_)
 
 
@@ -10,9 +10,6 @@ var start_lights: Node2D # opredeli se, če je semafor spawnan (če je na tilema
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
-
-onready var level_position_nodes: Array = $Positions.get_children()
-onready var racing_line: Node2D = $RacingLine
 
 # floor
 var corner_cell_TopL_regions: Array = [
@@ -50,6 +47,16 @@ var corner_cell_BtmR_regions: Array = [
 onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
 onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 
+# navigacija
+var navigation_cells: Array
+var navigation_cells_positions: Array
+var checkpoints_count: int
+
+onready var racing_navigation_agent: NavigationAgent2D = $Positions/StartPosition/NavigationAgent2D
+onready var level_navigation_line: Line2D = $LevelNavigactionLine
+onready var level_position_nodes: Array = $Positions.get_children()
+onready var racing_line: Node2D = $RacingLine
+
 # sounds
 onready var sounds: Node = $Sounds
 onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
@@ -62,38 +69,43 @@ onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
-#neu
-var navigation_cells: Array
-var navigation_cells_positions: Array
-#onready var finish_line: Area2D = $FinishLine
-#onready var checkpoint: Area2D = $Checkpoint
-var checkpoints_count: int
-
 
 func _ready() -> void:
+	# debug
 	printt("LEVEL")
-	
+#	$Comments.hide()
+#	$ScreenSize.hide()
+#	$RacingLine.hide()
+#	$RacingLine.hide()
+#	level_navigation_line.hide()
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
-	racing_line.hide()	
 	
-	set_level_floor()
-	set_level_elements()
-	set_level_edge() # more bit po elementsih zato, da se prilagodi navigacija ... 
-	on_all_is_set() # singal
+	set_level_floor() # lukenje
+	set_level_elements() # elementi
+	set_level_edge() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
+	get_navigation_racing_line()
+	on_all_is_set() # pošljem vsebino levela v GM
 
 
+func get_navigation_racing_line():
+	
+	racing_navigation_agent.set_target_location(level_position_nodes[5].global_position)
+	level_navigation_line.points = racing_navigation_agent.get_nav_path()
+	
+
+	
+func _physics_process(delta: float) -> void:
+	
+	racing_navigation_agent.get_next_location()
+	
+	
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
 
 
 func on_all_is_set():
 	
-#	var level_positions: Array
-#	for node in level_position_nodes:
-#		level_positions.append(node.global_position)	
-	
 	emit_signal("level_is_set", level_position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
-#	print(level_position_nodes)
-#	print(level_positions)
+
 		
 func set_level_floor():
 	# poberi vse celice podna, tudi prazne
@@ -112,6 +124,7 @@ func set_level_floor():
 		
 		if cell_index == -1:
 			spawn_hole(cell_global_position)
+			non_navigation_cell_positions.append(cell_global_position)
 
 
 func set_level_elements():
@@ -244,6 +257,7 @@ func set_level_elements():
 func set_level_edge():
 	
 	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
+	var range_to_check = 2 # št. celic v vsako stran čekiranja  
 	
 	for cell in edge_cells:
 		var cell_index = tilemap_edge.get_cellv(cell)
@@ -251,22 +265,28 @@ func set_level_edge():
 		var cell_global_position = tilemap_edge.to_global(cell_local_position)
 		
 		# če je prazna in ni zasedena z elemenotom, jo zamenjam z navigacijsko celico
-		if cell_index == -1 and not non_navigation_cell_positions.has(cell_global_position):
-			tilemap_edge.set_cellv(cell, 13)
-			navigation_cells.append(cell) # grid pozicije
-			navigation_cells_positions.append(cell_global_position)
-			
-			# če ima za soseda rob, potem jo odstranim
-			var cell_in_check: Vector2
-			for y in 5: # pregledam 5 celic v ver in hor smeri
-				for x in 5:
-					cell_in_check = cell + Vector2(x - 2, y - 2) # čekirana celica je v sredini 5 pregledanih celic
-					if tilemap_edge.get_cellv(cell_in_check) == 0:
-						tilemap_edge.set_cellv (cell, -1)
-						# zbrišem iz arrayev navigacije
-						navigation_cells.erase(cell)
-						navigation_cells_positions.erase(cell_global_position)
-						break
+		if cell_index == -1:
+			if not non_navigation_cell_positions.has(cell_global_position):
+				tilemap_edge.set_cellv(cell, 13)
+				navigation_cells.append(cell) # grid pozicije
+				navigation_cells_positions.append(cell_global_position)
+				
+				# če ima za soseda rob, pomeni, da je zunanja in jo odstranim
+				var cell_in_check: Vector2
+				var empy_cell_in_check_count: int = 0
+				for y in (range_to_check * 2 + 1): # pregledam 5 celic v ver in hor smeri, s čekirano v sredini
+					for x in (range_to_check * 2 + 1):
+						cell_in_check = cell + Vector2(x - range_to_check, y - range_to_check) # čekirana celica je v sredini 5 pregledanih celic
+						if tilemap_edge.get_cellv(cell_in_check) == 0 and empy_cell_in_check_count != 2:
+							tilemap_edge.set_cellv (cell, -1)
+							# zbrišem iz arrayev navigacije
+							navigation_cells.erase(cell)
+							navigation_cells_positions.erase(cell_global_position)
+							empy_cell_in_check_count += 1
+						else:
+							empy_cell_in_check_count = 0
+#							break
+				print(empy_cell_in_check_count)
 
 
 func get_tilemap_cells(tilemap: TileMap):
@@ -321,5 +341,7 @@ func spawn_hole(global_pos):
 # SIGNALI --------------------------------------------------------------------------------------------------------------------------------
 
 
-func _on_Edge_navigation_completed() -> void:
-	pass # Replace with function body.
+func _on_NavigationAgent2D_path_changed() -> void:
+	
+	level_navigation_line.points = racing_navigation_agent.get_nav_path()
+	
