@@ -181,8 +181,9 @@ var enemy_profile: Dictionary = {
 	"seek_rotation_range": 60,
 	"seek_rotation_speed": 3,
 	"seek_distance": 640 * 0.7,
-	"engine_power_idle": 35,
-	"engine_power_battle": 120, # je enaka kot od  bolta 
+	"racing_engine_power": 35,
+	"idle_engine_power": 35,
+	"battle_engine_power": 120, # je enaka kot od  bolta 
 #	"bullet_push_factor": 0.1,
 #	"misile_push_factor": 0.5,
 	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 

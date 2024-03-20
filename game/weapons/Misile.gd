@@ -9,40 +9,32 @@ var spawned_by_speed: float
 
 # gibanje
 export var speed: float = 20.0
-#export var max_speed: float = 150.0
+
+var misile_active: bool = true
 var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
-#var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
+# var direction_start_range: Array = [-0.1, 0.1] # variacija smeri ob izstrelitvi (trenutno jo upošteva tekom celega leta
 var acceleration_time = 2.0
 var collision: KinematicCollision2D	
-
-#var hit_damage: float = 4
+var misile_time: float = 0 # čas za domet
 var dissarm_speed_drop: float = 3 # notri je to v kvadratni funkciji
 var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
 var wiggle_freq: float = 0.6
-
-# domet
-var time: float = 0
-#export var lifetime: float = 1.0 # zadetek ali domet
-
-#homming
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
-var target_location: Vector2
-onready var target: Node
-
+var homming_target_position: Vector2
 var new_misile_trail: Object
+
 onready var trail_position: Position2D = $TrailPosition
 onready var drop_position: Position2D = $DropPosition
 
 onready var homming_detect: Area2D = $HommingArea
-onready var spawner_detect: Area2D = $DetectArea
 onready var collision_shape: CollisionShape2D = $MisileCollision
+onready var vision_ray: RayCast2D = $RayCast2D
 
 onready var MisileExplosion = preload("res://game/weapons/MisileExplosionParticles.tscn")
 onready var MisileTrail = preload("res://game/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://game/weapons/MisileDropParticles.tscn")
 
-# NEU
 onready var weapon_profile: Dictionary = Pro.weapon_profiles["misile"]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
@@ -51,8 +43,6 @@ onready var lifetime: float = weapon_profile["lifetime"]
 onready var inertia: float = weapon_profile["inertia"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
-var misile_active: bool = true
-onready var vision_ray: RayCast2D = $RayCast2D
 
 func _ready() -> void:
 	
@@ -73,31 +63,29 @@ func _ready() -> void:
 	new_misile_trail.gradient.colors[2] = spawned_by_color
 	new_misile_trail.z_index = z_index + Set.trail_z_index
 	Ref.node_creation_parent.add_child(new_misile_trail)
-	
-
 				
 					
 func _physics_process(delta: float) -> void:
 	
-	time += delta
-	
+	misile_time += delta
 
 	# pospeševanje
-	if time < lifetime:
+	if misile_time < lifetime:
 		var accelaration_tween = get_tree().create_tween()
 		accelaration_tween.tween_property(self ,"speed", max_speed, acceleration_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		new_misile_trail.add_points(trail_position.global_position)
 	# bremzanje	
-	elif time > lifetime:
+	elif misile_time > lifetime:
 		speed -= pow(dissarm_speed_drop, 1.0) # deactivated_speed_drop na kvadrat
 		speed = clamp(speed, 0.0, speed)
 		new_misile_trail.add_points(trail_position.global_position)
 		if speed <= 50.0:
 			dissarm()
-
+	
+	# sledenje
 	if is_homming == true: 
-		direction = lerp(direction, global_position.direction_to(target_location), 0.1) 	
-		rotation = global_position.direction_to(target_location).angle()
+		direction = lerp(direction, global_position.direction_to(homming_target_position), 0.1) 	
+		rotation = global_position.direction_to(homming_target_position).angle()
 		
 		if homming_detect.monitoring != true:
 			homming_detect.monitoring = true
@@ -107,37 +95,33 @@ func _physics_process(delta: float) -> void:
 	velocity = direction * speed
 	move_and_slide(velocity) 
 	
-	# način s kolizijami
-	#	# detect avtorja ... prva je zato, ker se zgodi hitreje
-	#	if spawner_detect.get_overlapping_bodies().empty() == true:
-	#		collision_shape.disabled = false
-	#	else:
-	#		for body in spawner_detect.get_overlapping_bodies():
-	#			if body == spawned_by:
-	##			if body.name == spawned_by:
-	#				collision_shape.disabled = true
-		
-	#	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
-	#	if get_slide_count() != 0:
-	#		collision = get_slide_collision(0) # we wan't to take the first collision
-	#		if collision.collider != spawned_by:
-	##		if collision.collider.name != spawned_by:
-	#			explode()
-	#			if collision.collider.has_method("on_hit"):
-	#				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
-			
+	# preverjam, če se še dotika avtorja
 	if vision_ray.is_colliding():
-		collide()
+		var current_collider = vision_ray.get_collider()
+		if current_collider == spawned_by:
+			collision_shape.disabled = true
+		else:
+			collision_shape.disabled = false
+			
+	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
+	if get_slide_count() != 0:
+		collision = get_slide_collision(0) # we wan't to take the first collision
+		# if collision.collider != spawned_by: # sam sebe lahko ubiješ
+		explode()
+		if collision.collider.has_method("on_hit"):
+			collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
 		
 		
-func collide():
-	
-	modulate = Color.red
-	var current_collider = vision_ray.get_collider()
-	explode()
-	if current_collider.has_method("on_hit"):
-		current_collider.on_hit(self)
-	velocity = Vector2.ZERO
+#func collide():
+#
+#	modulate = Color.red
+#	var current_collider = vision_ray.get_collider()
+#	explode()
+#	if current_collider.has_method("on_hit"):
+#		if current_collider.is_in_group(Ref.group_enemies):
+#			current_collider.on_hit(self)
+#			print (current_collider)
+#	velocity = Vector2.ZERO
 	
 				
 func dissarm():
@@ -186,6 +170,6 @@ func _on_HommingArea_body_entered(body: Node) -> void:
 	if body.is_in_group("Bolts") and body != spawned_by:
 #	if body.is_in_group("Bolts") and body.name != spawned_by:
 		is_homming = true
-		target = body
-		target_location = body.global_position
+#		homming_target = body
+		homming_target_position = body.global_position
 

@@ -58,7 +58,7 @@ var default_game_settings: Dictionary = {
 	"race_mode": false, # ranking, gas use, enemy AI
 	"sudden_death_mode": false,
 	"sudden_death_limit": 10, # koliko pred koncem
-	"select_feature_mode": false,
+#	"select_feature_mode": false,
 	"spawn_pickables_mode": true,
 #	"lap_mode": false,
 #	"dogfight_mode": false,
@@ -135,9 +135,9 @@ func _ready() -> void:
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.NITRO_STRAIGHT
-	var debug_level = Levels.DEBUG_RACE
+#	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-#	var debug_level = Levels.OSMICA
+	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
 #	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
@@ -151,7 +151,7 @@ func set_game_settings(selected_level) -> void:
 		Levels.TRAINING: 
 			current_level_settings = level_settings[Levels.TRAINING]
 			current_game_settings["start_countdown"] = false
-			current_game_settings["select_feature_mode"] = true			
+#			current_game_settings["select_feature_mode"] = true			
 			current_game_settings["race_mode"] = true
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
@@ -171,7 +171,7 @@ func set_game_settings(selected_level) -> void:
 		Levels.DUEL: 
 			current_level_settings = level_settings[Levels.DUEL]
 			current_game_settings["start_countdown"] = false
-			current_game_settings["select_feature_mode"] = true
+#			current_game_settings["select_feature_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = true
 			current_game_settings["sudden_death_mode"] = true
 			current_game_settings["stopwatch_mode"] = false		
@@ -183,7 +183,7 @@ func set_game_settings(selected_level) -> void:
 		Levels.DEBUG_DUEL: 
 			current_level_settings = level_settings[Levels.DEBUG_DUEL]
 			current_game_settings["start_countdown"] = false
-			current_game_settings["select_feature_mode"] = true			
+#			current_game_settings["select_feature_mode"] = true			
 			current_game_settings["stopwatch_mode"] = false		
 			current_game_settings["sudden_death_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = true

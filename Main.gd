@@ -4,7 +4,6 @@ var fade_time = 0.7
 var camera_shake_on: bool =  true #_temp
 
 
-#onready var home_scene_path: String = "res://home/Home_fast.tscn"
 onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
 #onready var game_scene_path: String = Profiles.current_game_data["game_scene_path"]

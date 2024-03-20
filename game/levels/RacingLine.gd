@@ -1,19 +1,6 @@
 extends Node2D
 
 
-func _ready() -> void:
-	
-	pass
-	
-#func draw_racing_line():
-#
-#	var racing_line: Line2D = $RacingPath
-#	split_line($RacingPath)
-#	printt("P", racing_line.get_points().size())
-#	return racing_line.get_points()
-
-
-	
 func draw_racing_lines():
 	
 	var racing_lines_points: Array

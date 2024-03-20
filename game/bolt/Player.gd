@@ -4,6 +4,8 @@ class_name Player
 
 var player_name: String # za opredelitev statistike
 var controller_profile: Dictionary
+var tilt_input_time: float = 0.12
+var tilt_ready: bool
 
 onready var player_profile: Dictionary = Pro.default_player_profiles[bolt_id]
 onready var controller_profiles: Dictionary = Pro.default_controller_actions
@@ -17,24 +19,11 @@ onready var right_action: String = controller_actions["right_action"]
 onready var shoot_action: String = controller_actions["shoot_action"]
 onready var feature_action: String = controller_actions["feature_action"]
 
-# neu
-var feat_selector_alpha: float = 0.3			
-onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
-#onready var selected_feat_index: int = 0
-var available_features: Array
+onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
 onready var tilt_input_timer: Timer = $TiltTimer
-var tilt_input_time: float = 0.12
-var tilt_ready: bool
 
 # debug
 onready var ray_cast_2d: RayCast2D = $RayCast2D
-onready var ray_cast_2d_2: RayCast2D = $RayCast2D2	
-
-var in_fast_start: bool
-#onready var slow_start_engine_power: float = 0 # poveča se samo če zgrešiš start
-onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
-var fast_start_enabled: bool
-var in_start: bool
 
 
 func _input(event: InputEvent) -> void:
@@ -42,18 +31,17 @@ func _input(event: InputEvent) -> void:
 	if not bolt_active:
 		return
 	
+	# fast start detection
 	if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: #slow_start_engine_power == fwd_engine_power: # če še ni štartal (drugače bi bila slow start power še defoltna)
-			slow_start_engine_power = 0
-			 
-			print("fast start")
-
+		slow_start_engine_power = 0
+		print("fast start")
 		
 	if Input.is_action_pressed(fwd_action):
+		# slow start
 		if slow_start_engine_power == fwd_engine_power:
 			var slow_start_tween = get_tree().create_tween()
 			slow_start_tween.tween_property(self, "slow_start_engine_power", 0, 1).set_ease(Tween.EASE_IN)
 			print("slow start")
-			
 		engine_power = fwd_engine_power - slow_start_engine_power
 
 	elif Input.is_action_pressed(rev_action):
@@ -125,8 +113,8 @@ func _ready() -> void:
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
 	
-#	feat_selector.modulate.a = feat_selector_alpha
 	feat_selector.hide()
+	# debug
 	available_features.append(feat_selector.get_node("Icons/IconBullet"))
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
@@ -136,8 +124,8 @@ func _process(delta: float) -> void:
 	
 	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
 		
-	if Ref.game_manager.game_settings["select_feature_mode"]:
-		update_feature_selector()
+#	if not Ref.game_manager.game_settings["race_mode"]:
+#		update_feature_selector()
 
 	
 func _physics_process(delta: float) -> void:
@@ -147,22 +135,23 @@ func _physics_process(delta: float) -> void:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 
 
-func update_feature_selector():
-	
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
+#func update_feature_selector():
+#
+#	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
+#	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
+#	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
 
 	
 func shoot():
-	print("ŠUT")
-	selected_feat_index = 0 # debug
+	
 	match selected_feat_index:
-		0: # bullet
+		0: # no feature
+			return
+		1: # bullet
 			shooting("bullet")
-		1: # misile
+		2: # misilef
 			shooting("misile")
-		2: # shocker
+		3: # shocker
 			shooting("shocker")
 
 
@@ -175,18 +164,18 @@ func select_feature():
 
 	if not feat_selector.visible:
 		feat_selector.show() # samo prižgem
-	elif feat_selector.visible: # samo dvignem index
-		selected_feat_index += 1
-	
+	#	elif feat_selector.visible: # samo dvignem index
+	#		selected_feat_index += 1
+	selected_feat_index += 1
 	
 	# reset indexa, če je prevelik
-	if selected_feat_index > available_features.size() - 1:
-		selected_feat_index = 0
+	if selected_feat_index > available_features.size():
+		selected_feat_index = 1 # 0 je prazen feature
 	
 	# setam vidnost ikon
 	for feature in available_features:
-		feature.hide() # najprej jo skrijem
-		if feature == available_features[selected_feat_index]: # potem pokažem izbrano 
+		feature.hide() # najprej vse skrijem
+		if feature == available_features[selected_feat_index - 1]: # potem pokažem izbrano .. - 1, ker je 0 prazen feature
 			feature.show()		
 
 
@@ -217,7 +206,6 @@ func pull_bolt_on_screen(pull_position: Vector2):
 
 func _on_SelectorTimer_timeout() -> void:
 	
-#	feat_selector.modulate.a = feat_selector_alpha
 	feat_selector.hide()
 
 

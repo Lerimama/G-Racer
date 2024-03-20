@@ -39,7 +39,6 @@ onready var engine_power_idle = Pro.enemy_profile["engine_power_idle"]
 onready var engine_power_battle = Pro.enemy_profile["engine_power_battle"]
 onready var shooting_ability = Pro.enemy_profile["shooting_ability"]
 
-# neu
 enum AIStates {IDLE, RACING, FOLLOWING,} # MONITORING, ATTACKING, SEARCHING, PATROLING, WANDERING, DYING, DISSARAY,	
 var current_ai_state: int = AIStates.IDLE
 

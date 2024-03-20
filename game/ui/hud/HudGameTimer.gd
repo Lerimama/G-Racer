@@ -25,7 +25,8 @@ func _ready() -> void:
 		stopwatch_mode = true # avtomatično pač ...
 	coundown_second = gameover_countdown_duration
 	modulate = Set.color_hud_base
-#	stopwatch_mode = true
+	# debug
+#	stopwatch_mode = true 
 #	game_time_limit = 10
 
 

@@ -39,8 +39,8 @@ onready var game_music: AudioStreamPlayer = $"../Sounds/NitroMusic"
 var checkpoints_per_lap: int
 var level_goal_position: Vector2
 var level_start_position: Vector2
-var enemy_racing_point_offset: int = 50 # prediction points length ... č
-
+var enemy_racing_point_offset: int = 50 # prediction points length
+var fast_start_window: bool = false
 
 func _input(event: InputEvent) -> void:
 
@@ -50,13 +50,18 @@ func _input(event: InputEvent) -> void:
 		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
 		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
 			
-	if not game_on:
+	if game_on:
 		if Input.is_action_just_pressed("x"):
 			spawn_pickable()
 		if Input.is_action_just_released("r"):
 			call_deferred("game_over", GameoverReason.SUCCES)	
-		if Input.is_action_just_pressed("f") and not bolts_in_game.empty():
-			pass
+#		if Input.is_action_just_pressed("f"):
+#			for bolt in bolts_in_game:
+#				if bolt.selected_feat_index > 2:
+#					bolt.selected_feat_index = 0
+#				else:
+#					bolt.selected_feat_index += 1
+#				print("id", bolt.selected_feat_index)
 
 
 func _ready() -> void:
@@ -83,10 +88,10 @@ func set_game(): # kliče main.gd pred fejdin igre
 	var current_bolts_activated: Array = Set.bolts_activated
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
-#		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.ENEMY] 
-#		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
-#		current_bolts_activated = [Pro.Bolts.P1,Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
 	var bolt_index: int = 0
@@ -104,9 +109,6 @@ func set_game(): # kliče main.gd pred fejdin igre
 			Ref.hud.start_countdown.start_countdown()
 			yield(Ref.hud.start_countdown, "countdown_finished") # sproži ga hud po slide-inu
 	start_game()
-
-var fast_start_window: bool = false
-
 
 
 func start_game():
@@ -188,13 +190,13 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 
 	var new_bolt = NewBolt.instance()
 	new_bolt.bolt_id = spawned_bolt_id
-#	new_bolt.bolt_id = spawned_bolt_index
+	# new_bolt.bolt_id = spawned_bolt_index
 	new_bolt.global_position = spawn_position_node.global_position
 	Ref.node_creation_parent.add_child(new_bolt)
 	new_bolt.rotation_degrees = spawn_position_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	
 	# new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
-#	new_bolt.set_physics_process(false)
+	# new_bolt.set_physics_process(false)
 
 	new_bolt.connect("bolt_activity_changed", self, "_on_Bolt_activity_changed")
 	if new_bolt.is_in_group(Ref.group_enemies):
@@ -529,9 +531,6 @@ func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Ar
 	bolt_spawn_position_nodes = level_positions_nodes
 	level_start_position = level_positions_nodes.pop_front().global_position
 	level_goal_position = level_positions_nodes.pop_back().global_position # vedno zadnja v arrayu
-#	level_start_position = all_level_positions[0]
-#	level_goal_position = all_level_positions[all_level_positions.size() - 1] # vedno zadnja v arrayu
-	
 	
 	# kamera
 	Ref.current_camera.position = level_start_position

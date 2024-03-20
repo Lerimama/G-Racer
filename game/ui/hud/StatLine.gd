@@ -1,6 +1,8 @@
 extends Control
 
 
+var player_name: String = "NN"
+
 # hud colors
 var stat_line_color: Color = Color.white setget _on_bolt_color_set
 
@@ -17,16 +19,9 @@ onready var stat_shocker: HBoxContainer = $StatShocker
 onready var stat_points: HBoxContainer = $StatPoints
 onready var stat_bullet: HBoxContainer = $StatBullet
 onready var stat_gas: HBoxContainer = $StatGas
-
-#neu
 onready var stat_laps_count: HBoxContainer = $StatLapsCount
 onready var stat_fastest_lap: HBoxContainer = $StatFastestLap
 onready var player_line: Control = $PlayerLine
-
-var player_name: String = "NN"
-
-
-# -------------------------------------------------------------------------------------------------------------------------------
 
 
 func _ready() -> void:

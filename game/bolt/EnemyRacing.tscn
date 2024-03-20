@@ -19,44 +19,13 @@ shader_param/texture_size = Vector2( 32, 32 )
 [sub_resource type="CircleShape2D" id=2]
 radius = 56.0
 
-[node name="Enemy" instance=ExtResource( 1 )]
+[node name="EnemyRacing" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
 [node name="Shield" parent="." index="3"]
-visible = false
 material = SubResource( 1 )
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="7"]
-
-[node name="VisionFront" type="RayCast2D" parent="." index="8"]
-visible = false
-enabled = true
-cast_to = Vector2( 100, 0 )
-collide_with_areas = true
-
-[node name="VisionRear" type="RayCast2D" parent="." index="9"]
-visible = false
-enabled = true
-cast_to = Vector2( -50, 0 )
-collide_with_areas = true
-
-[node name="VisionLeft" type="RayCast2D" parent="." index="10"]
-visible = false
-enabled = true
-cast_to = Vector2( 10, -40 )
-collide_with_areas = true
-
-[node name="VisionRight" type="RayCast2D" parent="." index="11"]
-visible = false
-enabled = true
-cast_to = Vector2( 10, 40 )
-collide_with_areas = true
-
-[node name="SeekRay" type="RayCast2D" parent="." index="12"]
-enabled = true
-cast_to = Vector2( 18, 0 )
-
-[node name="DetectArea" type="Node2D" parent="." index="13"]
+[node name="DetectArea" type="Node2D" parent="." index="7"]
 scale = Vector2( 3, 3 )
 
 [node name="DetectLeft" type="Area2D" parent="DetectArea" index="0"]
@@ -96,9 +65,32 @@ monitorable = false
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="DetectArea/DetectBack" index="0"]
 polygon = PoolVector2Array( 0, 0, 39.6667, -39.6667, 56, 0, 39.3332, 39.6668 )
 
-[connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_navigation_finished"]
-[connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
-[connection signal="target_reached" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_target_reached"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="8"]
+
+[node name="SeekRay" type="RayCast2D" parent="." index="9"]
+enabled = true
+cast_to = Vector2( 18, 0 )
+
+[node name="VisionFront" type="RayCast2D" parent="." index="10"]
+enabled = true
+cast_to = Vector2( 100, 0 )
+collide_with_areas = true
+
+[node name="VisionRear" type="RayCast2D" parent="." index="11"]
+visible = false
+cast_to = Vector2( -50, 0 )
+collide_with_areas = true
+
+[node name="VisionLeft" type="RayCast2D" parent="." index="12"]
+visible = false
+cast_to = Vector2( 10, -40 )
+collide_with_areas = true
+
+[node name="VisionRight" type="RayCast2D" parent="." index="13"]
+visible = false
+cast_to = Vector2( 10, 40 )
+collide_with_areas = true
+
 [connection signal="body_entered" from="DetectArea/DetectLeft" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea/DetectLeft" to="." method="_on_DetectArea_body_exited"]
 [connection signal="body_entered" from="DetectArea/DetectRight" to="." method="_on_DetectArea_body_entered"]
@@ -107,3 +99,6 @@ polygon = PoolVector2Array( 0, 0, 39.6667, -39.6667, 56, 0, 39.3332, 39.6668 )
 [connection signal="body_exited" from="DetectArea/DetectFront" to="." method="_on_DetectArea_body_exited"]
 [connection signal="body_entered" from="DetectArea/DetectBack" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea/DetectBack" to="." method="_on_DetectArea_body_exited"]
+[connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_navigation_finished"]
+[connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
+[connection signal="target_reached" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_target_reached"]

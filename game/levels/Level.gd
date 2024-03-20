@@ -7,10 +7,6 @@ signal level_is_set(navigation, spawn_positions, other_)
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 var start_lights: Node2D # opredeli se, če je semafor spawnan (če je na tilemapu)
 
-onready var tilemap_floor: TileMap = $Floor
-onready var tilemap_elements: TileMap = $Elements
-onready var tilemap_edge: TileMap = $Edge
-
 # floor
 var corner_cell_TopL_regions: Array = [
 	Vector2(2,3), Vector2(1,5),
@@ -44,18 +40,21 @@ var corner_cell_BtmR_regions: Array = [
 	Vector2(8,14), Vector2(10,14),
 	Vector2(8,16), Vector2(10,16)
 	]
-onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
-onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 
 # navigacija
 var navigation_cells: Array
 var navigation_cells_positions: Array
 var checkpoints_count: int
 
+onready var tilemap_floor: TileMap = $Floor
+onready var tilemap_elements: TileMap = $Elements
+onready var tilemap_edge: TileMap = $Edge
 onready var racing_navigation_agent: NavigationAgent2D = $Positions/StartPosition/NavigationAgent2D
 onready var level_navigation_line: Line2D = $LevelNavigactionLine
 onready var level_position_nodes: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
+onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
+onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 
 # sounds
 onready var sounds: Node = $Sounds
@@ -69,7 +68,7 @@ onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
-
+	
 func _ready() -> void:
 	# debug
 	printt("LEVEL")
@@ -80,9 +79,9 @@ func _ready() -> void:
 #	level_navigation_line.hide()
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
-	set_level_floor() # lukenje
+	set_level_floor() # luknje
 	set_level_elements() # elementi
-	set_level_edge() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
+	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
 	get_navigation_racing_line()
 	on_all_is_set() # pošljem vsebino levela v GM
 
@@ -91,7 +90,6 @@ func get_navigation_racing_line():
 	
 	racing_navigation_agent.set_target_location(level_position_nodes[5].global_position)
 	level_navigation_line.points = racing_navigation_agent.get_nav_path()
-	
 
 	
 func _physics_process(delta: float) -> void:
@@ -99,12 +97,12 @@ func _physics_process(delta: float) -> void:
 	racing_navigation_agent.get_next_location()
 	
 	
-# SET TILEMAPS --------------------------------------------------------------------------------------------------------
-
-
 func on_all_is_set():
 	
 	emit_signal("level_is_set", level_position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
+
+
+# SET TILEMAPS --------------------------------------------------------------------------------------------------------
 
 		
 func set_level_floor():
@@ -129,8 +127,6 @@ func set_level_floor():
 
 func set_level_elements():
 	
-
-#	var element_cells = get_tilemap_cells(tilemap_edge) # poberem celice edga, da je prave velikosti
 	if tilemap_elements.get_used_cells().empty():
 		return
 		
@@ -254,7 +250,7 @@ func set_level_elements():
 				tilemap_elements.set_cellv(cell, -1)
 
 
-func set_level_edge():
+func set_level_navigation():
 	
 	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
 	var range_to_check = 2 # št. celic v vsako stran čekiranja  
@@ -286,8 +282,9 @@ func set_level_edge():
 						else:
 							empy_cell_in_check_count = 0
 #							break
-				print(empy_cell_in_check_count)
-
+		
+		tilemap_edge.bake_navigation = true
+		
 
 func get_tilemap_cells(tilemap: TileMap):
 	# kadar me zanimajo tudi prazne celice
@@ -316,7 +313,6 @@ func spawn_checkpoint(checkpoint_global_position: Vector2, checkpoint_rotation: 
 	if checkpoint_rotation == 90:
 		new_checkpoint_scene.global_rotation = deg2rad(checkpoint_rotation) # + element_center_offset
 		new_checkpoint_scene.position.x += 8# + element_center_offset
-#	new_checkpoint_scene.modulate = Color.green
 	add_child(new_checkpoint_scene)
 	
 	return new_checkpoint_scene

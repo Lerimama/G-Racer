@@ -24,4 +24,3 @@ volume_db = -15.0
 bus = "GameSfx"
 
 [connection signal="body_entered" from="." to="." method="_on_AreaFinish_body_entered"]
-[connection signal="body_exited" from="." to="." method="_on_AreaFinish_body_exited"]

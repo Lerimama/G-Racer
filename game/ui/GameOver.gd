@@ -1,7 +1,7 @@
 extends Control
 
 
-onready var RankingLine: PackedScene = preload("res://game/ui/RankingLine.tscn")
+onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingLine.tscn")
 
 
 func _ready() -> void:
@@ -34,7 +34,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 	# uvrščeni
 	for bolt_on_finish_line in bolts_on_finish_line:
 		# spawn ranking line
-		var new_ranking_line = RankingLine.instance() # spawn ranking line
+		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
 		# set ranking line
 		var bolt_index = bolts_on_finish_line.find(bolt_on_finish_line)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
@@ -49,7 +49,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 	# neuvrščeni
 	for bolt in bolts_on_start: # array je že brez uvrščenih
 		if not bolts_on_finish_line.has(bolt):
-			var new_ranking_line = RankingLine.instance() # spawn ranking line
+			var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
 			new_ranking_line.get_node("Rank").text = "NN"
 			new_ranking_line.get_node("Bolt").text = str(bolt.player_name)
 			new_ranking_line.get_node("Result").text = "did no finish"

@@ -19,7 +19,6 @@ var collision: KinematicCollision2D
 var axis_distance: float # določen glede na širino sprajta
 var rotation_angle: float
 var rotation_dir: float
-var disarray_rotation_dir = 6
 var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 var revive_time: float = 2
 
@@ -44,12 +43,26 @@ var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
 var engine_particles_front_right : CPUParticles2D
 
-# za area efekte
+# za level area efekte
 var bolt_on_nitro_count: int = 0
 var bolt_on_hole_count: int = 0
 var bolt_on_gravel_count: int = 0
 var bolt_on_tracking_count: int = 0
 
+# racing
+var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pogoji za krog
+var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
+var current_lap_time: float # statistika
+var fastest_lap_time: float # statistika
+var current_race_ranking: int # 
+
+# fighting
+var tilt_speed_call: int = 0 
+var disarray_rotation_dir = 6
+var selected_feat_index: int = 0
+var available_features: Array = [] # feature icons
+
+onready var bolt_hud: Node2D = $BoltHud
 onready var bolt_sprite: Sprite = $Bolt
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
 onready var shield: Sprite = $Shield
@@ -57,6 +70,9 @@ onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
+onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
+# nodeti
+onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://game/bolt/EngineParticles.tscn") 
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
@@ -64,12 +80,9 @@ onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
 onready var Bullet: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var Misile: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var Shocker: PackedScene = preload("res://game/weapons/Shocker.tscn")
-# player stats
-#onready var player_life: int = Pro.default_player_stats["player_life"]
+# stats
 onready var points: int = Pro.default_player_stats["points"]
 onready var wins: int = Pro.default_player_stats["wins"]
-
-# bolt stats
 onready var life: int = Pro.default_bolt_stats["life"]
 onready var energy: float = Pro.default_bolt_stats["energy"]
 onready var max_energy: float = Pro.default_bolt_stats["energy"] # zato, da se lahko resetira
@@ -95,19 +108,6 @@ onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"]
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
 
-# neu
-var tilt_speed_call: int = 0 
-var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pogoji za krog
-var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
-var current_lap_time: float # statistika
-var fastest_lap_time: float # statistika
-var current_race_ranking: int # 
-#onready var selected_feature_index: int = 0
-onready var selected_feat_index: int = 0
-
-onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
-onready var bolt_hud: Node2D = $BoltHud
-
 
 func _ready() -> void:
 
@@ -120,15 +120,15 @@ func _ready() -> void:
 
 	set_engines() # postavi partikle za pogon
 	
-	# shield
+	# nodes
 	shield.modulate.a = 0 
 	shield_collision.disabled = true 
 	shield.self_modulate = bolt_color 
+	bolt_hud.hide()
 	
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
-#	energy_bar_holder.hide()
-	bolt_hud.hide()
+	
 	
 func set_motion_states():
 	if engine_power > 0:
@@ -151,7 +151,10 @@ func _physics_process(delta: float) -> void:
 	
 	# animiran bolt
 	#bolt_sprite.rotation = - global_rotation
-		
+	
+	if not Ref.game_manager.game_settings["race_mode"]:
+		update_feature_selector()		
+	
 	# sila upora raste s hitrostjo		
 	var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
 	# hitrost je pospešek s časom
@@ -177,11 +180,13 @@ func _physics_process(delta: float) -> void:
 	if Ref.game_manager.game_settings["race_mode"]:
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
-			selected_feat_index = 0
-		if misile_count > 0:
 			selected_feat_index = 1
-		if shocker_count > 0:
+		elif misile_count > 0:
 			selected_feat_index = 2
+		elif shocker_count > 0:
+			selected_feat_index = 3
+		else:
+			selected_feat_index = 0
 	else:
 		energy_bar_holder.show()
 			
@@ -189,6 +194,13 @@ func _physics_process(delta: float) -> void:
 	
 # IZ PROCESA ----------------------------------------------------------------------------
 
+
+func update_feature_selector():
+	
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
+	
 	
 func on_collision():
 	
@@ -361,22 +373,6 @@ func manage_bolt_hud():
 			energy_bar.color = Set.color_red
 		else:
 			energy_bar.color = Set.color_green
-
-
-#func update_energy_bar():
-#
-#	if not energy_bar_holder.visible:
-#		energy_bar_holder.show()
-#
-#	# energy_bar
-#	energy_bar_holder.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
-#	energy_bar_holder.global_position = global_position + Vector2(0, 8) # negiramo rotacijo bolta, da je pri miru
-#
-#	energy_bar.scale.x = energy / max_energy
-#	if energy_bar.scale.x <= 0.5:
-#		energy_bar.color = Set.color_red
-#	else:
-#		energy_bar.color = Set.color_green
 			
 
 # LIFE CYCLE ----------------------------------------------------------------------------
@@ -550,8 +546,6 @@ func spawn_floating_tag(value = 0):
 		return
 		
 	var current_lap_time_on_clock: String = Met.get_clock_time(value)
-#	var current_lap_time: Array = Met.get_clock_time(value)
-#	var current_lap_time_on_clock: String = "%02d" % current_lap_time[0] + ":" + "%02d" % current_lap_time[1] + ":" + "%02d" % current_lap_time[2]	
 	value = current_lap_time_on_clock
 	
 	var new_floating_tag = FloatingTag.instance()

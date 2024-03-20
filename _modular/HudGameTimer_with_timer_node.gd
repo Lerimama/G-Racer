@@ -12,7 +12,6 @@ onready var sudden_death_limit: int = Ref.game_manager.game_settings["sudden_dea
 onready var stopwatch_mode: bool = Ref.game_manager.game_settings["stopwatch_mode"]
 onready var gameover_countdown_duration: int = Ref.game_manager.game_settings["gameover_countdown_duration"] # čas, ko je obarvan in se sliši bip bip
 
-# neu 
 var current_minutes: float = 0
 var current_seconds: float = 0
 var current_hundreds: float = 0

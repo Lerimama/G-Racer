@@ -1,14 +1,17 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://assets/bolt/bolt_alt.png" type="Texture" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
 [ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=3]
 [ext_resource path="res://assets/shaders/bolt_wiggle_texture.gdshader" type="Shader" id=4]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=5]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=6]
 [ext_resource path="res://assets/sound/sfx/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://assets/sound/sfx/skills/pull.wav" type="AudioStream" id=8]
 [ext_resource path="res://assets/sound/sfx/last_beat.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=10]
 [ext_resource path="res://assets/sound/sfx/burst/burst_laser_NFF-laser-gun.wav" type="AudioStream" id=11]
+[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=12]
 [ext_resource path="res://assets/sound/sfx/burst/burs_stop_phaser.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=16]
 [ext_resource path="res://assets/sound/sfx/skills/skilled_frcer.wav" type="AudioStream" id=17]
@@ -157,6 +160,22 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.6, 1.2 )
 }
 
+[sub_resource type="AtlasTexture" id=121]
+atlas = ExtResource( 12 )
+region = Rect2( 0, 0, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=122]
+atlas = ExtResource( 6 )
+region = Rect2( 48, 8, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=123]
+atlas = ExtResource( 12 )
+region = Rect2( 8, 0, 8, 8 )
+
+[sub_resource type="AtlasTexture" id=124]
+atlas = ExtResource( 12 )
+region = Rect2( 16, 0, 8, 8 )
+
 [sub_resource type="AudioStreamRandomPitch" id=118]
 audio_stream = ExtResource( 11 )
 random_pitch = 1.2
@@ -172,9 +191,9 @@ random_pitch = 1.05
 script = ExtResource( 5 )
 
 [node name="BoltCollision" type="CollisionPolygon2D" parent="."]
-position = Vector2( -0.5, 0.5 )
+position = Vector2( 0, 0.5 )
 rotation = 1.57079
-polygon = PoolVector2Array( -1.99997, -4.00001, -5, -3.13719e-05, -5.00001, 1.99997, -4.00002, 2.99997, 2.99998, 3.00002, 3.99999, 2.00003, 4, 2.50975e-05, 1.00003, -3.99999 )
+polygon = PoolVector2Array( -2.99997, -4.00002, -5, -3.13719e-05, -5.00003, 3.99997, 3.99997, 4.00003, 4, 2.50975e-05, 2.00003, -3.99999 )
 
 [node name="Bolt" type="Sprite" parent="."]
 material = SubResource( 114 )
@@ -238,8 +257,10 @@ texture = ExtResource( 2 )
 [node name="ShieldCollision" type="CollisionShape2D" parent="."]
 visible = false
 shape = SubResource( 30 )
+disabled = true
 
 [node name="Shield" type="Sprite" parent="."]
+visible = false
 material = SubResource( 28 )
 texture = SubResource( 109 )
 
@@ -258,9 +279,96 @@ margin_bottom = 3.0
 grow_horizontal = 2
 rect_min_size = Vector2( 6, 0 )
 
+[node name="FeatSelector" type="Control" parent="BoltHud/VBoxContainer"]
+margin_right = 8.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 8, 8 )
+size_flags_horizontal = 4
+
+[node name="Icons" type="Control" parent="BoltHud/VBoxContainer/FeatSelector"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -4.0
+margin_right = 4.0
+margin_bottom = 8.0
+theme = ExtResource( 10 )
+
+[node name="IconBullet" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 121 )
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 122 )
+
+[node name="Label" type="Label" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet"]
+margin_left = -7.5
+margin_top = 6.0
+margin_right = 16.5
+margin_bottom = 19.0
+grow_horizontal = 2
+text = "8888"
+align = 1
+
+[node name="IconMisile" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 123 )
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 122 )
+
+[node name="Label" type="Label" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile"]
+margin_left = -7.5
+margin_top = 6.0
+margin_right = 16.5
+margin_bottom = 19.0
+grow_horizontal = 2
+text = "8888"
+align = 1
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="IconShocker" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 124 )
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker"]
+visible = false
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 122 )
+
+[node name="Label" type="Label" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker"]
+margin_left = -7.5
+margin_top = 6.0
+margin_right = 16.5
+margin_bottom = 19.0
+grow_horizontal = 2
+text = "8888"
+align = 1
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="SelectorTimer" type="Timer" parent="BoltHud/VBoxContainer/FeatSelector"]
+
 [node name="EnergyBar" type="Control" parent="BoltHud/VBoxContainer"]
-margin_right = 6.0
-margin_bottom = 1.0
+margin_left = 1.0
+margin_top = 12.0
+margin_right = 7.0
+margin_bottom = 13.0
 grow_horizontal = 2
 rect_min_size = Vector2( 6, 1 )
 size_flags_horizontal = 4
