@@ -155,7 +155,7 @@ func set_game_settings(selected_level) -> void:
 			current_game_settings["race_mode"] = true
 		Levels.NITRO: 
 			current_level_settings = level_settings[Levels.NITRO]
-			current_game_settings["start_countdown"] = false
+#			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = false
 		Levels.NITRO_STRAIGHT: 

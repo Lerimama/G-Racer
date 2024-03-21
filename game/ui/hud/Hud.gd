@@ -58,8 +58,8 @@ func _ready() -> void:
 			stat_line.stat_misile.show()	
 			stat_line.stat_shocker.show()	
 			record_lap_label.hide()
-#			game_timer.get_node("Dots2").hide()
-#			game_timer.get_node("Hunds").hide()
+			game_timer.get_node("Dots2").hide()
+			game_timer.get_node("Hunds").hide()
 		
 			
 func on_game_start():
@@ -71,10 +71,10 @@ func on_game_start():
 func on_game_over():
 	
 	game_timer.stop_timer()
-	hide_player_stats()
+	hide_stats()
 	
 
-func hide_player_stats():
+func hide_stats():
 	# skrij statistiko
 	
 	stat_line_topL.visible = false
@@ -97,6 +97,9 @@ func _on_record_changed(new_record_time: int): # stotinke
 	
 func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 	
+	if not Ref.game_manager.game_on:
+		return
+		
 	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
 	
 	match stat_name:

@@ -43,7 +43,6 @@ __meta__ = {
 [node name="RayCast2D" type="RayCast2D" parent="."]
 position = Vector2( -3, 0 )
 enabled = true
-exclude_parent = false
 cast_to = Vector2( 8, 0 )
 
 [connection signal="body_entered" from="HommingArea" to="." method="_on_HommingArea_body_entered"]

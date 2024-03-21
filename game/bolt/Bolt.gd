@@ -514,7 +514,7 @@ func revive_bolt():
 # RACE ----------------------------------------------------------------------------
 
 
-func on_lap_finished(current_race_time: float):
+func on_lap_finished(current_race_time: float, laps_limit: int):
 
 	
 	# čas kroga
@@ -526,7 +526,7 @@ func on_lap_finished(current_race_time: float):
 		# je najhitrejši krog?
 		if current_lap_time < fastest_lap_time:
 			fastest_lap_time = current_lap_time
-			
+	
 	# prištejem krog in mu zbrišem čekpointe
 	laps_finished += 1
 	checkpoints_reached.clear()
@@ -536,6 +536,7 @@ func on_lap_finished(current_race_time: float):
 
 
 func on_checkpoint_reached(checkpoint: Area2D):
+	
 	if not checkpoints_reached.has(checkpoint): # če še ni dodana
 		checkpoints_reached.append(checkpoint)
 	
@@ -550,6 +551,7 @@ func spawn_floating_tag(value = 0):
 	
 	var new_floating_tag = FloatingTag.instance()
 	new_floating_tag.z_index = 4 # višje od straysa in playerja
+	# če je zadnji krog njegov čas ostane na liniji
 	new_floating_tag.global_position = global_position
 	new_floating_tag.tag_owner = self
 	Ref.node_creation_parent.add_child(new_floating_tag)

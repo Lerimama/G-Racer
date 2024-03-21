@@ -59,7 +59,7 @@ func _on_PlayBtn_pressed() -> void:
 func _on_RestartBtn_pressed() -> void:
 
 #	Global.sound_manager.play_gui_sfx("btn_confirm")
-#	Global.sound_manager.stop_music("game_music_on_gameover")
+	Ref.sound_manager.stop_music()
 	
 #	Ref.game_manager.stop_game_elements()
 	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
@@ -70,7 +70,7 @@ func _on_RestartBtn_pressed() -> void:
 func _on_QuitBtn_pressed() -> void:
 
 #	Global.game_manager.stop_game_elements()
-#	Global.sound_manager.stop_music("game_music_on_gameover")
+	Ref.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
 	Ref.main_node.game_out()
 
@@ -88,6 +88,8 @@ func _on_QuitBtn_pressed() -> void:
 #		Global.sound_manager.play_gui_sfx("btn_cancel")
 #		Global.sound_manager.game_music_set_to_off = true
 #		Global.sound_manager.stop_music("game_music")
+#		Ref.sound_manager.stop_music()
+
 
 
 #func _on_GameMusicSlider_value_changed(value: float) -> void:

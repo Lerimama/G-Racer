@@ -102,6 +102,8 @@ func _physics_process(delta: float) -> void:
 			collision_shape.disabled = true
 		else:
 			collision_shape.disabled = false
+	else:
+		collision_shape.disabled = false
 			
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	if get_slide_count() != 0:

@@ -80,8 +80,4 @@ environment = ExtResource( 7 )
 stream = ExtResource( 1 )
 bus = "GameMusic"
 
-[node name="PickableTimer" type="Timer" parent="."]
-
-[connection signal="body_entered" from="ScreenArea" to="GameManager" method="_on_ScreenArea_body_entered"]
 [connection signal="body_exited" from="ScreenArea" to="GameManager" method="_on_ScreenArea_body_exited"]
-[connection signal="timeout" from="PickableTimer" to="GameManager" method="_on_PickableTimer_timeout"]

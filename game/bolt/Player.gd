@@ -114,19 +114,16 @@ func _ready() -> void:
 	bolt_sprite.modulate = bolt_color
 	
 	feat_selector.hide()
-	# debug
+	
+	# napolnem možne featurje (notri so tudi, ko je count = 0
 	available_features.append(feat_selector.get_node("Icons/IconBullet"))
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
 
-func _process(delta: float) -> void:
-	
-	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
+#func _process(delta: float) -> void:
+#	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
 		
-#	if not Ref.game_manager.game_settings["race_mode"]:
-#		update_feature_selector()
-
 	
 func _physics_process(delta: float) -> void:
 	
@@ -135,13 +132,6 @@ func _physics_process(delta: float) -> void:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 
 
-#func update_feature_selector():
-#
-#	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
-#	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
-#	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
-
-	
 func shoot():
 	
 	match selected_feat_index:

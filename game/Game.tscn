@@ -1,8 +1,9 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://game/GameViewGrid.gd" type="Script" id=1]
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/ui/GameOver.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=4]
 [ext_resource path="res://game/Game.gd" type="Script" id=5]
 [ext_resource path="res://assets/sound/sfx/gui/key_2.wav" type="AudioStream" id=6]
 [ext_resource path="res://game/ui/PauseGame.tscn" type="PackedScene" id=7]
@@ -16,7 +17,6 @@
 [ext_resource path="res://assets/sound/sfx/gui/screen_slide.wav" type="AudioStream" id=20]
 [ext_resource path="res://assets/sound/sfx/gui/menu_fade.wav" type="AudioStream" id=21]
 [ext_resource path="res://assets/sound/sfx/blinking/blink_2.wav" type="AudioStream" id=26]
-[ext_resource path="res://assets/sound/music/track_upbeat.wav" type="AudioStream" id=27]
 [ext_resource path="res://assets/sound/sfx/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
 [ext_resource path="res://assets/sound/sfx/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=36]
 [ext_resource path="res://assets/sound/sfx/gui/btn_focus_change.wav" type="AudioStream" id=38]
@@ -27,11 +27,9 @@
 [ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=49]
 [ext_resource path="res://assets/sound/sfx/blinking/blink_1.wav" type="AudioStream" id=50]
 [ext_resource path="res://assets/sound/sfx/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=53]
-[ext_resource path="res://assets/sound/music/track_tictac.wav" type="AudioStream" id=54]
 [ext_resource path="res://SoundManager.gd" type="Script" id=57]
 [ext_resource path="res://assets/sound/sfx/gui/key_1.wav" type="AudioStream" id=60]
 [ext_resource path="res://assets/sound/sfx/gui/key_4.wav" type="AudioStream" id=61]
-[ext_resource path="res://assets/sound/music/POL-the-foyer-short.wav" type="AudioStream" id=62]
 [ext_resource path="res://assets/sound/sfx/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=65]
 [ext_resource path="res://assets/sound/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=66]
 [ext_resource path="res://assets/sound/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=68]
@@ -118,12 +116,11 @@ bus = "GameSfx"
 
 [node name="Track8_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
 stream = ExtResource( 11 )
-volume_db = -12.0
+volume_db = -10.0
 bus = "GameMusic"
 
-[node name="Track12_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
-stream = ExtResource( 68 )
-volume_db = -6.0
+[node name="Nitro" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 4 )
 bus = "GameMusic"
 
 [node name="Track4_4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
@@ -131,24 +128,14 @@ stream = ExtResource( 66 )
 volume_db = -6.0
 bus = "GameMusic"
 
+[node name="Track12_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+stream = ExtResource( 68 )
+volume_db = -6.0
+bus = "GameMusic"
+
 [node name="Track1_3" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
 stream = ExtResource( 15 )
 volume_db = -7.0
-bus = "GameMusic"
-
-[node name="Track5_3-4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
-stream = ExtResource( 54 )
-volume_db = -7.0
-bus = "GameMusic"
-
-[node name="Track6_3-4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
-stream = ExtResource( 27 )
-volume_db = -10.0
-bus = "GameMusic"
-
-[node name="Track19_4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
-stream = ExtResource( 62 )
-volume_db = -5.0
 bus = "GameMusic"
 
 [node name="GuiSfx" type="Node2D" parent="Sounds"]

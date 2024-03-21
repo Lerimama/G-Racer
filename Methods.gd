@@ -36,8 +36,9 @@ func sound_stop_fade_out(sound, fade_time: float):
 	# volume reset
 	sound.volume_db = current_sound_volume
 
+
 func sound_play_fade_in(sound, new_volume: int, fade_time: float):
-	print(sound, new_volume, fade_time)
+	
 	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_callback(sound, "play")
 	fade_out.tween_property(sound, "volume_db", new_volume, fade_time)
@@ -55,6 +56,7 @@ onready var indikator: PackedScene = preload("res://game/DebugIndikator.tscn")
 
 func spawn_indikator(pos, rot): # neki ne štima
 	
+	print("INDI IN")
 	var new_indikator = indikator.instance()
 	new_indikator.global_position = pos
 	new_indikator.global_rotation = rot

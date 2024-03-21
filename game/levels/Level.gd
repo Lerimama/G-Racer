@@ -7,40 +7,6 @@ signal level_is_set(navigation, spawn_positions, other_)
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 var start_lights: Node2D # opredeli se, če je semafor spawnan (če je na tilemapu)
 
-# floor
-var corner_cell_TopL_regions: Array = [
-	Vector2(2,3), Vector2(1,5),
-	Vector2(8,6), Vector2(10,6), Vector2(12,6), Vector2(14,6),
-	Vector2(3,8), Vector2(5,8), Vector2(14,8),
-	Vector2(2,13), Vector2(8,13), Vector2(14,13),
-	Vector2(9,15), Vector2(11,15),
-	Vector2(9,17), Vector2(11,17)
-	]
-var corner_cell_TopR_regions: Array =[
-	Vector2(0,3), Vector2(5,5),
-	Vector2(7,6), Vector2(9,6), Vector2(11,6), Vector2(13,6),
-	Vector2(2,8), Vector2(4,8), Vector2(13,8),
-	Vector2(1,13), Vector2(7,13), Vector2(13,13),
-	Vector2(8,15), Vector2(10,15),
-	Vector2(8,17), Vector2(10,17)
-	]
-var corner_cell_BtmL_regions: Array = [
-	Vector2(2,1), Vector2(1,9),
-	Vector2(8,5), Vector2(10,5), Vector2(12,5), Vector2(14,5),
-	Vector2(3,7), Vector2(5,7), Vector2(14,7),
-	Vector2(2,12), Vector2(8,12), Vector2(14,12),
-	Vector2(9,14), Vector2(11,14),
-	Vector2(9,16), Vector2(11,16)
-	]
-var corner_cell_BtmR_regions: Array = [
-	Vector2(0,1), Vector2(5,9),
-	Vector2(7,5), Vector2(9,5), Vector2(11,5), Vector2(13,5),
-	Vector2(2,7), Vector2(4,7), Vector2(13,7),
-	Vector2(1,12), Vector2(7,12), Vector2(13,12),
-	Vector2(8,14), Vector2(10,14),
-	Vector2(8,16), Vector2(10,16)
-	]
-
 # navigacija
 var navigation_cells: Array
 var navigation_cells_positions: Array
@@ -72,17 +38,17 @@ onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 func _ready() -> void:
 	# debug
 	printt("LEVEL")
-#	$Comments.hide()
-#	$ScreenSize.hide()
+	$Comments.hide()
+	$ScreenSize.hide()
 #	$RacingLine.hide()
 #	$RacingLine.hide()
-#	level_navigation_line.hide()
+	level_navigation_line.hide()
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
 	set_level_floor() # luknje
 	set_level_elements() # elementi
 	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
-	get_navigation_racing_line()
+	# get_navigation_racing_line() ... uporabno ko bo main racing line avtomatiziran 
 	on_all_is_set() # pošljem vsebino levela v GM
 
 

@@ -24,6 +24,7 @@ onready var lifetime: float = weapon_profile["lifetime"]
 onready var inertia: float = weapon_profile["inertia"]
 onready var speed: float = weapon_profile["speed"]
 onready var vision_ray: RayCast2D = $VisionRay
+onready var collision_shape: CollisionShape2D = $BulletCollision
 
 
 func _ready() -> void:
@@ -48,10 +49,19 @@ func _physics_process(delta: float) -> void:
 	new_bullet_trail.add_points(trail_position.global_position) # premaknjeno iz process
 		
 	move_and_slide(velocity) # ma delto že vgrajeno
-			
-	if vision_ray.is_colliding():
-		collide()
 	
+	# preverjam, če se še dotika avtorja
+	if vision_ray.is_colliding():
+		var current_collider = vision_ray.get_collider()
+		if current_collider == spawned_by:
+			collision_shape.disabled = true # rabim, da ekran sploh registrira bullet
+		else:
+			collision_shape.disabled = false
+			collide()
+	else:
+		collision_shape.disabled = false
+
+				
 func collide():
 	
 	# vision_ray.force_raycast_update() # ni glih učinka
@@ -83,3 +93,9 @@ func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):
 	new_bullet_trail.start_decay(collision_position) # zadnja pika se pripne na mesto kolizije
 	queue_free()
 	
+
+func on_out_of_screen():
+	var bullet_off_screen_time: float = 2 
+	yield(get_tree().create_timer(bullet_off_screen_time), "timeout") # za dojet
+	new_bullet_trail.start_decay(global_position) # zadnja pika se pripne na mesto kolizije
+	queue_free()

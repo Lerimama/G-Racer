@@ -7,7 +7,7 @@ var game_music_set_to_off: bool = false
 
 var currently_playing_track_index: int = 1 # ga ne resetiraš, da ostane v spominu skozi celo igro
 
-onready var game_music: Node2D# = $Music/GameMusic
+onready var game_music: Node2D = $GameMusic
 #onready var menu_music: AudioStreamPlayer = $Music/MenuMusic/WarmUpShort
 #onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
 
@@ -82,26 +82,39 @@ func play_music():
 		return
 
 	# set track
-	var current_track = game_music.get_child(currently_playing_track_index - 1)
+	var current_track: AudioStreamPlayer
+	
+	if Ref.game_manager.level_settings["level"] == Set.Levels.NITRO:
+		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
+		current_track = game_music.get_node("Nitro")
+	else:
+		current_track = game_music.get_child(currently_playing_track_index - 1)
+	
+	# Met.sound_play_fade_in(game_music, 0, 2)
 	current_track.play()	
 
 
-func stop_music(stop_reason: String):
+func stop_music():
+#func stop_music(stop_reason: String):
 	
-	match stop_reason:
-		"game_music":
-			for music in game_music.get_children():
-				if music.is_playing():
-					music.stop()
-		"game_music_on_gameover":
-			for music in game_music.get_children():
-				if music.is_playing():
-					var current_music_volume = music.volume_db
-					var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-					fade_out.tween_property(music, "volume_db", -80, 2)
-					fade_out.tween_callback(music, "stop")
-					# volume reset
-					fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
+	for music in game_music.get_children():
+		if music.is_playing():
+			Met.sound_stop_fade_out(music, 2)
+			
+#	match stop_reason:
+#		"game_music":
+#			for music in game_music.get_children():
+#				if music.is_playing():
+#					music.stop()
+#		"game_music_on_gameover":
+#			for music in game_music.get_children():
+#				if music.is_playing():
+#					var current_music_volume = music.volume_db
+#					var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+#					fade_out.tween_property(music, "volume_db", -80, 2)
+#					fade_out.tween_callback(music, "stop")
+#					# volume reset
+#					fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
 					
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov

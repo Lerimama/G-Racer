@@ -47,6 +47,7 @@ func _physics_process(delta: float) -> void:
 	
 		
 	if not bolt_active: # ai je kot kontrole pri plejerju
+		navigation_target_position = Vector2.ZERO
 		return
 
 	manage_ai_states()
@@ -105,8 +106,22 @@ func manage_motion_states():
 		current_motion_state = MotionStates.IDLE
 
 
-func _on_target_position_changed(new_position: Vector2):
+func on_checkpoint_reached(checkpoint: Area2D):
+	
+	if not checkpoints_reached.has(checkpoint): # če še ni dodana
+		checkpoints_reached.append(checkpoint)
 
+
+func on_race_finished():
+	
+	var finish_tween = get_tree().create_tween()
+	finish_tween.tween_property(self, "velocity", Vector2.ZERO, 1.5).set_ease(Tween.EASE_OUT).set_delay(1)
+	yield(finish_tween, "finished")
+	bolt_active = false
+	set_physics_process(false)
+	
+				
+func _on_target_position_changed(new_position: Vector2):
 	navigation_agent.set_target_location(new_position)
 	navigation_target_position = new_position
 
@@ -135,7 +150,5 @@ func _on_NavigationAgent2D_navigation_finished() -> void:
 	
 	
 func _on_NavigationAgent2D_target_reached() -> void:
+
 	print("_on_NavigationAgent2D_target_reached")
-
-
-		

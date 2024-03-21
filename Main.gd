@@ -6,7 +6,6 @@ var camera_shake_on: bool =  true #_temp
 
 onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
-#onready var game_scene_path: String = Profiles.current_game_data["game_scene_path"]
 
 func _ready() -> void:
 	
