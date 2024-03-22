@@ -22,6 +22,14 @@ script = ExtResource( 2 )
 [node name="Shield" parent="." index="3"]
 material = SubResource( 1 )
 
+[node name="EnergyBar" parent="BoltHud/VBoxContainer" index="0"]
+margin_top = 0.0
+margin_bottom = 1.0
+
+[node name="FeatSelector" parent="BoltHud/VBoxContainer" index="1"]
+margin_top = 5.0
+margin_bottom = 13.0
+
 [node name="DetectArea" type="Node2D" parent="." index="7"]
 scale = Vector2( 3, 3 )
 

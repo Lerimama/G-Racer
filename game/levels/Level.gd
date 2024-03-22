@@ -219,7 +219,7 @@ func set_level_elements():
 func set_level_navigation():
 	
 	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
-	var range_to_check = 2 # št. celic v vsako stran čekiranja  
+	var range_to_check = 1 # št. celic v vsako stran čekiranja  
 	
 	for cell in edge_cells:
 		var cell_index = tilemap_edge.get_cellv(cell)
@@ -251,6 +251,12 @@ func set_level_navigation():
 		
 		tilemap_edge.bake_navigation = true
 		
+	# zelene spremenim prazne po navigaciji
+	for cell in edge_cells:
+		var cell_index = tilemap_edge.get_cellv(cell)
+		if cell_index == 5:
+			tilemap_edge.set_cellv(cell, -1)
+
 
 func get_tilemap_cells(tilemap: TileMap):
 	# kadar me zanimajo tudi prazne celice

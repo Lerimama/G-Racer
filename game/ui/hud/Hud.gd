@@ -111,12 +111,14 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 		"lap_finished":
 			# laps count
 			stat_line_to_change.stat_laps_count.current_stat_value = new_stat_value[0]
-			# fast time
-			var fastest_lap_time: int = new_stat_value[1] # stotinke
+			# lap time ... zapišem ga samo, če je najhitrejši poskus
+			var fastest_lap_time: float = new_stat_value[1] # stotinke
 			var fastest_lap_time_on_clock: String = Met.get_clock_time(fastest_lap_time)
 			stat_line_to_change.stat_fastest_lap.current_stat_value = fastest_lap_time_on_clock
+			# če je prvi krog jo prikažem
 			if not stat_line_to_change.stat_fastest_lap.visible:
 				stat_line_to_change.stat_fastest_lap.show()
+			# če je rekord igre, popravim še rekord
 			if fastest_lap_time < current_record_lap_time or current_record_lap_time == 0:
 				self.current_record_lap_time = fastest_lap_time
 		"points":

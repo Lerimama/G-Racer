@@ -279,9 +279,28 @@ margin_bottom = 3.0
 grow_horizontal = 2
 rect_min_size = Vector2( 6, 0 )
 
+[node name="EnergyBar" type="Control" parent="BoltHud/VBoxContainer"]
+margin_left = 1.0
+margin_right = 7.0
+margin_bottom = 1.0
+grow_horizontal = 2
+rect_min_size = Vector2( 6, 1 )
+size_flags_horizontal = 4
+
+[node name="Undi" type="Polygon2D" parent="BoltHud/VBoxContainer/EnergyBar"]
+position = Vector2( -0.5, 0 )
+color = Color( 0.32549, 0.356863, 0.407843, 0.54902 )
+polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
+
+[node name="Bar" type="Polygon2D" parent="BoltHud/VBoxContainer/EnergyBar"]
+position = Vector2( -0.5, 0 )
+color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
+polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
+
 [node name="FeatSelector" type="Control" parent="BoltHud/VBoxContainer"]
+margin_top = 5.0
 margin_right = 8.0
-margin_bottom = 8.0
+margin_bottom = 13.0
 rect_min_size = Vector2( 8, 8 )
 size_flags_horizontal = 4
 
@@ -363,25 +382,6 @@ __meta__ = {
 }
 
 [node name="SelectorTimer" type="Timer" parent="BoltHud/VBoxContainer/FeatSelector"]
-
-[node name="EnergyBar" type="Control" parent="BoltHud/VBoxContainer"]
-margin_left = 1.0
-margin_top = 12.0
-margin_right = 7.0
-margin_bottom = 13.0
-grow_horizontal = 2
-rect_min_size = Vector2( 6, 1 )
-size_flags_horizontal = 4
-
-[node name="Undi" type="Polygon2D" parent="BoltHud/VBoxContainer/EnergyBar"]
-position = Vector2( -0.5, 0 )
-color = Color( 0.32549, 0.356863, 0.407843, 0.54902 )
-polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
-
-[node name="Bar" type="Polygon2D" parent="BoltHud/VBoxContainer/EnergyBar"]
-position = Vector2( -0.5, 0 )
-color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
-polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
 
 [node name="Sounds" type="Node" parent="."]
 

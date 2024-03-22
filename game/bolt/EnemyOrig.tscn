@@ -20,7 +20,6 @@ shader_param/texture_size = Vector2( 32, 32 )
 script = ExtResource( 2 )
 
 [node name="Shield" parent="." index="3"]
-visible = false
 material = SubResource( 1 )
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="7"]

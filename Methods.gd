@@ -11,15 +11,11 @@ extends Node2D
 #	print ("root: ", root)
 #	print ("current_scene: ", current_scene)
 
-func get_clock_time(time_to_split: int): # sekunde
+func get_clock_time(time_to_split: float): # sekunde
 	
-	var minutes: int = floor(time_to_split / 60)
-	var seconds: int = floor(time_to_split) - minutes * 60
-	var hundreds: int = floor((time_to_split - floor(time_to_split)) * 100)
-
-#	var minutes = floor(time_to_split/6000)
-#	var seconds = floor(time_to_split/100) - minutes * 60
-#	var hundreds = time_to_split - floor(time_to_split / 100) * 100 # od vseh stotink odštejem sotinke znotraj celih sekund
+	var minutes: int = floor(time_to_split / 60) # vse cele sekunde delim s 60
+	var seconds: int = floor(time_to_split) - minutes * 60 # vse sekunde minus sekunde v celih minutah
+	var hundreds: int = round((time_to_split - floor(time_to_split)) * 100) # decimalke množim x 100 in zaokrožim na celo
 
 	# return [minutes, seconds, hundreds]	
 	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds	

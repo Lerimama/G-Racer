@@ -181,7 +181,7 @@ var enemy_profile: Dictionary = {
 	"seek_rotation_range": 60,
 	"seek_rotation_speed": 3,
 	"seek_distance": 640 * 0.7,
-	"racing_engine_power": 75, # 80 ima skoraj identično hitrost kot plejer
+	"racing_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	"idle_engine_power": 35,
 	"battle_engine_power": 120, # je enaka kot od  bolta 
 #	"bullet_push_factor": 0.1,

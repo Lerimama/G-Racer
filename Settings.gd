@@ -133,11 +133,11 @@ var bolts_activated: Array # napolne so ob izbiri
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
-#	var debug_level = Levels.NITRO
+	var debug_level = Levels.NITRO
 #	var debug_level = Levels.NITRO_STRAIGHT
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-	var debug_level = Levels.OSMICA
+#	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
 #	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)

@@ -115,6 +115,7 @@ margin_bottom = 250.0
 rect_min_size = Vector2( 0, 170 )
 
 [node name="Text" type="Label" parent="VBoxContainer/Content"]
+visible = false
 margin_left = 224.0
 margin_top = 18.0
 margin_right = 416.0
@@ -127,9 +128,9 @@ align = 1
 autowrap = true
 
 [node name="Results" type="VBoxContainer" parent="VBoxContainer/Content"]
-margin_top = 63.0
+margin_top = 15.0
 margin_right = 640.0
-margin_bottom = 89.0
+margin_bottom = 41.0
 custom_constants/separation = 8
 
 [node name="Title" type="Label" parent="VBoxContainer/Content/Results"]

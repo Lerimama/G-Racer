@@ -34,7 +34,7 @@ onready var navigation_line: Line2D = $"../NavigationPath"
 var position_indikator: Node2D	# debug
 onready var NewLevel: PackedScene = level_settings["level_scene"]
 
-# neu
+# neu ... race managerja
 var checkpoints_per_lap: int
 var level_goal_position: Vector2
 var level_start_position: Vector2
@@ -91,8 +91,8 @@ func set_game(): # kliče main.gd pred fejdin igre
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
@@ -574,7 +574,7 @@ func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Ar
 # SIGNALI ----------------------------------------------------------------------------------------------------
 
 
-func _on_Enemy_path_changed(path: Array) -> void:
+func _on_Enemy_path_changed(path: Array) -> void: # za prikaz linije
 	# ta funkcija je vezana na signal bolta
 	# inline connect za primer, če je bolt spawnan
 	# def signal connect za primer, če je bolt "in-tree" node

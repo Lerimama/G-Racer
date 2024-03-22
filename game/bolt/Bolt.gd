@@ -169,15 +169,15 @@ func _physics_process(delta: float) -> void:
 		on_collision()	
 
 	set_motion_states()
+	manage_motion_fx()
+	
 	if Ref.game_manager.game_settings["race_mode"]:
+		# poraba bencina
 		if current_motion_state == MotionStates.FWD:
 			manage_gas(fwd_gas_usage)
 		elif current_motion_state == MotionStates.REV:
 			manage_gas(rev_gas_usage)
-	manage_motion_fx()
-	manage_bolt_hud()
-	
-	if Ref.game_manager.game_settings["race_mode"]:
+		
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
 			selected_feat_index = 1
@@ -188,7 +188,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			selected_feat_index = 0
 	else:
-		energy_bar_holder.show()
+		manage_bolt_hud()
 			
 		
 	
@@ -516,22 +516,24 @@ func revive_bolt():
 
 func on_lap_finished(current_race_time: float, laps_limit: int):
 
-	
 	# čas kroga
 	if laps_finished == 0: # če je prvi krog
 		current_lap_time = current_race_time
 		fastest_lap_time = current_lap_time	
+		spawn_floating_tag(current_lap_time, true) # time, is fastest
 	else: # če že ima vpisanega, ga odštejem od trenutnega časa
 		current_lap_time = current_race_time - current_lap_time
 		# je najhitrejši krog?
 		if current_lap_time < fastest_lap_time:
 			fastest_lap_time = current_lap_time
+			spawn_floating_tag(current_lap_time, true) # time, is fastest
+		else:
+			spawn_floating_tag(current_lap_time, false) # time, not fastest
 	
 	# prištejem krog in mu zbrišem čekpointe
 	laps_finished += 1
 	checkpoints_reached.clear()
 	
-	spawn_floating_tag(current_lap_time)
 	emit_signal("stat_changed", bolt_id, "lap_finished", [laps_finished, fastest_lap_time]) 
 
 
@@ -541,13 +543,12 @@ func on_checkpoint_reached(checkpoint: Area2D):
 		checkpoints_reached.append(checkpoint)
 	
 
-func spawn_floating_tag(value = 0):
+func spawn_floating_tag(lap_time_seconds: float, best_lap: bool):
 	
-	if value == 0:
+	if lap_time_seconds == 0:
 		return
 		
-	var current_lap_time_on_clock: String = Met.get_clock_time(value)
-	value = current_lap_time_on_clock
+	var current_lap_time_on_clock: String = Met.get_clock_time(lap_time_seconds)
 	
 	var new_floating_tag = FloatingTag.instance()
 	new_floating_tag.z_index = 4 # višje od straysa in playerja
@@ -556,13 +557,12 @@ func spawn_floating_tag(value = 0):
 	new_floating_tag.tag_owner = self
 	Ref.node_creation_parent.add_child(new_floating_tag)
 	
-	if value is String:
-		new_floating_tag.label.text = current_lap_time_on_clock
-	elif value < 0:
+	printt("time3", current_lap_time_on_clock)
+	new_floating_tag.label.text = current_lap_time_on_clock
+	if best_lap == true:
+		new_floating_tag.modulate = Set.color_green
+	else:
 		new_floating_tag.modulate = Set.color_red
-		new_floating_tag.label.text = str(value)
-	elif value > 0:
-		new_floating_tag.label.text = "+" + str(value)
 	
 	
 		
