@@ -6,9 +6,9 @@ onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingL
 
 func _ready() -> void:
 	
-	Ref.game_over = self
-	visible = false
-
+#	Ref.game_over = self
+#	visible = false
+	pass
 
 func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolts_on_start: Array):
 	
@@ -61,7 +61,6 @@ func _on_RestartBtn_pressed() -> void:
 
 
 func _on_QuitBtn_pressed() -> void:
-	
 	Ref.main_node.game_out()
 
 

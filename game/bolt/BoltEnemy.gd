@@ -74,8 +74,8 @@ func manage_modes():
 			# target pošilja GM
 			seek_ray.cast_to.x = velocity.length()
 			seek_ray.look_at(Vector2.RIGHT + global_position)
-			engine_power = 30
-#			engine_power = racing_engine_power
+#			engine_power = 30
+			engine_power = racing_engine_power
 		Modes.FOLLOWING: # plejer je dovlj blizu, da mu sledi
 			seek_ray.cast_to.x = global_position.distance_to(navigation_target_position)
 			seek_ray.look_at(navigation_target_position)

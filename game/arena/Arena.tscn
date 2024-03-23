@@ -42,7 +42,7 @@ script = ExtResource( 5 )
 
 [node name="LevelPosition" type="Position2D" parent="."]
 
-[node name="Effects" type="Node2D" parent="."]
+[node name="_Effects" type="Node2D" parent="."]
 z_index = 1
 script = SubResource( 771 )
 
@@ -71,12 +71,12 @@ margin_right = 257.0
 margin_bottom = 115.0
 custom_styles/panel = SubResource( 773 )
 
+[node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 7 )
+
 [node name="Camera" parent="." instance=ExtResource( 2 )]
 z_index = 0
 current = true
-
-[node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource( 7 )
 
 [node name="Sounds" type="Node" parent="."]
 

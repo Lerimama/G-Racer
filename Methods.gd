@@ -28,9 +28,7 @@ func sound_stop_fade_out(sound, fade_time: float):
 	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(sound, "volume_db", -80, fade_time)
 	fade_out.tween_callback(sound, "stop")
-	yield(fade_out, "finished")
-	# volume reset
-	sound.volume_db = current_sound_volume
+	fade_out.tween_callback(sound, "set_volume_db", [current_sound_volume])
 
 
 func sound_play_fade_in(sound, new_volume: int, fade_time: float):

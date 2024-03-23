@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://game/GameViewGrid.gd" type="Script" id=1]
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://assets/sound/sfx/skills/pull.wav" type="AudioStream" id=10]
 [ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=11]
 [ext_resource path="res://assets/sound/sfx/blinking/blink_3.wav" type="AudioStream" id=12]
+[ext_resource path="res://game/ui/LevelOver.tscn" type="PackedScene" id=13]
 [ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sound/sfx/events/countdown-b.ogg" type="AudioStream" id=16]
 [ext_resource path="res://assets/sound/sfx/gui/screen_slide.wav" type="AudioStream" id=20]
@@ -249,4 +250,7 @@ __meta__ = {
 
 [node name="PauseGame" parent="UI" instance=ExtResource( 7 )]
 
+[node name="LevelOver" parent="UI" instance=ExtResource( 13 )]
+
 [node name="GameOver" parent="UI" instance=ExtResource( 3 )]
+visible = false

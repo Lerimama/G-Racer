@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
@@ -30,10 +30,6 @@ region = Rect2( 48, 8, 8, 8 )
 atlas = ExtResource( 3 )
 region = Rect2( 8, 0, 8, 8 )
 
-[sub_resource type="AtlasTexture" id=120]
-atlas = ExtResource( 3 )
-region = Rect2( 16, 0, 8, 8 )
-
 [node name="Player" instance=ExtResource( 4 )]
 script = ExtResource( 5 )
 
@@ -42,10 +38,6 @@ material = SubResource( 1 )
 
 [node name="VBoxContainer" parent="BoltHud" index="0"]
 custom_constants/separation = 3
-
-[node name="EnergyBar" parent="BoltHud/VBoxContainer" index="0"]
-margin_top = 0.0
-margin_bottom = 1.0
 
 [node name="FeatSelector" parent="BoltHud/VBoxContainer" index="1"]
 margin_top = 4.0
@@ -62,9 +54,6 @@ texture = SubResource( 119 )
 
 [node name="IconEdge" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile" index="0"]
 texture = SubResource( 118 )
-
-[node name="IconShocker" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="2"]
-texture = SubResource( 120 )
 
 [node name="IconEdge" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker" index="0"]
 texture = SubResource( 118 )

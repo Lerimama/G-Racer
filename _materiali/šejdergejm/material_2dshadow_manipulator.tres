@@ -4,10 +4,10 @@
 
 [resource]
 shader = ExtResource( 1 )
-shader_param/manipulate_color = Color( 0, 0, 0, 1 )
+shader_param/manipulate_color = Color( 1, 1, 1, 1 )
 shader_param/manipulate_other_colors = false
 shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
-shader_param/shadow_color = Color( 0, 0, 0, 0.258824 )
+shader_param/shadow_color = Color( 0.952941, 0.356863, 0.498039, 1 )
 shader_param/shadow_offset_x = 0.0
 shader_param/shadow_offset_y = 1.0
 shader_param/texture_altitude = 12.0

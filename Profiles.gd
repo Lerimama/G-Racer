@@ -42,9 +42,10 @@ var bolt_profiles: Dictionary = {
 
 var pickable_profiles: Dictionary = {
 	# imena so ista kot enum ključi v pickables
+	# random so samo pickabli, uporablja se samo v DUEL stilu
 	
 	"BULLET": { # BULLET
-		"for_random_selection": true, # random je samo pickable, pa še to ni v dirki
+		"for_random_selection": true, # vključeno v random izbor?
 		"pickable_color": Set.color_green,
 		"pickable_value": 20,
 		"pickable_time": 0, # pomeni, da ni časovno pogojen učinek

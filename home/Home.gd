@@ -142,6 +142,10 @@ func _on_ConfirmBtn_3_pressed() -> void:
 	Set.set_game_settings(Set.Levels.DUEL)
 	animation_player.play("players_in")
 
+func _on_ConfirmBtn_6_pressed() -> void:
+	Set.game_levels = [Set.Levels.OSMICA, Set.Levels.NITRO_STRAIGHT]
+	animation_player.play("players_in")
+
 # debug
 func _on_ConfirmBtn_1_pressed() -> void:
 	Set.set_game_settings(Set.Levels.DEBUG_DUEL)
@@ -228,3 +232,4 @@ func _on_clean_up_btn_pressed():
 		new_world.cleanup_map()
 func _on_temp_back_btn_pressed():
 	animation_player.play_backwards("start_game")
+

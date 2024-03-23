@@ -1,0 +1,127 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://game/GameEnd.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://game/ui/FinalRankingLine.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=6]
+
+[node name="GameEnd" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 6 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_vertical_guides_": [ 320.0 ]
+}
+
+[node name="Panel" type="Panel" parent="."]
+modulate = Color( 1, 1, 1, 0.941176 )
+margin_right = 640.0
+margin_bottom = 360.0
+
+[node name="Content" type="Control" parent="."]
+margin_top = 27.0
+margin_right = 640.0
+margin_bottom = 197.0
+rect_min_size = Vector2( 0, 170 )
+
+[node name="Letter" type="Label" parent="Content"]
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_right = 1.0
+margin_top = 13.0
+margin_bottom = 77.0
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 3 )
+text = "Bravisimo!!!"
+align = 1
+uppercase = true
+
+[node name="Letter2" type="Label" parent="Content"]
+modulate = Color( 0.368627, 1, 0.662745, 1 )
+anchor_right = 1.0
+margin_top = 10.0
+margin_bottom = 23.0
+size_flags_vertical = 0
+text = "FINAL SCREEN"
+align = 1
+
+[node name="Text" type="Label" parent="Content"]
+visible = false
+margin_left = 224.0
+margin_top = 18.0
+margin_right = 416.0
+margin_bottom = 47.0
+rect_min_size = Vector2( 192, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "If you're looking for a term that refers specifically."
+align = 1
+autowrap = true
+
+[node name="Results" type="VBoxContainer" parent="Content"]
+margin_top = 103.0
+margin_right = 640.0
+margin_bottom = 129.0
+custom_constants/separation = 8
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Title" type="Label" parent="Content/Results"]
+margin_left = 281.0
+margin_right = 359.0
+margin_bottom = 26.0
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 2 )
+text = "Results"
+
+[node name="RankingLine" parent="Content/Results" instance=ExtResource( 4 )]
+visible = false
+margin_left = 275.0
+margin_top = 34.0
+margin_right = 364.0
+margin_bottom = 47.0
+
+[node name="RankingLine2" parent="Content/Results" instance=ExtResource( 4 )]
+visible = false
+margin_left = 275.0
+margin_top = 55.0
+margin_right = 364.0
+margin_bottom = 68.0
+
+[node name="Menu" type="HBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -119.0
+margin_top = -51.0
+margin_right = 119.0
+margin_bottom = -38.0
+size_flags_horizontal = 4
+custom_constants/separation = 16
+
+[node name="QuitBtn" type="Button" parent="Menu"]
+margin_right = 106.0
+margin_bottom = 13.0
+size_flags_vertical = 8
+text = "QUIT TO MAIN MENU"
+
+[node name="RestartBtn" type="Button" parent="Menu"]
+margin_left = 122.0
+margin_right = 166.0
+margin_bottom = 13.0
+size_flags_vertical = 8
+text = "RESTART"
+
+[node name="QuitGameBtn" type="Button" parent="Menu"]
+margin_left = 182.0
+margin_right = 238.0
+margin_bottom = 13.0
+size_flags_vertical = 8
+text = "QUIT GAME"
+
+[connection signal="pressed" from="Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
+[connection signal="pressed" from="Menu/QuitGameBtn" to="." method="_on_QuitGameBtn_pressed"]

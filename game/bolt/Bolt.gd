@@ -130,6 +130,7 @@ func _ready() -> void:
 	set_engines() # postavi partikle za pogon
 	
 	# nodes
+	shield.hide() 
 	shield.modulate.a = 0 
 	shield_collision.disabled = true 
 	shield.self_modulate = bolt_color 
@@ -138,6 +139,13 @@ func _ready() -> void:
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
 
+	feat_selector.hide()
+	
+	# napolnem možne featurje (notri so tudi, ko je count = 0
+	available_features.append(feat_selector.get_node("Icons/IconBullet"))
+	available_features.append(feat_selector.get_node("Icons/IconMisile"))
+	available_features.append(feat_selector.get_node("Icons/IconMina"))
+	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
 func _physics_process(delta: float) -> void:
 	# aktivacija pospeška je setana na vozniku
@@ -184,8 +192,8 @@ func _physics_process(delta: float) -> void:
 		else:
 			selected_feat_index = 0
 	else:
-		manage_bolt_hud()
 		update_feature_selector()
+		manage_bolt_hud()
 			
 		
 	
@@ -285,8 +293,6 @@ func manage_motion_states(delta):
 	else:
 		current_motion_state = MotionStates.IDLE	
 	
-#	
-
 
 func manage_motion_fx():
 
@@ -410,7 +416,7 @@ func on_hit(hit_by: Node):
 	if hit_by.is_in_group(Ref.group_bullets):
 		Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
 		if velocity == Vector2.ZERO:
-			velocity = hit_by.velocity
+			velocity = hit_by.velocity / mass
 		else:
 			velocity += hit_by.velocity * hit_by.mass / mass
 		in_disarray(hit_by.hit_damage)
@@ -477,6 +483,7 @@ func in_disarray(damage_amount: float): # 5 raketa, 1 metk
 	yield(dissaray_tween, "finished")
 	set_process_input(true)		
 	current_motion_state = MotionStates.IDLE
+
 	
 func explode():
 	
@@ -713,6 +720,7 @@ func shooting(weapon: String) -> void:
 func activate_shield():
 	
 	if shields_on == false:
+#		shield.show()
 		shield.modulate.a = 1
 		animation_player.play("shield_on")
 		shields_on = true
@@ -834,7 +842,15 @@ func on_item_picked(pickable_type_key: String):
 
 func _on_bolt_active_changed(bolt_is_active: bool):
 	
+	# če je aktiven ga upočacnim v trenutni smeri
 	bolt_active = bolt_is_active
+	if not bolt_active:
+		rotation_dir = 0
+		var dissable_tween = get_tree().create_tween()
+		dissable_tween.tween_property(self, "velocity", Vector2.ZERO, 2) # tajmiram pojemek 
+#		dissable_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
+#		yield(dissaray_tween, "finished")
+#		set_process_input(true)				
 	emit_signal("bolt_activity_changed", self)
 
 

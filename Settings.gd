@@ -132,6 +132,10 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 var selected_level: int
 var bolts_activated: Array # napolne so ob izbiri
 
+#var game_levels: Array = [Levels.OSMICA, Levels.NITRO_STRAIGHT]
+var game_levels: Array = []
+
+
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
@@ -141,11 +145,11 @@ func _ready() -> void:
 #	var debug_level = Levels.DEBUG_DUEL
 #	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
-	var debug_level = Levels.DUEL
+	var debug_level: int = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	
-func set_game_settings(selected_level) -> void:
+func set_game_settings(selected_level: int) -> void:
 	
 	current_game_settings = default_game_settings.duplicate() # naloži default, potrebne spremeni ob loadanju igre
 	

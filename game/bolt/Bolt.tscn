@@ -17,28 +17,6 @@
 [ext_resource path="res://assets/sound/sfx/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sound/sfx/burst/hit_stray_v2.wav" type="AudioStream" id=18]
 
-[sub_resource type="OpenSimplexNoise" id=115]
-seed = 1
-octaves = 4
-period = 90.5
-persistence = 0.354
-lacunarity = 3.58
-
-[sub_resource type="NoiseTexture" id=116]
-width = 9
-height = 9
-seamless = true
-noise = SubResource( 115 )
-
-[sub_resource type="ShaderMaterial" id=114]
-shader = ExtResource( 4 )
-shader_param/noise_factor = 0.0
-shader_param/speed = 0.0
-shader_param/noise_texture = SubResource( 116 )
-
-[sub_resource type="CircleShape2D" id=30]
-radius = 12.0
-
 [sub_resource type="ShaderMaterial" id=28]
 resource_local_to_scene = true
 shader = ExtResource( 3 )
@@ -63,6 +41,28 @@ height = 32
 seamless = true
 bump_strength = 13.9
 noise = SubResource( 25 )
+
+[sub_resource type="CircleShape2D" id=30]
+radius = 12.0
+
+[sub_resource type="OpenSimplexNoise" id=115]
+seed = 1
+octaves = 4
+period = 90.5
+persistence = 0.354
+lacunarity = 3.58
+
+[sub_resource type="NoiseTexture" id=116]
+width = 9
+height = 9
+seamless = true
+noise = SubResource( 115 )
+
+[sub_resource type="ShaderMaterial" id=114]
+shader = ExtResource( 4 )
+shader_param/noise_factor = 0.0
+shader_param/speed = 0.0
+shader_param/noise_texture = SubResource( 116 )
 
 [sub_resource type="Animation" id=117]
 length = 0.001
@@ -102,7 +102,7 @@ tracks/2/keys = {
 [sub_resource type="Animation" id=112]
 resource_name = "shield_on"
 length = 2.0
-step = 0.05
+step = 0.02
 tracks/0/type = "bezier"
 tracks/0/path = NodePath(".:scale:x")
 tracks/0/interp = 1
@@ -134,6 +134,18 @@ tracks/2/keys = {
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.06 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
 }
 
 [sub_resource type="Animation" id=110]
@@ -194,10 +206,15 @@ random_pitch = 1.05
 [node name="Bolt" type="KinematicBody2D"]
 script = ExtResource( 5 )
 
-[node name="BoltCollision" type="CollisionPolygon2D" parent="."]
-position = Vector2( 0, 0.5 )
-rotation = 1.57079
-polygon = PoolVector2Array( -2.99997, -4.00002, -5, -3.13719e-05, -5.00003, 3.99997, 3.99997, 4.00003, 4, 2.50975e-05, 2.00003, -3.99999 )
+[node name="Shield" type="Sprite" parent="."]
+visible = false
+material = SubResource( 28 )
+texture = SubResource( 109 )
+
+[node name="ShieldCollision" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 30 )
+disabled = true
 
 [node name="Bolt" type="Sprite" parent="."]
 material = SubResource( 114 )
@@ -258,15 +275,10 @@ modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
-[node name="ShieldCollision" type="CollisionShape2D" parent="."]
-visible = false
-shape = SubResource( 30 )
-disabled = true
-
-[node name="Shield" type="Sprite" parent="."]
-visible = false
-material = SubResource( 28 )
-texture = SubResource( 109 )
+[node name="BoltCollision" type="CollisionPolygon2D" parent="."]
+position = Vector2( 0, 0.5 )
+rotation = 1.57079
+polygon = PoolVector2Array( -2.99997, -4.00002, -5, -3.13719e-05, -5.00003, 3.99997, 3.99997, 4.00003, 4, 2.50975e-05, 2.00003, -3.99999 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Shield")
@@ -362,6 +374,7 @@ __meta__ = {
 }
 
 [node name="IconMina" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons"]
+visible = false
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 125 )
@@ -385,7 +398,6 @@ __meta__ = {
 }
 
 [node name="IconShocker" type="TextureRect" parent="BoltHud/VBoxContainer/FeatSelector/Icons"]
-visible = false
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 124 )

@@ -113,13 +113,7 @@ func _ready() -> void:
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
 	
-	feat_selector.hide()
-	
-	# napolnem možne featurje (notri so tudi, ko je count = 0
-	available_features.append(feat_selector.get_node("Icons/IconBullet"))
-	available_features.append(feat_selector.get_node("Icons/IconMisile"))
-	available_features.append(feat_selector.get_node("Icons/IconMina"))
-	available_features.append(feat_selector.get_node("Icons/IconShocker"))
+
 
 
 #func _process(delta: float) -> void:

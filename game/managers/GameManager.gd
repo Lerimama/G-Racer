@@ -56,14 +56,15 @@ func _input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed("x"):
 			spawn_pickable()
 		if Input.is_action_just_released("r"):
-			call_deferred("game_over", GameoverReason.SUCCES)	
-		#		if Input.is_action_just_pressed("f"):
-		#			for bolt in bolts_in_game:
-		#				if bolt.selected_feat_index > 2:
-		#					bolt.selected_feat_index = 0
-		#				else:
-		#					bolt.selected_feat_index += 1
-		#				print("id", bolt.selected_feat_index)
+			Ref.main_node.to_next_level()
+		if Input.is_action_just_pressed("f"):
+			for bolt in bolts_in_game:
+				bolt.gas_count = 0
+				printt("GC", bolt.gas_count)
+#					bolt.selected_feat_index = 0
+#				else:
+#					bolt.selected_feat_index += 1
+#				print("id", bolt.selected_feat_index)
 
 
 func _ready() -> void:
@@ -91,8 +92,8 @@ func set_game(): # kliče main.gd pred fejdin igre
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
@@ -134,7 +135,7 @@ func start_game():
 	fast_start_window = false	
 		
 		
-func game_over(gameover_reason: int):
+func level_over(gameover_reason: int):
 
 	if game_on == false: # preprečim double gameover
 		return
@@ -146,13 +147,24 @@ func game_over(gameover_reason: int):
 		printt("GO SUCCESS", bolts_across_finish_line.size())
 		for bolt_across_finish_line in bolts_across_finish_line:
 			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
+		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
 	elif gameover_reason == GameoverReason.FAIL:
+		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 		print("GO FAIL")
 	elif gameover_reason == GameoverReason.FAIL:
-		for bolt in bolts_in_game:
-			bolt.bolt_active = false
+		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 		print("GO TIME")
-	Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
+	
+	# stop elemenets
+	Ref.hud.on_level_over()
+	Ref.sound_manager.stop_music()
+	Ref.current_camera.follow_target = null
+	for bolt in bolts_in_game: # zazih ... načeloma bi moralo že veljati za vse
+		bolt.bolt_active = false 
+		
+			
+func game_over(gameover_reason: int):
+
 	
 	# stop elemenets
 	Ref.hud.on_game_over()
@@ -162,7 +174,7 @@ func game_over(gameover_reason: int):
 		bolt.bolt_active = false 
 		
 		
-func check_for_game_over(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
+func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
 	
 	var active_bolts: Array
 	
@@ -176,10 +188,10 @@ func check_for_game_over(): # za preverjanje pogojev za game over (vsakič ko bo
 		if not bolts_across_finish_line.empty(): # lahko so vsi izven cilja
 			for bolt_across_finish_line in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
 				if bolt_across_finish_line[0].is_in_group(Ref.group_players):
-					game_over(GameoverReason.SUCCES)		
+					level_over(GameoverReason.SUCCES)		
 					return # dovolj je en uspeh
 		# če ni uspeha
-		game_over(GameoverReason.FAIL)	
+		level_over(GameoverReason.FAIL)	
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
@@ -537,7 +549,7 @@ func current_bolt_areas():
 func _on_Bolt_activity_changed(bolt: KinematicBody2D):
 	
 	if bolt.bolt_active == false:
-		check_for_game_over()
+		check_for_level_over()
 
 	
 func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array, level_checkpoints_count: int):

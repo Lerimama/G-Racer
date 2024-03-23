@@ -1,0 +1,17 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://assets/shaders/arena_colors_texture.gdshader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/manipulate_color_1 = Color( 0.152941, 0.176471, 0.239216, 1 )
+shader_param/new_color_1 = Color( 1, 1, 0, 1 )
+shader_param/manipulate_color_2 = Color( 0, 1, 0, 1 )
+shader_param/new_color_2 = Color( 0, 1, 1, 1 )
+shader_param/manipulate_color_3 = Color( 0, 0, 1, 1 )
+shader_param/new_color_3 = Color( 1, 0, 1, 1 )
+shader_param/manipulate_other = false
+shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
+shader_param/manipulate_all = false
+shader_param/new_color_manipulate_all = Color( 0.5, 0.5, 0.5, 1 )
+shader_param/transparent_to_color = Color( 0, 0, 0, 0 )

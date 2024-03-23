@@ -7,6 +7,7 @@ var camera_shake_on: bool =  true #_temp
 onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
 
+
 func _ready() -> void:
 	
 	Ref.main_node = self
@@ -71,21 +72,75 @@ func game_in():
 	get_viewport().set_disable_input(false)
 	get_tree().set_pause(false)
 	
+	
+	if not Set.game_levels.empty():
+		Set.set_game_settings(Set.game_levels[game_level_index]) # setaš level znotraj igre
+		
 	Met.spawn_new_scene(game_scene_path, self)
 	Met.current_scene.modulate = Color.black
-	# tukaj se seta GM glede na izbiro igre
-	
-#	Ref.game_manager.set_level()
 	Ref.game_manager.set_game()
-#	Met.game_manager.set_tilemap()
-#	Met.game_manager.set_game_view()
-#	Met.game_manager.set_players()
-	
 	yield(get_tree().create_timer(1), "timeout") # da se kamera centrira (na restart)
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_property(Met.current_scene, "modulate", Color.white, fade_time).from(Color.black)
 #	fade_in.tween_callback(Ref.game_manager, "set_game")
+
+var game_level_index: int = 0
+
+func to_next_level(): # reload game scene z neslednjim levelom
+	
+	if game_level_index < Set.game_levels.size() - 1:
+		game_level_index += 1
+		reload_game()
+	else:
+		game_level_index = 0		
+		game_over_in()
+	
+	
+#	yield(fade_out, "finished")
+#	get_tree().set_current_scene(Met.current_scene)
+#	print("CURR", get_tree().current_scene)
+#	get_tree().reload_current_scene()	
+
+func game_over_in():
+	printt ("GO", Met.current_scene)
+	$Sounds/MenuFade.play()	
+
+	# game_out
+	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_out.tween_property(Met.current_scene, "modulate", Color.black, fade_time)
+	yield(fade_out, "finished")
+	Met.release_scene(Met.current_scene)
+	
+	var path = "res://game/GameEnd.tscn"
+	Met.spawn_new_scene(path, self)
+	Met.current_scene.modulate = Color.black
+	var fade_in = get_tree().create_tween()
+	fade_in.tween_property(Met.current_scene, "modulate", Color.white, fade_time).from(Color.black)
+	printt ("GO poo", Met.current_scene)
+
+#	fade_in.tween_callback(Ref.game_manager, "set_game")
+#	Ref.game_manager.game_over(1)
+	
+	pass
+	
+#func level_in(level_to_load: int):
+#func level_in(level_to_load_index: int):
+#	Set.set_game_settings(level_to_load_index)
+#	current_level_index = level_to_load_index
+#	print ("CL", level_to_load_index)
+##	Set.set_game_settings(current_level) # setaš prvi level
+#
+#	Met.spawn_new_scene(game_scene_path, self)
+#	Met.current_scene.modulate = Color.black
+#	Ref.game_manager.set_game()
+#	yield(get_tree().create_timer(1), "timeout") # da se kamera centrira (na restart)
+#	var fade_in = get_tree().create_tween()
+#	fade_in.tween_property(Met.current_scene, "modulate", Color.white, fade_time).from(Color.black)
+#
+#
+#func level_out():
+#	pass
 	
 
 func game_out():
@@ -117,4 +172,8 @@ func reload_game(): # game out z drugačnim zaključkom
 	fade_out.tween_property(Met.current_scene, "modulate", Color.black, fade_time)
 	fade_out.tween_callback(Met, "release_scene", [Met.current_scene])
 	fade_out.tween_callback(self, "game_in").set_delay(1) # dober delay ker se relese zgodi šele v naslednjem frejmu
+#	yield(fade_out, "finished")
+#	get_tree().set_current_scene(Met.current_scene)
+#	print("CURR", get_tree().current_scene)
+#	get_tree().reload_current_scene()
 	
