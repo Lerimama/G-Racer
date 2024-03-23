@@ -26,7 +26,7 @@ func goal_reached(bolt: KinematicBody2D):
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 	
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		bolts_in_goal_area.append(body)
 
 

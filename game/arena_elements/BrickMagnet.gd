@@ -38,7 +38,7 @@ func _physics_process(delta: float) -> void:
 	if magnet_on:
 		var detected_bodies = force_field.get_overlapping_bodies()
 		for body in detected_bodies:
-			if body is Bolt:
+			if body.is_in_group(Ref.group_bolts):
 				var vector_to_magnet: Vector2 = body.global_position.direction_to(global_position)
 				var distance_to_magnet: float = body.global_position.distance_to(global_position)
 				var gravity_velocity: float = gravity_force / (distance_to_magnet * 1)

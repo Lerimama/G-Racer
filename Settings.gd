@@ -35,6 +35,8 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 var default_game_settings: Dictionary = {
+	# tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
+	# ni settingsov, ki jih ne bom spreminjal, ko bodo enkrat nastavljeni .. #drugam
 	"start_player_count": 1,
 	"game_time_limit": 0, # če je 0 ni omejitve
 	"stopwatch_mode": true,
@@ -54,7 +56,7 @@ var default_game_settings: Dictionary = {
 	"pull_penalty_gas": -20,
 	"pickables_count_limit": 5,
 	# modes
-	"precision_start_drag_force_div": 500.0,
+	"precision_start_drag_force_div": 500.0, #drugam
 	"race_mode": false, # ranking, gas use, enemy AI
 	"sudden_death_mode": false,
 	"sudden_death_limit": 10, # koliko pred koncem
@@ -102,7 +104,7 @@ var level_settings: Dictionary = {
 		"level": Levels.DUEL,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
-		"time_limit": 15,
+		"time_limit": 0,
 		"lap_limit": 0,
 		},
 	Levels.DEBUG_RACE: {
@@ -133,11 +135,11 @@ var bolts_activated: Array # napolne so ob izbiri
 func _ready() -> void:
 	
 	# če greš iz menija je tole povoženo
-	var debug_level = Levels.NITRO
+#	var debug_level = Levels.NITRO
 #	var debug_level = Levels.NITRO_STRAIGHT
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-#	var debug_level = Levels.OSMICA
+	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
 #	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)

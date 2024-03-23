@@ -128,18 +128,19 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	
 	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
+	
 	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 
 
 func shoot():
-	
+	selected_feat_index = 2
 	match selected_feat_index:
 		0: # no feature
 			return
 		1: # bullet
 			shooting("bullet")
-		2: # misilef
+		2: # misile
 			shooting("misile")
 		3: # shocker
 			shooting("shocker")

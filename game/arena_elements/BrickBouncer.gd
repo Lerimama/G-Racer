@@ -14,7 +14,7 @@ func _ready() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		body.set_process_input(false)
 		body.bounce_size = bouncer_bounce_strenght
 		sprite.modulate = Color.white
@@ -25,7 +25,7 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 		
 func _on_DetectArea_body_exited(body: Node) -> void:
 
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		# sprite.modulate = bouncer_color
 		body.bounce_size = Pro.bolt_profiles[body.bolt_type]["bounce_size"]
 		body.set_process_input(true)

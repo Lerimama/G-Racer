@@ -24,7 +24,7 @@ direction = Vector3( 1, 1, 0 )
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
 initial_velocity = 40.0
-initial_velocity_random = 0.46
+initial_velocity_random = 0.5
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 damping = 30.83
@@ -56,7 +56,8 @@ animations = [ {
 } ]
 
 [node name="ExplosionParticles" type="Particles2D"]
-amount = 14
+amount = 20
+lifetime = 1.2
 explosiveness = 1.0
 randomness = 1.0
 process_material = SubResource( 11 )

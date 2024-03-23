@@ -91,8 +91,8 @@ func set_game(): # kliče main.gd pred fejdin igre
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
@@ -175,7 +175,7 @@ func check_for_game_over(): # za preverjanje pogojev za game over (vsakič ko bo
 		# preverjam uspeh
 		if not bolts_across_finish_line.empty(): # lahko so vsi izven cilja
 			for bolt_across_finish_line in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
-				if bolt_across_finish_line[0] is Player:
+				if bolt_across_finish_line[0].is_in_group(Ref.group_players):
 					game_over(GameoverReason.SUCCES)		
 					return # dovolj je en uspeh
 		# če ni uspeha
@@ -283,7 +283,7 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 	if bolt_finished.laps_finished >= laps_limit:
 		# deaktiviram plejerja in zabležim statistiko 
 		var race_finished_time: float = current_race_time
-		if bolt_finished is Player:
+		if bolt_finished.is_in_group(Ref.group_players):
 			bolt_finished.bolt_active = false # enemy se disebla ko doseže target
 			# če prvi med igralci, je konec igre
 			if not bolts_across_finish_line.has(bolt_finished): # če ga še nima, je prvi med plejerji
@@ -292,7 +292,7 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 				Ref.hud.game_timer.limitless_mode = false
 				Ref.hud.game_timer.game_time_limit = race_finished_time + time_to_finish
 				printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.absolute_game_time)				
-		elif bolt_finished is Enemy:
+		elif bolt_finished.is_in_group(Ref.group_enemies):
 			bolt_finished.on_race_finished()
 		bolts_across_finish_line.append([bolt_finished, race_finished_time]) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
 			
@@ -331,9 +331,9 @@ func get_game_ranking():
 		# set bolt ranking
 		bolt_on_racing_line[0].current_race_ranking = all_bolts_on_racing_line.find(bolt_on_racing_line) + 1
 		# če je plejer ga dodam me plejerje
-		if bolt_on_racing_line[0] is Player and bolt_on_racing_line[0].bolt_active:
+		if bolt_on_racing_line[0].is_in_group(Ref.group_players) and bolt_on_racing_line[0].bolt_active:
 			players_on_racing_line.append(bolt_on_racing_line)
-		elif bolt_on_racing_line[0] is Enemy and bolt_on_racing_line[0].bolt_active:
+		elif bolt_on_racing_line[0].is_in_group(Ref.group_enemies) and bolt_on_racing_line[0].bolt_active:
 			enemies_on_racing_line.append(bolt_on_racing_line)
 			
 	# ENEMIES ... setam nav target
@@ -435,7 +435,7 @@ func get_racing_line_bolts():
 				# opredelim najbližjo linijo kot vodilno
 				leading_racing_line = closest_racing_line
 		# ENEMY ... preverjam glavno linijo in potem vse, ki sledijo
-		elif bolt is Enemy:	
+		elif bolt.is_in_group(Ref.group_enemies):	
 			for line_point in level_racing_lines[enemy_racing_line_index].get_points():
 				var distance_to_point: float = bolt.global_position.distance_to(line_point)
 				# če je prva distance jo štejem in zapišem lokacijo točke na liniji
@@ -466,10 +466,10 @@ func get_racing_line_bolts():
 		# na koncu (nujno) sestavim bolt_on_racing_line .. bolt, index najbližje točke, index linije v level racing linijah
 		var closest_racing_line_point_index: int 
 		var closest_racing_line_index: int	
-		if bolt is Player:
+		if bolt.is_in_group(Ref.group_players):
 			closest_racing_line_point_index = level_racing_points.find(closest_racing_line_point)
 			closest_racing_line_index = level_racing_lines.find(closest_racing_line)
-		elif bolt is Enemy:
+		elif bolt.is_in_group(Ref.group_enemies):
 			closest_racing_line_point_index = level_racing_lines[enemy_racing_line_index].get_points().find(closest_racing_line_point)
 			closest_racing_line_index = enemy_racing_line_index
 					
@@ -586,15 +586,14 @@ func _on_ScreenArea_body_exited(body: Node) -> void:
 	
 	# player pull	
 	if game_settings["race_mode"]:
-		if body is Player:
+		if body.is_in_group(Ref.group_players):
 			var bolt_pull_position = get_bolt_pull_position(body)
 			body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
 	
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		if not body.bolt_active:
 			body.call_deferred("set_physics_process", false)
 	elif body is Bullet:
-		print("bull")
 		body.on_out_of_screen() # ta funkcija zakasni učinek
 	# elif body is Misile: ... ima timer in se sama kvefrija ... misila se lahko vrne v ekran (nitro)
 		

@@ -22,6 +22,7 @@ var bolt_profiles: Dictionary = {
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
 		"side_traction": 0.01, # 0 - 1
 		"bounce_size": 0.5, # 0 - 1 
+		"mass": 100, # kg
 		"inertia": 5, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
 		"drag_force_div": 100.0, # večji pomeni nižjo drag force
@@ -134,7 +135,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile" : "ARROWS",
 		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/Player.tscn"),
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
 	Bolts.P2 : {
 		"player_name" : "Zed",
@@ -142,7 +143,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_color" : Set.color_red,
 		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/Player.tscn"),
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
 	Bolts.P3 : {
 		"player_name" : "Dot",
@@ -151,7 +152,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 #		"controller_profile" : "ARROWS",
 		"controller_profile" : "JP1",
 		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/Player.tscn"),
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
 	Bolts.P4 : {
 		"player_name" : "Jax",
@@ -160,7 +161,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"controller_profile" : "JP2",
 #		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/Player.tscn"),
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
 	Bolts.ENEMY : {
 		"player_name" : "Rat",
@@ -170,7 +171,7 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"controller_profile" : "AI",
 		"bolt_type:": BoltTypes.BASIC,
 #		"player_scene": preload("res://game/bolt/Enemy.tscn"),
-		"player_scene": preload("res://game/bolt/EnemyRacing.tscn"),
+		"player_scene": preload("res://game/bolt/BoltEnemy.tscn"),
 	},
 }
 
@@ -216,18 +217,20 @@ var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 var weapon_profiles : Dictionary = {
 	"bullet": {
 		"reload_time": 0.1,
-		"hit_damage": 1,
+		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
 		"speed": 1000,
 		"lifetime": 1.0, #domet vedno merim s časom
-		"inertia": 50,
+		"mass": 1.5, # glede na to kakšno inercijo hočem
+#		"inertia": 50,
 		"direction_start_range": [0, 0] , # natančnost misile
 	},
 	"misile": {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 5,
-		"speed": 150,
+		"speed": 100,
 		"lifetime": 1.0, #domet vedno merim s časom
-		"inertia": 100,
+#		"inertia": 120,
+		"mass": 5,
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 	},
 	"shocker": {
@@ -235,7 +238,8 @@ var weapon_profiles : Dictionary = {
 		"hit_damage": 2,
 		"speed": 50,
 		"lifetime": 10, #domet vedno merim s časom
-		"inertia": 1,
+#		"inertia": 1,
+		"mass": 10,
 		"direction_start_range": [0, 0] , # natančnost misile
 	},
 }

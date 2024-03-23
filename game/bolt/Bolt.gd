@@ -7,6 +7,9 @@ signal bolt_activity_changed (bolt_is_active)
 
 enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
+enum Modes {RACING, FOLLOWING, FIGHTING} # RACING ... kadar šiba proti cilju, FOLLOWING ... kadar sledi gibajoči se tarči, FIGHTING ... kadar želi tarčo zadeti
+var current_mode: int = Modes.RACING
+
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 
 var bolt_id: int # ga seta spawner
@@ -58,7 +61,7 @@ var current_race_ranking: int #
 
 # fighting
 var tilt_speed_call: int = 0 
-var disarray_rotation_dir = 6
+#var disarray_rotation_dir = 6
 var selected_feat_index: int = 0
 var available_features: Array = [] # feature icons
 
@@ -101,9 +104,10 @@ onready var free_rotation_multiplier: int = Pro.bolt_profiles[bolt_type]["free_r
 onready var drag: float = Pro.bolt_profiles[bolt_type]["drag"] # raste kvadratno s hitrostjo
 onready var side_traction: float = Pro.bolt_profiles[bolt_type]["side_traction"]
 onready var bounce_size: float = Pro.bolt_profiles[bolt_type]["bounce_size"]
-onready var inertia: float = Pro.bolt_profiles[bolt_type]["inertia"]
+onready var mass: float = Pro.bolt_profiles[bolt_type]["mass"]
+#onready var inertia: float = Pro.bolt_profiles[bolt_type]["inertia"]
 onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability"]  # reload def gre v weapons
-onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
+#onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
@@ -128,47 +132,32 @@ func _ready() -> void:
 	
 	# bolt wiggle šejder
 	bolt_sprite.material.set_shader_param("noise_factor", 0)
-	
-	
-func set_motion_states():
-	if engine_power > 0:
-		current_motion_state = MotionStates.FWD
-#		if Ref.game_manager.game_settings["race_mode"]:
-#			update_gas(fwd_gas_usage)
-	elif engine_power < 0:
-		current_motion_state = MotionStates.REV
-#		if Ref.game_manager.game_settings["race_mode"]:
-#			update_gas(rev_gas_usage)
-	elif engine_power == 0:
-		current_motion_state = MotionStates.IDLE	
-	
+
 
 func _physics_process(delta: float) -> void:
-#	printt("RANK", current_race_ranking)
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
 	
-	# animiran bolt
-	#bolt_sprite.rotation = - global_rotation
+	# animiran bolt .. sprite se ne rotira z zavijanjem ... # bolt_sprite.rotation = - global_rotation
 	
-	if not Ref.game_manager.game_settings["race_mode"]:
-		update_feature_selector()		
-	
-	# sila upora raste s hitrostjo		
-	var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
-	# hitrost je pospešek s časom
-	acceleration -= drag_force
-	velocity += acceleration * delta
-	rotation_angle = rotation_dir * deg2rad(turn_angle)
-	rotate(delta * rotation_angle)
-	steering(delta)	# vpliva na ai !!!
-	
+	if current_motion_state == MotionStates.DISARRAY:
+		rotation_angle = rotation_dir * deg2rad(turn_angle)
+	else:
+		# sila upora raste s hitrostjo		
+		var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
+		# hitrost je pospešek s časom
+		acceleration -= drag_force
+		velocity += acceleration * delta
+		rotation_angle = rotation_dir * deg2rad(turn_angle)
+		rotate(delta * rotation_angle)
+		steering(delta)
+
 	collision = move_and_collide(velocity * delta, false)
 	if collision:
 		on_collision()	
-
-	set_motion_states()
+	
+	manage_motion_states(delta)
 	manage_motion_fx()
 	
 	if Ref.game_manager.game_settings["race_mode"]:
@@ -189,6 +178,7 @@ func _physics_process(delta: float) -> void:
 			selected_feat_index = 0
 	else:
 		manage_bolt_hud()
+		update_feature_selector()
 			
 		
 	
@@ -269,6 +259,25 @@ func steering(delta: float) -> void:
 	#	velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.5) # željeno smer gibanja doseže z zamikom "side-traction"	
 	
 	rotation = new_heading.angle() # sprite se obrne v smeri	
+
+	
+func manage_motion_states(delta):
+	
+	# če je dissaray ne more bit nič drugega, če ga nekdo ne izklopi (timer)
+	if current_motion_state == MotionStates.DISARRAY:
+		rotate(delta * rotation_angle * free_rotation_multiplier)
+#		engine_power = 0
+#		print ("states")
+		return
+		
+	if engine_power > 0:
+		current_motion_state = MotionStates.FWD
+	elif engine_power < 0:
+		current_motion_state = MotionStates.REV
+	else:
+		current_motion_state = MotionStates.IDLE	
+	
+#	
 
 
 func manage_motion_fx():
@@ -380,55 +389,70 @@ func manage_bolt_hud():
 
 func on_hit(hit_by: Node):
 	
-	if not shields_on:
+	if shields_on:
+		return
 		
-		if hit_by.is_in_group(Ref.group_bullets):
-			Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
-			take_damage(hit_by)
-			# push
-			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia
-			# efekt	
-			modulate.a = 0.2
-			var blink_tween = get_tree().create_tween()
-			blink_tween.tween_property(self, "modulate:a", 1, 0.1) 
-			
-		elif hit_by.is_in_group(Ref.group_misiles):
-			Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
-			# efekt	
-			velocity = velocity.normalized() * inertia + hit_by.velocity.normalized() * hit_by.inertia # push
-			explode()
-			if Ref.game_manager.game_settings["race_mode"]:
-				in_disarray()
-			else:
-				take_damage(hit_by)
-			
-		elif hit_by.is_in_group(Ref.group_shockers):
-			take_damage(hit_by)		
-			set_process_input(false)
-			# efekt
-			var catch_tween = get_tree().create_tween()
-			catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
-			catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
-			catch_tween.parallel().tween_property(bolt_sprite, "modulate:a", 0.5, 0.5)
-			bolt_sprite.material.set_shader_param("noise_factor", 2.0)
-			bolt_sprite.material.set_shader_param("speed", 0.7)
-			yield(get_tree().create_timer(hit_by.shock_time), "timeout") # controlls off time
-			# releaase
-			var relase_tween = get_tree().create_tween()
-			relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
-			relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
-			yield(relase_tween, "finished")
-			# reset shader
-			bolt_sprite.material.set_shader_param("noise_factor", 0.0)
-			bolt_sprite.material.set_shader_param("speed", 0.0)
-			set_process_input(true)
-
-
-func in_disarray():
+	if hit_by.is_in_group(Ref.group_bullets):
+		Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
+		if velocity == Vector2.ZERO:
+			velocity = hit_by.velocity
+		else:
+			velocity += hit_by.velocity * hit_by.mass / mass
+		if Ref.game_manager.game_settings["race_mode"]:
+			in_disarray(hit_by.hit_damage)
+		else:
+			energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
+			emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
+	elif hit_by.is_in_group(Ref.group_misiles):
+		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
+		if velocity == Vector2.ZERO:
+			velocity = hit_by.velocity
+		else:
+			velocity += hit_by.velocity * hit_by.mass / mass
+		if Ref.game_manager.game_settings["race_mode"]:
+			in_disarray(hit_by.hit_damage)
+		else:
+			energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
+			emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
+		
+	elif hit_by.is_in_group(Ref.group_shockers):
+		set_process_input(false)
+		# efekt
+		var catch_tween = get_tree().create_tween()
+		catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
+		catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
+		catch_tween.parallel().tween_property(bolt_sprite, "modulate:a", 0.5, 0.5)
+		bolt_sprite.material.set_shader_param("noise_factor", 2.0)
+		bolt_sprite.material.set_shader_param("speed", 0.7)
+		yield(get_tree().create_timer(hit_by.shock_time), "timeout") # controlls off time
+		# release
+		var relase_tween = get_tree().create_tween()
+		relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
+		relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
+		yield(relase_tween, "finished")
+		# reset shader
+		bolt_sprite.material.set_shader_param("noise_factor", 0.0)
+		bolt_sprite.material.set_shader_param("speed", 0.0)
+		set_process_input(true)
+		# damage
+		energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
+		emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
 	
-	set_process_input(false)		
-	# random disarray direction
+	energy = clamp(energy, 0, max_energy)
+	energy_bar.scale.x = energy/10
+	if energy == 0:
+		lose_life()
+
+
+func in_disarray(damage_amount: float): # 5 raketa, 1 metk
+	
 	current_motion_state = MotionStates.DISARRAY
+	set_process_input(false)		
+#	damage_amount = 5 # debug
+	var dissaray_time_factor: float = 0.6 # uravnano, da naredi pol kroga na 1 damage
+	var disarray_rotation_dir: float = damage_amount # vedno je -1, 0, ali +1, samo tukaj jo povečam, da dobim hitro rotacijo
+	var on_hit_disabled_time: float = dissaray_time_factor * damage_amount
+	# random disarray direction
 	var dissaray_random_direction = randi() % 2
 	if dissaray_random_direction == 0:
 		rotation_dir = - disarray_rotation_dir
@@ -438,9 +462,8 @@ func in_disarray():
 	disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
 	disabled_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
 	yield(disabled_tween, "finished")
-	current_motion_state = MotionStates.IDLE
-	energy = max_energy
 	set_process_input(true)		
+	current_motion_state = MotionStates.IDLE
 	
 	
 func explode():
@@ -464,22 +487,24 @@ func explode():
 	Ref.node_creation_parent.add_child(new_exploding_bolt)	
 
 
-func take_damage(hit_by: Node):
-	
-	var damage_amount: float = hit_by.hit_damage
-	
-	energy -= damage_amount
-	energy = clamp(energy, 0, max_energy)
-	energy_bar.scale.x = energy/10
-	
-	# za damage
-	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
-	
-	if energy <= 0:
-		lose_life()
+#func take_damage(hit_by: Node):
+#
+#	var damage_amount: float = hit_by.hit_damage
+#
+#	energy -= damage_amount
+#	energy = clamp(energy, 0, max_energy)
+#	energy_bar.scale.x = energy/10
+#
+#	# za damage
+#	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
+#
+#	if energy <= 0:
+#		lose_life()
 			
 	
 func lose_life():
+	
+	explode()
 	
 	# stats
 	life -= 1
@@ -496,6 +521,7 @@ func lose_life():
 	
 
 func revive_bolt():
+	
 	print("revieve")
 	yield(get_tree().create_timer(revive_time), "timeout")
 	
@@ -506,9 +532,10 @@ func revive_bolt():
 	#	engine_particles_front_right.visible = true
 	energy = max_energy
 	set_physics_process(true)
-	
 	visible = true
 	bolt_active = true
+	
+	emit_signal("stat_changed", bolt_id, "energy", energy)
 
 
 # RACE ----------------------------------------------------------------------------

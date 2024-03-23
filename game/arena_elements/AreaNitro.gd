@@ -3,7 +3,7 @@ extends Area2D
 
 func _on_AreaNitro_body_entered(body: Node) -> void:
 
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		if body.bolt_active: # če ni aktiven se sam od sebe ustavi
 			if body.bolt_on_nitro_count == 0: # vklopiš samo na prvi
 #				body.modulate = Color.green
@@ -14,7 +14,7 @@ func _on_AreaNitro_body_entered(body: Node) -> void:
 			
 func _on_AreaNitro_body_exited(body: Node) -> void:
 	
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		# yield(get_tree().create_timer(1), "timeout")
 		body.bolt_on_nitro_count -= 1 
 		if body.bolt_on_nitro_count == 0: # izklopiš, ko bolta ni v nobeni več

@@ -17,7 +17,7 @@ func _ready() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		body.velocity /= ghost_brake
 		animation_player.play("outro")
 

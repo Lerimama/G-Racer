@@ -3,7 +3,7 @@ extends Area2D
 
 func _on_AreaTracking_body_entered(body: Node) -> void:
 	
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		if body.bolt_active:
 			if body.bolt_on_tracking_count == 0: # vklopiš samo na prvi
 #				body.modulate = Color.green			
@@ -13,7 +13,7 @@ func _on_AreaTracking_body_entered(body: Node) -> void:
 
 func _on_AreaTracking_body_exited(body: Node) -> void:
 	
-	if body is Bolt:
+	if body.is_in_group(Ref.group_bolts):
 		body.bolt_on_tracking_count -= 1 
 		if body.bolt_on_tracking_count == 0: # izklopiš, ko bolta ni v nobeni več
 #			body.modulate = Color.white

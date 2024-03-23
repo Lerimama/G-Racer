@@ -40,7 +40,8 @@ onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var max_speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
-onready var inertia: float = weapon_profile["inertia"]
+onready var mass: float = weapon_profile["mass"]
+#onready var inertia: float = weapon_profile["inertia"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
 
@@ -108,10 +109,10 @@ func _physics_process(delta: float) -> void:
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	if get_slide_count() != 0:
 		collision = get_slide_collision(0) # we wan't to take the first collision
-		# if collision.collider != spawned_by: # sam sebe lahko ubiješ
-		explode()
-		if collision.collider.has_method("on_hit"):
-			collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+		if collision.collider != spawned_by: # sam sebe lahko ubiješ
+			explode()
+			if collision.collider.has_method("on_hit"):
+					collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
 		
 		
 #func collide():
@@ -153,7 +154,7 @@ func dissarm():
 func explode():
 
 	new_misile_trail.start_decay()
-	
+
 	var new_misile_explosion = MisileExplosion.instance()
 	new_misile_explosion.global_position = global_position
 	new_misile_explosion.set_one_shot(true)
