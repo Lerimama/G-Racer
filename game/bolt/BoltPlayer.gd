@@ -118,6 +118,7 @@ func _ready() -> void:
 	# napolnem možne featurje (notri so tudi, ko je count = 0
 	available_features.append(feat_selector.get_node("Icons/IconBullet"))
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
+	available_features.append(feat_selector.get_node("Icons/IconMina"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
 
@@ -134,7 +135,7 @@ func _physics_process(delta: float) -> void:
 
 
 func shoot():
-	selected_feat_index = 2
+#	selected_feat_index = 3
 	match selected_feat_index:
 		0: # no feature
 			return
@@ -142,7 +143,9 @@ func shoot():
 			shooting("bullet")
 		2: # misile
 			shooting("misile")
-		3: # shocker
+		3: # mina
+			shooting("mina")
+		4: # shocker 
 			shooting("shocker")
 
 

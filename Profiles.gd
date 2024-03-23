@@ -23,7 +23,6 @@ var bolt_profiles: Dictionary = {
 		"side_traction": 0.01, # 0 - 1
 		"bounce_size": 0.5, # 0 - 1 
 		"mass": 100, # kg
-		"inertia": 5, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
 		"drag_force_div": 100.0, # večji pomeni nižjo drag force
 		"fwd_gas_usage": -0.1, # per fram
@@ -37,7 +36,6 @@ var bolt_profiles: Dictionary = {
 #		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
 #		"side_traction": 0.05, # 0 - 1
 #		"bounce_size": 0.3, # 0 - 1 
-#		"inertia": 5, # kg
 		},
 }
 
@@ -46,52 +44,59 @@ var pickable_profiles: Dictionary = {
 	# imena so ista kot enum ključi v pickables
 	
 	"BULLET": { # BULLET
-		"for_random_selection": true,
+		"for_random_selection": true, # random je samo pickable, pa še to ni v dirki
 		"pickable_color": Set.color_green,
 		"pickable_value": 20,
-		"pickable_time": 0, # sekunde
+		"pickable_time": 0, # pomeni, da ni časovno pogojen učinek
 		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"), # pot rabim samo pri random spawnanju
 	},
 	"MISILE": {
 		"for_random_selection": true,
 		"pickable_color": Set.color_green,
 		"pickable_value": 2,
-		"pickable_time": 0, # sekunde
+		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
+	}, 
+	"MINA": {
+		"for_random_selection": true,
+		"pickable_color": Set.color_green,
+		"pickable_value": 3,
+		"pickable_time": 0,
+		"scene_path": preload("res://game/arena_elements/pickables/PickableMina.tscn"),
 	}, 
 	"SHOCKER": {
 		"for_random_selection": true,
 		"pickable_color": Set.color_green,
 		"pickable_value": 3,
-		"pickable_time": 10, # sekunde
+		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 	}, 
 	"SHIELD": {
 		"for_random_selection": true,
 		"pickable_color": Set.color_green,
 		"pickable_value": 1,
-		"pickable_time": 0, # sekunde
+		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
 	},
 	"ENERGY": {
 		"for_random_selection": true,
 		"pickable_color": Set.color_red,
 		"pickable_value": 0,
-		"pickable_time": 0, # sekunde
+		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableEnergy.tscn"),
 	},
 	"LIFE": {
 		"for_random_selection": true,
 		"pickable_color": Set.color_blue,
 		"pickable_value": 1,
-		"pickable_time": 0, # sekunde
+		"pickable_time": 0, 
 		"scene_path": preload("res://game/arena_elements/pickables/PickableLife.tscn"),
 	},
 	"GAS": {
 		"for_random_selection": false,
 		"pickable_color": Set.color_red,
 		"pickable_value": 200,
-		"pickable_time": 0, # sekunde
+		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableGas.tscn"),
 	},
 	"NITRO": {
@@ -105,14 +110,14 @@ var pickable_profiles: Dictionary = {
 		"for_random_selection": false,
 		"pickable_color": Set.color_green,
 		"pickable_value": 0.7,
-		"pickable_time": 10, # sekunde
+		"pickable_time": 5,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
 	"POINTS": {
 		"for_random_selection": false,
 		"pickable_color": Set.color_blue,
-		"pickable_value": 100, # nepomebno, ker random range je število ključev v tem slovarju
-		"pickable_time": 0, # sekunde
+		"pickable_value": 100,
+		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickablePoints.tscn"),
 	},
 	"RANDOM": {
@@ -197,6 +202,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"bullet_power" : 0.1,
 	"bullet_count" : 100,
 	"misile_count" : 5,
+	"mina_count" : 3,
 	"shocker_count" : 3,
 	"gas_count" : 300, # 300 je kul
 }
@@ -221,24 +227,29 @@ var weapon_profiles : Dictionary = {
 		"speed": 1000,
 		"lifetime": 1.0, #domet vedno merim s časom
 		"mass": 1.5, # glede na to kakšno inercijo hočem
-#		"inertia": 50,
 		"direction_start_range": [0, 0] , # natančnost misile
 	},
 	"misile": {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"hit_damage": 5,
+		"hit_damage": 5, # 10 je max energija
 		"speed": 100,
 		"lifetime": 1.0, #domet vedno merim s časom
-#		"inertia": 120,
 		"mass": 5,
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
+	},
+	"mina": {
+		"reload_time": 0.1, #
+		"hit_damage": 10,
+		"speed": 50,
+		"lifetime": 10, #domet vedno merim s časom
+		"mass": 3,
+		"direction_start_range": [0, 0] , # natančnost misile
 	},
 	"shocker": {
 		"reload_time": 1.0, #
 		"hit_damage": 2,
 		"speed": 50,
 		"lifetime": 10, #domet vedno merim s časom
-#		"inertia": 1,
 		"mass": 10,
 		"direction_start_range": [0, 0] , # natančnost misile
 	},

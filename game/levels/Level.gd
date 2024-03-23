@@ -158,6 +158,10 @@ func set_level_elements():
 				scene_to_spawn = Pro.pickable_profiles["MISILE"]["scene_path"]
 				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
+			35: # pickable mina
+				scene_to_spawn = Pro.pickable_profiles["MINA"]["scene_path"]
+				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				tilemap_elements.set_cellv(cell, -1)
 			16: # pickable shocker
 				scene_to_spawn = Pro.pickable_profiles["SHOCKER"]["scene_path"]
 				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)

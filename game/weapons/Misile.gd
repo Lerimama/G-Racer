@@ -41,7 +41,6 @@ onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var max_speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
-#onready var inertia: float = weapon_profile["inertia"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
 

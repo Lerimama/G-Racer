@@ -16,6 +16,7 @@ onready var stat_wins: Control = $StatIconsWins
 onready var stat_life: Control = $StatIconsLife
 onready var stat_misile: HBoxContainer = $StatMisile
 onready var stat_shocker: HBoxContainer = $StatShocker
+onready var stat_mina: HBoxContainer = $StatMina
 onready var stat_points: HBoxContainer = $StatPoints
 onready var stat_bullet: HBoxContainer = $StatBullet
 onready var stat_gas: HBoxContainer = $StatGas
@@ -37,6 +38,7 @@ func _on_bolt_color_set(bolt_color):
 	stat_wins.def_stat_color = bolt_color # setget
 	stat_life.def_stat_color = bolt_color # setget
 	stat_misile.def_stat_color = bolt_color # setget
+	stat_mina.def_stat_color = bolt_color # setget
 	stat_shocker.def_stat_color = bolt_color # setget
 	stat_points.def_stat_color = bolt_color # setget
 	stat_bullet.def_stat_color = bolt_color # setget

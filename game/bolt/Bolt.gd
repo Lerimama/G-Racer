@@ -28,6 +28,8 @@ var revive_time: float = 2
 # weapons
 var bullet_reloaded: bool = true
 var misile_reloaded: bool = true
+var mina_reloaded: bool = true
+var mina_released: bool # če je že odvržen v trenutni ožini
 var shocker_reloaded: bool = true
 var shocker_released: bool # če je že odvržen v trenutni ožini
 var shields_on = false
@@ -65,6 +67,8 @@ var tilt_speed_call: int = 0
 var selected_feat_index: int = 0
 var available_features: Array = [] # feature icons
 
+onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
+
 onready var bolt_hud: Node2D = $BoltHud
 onready var bolt_sprite: Sprite = $Bolt
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
@@ -74,15 +78,17 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
+
 # nodeti
 onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://game/bolt/EngineParticles.tscn") 
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
 onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
-onready var Bullet: PackedScene = preload("res://game/weapons/Bullet.tscn")
-onready var Misile: PackedScene = preload("res://game/weapons/Misile.tscn")
-onready var Shocker: PackedScene = preload("res://game/weapons/Shocker.tscn")
+onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
+onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
+onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
+onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 # stats
 onready var points: int = Pro.default_player_stats["points"]
 onready var wins: int = Pro.default_player_stats["wins"]
@@ -91,8 +97,9 @@ onready var energy: float = Pro.default_bolt_stats["energy"]
 onready var max_energy: float = Pro.default_bolt_stats["energy"] # zato, da se lahko resetira
 onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
 onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
-onready var bullet_power: float = Pro.default_bolt_stats["bullet_power"]
+#onready var bullet_power: float = Pro.default_bolt_stats["bullet_power"]
 onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
+onready var mina_count: float = Pro.default_bolt_stats["mina_count"]
 onready var shocker_count: float = Pro.default_bolt_stats["shocker_count"]
 # bolt profil ... default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
@@ -105,9 +112,7 @@ onready var drag: float = Pro.bolt_profiles[bolt_type]["drag"] # raste kvadratno
 onready var side_traction: float = Pro.bolt_profiles[bolt_type]["side_traction"]
 onready var bounce_size: float = Pro.bolt_profiles[bolt_type]["bounce_size"]
 onready var mass: float = Pro.bolt_profiles[bolt_type]["mass"]
-#onready var inertia: float = Pro.bolt_profiles[bolt_type]["inertia"]
 onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability"]  # reload def gre v weapons
-#onready var on_hit_disabled_time: float = Pro.bolt_profiles[bolt_type]["on_hit_disabled_time"] 
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
@@ -172,8 +177,10 @@ func _physics_process(delta: float) -> void:
 			selected_feat_index = 1
 		elif misile_count > 0:
 			selected_feat_index = 2
-		elif shocker_count > 0:
+		elif mina_count > 0:
 			selected_feat_index = 3
+		elif shocker_count > 0:
+			selected_feat_index = 4
 		else:
 			selected_feat_index = 0
 	else:
@@ -189,6 +196,7 @@ func update_feature_selector():
 	
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMina.get_node("Label").text = "%02d" % mina_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
 	
 	
@@ -301,24 +309,27 @@ func manage_motion_fx():
 	if current_motion_state == MotionStates.FWD:
 		engine_particles_rear.modulate.a = velocity.length()/50
 		engine_particles_rear.set_emitting(true)
-		engine_particles_rear.global_position = to_global(rear_engine_pos)
-		engine_particles_rear.global_rotation = bolt_sprite.global_rotation
-		# spawn trail if not active
-		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
-			current_active_trail = spawn_new_trail()
 	elif current_motion_state == MotionStates.REV:
 		engine_particles_front_left.modulate.a = velocity.length()/10
 		engine_particles_front_left.set_emitting(true)
-		engine_particles_front_left.global_position = to_global(front_engine_pos_L)
-		engine_particles_front_left.global_rotation = bolt_sprite.global_rotation - deg2rad(180)
 		engine_particles_front_right.modulate.a = velocity.length()/10
 		engine_particles_front_right.set_emitting(true)
-		engine_particles_front_right.global_position = to_global(front_engine_pos_R)
-		engine_particles_front_right.global_rotation = bolt_sprite.global_rotation - deg2rad(180)	
-		# spawn trail if not active
-		if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
-			current_active_trail = spawn_new_trail()
-
+	elif current_motion_state == MotionStates.IDLE:
+		engine_particles_rear.modulate.a = 0
+		engine_particles_front_left.modulate.a = 0
+		engine_particles_front_right.modulate.a = 0
+		
+	# pozicije vseh motorjev
+	engine_particles_front_left.global_position = to_global(front_engine_pos_L)
+	engine_particles_front_left.global_rotation = bolt_sprite.global_rotation - deg2rad(180)
+	engine_particles_rear.global_position = to_global(rear_engine_pos)
+	engine_particles_rear.global_rotation = bolt_sprite.global_rotation
+	engine_particles_front_right.global_position = to_global(front_engine_pos_R)
+	engine_particles_front_right.global_rotation = bolt_sprite.global_rotation - deg2rad(180)	
+		
+	# spawn trail if not active
+	if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+		current_active_trail = spawn_new_trail()
 	# manage trail
 	if bolt_trail_active:
 		manage_trail()
@@ -391,33 +402,37 @@ func on_hit(hit_by: Node):
 	
 	if shields_on:
 		return
-		
+
+	if not Ref.game_manager.game_settings["race_mode"]:
+		energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
+		emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
+				
 	if hit_by.is_in_group(Ref.group_bullets):
 		Ref.current_camera.shake_camera(Ref.current_camera.bullet_hit_shake)
 		if velocity == Vector2.ZERO:
 			velocity = hit_by.velocity
 		else:
 			velocity += hit_by.velocity * hit_by.mass / mass
-		if Ref.game_manager.game_settings["race_mode"]:
-			in_disarray(hit_by.hit_damage)
-		else:
-			energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
-			emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
+		in_disarray(hit_by.hit_damage)
+		
 	elif hit_by.is_in_group(Ref.group_misiles):
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		if velocity == Vector2.ZERO:
 			velocity = hit_by.velocity
 		else:
 			velocity += hit_by.velocity * hit_by.mass / mass
-		if Ref.game_manager.game_settings["race_mode"]:
-			in_disarray(hit_by.hit_damage)
-		else:
-			energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
-			emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
+		in_disarray(hit_by.hit_damage)
+#
+	elif hit_by.is_in_group(Ref.group_mine):
+		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
+		in_disarray(hit_by.hit_damage)
 		
 	elif hit_by.is_in_group(Ref.group_shockers):
-		set_process_input(false)
+		# damage
+		energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
+		emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
 		# efekt
+		set_process_input(false)
 		var catch_tween = get_tree().create_tween()
 		catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
 		catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
@@ -434,10 +449,8 @@ func on_hit(hit_by: Node):
 		bolt_sprite.material.set_shader_param("noise_factor", 0.0)
 		bolt_sprite.material.set_shader_param("speed", 0.0)
 		set_process_input(true)
-		# damage
-		energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
-		emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
-	
+		
+	# energy management	
 	energy = clamp(energy, 0, max_energy)
 	energy_bar.scale.x = energy/10
 	if energy == 0:
@@ -445,10 +458,10 @@ func on_hit(hit_by: Node):
 
 
 func in_disarray(damage_amount: float): # 5 raketa, 1 metk
+#	damage_amount = 5 # debug
 	
 	current_motion_state = MotionStates.DISARRAY
 	set_process_input(false)		
-#	damage_amount = 5 # debug
 	var dissaray_time_factor: float = 0.6 # uravnano, da naredi pol kroga na 1 damage
 	var disarray_rotation_dir: float = damage_amount # vedno je -1, 0, ali +1, samo tukaj jo povečam, da dobim hitro rotacijo
 	var on_hit_disabled_time: float = dissaray_time_factor * damage_amount
@@ -458,13 +471,12 @@ func in_disarray(damage_amount: float): # 5 raketa, 1 metk
 		rotation_dir = - disarray_rotation_dir
 	else:
 		rotation_dir = disarray_rotation_dir
-	var disabled_tween = get_tree().create_tween()
-	disabled_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
-	disabled_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
-	yield(disabled_tween, "finished")
+	dissaray_tween = get_tree().create_tween()
+	dissaray_tween.tween_property(self, "velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek 
+	dissaray_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
+	yield(dissaray_tween, "finished")
 	set_process_input(true)		
 	current_motion_state = MotionStates.IDLE
-	
 	
 func explode():
 	
@@ -487,32 +499,15 @@ func explode():
 	Ref.node_creation_parent.add_child(new_exploding_bolt)	
 
 
-#func take_damage(hit_by: Node):
-#
-#	var damage_amount: float = hit_by.hit_damage
-#
-#	energy -= damage_amount
-#	energy = clamp(energy, 0, max_energy)
-#	energy_bar.scale.x = energy/10
-#
-#	# za damage
-#	emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa
-#
-#	if energy <= 0:
-#		lose_life()
-			
-	
 func lose_life():
 	
 	explode()
-	
-	# stats
-	life -= 1
-	emit_signal("stat_changed", bolt_id, "life", life)
-	
 	bolt_collision.disabled = true
 	visible = false
+	set_process_input(false)		
 	set_physics_process(false)
+	life -= 1
+	emit_signal("stat_changed", bolt_id, "life", life)
 	if life > 0:
 		revive_bolt()
 	else:
@@ -524,13 +519,16 @@ func revive_bolt():
 	
 	print("revieve")
 	yield(get_tree().create_timer(revive_time), "timeout")
-	
 	# on new life
 	bolt_collision.disabled = false
-	#	engine_particles_rear.visible = true
-	#	engine_particles_front_left.visible = true
-	#	engine_particles_front_right.visible = true
+	# reset pred prikazom
 	energy = max_energy
+	current_motion_state = MotionStates.IDLE
+	dissaray_tween.kill()
+	velocity = Vector2.ZERO
+	rotation_dir = 0
+	engine_power = 0
+	set_process_input(true)		
 	set_physics_process(true)
 	visible = true
 	bolt_active = true
@@ -647,11 +645,12 @@ func shooting(weapon: String) -> void:
 	var shocker_pos: Vector2 = Vector2(-4.5, 0.5)	
 	
 	match weapon:
-		"bullet":	
+		"bullet":
+				
 			if bullet_reloaded:
 				if bullet_count <= 0:
 					return
-				var new_bullet = Bullet.instance()
+				var new_bullet = BulletScene.instance()
 				new_bullet.global_position = to_global(gun_pos)
 				new_bullet.global_rotation = bolt_sprite.global_rotation
 				new_bullet.spawned_by = self # ime avtorja izstrelka
@@ -665,7 +664,7 @@ func shooting(weapon: String) -> void:
 				bullet_reloaded= true
 		"misile":
 			if misile_reloaded and misile_count > 0:			
-				var new_misile = Misile.instance()
+				var new_misile = MisileScene.instance()
 				new_misile.global_position = to_global(gun_pos)
 				new_misile.global_rotation = bolt_sprite.global_rotation
 				new_misile.spawned_by = self # zato, da lahko dobiva "točke ali kazni nadaljavo
@@ -678,9 +677,26 @@ func shooting(weapon: String) -> void:
 				misile_reloaded = false
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
 				misile_reloaded= true
+		"mina":
+			print("š mina")
+			if mina_reloaded and mina_count > 0:			
+				var new_mina = MinaScene.instance()
+				new_mina.global_position = to_global(shocker_pos)
+				new_mina.global_rotation = bolt_sprite.global_rotation
+				new_mina.spawned_by = self # ime avtorja izstrelka
+				new_mina.spawned_by_color = bolt_color
+				new_mina.z_index = z_index + Set.weapons_z_index
+				Ref.node_creation_parent.add_child(new_mina)
+				mina_count -= 1
+				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) # do GMa
+				mina_reloaded = false
+				yield(get_tree().create_timer(new_mina.reload_time / reload_ability), "timeout")
+				mina_reloaded = true
 		"shocker":
+			print("š shocker")
+			
 			if shocker_reloaded and shocker_count > 0:			
-				var new_shocker = Shocker.instance()
+				var new_shocker = ShockerScene.instance()
 				new_shocker.global_position = to_global(shocker_pos)
 				new_shocker.global_rotation = bolt_sprite.global_rotation
 				new_shocker.spawned_by = self # ime avtorja izstrelka
@@ -724,7 +740,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_force_div = Pro.bolt_profiles[bolt_type]["drag_force_div"]	
 
 
-func get_points(points_added: int): # kličem od zunaj ob dodajanju točk
+func get_points(points_added: int): # kličem od zunaj ob dodajanju točk ... ni samo na "item picked"
 	
 	points += points_added
 	points = clamp(points, 0, points)
@@ -740,31 +756,49 @@ func on_item_picked(pickable_type_key: String):
 		"BULLET":
 			bullet_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
-			selected_feat_index = 0
+			selected_feat_index = 1
 			
 			if Ref.game_manager.game_settings["race_mode"]:
 				misile_count = 0
 				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
+				mina_count = 0
+				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
 				shocker_count = 0
 				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 		"MISILE":
 			misile_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
-			selected_feat_index = 1
-			
-			if Ref.game_manager.game_settings["race_mode"]:
-				bullet_count = 0
-				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
-				shocker_count = 0
-				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
-		"SHOCKER":
-			shocker_count += pickable_value
-			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 			selected_feat_index = 2
 			
 			if Ref.game_manager.game_settings["race_mode"]:
 				bullet_count = 0
 				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+				mina_count = 0
+				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
+				shocker_count = 0
+				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
+		"MINA":
+			mina_count += pickable_value
+			emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
+			selected_feat_index = 3
+			
+			if Ref.game_manager.game_settings["race_mode"]:
+				bullet_count = 0
+				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+				misile_count = 0
+				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
+				shocker_count = 0
+				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
+		"SHOCKER":
+			shocker_count += pickable_value
+			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
+			selected_feat_index = 4
+			
+			if Ref.game_manager.game_settings["race_mode"]:
+				bullet_count = 0
+				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+				mina_count = 0
+				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
 				misile_count = 0
 				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
 		"SHIELD":

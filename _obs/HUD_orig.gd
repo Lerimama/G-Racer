@@ -192,6 +192,7 @@ func _on_new_bolt_spawned(bolt_index, player_id):
 	# napolni statistiko
 	current_stat_line.stat_name.text = player_profiles[player_id]["player_name"]
 	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
+	current_stat_line.stat_mina.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
 	current_stat_line.stat_points.current_stat_value = player_stats["points"]
 	current_stat_line.stat_life.current_stat_value = player_stats["life"]

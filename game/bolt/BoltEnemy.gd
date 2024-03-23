@@ -162,8 +162,9 @@ func _on_NavigationAgent2D_path_changed() -> void:
 
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
-	print("_on_NavigationAgent2D_navigation_finished")
-	
+#	print("_on_NavigationAgent2D_navigation_finished")
+	pass
 	
 func _on_NavigationAgent2D_target_reached() -> void:
-	print("_on_NavigationAgent2D_target_reached")
+#	print("_on_NavigationAgent2D_target_reached")
+	pass

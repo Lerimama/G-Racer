@@ -139,9 +139,9 @@ func _ready() -> void:
 #	var debug_level = Levels.NITRO_STRAIGHT
 #	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
-	var debug_level = Levels.OSMICA
+#	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
-#	var debug_level = Levels.DUEL
+	var debug_level = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	

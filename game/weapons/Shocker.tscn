@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://game/weapons/Shocker.gd" type="Script" id=1]
 [ext_resource path="res://assets/weapons/animation_shocker.png" type="Texture" id=2]
@@ -157,6 +157,29 @@ tracks/1/keys = {
 "times": PoolRealArray( 0, 0.8 )
 }
 
+[sub_resource type="Animation" id=532]
+resource_name = "shockwave_mina"
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("ShockShader:material:shader_param/hole_size_px")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 40, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0.1, 0.615251 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath("ShockShader:material:shader_param/size_px")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.4, -0.142872, 38, -0.5, -0.330284, 0.25, 0.165142 ),
+"times": PoolRealArray( 0, 0.645754 )
+}
+
 [node name="Shocker" type="Node2D"]
 script = ExtResource( 1 )
 
@@ -181,6 +204,7 @@ margin_bottom = 40.0
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 520 )
 anims/shockwave = SubResource( 521 )
+anims/shockwave_mina = SubResource( 532 )
 
 [node name="ActiveTimer" type="Timer" parent="."]
 one_shot = true

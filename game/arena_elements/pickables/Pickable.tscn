@@ -18,7 +18,6 @@ animations = [ {
 } ]
 
 [node name="Pickable" type="Area2D"]
-position = Vector2( 280, 259 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true

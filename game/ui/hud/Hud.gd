@@ -49,6 +49,7 @@ func _ready() -> void:
 			stat_line.stat_bullet.hide()	
 			stat_line.stat_misile.hide()	
 			stat_line.stat_shocker.hide()	
+			stat_line.stat_mina.hide()	
 			# game stats
 			if current_record_lap_time == 0:
 				record_lap_label.hide()
@@ -56,6 +57,7 @@ func _ready() -> void:
 			stat_line.stat_life.show()
 			stat_line.stat_bullet.show()	
 			stat_line.stat_misile.show()	
+			stat_line.stat_mina.show()	
 			stat_line.stat_shocker.show()	
 			record_lap_label.hide()
 			game_timer.get_node("Dots2").hide()
@@ -142,6 +144,13 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 					stat_line_to_change.stat_misile.hide()
 				else:
 					stat_line_to_change.stat_misile.show()	
+		"mina_count": 
+			stat_line_to_change.stat_mina.current_stat_value = new_stat_value # setget
+			if Ref.game_manager.game_settings["race_mode"]:
+				if new_stat_value == 0:
+					stat_line_to_change.stat_mina.hide()
+				else:
+					stat_line_to_change.stat_mina.show()		
 		"shocker_count": 
 			stat_line_to_change.stat_shocker.current_stat_value = new_stat_value # setget
 			if Ref.game_manager.game_settings["race_mode"]:
@@ -186,8 +195,9 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 	
 	# bolt stats
 	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
-	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
+	current_stat_line.stat_mina.current_stat_value = bolt_stats["mina_count"]
+	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
 	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
 	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
 	

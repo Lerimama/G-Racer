@@ -1,6 +1,7 @@
 extends Node2D
 class_name Shocker
 
+
 var spawned_by: Node
 var spawned_by_color: Color
 
@@ -23,12 +24,11 @@ onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
-#onready var inertia: float = weapon_profile["inertia"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
 
 func _ready() -> void:
-	
+	print("Shocker")
 	add_to_group(Ref.group_shockers)
 	modulate = spawned_by_color
 	
