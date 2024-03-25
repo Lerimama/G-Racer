@@ -63,10 +63,16 @@ func _ready() -> void:
 	new_misile_trail.gradient.colors[2] = spawned_by_color
 	new_misile_trail.z_index = z_index + Set.trail_z_index
 	Ref.node_creation_parent.add_child(new_misile_trail)
-				
+		
+	$Sounds/Shoot.play()
+#	$Sounds/AudioStreamPlayer.play()		
 					
 func _physics_process(delta: float) -> void:
-	
+	if not misile_active:
+		if $Sounds/Flight.is_playing():
+			$Sounds/Flight.stop()
+		return
+		
 	misile_time += delta
 
 	# pospeševanje
@@ -135,6 +141,7 @@ func dissarm():
 ##	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
 #	velocity = transform.x * speed
 #	position += velocity * delta
+	misile_active = false
 
 	# drop particles
 	var new_drop_particles: CPUParticles2D = DropParticles.instance()
@@ -151,7 +158,11 @@ func dissarm():
 		
 		
 func explode():
-
+	misile_active = false
+	hide()
+	$Sounds/Hit.play()
+	is_homming = false
+	
 	new_misile_trail.start_decay()
 
 	var new_misile_explosion = MisileExplosion.instance()
@@ -164,14 +175,34 @@ func explode():
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Ref.node_creation_parent.add_child(new_misile_explosion)
 	
-	queue_free()
+#	queue_free()
 	
 	
 func _on_HommingArea_body_entered(body: Node) -> void:
 	
+	
 	if body.is_in_group("Bolts") and body != spawned_by:
 #	if body.is_in_group("Bolts") and body.name != spawned_by:
+		$Sounds/Detect.play()
 		is_homming = true
 #		homming_target = body
 		homming_target_position = body.global_position
 
+
+
+func _on_Shoot_finished() -> void:
+	
+	$Sounds/Flight.play()
+	print("ena")
+	pass
+
+func _on_Detect_finished() -> void:
+	
+	yield(get_tree().create_timer(0.4),"timeout")
+	if is_homming:
+		$Sounds/Detect.play()
+
+
+func _on_Hit_finished() -> void:
+	
+	queue_free()

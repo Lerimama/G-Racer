@@ -1,7 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://game/weapons/Misile.gd" type="Script" id=1]
 [ext_resource path="res://assets/weapons/misile.png" type="Texture" id=2]
+[ext_resource path="res://assets/sound/misile_start_short.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sound/misile_flight___724428__riley_garinger__dsgnimpt-scifi-blaster-shot-impacts_thick_rg_2024.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sound/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/misile_hit.wav" type="AudioStream" id=6]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 2.5, 0.5 )
@@ -43,6 +47,32 @@ __meta__ = {
 [node name="RayCast2D" type="RayCast2D" parent="."]
 position = Vector2( -11, 0 )
 enabled = true
-cast_to = Vector2( 18, 0 )
+cast_to = Vector2( 20, 0 )
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="Shoot" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 3 )
+bus = "GameSfx"
+
+[node name="Flight" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 4 )
+bus = "GameSfx"
+
+[node name="Detect" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+bus = "GameSfx"
+
+[node name="Hit" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 6 )
+bus = "GameSfx"
+
+[node name="Dissarm" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 6 )
+bus = "GameSfx"
 
 [connection signal="body_entered" from="HommingArea" to="." method="_on_HommingArea_body_entered"]
+[connection signal="finished" from="Sounds/Shoot" to="." method="_on_Shoot_finished"]
+[connection signal="finished" from="Sounds/Detect" to="." method="_on_Detect_finished"]
+[connection signal="finished" from="Sounds/Hit" to="." method="_on_Hit_finished"]
+[connection signal="finished" from="Sounds/Dissarm" to="." method="_on_Hit_finished"]

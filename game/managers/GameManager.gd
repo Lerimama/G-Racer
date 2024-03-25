@@ -151,7 +151,7 @@ func level_over(gameover_reason: int):
 	elif gameover_reason == GameoverReason.FAIL:
 		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 		print("GO FAIL")
-	elif gameover_reason == GameoverReason.FAIL:
+	elif gameover_reason == GameoverReason.TIME:
 		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
 		print("GO TIME")
 	
@@ -163,16 +163,6 @@ func level_over(gameover_reason: int):
 		bolt.bolt_active = false 
 		
 			
-func game_over(gameover_reason: int):
-
-	
-	# stop elemenets
-	Ref.hud.on_game_over()
-	Ref.sound_manager.stop_music()
-	Ref.current_camera.follow_target = null
-	for bolt in bolts_in_game: # zazih ... načeloma bi moralo že veljati za vse
-		bolt.bolt_active = false 
-		
 		
 func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
 	
@@ -308,7 +298,8 @@ func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finis
 			bolt_finished.on_race_finished()
 		bolts_across_finish_line.append([bolt_finished, race_finished_time]) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
 			
-
+#	if bolts_across_finish_line.size() == 1: 3 pomeni, da je skozi cilj pripeljal samo prvi
+	
 func get_game_ranking():
 	# najbližje točke vseh boltov primerjam (po indexu na vodilni racing liniji) 
 	## problem ... trenutnega načina je da rangira plejerje glede na index točke znotraj njene linije

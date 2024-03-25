@@ -14,9 +14,6 @@ onready var tex : ImageTexture = ImageTexture.new()
 func _ready() -> void:
 	
 	add_to_group("VP")
-	pass
-
-
 
 
 func get_viewport_as_texture():

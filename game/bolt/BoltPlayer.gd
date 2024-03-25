@@ -126,10 +126,15 @@ func _physics_process(delta: float) -> void:
 	
 	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
 		rotate(delta * rotation_angle * free_rotation_multiplier)
-
+	
+	# poraba bencina
+	if current_motion_state == MotionStates.FWD:
+		manage_gas(fwd_gas_usage)
+	elif current_motion_state == MotionStates.REV:
+		manage_gas(rev_gas_usage)
 
 func shoot():
-#	selected_feat_index = 3
+	selected_feat_index = 1
 	match selected_feat_index:
 		0: # no feature
 			return

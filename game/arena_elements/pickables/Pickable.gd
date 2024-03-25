@@ -27,9 +27,10 @@ func _ready() -> void:
 	
 func _on_Item_body_entered(body: Node) -> void:
 	
-	# če je med soundi kakšen poleg defaultnega, potem zaigraj tistega
-	if sounds.get_children().size() > 1:
-		sound_picked = sounds.get_children()[1] 
+	# če je med soundi kakšen poleg defaultnega, potem zaigraj zadnjega
+	var all_sounds: Array = sounds.get_children()
+	if all_sounds.size() > 1:
+		sound_picked = all_sounds[all_sounds.size() - 1] 
 
 	if body.has_method("on_item_picked"):
 		sound_picked.play()

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/arena_elements/pickables/Pickable.tscn" type="PackedScene" id=1]
-[ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=2]
+[ext_resource path="res://assets/sound/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=2]
 
 [node name="PickableNitro" instance=ExtResource( 1 )]
 pickable_type = 8
@@ -9,8 +9,7 @@ pickable_type = 8
 [node name="Sprite" parent="." index="0"]
 region_rect = Rect2( 32, 40, 16, 16 )
 
-[node name="Burst" type="AudioStreamPlayer" parent="Sounds" index="1"]
+[node name="Nitro" type="AudioStreamPlayer" parent="Sounds" index="1"]
 stream = ExtResource( 2 )
+volume_db = -15.0
 bus = "GameSfx"
-
-[connection signal="finished" from="Sounds/Burst" to="." method="_on_Picked_finished"]

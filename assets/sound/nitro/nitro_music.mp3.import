@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/nitro_music.mp3-27fd46145644c3c3d43255ef5308fc52.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/nitro/nitro_music.mp3"
+dest_files=[ "res://.import/nitro_music.mp3-27fd46145644c3c3d43255ef5308fc52.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

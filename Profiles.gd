@@ -205,7 +205,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"misile_count" : 5,
 	"mina_count" : 3,
 	"shocker_count" : 3,
-	"gas_count" : 300, # 300 je kul
+	"gas_count" : 100, # 300 je kul
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti

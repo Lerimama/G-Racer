@@ -42,10 +42,14 @@ func _ready() -> void:
 	Ref.node_creation_parent.add_child(new_bullet_trail)
 	
 	velocity = direction * speed # velocity is the velocity vector in pixels per second?
-
+	
+	$Sounds/Shoot2.play()
+	
 			
 func _physics_process(delta: float) -> void:
 	
+	if not bullet_active:
+		return
 	new_bullet_trail.add_points(trail_position.global_position) # premaknjeno iz process
 		
 	move_and_slide(velocity) # ma delto že vgrajeno
@@ -72,9 +76,11 @@ func collide():
 		current_collider.on_hit(self)	
 	velocity = Vector2.ZERO
 	
+	$Sounds/Hit.play()
+	
 			
 func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):	
-	
+	bullet_active = false
 	#func destroy_bullet():	
 	#	new_hit_particles.position = collision.position
 	#	new_hit_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
@@ -91,11 +97,16 @@ func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):
 	new_hit_particles.set_emitting(true)
 	Ref.node_creation_parent.add_child(new_hit_particles)
 	new_bullet_trail.start_decay(collision_position) # zadnja pika se pripne na mesto kolizije
-	queue_free()
-	
+#	queue_free()
+	$Sounds/Hit.play()
 
 func on_out_of_screen():
 	var bullet_off_screen_time: float = 2 
 	yield(get_tree().create_timer(bullet_off_screen_time), "timeout") # za dojet
 	new_bullet_trail.start_decay(global_position) # zadnja pika se pripne na mesto kolizije
+	queue_free()
+
+
+func _on_Hit_finished() -> void:
+	
 	queue_free()

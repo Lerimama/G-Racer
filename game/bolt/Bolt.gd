@@ -148,6 +148,7 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
 func _physics_process(delta: float) -> void:
+	printt("gas_count", gas_count)
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
@@ -174,11 +175,11 @@ func _physics_process(delta: float) -> void:
 	manage_motion_fx()
 	
 	if Ref.game_manager.game_settings["race_mode"]:
-		# poraba bencina
-		if current_motion_state == MotionStates.FWD:
-			manage_gas(fwd_gas_usage)
-		elif current_motion_state == MotionStates.REV:
-			manage_gas(rev_gas_usage)
+		#		# poraba bencina
+		#		if current_motion_state == MotionStates.FWD:
+		#			manage_gas(fwd_gas_usage)
+		#		elif current_motion_state == MotionStates.REV:
+		#			manage_gas(rev_gas_usage)
 		
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
