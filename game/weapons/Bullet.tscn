@@ -1,10 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://game/weapons/Bullet.gd" type="Script" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://assets/sound/shoot_bullet___238159__jtragaudio__fuzzsound-bullet.wav" type="AudioStream" id=3]
-[ext_resource path="res://assets/sound/shoot_bullet___659460__diogorusso__kick-drum-or-punch-car-door-slam.wav" type="AudioStream" id=4]
-[ext_resource path="res://assets/sound/hit_weapon___658823__3dj__battlefield-7.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/sfx/misile_shoot.wav" type="AudioStream" id=3]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 0.2, 0.1 )
@@ -35,13 +33,3 @@ cast_to = Vector2( 14, 0 )
 [node name="Shoot" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 3 )
 bus = "GameSfx"
-
-[node name="Shoot2" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 4 )
-bus = "GameSfx"
-
-[node name="Hit" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 5 )
-bus = "GameSfx"
-
-[connection signal="finished" from="Sounds/Hit" to="." method="_on_Hit_finished"]

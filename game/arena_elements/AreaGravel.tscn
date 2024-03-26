@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://game/arena_elements/AreaGravel.gd" type="Script" id=1]
-[ext_resource path="res://assets/sound/sfx/burst/burst_uncocking.wav" type="AudioStream" id=2]
-[ext_resource path="res://assets/sound/sfx/skills/teleport_in_v2.wav" type="AudioStream" id=3]
-[ext_resource path="res://assets/sound/sfx/skills/teleport_out_v2.wav" type="AudioStream" id=4]
-[ext_resource path="res://assets/sound/sfx/skills/teleport_loop_v2.wav" type="AudioStream" id=5]
-[ext_resource path="res://assets/sound/sfx/burst/burst_cocking_short.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=2]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=6]
 
 [node name="AreaGravel" type="Area2D"]
 script = ExtResource( 1 )

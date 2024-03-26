@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/arena_elements/pickables/Pickable.gd" type="Script" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
-[ext_resource path="res://assets/sound/sfx/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=3]
 
 [sub_resource type="SpriteFrames" id=561]
 animations = [ {

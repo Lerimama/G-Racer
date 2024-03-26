@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/arena_elements/pickables/Pickable.tscn" type="PackedScene" id=1]
-[ext_resource path="res://assets/sound/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=2]
+[ext_resource path="res://assets/sound/sfx/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=2]
 
 [node name="PickableShocker" instance=ExtResource( 1 )]
 pickable_type = 3

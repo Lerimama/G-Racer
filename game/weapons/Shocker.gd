@@ -34,6 +34,8 @@ func _ready() -> void:
 	
 	drop_direction = -transform.x # rikverc na osi x
 	
+	Ref.sound_manager.play_sfx("mina_shoot")
+	
 	# drop mine
 	var drop_tween = get_tree().create_tween()
 	drop_tween.tween_property(self, "speed", 0.0, drop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -63,6 +65,9 @@ func _on_CollisionArea_body_entered(body: Node) -> void:
 	# sproži val in detect shape			
 	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body != spawned_by:
 #	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body.name != spawned_by:
+		
+		Ref.sound_manager.play_sfx("shocker_effect")
+		
 		active_timer.stop()
 		
 		# detect tween
@@ -90,4 +95,6 @@ func _on_ActiveTimer_timeout() -> void:
 
 # kvefri
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
+#	Ref.sound_manager.stop_sfx("shocker_effect")
+#	print("JA")
 	queue_free()

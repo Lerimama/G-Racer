@@ -52,6 +52,8 @@ func _ready() -> void:
 	$Sprite.modulate = spawned_by_color
 	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
+	Ref.sound_manager.play_sfx("misile_shoot")
+		
 	# set movement
 	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
 	rotation += random_range # rotacija misile
@@ -64,14 +66,9 @@ func _ready() -> void:
 	new_misile_trail.z_index = z_index + Set.trail_z_index
 	Ref.node_creation_parent.add_child(new_misile_trail)
 		
-	$Sounds/Shoot.play()
-#	$Sounds/AudioStreamPlayer.play()		
+
 					
 func _physics_process(delta: float) -> void:
-	if not misile_active:
-		if $Sounds/Flight.is_playing():
-			$Sounds/Flight.stop()
-		return
 		
 	misile_time += delta
 
@@ -117,7 +114,7 @@ func _physics_process(delta: float) -> void:
 		if collision.collider != spawned_by: # sam sebe lahko ubiješ
 			explode()
 			if collision.collider.has_method("on_hit"):
-					collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
 		
 		
 #func collide():
@@ -134,6 +131,7 @@ func _physics_process(delta: float) -> void:
 				
 func dissarm():
 	
+	
 	# wigle
 #	var wiggle: Vector2  
 #	wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
@@ -141,7 +139,7 @@ func dissarm():
 ##	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
 #	velocity = transform.x * speed
 #	position += velocity * delta
-	misile_active = false
+#	misile_active = false
 
 	# drop particles
 	var new_drop_particles: CPUParticles2D = DropParticles.instance()
@@ -151,18 +149,17 @@ func dissarm():
 	new_drop_particles.set_one_shot(true)
 	new_drop_particles.set_emitting(true)
 	Ref.node_creation_parent.add_child(new_drop_particles)
-
 	queue_free()
 	
+	Ref.sound_manager.play_sfx("misile_dissarm")
 	new_misile_trail.start_decay()
 		
 		
 func explode():
-	misile_active = false
-	hide()
-	$Sounds/Hit.play()
-	is_homming = false
+
+	Ref.sound_manager.play_sfx("misile_explode")
 	
+#	$Sounds/Hit.play()
 	new_misile_trail.start_decay()
 
 	var new_misile_explosion = MisileExplosion.instance()
@@ -175,7 +172,7 @@ func explode():
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Ref.node_creation_parent.add_child(new_misile_explosion)
 	
-#	queue_free()
+	queue_free()
 	
 	
 func _on_HommingArea_body_entered(body: Node) -> void:
@@ -183,26 +180,8 @@ func _on_HommingArea_body_entered(body: Node) -> void:
 	
 	if body.is_in_group("Bolts") and body != spawned_by:
 #	if body.is_in_group("Bolts") and body.name != spawned_by:
-		$Sounds/Detect.play()
+#		$Sounds/Detect.play()
 		is_homming = true
 #		homming_target = body
 		homming_target_position = body.global_position
 
-
-
-func _on_Shoot_finished() -> void:
-	
-	$Sounds/Flight.play()
-	print("ena")
-	pass
-
-func _on_Detect_finished() -> void:
-	
-	yield(get_tree().create_timer(0.4),"timeout")
-	if is_homming:
-		$Sounds/Detect.play()
-
-
-func _on_Hit_finished() -> void:
-	
-	queue_free()

@@ -148,7 +148,8 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
 func _physics_process(delta: float) -> void:
-	printt("gas_count", gas_count)
+	
+#	printt("gas_count", gas_count)
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
@@ -289,10 +290,12 @@ func manage_motion_states(delta):
 		
 	if engine_power > 0:
 		current_motion_state = MotionStates.FWD
+		Ref.sound_manager.play_sfx("bolt_engine")
 	elif engine_power < 0:
 		current_motion_state = MotionStates.REV
 	else:
 		current_motion_state = MotionStates.IDLE	
+		Ref.sound_manager.stop_sfx("bolt_engine")
 	
 
 func manage_motion_fx():
@@ -456,6 +459,7 @@ func on_hit(hit_by: Node):
 		bolt_sprite.material.set_shader_param("noise_factor", 0.0)
 		bolt_sprite.material.set_shader_param("speed", 0.0)
 		set_process_input(true)
+		Ref.sound_manager.stop_sfx("shocker_effect")
 		
 	# energy management	
 	energy = clamp(energy, 0, max_energy)

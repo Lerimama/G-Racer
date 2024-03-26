@@ -36,6 +36,8 @@ func _ready() -> void:
 	
 	drop_direction = -transform.x # rikverc na osi x
 	
+	Ref.sound_manager.play_sfx("mina_shoot")
+	
 	# drop mine
 	var drop_tween = get_tree().create_tween()
 	drop_tween.tween_property(self, "speed", 0.0, drop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -55,6 +57,8 @@ func activate():
 
 func explode():
 
+	Ref.sound_manager.play_sfx("mina_explode")
+	
 	var new_misile_explosion = MisileExplosion.instance()
 	new_misile_explosion.global_position = global_position
 	new_misile_explosion.set_one_shot(true)

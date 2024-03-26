@@ -1,37 +1,48 @@
-[gd_scene load_steps=42 format=2]
+[gd_scene load_steps=53 format=2]
 
 [ext_resource path="res://game/GameViewGrid.gd" type="Script" id=1]
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/ui/GameOver.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=4]
 [ext_resource path="res://game/Game.gd" type="Script" id=5]
-[ext_resource path="res://assets/sound/sfx/gui/key_2.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/key_2.wav" type="AudioStream" id=6]
 [ext_resource path="res://game/ui/PauseGame.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/ui/hud/Hud.tscn" type="PackedScene" id=8]
-[ext_resource path="res://assets/sound/sfx/gui/key_3.wav" type="AudioStream" id=9]
-[ext_resource path="res://assets/sound/sfx/skills/pull.wav" type="AudioStream" id=10]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/key_3.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/pull.wav" type="AudioStream" id=10]
 [ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=11]
-[ext_resource path="res://assets/sound/sfx/blinking/blink_3.wav" type="AudioStream" id=12]
+[ext_resource path="res://assets/sound/sfx/_pa/blinking/blink_3.wav" type="AudioStream" id=12]
 [ext_resource path="res://game/ui/LevelOver.tscn" type="PackedScene" id=13]
+[ext_resource path="res://assets/sound/sfx/misile_flight.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
-[ext_resource path="res://assets/sound/sfx/events/countdown-b.ogg" type="AudioStream" id=16]
-[ext_resource path="res://assets/sound/sfx/gui/screen_slide.wav" type="AudioStream" id=20]
-[ext_resource path="res://assets/sound/sfx/gui/menu_fade.wav" type="AudioStream" id=21]
-[ext_resource path="res://assets/sound/sfx/blinking/blink_2.wav" type="AudioStream" id=26]
-[ext_resource path="res://assets/sound/sfx/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
-[ext_resource path="res://assets/sound/sfx/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=36]
-[ext_resource path="res://assets/sound/sfx/gui/btn_focus_change.wav" type="AudioStream" id=38]
-[ext_resource path="res://assets/sound/sfx/blinking/blink_4.wav" type="AudioStream" id=39]
-[ext_resource path="res://assets/sound/sfx/events/countdown-a.ogg" type="AudioStream" id=46]
-[ext_resource path="res://assets/sound/sfx/gui/key_5.wav" type="AudioStream" id=47]
-[ext_resource path="res://assets/sound/sfx/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=48]
-[ext_resource path="res://assets/sound/sfx/burst/burst.wav" type="AudioStream" id=49]
-[ext_resource path="res://assets/sound/sfx/blinking/blink_1.wav" type="AudioStream" id=50]
-[ext_resource path="res://assets/sound/sfx/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=53]
-[ext_resource path="res://SoundManager.gd" type="Script" id=57]
-[ext_resource path="res://assets/sound/sfx/gui/key_1.wav" type="AudioStream" id=60]
-[ext_resource path="res://assets/sound/sfx/gui/key_4.wav" type="AudioStream" id=61]
-[ext_resource path="res://assets/sound/sfx/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=65]
+[ext_resource path="res://assets/sound/sfx/_pa/events/countdown-b.ogg" type="AudioStream" id=16]
+[ext_resource path="res://assets/sound/sfx/misile_shoot.wav" type="AudioStream" id=17]
+[ext_resource path="res://assets/sound/sfx/misile_hit.wav" type="AudioStream" id=18]
+[ext_resource path="res://assets/sound/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=19]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/screen_slide.wav" type="AudioStream" id=20]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/menu_fade.wav" type="AudioStream" id=21]
+[ext_resource path="res://game/managers/SoundManagerGame.gd" type="Script" id=22]
+[ext_resource path="res://assets/sound/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=23]
+[ext_resource path="res://assets/sound/sfx/shocker_efekt___PA_skilled_frcer.wav" type="AudioStream" id=24]
+[ext_resource path="res://assets/sound/sfx/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=25]
+[ext_resource path="res://assets/sound/sfx/_pa/blinking/blink_2.wav" type="AudioStream" id=26]
+[ext_resource path="res://assets/sound/sfx/pickup___39026__wildweasel__keypickup.wav" type="AudioStream" id=27]
+[ext_resource path="res://assets/sound/sfx/nitro_short___491407__samsterbirdies__jet-engine-startup.wav" type="AudioStream" id=28]
+[ext_resource path="res://assets/sound/sfx/_pa/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
+[ext_resource path="res://assets/sound/sfx/weapon_reload_short___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=30]
+[ext_resource path="res://assets/sound/engine1_on.wav" type="AudioStream" id=31]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=36]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/btn_focus_change.wav" type="AudioStream" id=38]
+[ext_resource path="res://assets/sound/sfx/_pa/blinking/blink_4.wav" type="AudioStream" id=39]
+[ext_resource path="res://assets/sound/sfx/_pa/events/countdown-a.ogg" type="AudioStream" id=46]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/key_5.wav" type="AudioStream" id=47]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=48]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=49]
+[ext_resource path="res://assets/sound/sfx/_pa/blinking/blink_1.wav" type="AudioStream" id=50]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=53]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/key_1.wav" type="AudioStream" id=60]
+[ext_resource path="res://assets/sound/sfx/_pa/gui/key_4.wav" type="AudioStream" id=61]
+[ext_resource path="res://assets/sound/sfx/_pa/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=65]
 [ext_resource path="res://assets/sound/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=66]
 [ext_resource path="res://assets/sound/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=68]
 [ext_resource path="res://DataManager.gd" type="Script" id=69]
@@ -65,165 +76,218 @@ script = ExtResource( 5 )
 [node name="DataManager" type="Node" parent="."]
 script = ExtResource( 69 )
 
-[node name="Sounds" type="Node" parent="."]
+[node name="SoundsManager" type="Node" parent="."]
 pause_mode = 2
-script = ExtResource( 57 )
+script = ExtResource( 22 )
 
-[node name="GameSfx" type="Node2D" parent="Sounds"]
+[node name="GameSfx" type="Node2D" parent="SoundsManager"]
 
-[node name="StraySlide" type="AudioStreamPlayer" parent="Sounds/GameSfx"]
+[node name="StraySlide" type="AudioStreamPlayer" parent="SoundsManager/GameSfx"]
 stream = SubResource( 12 )
 volume_db = -25.0
 pitch_scale = 0.8
 bus = "GameSfx"
 
-[node name="Burst" type="AudioStreamPlayer" parent="Sounds/GameSfx"]
+[node name="Burst" type="AudioStreamPlayer" parent="SoundsManager/GameSfx"]
 stream = SubResource( 11 )
 volume_db = -10.0
 bus = "GameSfx"
 
-[node name="Bricks" type="Node2D" parent="Sounds/GameSfx"]
+[node name="Bricks" type="Node2D" parent="SoundsManager/GameSfx"]
 
-[node name="Blink1" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+[node name="Blink1" type="AudioStreamPlayer" parent="SoundsManager/GameSfx/Bricks"]
 stream = SubResource( 1 )
 bus = "GameSfx"
 
-[node name="Blink2" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+[node name="Blink2" type="AudioStreamPlayer" parent="SoundsManager/GameSfx/Bricks"]
 stream = SubResource( 2 )
 volume_db = -15.0
 bus = "GameSfx"
 
-[node name="Blink3" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+[node name="Blink3" type="AudioStreamPlayer" parent="SoundsManager/GameSfx/Bricks"]
 stream = SubResource( 3 )
 volume_db = -15.0
 bus = "GameSfx"
 
-[node name="Blink4_mute" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+[node name="Blink4_mute" type="AudioStreamPlayer" parent="SoundsManager/GameSfx/Bricks"]
 stream = SubResource( 4 )
 volume_db = -80.0
 bus = "GameSfx"
 
-[node name="Blink5_mute" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+[node name="Blink5_mute" type="AudioStreamPlayer" parent="SoundsManager/GameSfx/Bricks"]
 stream = SubResource( 4 )
 volume_db = -80.0
 bus = "GameSfx"
 
-[node name="Blink6_mute" type="AudioStreamPlayer" parent="Sounds/GameSfx/Bricks"]
+[node name="Blink6_mute" type="AudioStreamPlayer" parent="SoundsManager/GameSfx/Bricks"]
 stream = SubResource( 4 )
 volume_db = -80.0
 bus = "GameSfx"
 
-[node name="GameMusic" type="Node2D" parent="Sounds"]
+[node name="GameMusic" type="Node2D" parent="SoundsManager"]
 
-[node name="Track8_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+[node name="Track8_5" type="AudioStreamPlayer" parent="SoundsManager/GameMusic"]
 stream = ExtResource( 11 )
 volume_db = -10.0
 bus = "GameMusic"
 
-[node name="Nitro" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+[node name="Nitro" type="AudioStreamPlayer" parent="SoundsManager/GameMusic"]
 stream = ExtResource( 4 )
 bus = "GameMusic"
 
-[node name="Track4_4" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+[node name="Track4_4" type="AudioStreamPlayer" parent="SoundsManager/GameMusic"]
 stream = ExtResource( 66 )
 volume_db = -6.0
 bus = "GameMusic"
 
-[node name="Track12_5" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+[node name="Track12_5" type="AudioStreamPlayer" parent="SoundsManager/GameMusic"]
 stream = ExtResource( 68 )
 volume_db = -6.0
 bus = "GameMusic"
 
-[node name="Track1_3" type="AudioStreamPlayer" parent="Sounds/GameMusic"]
+[node name="Track1_3" type="AudioStreamPlayer" parent="SoundsManager/GameMusic"]
 stream = ExtResource( 15 )
 volume_db = -7.0
 bus = "GameMusic"
 
-[node name="GuiSfx" type="Node2D" parent="Sounds"]
+[node name="GuiSfx" type="Node2D" parent="SoundsManager"]
 
-[node name="Inputs" type="Node2D" parent="Sounds/GuiSfx"]
+[node name="Inputs" type="Node2D" parent="SoundsManager/GuiSfx"]
 
-[node name="Typing" type="Node2D" parent="Sounds/GuiSfx/Inputs"]
+[node name="Typing" type="Node2D" parent="SoundsManager/GuiSfx/Inputs"]
 
-[node name="Key1" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+[node name="Key1" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs/Typing"]
 stream = ExtResource( 60 )
 volume_db = -15.0
 pitch_scale = 0.6
 
-[node name="Key2" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+[node name="Key2" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs/Typing"]
 stream = ExtResource( 6 )
 volume_db = -15.0
 pitch_scale = 0.6
 
-[node name="Key3" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+[node name="Key3" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs/Typing"]
 stream = ExtResource( 9 )
 volume_db = -15.0
 pitch_scale = 0.6
 
-[node name="Key4" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+[node name="Key4" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs/Typing"]
 stream = ExtResource( 61 )
 volume_db = -15.0
 pitch_scale = 0.6
 
-[node name="Key5" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs/Typing"]
+[node name="Key5" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs/Typing"]
 stream = ExtResource( 47 )
 volume_db = -15.0
 pitch_scale = 0.6
 
-[node name="BtnFocus" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs"]
+[node name="BtnFocus" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs"]
 stream = ExtResource( 38 )
 volume_db = -30.0
 pitch_scale = 0.7
 
-[node name="BtnConfirm" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs"]
+[node name="BtnConfirm" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs"]
 stream = ExtResource( 36 )
 volume_db = -25.0
 
-[node name="BtnCancel" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Inputs"]
+[node name="BtnCancel" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Inputs"]
 stream = ExtResource( 48 )
 volume_db = -25.0
 
-[node name="Events" type="Node2D" parent="Sounds/GuiSfx"]
+[node name="Events" type="Node2D" parent="SoundsManager/GuiSfx"]
 
-[node name="Win" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="Win" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 29 )
 volume_db = -15.0
 
-[node name="Loose" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="Loose" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 65 )
 volume_db = -5.0
 
-[node name="GameCoundownA" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="GameCoundownA" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 46 )
 volume_db = -25.0
 pitch_scale = 0.8
 
-[node name="GameCoundownB" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="GameCoundownB" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 16 )
 volume_db = -15.0
 pitch_scale = 0.7
 
-[node name="StartCoundownA" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="StartCoundownA" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 46 )
 volume_db = -25.0
 
-[node name="StartCoundownB" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="StartCoundownB" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 16 )
 volume_db = -15.0
 
-[node name="TutorialStageDone" type="AudioStreamPlayer" parent="Sounds/GuiSfx/Events"]
+[node name="TutorialStageDone" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx/Events"]
 stream = ExtResource( 53 )
 volume_db = -13.0
 pitch_scale = 1.1
 
-[node name="MenuFade" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+[node name="MenuFade" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx"]
 stream = ExtResource( 21 )
 volume_db = -15.0
 pitch_scale = 0.93
 
-[node name="ScreenSlide" type="AudioStreamPlayer" parent="Sounds/GuiSfx"]
+[node name="ScreenSlide" type="AudioStreamPlayer" parent="SoundsManager/GuiSfx"]
 stream = ExtResource( 20 )
 pitch_scale = 0.9
+
+[node name="Sfx" type="Node" parent="SoundsManager"]
+
+[node name="BulletShoot" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 23 )
+bus = "GameSfx"
+
+[node name="BoltEngine" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 31 )
+bus = "GameSfx"
+
+[node name="MisileShoot" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 17 )
+bus = "GameSfx"
+
+[node name="MisileFlight" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 14 )
+bus = "GameSfx"
+
+[node name="MisileDetect" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 19 )
+bus = "GameSfx"
+
+[node name="MisileExplode" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 18 )
+bus = "GameSfx"
+
+[node name="MisileDissarm" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 30 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="ShockerEffect" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 24 )
+volume_db = -16.0
+bus = "GameSfx"
+
+[node name="Pickable" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 27 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="PickableWeapon" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 25 )
+volume_db = -15.0
+pitch_scale = 1.2
+bus = "GameSfx"
+
+[node name="PickableNitro" type="AudioStreamPlayer" parent="SoundsManager/Sfx"]
+stream = ExtResource( 28 )
+bus = "GameSfx"
+
+[node name="Music" type="Node" parent="SoundsManager"]
 
 [node name="GameViewGrid" type="GridContainer" parent="."]
 anchor_right = 1.0
@@ -254,3 +318,5 @@ __meta__ = {
 
 [node name="GameOver" parent="UI" instance=ExtResource( 3 )]
 visible = false
+
+[connection signal="finished" from="SoundsManager/Sfx/MisileShoot" to="SoundsManager" method="_on_MisileShoot_finished"]

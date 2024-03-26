@@ -91,8 +91,8 @@ func set_game(): # kliče main.gd pred fejdin igre
 	var current_bolts_activated: Array = Set.bolts_activated
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]

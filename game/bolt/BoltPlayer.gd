@@ -32,16 +32,19 @@ func _input(event: InputEvent) -> void:
 		return
 	
 	# fast start detection
-	if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: #slow_start_engine_power == fwd_engine_power: # če še ni štartal (drugače bi bila slow start power še defoltna)
+	if Ref.game_manager.game_settings["race_mode"]:
+		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: #slow_start_engine_power == fwd_engine_power: # če še ni štartal (drugače bi bila slow start power še defoltna)
+			slow_start_engine_power = 0
+			print("fast start")
+	else:
 		slow_start_engine_power = 0
-		print("fast start")
+		
 		
 	if Input.is_action_pressed(fwd_action):
 		# slow start
 		if slow_start_engine_power == fwd_engine_power:
 			var slow_start_tween = get_tree().create_tween()
 			slow_start_tween.tween_property(self, "slow_start_engine_power", 0, 1).set_ease(Tween.EASE_IN)
-			print("slow start")
 		engine_power = fwd_engine_power - slow_start_engine_power
 
 	elif Input.is_action_pressed(rev_action):
@@ -134,7 +137,7 @@ func _physics_process(delta: float) -> void:
 		manage_gas(rev_gas_usage)
 
 func shoot():
-	selected_feat_index = 1
+#	selected_feat_index = 1
 	match selected_feat_index:
 		0: # no feature
 			return
