@@ -9,7 +9,7 @@ atlas = ExtResource( 1 )
 region = Rect2( 32, 16, 8, 8 )
 
 [sub_resource type="RectangleShape2D" id=514]
-extents = Vector2( 72, 4 )
+extents = Vector2( 144, 4 )
 
 [node name="Checkpoint" type="Area2D"]
 position = Vector2( 0, 8 )
@@ -95,8 +95,80 @@ texture = SubResource( 515 )
 position = Vector2( 140, 4 )
 texture = SubResource( 515 )
 
+[node name="Sprite19" type="Sprite" parent="."]
+position = Vector2( 148, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite20" type="Sprite" parent="."]
+position = Vector2( 156, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite21" type="Sprite" parent="."]
+position = Vector2( 164, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite22" type="Sprite" parent="."]
+position = Vector2( 172, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite23" type="Sprite" parent="."]
+position = Vector2( 180, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite24" type="Sprite" parent="."]
+position = Vector2( 188, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite25" type="Sprite" parent="."]
+position = Vector2( 196, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite26" type="Sprite" parent="."]
+position = Vector2( 204, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite27" type="Sprite" parent="."]
+position = Vector2( 212, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite28" type="Sprite" parent="."]
+position = Vector2( 220, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite29" type="Sprite" parent="."]
+position = Vector2( 228, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite30" type="Sprite" parent="."]
+position = Vector2( 236, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite31" type="Sprite" parent="."]
+position = Vector2( 244, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite32" type="Sprite" parent="."]
+position = Vector2( 252, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite33" type="Sprite" parent="."]
+position = Vector2( 260, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite34" type="Sprite" parent="."]
+position = Vector2( 268, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite35" type="Sprite" parent="."]
+position = Vector2( 276, 4 )
+texture = SubResource( 515 )
+
+[node name="Sprite36" type="Sprite" parent="."]
+position = Vector2( 284, 4 )
+texture = SubResource( 515 )
+
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="."]
-position = Vector2( 72, 4 )
+position = Vector2( 144, 4 )
 shape = SubResource( 514 )
 
 [connection signal="body_entered" from="." to="." method="_on_Checkpoint_body_entered"]

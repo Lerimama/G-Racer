@@ -214,6 +214,7 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 
 
 func _on_GameTimer_gametime_is_up() -> void:
-	# trenutno je game over samo, če ti zmanjka bencina
-#	Ref.game_manager.level_over(Ref.game_manager.GameoverReason.TIME)
-	pass # Replace with function body.
+	
+	if not Ref.game_manager.game_settings["race_mode"]:
+		Ref.game_manager.level_over(Ref.game_manager.GameoverReason.TIME)
+	# v dirki je trenutno je game over samo, če ti zmanjka bencina

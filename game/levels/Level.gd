@@ -34,6 +34,7 @@ onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
+onready var background_space: Sprite = $BackgroundSpace
 	
 func _ready() -> void:
 	# debug
@@ -45,6 +46,9 @@ func _ready() -> void:
 	level_navigation_line.hide()
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
+	if background_space.visible:
+		background_space.get_node("Zvezde").emitting = true
+		
 	set_level_floor() # luknje
 	set_level_elements() # elementi
 	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
@@ -284,12 +288,13 @@ func spawn_checkpoint(checkpoint_global_position: Vector2, checkpoint_rotation: 
 	var Checkpoint: PackedScene =  preload("res://game/arena_elements/Checkpoint.tscn")
 	var new_checkpoint_scene = Checkpoint.instance() #
 	new_checkpoint_scene.position = checkpoint_global_position# + element_center_offset
-	
-	# če rotiram je hor zamik
-	if checkpoint_rotation == 90:
+	if checkpoint_rotation == 90: # če rotiram je hor zamik
 		new_checkpoint_scene.global_rotation = deg2rad(checkpoint_rotation) # + element_center_offset
 		new_checkpoint_scene.position.x += 8# + element_center_offset
 	add_child(new_checkpoint_scene)
+	new_checkpoint_scene.modulate.a = 0.2
+	
+	
 	
 	return new_checkpoint_scene
 

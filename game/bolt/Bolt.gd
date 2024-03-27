@@ -117,6 +117,9 @@ onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"]
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
 
+# neu
+var drive_off = false
+
 
 func _ready() -> void:
 
@@ -284,8 +287,6 @@ func manage_motion_states(delta):
 	# če je dissaray ne more bit nič drugega, če ga nekdo ne izklopi (timer)
 	if current_motion_state == MotionStates.DISARRAY:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
-#		engine_power = 0
-#		print ("states")
 		return
 		
 	if engine_power > 0:
@@ -378,13 +379,15 @@ func manage_trail():
 
 
 func manage_gas(gas_usage: float):
-				
+	
 	gas_count += gas_usage
 	gas_count = clamp(gas_count, 0, gas_count)
 	
 	if gas_count == 0: # če zmanjka bencina je deaktiviran
 		self.bolt_active = false
 	
+	if not bolt_active and gas_count > 0:
+		self.bolt_active = true
 	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
 	
 
@@ -569,6 +572,10 @@ func on_lap_finished(current_race_time: float, laps_limit: int):
 	
 	# prištejem krog in mu zbrišem čekpointe
 	laps_finished += 1
+	
+	if laps_finished == laps_limit:
+		drive_off = true
+	
 	checkpoints_reached.clear()
 	
 	emit_signal("stat_changed", bolt_id, "lap_finished", [laps_finished, fastest_lap_time]) 

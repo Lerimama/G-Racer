@@ -91,7 +91,7 @@ var level_settings: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
 #		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
 		"time_limit": 0,
-		"lap_limit": 1,
+		"lap_limit": 2,
 		},
 	Levels.OSMICA: {
 		"level": Levels.OSMICA,
@@ -141,11 +141,12 @@ func _ready() -> void:
 	# če greš iz menija je tole povoženo
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.NITRO_STRAIGHT
-#	var debug_level = Levels.DEBUG_RACE
+
+	var debug_level = Levels.DEBUG_RACE
 #	var debug_level = Levels.DEBUG_DUEL
 #	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING
-	var debug_level: int = Levels.DUEL
+#	var debug_level: int = Levels.DUEL
 	set_game_settings(debug_level)
 	
 	

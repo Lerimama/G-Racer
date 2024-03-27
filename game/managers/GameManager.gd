@@ -5,6 +5,9 @@ signal stat_change_received (player_index, changed_stat, stat_new_value)
 signal new_bolt_spawned (name, other)
 
 enum GameoverReason {SUCCES, FAIL, TIME} # ali kdo od plejerjev napreduje, ali pa ne
+#enum LevelGoal{SUCCES, FAIL}
+#var level_goal_reached: bool # za GO
+
 
 var game_on: bool
 
@@ -91,9 +94,9 @@ func set_game(): # kliče main.gd pred fejdin igre
 	var current_bolts_activated: Array = Set.bolts_activated
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
 #		current_bolts_activated = [Pro.Bolts.P1] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.ENEMY] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
@@ -135,25 +138,27 @@ func start_game():
 	fast_start_window = false	
 		
 		
-func level_over(gameover_reason: int):
-
+func level_over(level_goal_reached: bool):
+	print("LO")
 	if game_on == false: # preprečim double gameover
 		return
 	game_on = false
 
 	yield(get_tree().create_timer(2), "timeout") # za dojet
 	
-	if gameover_reason == GameoverReason.SUCCES:
+	if level_goal_reached:
 		printt("GO SUCCESS", bolts_across_finish_line.size())
 		for bolt_across_finish_line in bolts_across_finish_line:
 			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
 		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
-	elif gameover_reason == GameoverReason.FAIL:
-		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
+	else:
+#		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
+		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
 		print("GO FAIL")
-	elif gameover_reason == GameoverReason.TIME:
-		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
-		print("GO TIME")
+#	elif gameover_reason == GameoverReason.TIME:
+#		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
+##		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
+#		print("GO TIME")
 	
 	# stop elemenets
 	Ref.hud.on_level_over()
@@ -174,14 +179,14 @@ func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko b
 	
 	# če so vsi neaktivni je GAME OVER:
 	if active_bolts.empty():
-		# preverjam uspeh
+		# preverjam uspeh (je kakšen prišel čez linijo
 		if not bolts_across_finish_line.empty(): # lahko so vsi izven cilja
 			for bolt_across_finish_line in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
 				if bolt_across_finish_line[0].is_in_group(Ref.group_players):
-					level_over(GameoverReason.SUCCES)		
+					level_over(true)		
 					return # dovolj je en uspeh
 		# če ni uspeha
-		level_over(GameoverReason.FAIL)	
+		level_over(false)	
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------

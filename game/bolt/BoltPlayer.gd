@@ -131,10 +131,11 @@ func _physics_process(delta: float) -> void:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 	
 	# poraba bencina
-	if current_motion_state == MotionStates.FWD:
-		manage_gas(fwd_gas_usage)
-	elif current_motion_state == MotionStates.REV:
-		manage_gas(rev_gas_usage)
+	if Ref.game_manager.game_settings["race_mode"]:
+		if current_motion_state == MotionStates.FWD:
+			manage_gas(fwd_gas_usage)
+		elif current_motion_state == MotionStates.REV:
+			manage_gas(rev_gas_usage)
 
 func shoot():
 #	selected_feat_index = 1

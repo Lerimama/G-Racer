@@ -31,6 +31,8 @@ func _on_follow_target_change(new_follow_target):
 	
 	
 func shake_camera(shake_power: float):
+	print("ne tresem")
+	return
 	# time, power in nivo popuščanja
 	
 	test_ui.add_trauma(shake_power)
@@ -58,3 +60,4 @@ func set_camera_limits():
 	limit_right = corner_TR
 	limit_top = corner_BL
 	limit_bottom = corner_BR
+	print("CL", set_camera_limits())
