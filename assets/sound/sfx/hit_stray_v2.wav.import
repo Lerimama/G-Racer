@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/engine1_on.wav-12cb62513c3255440799899b82cfeeb7.sample"
+path="res://.import/hit_stray_v2.wav-b48dceff22d58514ba2b448fd6564fdc.sample"
 
 [deps]
 
-source_file="res://assets/sound/engine1_on.wav"
-dest_files=[ "res://.import/engine1_on.wav-12cb62513c3255440799899b82cfeeb7.sample" ]
+source_file="res://assets/sound/sfx/hit_stray_v2.wav"
+dest_files=[ "res://.import/hit_stray_v2.wav-b48dceff22d58514ba2b448fd6564fdc.sample" ]
 
 [params]
 
@@ -17,7 +17,7 @@ force/max_rate=false
 force/max_rate_hz=44100
 edit/trim=false
 edit/normalize=false
-edit/loop_mode=2
+edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
 compress/mode=0

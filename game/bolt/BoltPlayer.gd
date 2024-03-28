@@ -33,12 +33,16 @@ func _input(event: InputEvent) -> void:
 	
 	# fast start detection
 	if Ref.game_manager.game_settings["race_mode"]:
-		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: #slow_start_engine_power == fwd_engine_power: # če še ni štartal (drugače bi bila slow start power še defoltna)
+		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: # če še ni štartal (drugače bi bila slow start power še defoltna)
 			slow_start_engine_power = 0
 			print("fast start")
 	else:
 		slow_start_engine_power = 0
 		
+		
+	if Input.is_action_just_pressed(fwd_action):
+#		$Sounds/EngineRevup.play()
+		pass
 		
 	if Input.is_action_pressed(fwd_action):
 		# slow start
@@ -137,8 +141,9 @@ func _physics_process(delta: float) -> void:
 		elif current_motion_state == MotionStates.REV:
 			manage_gas(rev_gas_usage)
 
+
 func shoot():
-#	selected_feat_index = 1
+	selected_feat_index = 2
 	match selected_feat_index:
 		0: # no feature
 			return

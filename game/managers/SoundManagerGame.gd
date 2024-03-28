@@ -20,7 +20,7 @@ func _ready() -> void:
 	
 # SFX --------------------------------------------------------------------------------------------------------
 	
-onready var fx: Node = $Fx
+#onready var sfx: Node = $Sfx
 onready var music: Node = $Music
 	
 	
@@ -33,7 +33,9 @@ func play_sfx(effect_for: String):
 		"bolt_engine": 
 			if not $Sfx/BoltEngine.is_playing():
 				$Sfx/BoltEngine.play()
+		"bolt_explode": $Sfx/BoltExplode.play()
 		"bullet_shoot": $Sfx/BulletShoot.play()
+		"bullet_hit": $Sfx/BulletHit.play()
 		"misile_shoot": 
 			$Sfx/MisileFlight.set_volume_db(0)
 			$Sfx/MisileShoot.set_volume_db(0)
@@ -65,7 +67,7 @@ func play_sfx(effect_for: String):
 		"pickable_nitro": $Sfx/PickableNitro.play()
 		
 		
-			
+		"finish_horn": $Sfx/FinishHorn.play()
 		"stray_step":
 			$GameSfx/StraySlide.play()
 		"blinking": # GM na strays spawn, ker se bolje sliši

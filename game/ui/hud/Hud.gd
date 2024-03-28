@@ -74,6 +74,7 @@ func on_level_over():
 	game_timer.stop_timer()
 	hide_stats()
 	
+	
 func on_game_over():
 	
 	game_timer.stop_timer()

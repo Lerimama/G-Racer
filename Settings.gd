@@ -61,13 +61,22 @@ var default_game_settings: Dictionary = {
 	"sudden_death_mode": false,
 	"sudden_death_limit": 10, # koliko pred koncem
 #	"select_feature_mode": false,
-	"spawn_pickables_mode": true,
+	"spawn_pickables_mode": false,
 #	"lap_mode": false,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu
 }
 
-enum Levels {TRAINING, NITRO, OSMICA, DUEL, DEBUG_RACE, DEBUG_DUEL, NITRO_STRAIGHT}
+enum Levels {
+	RACE_DIRECT, RACE_ROUND, RACE_CIRCO, RACE_SNAKE, RACE_NITRO
+	TRAINING, 
+	NITRO, 
+	OSMICA, 
+	DUEL, 
+	DEBUG_RACE, 
+	DEBUG_DUEL, 
+	NITRO_STRAIGHT
+	}
 
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
@@ -79,8 +88,8 @@ var level_settings: Dictionary = {
 		},
 	Levels.NITRO: {
 		"level": Levels.NITRO,
-		"level_path": "res://game/levels/LevelNitro.tscn",
-		"level_scene": preload("res://game/levels/LevelNitro.tscn"),
+#		"level_path": "res://game/levels/LevelNitro.tscn",
+		"level_scene": preload("res://game/levels/LevelRaceNitro.tscn"),
 #		"level_scene": preload("res://game/levels/LevelNitroStraight.tscn"),
 		"time_limit": 0,
 		"lap_limit": 1,
@@ -95,31 +104,66 @@ var level_settings: Dictionary = {
 		},
 	Levels.OSMICA: {
 		"level": Levels.OSMICA,
-		"level_path": "res://game/levels/Level8.tscn",
+#		"level_path": "res://game/levels/Level8.tscn",
 		"level_scene": preload("res://game/levels/Level8.tscn"),
 		"time_limit": 0,
 		"lap_limit": 2,
 		},
 	Levels.DUEL: {
 		"level": Levels.DUEL,
-		"level_path": "res://game/levels/LevelDuel.tscn",
+#		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDuel.tscn"),
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
 	Levels.DEBUG_RACE: {
 		"level": Levels.DEBUG_RACE,
-		"level_path": "res://game/levels/LevelDuel.tscn",
+#		"level_path": "res://game/levels/LevelDuel.tscn",
 		"level_scene": preload("res://game/levels/LevelDebugRace.tscn"),
 		"time_limit": 0,
 		"lap_limit": 1,
 		},
 	Levels.DEBUG_DUEL: {
 		"level": Levels.DEBUG_DUEL,
-		"level_path": "res://game/levels/LevelTraining.tscn",
+#		"level_path": "res://game/levels/LevelTraining.tscn",
 		"level_scene": preload("res://game/levels/LevelDebugDuel.tscn"),
 		"time_limit": 10,
 		"lap_limit": 0,
+		},
+		
+		
+		
+		
+		
+	Levels.RACE_DIRECT: {
+		"level": Levels.RACE_DIRECT,
+		"level_scene": preload("res://game/levels/LevelRaceDirect.tscn"),
+		"time_limit": 0,
+		"lap_limit": 1,
+		},
+	Levels.RACE_CIRCO: {
+		"level": Levels.RACE_CIRCO,
+		"level_scene": preload("res://game/levels/LevelRaceCirco.tscn"),
+		"time_limit": 0,
+		"lap_limit": 2,
+		},
+	Levels.RACE_ROUND: {
+		"level": Levels.RACE_ROUND,
+		"level_scene": preload("res://game/levels/LevelRaceRound.tscn"),
+		"time_limit": 0,
+		"lap_limit": 2,
+		},
+	Levels.RACE_SNAKE: {
+		"level": Levels.RACE_SNAKE,
+		"level_scene": preload("res://game/levels/LevelRaceSnake.tscn"),
+		"time_limit": 0,
+		"lap_limit": 1,
+		},
+	Levels.RACE_NITRO: {
+		"level": Levels.RACE_NITRO,
+		"level_scene": preload("res://game/levels/LevelRaceNitro.tscn"),
+		"time_limit": 0,
+		"lap_limit": 1,
 		},
 }
 
@@ -132,8 +176,9 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 var selected_level: int
 var bolts_activated: Array # napolne so ob izbiri
 
+#var game_levels: Array = []
 #var game_levels: Array = [Levels.OSMICA, Levels.NITRO_STRAIGHT]
-var game_levels: Array = []
+var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
 
 func _ready() -> void:
@@ -194,7 +239,24 @@ func set_game_settings(selected_level: int) -> void:
 			current_game_settings["stopwatch_mode"] = false		
 			current_game_settings["sudden_death_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = true
-
+			
+			
+		Levels.RACE_DIRECT: 
+			current_level_settings = level_settings[Levels.RACE_DIRECT]
+			current_game_settings["race_mode"] = true
+#			current_game_settings["start_countdown"] = false
+		Levels.RACE_CIRCO: 
+			current_level_settings = level_settings[Levels.RACE_CIRCO]
+			current_game_settings["race_mode"] = true
+		Levels.RACE_ROUND: 
+			current_level_settings = level_settings[Levels.RACE_ROUND]
+			current_game_settings["race_mode"] = true
+		Levels.RACE_SNAKE: 
+			current_level_settings = level_settings[Levels.RACE_SNAKE]
+			current_game_settings["race_mode"] = true
+		Levels.RACE_NITRO: 
+			current_level_settings = level_settings[Levels.RACE_NITRO]
+			current_game_settings["race_mode"] = true
 #
 #var default_game_settings: Dictionary = {
 #	# to so default CLEANER settings

@@ -19,7 +19,7 @@ shader_param/texture_size = Vector2( 32, 32 )
 [node name="EnemyRacing" instance=ExtResource( 2 )]
 script = ExtResource( 3 )
 
-[node name="Shield" parent="." index="3"]
+[node name="Shield" parent="." index="0"]
 material = SubResource( 1 )
 
 [node name="DetectArea" type="Node2D" parent="." index="7"]

@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/engine1_start.wav-37264ca6070d534e981d72c5688e979b.sample"
+path="res://.import/hit_wall.wav-97bcca8a236335f9b8830fb4c3df9a94.sample"
 
 [deps]
 
-source_file="res://assets/sound/engine1_start.wav"
-dest_files=[ "res://.import/engine1_start.wav-37264ca6070d534e981d72c5688e979b.sample" ]
+source_file="res://assets/sound/sfx/hit_wall.wav"
+dest_files=[ "res://.import/hit_wall.wav-97bcca8a236335f9b8830fb4c3df9a94.sample" ]
 
 [params]
 

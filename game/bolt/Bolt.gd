@@ -14,7 +14,6 @@ var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za poši
 
 var bolt_id: int # ga seta spawner
 var bolt_color: Color = Color.white
-var input_power: float
 var acceleration: Vector2
 var velocity: Vector2 = Vector2.ZERO
 var collision: KinematicCollision2D
@@ -101,7 +100,8 @@ onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
 onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
 onready var mina_count: float = Pro.default_bolt_stats["mina_count"]
 onready var shocker_count: float = Pro.default_bolt_stats["shocker_count"]
-# bolt profil ... default vrednosti, ki jih lahko med igro spreminjam
+# bolt profil
+# default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
 onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
 onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
@@ -149,6 +149,8 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
 	available_features.append(feat_selector.get_node("Icons/IconMina"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
+	
+	$Sounds/EngineStart.play()
 
 func _physics_process(delta: float) -> void:
 	
@@ -158,14 +160,14 @@ func _physics_process(delta: float) -> void:
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
 	
 	# animiran bolt .. sprite se ne rotira z zavijanjem ... # bolt_sprite.rotation = - global_rotation
-	
+
 	if current_motion_state == MotionStates.DISARRAY:
 		rotation_angle = rotation_dir * deg2rad(turn_angle)
 	else:
 		# sila upora raste s hitrostjo		
 		var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
-		# hitrost je pospešek s časom
 		acceleration -= drag_force
+		# hitrost je pospešek s časom
 		velocity += acceleration * delta
 		rotation_angle = rotation_dir * deg2rad(turn_angle)
 		rotate(delta * rotation_angle)
@@ -200,7 +202,6 @@ func _physics_process(delta: float) -> void:
 		update_feature_selector()
 		manage_bolt_hud()
 			
-		
 	
 # IZ PROCESA ----------------------------------------------------------------------------
 
@@ -215,8 +216,11 @@ func update_feature_selector():
 	
 func on_collision():
 	
-	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
+	if not $Sounds/HitWall2.is_playing():
+		$Sounds/HitWall.play()
+		$Sounds/HitWall2.play()
 	
+	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 	# odbojni partikli
 	if velocity.length() > stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
 		var new_collision_particles = CollisionParticles.instance()
@@ -291,41 +295,37 @@ func manage_motion_states(delta):
 		
 	if engine_power > 0:
 		current_motion_state = MotionStates.FWD
-		Ref.sound_manager.play_sfx("bolt_engine")
 	elif engine_power < 0:
 		current_motion_state = MotionStates.REV
 	else:
 		current_motion_state = MotionStates.IDLE	
-		Ref.sound_manager.stop_sfx("bolt_engine")
 	
 
 func manage_motion_fx():
 
-	# position2D
-	# var rear_engine_pos: Vector2 = bolt_sprite.get_node("RearEnginePosition").position
-	# var front_engine_pos_L: Vector2 = bolt_sprite.get_node("FrontEnginePositionL").position
-	# var front_engine_pos_R: Vector2 = bolt_sprite.get_node("FrontEnginePositionR").position
-	# old
-	# var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
-	# var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
-	# var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)
-	# new
 	var rear_engine_pos: Vector2 = Vector2(-2.7, 0.5)
 	var front_engine_pos_L: Vector2 = Vector2(3, -4)
 	var front_engine_pos_R: Vector2 = Vector2(3, 4.5)	
 	
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
 	
-	# zadnji motor
+	var engine_pitch_tween = get_tree().create_tween()
 	if current_motion_state == MotionStates.FWD:
+		$Sounds/Engine.pitch_scale = 1 + velocity.length()/180
 		engine_particles_rear.modulate.a = velocity.length()/50
 		engine_particles_rear.set_emitting(true)
 	elif current_motion_state == MotionStates.REV:
+		$Sounds/Engine.pitch_scale = 1 + velocity.length()/180
 		engine_particles_front_left.modulate.a = velocity.length()/10
 		engine_particles_front_left.set_emitting(true)
 		engine_particles_front_right.modulate.a = velocity.length()/10
 		engine_particles_front_right.set_emitting(true)
 	elif current_motion_state == MotionStates.IDLE:
+		if $Sounds/Engine.pitch_scale > 1:
+			engine_pitch_tween.tween_property($Sounds/Engine, "pitch_scale", 1, 0.3)
+		else:
+			engine_pitch_tween.kill()
+			$Sounds/Engine.pitch_scale = 1
 		engine_particles_rear.modulate.a = 0
 		engine_particles_front_left.modulate.a = 0
 		engine_particles_front_right.modulate.a = 0
@@ -380,16 +380,22 @@ func manage_trail():
 
 func manage_gas(gas_usage: float):
 	
+	if not bolt_active: 
+		return
+		
 	gas_count += gas_usage
 	gas_count = clamp(gas_count, 0, gas_count)
 	
-	if gas_count == 0: # če zmanjka bencina je deaktiviran
-		self.bolt_active = false
-	
-	if not bolt_active and gas_count > 0:
-		self.bolt_active = true
 	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
 	
+	if gas_count == 0: # če zmanjka bencina je deaktiviran
+		self.bolt_active = false
+#		var finish_tween = get_tree().create_tween()
+#		finish_tween.tween_property(self, "velocity", Vector2.ZERO, 1).set_ease(Tween.EASE_OUT).set_delay(1)
+#		finish_tween.parallel().tween_property(self, "engine_power", 0, 1).set_ease(Tween.EASE_OUT).set_delay(1)
+#	if not bolt_active and gas_count > 0: # če med ustavljanjem spet dobi bencin, se aktivira
+#		self.bolt_active = true	
+
 
 func manage_bolt_hud():
 	
@@ -429,6 +435,8 @@ func on_hit(hit_by: Node):
 		in_disarray(hit_by.hit_damage)
 		
 	elif hit_by.is_in_group(Ref.group_misiles):
+		
+		Ref.sound_manager.play_sfx("bolt_explode")
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		if velocity == Vector2.ZERO:
 			velocity = hit_by.velocity
@@ -601,7 +609,6 @@ func spawn_floating_tag(lap_time_seconds: float, best_lap: bool):
 	new_floating_tag.tag_owner = self
 	Ref.node_creation_parent.add_child(new_floating_tag)
 	
-	printt("time3", current_lap_time_on_clock)
 	new_floating_tag.label.text = current_lap_time_on_clock
 	if best_lap == true:
 		new_floating_tag.modulate = Set.color_green
@@ -665,7 +672,6 @@ func shooting(weapon: String) -> void:
 	
 	match weapon:
 		"bullet":
-				
 			if bullet_reloaded:
 				if bullet_count <= 0:
 					return
@@ -697,7 +703,6 @@ func shooting(weapon: String) -> void:
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
 				misile_reloaded= true
 		"mina":
-			print("š mina")
 			if mina_reloaded and mina_count > 0:			
 				var new_mina = MinaScene.instance()
 				new_mina.global_position = to_global(shocker_pos)
@@ -712,8 +717,6 @@ func shooting(weapon: String) -> void:
 				yield(get_tree().create_timer(new_mina.reload_time / reload_ability), "timeout")
 				mina_reloaded = true
 		"shocker":
-			print("š shocker")
-			
 			if shocker_reloaded and shocker_count > 0:			
 				var new_shocker = ShockerScene.instance()
 				new_shocker.global_position = to_global(shocker_pos)
@@ -732,7 +735,7 @@ func shooting(weapon: String) -> void:
 func activate_shield():
 	
 	if shields_on == false:
-#		shield.show()
+		#		shield.show()
 		shield.modulate.a = 1
 		animation_player.play("shield_on")
 		shields_on = true
@@ -856,14 +859,15 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 	
 	# če je aktiven ga upočacnim v trenutni smeri
 	bolt_active = bolt_is_active
-	if not bolt_active:
+	
+	var deactivate_time: float = 1.5
+	if bolt_active == false:
 		rotation_dir = 0
-		var dissable_tween = get_tree().create_tween()
-		dissable_tween.tween_property(self, "velocity", Vector2.ZERO, 2) # tajmiram pojemek 
-#		dissable_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
-#		yield(dissaray_tween, "finished")
-#		set_process_input(true)				
+		var deactivate_tween = get_tree().create_tween()
+		deactivate_tween.tween_property(self, "velocity", Vector2.ZERO, deactivate_time) # tajmiram pojemek 
+		deactivate_tween.parallel().tween_property(self, "engine_power", 0, deactivate_time)
 	emit_signal("bolt_activity_changed", self)
+	printt("bolt_activity_changed", self, bolt_active)
 
 
 func _on_shield_animation_finished(anim_name: String) -> void:
@@ -889,3 +893,10 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 			# konec loopa, ko je limit dosežen
 			elif shield_loops_counter >= shield_loops_limit:
 				animation_player.play_backwards("shield_on")
+
+var engines_on: bool = false
+
+func _on_EngineStart_finished() -> void:
+	engines_on = true
+#	pass
+	$Sounds/Engine.play()

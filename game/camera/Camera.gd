@@ -60,4 +60,3 @@ func set_camera_limits():
 	limit_right = corner_TR
 	limit_top = corner_BL
 	limit_bottom = corner_BR
-	print("CL", set_camera_limits())

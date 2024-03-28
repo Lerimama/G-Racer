@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://assets/bolt/bolt_alt.png" type="Texture" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
@@ -10,12 +10,14 @@
 [ext_resource path="res://assets/sound/sfx/_pa/skills/pull.wav" type="AudioStream" id=8]
 [ext_resource path="res://assets/sound/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=10]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_laser_NFF-laser-gun.wav" type="AudioStream" id=11]
+[ext_resource path="res://assets/sound/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav" type="AudioStream" id=11]
 [ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=12]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burs_stop_phaser.wav" type="AudioStream" id=14]
+[ext_resource path="res://assets/sound/sfx/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=13]
+[ext_resource path="res://assets/sound/sfx/engine___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=14]
+[ext_resource path="res://assets/sound/sfx/engine_revup___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=16]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/hit_stray_v2.wav" type="AudioStream" id=18]
+[ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 
 [sub_resource type="ShaderMaterial" id=28]
 resource_local_to_scene = true
@@ -192,12 +194,11 @@ region = Rect2( 16, 0, 8, 8 )
 atlas = ExtResource( 12 )
 region = Rect2( 24, 0, 8, 8 )
 
-[sub_resource type="AudioStreamRandomPitch" id=118]
-audio_stream = ExtResource( 11 )
-random_pitch = 1.2
+[sub_resource type="AudioStreamRandomPitch" id=126]
+audio_stream = ExtResource( 18 )
 
 [sub_resource type="AudioStreamRandomPitch" id=120]
-audio_stream = ExtResource( 18 )
+audio_stream = ExtResource( 11 )
 
 [sub_resource type="AudioStreamRandomPitch" id=119]
 audio_stream = ExtResource( 16 )
@@ -424,21 +425,16 @@ __meta__ = {
 
 [node name="Sounds" type="Node" parent="."]
 
-[node name="ShootBullet" type="AudioStreamPlayer" parent="Sounds"]
-stream = SubResource( 118 )
+[node name="HitWall" type="AudioStreamPlayer" parent="Sounds"]
+stream = SubResource( 126 )
 volume_db = -15.0
-pitch_scale = 1.1
+pitch_scale = 0.7
 bus = "GameSfx"
 
-[node name="ShootMisile" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 14 )
-volume_db = 10.0
-bus = "GameSfx"
-
-[node name="HitBullet" type="AudioStreamPlayer" parent="Sounds"]
+[node name="HitWall2" type="AudioStreamPlayer" parent="Sounds"]
 stream = SubResource( 120 )
-volume_db = -10.0
-pitch_scale = 0.9
+volume_db = -15.0
+pitch_scale = 0.85
 bus = "GameSfx"
 
 [node name="HitMisile" type="AudioStreamPlayer" parent="Sounds"]
@@ -472,5 +468,20 @@ stream = ExtResource( 9 )
 pitch_scale = 1.1
 bus = "GameSfx"
 
+[node name="Engine" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 14 )
+bus = "GameSfx"
+
+[node name="EngineStart" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 13 )
+bus = "GameSfx"
+
+[node name="EngineRevup" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 15 )
+volume_db = -10.0
+bus = "GameSfx"
+
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_started"]
+[connection signal="finished" from="Sounds/EngineStart" to="." method="_on_EngineStart_finished"]
+[connection signal="finished" from="Sounds/EngineRevup" to="." method="_on_EngineStart_finished"]

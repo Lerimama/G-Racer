@@ -93,10 +93,10 @@ func set_game(): # kliče main.gd pred fejdin igre
 #	game_settings["start_player_count"] = 1
 	var current_bolts_activated: Array = Set.bolts_activated
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
-#		current_bolts_activated = [Pro.Bolts.P1] 
+		current_bolts_activated = [Pro.Bolts.P1] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
-		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
+#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
@@ -106,7 +106,7 @@ func set_game(): # kliče main.gd pred fejdin igre
 		var player_scene: PackedScene = Pro.default_player_profiles[bolt]["player_scene"]
 		spawn_bolt(player_scene, bolt_spawn_position_nodes[bolt_index - 1], current_bolts_activated[bolt_index - 1], bolt_index)	
 		
-	if Ref.current_level.start_lights:
+	if Ref.current_level.start_lights.visible:
 		Ref.current_level.start_lights.start_countdown()
 		yield(Ref.current_level.start_lights, "countdown_finished") # sproži ga hud po slide-inu
 	else:
@@ -176,9 +176,10 @@ func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko b
 	for bolt in bolts_in_game:
 		if bolt.bolt_active:
 			active_bolts.append(bolt)
-	
+			
 	# če so vsi neaktivni je GAME OVER:
 	if active_bolts.empty():
+		print("noben aktiven")
 		# preverjam uspeh (je kakšen prišel čez linijo
 		if not bolts_across_finish_line.empty(): # lahko so vsi izven cilja
 			for bolt_across_finish_line in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
@@ -187,6 +188,40 @@ func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko b
 					return # dovolj je en uspeh
 		# če ni uspeha
 		level_over(false)	
+
+		
+func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finish line
+	
+	var time_to_finish: float = 2 # čas za druge, da dosežejo cilj
+	#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
+	
+	var current_race_time: float  = Ref.hud.game_timer.absolute_game_time # pozitiven game čas v sekundah
+	
+	# LAP
+	if bolt_finished.checkpoints_reached.size() >= checkpoints_per_lap:
+		bolt_finished.on_lap_finished(current_race_time, laps_limit)
+		Ref.sound_manager.play_sfx("finish_horn")
+	
+	
+	# FINISH
+	# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
+	if bolt_finished.laps_finished >= laps_limit:
+		# deaktiviram plejerja in zabležim statistiko 
+		var race_finished_time: float = current_race_time
+		if bolt_finished.is_in_group(Ref.group_players):
+			bolt_finished.bolt_active = false # enemy se disebla ko doseže target
+			# če prvi med igralci, je konec igre
+#			if not bolts_across_finish_line.has(bolt_finished): # če ga še nima, je prvi med plejerji
+#				# timer postane limited in določim mu limit
+#				# GO timer se sproži ko je prvi čez
+#				Ref.hud.game_timer.limitless_mode = false
+#				Ref.hud.game_timer.game_time_limit = race_finished_time + time_to_finish
+#				printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.absolute_game_time)				
+		elif bolt_finished.is_in_group(Ref.group_enemies):
+			bolt_finished.on_race_finished()
+		bolts_across_finish_line.append([bolt_finished, race_finished_time]) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
+			
+#	if bolts_across_finish_line.size() == 1: 3 pomeni, da je skozi cilj pripeljal samo prvi
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
@@ -273,37 +308,6 @@ func spawn_level():
 		
 # RANKING ---------------------------------------------------------------------------------------------
 
-		
-func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finish line
-	
-	var time_to_finish: float = 2 # čas za druge, da dosežejo cilj
-	#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
-	
-	var current_race_time: float  = Ref.hud.game_timer.absolute_game_time # pozitiven game čas v sekundah
-	
-	# LAP
-	if bolt_finished.checkpoints_reached.size() >= checkpoints_per_lap:
-		bolt_finished.on_lap_finished(current_race_time, laps_limit)
-	
-	# FINISH
-	# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
-	if bolt_finished.laps_finished >= laps_limit:
-		# deaktiviram plejerja in zabležim statistiko 
-		var race_finished_time: float = current_race_time
-		if bolt_finished.is_in_group(Ref.group_players):
-			bolt_finished.bolt_active = false # enemy se disebla ko doseže target
-			# če prvi med igralci, je konec igre
-			if not bolts_across_finish_line.has(bolt_finished): # če ga še nima, je prvi med plejerji
-				# timer postane limited in določim mu limit
-				# GO timer se sproži ko je prvi čez
-				Ref.hud.game_timer.limitless_mode = false
-				Ref.hud.game_timer.game_time_limit = race_finished_time + time_to_finish
-				printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.absolute_game_time)				
-		elif bolt_finished.is_in_group(Ref.group_enemies):
-			bolt_finished.on_race_finished()
-		bolts_across_finish_line.append([bolt_finished, race_finished_time]) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
-			
-#	if bolts_across_finish_line.size() == 1: 3 pomeni, da je skozi cilj pripeljal samo prvi
 	
 func get_game_ranking():
 	# najbližje točke vseh boltov primerjam (po indexu na vodilni racing liniji) 

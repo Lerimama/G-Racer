@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/hit_stray_v2.wav-f2749c15bfb3afc57a5307b6b2918774.sample"
+path="res://.import/loose_jingle_GAMEOVER.wav-d8a1fdf6a0fb14a1b8d0700a8d4b2905.sample"
 
 [deps]
 
-source_file="res://assets/sound/sfx/_pa/burst/hit_stray_v2.wav"
-dest_files=[ "res://.import/hit_stray_v2.wav-f2749c15bfb3afc57a5307b6b2918774.sample" ]
+source_file="res://assets/sound/sfx/events/loose_jingle_GAMEOVER.wav"
+dest_files=[ "res://.import/loose_jingle_GAMEOVER.wav-d8a1fdf6a0fb14a1b8d0700a8d4b2905.sample" ]
 
 [params]
 

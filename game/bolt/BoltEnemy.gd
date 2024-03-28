@@ -132,7 +132,7 @@ func on_race_finished():
 	var finish_tween = get_tree().create_tween()
 	finish_tween.tween_property(self, "velocity", Vector2.ZERO, 1).set_ease(Tween.EASE_OUT).set_delay(1)
 	yield(finish_tween, "finished")
-	bolt_active = false
+	self.bolt_active = false
 	set_physics_process(false)
 	
 				

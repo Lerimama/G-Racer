@@ -87,6 +87,8 @@ func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):
 	#	new_bullet_trail.start_decay(collision.position) # zadnja pika se pripne na mesto kolizije
 	#	...
 	
+	Ref.sound_manager.play_sfx("bullet_hit")
+	
 	# hit partikli
 	var new_hit_particles = HitParticles.instance()
 	new_hit_particles.position = collision_position

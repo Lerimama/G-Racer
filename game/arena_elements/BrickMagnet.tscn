@@ -6,7 +6,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=4]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=6]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/hit_stray_v2.wav" type="AudioStream" id=7]
+[ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=7]
 
 [sub_resource type="PhysicsMaterial" id=20]
 absorbent = true

@@ -4,23 +4,28 @@ signal level_navigation_finished(navigation)
 signal level_is_set(navigation, spawn_positions, other_)
 
 
-var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
-var start_lights: Node2D # opredeli se, če je semafor spawnan (če je na tilemapu)
-
 # navigacija
 var navigation_cells: Array
 var navigation_cells_positions: Array
 var checkpoints_count: int
+var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
+onready var racing_navigation_agent: NavigationAgent2D = $Positions/StartPosition/NavigationAgent2D
 
+# tilemaps
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
-onready var racing_navigation_agent: NavigationAgent2D = $Positions/StartPosition/NavigationAgent2D
-onready var level_navigation_line: Line2D = $LevelNavigactionLine
-onready var level_position_nodes: Array = $Positions.get_children()
+
+# level elements
+onready var level_navigation_line: Line2D = $LevelNavigationLine # zaenkrat ne uporabljam
+onready var position_nodes: Array = $Positions.get_children()
 onready var racing_line: Node2D = $RacingLine
-onready var corner_tile: PackedScene = preload("res://game/arena_elements/AreaHoleCorner.tscn")
-onready var test_tile: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
+onready var finish_line: Area2D = $FinishLine
+onready var start_lights: Node2D = $StartLights
+onready var background_space: Sprite = $BackgroundSpace
+
+# obs
+onready var area_hole_scene: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
 
 # sounds
 onready var sounds: Node = $Sounds
@@ -34,7 +39,6 @@ onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
-onready var background_space: Sprite = $BackgroundSpace
 	
 func _ready() -> void:
 	# debug
@@ -46,8 +50,14 @@ func _ready() -> void:
 	level_navigation_line.hide()
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
+	# kar je skrito, ne deluje
 	if background_space.visible:
 		background_space.get_node("Zvezde").emitting = true
+	if finish_line.visible:
+		finish_line.monitoring = true
+	if not Ref.game_manager.game_settings["start_countdown"]:	
+		start_lights.hide()
+		
 		
 	set_level_floor() # luknje
 	set_level_elements() # elementi
@@ -58,7 +68,7 @@ func _ready() -> void:
 
 func get_navigation_racing_line():
 	
-	racing_navigation_agent.set_target_location(level_position_nodes[5].global_position)
+	racing_navigation_agent.set_target_location(position_nodes[5].global_position)
 	level_navigation_line.points = racing_navigation_agent.get_nav_path()
 
 	
@@ -69,7 +79,7 @@ func _physics_process(delta: float) -> void:
 	
 func on_all_is_set():
 	
-	emit_signal("level_is_set", level_position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
+	emit_signal("level_is_set", position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
 
 
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
@@ -210,10 +220,10 @@ func set_level_elements():
 				spawn_element(cell_global_position, scene_to_spawn, Vector2(36,36))
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
-			32: # semafor
-				scene_to_spawn = preload("res://game/arena_elements/StartLights.tscn")
-				start_lights = spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
+#			32: # semafor
+#				scene_to_spawn = preload("res://game/arena_elements/StartLights.tscn")
+#				start_lights = spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+#				tilemap_elements.set_cellv(cell, -1)
 			33: # checkpoint_hor
 				var checkpoint_rotation: float = 0
 				spawn_checkpoint(cell_global_position, checkpoint_rotation)
@@ -310,9 +320,9 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 
 func spawn_hole(global_pos):
 	
-	var new_tile = test_tile.instance()
-	new_tile.global_position = global_pos + Vector2(5,4)
-	get_parent().call_deferred("add_child",new_tile)
+	var new_hole_scene = area_hole_scene.instance()
+	new_hole_scene.global_position = global_pos + Vector2(5,4)
+	get_parent().call_deferred("add_child", new_hole_scene)
 	
 
 # SIGNALI --------------------------------------------------------------------------------------------------------------------------------
