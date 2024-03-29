@@ -32,7 +32,7 @@ func _ready() -> void:
 	Ref.game_manager.connect("new_bolt_spawned", self, "_set_spawned_bolt_hud") # signal pride iz GM in pošlje spremenjeno statistiko
 	
 	# stats setup
-	level_name.text = str(Set.Levels.keys()[Ref.game_manager.level_settings["level"]])
+#	level_name.text = str(Set.Levels.keys()[Ref.game_manager.level_settings["level"]])
 	var stat_lines: Array = [$StatLineRacer1, $StatLineRacer2, $StatLineRacer3, $StatLineRacer4]
 	for stat_line in stat_lines:
 		# najprej skrijem vse in potem pokažem glede na igro
@@ -70,9 +70,10 @@ func on_game_start():
 	game_timer.start_timer()
 
 
-func on_level_over():
+func on_level_finished():
 	game_timer.stop_timer()
 	hide_stats()
+	
 	
 	
 func on_game_over():
@@ -114,7 +115,6 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 		# player stats
 		"feature_selected":
 			printt("FS",stat_owner_id, stat_name, new_stat_value)
-			
 		"lap_finished":
 			# laps count
 			stat_line_to_change.stat_laps_count.current_stat_value = new_stat_value[0]
@@ -167,30 +167,44 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 			stat_line_to_change.stat_gas.current_stat_value = new_stat_value # setget
 	
 	
-func _set_spawned_bolt_hud(bolt_index, bolt_id):
+func _set_spawned_bolt_hud(bolt_id):
+#func _set_spawned_bolt_hud(bolt_id, bolt_index):
 	
-	if bolt_id == 4: # če je enemy ne pokažem statsov
+	if bolt_id == Pro.Bolts.ENEMY: # če je enemy ne pokažem statsov
 		return
 	
 	var current_stat_line: Control
 	
 	# poveži plejerja in stat line ... v slovarju
-	match bolt_index:
-		1:
+#	match bolt_index:
+#		1:
+#			current_stat_line = stat_line_topL
+#			stat_lines_owners[bolt_id] = stat_line_topL 
+#		2:
+#			current_stat_line = stat_line_topR
+#			stat_lines_owners[bolt_id] = stat_line_topR 
+#		3:
+#			current_stat_line = stat_line_btmL
+#			stat_lines_owners[bolt_id] = stat_line_btmL 
+#		4:
+#			current_stat_line = stat_line_btmR
+#			stat_lines_owners[bolt_id] = stat_line_btmR 
+	match bolt_id:
+		0:
 			current_stat_line = stat_line_topL
 			stat_lines_owners[bolt_id] = stat_line_topL 
-		2:
+		1:
 			current_stat_line = stat_line_topR
 			stat_lines_owners[bolt_id] = stat_line_topR 
-		3:
+		2:
 			current_stat_line = stat_line_btmL
 			stat_lines_owners[bolt_id] = stat_line_btmL 
-		4:
+		3:
 			current_stat_line = stat_line_btmR
 			stat_lines_owners[bolt_id] = stat_line_btmR 
 	
 	# data
-	var bolt_stats: Dictionary = Pro.default_bolt_stats
+#	var bolt_stats: Dictionary = Pro.default_bolt_stats
 	var player_stats: Dictionary = Pro.default_player_stats
 	var player_profiles: Dictionary = Pro.default_player_profiles
 	
@@ -199,12 +213,19 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 	current_stat_line.stat_name.text = player_profiles[bolt_id]["player_name"]
 	
 	# bolt stats
-	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
-	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
-	current_stat_line.stat_mina.current_stat_value = bolt_stats["mina_count"]
-	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
-	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
-	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
+	current_stat_line.stat_bullet.current_stat_value = player_stats["bullet_count"]
+	current_stat_line.stat_misile.current_stat_value = player_stats["misile_count"]
+	current_stat_line.stat_mina.current_stat_value = player_stats["mina_count"]
+	current_stat_line.stat_shocker.current_stat_value = player_stats["shocker_count"]
+	current_stat_line.stat_gas.current_stat_value = player_stats["gas_count"]
+	current_stat_line.stat_life.current_stat_value = player_stats["life"]
+	
+#	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
+#	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
+#	current_stat_line.stat_mina.current_stat_value = bolt_stats["mina_count"]
+#	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
+#	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
+#	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
 	
 	# player stats
 	current_stat_line.stat_points.current_stat_value = player_stats["points"]
@@ -217,5 +238,5 @@ func _set_spawned_bolt_hud(bolt_index, bolt_id):
 func _on_GameTimer_gametime_is_up() -> void:
 	
 	if not Ref.game_manager.game_settings["race_mode"]:
-		Ref.game_manager.level_over(Ref.game_manager.GameoverReason.TIME)
+		Ref.game_manager.level_completed(Ref.game_manager.GameoverReason.TIME)
 	# v dirki je trenutno je game over samo, če ti zmanjka bencina

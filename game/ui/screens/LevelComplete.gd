@@ -6,17 +6,17 @@ onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingL
 
 func _ready() -> void:
 	
-	Ref.game_over = self
+	Ref.level_completed = self
 	visible = false
 
 
-func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolts_on_start: Array):
+func open(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 	set_scorelist(bolts_on_finish_line, bolts_on_start)
 	
-	var background_fadein_transparency: float = 0.9
+	var background_fadein_transparency: float = 1
 	
-	$VBoxContainer/Menu/RestartBtn.grab_focus()
+	$VBoxContainer/Menu/ContinueBtn.grab_focus()
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_callback(self, "show")
@@ -56,14 +56,22 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 			results.add_child(new_ranking_line)
 			
 
-func _on_RestartBtn_pressed() -> void:
-	Ref.main_node.reload_game()
-
-
 func _on_QuitBtn_pressed() -> void:
-	
 	Ref.main_node.game_out()
 
 
 func _on_QuitGameBtn_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_ContinueBtn_pressed() -> void:
+	var fade_out_tween = get_tree().create_tween()
+	fade_out_tween.tween_property(self, "modulate:a", 0, 1)
+	fade_out_tween.tween_callback(self, "hide")
+	# fade_in.parallel().tween_callback(Global.sound_manager, "stop_music", ["game_music_on_gameover"])
+	# fade_in.parallel().tween_callback(Global.sound_manager, "play_gui_sfx", [selected_gameover_jingle])
+#	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
+#	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)	
+	yield(fade_out_tween, "finished")
+	Ref.game_manager.start_next_level()
+#	Ref.main_node.to_next_level()

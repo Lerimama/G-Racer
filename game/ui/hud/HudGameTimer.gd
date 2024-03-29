@@ -11,11 +11,13 @@ var limitless_mode: bool # če je gejm tajm 0 in je count-up mode
 var absolute_game_time: float # pozitiven čas igre v sekundah
 var coundown_second: int # za uravnavanje GO odštevanja ... opredeli s v ready
 
-onready var game_time_limit: int = Ref.game_manager.level_settings["time_limit"]
+var game_time_limit: int
+#onready var game_time_limit: int = Ref.game_manager.level_settings["time_limit"]
 onready var sudden_death_mode: int = Ref.game_manager.game_settings["sudden_death_mode"]
 onready var sudden_death_limit: int = Ref.game_manager.game_settings["sudden_death_limit"]
 onready var stopwatch_mode: bool = Ref.game_manager.game_settings["stopwatch_mode"]
 onready var gameover_countdown_duration: int = Ref.game_manager.game_settings["gameover_countdown_duration"] # čas, ko je obarvan in se sliši bip bip
+
 
 
 func _ready() -> void:
@@ -84,6 +86,7 @@ func _process(delta: float) -> void:
 	
 	
 func start_timer():
+	game_time_limit = Ref.game_manager.level_settings["time_limit"]
 	
 	# reset vrendosti se zgodi na štart (ne na stop)
 	absolute_game_time = 0

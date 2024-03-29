@@ -80,7 +80,7 @@ func _free_scene(scene_node):
 	
 
 func spawn_new_scene(scene_path, parent_node): # spawn scene
-
+	print(scene_path, parent_node)
 	var scene_resource = ResourceLoader.load(scene_path)
 	
 	current_scene = scene_resource.instance()

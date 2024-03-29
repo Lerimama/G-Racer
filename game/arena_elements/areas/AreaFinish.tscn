@@ -1,13 +1,13 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://game/arena_elements/AreaFinish.gd" type="Script" id=1]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=2]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=1]
+[ext_resource path="res://game/arena_elements/areas/AreaFinish.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 4, 4 )
 
 [node name="AreaFinish" type="Area2D"]
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 visible = false
@@ -19,7 +19,7 @@ shape = SubResource( 2 )
 [node name="Sounds" type="Node" parent="."]
 
 [node name="Nitro" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 2 )
+stream = ExtResource( 1 )
 volume_db = -15.0
 bus = "GameSfx"
 

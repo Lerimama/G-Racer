@@ -1,7 +1,7 @@
 extends Node
 
 
-var current_level = null
+var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var node_creation_parent = null
 var current_camera = null
 var game_manager = null
@@ -10,7 +10,7 @@ var sound_manager = null
 var data_manager = null
 var main_node = null
 var game_over = null
-var level_over = null
+var level_completed = null
 #var effects_creation_parent = null
 #var game_timer = null
 #var start_countdown = null

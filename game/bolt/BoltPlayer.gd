@@ -182,7 +182,7 @@ func select_feature():
 
 
 func pull_bolt_on_screen(pull_position: Vector2):
-	
+	print("plla")
 	if not bolt_active:
 		return
 		

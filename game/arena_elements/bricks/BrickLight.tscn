@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=1]
-[ext_resource path="res://game/arena_elements/BrickLight.gd" type="Script" id=2]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=2]
 [ext_resource path="res://assets/light.png" type="Texture" id=3]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=4]
+[ext_resource path="res://game/arena_elements/bricks/BrickLight.gd" type="Script" id=4]
 
 [sub_resource type="PhysicsMaterial" id=7]
 
@@ -41,7 +41,7 @@ tracks/1/keys = {
 
 [node name="BrickLight" type="StaticBody2D"]
 physics_material_override = SubResource( 7 )
-script = ExtResource( 2 )
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -77,7 +77,7 @@ mode = 2
 [node name="Sounds" type="Node" parent="."]
 
 [node name="MagnetLoop" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 4 )
+stream = ExtResource( 2 )
 volume_db = -10.0
 bus = "GameSfx"
 

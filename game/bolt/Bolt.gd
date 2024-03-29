@@ -89,17 +89,34 @@ onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 # stats
-onready var points: int = Pro.default_player_stats["points"]
-onready var wins: int = Pro.default_player_stats["wins"]
-onready var life: int = Pro.default_bolt_stats["life"]
-onready var energy: float = Pro.default_bolt_stats["energy"]
-onready var max_energy: float = Pro.default_bolt_stats["energy"] # zato, da se lahko resetira
-onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
-onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
-#onready var bullet_power: float = Pro.default_bolt_stats["bullet_power"]
-onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
-onready var mina_count: float = Pro.default_bolt_stats["mina_count"]
-onready var shocker_count: float = Pro.default_bolt_stats["shocker_count"]
+onready var player_stats: Dictionary # = Pro.default_player_stats.duplicate() # samo na začetku, potem se pa ob spawnanju prepišejo
+onready var points: int = player_stats["points"]
+onready var wins: int = player_stats["wins"]
+onready var life: int = player_stats["life"]
+onready var energy: float = player_stats["energy"]
+onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
+onready var gas_count: float = player_stats["gas_count"]
+onready var bullet_count: float = player_stats["bullet_count"]
+onready var misile_count: float = player_stats["misile_count"]
+onready var mina_count: float = player_stats["mina_count"]
+onready var shocker_count: float = player_stats["shocker_count"]
+#onready var points: int = player_stats["points"]
+#onready var wins: int = player_stats["wins"]
+#onready var life: int = player_stats["life"]
+#onready var energy: float = player_stats["energy"]
+#onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
+#onready var gas_count: float = player_stats["gas_count"]
+#onready var bullet_count: float = player_stats["bullet_count"]
+#onready var misile_count: float = player_stats["misile_count"]
+#onready var mina_count: float = player_stats["mina_count"]
+#onready var shocker_count: float = player_stats["shocker_count"]
+#onready var energy: float = Pro.default_bolt_stats["energy"]
+#onready var max_energy: float = Pro.default_bolt_stats["energy"] # zato, da se lahko resetira
+#onready var gas_count: float = Pro.default_bolt_stats["gas_count"]
+#onready var bullet_count: float = Pro.default_bolt_stats["bullet_count"]
+#onready var misile_count: float = Pro.default_bolt_stats["misile_count"]
+#onready var mina_count: float = Pro.default_bolt_stats["mina_count"]
+#onready var shocker_count: float = Pro.default_bolt_stats["shocker_count"]
 # bolt profil
 # default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
@@ -118,7 +135,9 @@ onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"]
 onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
 
 # neu
-var drive_off = false
+var drive_off: bool = false
+var engines_on: bool = false
+onready var sounds: Node = $Sounds
 
 
 func _ready() -> void:
@@ -152,6 +171,7 @@ func _ready() -> void:
 	
 	$Sounds/EngineStart.play()
 
+
 func _physics_process(delta: float) -> void:
 	
 #	printt("gas_count", gas_count)
@@ -179,6 +199,7 @@ func _physics_process(delta: float) -> void:
 	
 	manage_motion_states(delta)
 	manage_motion_fx()
+	update_player_stats()
 	
 	if Ref.game_manager.game_settings["race_mode"]:
 		#		# poraba bencina
@@ -201,17 +222,39 @@ func _physics_process(delta: float) -> void:
 	else:
 		update_feature_selector()
 		manage_bolt_hud()
+
 			
+func _exit_tree() -> void:
+	printt ("so", sounds.get_child_count())
+	for sound in sounds.get_children():
+		sound.stop()
+	if engine_particles_rear:
+		engine_particles_rear.queue_free()
+	if engine_particles_front_left:
+		engine_particles_front_left.queue_free()
+	if engine_particles_front_right:
+		engine_particles_front_right.queue_free()
+	printt("trail", current_active_trail) # trail decay tween start
+#	current_active_trail.start_decay() # trail decay tween start
+	bolt_trail_active = false
+	if Ref.current_camera.follow_target == self:
+		Ref.current_camera.follow_target = null
+		
 	
 # IZ PROCESA ----------------------------------------------------------------------------
 
 
-func update_feature_selector():
+func update_player_stats():
 	
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMina.get_node("Label").text = "%02d" % mina_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
+	player_stats["points"] = points
+	player_stats["wins"] = wins
+	player_stats["life"] = life
+	player_stats["energy"] = energy
+	player_stats["gas_count"] = gas_count
+	player_stats["bullet_count"] = bullet_count
+	player_stats["misile_count"] = misile_count
+	player_stats["mina_count"] = mina_count
+	player_stats["shocker_count"] = shocker_count
 	
 	
 func on_collision():
@@ -341,6 +384,7 @@ func manage_motion_fx():
 	# spawn trail if not active
 	if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 		current_active_trail = spawn_new_trail()
+	
 	# manage trail
 	if bolt_trail_active:
 		manage_trail()
@@ -414,6 +458,14 @@ func manage_bolt_hud():
 			energy_bar.color = Set.color_green
 			
 
+func update_feature_selector():
+	
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMina.get_node("Label").text = "%02d" % mina_count
+	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
+	
+	
 # LIFE CYCLE ----------------------------------------------------------------------------
 
 
@@ -634,6 +686,7 @@ func spawn_new_trail():
 	
 			
 func set_engines():
+	
 	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
 	var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
 	var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)	
@@ -894,9 +947,8 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 			elif shield_loops_counter >= shield_loops_limit:
 				animation_player.play_backwards("shield_on")
 
-var engines_on: bool = false
 
 func _on_EngineStart_finished() -> void:
-	engines_on = true
+#	engines_on = true
 #	pass
 	$Sounds/Engine.play()

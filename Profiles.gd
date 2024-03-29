@@ -205,7 +205,7 @@ var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"misile_count" : 5,
 	"mina_count" : 3,
 	"shocker_count" : 3,
-	"gas_count" : 100, # 300 je kul
+	"gas_count" : 500, # 300 je kul
 }
 
 var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
@@ -219,6 +219,15 @@ var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 #	"player_life" : 5,
 	"points" : 0,
 	"wins" : 2,
+	# ex bolt stats
+	"life" : 5,
+	"energy" : 10,
+	"bullet_power" : 0.1,
+	"bullet_count" : 100,
+	"misile_count" : 5,
+	"mina_count" : 3,
+	"shocker_count" : 3,
+	"gas_count" : 500, # 300 je kul
 }
 
 var weapon_profiles : Dictionary = {

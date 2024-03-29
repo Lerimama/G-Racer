@@ -23,7 +23,7 @@ func _ready() -> void:
 #onready var sfx: Node = $Sfx
 onready var music: Node = $Music
 	
-	
+		
 func play_sfx(effect_for: String):
 	
 	if game_sfx_set_to_off:

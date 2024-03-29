@@ -21,7 +21,6 @@ func start_countdown():
 	else:
 		yield(get_tree().create_timer(0.5), "timeout")
 		emit_signal("countdown_finished") # GM yielda za ta signal
-		print("START")
 
 
 func turn_on_light():
@@ -48,7 +47,6 @@ func turn_off_all_lights():
 	$Timer.stop()
 	# Ref.sound_manager.play_gui_sfx("start_countdown_a")
 	emit_signal("countdown_finished") # GM yielda za ta signal
-	print("START")
 	
 	for light in all_lights:
 		var turn_off_tween = get_tree().create_tween()

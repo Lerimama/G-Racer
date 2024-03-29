@@ -4,7 +4,7 @@ extends Node
 signal stat_change_received (player_index, changed_stat, stat_new_value)
 signal new_bolt_spawned (name, other)
 
-enum GameoverReason {SUCCES, FAIL, TIME} # ali kdo od plejerjev napreduje, ali pa ne
+#enum GameoverReason {SUCCES, FAIL, TIME} # ali kdo od plejerjev napreduje, ali pa ne
 #enum LevelGoal{SUCCES, FAIL}
 #var level_goal_reached: bool # za GO
 
@@ -29,13 +29,13 @@ var level_racing_lines: Array
 var level_racing_points: Array # pike vseh linij
 var all_bolts_ranked: Array = []
 
-onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
+#onready var level_settings: Dictionary = Set.current_level_settings # ga med igro ne spreminjaš
 onready var game_settings: Dictionary = Set.current_game_settings # ga med igro ne spreminjaš
+onready var level_settings: Dictionary
+#onready var game_settings: Dictionary
 onready var navigation_line: Line2D = $"../NavigationPath"
 
-# temp 
 var position_indikator: Node2D	# debug
-onready var NewLevel: PackedScene = level_settings["level_scene"]
 
 # neu ... race managerja
 var checkpoints_per_lap: int
@@ -44,30 +44,35 @@ var level_start_position: Vector2
 var default_enemy_racing_point_offset: int = 20 # da lahko resetiram
 var enemy_racing_point_offset: int = 20 # prediction points length ... vpliva na natančnost gibanja
 var fast_start_window: bool = false
-onready var laps_limit: int = level_settings["lap_limit"]
 var enemy_racing_line_index: int = 0
-
+#onready var laps_limit: int = level_settings["lap_limit"]
+#onready var NewLevel: PackedScene = level_settings["level_scene"]
+onready	var current_bolts_activated: Array = Set.bolts_activated # naslednji leveli se tole adaptira, glede na to kdo je še v igri
+var qualified_bolt_ids: Array # za naslednji level
+var current_level_index: int = 0
 
 func _input(event: InputEvent) -> void:
+	
 	
 	if Input.is_action_just_pressed("m"):
 		var bus_index: int = AudioServer.get_bus_index("GameMusic")
 		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
 		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
 			
+	if Input.is_action_just_pressed("x"):
+		level_finished(true)
+#		for bolt in bolts_in_game:
+#			bolt.bolt_active = false
+#			bolt.call_deferred("queue_free")
+	if Input.is_action_just_pressed("f"):
+		for bolt in bolts_in_game:
+			bolt.gas_count = 0
+#			printt("GC", bolt.gas_count)
+			
 	if game_on:
-		if Input.is_action_just_pressed("x"):
-			spawn_pickable()
+#			spawn_pickable()
 		if Input.is_action_just_released("r"):
 			Ref.main_node.to_next_level()
-		if Input.is_action_just_pressed("f"):
-			for bolt in bolts_in_game:
-				bolt.gas_count = 0
-				printt("GC", bolt.gas_count)
-#					bolt.selected_feat_index = 0
-#				else:
-#					bolt.selected_feat_index += 1
-#				print("id", bolt.selected_feat_index)
 
 
 func _ready() -> void:
@@ -87,24 +92,37 @@ func _process(delta: float) -> void:
 			get_game_ranking()
 	
 	
-func set_game(): # kliče main.gd pred fejdin igre
+func set_game(): # kliče main.gd pred fejdin igre na nov level
 	
 	spawn_level()	
 #	game_settings["start_player_count"] = 1
-	var current_bolts_activated: Array = Set.bolts_activated
+#	if bolts_in_game.empty():
 	if current_bolts_activated.empty(): # kadar ne štartam igre iz home menija
-		current_bolts_activated = [Pro.Bolts.P1] 
-#		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 
+#		current_bolts_activated = [Pro.Bolts.P1] 
+		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2] 	
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
-	
-	var bolt_index: int = 0
+
+#	var bolt_index: int = 0
 	for bolt in current_bolts_activated:
-		bolt_index += 1
-		var player_scene: PackedScene = Pro.default_player_profiles[bolt]["player_scene"]
-		spawn_bolt(player_scene, bolt_spawn_position_nodes[bolt_index - 1], current_bolts_activated[bolt_index - 1], bolt_index)	
+		printt("ACTIV", bolt)
+#		bolt_index += 1
+		spawn_bolt(bolt, bolt_spawn_position_nodes[current_bolts_activated.find(bolt)]) # scena, pozicija, profile id (barva, ...)
+	
+	# dodam komp
+	game_settings["ai_mode"] = false
+	if game_settings["ai_mode"]:
+		# koliko pozicij je nezasedenih?
+		var free_positions_count: int = bolt_spawn_position_nodes.size() - current_bolts_activated.size()
+		if free_positions_count > 0:
+			for n in free_positions_count:
+				spawn_bolt(Pro.Bolts.ENEMY, bolt_spawn_position_nodes[bolt_spawn_position_nodes.size() - (1 + n)])	
+				
+		elif free_positions_count < 0:
+			print("ERROR - premalo level pozicij")
+	
 		
 	if Ref.current_level.start_lights.visible:
 		Ref.current_level.start_lights.start_countdown()
@@ -118,12 +136,15 @@ func set_game(): # kliče main.gd pred fejdin igre
 
 func start_game():
 	
-	Ref.sound_manager.play_music()
+#	for bolt in bolts_in_game:
+#		Ref.current_camera.follow_target = bolt
+#	if not bolts_across_finish_line.empty():
+#		Ref.current_camera.follow_target = bolts_across_finish_line[0]
+#		bolts_across_finish_line.clear()
 	
+	Ref.sound_manager.play_music()
 	for bolt in bolts_in_game:
-#		bolt.set_physics_process(true)
 		bolt.bolt_active = true
-#		Ref.sound_manager.play_music("game_music")
 
 	Ref.hud.on_game_start()
 	
@@ -137,39 +158,120 @@ func start_game():
 	yield(get_tree().create_timer(0.32), "timeout") # za dojet
 	fast_start_window = false	
 		
-		
-func level_over(level_goal_reached: bool):
-	print("LO")
+
+func level_finished(level_goal_reached: bool):
+	
 	if game_on == false: # preprečim double gameover
 		return
 	game_on = false
 
+	print("Level finished")
+	Ref.current_camera.follow_target = null
+	
 	yield(get_tree().create_timer(2), "timeout") # za dojet
 	
 	if level_goal_reached:
-		printt("GO SUCCESS", bolts_across_finish_line.size())
 		for bolt_across_finish_line in bolts_across_finish_line:
-			printt("BOLT RANK", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
-		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
+			printt("Bolts rank on finish", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
+			qualified_bolt_ids.append(bolt_across_finish_line[0].bolt_id)
+		Ref.level_completed.open(bolts_across_finish_line, bolts_on_start)
+		# save data
+		printt("Level SUCCESS", bolts_across_finish_line.size())
+
+#				bolt.queue_free()
+		
+		
 	else:
-#		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
-		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
-		print("GO FAIL")
-#	elif gameover_reason == GameoverReason.TIME:
-#		Ref.level_over.open(bolts_across_finish_line, bolts_on_start)
-##		Ref.game_over.open_gameover(gameover_reason, bolts_across_finish_line, bolts_on_start)
-#		print("GO TIME")
+		Ref.game_over.open_gameover(bolts_across_finish_line, bolts_on_start)
+		print("Level FAIL")
 	
-	# stop elemenets
-	Ref.hud.on_level_over()
+	# level reset
+#	yield(get_tree().create_timer(1), "timeout") # da se GO do konca prifejda
+	# HUD reset
+	Ref.hud.on_level_finished()
+	# music stop
 	Ref.sound_manager.stop_music()
-	Ref.current_camera.follow_target = null
-	for bolt in bolts_in_game: # zazih ... načeloma bi moralo že veljati za vse
-		bolt.bolt_active = false 
+	# sfx mute
+	var bus_index: int = AudioServer.get_bus_index("GameSfx")
+	AudioServer.set_bus_mute(bus_index, true)
+	# best lap stats reset
+	# looping sounds stop
+	# navigacija enemyja
+	# kvefri elementov, ki so v areni
+	bolt_spawn_position_nodes
+	
+
+func spawn_level():
+	
+	current_level_index += 1
+	# level name
+	var level_to_load: int = Set.game_levels[current_level_index - 1]
+	# level settings
+	level_settings = Set.level_settings[level_to_load]
+	var level_to_load_path: PackedScene = level_settings["level_scene"]
+	
+	var level_position: Position2D = $"../LevelPosition"
+	var level_z_index: int # z index v node drevesu
+	
+	if not Ref.current_level == null: # če level že obstaja, ga najprej moram zbrisat
+		level_z_index = Ref.current_level.z_index
+		Ref.current_level.set_physics_process(false)
+		Ref.current_level.free()
+	else: # če je samo level marker
+		level_z_index = level_position.z_index
 		
+	# spawn level
+	# var Level = ResourceLoader.load(level_to_load_path)
+	# var new_level = Level.instance()
+	var new_level = level_to_load_path.instance()
+	new_level.z_index = level_z_index
+	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
+	Ref.node_creation_parent.add_child(new_level)	
+	
+	
+func start_next_level():
+
+	# odstrani nekvalificirane bolte iz aktivnih
+	for bolt_id in current_bolts_activated:
+		if not qualified_bolt_ids.has(bolt_id):
+			current_bolts_activated.erase(bolt_id)
+			printt("erased", bolt_id)
+	
+	# vse bolte zbrišem
+	for bolt in bolts_in_game:
+		bolt.queue_free()
+
+	# reset level values
+	leading_player = null # trenutno vodilni igralec (rabim za camera target in pull target)
+	leading_racing_line = null
+	level_racing_lines = [] 
+	level_racing_points = []
+	all_bolts_ranked = []
+	checkpoints_per_lap = 0
+	level_goal_position = Vector2.ZERO
+	level_start_position = Vector2.ZERO
+	bolts_across_finish_line = []
+	# spawnam tiste, ki
+#		for bolt_across_finish_line in bolts_across_finish_line:
+#			if bolt_across_finish_line[0] == bolt:
+#				break
+##		for bolt_across_finish_line in bolts_in_game:
+##			printt("Bolts rank on finish", bolt_across_finish_line[0].bolt_id, bolt_across_finish_line[0].player_name, bolt_across_finish_line[1])
+##			printt("stats",bolt_across_finish_line[0].player_stats)
+##		if bolts_across_finish_line[0].has(bolt):
+##			bolt.global_position = bolt_spawn_position_nodes[bolts_across_finish_line.find(bolt)]
+##		else:
+#		bolt.queue_free()
+	
+	# zbrišem tiste ki niso uspeli
+	set_game()
+#	spawn pozicije so drugačne
+#	statistika je drugačna 
+#	to bo pa to
+	pass	
+
 			
-		
-func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
+func check_for_level_completed(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
 	
 	var active_bolts: Array
 	
@@ -177,64 +279,58 @@ func check_for_level_over(): # za preverjanje pogojev za game over (vsakič ko b
 		if bolt.bolt_active:
 			active_bolts.append(bolt)
 			
-	# če so vsi neaktivni je GAME OVER:
+	# če so vsi neaktivni, preverim kdo je v cilju
 	if active_bolts.empty():
-		print("noben aktiven")
-		# preverjam uspeh (je kakšen prišel čez linijo
-		if not bolts_across_finish_line.empty(): # lahko so vsi izven cilja
-			for bolt_across_finish_line in bolts_across_finish_line: # če je vsaj en plejer bil čez ciljno črto
+		if not bolts_across_finish_line.empty():
+			# SUCCESS če je vsaj en plejer bil čez ciljno črto
+			for bolt_across_finish_line in bolts_across_finish_line: 
 				if bolt_across_finish_line[0].is_in_group(Ref.group_players):
-					level_over(true)		
+					level_finished(true)		
 					return # dovolj je en uspeh
-		# če ni uspeha
-		level_over(false)	
+		# FAIL, če ni nobenega plejerja v cilju
+		level_finished(false)			
 
 		
-func on_bolt_across_finish_line(bolt_finished: KinematicBody2D): # sproži finish line
+func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish line
 	
 	var time_to_finish: float = 2 # čas za druge, da dosežejo cilj
 	#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
 	
 	var current_race_time: float  = Ref.hud.game_timer.absolute_game_time # pozitiven game čas v sekundah
 	
-	# LAP
+	# LAP FINISHED
 	if bolt_finished.checkpoints_reached.size() >= checkpoints_per_lap:
-		bolt_finished.on_lap_finished(current_race_time, laps_limit)
+		bolt_finished.on_lap_finished(current_race_time, level_settings["lap_limit"])
 		Ref.sound_manager.play_sfx("finish_horn")
 	
 	
-	# FINISH
+	# RACE FINISHED
 	# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
-	if bolt_finished.laps_finished >= laps_limit:
-		# deaktiviram plejerja in zabležim statistiko 
+	if bolt_finished.laps_finished >= level_settings["lap_limit"]:
 		var race_finished_time: float = current_race_time
+		bolts_across_finish_line.append([bolt_finished, race_finished_time]) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
+		# deaktiviram plejerja in zabležim statistiko 
 		if bolt_finished.is_in_group(Ref.group_players):
 			bolt_finished.bolt_active = false # enemy se disebla ko doseže target
-			# če prvi med igralci, je konec igre
-#			if not bolts_across_finish_line.has(bolt_finished): # če ga še nima, je prvi med plejerji
-#				# timer postane limited in določim mu limit
-#				# GO timer se sproži ko je prvi čez
-#				Ref.hud.game_timer.limitless_mode = false
-#				Ref.hud.game_timer.game_time_limit = race_finished_time + time_to_finish
-#				printt ("GO TIME", Ref.hud.game_timer.game_time_limit, Ref.hud.game_timer.absolute_game_time)				
 		elif bolt_finished.is_in_group(Ref.group_enemies):
 			bolt_finished.on_race_finished()
-		bolts_across_finish_line.append([bolt_finished, race_finished_time]) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
-			
-#	if bolts_across_finish_line.size() == 1: 3 pomeni, da je skozi cilj pripeljal samo prvi
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
 
 
-func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_id: int, spawned_bolt_index: int):
-
+func spawn_bolt(spawned_bolt_id: int, spawn_position_node: Node2D): #, spawned_bolt_index: int): # scena, pozicija, bolt id
+#func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_id: int, spawned_bolt_index: int): # scena, pozicija, bolt id
+	
+	var NewBolt: PackedScene = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
+	
 	var new_bolt = NewBolt.instance()
 	new_bolt.bolt_id = spawned_bolt_id
 	# new_bolt.bolt_id = spawned_bolt_index
 	new_bolt.global_position = spawn_position_node.global_position
-	Ref.node_creation_parent.add_child(new_bolt)
 	new_bolt.rotation_degrees = spawn_position_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_bolt.player_stats = Pro.default_player_stats.duplicate()
+	Ref.node_creation_parent.add_child(new_bolt)
 	
 	# new_bolt.look_at(Vector2(320,180)) # rotacija proti centru ekrana
 	# new_bolt.set_physics_process(false)
@@ -244,15 +340,15 @@ func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_
 	# if new_bolt is Enemy: ..script error or cycling dependancy
 		new_bolt.navigation_cells = navigation_area
 		new_bolt.connect("path_changed", self, "_on_Enemy_path_changed") # samo za prikaz nav linije
-		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
+#		emit_signal("new_bolt_spawned", spawned_bolt_id, spawned_bolt_index) # pošljem na hud, da prižge stat line in ga napolne
 	if new_bolt.is_in_group(Ref.group_players):
 		new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # statistika med boltom in hudom
-		emit_signal("new_bolt_spawned", spawned_bolt_index, spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
+#		emit_signal("new_bolt_spawned", spawned_bolt_id, spawned_bolt_index) # pošljem na hud, da prižge stat line in ga napolne
+	emit_signal("new_bolt_spawned", spawned_bolt_id) # pošljem na hud, da prižge stat line in ga napolne
 		# Ref.current_camera.follow_target = new_bolt
 	
-	bolts_on_start.append(new_bolt)
-
 	Ref.current_camera.follow_target = new_bolt # začasen holder, ki se obdrži, če se ob štartu ne seta posebej (racing se ...) 
+	bolts_on_start.append(new_bolt)
 
 
 func spawn_pickable():
@@ -282,28 +378,28 @@ func spawn_pickable():
 	var random_pickable_spawn_time: int = Met.get_random_member([1,2,3])
 	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # za dojet
 	spawn_pickable()
-	
 
-func spawn_level():
 	
-	var level_position: Position2D = $"../LevelPosition"
-	var level_z_index: int # z index v node drevesu
-	
-	if not Ref.current_level == null: # če level že obstaja, ga najprej moram zbrisat
-		#var level_to_load_path: String = level_settings["level_path"]
-		level_z_index = Ref.current_level.z_index
-		Ref.current_level.set_physics_process(false)
-		Ref.current_level.free()
-	else: # če je samo level marker
-		level_z_index = level_position.z_index
-		
-	# spawn level
-	# var Level = ResourceLoader.load(level_to_load_path)
-	# var new_level = Level.instance()
-	var new_level = NewLevel.instance()
-	new_level.z_index = level_z_index
-	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
-	Ref.node_creation_parent.add_child(new_level)
+#func spawn_level_():
+#
+#	var level_position: Position2D = $"../LevelPosition"
+#	var level_z_index: int # z index v node drevesu
+#
+#	if not Ref.current_level == null: # če level že obstaja, ga najprej moram zbrisat
+#		#var level_to_load_path: String = level_settings["level_path"]
+#		level_z_index = Ref.current_level.z_index
+#		Ref.current_level.set_physics_process(false)
+#		Ref.current_level.free()
+#	else: # če je samo level marker
+#		level_z_index = level_position.z_index
+#
+#	# spawn level
+#	# var Level = ResourceLoader.load(level_to_load_path)
+#	# var new_level = Level.instance()
+#	var new_level = NewLevel.instance()
+#	new_level.z_index = level_z_index
+#	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
+#	Ref.node_creation_parent.add_child(new_level)
 
 		
 # RANKING ---------------------------------------------------------------------------------------------
@@ -318,12 +414,6 @@ func get_game_ranking():
 	# vodilna racing linija
 	if leading_racing_line == null:
 		leading_racing_line = level_racing_lines[0] # na začetku je vedno ta glavna linija, kasneje se opredeli glede na vodilnega plejerja
-	# debug
-	#	for line in level_racing_lines: 
-	#		if level_racing_lines.find(line) == level_racing_lines.find(leading_racing_line):
-	#			line.modulate = Color.red
-	#		else:
-	#			line.modulate = Color.white
 					
 	# VSI BOLTI
 	# sortam arraj po indexu pike na vodilni liniji ... 0 ... bolt, 1 ... closest_racing_line_point_index, 2 ...closest_racing_line_index
@@ -349,8 +439,6 @@ func get_game_ranking():
 			enemies_on_racing_line.append(bolt_on_racing_line)
 			
 	# ENEMIES ... setam nav target
-	# če ni čekpointov
-#	if checkpoints_per_lap == 0:
 	# enemy racing line je vedno glavni racing line
 	# razen če si linije sledijo in glavne ni več, potem je naslednja (stil 8 recimo)
 	# če je nov krog je glavna linija spet prva
@@ -375,27 +463,28 @@ func get_game_ranking():
 		else:
 			enemy_racing_point_offset -= 1
 		
-		
-	# če so čekpointi
-		
 	# PLAYERS ... setam vodilnega, vodilno linijo in tarčo kamere
-	if not players_on_racing_line.empty(): 
+	# če so vsi neaktivni, lokacija kamere ostane ista
+	if players_on_racing_line.empty(): 
+		Ref.current_camera.follow_target = null
+	else:
 		var leading_player_on_racing_line: Array = players_on_racing_line[0] # players_on_racing_line so že rangirani zato je 0 prvi
 		leading_player = leading_player_on_racing_line[0]
 		leading_racing_line = level_racing_lines[leading_player_on_racing_line[2]]
+		
 		# debug ... indikator
+		if Set.debug_mode:
 #		if level_settings["level"] == Set.Levels.DEBUG_RACE:
-		var leading_point_index: int = leading_player_on_racing_line[1]
-		var leading_point: Vector2 = level_racing_points[leading_point_index]
-		position_indikator.global_position = leading_point
-		position_indikator.scale = Vector2(3,3)
-		position_indikator.modulate = leading_player.bolt_color
+			var leading_point_index: int = leading_player_on_racing_line[1]
+			var leading_point: Vector2 = level_racing_points[leading_point_index]
+			position_indikator.global_position = leading_point
+			position_indikator.scale = Vector2(3,3)
+			position_indikator.modulate = leading_player.bolt_color
 		# camera follow
+			#if not Ref.current_camera.follow_target == position_indikator: # da kamera ne reagira, če je že setan isti plejer
+			#	Ref.current_camera.follow_target = position_indikator
 		if not Ref.current_camera.follow_target == leading_player: # da kamera ne reagira, če je že setan isti plejer
 			Ref.current_camera.follow_target = leading_player
-	# če so vsi neaktivni, lokacija kamere ostane ista
-	else:
-		Ref.current_camera.follow_target = null
 	
 
 func sort_bolts_by_laps(bolt_on_racing_line_1, bolt_on_racing_line_2): # ascending ... večji index je boljši
@@ -549,7 +638,7 @@ func current_bolt_areas():
 func _on_Bolt_activity_changed(bolt: KinematicBody2D):
 	
 	if bolt.bolt_active == false:
-		check_for_level_over()
+		check_for_level_completed()
 
 	
 func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array, level_checkpoints_count: int):
@@ -579,8 +668,8 @@ func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Ar
 	checkpoints_per_lap = level_checkpoints_count
 	
 	# debug
-	position_indikator = Met.spawn_indikator(bolt_spawn_position_nodes[1].global_position, 0)
-	position_indikator.modulate.a = 0
+	if Set.debug_mode and position_indikator == null:
+		position_indikator = Met.spawn_indikator(bolt_spawn_position_nodes[1].global_position, 0)
 
 
 # SIGNALI ----------------------------------------------------------------------------------------------------

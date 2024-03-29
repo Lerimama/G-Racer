@@ -33,7 +33,7 @@ region = Rect2( 8, 0, 8, 8 )
 [node name="Player" instance=ExtResource( 4 )]
 script = ExtResource( 5 )
 
-[node name="Shield" parent="." index="3"]
+[node name="Shield" parent="." index="0"]
 material = SubResource( 1 )
 
 [node name="VBoxContainer" parent="BoltHud" index="0"]

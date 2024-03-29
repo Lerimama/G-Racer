@@ -21,7 +21,6 @@ func start_countdown():
 	else:
 		yield(get_tree().create_timer(0.5), "timeout")
 		emit_signal("countdown_finished") # GM yielda za ta signal
-#		print("START")
 	
 	
 func play_countdown_a_sound():

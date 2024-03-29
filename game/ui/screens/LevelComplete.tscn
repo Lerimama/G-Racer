@@ -1,12 +1,12 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://game/ui/GameOver.gd" type="Script" id=1]
+[ext_resource path="res://game/ui/screens/LevelComplete.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=3]
 [ext_resource path="res://game/ui/FinalRankingLine.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=6]
 
-[node name="GameOver" type="Control"]
+[node name="LevelOver" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 6 )
@@ -16,6 +16,7 @@ __meta__ = {
 }
 
 [node name="Panel" type="Panel" parent="."]
+visible = false
 modulate = Color( 1, 1, 1, 0.941176 )
 margin_right = 640.0
 margin_bottom = 360.0
@@ -28,8 +29,8 @@ margin_bottom = -24.0
 custom_constants/separation = 16
 
 [node name="Title" type="HBoxContainer" parent="VBoxContainer"]
-margin_left = 192.0
-margin_right = 447.0
+margin_left = 172.0
+margin_right = 467.0
 margin_bottom = 64.0
 size_flags_horizontal = 4
 custom_constants/separation = 0
@@ -37,76 +38,10 @@ alignment = 1
 
 [node name="Letter" type="Label" parent="VBoxContainer/Title"]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_right = 30.0
+margin_right = 295.0
 margin_bottom = 64.0
 custom_fonts/font = ExtResource( 3 )
-text = "G"
-
-[node name="Letter2" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.368627, 1, 0.662745, 1 )
-margin_left = 30.0
-margin_right = 60.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 3 )
-text = "A"
-
-[node name="Letter3" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.294118, 0.623529, 1, 1 )
-margin_left = 60.0
-margin_right = 100.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 3 )
-text = "M"
-
-[node name="Letter4" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
-margin_left = 100.0
-margin_right = 130.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 3 )
-text = "E"
-
-[node name="Letter5" type="Label" parent="VBoxContainer/Title"]
-margin_left = 130.0
-margin_top = 19.0
-margin_right = 140.0
-margin_bottom = 45.0
-custom_fonts/font = ExtResource( 2 )
-text = " "
-
-[node name="Letter6" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.368627, 1, 0.662745, 1 )
-margin_left = 140.0
-margin_right = 170.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 3 )
-text = "O"
-
-[node name="Letter7" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_left = 170.0
-margin_right = 200.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 3 )
-text = "V"
-
-[node name="Letter8" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
-margin_left = 200.0
-margin_right = 230.0
-margin_bottom = 64.0
-custom_fonts/font = ExtResource( 3 )
-text = "E"
-
-[node name="Letter9" type="Label" parent="VBoxContainer/Title"]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_left = 230.0
-margin_right = 255.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 25, 0 )
-custom_fonts/font = ExtResource( 3 )
-text = "R"
-clip_text = true
+text = "LEVEL OVER"
 
 [node name="Content" type="Control" parent="VBoxContainer"]
 margin_top = 80.0
@@ -156,9 +91,9 @@ margin_right = 364.0
 margin_bottom = 68.0
 
 [node name="Menu" type="HBoxContainer" parent="VBoxContainer"]
-margin_left = 237.0
+margin_left = 234.0
 margin_top = 266.0
-margin_right = 403.0
+margin_right = 406.0
 margin_bottom = 279.0
 size_flags_horizontal = 4
 custom_constants/separation = 16
@@ -169,12 +104,12 @@ margin_bottom = 13.0
 size_flags_vertical = 8
 text = "QUIT TO MAIN MENU"
 
-[node name="RestartBtn" type="Button" parent="VBoxContainer/Menu"]
+[node name="ContinueBtn" type="Button" parent="VBoxContainer/Menu"]
 margin_left = 122.0
-margin_right = 166.0
+margin_right = 172.0
 margin_bottom = 13.0
 size_flags_vertical = 8
-text = "RESTART"
+text = "CONTINUE"
 
 [node name="QuitGameBtn" type="Button" parent="VBoxContainer/Menu"]
 visible = false
@@ -185,5 +120,5 @@ size_flags_vertical = 8
 text = "QUIT GAME"
 
 [connection signal="pressed" from="VBoxContainer/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
-[connection signal="pressed" from="VBoxContainer/Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
+[connection signal="pressed" from="VBoxContainer/Menu/ContinueBtn" to="." method="_on_ContinueBtn_pressed"]
 [connection signal="pressed" from="VBoxContainer/Menu/QuitGameBtn" to="." method="_on_QuitGameBtn_pressed"]

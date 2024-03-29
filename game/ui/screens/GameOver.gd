@@ -6,17 +6,17 @@ onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingL
 
 func _ready() -> void:
 	
-	Ref.level_over = self
+	Ref.game_over = self
 	visible = false
 
 
-func open(bolts_on_finish_line: Array, bolts_on_start: Array):
+func open_gameover(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 	set_scorelist(bolts_on_finish_line, bolts_on_start)
 	
-	var background_fadein_transparency: float = 0.9
+	var background_fadein_transparency: float = 1
 	
-	$VBoxContainer/Menu/ContinueBtn.grab_focus()
+	$VBoxContainer/Menu/RestartBtn.grab_focus()
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_callback(self, "show")
@@ -56,13 +56,14 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 			results.add_child(new_ranking_line)
 			
 
+func _on_RestartBtn_pressed() -> void:
+	Ref.main_node.reload_game()
+
+
 func _on_QuitBtn_pressed() -> void:
+	
 	Ref.main_node.game_out()
 
 
 func _on_QuitGameBtn_pressed() -> void:
 	get_tree().quit()
-
-
-func _on_ContinueBtn_pressed() -> void:
-	Ref.main_node.to_next_level()

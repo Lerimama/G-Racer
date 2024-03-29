@@ -1,9 +1,9 @@
 [gd_scene load_steps=13 format=2]
 
-[ext_resource path="res://game/arena_elements/BrickGhost.gd" type="Script" id=1]
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
+[ext_resource path="res://game/arena_elements/bricks/BrickGhost.gd" type="Script" id=1]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=2]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=3]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=4]
 
 [sub_resource type="PhysicsMaterial" id=7]
 
@@ -94,7 +94,7 @@ __meta__ = {
 }
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 2 )
+texture = ExtResource( 4 )
 region_enabled = true
 region_rect = Rect2( 24, 0, 8, 8 )
 
@@ -124,7 +124,7 @@ anims/outro = SubResource( 14 )
 [node name="Sounds" type="Node" parent="."]
 
 [node name="HitBulletBrick" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 4 )
+stream = ExtResource( 2 )
 volume_db = -7.0
 bus = "GameSfx"
 

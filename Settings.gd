@@ -34,6 +34,8 @@ var engine_z_index = -1
 var trail_z_index = -1
 var explosion_z_index = 1
 
+var debug_mode = true
+
 var default_game_settings: Dictionary = {
 	# tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
 	# ni settingsov, ki jih ne bom spreminjal, ko bodo enkrat nastavljeni .. #drugam
@@ -41,7 +43,7 @@ var default_game_settings: Dictionary = {
 	"game_time_limit": 0, # če je 0 ni omejitve
 	"stopwatch_mode": true,
 	"gameover_countdown_duration": 5,
-	"start_countdown": true,
+	"start_countdown": false,
 	# bricks and area values
 	"goal_points": 1000,
 	"light_points": 10,
@@ -62,6 +64,7 @@ var default_game_settings: Dictionary = {
 	"sudden_death_limit": 10, # koliko pred koncem
 #	"select_feature_mode": false,
 	"spawn_pickables_mode": false,
+	"ai_mode": true,
 #	"lap_mode": false,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu
@@ -178,7 +181,8 @@ var bolts_activated: Array # napolne so ob izbiri
 
 #var game_levels: Array = []
 #var game_levels: Array = [Levels.OSMICA, Levels.NITRO_STRAIGHT]
-var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
+var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO]
+#var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
 
 func _ready() -> void:
@@ -187,7 +191,8 @@ func _ready() -> void:
 #	var debug_level = Levels.NITRO
 #	var debug_level = Levels.NITRO_STRAIGHT
 
-	var debug_level = Levels.DEBUG_RACE
+#	var debug_level = Levels.DEBUG_RACE
+	var debug_level = Levels.RACE_SNAKE
 #	var debug_level = Levels.DEBUG_DUEL
 #	var debug_level = Levels.OSMICA
 #	var debug_level = Levels.TRAINING

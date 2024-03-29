@@ -25,7 +25,7 @@ onready var start_lights: Node2D = $StartLights
 onready var background_space: Sprite = $BackgroundSpace
 
 # obs
-onready var area_hole_scene: PackedScene = preload("res://game/arena_elements/AreaHole.tscn")	
+onready var area_hole_scene: PackedScene = preload("res://game/arena_elements/areas/AreaHole.tscn")	
 
 # sounds
 onready var sounds: Node = $Sounds
@@ -43,11 +43,12 @@ onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 func _ready() -> void:
 	# debug
 	printt("LEVEL")
-	$Comments.hide()
-	$ScreenSize.hide()
-#	$RacingLine.hide()
-#	$RacingLine.hide()
+	if not Set.debug_mode:
+		$Comments.hide()
+		$ScreenSize.hide()
+		$RacingLine.hide()
 	level_navigation_line.hide()
+	
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
 	# kar je skrito, ne deluje
@@ -105,8 +106,30 @@ func set_level_floor():
 			non_navigation_cell_positions.append(cell_global_position)
 
 
+onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
+onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
+onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
+onready var BrickTarget: PackedScene = preload("res://game/arena_elements/bricks/BrickTarget.tscn")
+onready var BrickLight: PackedScene = preload("res://game/arena_elements/bricks/BrickLight.tscn")
+
+onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
+onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
+
+onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
+onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
+onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
+onready var PickableShocker: PackedScene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
+onready var PickableShield: PackedScene = Pro.pickable_profiles["SHIELD"]["scene_path"]
+onready var PickableEnergy: PackedScene = Pro.pickable_profiles["ENERGY"]["scene_path"]
+onready var PickableLife: PackedScene = Pro.pickable_profiles["LIFE"]["scene_path"]
+onready var PickableNitro: PackedScene = Pro.pickable_profiles["NITRO"]["scene_path"]
+onready var PickableTracking: PackedScene = Pro.pickable_profiles["TRACKING"]["scene_path"]
+onready var PickableRandom: PackedScene = Pro.pickable_profiles["RANDOM"]["scene_path"]
+onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"]
+onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
+
+
 func set_level_elements():
-	
 	if tilemap_elements.get_used_cells().empty():
 		return
 		
@@ -120,103 +143,85 @@ func set_level_elements():
 		var single_tile_offset: Vector2 = Vector2(4,4)
 		var double_tile_offset: Vector2 = Vector2(8,8)
 		
+		
+		
 		match cell_index:
 
 			7: # brick ghost
-				scene_to_spawn = preload("res://game/arena_elements/BrickGhost.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, BrickGhost, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			8: # brick bouncer
-				scene_to_spawn = preload("res://game/arena_elements/BrickBouncer.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, BrickBouncer, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			9: # brick magnet
-				scene_to_spawn = preload("res://game/arena_elements/BrickMagnet.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, BrickMagnet, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			10: # brick target
-				scene_to_spawn = preload("res://game/arena_elements/BrickTarget.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, BrickTarget, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			11: # brick light
-				scene_to_spawn = preload("res://game/arena_elements/BrickLight.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, BrickLight, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 				
 			# ------------------------------------------------------------------------------------------------------
 				
 			28: # area nitro ... 12
-				scene_to_spawn = preload("res://game/arena_elements/AreaNitro.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, AreaNitro, single_tile_offset)
 			29: # area gravel ... 13
-				scene_to_spawn = preload("res://game/arena_elements/AreaGravel.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+				spawn_element(cell_global_position, AreaGravel, single_tile_offset)
 				non_navigation_cell_positions.append(cell_global_position)
-			23: # area finish
-				scene_to_spawn = preload("res://game/arena_elements/AreaFinish.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
-				non_navigation_cell_positions.append(cell_global_position)
-#				tilemap_elements.set_cellv(cell, -1)
+#			23: # area finish
+#				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
+#				non_navigation_cell_positions.append(cell_global_position)
+##				tilemap_elements.set_cellv(cell, -1)
 
 			# ------------------------------------------------------------------------------------------------------
 
 			14: # pickable bullet
-				scene_to_spawn = Pro.pickable_profiles["BULLET"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableBullet, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			15: # pickable misile
-				scene_to_spawn = Pro.pickable_profiles["MISILE"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableMisile, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			35: # pickable mina
-				scene_to_spawn = Pro.pickable_profiles["MINA"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableMina, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			16: # pickable shocker
-				scene_to_spawn = Pro.pickable_profiles["SHOCKER"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableShocker, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			17: # pickable shield
-				scene_to_spawn = Pro.pickable_profiles["SHIELD"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableShield, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			18: # pickable energy
-				scene_to_spawn = Pro.pickable_profiles["ENERGY"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableEnergy, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			19: # pickable life
-				scene_to_spawn = Pro.pickable_profiles["LIFE"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableLife, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			20: # pickable nitro
-				scene_to_spawn = Pro.pickable_profiles["NITRO"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableNitro, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			21: # pickable tracking
-				scene_to_spawn = Pro.pickable_profiles["TRACKING"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableTracking, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			22: # pickable random
-				scene_to_spawn = Pro.pickable_profiles["RANDOM"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableRandom, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			27: # pickable gas
-				scene_to_spawn = Pro.pickable_profiles["GAS"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickableGas, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 			30: # pickable points
-				scene_to_spawn = Pro.pickable_profiles["POINTS"]["scene_path"]
-				spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
+				spawn_element(cell_global_position, PickablePoints, double_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
 
 			# ------------------------------------------------------------------------------------------------------
 			
 			6: # goal pillar
-				scene_to_spawn = preload("res://game/arena_elements/GoalPillar.tscn")
+				var GoalPillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
 				spawn_element(cell_global_position, scene_to_spawn, Vector2(36,36))
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
@@ -320,6 +325,7 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 
 func spawn_hole(global_pos):
 	
+	return
 	var new_hole_scene = area_hole_scene.instance()
 	new_hole_scene.global_position = global_pos + Vector2(5,4)
 	get_parent().call_deferred("add_child", new_hole_scene)

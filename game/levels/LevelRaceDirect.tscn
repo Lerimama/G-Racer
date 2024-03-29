@@ -14,7 +14,7 @@ region = Rect2( 24, 16, 8, 8 )
 [node name="LevelRace" instance=ExtResource( 1 )]
 
 [node name="BackgroundSpace" parent="." index="0"]
-position = Vector2( 888, -632 )
+position = Vector2( 64.0001, -80.0001 )
 scale = Vector2( 0.4, 0.4 )
 
 [node name="Floor" parent="." index="1"]
@@ -31,8 +31,7 @@ visible = true
 position = Vector2( 320, 1216 )
 
 [node name="FinishLine" parent="." index="5"]
-visible = false
-position = Vector2( 192, 1000 )
+position = Vector2( 192, 1144 )
 
 [node name="CollisionPolygon2D" parent="FinishLine" index="19"]
 position = Vector2( 128, 4 )
@@ -124,6 +123,9 @@ points = PoolVector2Array( 319.226, 1280, 319.226, 613.216, 319.226, 0 )
 width = 10.0
 default_color = Color( 0.4, 0.501961, 1, 0.145098 )
 antialiased = true
+
+[node name="LevelNavigationLine" parent="." index="8"]
+visible = false
 
 [node name="Label" type="Label" parent="." index="11"]
 margin_left = -616.0
