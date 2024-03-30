@@ -53,15 +53,8 @@ var bolt_on_hole_count: int = 0
 var bolt_on_gravel_count: int = 0
 var bolt_on_tracking_count: int = 0
 
-# racing
-var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pogoji za krog
-var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
-var current_lap_time: float # statistika
-var fastest_lap_time: float # statistika
-var current_race_ranking: int # 
-
 # fighting
-var tilt_speed_call: int = 0 
+#var tilt_speed_call: int = 0 
 #var disarray_rotation_dir = 6
 var selected_feat_index: int = 0
 var available_features: Array = [] # feature icons
@@ -89,7 +82,7 @@ onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 # stats
-onready var player_stats: Dictionary # = Pro.default_player_stats.duplicate() # samo na začetku, potem se pa ob spawnanju prepišejo
+onready var player_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
 onready var points: int = player_stats["points"]
 onready var wins: int = player_stats["wins"]
 onready var life: int = player_stats["life"]
@@ -100,6 +93,13 @@ onready var bullet_count: float = player_stats["bullet_count"]
 onready var misile_count: float = player_stats["misile_count"]
 onready var mina_count: float = player_stats["mina_count"]
 onready var shocker_count: float = player_stats["shocker_count"]
+
+onready var laps_finished_count: float = player_stats["laps_finished_count"]
+onready var fastest_lap_time: float = player_stats["fastest_lap_time"]
+onready var level_finished_time: float = player_stats["level_finished_time"]
+onready var level_rank: int = player_stats["level_rank"] setget _on_bolt_rank_changed
+#onready var shocker_count: float = player_stats["shocker_count"]
+
 #onready var points: int = player_stats["points"]
 #onready var wins: int = player_stats["wins"]
 #onready var life: int = player_stats["life"]
@@ -138,7 +138,12 @@ onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div
 var drive_off: bool = false
 var engines_on: bool = false
 onready var sounds: Node = $Sounds
-
+# racing
+#var laps_finished:  int # spreminja GM, ker preverja, če so bili izpolnjeni pogoji za krog
+var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
+var current_lap_time: float # statistika
+#var fastest_lap_time: float # statistika
+#var current_race_ranking: int # 
 
 func _ready() -> void:
 
@@ -225,7 +230,6 @@ func _physics_process(delta: float) -> void:
 
 			
 func _exit_tree() -> void:
-	printt ("so", sounds.get_child_count())
 	for sound in sounds.get_children():
 		sound.stop()
 	if engine_particles_rear:
@@ -234,7 +238,7 @@ func _exit_tree() -> void:
 		engine_particles_front_left.queue_free()
 	if engine_particles_front_right:
 		engine_particles_front_right.queue_free()
-	printt("trail", current_active_trail) # trail decay tween start
+#	printt("trail", current_active_trail) # trail decay tween start
 #	current_active_trail.start_decay() # trail decay tween start
 	bolt_trail_active = false
 	if Ref.current_camera.follow_target == self:
@@ -256,6 +260,11 @@ func update_player_stats():
 	player_stats["mina_count"] = mina_count
 	player_stats["shocker_count"] = shocker_count
 	
+	player_stats["laps_finished_count"] = laps_finished_count
+	player_stats["fastest_lap_time"] = fastest_lap_time
+	player_stats["level_finished_time"] = level_finished_time
+	player_stats["level_rank"] = level_rank
+
 	
 func on_collision():
 	
@@ -279,32 +288,32 @@ func on_collision():
 		bolt_trail_active = false
 
 
-func tilt_bolt(tilt_direction):
-	
-	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
-	
-	# način, ko feature tipka drži funkcijo
-	if Ref.game_manager.game_settings["race_mode"]:
-		tilt_speed_call += 1 # resetira ga input na plejerju
-		
-		if tilt_speed_call == 1:
-			tilt_speed = 150
-		else:
-			tilt_speed = 20
-			
-		var tilt_vector: Vector2 = tilt_direction.rotated(deg2rad(90)) * tilt_speed
-		velocity = velocity + tilt_vector.rotated(global_rotation)
-
-	# način na hitri klik v smeri
-	else:
-
-		tilt_speed = 100
-		var tilt_time: float = 0.05
-		var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
-		var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
-		var tilt_tween = get_tree().create_tween()
-		tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
-		tilt_tween.tween_property(self, "tilt_speed", 0, 0)#.set_ease(Tween.EASE_IN_OUT)
+#func tilt_bolt(tilt_direction):
+#
+#	var tilt_speed: float = Pro.bolt_profiles[bolt_type]["tilt_speed"]
+#
+#	# način, ko feature tipka drži funkcijo
+#	if Ref.game_manager.game_settings["race_mode"]:
+#		tilt_speed_call += 1 # resetira ga input na plejerju
+#
+#		if tilt_speed_call == 1:
+#			tilt_speed = 150
+#		else:
+#			tilt_speed = 20
+#
+#		var tilt_vector: Vector2 = tilt_direction.rotated(deg2rad(90)) * tilt_speed
+#		velocity = velocity + tilt_vector.rotated(global_rotation)
+#
+#	# način na hitri klik v smeri
+#	else:
+#
+#		tilt_speed = 100
+#		var tilt_time: float = 0.05
+#		var tilt_velocity: Vector2 = Vector2(1,-8) * tilt_speed
+#		var tilt_vector = tilt_direction.rotated(deg2rad(90)) * tilt_speed
+#		var tilt_tween = get_tree().create_tween()
+#		tilt_tween.tween_property(self, "velocity", velocity + tilt_vector.rotated(global_rotation), tilt_time).set_ease(Tween.EASE_IN_OUT)
+#		tilt_tween.tween_property(self, "tilt_speed", 0, 0)#.set_ease(Tween.EASE_IN_OUT)
 
 
 func steering(delta: float) -> void:
@@ -617,7 +626,7 @@ func revive_bolt():
 func on_lap_finished(current_race_time: float, laps_limit: int):
 
 	# čas kroga
-	if laps_finished == 0: # če je prvi krog
+	if laps_finished_count == 0: # če je prvi krog
 		current_lap_time = current_race_time
 		fastest_lap_time = current_lap_time	
 		spawn_floating_tag(current_lap_time, true) # time, is fastest
@@ -629,16 +638,18 @@ func on_lap_finished(current_race_time: float, laps_limit: int):
 			spawn_floating_tag(current_lap_time, true) # time, is fastest
 		else:
 			spawn_floating_tag(current_lap_time, false) # time, not fastest
-	
 	# prištejem krog in mu zbrišem čekpointe
-	laps_finished += 1
-	
-	if laps_finished == laps_limit:
-		drive_off = true
-	
+	laps_finished_count += 1
 	checkpoints_reached.clear()
 	
-	emit_signal("stat_changed", bolt_id, "lap_finished", [laps_finished, fastest_lap_time]) 
+	# če je zadnji
+	if laps_finished_count == laps_limit:
+		level_finished_time = current_race_time
+		drive_off = true
+		emit_signal("stat_changed", bolt_id, "level_finished", level_finished_time) 
+	
+	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) 
+	emit_signal("stat_changed", bolt_id, "fastest_lap_time", fastest_lap_time) 
 
 
 func on_checkpoint_reached(checkpoint: Area2D):
@@ -908,6 +919,13 @@ func on_item_picked(pickable_type_key: String):
 # PRIVAT ------------------------------------------------------------------------------------------------
 
 
+func _on_bolt_rank_changed(new_bolt_rank: int):
+	
+	# če je aktiven ga upočacnim v trenutni smeri
+	level_rank = new_bolt_rank
+	emit_signal("stat_changed", bolt_id, "level_rank", level_rank) 
+	
+
 func _on_bolt_active_changed(bolt_is_active: bool):
 	
 	# če je aktiven ga upočacnim v trenutni smeri
@@ -920,7 +938,7 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 		deactivate_tween.tween_property(self, "velocity", Vector2.ZERO, deactivate_time) # tajmiram pojemek 
 		deactivate_tween.parallel().tween_property(self, "engine_power", 0, deactivate_time)
 	emit_signal("bolt_activity_changed", self)
-	printt("bolt_activity_changed", self, bolt_active)
+	printt("bolt_activity_changed", bolt_id, bolt_active, player_stats)
 
 
 func _on_shield_animation_finished(anim_name: String) -> void:

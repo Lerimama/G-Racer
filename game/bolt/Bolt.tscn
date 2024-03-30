@@ -54,7 +54,7 @@ period = 90.5
 persistence = 0.354
 lacunarity = 3.58
 
-[sub_resource type="NoiseTexture" id=116]
+[sub_resource type="NoiseTexture" id=127]
 width = 9
 height = 9
 seamless = true
@@ -64,7 +64,7 @@ noise = SubResource( 115 )
 shader = ExtResource( 4 )
 shader_param/noise_factor = 0.0
 shader_param/speed = 0.0
-shader_param/noise_texture = SubResource( 116 )
+shader_param/noise_texture = SubResource( 127 )
 
 [sub_resource type="Animation" id=117]
 length = 0.001

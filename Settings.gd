@@ -65,6 +65,7 @@ var default_game_settings: Dictionary = {
 #	"select_feature_mode": false,
 	"spawn_pickables_mode": false,
 	"ai_mode": true,
+	"full_equip_mode": false,
 #	"lap_mode": false,
 #	"dogfight_mode": false,
 #	"use_gas_mode": false, # beleženje statistike in statistika na hudu

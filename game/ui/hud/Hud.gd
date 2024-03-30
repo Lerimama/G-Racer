@@ -9,7 +9,8 @@ onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
 
-var current_record_lap_time: int = 0 setget _on_record_changed # stotinke 
+var record_lap_time: int = 0 #setget _on_lap_record_changed # stotinke 
+var record_level_time: int = 0# setget _on_level_record_changed # stotinke 
 onready var record_lap_label: Label = $GameStats/RecordLap
 onready var game_stats: VBoxContainer = $GameStats
 onready var game_timer: Control = $"%GameTimer"
@@ -44,14 +45,16 @@ func _ready() -> void:
 			# player stats
 			stat_line.stat_gas.show()
 			stat_line.stat_laps_count.show()
+			stat_line.stat_level_rank.show()	
 			# prikaže se med igro
 			stat_line.stat_fastest_lap.hide()
+			stat_line.stat_level_time.hide()	
 			stat_line.stat_bullet.hide()	
 			stat_line.stat_misile.hide()	
 			stat_line.stat_shocker.hide()	
 			stat_line.stat_mina.hide()	
 			# game stats
-			if current_record_lap_time == 0:
+			if record_lap_time == 0:
 				record_lap_label.hide()
 		else:
 			stat_line.stat_life.show()
@@ -94,40 +97,141 @@ func hide_stats():
 	
 # PRIVAT ------------------------------------------------------------------------------------------------------------
 
-func _on_record_changed(new_record_time: int): # stotinke 
+#func _on_lap_record_changed(new_record_time: int): # stotinke 
+#
+#	record_lap_time = new_record_time 
+#	var record_lap_time_on_clock: String = "Record: " + Met.get_clock_time(record_lap_time)
+#	record_lap_label.text = record_lap_time_on_clock
+#	if not record_lap_label.visible:
+#		record_lap_label.show()
+
+
+#func _on_level_record_changed(new_game_record_time: int): # stotinke 
+#
+#	record_level_time = new_game_record_time 
+#	var game_record_time_on_clock: String = "Record: " + Met.get_clock_time(record_level_time)
+##	record_lap_label.text = game_record_time_on_clock
+##	if not record_lap_label.visible:
+##		record_lap_label.show()
+#	print("rekord levela")
 	
-	current_record_lap_time = new_record_time 
-	var new_record_lap_time_on_clock: String = Met.get_clock_time(new_record_time)
-	record_lap_label.text = new_record_lap_time_on_clock
-	if not record_lap_label.visible:
-		record_lap_label.show()
+	
+func _set_spawned_bolt_hud(bolt: KinematicBody2D):
+#func _set_spawned_bolt_hud(bolt_id, bolt_stats):
+#func _set_spawned_bolt_hud(bolt_id, bolt_index):
+	
+	if bolt.bolt_id == Pro.Bolts.ENEMY: # če je enemy ne rabim hud statsov ... zaenkrat
+		return
+	
+	var current_stat_line: Control
+	
+#	var player_profiles: Dictionary = Pro.default_player_profiles
+	
+	
+	match bolt.bolt_id:
+		0:
+			current_stat_line = stat_line_topL
+			stat_lines_owners[bolt.bolt_id] = stat_line_topL 
+		1:
+			current_stat_line = stat_line_topR
+			stat_lines_owners[bolt.bolt_id] = stat_line_topR 
+		2:
+			current_stat_line = stat_line_btmL
+			stat_lines_owners[bolt.bolt_id] = stat_line_btmL 
+		3:
+			current_stat_line = stat_line_btmR
+			stat_lines_owners[bolt.bolt_id] = stat_line_btmR 
+	
+	# data
+#	var bolt_stats: Dictionary = new_bolt.bolt_stats
+	var bolt_stats: Dictionary = bolt.player_stats
+#	var bolt_stats: Dictionary = Pro.default_bolt_stats
+#	var player_stats: Dictionary = Pro.default_player_stats
+	var player_profiles: Dictionary = Pro.default_player_profiles
+	
+	# current_stat_line.stat_line_color = player_profiles[bolt_id]["player_color"]
+	current_stat_line.stat_name.modulate = player_profiles[bolt.bolt_id]["player_color"]
+	current_stat_line.stat_name.text = player_profiles[bolt.bolt_id]["player_name"]
+	
+	# bolt stats
+#	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
+#	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
+#	current_stat_line.stat_mina.current_stat_value = bolt_stats["mina_count"]
+#	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
+#	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
+#	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
+#	current_stat_line.stat_points.current_stat_value = bolt_stats["points"]
+#	current_stat_line.stat_wins.current_stat_value = bolt_stats["wins"]
+#	# player stats
+	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
+	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
+	current_stat_line.stat_mina.current_stat_value = bolt_stats["mina_count"]
+	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
+	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
+	
+	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
+	current_stat_line.stat_points.current_stat_value = bolt_stats["points"]
+	current_stat_line.stat_wins.current_stat_value = bolt_stats["wins"]
+	
+	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
+	current_stat_line.visible = true
+
+
+func _on_GameTimer_gametime_is_up() -> void:
+	
+	if not Ref.game_manager.game_settings["race_mode"]:
+		Ref.game_manager.level_completed(Ref.game_manager.GameoverReason.TIME)
+	# v dirki je trenutno je game over samo, če ti zmanjka bencina
 
 	
-func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
+func _on_stat_changed(bolt_id, stat_name, new_stat_value):
 	
 	if not Ref.game_manager.game_on:
 		return
 		
-	var stat_line_to_change: Control = stat_lines_owners[stat_owner_id]
+	var stat_line_to_change: Control = stat_lines_owners[bolt_id]
 	
 	match stat_name:
 		# value se preračun na plejerju
-		# player stats
-		"feature_selected":
-			printt("FS",stat_owner_id, stat_name, new_stat_value)
-		"lap_finished":
-			# laps count
-			stat_line_to_change.stat_laps_count.current_stat_value = new_stat_value[0]
-			# lap time ... zapišem ga samo, če je najhitrejši poskus
-			var fastest_lap_time: float = new_stat_value[1] # stotinke
+		# bolt stats
+		"level_rank":
+			stat_line_to_change.stat_level_rank.current_stat_value = new_stat_value
+		"laps_finished_count":
+			stat_line_to_change.stat_laps_count.current_stat_value = new_stat_value
+		"fastest_lap_time": # osebni rekord in rekord igre
+			var fastest_lap_time: float = new_stat_value # sekunde
 			var fastest_lap_time_on_clock: String = Met.get_clock_time(fastest_lap_time)
 			stat_line_to_change.stat_fastest_lap.current_stat_value = fastest_lap_time_on_clock
-			# če je prvi krog jo prikažem
+			# če je prvi krog moram stat še pokazat
 			if not stat_line_to_change.stat_fastest_lap.visible:
 				stat_line_to_change.stat_fastest_lap.show()
-			# če je rekord igre, popravim še rekord
-			if fastest_lap_time < current_record_lap_time or current_record_lap_time == 0:
-				self.current_record_lap_time = fastest_lap_time
+			# če je d rekord kroga, popravim še rekord
+			if fastest_lap_time < record_lap_time or record_lap_time == 0:
+#				self.record_lap_time = fastest_lap_time			
+				record_lap_time = fastest_lap_time 
+				var record_lap_time_on_clock: String = "Record: " + Met.get_clock_time(record_lap_time)
+				record_lap_label.text = record_lap_time_on_clock
+				if not record_lap_label.visible:
+					record_lap_label.show()
+		"level_finished_time" : 
+			var level_finished_time: float = new_stat_value # sekunde
+			var level_finished_time_on_clock: String = Met.get_clock_time(level_finished_time)
+			stat_line_to_change.stat_level_time.current_stat_value = level_finished_time_on_clock
+			if not stat_line_to_change.stat_level_time.visible:
+				stat_line_to_change.stat_level_time.show()
+			
+			# če je d rekord igre, popravim še rekordw
+			if level_finished_time < record_level_time or record_level_time == 0:
+#				self.record_level_time = level_finished_time
+				record_level_time = level_finished_time 
+				var game_record_time_on_clock: String = "Record: " + Met.get_clock_time(record_level_time)
+				stat_line_to_change.stat_level_time.modulate = Set.color_green
+				print("rekord levela")	
+
+
+		# duel
+		"feature_selected":
+			printt("FS",bolt_id, stat_name, new_stat_value)
 		"points":
 			stat_line_to_change.stat_points.current_stat_value = new_stat_value # setget
 		"wins": 
@@ -166,77 +270,3 @@ func _on_stat_changed(stat_owner_id, stat_name, new_stat_value):
 		"gas_count":
 			stat_line_to_change.stat_gas.current_stat_value = new_stat_value # setget
 	
-	
-func _set_spawned_bolt_hud(bolt_id):
-#func _set_spawned_bolt_hud(bolt_id, bolt_index):
-	
-	if bolt_id == Pro.Bolts.ENEMY: # če je enemy ne pokažem statsov
-		return
-	
-	var current_stat_line: Control
-	
-	# poveži plejerja in stat line ... v slovarju
-#	match bolt_index:
-#		1:
-#			current_stat_line = stat_line_topL
-#			stat_lines_owners[bolt_id] = stat_line_topL 
-#		2:
-#			current_stat_line = stat_line_topR
-#			stat_lines_owners[bolt_id] = stat_line_topR 
-#		3:
-#			current_stat_line = stat_line_btmL
-#			stat_lines_owners[bolt_id] = stat_line_btmL 
-#		4:
-#			current_stat_line = stat_line_btmR
-#			stat_lines_owners[bolt_id] = stat_line_btmR 
-	match bolt_id:
-		0:
-			current_stat_line = stat_line_topL
-			stat_lines_owners[bolt_id] = stat_line_topL 
-		1:
-			current_stat_line = stat_line_topR
-			stat_lines_owners[bolt_id] = stat_line_topR 
-		2:
-			current_stat_line = stat_line_btmL
-			stat_lines_owners[bolt_id] = stat_line_btmL 
-		3:
-			current_stat_line = stat_line_btmR
-			stat_lines_owners[bolt_id] = stat_line_btmR 
-	
-	# data
-#	var bolt_stats: Dictionary = Pro.default_bolt_stats
-	var player_stats: Dictionary = Pro.default_player_stats
-	var player_profiles: Dictionary = Pro.default_player_profiles
-	
-	# current_stat_line.stat_line_color = player_profiles[bolt_id]["player_color"]
-	current_stat_line.stat_name.modulate = player_profiles[bolt_id]["player_color"]
-	current_stat_line.stat_name.text = player_profiles[bolt_id]["player_name"]
-	
-	# bolt stats
-	current_stat_line.stat_bullet.current_stat_value = player_stats["bullet_count"]
-	current_stat_line.stat_misile.current_stat_value = player_stats["misile_count"]
-	current_stat_line.stat_mina.current_stat_value = player_stats["mina_count"]
-	current_stat_line.stat_shocker.current_stat_value = player_stats["shocker_count"]
-	current_stat_line.stat_gas.current_stat_value = player_stats["gas_count"]
-	current_stat_line.stat_life.current_stat_value = player_stats["life"]
-	
-#	current_stat_line.stat_bullet.current_stat_value = bolt_stats["bullet_count"]
-#	current_stat_line.stat_misile.current_stat_value = bolt_stats["misile_count"]
-#	current_stat_line.stat_mina.current_stat_value = bolt_stats["mina_count"]
-#	current_stat_line.stat_shocker.current_stat_value = bolt_stats["shocker_count"]
-#	current_stat_line.stat_gas.current_stat_value = bolt_stats["gas_count"]
-#	current_stat_line.stat_life.current_stat_value = bolt_stats["life"]
-	
-	# player stats
-	current_stat_line.stat_points.current_stat_value = player_stats["points"]
-	current_stat_line.stat_wins.current_stat_value = player_stats["wins"]
-	
-	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
-	current_stat_line.visible = true
-
-
-func _on_GameTimer_gametime_is_up() -> void:
-	
-	if not Ref.game_manager.game_settings["race_mode"]:
-		Ref.game_manager.level_completed(Ref.game_manager.GameoverReason.TIME)
-	# v dirki je trenutno je game over samo, če ti zmanjka bencina

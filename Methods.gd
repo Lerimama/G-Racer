@@ -58,11 +58,8 @@ func spawn_indikator(pos, rot): # neki ne štima
 	new_indikator.modulate = Color.red
 	new_indikator.z_index = 10
 	Ref.node_creation_parent.add_child(new_indikator)
-	print("indikator spawned")
 	
 	return new_indikator
-#	print(new_indikator.new_indikator.global_position)
-	pass
 
 
 # SCENE MANAGER (prehajanje med igro in menijem) --------------------------------------------------------------

@@ -39,15 +39,40 @@ onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
+# elements
+onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
+onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
+onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
+onready var BrickTarget: PackedScene = preload("res://game/arena_elements/bricks/BrickTarget.tscn")
+onready var BrickLight: PackedScene = preload("res://game/arena_elements/bricks/BrickLight.tscn")
+onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
+onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
+onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
+onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
+onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
+onready var PickableShocker: PackedScene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
+onready var PickableShield: PackedScene = Pro.pickable_profiles["SHIELD"]["scene_path"]
+onready var PickableEnergy: PackedScene = Pro.pickable_profiles["ENERGY"]["scene_path"]
+onready var PickableLife: PackedScene = Pro.pickable_profiles["LIFE"]["scene_path"]
+onready var PickableNitro: PackedScene = Pro.pickable_profiles["NITRO"]["scene_path"]
+onready var PickableTracking: PackedScene = Pro.pickable_profiles["TRACKING"]["scene_path"]
+onready var PickableRandom: PackedScene = Pro.pickable_profiles["RANDOM"]["scene_path"]
+onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"]
+onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
+	
+	
 	
 func _ready() -> void:
 	# debug
 	printt("LEVEL")
 	if not Set.debug_mode:
+		$Positions.hide()
 		$Comments.hide()
 		$ScreenSize.hide()
+		$Instructions.hide()
 		$RacingLine.hide()
 	level_navigation_line.hide()
+	$StartLabel.show()
 	
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
@@ -104,29 +129,6 @@ func set_level_floor():
 		if cell_index == -1:
 			spawn_hole(cell_global_position)
 			non_navigation_cell_positions.append(cell_global_position)
-
-
-onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
-onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
-onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
-onready var BrickTarget: PackedScene = preload("res://game/arena_elements/bricks/BrickTarget.tscn")
-onready var BrickLight: PackedScene = preload("res://game/arena_elements/bricks/BrickLight.tscn")
-
-onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
-onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
-
-onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
-onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
-onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
-onready var PickableShocker: PackedScene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
-onready var PickableShield: PackedScene = Pro.pickable_profiles["SHIELD"]["scene_path"]
-onready var PickableEnergy: PackedScene = Pro.pickable_profiles["ENERGY"]["scene_path"]
-onready var PickableLife: PackedScene = Pro.pickable_profiles["LIFE"]["scene_path"]
-onready var PickableNitro: PackedScene = Pro.pickable_profiles["NITRO"]["scene_path"]
-onready var PickableTracking: PackedScene = Pro.pickable_profiles["TRACKING"]["scene_path"]
-onready var PickableRandom: PackedScene = Pro.pickable_profiles["RANDOM"]["scene_path"]
-onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"]
-onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
 
 
 func set_level_elements():

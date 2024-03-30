@@ -27,7 +27,7 @@ var bolt_profiles: Dictionary = {
 		"drag_force_div": 100.0, # večji pomeni nižjo drag force
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
-		"tilt_speed": 150,
+		"tilt_speed": 150, # trenutno off
 		# v1
 #		"fwd_engine_power": 300, # 1 - 500 konjev 
 #		"rev_engine_power": 150, # 1 - 500 konjev 
@@ -196,24 +196,22 @@ var enemy_profile: Dictionary = {
 	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
 }
 
-var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
-#	"player_start_position" : Vector2(0, 0),
-	"life" : 5,
-	"energy" : 10,
-	"bullet_power" : 0.1,
-	"bullet_count" : 100,
-	"misile_count" : 5,
-	"mina_count" : 3,
-	"shocker_count" : 3,
-	"gas_count" : 500, # 300 je kul
-}
+#var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
+##	"player_start_position" : Vector2(0, 0),
+#	"life" : 5,
+#	"energy" : 10,
+#	"bullet_power" : 0.1,
+#	"bullet_count" : 100,
+#	"misile_count" : 5,
+#	"mina_count" : 3,
+#	"shocker_count" : 3,
+#	"gas_count" : 500, # 300 je kul
+#}
 
-var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
+var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+#var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 # statse ima tudi enemy
 #	"player_active" : true,
-	"fastest_lap_time" : 0,
-	"laps_finished" : 0,
-	"race_time": 0,
 #	"player_lap_time" : 0,
 #	"player_laps" : 0,
 #	"player_life" : 5,
@@ -227,7 +225,13 @@ var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
 	"misile_count" : 5,
 	"mina_count" : 3,
 	"shocker_count" : 3,
-	"gas_count" : 500, # 300 je kul
+	# per level/race
+	"fastest_lap_time" : 0,
+	"laps_finished_count" : 0,
+	"level_finished_time" : 0, # sekunde
+	"level_rank" : 0, 
+#	"race_time": 0,
+	"gas_count": 20,
 }
 
 var weapon_profiles : Dictionary = {

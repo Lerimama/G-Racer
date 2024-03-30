@@ -32,19 +32,19 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 	var results: VBoxContainer = $VBoxContainer/Content/Results
 	
 	# uvrščeni
-	for bolt_on_finish_line in bolts_on_finish_line:
+	for bolt in bolts_on_finish_line:
 		# spawn ranking line
 		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
 		# set ranking line
-		var bolt_index = bolts_on_finish_line.find(bolt_on_finish_line)
+		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
-		new_ranking_line.get_node("Bolt").text = bolt_on_finish_line[0].player_name
-		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt_on_finish_line[1])
+		new_ranking_line.get_node("Bolt").text = bolt.player_name
+		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt.player_stats["level_finished_time"])
 		results.add_child(new_ranking_line)
 		
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
-		if bolts_on_start.has(bolt_on_finish_line[0]):
-			bolts_on_start.erase(bolt_on_finish_line[0])
+		if bolts_on_start.has(bolt):
+			bolts_on_start.erase(bolt)
 			
 	# neuvrščeni
 	for bolt in bolts_on_start: # array je že brez uvrščenih
@@ -54,6 +54,29 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 			new_ranking_line.get_node("Bolt").text = str(bolt.player_name)
 			new_ranking_line.get_node("Result").text = "did no finish"
 			results.add_child(new_ranking_line)
+#	# uvrščeni
+#	for bolt_on_finish_line in bolts_on_finish_line:
+#		# spawn ranking line
+#		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
+#		# set ranking line
+#		var bolt_index = bolts_on_finish_line.find(bolt_on_finish_line)
+#		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
+#		new_ranking_line.get_node("Bolt").text = bolt_on_finish_line[0].player_name
+#		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt_on_finish_line[1])
+#		results.add_child(new_ranking_line)
+#
+#		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
+#		if bolts_on_start.has(bolt_on_finish_line[0]):
+#			bolts_on_start.erase(bolt_on_finish_line[0])
+#
+#	# neuvrščeni
+#	for bolt in bolts_on_start: # array je že brez uvrščenih
+#		if not bolts_on_finish_line.has(bolt):
+#			var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
+#			new_ranking_line.get_node("Rank").text = "NN"
+#			new_ranking_line.get_node("Bolt").text = str(bolt.player_name)
+#			new_ranking_line.get_node("Result").text = "did no finish"
+#			results.add_child(new_ranking_line)
 			
 
 func _on_QuitBtn_pressed() -> void:

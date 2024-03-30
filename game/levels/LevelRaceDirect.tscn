@@ -97,16 +97,20 @@ texture = SubResource( 1 )
 position = Vector2( 320, 1280 )
 
 [node name="SpawnPosition1" parent="Positions" index="1"]
-position = Vector2( 298, 1266 )
+position = Vector2( 298, 1264 )
+rotation = -1.5708
 
 [node name="SpawnPosition2" parent="Positions" index="2"]
 position = Vector2( 344, 1264 )
+rotation = -1.5708
 
 [node name="SpawnPosition3" parent="Positions" index="3"]
-position = Vector2( 298, 1298 )
+position = Vector2( 298, 1296 )
+rotation = -1.5708
 
 [node name="SpawnPosition4" parent="Positions" index="4"]
 position = Vector2( 344, 1296 )
+rotation = -1.5708
 
 [node name="GoalPosition" parent="Positions" index="5"]
 position = Vector2( 320, -32 )
@@ -141,3 +145,10 @@ text = "NAVODILA ZA IGRADNJO LEVELA
 
 [node name="ScreenSize" parent="." index="12"]
 visible = false
+
+[node name="StartLabel" parent="." index="14"]
+margin_left = 192.0
+margin_top = 1152.0
+margin_right = 448.0
+margin_bottom = 1197.0
+text = "hitri štart"

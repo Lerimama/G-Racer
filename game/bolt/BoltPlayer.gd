@@ -4,8 +4,8 @@ class_name Player
 
 var player_name: String # za opredelitev statistike
 var controller_profile: Dictionary
-var tilt_input_time: float = 0.12
-var tilt_ready: bool
+#var tilt_input_time: float = 0.12
+#var tilt_ready: bool
 
 onready var player_profile: Dictionary = Pro.default_player_profiles[bolt_id]
 onready var controller_profiles: Dictionary = Pro.default_controller_actions
@@ -20,7 +20,7 @@ onready var shoot_action: String = controller_actions["shoot_action"]
 onready var feature_action: String = controller_actions["feature_action"]
 
 onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
-onready var tilt_input_timer: Timer = $TiltTimer
+#onready var tilt_input_timer: Timer = $TiltTimer
 
 # debug
 onready var ray_cast_2d: RayCast2D = $RayCast2D
@@ -59,18 +59,18 @@ func _input(event: InputEvent) -> void:
 	# rotation ... rotation_angle se računa na inputu (turn_angle)
 	if Ref.game_manager.game_settings["race_mode"]:
 	# tilt na feature tipko	
-		if tilt_ready:
-			rotation_dir = 0
-			var tilt_dir = Input.get_axis(left_action, right_action)
-			if tilt_dir == -1:
-				tilt_bolt(Vector2.LEFT)
-			elif tilt_dir == 1:
-				tilt_bolt(Vector2.RIGHT)
-			else:
-				tilt_speed_call = 0 # reset štetja klicov tilta
-				
-			
-		else:	
+#		if tilt_ready:
+#			rotation_dir = 0
+#			var tilt_dir = Input.get_axis(left_action, right_action)
+#			if tilt_dir == -1:
+#				tilt_bolt(Vector2.LEFT)
+#			elif tilt_dir == 1:
+#				tilt_bolt(Vector2.RIGHT)
+#			else:
+#				tilt_speed_call = 0 # reset štetja klicov tilta
+#
+#
+#		else:	
 			rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	# tilt na timer
 	else:
@@ -97,10 +97,12 @@ func _input(event: InputEvent) -> void:
 	
 	# feature select is tilt
 	if Ref.game_manager.game_settings["race_mode"]:
-		if Input.is_action_pressed(feature_action):
-			tilt_ready = true
-		else:
-			tilt_ready = false
+		if Input.is_action_pressed(feature_action) and Ref.game_manager.game_settings["full_equip_mode"]:
+#			tilt_ready = true
+#		else:
+#			tilt_ready = false
+	
+			select_feature()
 		if Input.is_action_just_pressed(shoot_action):
 			shoot() 
 	# select feature and shoot
@@ -182,7 +184,7 @@ func select_feature():
 
 
 func pull_bolt_on_screen(pull_position: Vector2):
-	print("plla")
+	
 	if not bolt_active:
 		return
 		
@@ -213,4 +215,5 @@ func _on_SelectorTimer_timeout() -> void:
 
 func _on_TiltTimer_timeout() -> void:
 
-	tilt_input_timer.stop()
+#	tilt_input_timer.stop()
+	pass
