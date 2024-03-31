@@ -53,6 +53,8 @@ func _ready() -> void:
 	temp_back_btn.connect("pressed", self, "_on_temp_back_btn_pressed")
 	
 	play_btn.grab_focus()
+	
+	Set.default_game_settings["ai_mode"] = false # temp
 
 
 func _process(delta: float) -> void:
@@ -73,8 +75,11 @@ func _process(delta: float) -> void:
 	if $HomeUI/Players/ItemList/thumb4/PlayersBtn.has_focus():
 		$HomeUI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Set.color_green
-	pass	
+		$HomeUI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Set.color_green	
+	if $HomeUI/Players/ItemList/thumb5/EnemiesBtn.has_focus():
+		$HomeUI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Color.white
+	else:
+		$HomeUI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Set.color_gray0
 		
 	
 func _on_AnimationPlayer_animation_finished(animation) -> void:
@@ -84,7 +89,7 @@ func _on_AnimationPlayer_animation_finished(animation) -> void:
 			if animation_player.get_current_animation_position() == 0:
 				play_btn.grab_focus()
 			else:
-				$HomeUI/Play/thumb/ConfirmBtn.grab_focus()
+				$HomeUI/Play/thumb7/ConfirmBtn.grab_focus()
 		"players_in":
 			if animation_player.get_current_animation_position() == 0:
 				$HomeUI/Play/thumb/ConfirmBtn.grab_focus()
@@ -134,24 +139,33 @@ func _on_players_back_btn_pressed():
 
 # play
 func _on_ConfirmBtn_2_pressed() -> void:
-	Set.set_game_settings(Set.Levels.NITRO)
+#	Set.set_game_settings(Set.Levels.NITRO)
+	Set.game_levels = [Set.Levels.NITRO]
 	animation_player.play("players_in")
-	
-	
 func _on_ConfirmBtn_3_pressed() -> void:
-	Set.set_game_settings(Set.Levels.DUEL)
+#	Set.set_game_settings(Set.Levels.OSMICA)
+	Set.game_levels = [Set.Levels.OSMICA]
 	animation_player.play("players_in")
-
+func _on_ConfirmBtn_5_pressed() -> void:
+#	Set.set_game_settings(Set.Levels.DUEL)
+	Set.game_levels = [Set.Levels.DUEL]
+	animation_player.play("players_in")
+func _on_ConfirmBtn_7_pressed() -> void:
+#	Set.set_game_settings(Set.Levels.RACE_DIRECT)
+	Set.game_levels = [Set.Levels.RACE_DIRECT]
+	animation_player.play("players_in")
+func _on_ConfirmBtn_8_pressed() -> void:
+#	Set.set_game_settings(Set.Levels.RACE_SNAKE)
+	Set.game_levels = [Set.Levels.RACE_SNAKE]
+	animation_player.play("players_in")
 func _on_ConfirmBtn_6_pressed() -> void:
-	Set.game_levels = [Set.Levels.OSMICA, Set.Levels.NITRO_STRAIGHT]
+#	Set.game_levels = [Set.Levels.OSMICA, Set.Levels.NITRO_STRAIGHT]
 	animation_player.play("players_in")
 
 # debug
 func _on_ConfirmBtn_1_pressed() -> void:
 	Set.set_game_settings(Set.Levels.DEBUG_DUEL)
 	animation_player.play("players_in")
-	
-	
 func _on_ConfirmBtn_4_pressed() -> void:
 	Set.set_game_settings(Set.Levels.DEBUG_RACE)
 	animation_player.play("players_in")
@@ -202,8 +216,26 @@ func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 			btn_label_node.modulate = Set.color_gray0
 			
 	print(players_in_game)
+func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
+#	var bolt_to_manage: int = Pro.Bolts.P4
+	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label
+	if button_pressed:
+		Set.default_game_settings["ai_mode"] = true
+#		players_in_game.append(bolt_to_manage)
+		btn_label_node.modulate = Color.white
+	else:
+		Set.default_game_settings["ai_mode"] = false
+#		if players_in_game.has(bolt_to_manage):
+#			players_in_game.erase(bolt_to_manage)
+		btn_label_node.modulate = Set.color_gray0
+			
+	print(players_in_game)
+	pass # Replace with function body.
+
 func _on_PlayBtn_pressed() -> void:
 	
+	if players_in_game.empty():
+		return
 	Set.bolts_activated = players_in_game
 	Ref.main_node.home_out()
 
@@ -232,4 +264,6 @@ func _on_clean_up_btn_pressed():
 		new_world.cleanup_map()
 func _on_temp_back_btn_pressed():
 	animation_player.play_backwards("start_game")
+
+
 

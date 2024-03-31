@@ -64,7 +64,7 @@ var default_game_settings: Dictionary = {
 	"sudden_death_limit": 10, # koliko pred koncem
 #	"select_feature_mode": false,
 	"spawn_pickables_mode": false,
-	"ai_mode": true,
+	"ai_mode": false,
 	"full_equip_mode": false,
 #	"lap_mode": false,
 #	"dogfight_mode": false,
@@ -134,11 +134,6 @@ var level_settings: Dictionary = {
 		"time_limit": 10,
 		"lap_limit": 0,
 		},
-		
-		
-		
-		
-		
 	Levels.RACE_DIRECT: {
 		"level": Levels.RACE_DIRECT,
 		"level_scene": preload("res://game/levels/LevelRaceDirect.tscn"),
@@ -181,9 +176,8 @@ var selected_level: int
 var bolts_activated: Array # napolne so ob izbiri
 
 #var game_levels: Array = []
-#var game_levels: Array = [Levels.OSMICA, Levels.NITRO_STRAIGHT]
-#var game_levels: Array = [Levels.RACE_CIRCO]
-var game_levels: Array = [Levels.RACE_DIRECT,Levels.RACE_ROUND]
+var game_levels: Array = [Levels.RACE_DIRECT]
+#var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
 

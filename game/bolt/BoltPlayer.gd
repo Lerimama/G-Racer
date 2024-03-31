@@ -57,60 +57,19 @@ func _input(event: InputEvent) -> void:
 		engine_power = 0
 	
 	# rotation ... rotation_angle se računa na inputu (turn_angle)
-	if Ref.game_manager.game_settings["race_mode"]:
-	# tilt na feature tipko	
-#		if tilt_ready:
-#			rotation_dir = 0
-#			var tilt_dir = Input.get_axis(left_action, right_action)
-#			if tilt_dir == -1:
-#				tilt_bolt(Vector2.LEFT)
-#			elif tilt_dir == 1:
-#				tilt_bolt(Vector2.RIGHT)
-#			else:
-#				tilt_speed_call = 0 # reset štetja klicov tilta
-#
-#
-#		else:	
-			rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
-	# tilt na timer
-	else:
-		rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
-		#		if Input.is_action_pressed(left_action):
-		#			if tilt_input_timer.is_stopped() and rotation_dir == 0:
-		#				tilt_input_timer.start(tilt_input_time)
-		#			rotation_dir = -1
-		#		elif Input.is_action_just_released(left_action):
-		#			rotation_dir = 0
-		#			if not tilt_input_timer.is_stopped():
-		#				tilt_input_timer.stop()				
-		#				tilt_bolt(Vector2.LEFT)
-		#
-		#		if Input.is_action_pressed(right_action):
-		#			if tilt_input_timer.is_stopped() and rotation_dir == 0:
-		#				tilt_input_timer.start(tilt_input_time)
-		#			rotation_dir = 1
-		#		elif Input.is_action_just_released(right_action):
-		#			rotation_dir = 0
-		#			if not tilt_input_timer.is_stopped():
-		#				tilt_input_timer.stop()				
-		#				tilt_bolt(Vector2.RIGHT)
+	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
 	# feature select is tilt
 	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_pressed(feature_action) and Ref.game_manager.game_settings["full_equip_mode"]:
-#			tilt_ready = true
-#		else:
-#			tilt_ready = false
-	
 			select_feature()
-		if Input.is_action_just_pressed(shoot_action):
-			shoot() 
-	# select feature and shoot
 	else:
 		if Input.is_action_just_pressed(feature_action):
-				select_feature()
-		if Input.is_action_just_pressed(shoot_action):
-				shoot()
+			select_feature()
+	
+	# select feature and shoot
+	if Input.is_action_just_pressed(shoot_action):
+		shoot()
 		
 	
 func _ready() -> void:

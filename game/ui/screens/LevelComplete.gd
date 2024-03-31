@@ -30,7 +30,11 @@ func open(bolts_on_finish_line: Array, bolts_on_start: Array):
 func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
 	var results: VBoxContainer = $VBoxContainer/Content/Results
-	
+	# če je še od prejšnjega levela
+	if not results.get_children().empty():
+		for result_line in results.get_children():
+			result_line.queue_free()
+			
 	# uvrščeni
 	for bolt in bolts_on_finish_line:
 		# spawn ranking line
