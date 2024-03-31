@@ -52,6 +52,8 @@ onready	var current_bolts_activated_ids: Array = Set.bolts_activated # naslednji
 var qualified_bolts: Array # za naslednji level
 var current_level_index: int = 0
 var defaultplayer
+var current_pull_positions: Array # trenutno zasedene za preventanje nalaganja bolto druga na drugega
+
 
 func _input(event: InputEvent) -> void:
 	
@@ -93,6 +95,7 @@ func _process(delta: float) -> void:
 		if game_settings["race_mode"]:
 			get_bolts_ranking()
 	
+var current_additional_enemies_rank: int = 0
 	
 func set_game(): # kliče main.gd pred fejdin igre na nov level
 	
@@ -102,19 +105,48 @@ func set_game(): # kliče main.gd pred fejdin igre na nov level
 	if Set.debug_mode:
 		if current_bolts_activated_ids.empty(): # kadar ne štartam igre iz home menija
 #			current_bolts_activated_ids = [Pro.Bolts.P1] 
-#			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2] 	
+			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2] 	
 #			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
 #			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
 #			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
-			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
+#			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
 #	var current_bolt_rank
+#			current_bolts_activated_ids.append(Pro.Bolts.ENEMY)
 	for bolt_id in current_bolts_activated_ids:
 #		if current_level_index == 0:
 #			current_bolt_rank = bolt_spawn_position_nodes[current_bolts_activated_ids.find(bolt_id)] 
 #		else:
 #			current_bolt_rank
 		spawn_bolt(bolt_id) # scena, pozicija, profile id (barva, ...)
+#		spawn_bolt(bolt_id, bolt_spawn_position_nodes[current_bolts_activated_ids.find(bolt_id)]) # scena, pozicija, profile id (barva, ...)
+	
+#	game_settings["ai_mode"] = false
+	if game_settings["ai_mode"]:
+		while current_additional_enemies_rank < bolt_spawn_position_nodes.size():
+			var free_positions_count: int = bolt_spawn_position_nodes.size() - current_bolts_activated_ids.size()
+			var taken_positions_count: int = bolt_spawn_position_nodes.size() - free_positions_count
+#		if free_positions_count > 0:
+			current_additional_enemies_rank = taken_positions_count + 1
+#			for position_index in free_positions_count:
+#				printt("INDEX", position_index)
+#				current_additional_enemies_rank = taken_positions_count + position_index + 1
+				
+#				current_bolts_activated_ids.append(Pro.Bolts.ENEMY) # da prepoznam v spawn funkciji .... trik pač
+#				spawn_bolt(10) # scena, pozicija, profile id (barva, ...)
+			current_bolts_activated_ids.append(Pro.Bolts.ENEMY) # da prepoznam v spawn funkciji .... trik pač
+#			current_additional_enemies_rank += 1
+			spawn_bolt(10) # scena, pozicija, profile id (barva, ...)
+#			spawn_bolt(10) # scena, pozicija, profile id (barva, ...)
+				
+				
+				
+#	for bolt_id in current_bolts_activated_ids:
+##		if current_level_index == 0:
+##			current_bolt_rank = bolt_spawn_position_nodes[current_bolts_activated_ids.find(bolt_id)] 
+##		else:
+##			current_bolt_rank
+#		spawn_bolt(bolt_id) # scena, pozicija, profile id (barva, ...)
 #		spawn_bolt(bolt_id, bolt_spawn_position_nodes[current_bolts_activated_ids.find(bolt_id)]) # scena, pozicija, profile id (barva, ...)
 	
 	# dodam komp
@@ -124,7 +156,9 @@ func set_game(): # kliče main.gd pred fejdin igre na nov level
 #		var free_positions_count: int = bolt_spawn_position_nodes.size() - current_bolts_activated_ids.size()
 #		if free_positions_count > 0:
 #			for n in free_positions_count:
-#				spawn_bolt(Pro.Bolts.ENEMY, bolt_spawn_position_nodes[bolt_spawn_position_nodes.size() - (1 + n)])	
+#				free_position_index += 1
+#
+#				spawn_bolt(Pro.Bolts.ENEMY)
 ##				spawn_bolt(Pro.Bolts.ENEMY, bolt_spawn_position_nodes[bolt_spawn_position_nodes.size() - (1 + n)])	
 #		elif free_positions_count < 0:
 #			print("ERROR - premalo level pozicij")
@@ -150,7 +184,7 @@ func start_game():
 	
 	Ref.sound_manager.play_music()
 	for bolt in bolts_in_game:
-		if not bolt.is_in_group(Ref.group_enemies):
+#		if not bolt.is_in_group(Ref.group_enemies):
 			bolt.bolt_active = true
 
 	Ref.hud.on_game_start()
@@ -294,6 +328,7 @@ func start_next_level():
 	
 	set_game()
 	
+	current_additional_enemies_rank = 0
 	qualified_bolts = [] # nujno za set game
 	
 			
@@ -358,6 +393,7 @@ func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish li
 #			bolt_finished.bolt_active = false # enemy se disebla ko doseže target
 #		elif bolt_finished.is_in_group(Ref.group_enemies):
 #			bolt_finished.on_race_finished()
+	
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
@@ -366,8 +402,14 @@ func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish li
 func spawn_bolt(spawned_bolt_id: int): #, spawn_position_node: Node2D): #, spawned_bolt_index: int): # scena, pozicija, bolt id
 #func spawn_bolt(spawned_bolt_id: int, spawn_position_node: Node2D): #, spawned_bolt_index: int): # scena, pozicija, bolt id
 #func spawn_bolt(NewBolt: PackedScene, spawn_position_node: Node2D, spawned_bolt_id: int, spawned_bolt_index: int): # scena, pozicija, bolt id
+	var NewBolt: PackedScene# = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
 	
-	var NewBolt: PackedScene = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
+	if spawned_bolt_id == 10:
+#		print("JUHEEEEEJ")
+#		spawned_bolt_id = Pro.Bolts.ENEMY
+		NewBolt = Pro.default_player_profiles[Pro.Bolts.ENEMY]["player_scene"]
+	else:
+		NewBolt = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
 
 #		if current_level_index == 0:
 #			current_bolt_rank = bolt_spawn_position_nodes[current_bolts_activated_ids.find(bolt_id)] 
@@ -378,21 +420,31 @@ func spawn_bolt(spawned_bolt_id: int): #, spawn_position_node: Node2D): #, spawn
 	var spawned_bolt_stats: Dictionary 
 	var current_bolt_rank: int
 	
-	# če ni prvi level
-	if current_level_index > 0 and not qualified_bolts.empty(): 
-		# če je bolt_id enak trenutno spawnanemu mu podam pripadajočo statistiko
-		for bolt in qualified_bolts:
-			if bolt.bolt_id == spawned_bolt_id:
-				spawned_bolt_stats = bolt.player_stats
-				current_bolt_rank = spawned_bolt_stats["level_rank"]
-	else: # prvi level ...  default statsi
-		spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
-		current_bolt_rank = current_bolts_activated_ids.find(spawned_bolt_id) + 1 # fejkam
-		
-		# če je bolt_id enak trenutno spawnanemu mu podam pripadajočo statistiko
-#		spawned_bolt_stats = Pro.default_player_stats.duplicate()	
-	# select position node
+	if spawned_bolt_id == 10:
+		print("JUHEEEEEJ")
+		if game_settings["ai_mode"]:
+		# additional enemies
+			spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
+			current_bolt_rank = current_additional_enemies_rank
+			spawned_bolt_id = Pro.Bolts.ENEMY
+			
+			pass
+	else:		
+		# če ni prvi level
+		if current_level_index > 0 and not qualified_bolts.empty(): 
+			# če je bolt_id enak trenutno spawnanemu mu podam pripadajočo statistiko
+			for bolt in qualified_bolts:
+				if bolt.bolt_id == spawned_bolt_id:
+					spawned_bolt_stats = bolt.player_stats
+					current_bolt_rank = spawned_bolt_stats["level_rank"]
+		else: # prvi level ...  default statsi
+			spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
+			current_bolt_rank = current_bolts_activated_ids.find(spawned_bolt_id) + 1 # fejkam
 	
+
+	
+			
+				
 	var new_bolt = NewBolt.instance()
 	new_bolt.bolt_id = spawned_bolt_id
 	# new_bolt.bolt_id = spawned_bolt_index
@@ -674,9 +726,6 @@ func get_racing_line_bolts():
 	return bolts_on_racing_line
 
 
-var current_pulled_bolts: Array
-var current_pull_positions: Array
-
 func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 #	printt ("current_pull_positions",current_pull_positions.size())
 	# na koncu izbrana pull pozicija:
@@ -685,9 +734,6 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 	# - se ne pokriva z drugim plejerjem	
 	
 	if game_on:
-		
-		# nabiram trenutno pulane, da mu dodam zamik
-		current_pulled_bolts.append(bolt_to_pull)
 		
 		# pull pozicija brez omejitev
 		var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja  

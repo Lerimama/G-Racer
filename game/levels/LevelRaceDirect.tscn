@@ -28,10 +28,10 @@ tile_data = PoolIntArray( 65534, 0, 65536, 65535, 0, 65537, 0, 0, 65537, 1, 0, 6
 
 [node name="StartLights" parent="." index="4"]
 visible = true
-position = Vector2( 320, 1216 )
+position = Vector2( 320, 1224 )
 
 [node name="FinishLine" parent="." index="5"]
-position = Vector2( 192, 1144 )
+position = Vector2( 192, 184 )
 
 [node name="CollisionPolygon2D" parent="FinishLine" index="19"]
 position = Vector2( 128, 4 )

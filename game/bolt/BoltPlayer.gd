@@ -210,7 +210,11 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, lead
 	yield(pull_tween, "finished")
 	# če preskoči ciljno linijo in checkpoint
 	if laps_finished_count < leader_laps_finished:
-		laps_finished_count = leader_laps_finished	
+		laps_finished_count = leader_laps_finished
+	
+	# ne dela
+#	if Ref.game_manager.current_pull_positions.has(pull_position):
+#		Ref.game_manager.current_pull_positions.erase(pull_position)
 	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) 
 	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
 	

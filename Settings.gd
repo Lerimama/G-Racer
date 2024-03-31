@@ -182,7 +182,8 @@ var bolts_activated: Array # napolne so ob izbiri
 
 #var game_levels: Array = []
 #var game_levels: Array = [Levels.OSMICA, Levels.NITRO_STRAIGHT]
-var game_levels: Array = [Levels.RACE_CIRCO]
+#var game_levels: Array = [Levels.RACE_CIRCO]
+var game_levels: Array = [Levels.RACE_DIRECT,Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
 
