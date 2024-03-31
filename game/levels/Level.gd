@@ -308,10 +308,8 @@ func spawn_checkpoint(checkpoint_global_position: Vector2, checkpoint_rotation: 
 	if checkpoint_rotation == 90: # če rotiram je hor zamik
 		new_checkpoint_scene.global_rotation = deg2rad(checkpoint_rotation) # + element_center_offset
 		new_checkpoint_scene.position.x += 8# + element_center_offset
+	new_checkpoint_scene.modulate.a = 0
 	add_child(new_checkpoint_scene)
-	new_checkpoint_scene.modulate.a = 0.2
-	
-	
 	
 	return new_checkpoint_scene
 

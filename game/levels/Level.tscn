@@ -73,6 +73,16 @@ border_width_bottom = 2
 
 [node name="Level" type="Node2D"]
 script = ExtResource( 2 )
+__meta__ = {
+"_editor_description_": "NAVODILA ZA IGRADNJO LEVELA
+- glavna linija je linija, ki jo vozi tudi enemy
+- če so krogi morajo biti nujno tudi čekpointi
+- ko  je cilj .. gre enemy na goal target
+- glavna linija je kar do konca
+- _temp samo na en čekpoint
+- dobra praksa je, da si linije, ko jih je več, niso preveč blizu
+- krožna dirka ima vedno dve liniji ... zadnja  linija se konča konča tik pred ciljem, prva pa začne tik za štartom"
+}
 
 [node name="BackgroundSpace" parent="." instance=ExtResource( 7 )]
 scale = Vector2( 0.5, 0.5 )
@@ -395,9 +405,13 @@ text = "NAVODILA ZA IGRADNJO LEVELA
 - če so krogi morajo biti nujno tudi čekpointi
 - ko  je cilj .. gre enemy na goal target
 - glavna linija je kar do konca
+- _temp samo na en čekpoint
 - dobra praksa je, da si linije, ko jih je več, niso preveč blizu
 - krožna dirka ima vedno dve liniji ... zadnja  linija se konča konča tik pred ciljem, prva pa začne tik za štartom"
 autowrap = true
+__meta__ = {
+"_editor_description_": ""
+}
 
 [node name="StartLabel" type="Label" parent="."]
 modulate = Color( 1, 1, 1, 0.0980392 )

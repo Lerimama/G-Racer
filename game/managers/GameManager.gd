@@ -104,9 +104,9 @@ func set_game(): # kliče main.gd pred fejdin igre na nov level
 #			current_bolts_activated_ids = [Pro.Bolts.P1] 
 #			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2] 	
 #			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
-			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
+#			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
 #			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
-#			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
+			current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
 	
 #	var current_bolt_rank
 	for bolt_id in current_bolts_activated_ids:
@@ -150,7 +150,8 @@ func start_game():
 	
 	Ref.sound_manager.play_music()
 	for bolt in bolts_in_game:
-		bolt.bolt_active = true
+		if not bolt.is_in_group(Ref.group_enemies):
+			bolt.bolt_active = true
 
 	Ref.hud.on_game_start()
 	
@@ -177,10 +178,21 @@ func level_finished(level_goal_reached: bool):
 	yield(get_tree().create_timer(2), "timeout") # za dojet
 	
 	if level_goal_reached:
+		
+		var last_finished_time: float # da lahko fajkem za enemija
+		for bolt in bolts_in_game:
+			if bolts_across_finish_line.has(bolt):
+				last_finished_time = bolt.level_finished_time # na koncu je time od zadnjega uvrščenega
+			# enemy uspe, če zaključim preden je v cilju
+			else:
+				if bolt.is_in_group(Ref.group_enemies):	
+	#			if bolt.is_in_group(Ref.group_enemies) and not bolts_across_finish_line.has(bolt):
+					bolt.level_finished_time = last_finished_time + 32
+					bolts_across_finish_line.append(bolt)
+					printt("time", last_finished_time, bolt.level_finished_time)
 		for bolt in bolts_across_finish_line:
-			printt("Bolts rank on finish", bolt.bolt_id, bolt.player_name, bolt)
+#			printt("Bolts rank on finish", bolt.bolt_id, bolt.player_name, bolt)
 			qualified_bolts.append(bolt)
-#			qualified_bolts.append([bolt.bolt_id, bolt.player_stats])
 		
 		Ref.level_completed.open(bolts_across_finish_line, bolts_on_start)
 		# save data
@@ -323,6 +335,7 @@ func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish li
 	var current_race_time: float  = Ref.hud.game_timer.absolute_game_time # pozitiven game čas v sekundah
 	
 	# LAP FINISHED
+	checkpoints_per_lap = 1
 	if bolt_finished.checkpoints_reached.size() >= checkpoints_per_lap:
 		bolt_finished.on_lap_finished(current_race_time, level_settings["lap_limit"])
 		Ref.sound_manager.play_sfx("finish_horn")
@@ -374,7 +387,7 @@ func spawn_bolt(spawned_bolt_id: int): #, spawn_position_node: Node2D): #, spawn
 				current_bolt_rank = spawned_bolt_stats["level_rank"]
 	else: # prvi level ...  default statsi
 		spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
-		current_bolt_rank = current_bolts_activated_ids.find(spawned_bolt_id)
+		current_bolt_rank = current_bolts_activated_ids.find(spawned_bolt_id) + 1 # fejkam
 		
 		# če je bolt_id enak trenutno spawnanemu mu podam pripadajočo statistiko
 #		spawned_bolt_stats = Pro.default_player_stats.duplicate()	
@@ -660,8 +673,12 @@ func get_racing_line_bolts():
 	
 	return bolts_on_racing_line
 
-	
+
+var current_pulled_bolts: Array
+var current_pull_positions: Array
+
 func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
+#	printt ("current_pull_positions",current_pull_positions.size())
 	# na koncu izbrana pull pozicija:
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
@@ -669,8 +686,12 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 	
 	if game_on:
 		
+		# nabiram trenutno pulane, da mu dodam zamik
+		current_pulled_bolts.append(bolt_to_pull)
+		
 		# pull pozicija brez omejitev
 		var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja  
+		var pull_position_distance_from_leader_correction: float = 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
 		var vector_to_leading_player: Vector2 = leading_player.global_position - bolt_to_pull.global_position
 		var vector_to_pull_position: Vector2 = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
 		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
@@ -687,17 +708,23 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 				navigation_position_as_pull_position = cell_position 
 			# ostale nav celice ... če je boljša, jo določim za novo opredeljeno
 			else:
-				# preverim, če je bližja od trenutno opredeljene
+				# preverim, če je bližja od trenutno opredeljene ... itak da je 
 				if cell_position.distance_to(bolt_pull_position) < navigation_position_as_pull_position.distance_to(bolt_pull_position):
 					# preverim, da je dovolj stran od vodilnega
 					if cell_position.distance_to(leading_player.global_position) > pull_position_distance_from_leader:
-						available_navigation_pull_positions.append(cell_position)
-						# nazadnje preverim, da se ne pokriva z območjem drugega plejerja ... ne deluje ravno
-						for area in bolt_areas:
-							if not area.has_point(cell_position):
+						# preverim, da pozicija ni že zasedena
+						# preverim, da pozicija ni že zasedena
+						# če poza ni zasedena ga dodaj med zasedene
+						if not current_pull_positions.has(cell_position):
+							navigation_position_as_pull_position = cell_position
+						else: # če je poza zasedena dobim njen in dex med zasedenimi dodam korekcijo na zahtevani razdalji od vodilnega
+							var pull_pos_index: int = current_pull_positions.find(cell_position)
+							var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index * pull_position_distance_from_leader_correction
+							if cell_position.distance_to(leading_player.global_position) > corrected_pull_position:
+#								current_pull_positions.append(cell_position)
 								navigation_position_as_pull_position = cell_position
-								break # rabim samo eno pozicijo
-		
+
+		current_pull_positions.append(navigation_position_as_pull_position)
 		return navigation_position_as_pull_position
 		
 		
@@ -769,8 +796,10 @@ func _on_ScreenArea_body_exited(body: Node) -> void:
 	# player pull	
 	if game_settings["race_mode"]:
 		if body.is_in_group(Ref.group_players):
-			var bolt_pull_position = get_bolt_pull_position(body)
-			body.call_deferred("pull_bolt_on_screen", bolt_pull_position)
+			var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
+			var leader_laps_finished_count: int = leading_player.laps_finished_count
+			var leader_checkpoints_reached: Array = leading_player.checkpoints_reached
+			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leader_laps_finished_count, leader_checkpoints_reached)
 	
 	if body.is_in_group(Ref.group_bolts):
 		if not body.bolt_active:

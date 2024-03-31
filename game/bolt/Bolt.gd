@@ -654,8 +654,10 @@ func on_lap_finished(current_race_time: float, laps_limit: int):
 
 func on_checkpoint_reached(checkpoint: Area2D):
 	
-	if not checkpoints_reached.has(checkpoint): # če še ni dodana
-		checkpoints_reached.append(checkpoint)
+	# temp
+	if checkpoints_reached.empty():
+#		if not checkpoints_reached.has(checkpoint): # če še ni dodana
+			checkpoints_reached.append(checkpoint)
 	
 
 func spawn_floating_tag(lap_time_seconds: float, best_lap: bool):

@@ -21,7 +21,7 @@ var bolt_profiles: Dictionary = {
 		"turn_angle": 10, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
 		"side_traction": 0.01, # 0 - 1
-		"bounce_size": 0.5, # 0 - 1 
+		"bounce_size": 0.5, # 0 - 1 	
 		"mass": 100, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
 		"drag_force_div": 100.0, # večji pomeni nižjo drag force
@@ -156,7 +156,8 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
 		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
 #		"controller_profile" : "ARROWS",
-		"controller_profile" : "JP1",
+		"controller_profile" : "WASD",
+#		"controller_profile" : "JP1",
 		"bolt_type:": BoltTypes.BASIC,
 		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
@@ -164,7 +165,8 @@ var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi d
 		"player_name" : "Jax",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
 		"player_color" : Set.color_green,
-		"controller_profile" : "JP2",
+		"controller_profile" : "WASD",
+#		"controller_profile" : "JP2",
 #		"controller_profile" : "WASD",
 		"bolt_type:": BoltTypes.BASIC,
 		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
@@ -231,7 +233,7 @@ var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"level_finished_time" : 0, # sekunde
 	"level_rank" : 0, 
 #	"race_time": 0,
-	"gas_count": 20,
+	"gas_count": 5000,
 }
 
 var weapon_profiles : Dictionary = {

@@ -183,7 +183,7 @@ func select_feature():
 			feature.show()		
 
 
-func pull_bolt_on_screen(pull_position: Vector2):
+func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, leader_checkpoints_reached: Array):
 	
 	if not bolt_active:
 		return
@@ -191,21 +191,31 @@ func pull_bolt_on_screen(pull_position: Vector2):
 	bolt_collision.disabled = true
 	shield_collision.disabled = true
 	
-	var pull_time: float = 0.2
-	
-	# spawn particles
-	var pull_tween = get_tree().create_tween()
-	pull_tween.tween_property(self, "global_position", pull_position, pull_time).set_ease(Tween.EASE_OUT)
-	pull_tween.parallel().tween_property(self, "modulate:a", 0.2, pull_time/2).set_ease(Tween.EASE_OUT)
-	pull_tween.parallel().tween_property(self, "modulate:a", 1, pull_time/2).set_delay(pull_time/2).set_ease(Tween.EASE_IN)
-	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
-	
-	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
-	
-	# ugasnem trail
+	# reštartam trail
 	if bolt_trail_active:
 		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false
+		
+
+#	printt ("pre", checkpoints_reached)
+#	if not leader_checkpoints_reached.empty():
+##		if not checkpoints_reached.size() == leader_checkpoints_reached.size():
+#		checkpoints_reached = leader_checkpoints_reached
+#	printt ("aft", checkpoints_reached)
+		
+	var pull_time: float = 0.2
+	var pull_tween = get_tree().create_tween()
+	pull_tween.tween_property(self, "global_position", pull_position, pull_time).set_ease(Tween.EASE_OUT)
+	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
+	yield(pull_tween, "finished")
+	# če preskoči ciljno linijo in checkpoint
+	if laps_finished_count < leader_laps_finished:
+		laps_finished_count = leader_laps_finished	
+	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) 
+	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
+	
+	
+
 
 
 func _on_SelectorTimer_timeout() -> void:
