@@ -1,75 +1,67 @@
-[gd_scene load_steps=5 format=2]
+extends Node2D
 
-[ext_resource path="res://game/ui/hud/HudGameTimer.gd" type="Script" id=1]
-[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
-[ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=3]
-[ext_resource path="res://assets/fonts/menu_font.tres" type="DynamicFont" id=4]
 
-[node name="GameTimer" type="HBoxContainer"]
-margin_left = -50.0
-margin_right = 50.0
-margin_bottom = 26.0
-grow_horizontal = 2
-theme = ExtResource( 2 )
-custom_constants/separation = 2
-alignment = 1
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+func _ready() -> void:
+	
+	pass
+	
+#func draw_racing_line():
+#
+#	var racing_line: Line2D = $RacingPath
+#	split_line($RacingPath)
+#	printt("P", racing_line.get_points().size())
+#	return racing_line.get_points()
 
-[node name="Mins" type="Label" parent="."]
-margin_left = 1.0
-margin_right = 27.0
-margin_bottom = 26.0
-rect_min_size = Vector2( 26, 0 )
-size_flags_vertical = 8
-custom_fonts/font = ExtResource( 3 )
-text = "00"
-align = 2
-valign = 2
 
-[node name="Dots" type="Label" parent="."]
-margin_left = 29.0
-margin_right = 35.0
-margin_bottom = 26.0
-size_flags_horizontal = 4
-size_flags_vertical = 8
-custom_fonts/font = ExtResource( 4 )
-text = ":"
-align = 1
-valign = 2
-
-[node name="Secs" type="Label" parent="."]
-margin_left = 37.0
-margin_right = 63.0
-margin_bottom = 26.0
-grow_horizontal = 2
-rect_min_size = Vector2( 26, 0 )
-size_flags_vertical = 8
-custom_fonts/font = ExtResource( 3 )
-text = "00"
-align = 1
-valign = 2
-
-[node name="Dots2" type="Label" parent="."]
-margin_left = 65.0
-margin_right = 71.0
-margin_bottom = 26.0
-size_flags_horizontal = 4
-size_flags_vertical = 8
-custom_fonts/font = ExtResource( 4 )
-text = ":"
-align = 1
-valign = 2
-
-[node name="Hunds" type="Label" parent="."]
-margin_left = 73.0
-margin_right = 99.0
-margin_bottom = 26.0
-grow_horizontal = 0
-rect_min_size = Vector2( 26, 0 )
-size_flags_vertical = 8
-custom_fonts/font = ExtResource( 3 )
-text = "00"
-valign = 2
+	
+func draw_racing_lines():
+	
+	var racing_lines_points: Array
+	var all_racing_lines: Array
+	var all_racing_lines_points: Array
+	
+	for racing_line in get_children():
+		split_line(racing_line)
+		for point in racing_line.get_points():
+			all_racing_lines_points.append(point)
+		all_racing_lines.append(racing_line)
+	
+	return all_racing_lines
+	
+	
+func split_line(racing_path: Line2D):
+	
+	var cut_distance: float = 5 # dolžina, ki jo želim med pikami
+	var cut_count_limit: int = 1000 # največ tolikokrat razreže vsak segment
+	
+	# za vsako piko v original liniji, razdelim njen vektor do naslednje pike
+	var original_racing_line_points: Array = racing_path.get_points()
+	for original_point in original_racing_line_points:
+		
+		# vsakič znova zajamem vse pike v trenutni liniji
+		var updated_racing_line_points = racing_path.get_points()
+		var updated_original_point_index = updated_racing_line_points.find(original_point)
+		var updated_last_original_point_index = updated_racing_line_points.size() - 1
+		# če je pika zadnja v celi liniji, je ne splitam
+		if updated_original_point_index == updated_last_original_point_index: 
+			return # prekinem, če je original zadnja pika enaka zadnji piki trenutne linije
+		
+		# za vsak rez dodam novo točko na razdalji
+		for cut_count in cut_count_limit:
+			# vsakič znova zajamem vse pike v trenutni liniji
+			var current_points_in_line: Array = racing_path.get_points()
+			# določim vektor od trenutne do naslednje točke v liniji
+			var current_point: Vector2 = current_points_in_line[updated_original_point_index + cut_count]
+			var next_point: Vector2 = current_points_in_line[updated_original_point_index + cut_count + 1]
+			var vector_to_next_point: Vector2 = next_point - current_point
+			# če je razdalja do naslednje točke manjša od določene minimalne ustavim rezanje
+			if vector_to_next_point.length() < 5:
+				break
+			# dodam novo točko na določeni dolžini vektorja
+			var new_point: Vector2 = current_point + vector_to_next_point.normalized() * 5
+			var new_point_index: int = updated_original_point_index + cut_count + 1
+			racing_path.add_point(new_point, new_point_index)
+	
+	return racing_path	
+#			Met.spawn_indikator(new_point, 0)
+		

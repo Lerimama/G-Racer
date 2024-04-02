@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/loose_jingle_GAMEOVER.wav-d8a1fdf6a0fb14a1b8d0700a8d4b2905.sample"
+path="res://.import/hit_wall.wav-01786b894836b8fa282e18d22d23d934.sample"
 
 [deps]
 
-source_file="res://assets/sound/sfx/events/loose_jingle_GAMEOVER.wav"
-dest_files=[ "res://.import/loose_jingle_GAMEOVER.wav-d8a1fdf6a0fb14a1b8d0700a8d4b2905.sample" ]
+source_file="res://assets/sound/sfx/burst/hit_wall.wav"
+dest_files=[ "res://.import/hit_wall.wav-01786b894836b8fa282e18d22d23d934.sample" ]
 
 [params]
 

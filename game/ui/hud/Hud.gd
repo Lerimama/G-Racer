@@ -65,7 +65,43 @@ func _ready() -> void:
 			record_lap_label.hide()
 			game_timer.get_node("Dots2").hide()
 			game_timer.get_node("Hunds").hide()
+
+func set_hud():
+	printt("Ref.game_manager.level_settings", Ref.game_manager.level_settings)
+	if Ref.game_manager.level_settings["lap_limit"] <= 1:
+		var stat_lines: Array = [$StatLineRacer1, $StatLineRacer2, $StatLineRacer3, $StatLineRacer4]
+		for stat_line in stat_lines:
+			stat_line.stat_laps_count.hide()
 		
+#		# najprej skrijem vse in potem pokažem glede na igro
+#		for stat in stat_line.get_children():
+#			stat.hide()
+#		stat_line.player_line.show()
+#
+#		if Ref.game_manager.game_settings["race_mode"]:
+#			# player stats
+#			stat_line.stat_gas.show()
+#			stat_line.stat_laps_count.show()
+#			stat_line.stat_level_rank.show()	
+#			# prikaže se med igro
+#			stat_line.stat_fastest_lap.hide()
+#			stat_line.stat_level_time.hide()	
+#			stat_line.stat_bullet.hide()	
+#			stat_line.stat_misile.hide()	
+#			stat_line.stat_shocker.hide()	
+#			stat_line.stat_mina.hide()	
+#			# game stats
+#			if record_lap_time == 0:
+#				record_lap_label.hide()
+#		else:
+#			stat_line.stat_life.show()
+#			stat_line.stat_bullet.show()	
+#			stat_line.stat_misile.show()	
+#			stat_line.stat_mina.show()	
+#			stat_line.stat_shocker.show()	
+#			record_lap_label.hide()
+#			game_timer.get_node("Dots2").hide()
+#			game_timer.get_node("Hunds").hide()			
 			
 func on_game_start():
 	

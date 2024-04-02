@@ -31,8 +31,6 @@ func _on_Item_body_entered(body: Node) -> void:
 #	var all_sounds: Array = sounds.get_children()
 #	if all_sounds.size() > 1:
 #		sound_picked = all_sounds[all_sounds.size() - 1] 
-
-	
 	
 	if body.has_method("on_item_picked"):
 		if pickable_type == Pickables.BULLET or pickable_type == Pickables.MISILE \
@@ -45,10 +43,11 @@ func _on_Item_body_entered(body: Node) -> void:
 			pass
 #		sound_picked.play()
 		body.on_item_picked(pickable_type_key)
-		modulate.a = 0
-		monitorable = false
-		monitoring = false
+#		modulate.a = 0
+#		monitorable = false
+#		monitoring = false
 
+		queue_free()
 
-func _on_Picked_finished() -> void:
-	queue_free()	
+#func _on_Picked_finished() -> void:
+#	queue_free()	

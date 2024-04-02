@@ -12,7 +12,7 @@ onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 
-onready var target_points: int = Set.default_game_settings["target_brick_points"]
+#onready var target_points: int = Ref.game_settings["target_brick_points"]
 
 
 func _ready() -> void:
@@ -21,6 +21,8 @@ func _ready() -> void:
 
 
 func on_hit(hit_by: Node):
+	
+	var points_reward: float = Ref.game_manager.game_settings["target_brick_points"]
 	
 	if hit_by is Bullet:
 		hit_count += 1
@@ -32,13 +34,18 @@ func on_hit(hit_by: Node):
 			3:
 				animation_player.play("outro")
 				modulate = Set.color_red
-				hit_by.spawned_by.get_points(target_points)
-				
+				# points
+				hit_by.spawned_by.points = points_reward # setget
+#				hit_by.spawned_by.score_points(points_reward)
 	elif hit_by is Misile:
 		modulate = Set.color_red
 		animation_player.play("outro")
-		hit_by.spawned_by.get_points(target_points)
+		# points
+		hit_by.spawned_by.points = points_reward # setget
+#		hit_by.spawned_by.score_points(points_reward)
 	
+			
+
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	queue_free()

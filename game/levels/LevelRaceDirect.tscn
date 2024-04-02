@@ -31,7 +31,7 @@ visible = true
 position = Vector2( 320, 1224 )
 
 [node name="FinishLine" parent="." index="5"]
-position = Vector2( 192, 936 )
+position = Vector2( 192, 1088 )
 
 [node name="CollisionPolygon2D" parent="FinishLine" index="19"]
 position = Vector2( 128, 4 )

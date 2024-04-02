@@ -5,7 +5,7 @@ var bolts_in_goal_area: Array = []
 
 onready var light_poly: Polygon2D = $LightPoly
 onready var light_2d: Light2D = $Light2D
-onready var light_points: int = Set.default_game_settings["light_points"]
+#onready var light_points: int = Ref.game_settings["light_points"]
 
 
 func _ready() -> void:
@@ -20,7 +20,10 @@ func light_reached(bolt: KinematicBody2D):
 		turned_on = true
 		light_2d.color = Set.color_green
 		light_poly.color = Set.color_green
-		bolt.get_points(light_points)
+		# points
+		var points_reward: float = Ref.game_manager.game_settings["light_points"]
+		bolt.points = points_reward # setget
+#		bolt.score_points(points_reward)
 	
 
 func _on_DetectArea_body_entered(body: Node) -> void:

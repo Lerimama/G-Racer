@@ -7,7 +7,7 @@ func _on_AreaTracking_body_entered(body: Node) -> void:
 		if body.bolt_active:
 			if body.bolt_on_tracking_count == 0: # vklopiš samo na prvi
 #				body.modulate = Color.green			
-				body.side_traction = Set.default_game_settings["area_tracking_value"]
+				body.side_traction = Ref.game_manager.game_settings["area_tracking_value"]
 			body.bolt_on_tracking_count += 1 
 
 

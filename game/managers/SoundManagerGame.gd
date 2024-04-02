@@ -138,9 +138,11 @@ func play_music():
 	var current_track: AudioStreamPlayer
 	
 	if Ref.game_manager.level_settings["level"] == Set.Levels.NITRO:
-		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
+		print("NITTTTTTTTTTTTTI")
+		var nitro_track: AudioStreamPlayer = $"GameMusic/Nitro"
 		current_track = game_music.get_node("Nitro")
 	else:
+		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
 		current_track = game_music.get_child(currently_playing_track_index - 1)
 	
 	# Met.sound_play_fade_in(game_music, 0, 2)

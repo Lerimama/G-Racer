@@ -83,7 +83,7 @@ onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 # stats
 onready var player_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
-onready var points: int = player_stats["points"]
+onready var points: int = player_stats["points"] setget _on_score_points
 onready var wins: int = player_stats["wins"]
 onready var life: int = player_stats["life"]
 onready var energy: float = player_stats["energy"]
@@ -781,13 +781,6 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_force_div = Ref.game_manager.game_settings["area_nitro_drag_force_div"]
 		yield(get_tree().create_timer(nitro_time), "timeout")
 		drag_force_div = Pro.bolt_profiles[bolt_type]["drag_force_div"]	
-
-
-func get_points(points_added: int): # kličem od zunaj ob dodajanju točk ... ni samo na "item picked"
-	
-	points += points_added
-	points = clamp(points, 0, points)
-	emit_signal("stat_changed", bolt_id, "points", points) # do GMa
 	
 	
 func on_item_picked(pickable_type_key: String):
@@ -863,8 +856,8 @@ func on_item_picked(pickable_type_key: String):
 			yield(get_tree().create_timer(pickable_time), "timeout")
 			side_traction = default_traction
 		"POINTS":
-			points += pickable_value
-			emit_signal("stat_changed", bolt_id, "points", points)
+			self.points += pickable_value
+			# emit_signal("stat_changed", bolt_id, "points", points) ... signal gre iz setget 
 		"RANDOM":
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
@@ -873,6 +866,13 @@ func on_item_picked(pickable_type_key: String):
 			
 			
 # PRIVAT ------------------------------------------------------------------------------------------------
+
+
+func _on_score_points(points_added: int): # setget ob dodajanju točk ... ni samo na "item picked"
+	
+	points += points_added
+	points = clamp(points, 0, points)
+	emit_signal("stat_changed", bolt_id, "points", points)
 
 
 func _on_bolt_rank_changed(new_bolt_rank: int):

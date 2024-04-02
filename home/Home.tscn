@@ -1220,11 +1220,12 @@ align = 1
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 43.0
-margin_bottom = 88.0
+margin_top = 37.0
+margin_bottom = 98.0
 text = "Arrows
-shift
-Ctrl"
+dir: Arrows
+shot: shift
+CHNG: Ctrl"
 align = 1
 uppercase = true
 
@@ -1254,11 +1255,12 @@ align = 1
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb2/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 43.0
-margin_bottom = 88.0
+margin_top = 35.0
+margin_bottom = 96.0
 text = "WASD
-G
-W"
+DIR: WASD
+SHOT: G
+CHNG: W"
 align = 1
 uppercase = true
 
@@ -1288,12 +1290,12 @@ align = 1
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb3/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 43.0
-margin_bottom = 104.0
+margin_top = 35.0
+margin_bottom = 96.0
 text = "Joypad 1
-Dpad
-Y
-A"
+Dir: Dpad
+SHOot: Y
+CHNG: A"
 align = 1
 uppercase = true
 
@@ -1324,12 +1326,12 @@ align = 1
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb4/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 43.0
-margin_bottom = 104.0
+margin_top = 35.0
+margin_bottom = 96.0
 text = "Joypad 2
-Dpad
-Y
-A"
+Dir: Dpad
+SHOot: Y
+CHNG: A"
 align = 1
 uppercase = true
 

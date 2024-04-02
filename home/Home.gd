@@ -1,7 +1,8 @@
 extends Node
 
 	
-var players_in_game: Array
+var players_activated: Array
+var enemies_mode: bool 
 var arena_on = false
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -54,8 +55,6 @@ func _ready() -> void:
 	
 	play_btn.grab_focus()
 	
-	Set.default_game_settings["ai_mode"] = false # temp
-
 
 func _process(delta: float) -> void:
 	
@@ -140,26 +139,26 @@ func _on_players_back_btn_pressed():
 # play
 func _on_ConfirmBtn_2_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.NITRO)
-	Set.game_levels = [Set.Levels.NITRO]
+	Set.current_game_levels = [Set.Levels.NITRO]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_3_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.OSMICA)
-	Set.game_levels = [Set.Levels.OSMICA]
+	Set.current_game_levels = [Set.Levels.OSMICA]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_5_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.DUEL)
-	Set.game_levels = [Set.Levels.DUEL]
+	Set.current_game_levels = [Set.Levels.DUEL]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_7_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.RACE_DIRECT)
-	Set.game_levels = [Set.Levels.RACE_DIRECT]
+	Set.current_game_levels = [Set.Levels.RACE_DIRECT]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_8_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.RACE_SNAKE)
-	Set.game_levels = [Set.Levels.RACE_SNAKE]
+	Set.current_game_levels = [Set.Levels.RACE_SNAKE]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_6_pressed() -> void:
-#	Set.game_levels = [Set.Levels.OSMICA, Set.Levels.NITRO_STRAIGHT]
+#	Set.current_game_levels = [Set.Levels.OSMICA, Set.Levels.NITRO_STRAIGHT]
 	animation_player.play("players_in")
 
 # debug
@@ -176,67 +175,61 @@ func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb/PlayersBtn/Label
 	if button_pressed:
 		btn_label_node.modulate = Color.white
-		players_in_game.append(bolt_to_manage)
+		players_activated.append(bolt_to_manage)
 	else:
-		if players_in_game.has(bolt_to_manage):
-			players_in_game.erase(bolt_to_manage)
+		if players_activated.has(bolt_to_manage):
+			players_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Set.color_gray0
-	print(players_in_game)
 func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Bolts.P2
 	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb2/PlayersBtn/Label
 	if button_pressed:
-		players_in_game.append(bolt_to_manage)
+		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
 	else:
-		if players_in_game.has(bolt_to_manage):
-			players_in_game.erase(bolt_to_manage)
+		if players_activated.has(bolt_to_manage):
+			players_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Set.color_gray0
-	print(players_in_game)
 func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Bolts.P3
 	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb3/PlayersBtn/Label
 	if button_pressed:
-		players_in_game.append(bolt_to_manage)
+		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
 	else:
-		if players_in_game.has(bolt_to_manage):
-			players_in_game.erase(bolt_to_manage)
+		if players_activated.has(bolt_to_manage):
+			players_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Set.color_gray0
-	print(players_in_game)
 func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Bolts.P4
 	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb4/PlayersBtn/Label
 	if button_pressed:
-		players_in_game.append(bolt_to_manage)
+		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
 	else:
-		if players_in_game.has(bolt_to_manage):
-			players_in_game.erase(bolt_to_manage)
+		if players_activated.has(bolt_to_manage):
+			players_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Set.color_gray0
 			
-	print(players_in_game)
 func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
-#	var bolt_to_manage: int = Pro.Bolts.P4
 	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label
 	if button_pressed:
-		Set.default_game_settings["ai_mode"] = true
-#		players_in_game.append(bolt_to_manage)
+		enemies_mode = true
 		btn_label_node.modulate = Color.white
 	else:
-		Set.default_game_settings["ai_mode"] = false
-#		if players_in_game.has(bolt_to_manage):
-#			players_in_game.erase(bolt_to_manage)
+		enemies_mode = false
 		btn_label_node.modulate = Set.color_gray0
 			
-	print(players_in_game)
-	pass # Replace with function body.
-
 func _on_PlayBtn_pressed() -> void:
 	
-	if players_in_game.empty():
+	if players_activated.empty():
 		return
-	Set.bolts_activated = players_in_game
+		
+	# setam vrednost v Set.
+	Set.current_game_settings["enemies_mode"] = enemies_mode # slovar, ki je duplikat in se ustvari na Set. ready
+	Set.players_on_game_start = players_activated
+
+#	Set.bolts_activated = players_in_game
 	Ref.main_node.home_out()
 
 
