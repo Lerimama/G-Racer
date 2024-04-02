@@ -88,6 +88,115 @@ func spawn_new_scene(scene_path, parent_node): # spawn scene
 	print ("SCENE ADDED: ", current_scene)	
 	
 	return current_scene
+	
+	
+	
+
+# BUTTONS --------------------------------------------------------------------------------------------------
+
+# vsak hover, postane focus
+# dodam sounde na focus
+# dodam sounde na confirm, cancel, quit
+# dodam modulate na Checkbutton focus
+
+
+func _on_SceneTree_node_added(node: Control):
+	
+	if node is BaseButton or node is HSlider:
+		connect_to_button(node)
+
+
+func connect_buttons(root: Node): # recursively connect all buttons
+	
+	for child in root.get_children():
+		if child is BaseButton or child is HSlider:
+			connect_to_button(child)
+		connect_buttons(child)
+
+
+func connect_to_button(button):
+	
+	# pressing btnz
+	if button is CheckButton:
+		button.connect("toggled", self, "_on_button_toggled")
+#	else:# not HSlider:
+	elif not button is HSlider:
+		button.connect("pressed", self, "_on_button_pressed", [button])
+	
+	# hover and focus
+	button.connect("mouse_entered", self, "_on_control_hovered", [button])
+	button.connect("focus_entered", self, "_on_control_focused", [button])
+	button.connect("focus_exited", self, "_on_control_unfocused", [button])
+
+
+func _on_button_pressed(button: BaseButton):
+	print("PRESSED ", button)
+	
+	if button.name == "BackBtn":
+		Ref.sound_manager.play_gui_sfx("btn_confirm")
+	elif button.name == "QuitBtn" or button.name == "CancelBtn":
+		Ref.sound_manager.play_gui_sfx("btn_cancel")
+	elif button.name == "ContinueBtn":
+		button.set_disabled(true) # ne dela
+		Ref.sound_manager.play_gui_sfx("btn_confirm")
+	else:
+		Ref.sound_manager.play_gui_sfx("btn_confirm")
+
+	
+func _on_button_toggled(button_pressed: bool) -> void:
+	
+	if button_pressed:
+		Ref.sound_manager.play_gui_sfx("btn_confirm")
+	else:
+		Ref.sound_manager.play_gui_sfx("btn_cancel")
+
+
+func _on_control_hovered(control: Control):
+	
+	if not control.has_focus():		
+		control.grab_focus()
+		Ref.sound_manager.play_gui_sfx("btn_focus_change")
+		
+				
+func _on_control_focused(control: Control):
+	
+	Ref.sound_manager.play_gui_sfx("btn_focus_change")
+	# check btn color fix
+	if control is CheckButton or control is HSlider:
+		control.modulate = Color.white
+
+
+func _on_control_unfocused(control: Control):
+	
+	if control is CheckButton or control is HSlider:
+		control.modulate = Color.red # color_gui_gray # Color.white
+
+
+var allow_focus_sfx: bool = false # focus sounds
+
+func grab_focus_no_sfx(control_to_focus: Control):
+	
+	allow_focus_sfx = false
+	control_to_focus.grab_focus()
+	allow_focus_sfx = true
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 #
 #
 #func switch_to_scene(path):

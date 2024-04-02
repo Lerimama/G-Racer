@@ -81,8 +81,10 @@ func _ready() -> void:
 		background_space.get_node("Zvezde").emitting = true
 	if finish_line.visible:
 		finish_line.monitoring = true
-	if not Ref.game_manager.game_settings["start_countdown"]:	
-		start_lights.hide()
+#	if not Ref.game_manager.game_settings["start_countdown"]:	
+#		start_lights.hide()
+	if start_lights.visible:
+		pass
 		
 		
 	set_level_floor() # luknje
@@ -132,6 +134,7 @@ func set_level_floor():
 
 
 func set_level_elements():
+	
 	if tilemap_elements.get_used_cells().empty():
 		return
 		

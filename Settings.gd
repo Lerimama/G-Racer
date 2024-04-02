@@ -161,7 +161,7 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelRaceSnake.tscn",
 #		"level_scene": preload("res://game/levels/LevelRaceSnake.tscn"),
 		"time_limit": 0,
-		"lap_limit": 1,
+		"lap_limit": 13,
 		},
 	Levels.RACE_NITRO: {
 		"level": Levels.RACE_NITRO,
@@ -184,7 +184,8 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 #var game_levels: Array = []
 var current_level: int
 #var current_game_levels: Array = [Levels.NITRO, Levels.RACE_DIRECT]
-var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_DIRECT]
+var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
+#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_DIRECT]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
@@ -201,27 +202,24 @@ func _ready() -> void:
 #	var debug_level = Levels.TRAINING
 #	var debug_level: int = Levels.DUEL
 #	set_game_settings(debug_level)
-	var current_level = Levels.RACE_SNAKE
+#	var current_level = Levels.RACE_SNAKE
+#	current_level = current_game_levels[0]
 	
+	pass
 	
-func set_game_settings(selected_level_index: int):
+func get_level_game_settings(selected_level_index: int):
 	
-	current_level = current_game_levels[selected_level_index]
 	current_game_settings = default_game_settings.duplicate() # naloži default, potrebne spremeni ob loadanju igre
+	current_level = current_game_levels[selected_level_index]
 	
 	match current_level:
 		Levels.TRAINING: 
-#			current_level_settings = level_settings[Levels.TRAINING]
 			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 		Levels.NITRO: 
-#			current_level_settings = level_settings[Levels.NITRO]
-#			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = false
 		Levels.NITRO_STRAIGHT: 
-#			current_level_settings = level_settings[Levels.NITRO_STRAIGHT]
-#			current_game_settings["start_countdown"] = false
 			current_game_settings["race_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = false
 		Levels.OSMICA: 
@@ -244,7 +242,6 @@ func set_game_settings(selected_level_index: int):
 		Levels.DEBUG_DUEL: 
 			current_level_settings = level_settings[Levels.DEBUG_DUEL]
 			current_game_settings["start_countdown"] = false
-#			current_game_settings["select_feature_mode"] = true			
 			current_game_settings["stopwatch_mode"] = false		
 			current_game_settings["sudden_death_mode"] = true
 			current_game_settings["spawn_pickables_mode"] = true
@@ -253,7 +250,7 @@ func set_game_settings(selected_level_index: int):
 		Levels.RACE_DIRECT: 
 			current_level_settings = level_settings[Levels.RACE_DIRECT]
 			current_game_settings["race_mode"] = true
-			current_game_settings["start_countdown"] = false
+#			current_game_settings["start_countdown"] = false
 		Levels.RACE_CIRCO: 
 			current_level_settings = level_settings[Levels.RACE_CIRCO]
 			current_game_settings["race_mode"] = true
@@ -263,6 +260,7 @@ func set_game_settings(selected_level_index: int):
 		Levels.RACE_SNAKE: 
 			current_level_settings = level_settings[Levels.RACE_SNAKE]
 			current_game_settings["race_mode"] = true
+#			current_game_settings["start_countdown"] = true
 		Levels.RACE_NITRO: 
 			current_level_settings = level_settings[Levels.RACE_NITRO]
 			current_game_settings["race_mode"] = true

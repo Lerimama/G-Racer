@@ -58,11 +58,7 @@ texture = SubResource( 118 )
 [node name="IconEdge" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker" index="0"]
 texture = SubResource( 118 )
 
-[node name="RayCast2D" type="RayCast2D" parent="." index="7"]
-cast_to = Vector2( 24, 0 )
-
-[node name="TiltTimer" type="Timer" parent="." index="8"]
+[node name="TiltTimer" type="Timer" parent="." index="7"]
 one_shot = true
 
 [connection signal="timeout" from="BoltHud/VBoxContainer/FeatSelector/SelectorTimer" to="." method="_on_SelectorTimer_timeout"]
-[connection signal="timeout" from="TiltTimer" to="." method="_on_TiltTimer_timeout"]

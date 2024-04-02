@@ -26,7 +26,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 		
 	# POINT AGING
-	
 	# "points" array je array "vec2" pozicij pik, ki nima pripisane "starosti"
 	# "point_age" je array v katerem ob vsaki kreaciji nove pike, na konec dodamo novo "0" starost ... ostale vrednosti povečamo za "faktor staranja"
 	# "point_age" že po diofoltu vsebuje "0" vrednost (če je ni, se pojavlja error ker ni pike) ... to bi lahko zaobšel, pa nima smisla

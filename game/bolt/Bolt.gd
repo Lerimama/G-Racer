@@ -7,17 +7,17 @@ signal bolt_activity_changed (bolt_is_active)
 
 enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
+
 enum Modes {RACING, FOLLOWING, FIGHTING} # RACING ... kadar šiba proti cilju, FOLLOWING ... kadar sledi gibajoči se tarči, FIGHTING ... kadar želi tarčo zadeti
 var current_mode: int = Modes.RACING
 
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
-
 var bolt_id: int # ga seta spawner
 var bolt_color: Color = Color.white
+
 var acceleration: Vector2
 var velocity: Vector2 = Vector2.ZERO
 var collision: KinematicCollision2D
-
 var axis_distance: float # določen glede na širino sprajta
 var rotation_angle: float
 var rotation_dir: float
@@ -54,12 +54,8 @@ var bolt_on_gravel_count: int = 0
 var bolt_on_tracking_count: int = 0
 
 # fighting
-#var tilt_speed_call: int = 0 
-#var disarray_rotation_dir = 6
 var selected_feat_index: int = 0
 var available_features: Array = [] # feature icons
-
-onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 
 onready var bolt_hud: Node2D = $BoltHud
 onready var bolt_sprite: Sprite = $Bolt
@@ -70,8 +66,8 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
+onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 
-# nodeti
 onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticles: PackedScene = preload("res://game/bolt/EngineParticles.tscn") 
@@ -81,25 +77,25 @@ onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
-# stats
+# basic stats
 onready var player_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
 onready var points: int = player_stats["points"] setget _on_score_points
 onready var wins: int = player_stats["wins"]
 onready var life: int = player_stats["life"]
 onready var energy: float = player_stats["energy"]
 onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
+# weapon stats
 onready var gas_count: float = player_stats["gas_count"]
 onready var bullet_count: float = player_stats["bullet_count"]
 onready var misile_count: float = player_stats["misile_count"]
 onready var mina_count: float = player_stats["mina_count"]
 onready var shocker_count: float = player_stats["shocker_count"]
-
+# race stats
 onready var laps_finished_count: float = player_stats["laps_finished_count"]
 onready var fastest_lap_time: float = player_stats["fastest_lap_time"]
 onready var level_finished_time: float = player_stats["level_finished_time"]
 onready var level_rank: int = player_stats["level_rank"] setget _on_bolt_rank_changed
-# bolt profil
-# default vrednosti, ki jih lahko med igro spreminjam
+# bolt profil ...  default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
 onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
 onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
@@ -125,8 +121,8 @@ var current_lap_time: float # statistika
 
 
 func _ready() -> void:
-
-	printt("BOLT", bolt_id, global_position)
+	
+	printt("BOLT", bolt_id, global_position)#, player_stats)
 	
 	# bolt 
 	add_to_group(Ref.group_bolts)	
@@ -158,7 +154,6 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	
-#	printt("gas_count", gas_count)
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
@@ -186,11 +181,6 @@ func _physics_process(delta: float) -> void:
 	update_player_stats()
 	
 	if Ref.game_manager.game_settings["race_mode"]:
-		#		# poraba bencina
-		#		if current_motion_state == MotionStates.FWD:
-		#			manage_gas(fwd_gas_usage)
-		#		elif current_motion_state == MotionStates.REV:
-		#			manage_gas(rev_gas_usage)
 		
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
@@ -225,24 +215,6 @@ func _exit_tree() -> void:
 		
 	
 # IZ PROCESA ----------------------------------------------------------------------------
-
-
-func update_player_stats():
-	
-	player_stats["points"] = points
-	player_stats["wins"] = wins
-	player_stats["life"] = life
-	player_stats["energy"] = energy
-	player_stats["gas_count"] = gas_count
-	player_stats["bullet_count"] = bullet_count
-	player_stats["misile_count"] = misile_count
-	player_stats["mina_count"] = mina_count
-	player_stats["shocker_count"] = shocker_count
-	
-	player_stats["laps_finished_count"] = laps_finished_count
-	player_stats["fastest_lap_time"] = fastest_lap_time
-	player_stats["level_finished_time"] = level_finished_time
-	player_stats["level_rank"] = level_rank
 
 	
 func on_collision():
@@ -397,11 +369,6 @@ func manage_gas(gas_usage: float):
 	
 	if gas_count == 0: # če zmanjka bencina je deaktiviran
 		self.bolt_active = false
-#		var finish_tween = get_tree().create_tween()
-#		finish_tween.tween_property(self, "velocity", Vector2.ZERO, 1).set_ease(Tween.EASE_OUT).set_delay(1)
-#		finish_tween.parallel().tween_property(self, "engine_power", 0, 1).set_ease(Tween.EASE_OUT).set_delay(1)
-#	if not bolt_active and gas_count > 0: # če med ustavljanjem spet dobi bencin, se aktivira
-#		self.bolt_active = true	
 
 
 func manage_bolt_hud():
@@ -427,6 +394,23 @@ func update_feature_selector():
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMina.get_node("Label").text = "%02d" % mina_count
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
+
+
+func update_player_stats():
+	
+	player_stats["points"] = points
+	player_stats["wins"] = wins
+	player_stats["life"] = life
+	player_stats["energy"] = energy
+	player_stats["gas_count"] = gas_count
+	player_stats["bullet_count"] = bullet_count
+	player_stats["misile_count"] = misile_count
+	player_stats["mina_count"] = mina_count
+	player_stats["shocker_count"] = shocker_count
+	player_stats["laps_finished_count"] = laps_finished_count
+	player_stats["fastest_lap_time"] = fastest_lap_time
+	player_stats["level_finished_time"] = level_finished_time
+	player_stats["level_rank"] = level_rank	
 	
 	
 # LIFE CYCLE ----------------------------------------------------------------------------
@@ -458,7 +442,7 @@ func on_hit(hit_by: Node):
 		else:
 			velocity += hit_by.velocity * hit_by.mass / mass
 		in_disarray(hit_by.hit_damage)
-#
+		
 	elif hit_by.is_in_group(Ref.group_mine):
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		in_disarray(hit_by.hit_damage)
@@ -495,7 +479,6 @@ func on_hit(hit_by: Node):
 
 
 func in_disarray(damage_amount: float): # 5 raketa, 1 metk
-#	damage_amount = 5 # debug
 	
 	current_motion_state = MotionStates.DISARRAY
 	set_process_input(false)		
@@ -894,7 +877,6 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 		deactivate_tween.tween_property(self, "velocity", Vector2.ZERO, deactivate_time) # tajmiram pojemek 
 		deactivate_tween.parallel().tween_property(self, "engine_power", 0, deactivate_time)
 	emit_signal("bolt_activity_changed", self)
-#	printt("bolt_activity_changed", bolt_id, bolt_active) #, player_stats)
 
 
 func _on_shield_animation_finished(anim_name: String) -> void:

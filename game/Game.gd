@@ -7,7 +7,8 @@ onready var game_view_grid: GridContainer = $GameViewGrid
 func _ready() -> void:
 #	print("GAME")
 #	modulate.a = 0
-	Ref.game_manager.set_game()
+#	Ref.game_manager.get_game_settings(0)
+#	Ref.game_manager.set_game()
 	
 	yield(get_tree().create_timer(1), "timeout") # da se kamera centrira (na restart)
 	

@@ -72,13 +72,12 @@ func game_in():
 	get_tree().set_pause(false)
 	
 	
-	if not Set.current_game_levels.empty():
-		Set.set_game_settings(0) # setaš prvi level (ali edini)
-#		Set.set_game_settings(Set.current_game_levels[game_level_index]) # setaš level znotraj igre
-		pass
+#	Set.get_game_settings(0) # setaš prvi level (ali edini)
 		
+#	Set.get_level_game_settings(0) # setaš prvi level
 	Met.spawn_new_scene(game_scene_path, self)
 #	Met.current_scene.modulate = Color.black
+#	Ref.game_manager.call_deferred("set_game")
 #	Ref.game_manager.set_game()
 #	yield(get_tree().create_timer(1), "timeout") # da se kamera centrira (na restart)
 #
@@ -88,16 +87,16 @@ func game_in():
 	
 #	fade_in.tween_callback(Ref.game_manager, "set_game")
 
-var game_level_index: int = 0
-
-func to_next_level(): # reload game scene z neslednjim levelom
-	
-	if game_level_index < Set.current_game_levels.size() - 1:
-		game_level_index += 1
-		reload_game()
-	else:
-		game_level_index = 0		
-		game_over_in()
+#var game_level_index: int = 0
+#
+#func to_next_level(): # reload game scene z neslednjim levelom
+#
+#	if game_level_index < Set.current_game_levels.size() - 1:
+#		game_level_index += 1
+#		reload_game()
+#	else:
+#		game_level_index = 0		
+#		game_over_in()
 	
 	
 #	yield(fade_out, "finished")

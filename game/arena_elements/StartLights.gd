@@ -14,7 +14,9 @@ func _ready() -> void:
 	pass
 	
 func start_countdown():
-	if Ref.game_manager.game_settings["start_countdown"]:
+	
+	if visible:
+#	if Ref.game_manager.game_settings["start_countdown"]:
 		yield(get_tree().create_timer(2), "timeout")
 		$Timer.start()
 		turn_on_light()

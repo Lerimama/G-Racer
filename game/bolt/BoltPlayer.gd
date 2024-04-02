@@ -4,8 +4,6 @@ class_name Player
 
 var player_name: String # za opredelitev statistike
 var controller_profile: Dictionary
-#var tilt_input_time: float = 0.12
-#var tilt_ready: bool
 
 onready var player_profile: Dictionary = Pro.default_player_profiles[bolt_id]
 onready var controller_profiles: Dictionary = Pro.default_controller_actions
@@ -18,9 +16,7 @@ onready var left_action: String = controller_actions["left_action"]
 onready var right_action: String = controller_actions["right_action"]
 onready var shoot_action: String = controller_actions["shoot_action"]
 onready var feature_action: String = controller_actions["feature_action"]
-
 onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
-#onready var tilt_input_timer: Timer = $TiltTimer
 
 # debug
 onready var ray_cast_2d: RayCast2D = $RayCast2D
@@ -35,7 +31,6 @@ func _input(event: InputEvent) -> void:
 	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: # če še ni štartal (drugače bi bila slow start power še defoltna)
 			slow_start_engine_power = 0
-			print("fast start")
 	else:
 		slow_start_engine_power = 0
 		
@@ -80,14 +75,8 @@ func _ready() -> void:
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"]
 	bolt_sprite.modulate = bolt_color
-	
 
 
-
-#func _process(delta: float) -> void:
-#	ray_cast_2d.cast_to = Vector2(velocity.length(),0)
-		
-	
 func _physics_process(delta: float) -> void:
 	
 	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
@@ -104,7 +93,7 @@ func _physics_process(delta: float) -> void:
 
 
 func shoot():
-	selected_feat_index = 2
+#	selected_feat_index = 2
 	match selected_feat_index:
 		0: # no feature
 			return
@@ -154,7 +143,6 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, lead
 	if bolt_trail_active:
 		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false
-		
 
 #	printt ("pre", checkpoints_reached)
 #	if not leader_checkpoints_reached.empty():
@@ -184,9 +172,3 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, lead
 func _on_SelectorTimer_timeout() -> void:
 	
 	feat_selector.hide()
-
-
-func _on_TiltTimer_timeout() -> void:
-
-#	tilt_input_timer.stop()
-	pass

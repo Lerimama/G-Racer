@@ -4,7 +4,8 @@
 [ext_resource path="res://game/arena/Arena.tscn" type="PackedScene" id=4]
 
 [node name="GameView" type="ViewportContainer"]
-margin_right = 640.0
+margin_left = 1.0
+margin_right = 641.0
 margin_bottom = 360.0
 rect_min_size = Vector2( 640, 360 )
 rect_clip_content = true
