@@ -69,10 +69,10 @@ func _ready() -> void:
 		$Comments.hide()
 		$ScreenSize.hide()
 		$Instructions.hide()
-		$RacingLine.hide()
+		racing_line.hide()
 	level_navigation_line.hide()
 	$StartLabel.show()
-	
+
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
 	# kar je skrito, ne deluje

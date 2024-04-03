@@ -28,7 +28,8 @@ func sound_stop_fade_out(sound, fade_time: float):
 	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(sound, "volume_db", -80, fade_time)
 	fade_out.tween_callback(sound, "stop")
-	fade_out.tween_callback(sound, "set_volume_db", [current_sound_volume])
+	yield(fade_out, "finished")
+	sound.volume_db = current_sound_volume
 
 
 func sound_play_fade_in(sound, new_volume: int, fade_time: float):
@@ -45,6 +46,7 @@ func get_random_member(group_of_elements):
 		# printt ("Random:", group_of_elements.size(), selected_int, group_of_elements[selected_int])
 		
 		return group_of_elements[selected_int]
+
 	
 onready var indikator: PackedScene = preload("res://game/DebugIndikator.tscn")
 

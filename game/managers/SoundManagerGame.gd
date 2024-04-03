@@ -1,9 +1,9 @@
 extends Node
 
 
-var game_sfx_set_to_off: bool = false
-var menu_music_set_to_off: bool = false
-var game_music_set_to_off: bool = false
+var sfx_set_to_mute: bool = false
+#var menu_music_set_to_off: bool = false
+var music_set_to_mute: bool = false
 
 var currently_playing_track_index: int = 1 # ga ne resetiraš, da ostane v spominu skozi celo igro
 
@@ -11,7 +11,24 @@ onready var game_music: Node2D = $GameMusic
 #onready var menu_music: AudioStreamPlayer = $Music/MenuMusic/WarmUpShort
 #onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
 
+
+
+func _input(event: InputEvent) -> void:
 	
+	# un/mute
+	if Input.is_action_just_pressed("m"):
+		var bus_index: int = AudioServer.get_bus_index("GameMusic")
+		var is_bus_mute: bool = AudioServer.is_bus_mute(bus_index)
+		AudioServer.set_bus_mute(bus_index, not is_bus_mute)
+		music_set_to_mute = not is_bus_mute
+
+	if Input.is_action_just_pressed("f"):	
+		var bus_index: int = AudioServer.get_bus_index("GameSfx")
+		var is_bus_mute: bool = AudioServer.is_bus_mute(bus_index)
+		AudioServer.set_bus_mute(bus_index, not is_bus_mute)
+		sfx_set_to_mute = not is_bus_mute	
+	
+			
 func _ready() -> void:
 	
 	Ref.sound_manager = self
@@ -25,35 +42,24 @@ onready var music: Node = $Music
 	
 		
 func play_sfx(effect_for: String):
-	return
-	if game_sfx_set_to_off:
-		return	
-		
+	
 	match effect_for:
-		"bolt_engine": 
-			if not $Sfx/BoltEngine.is_playing():
-				$Sfx/BoltEngine.play()
 		"bolt_explode": $Sfx/BoltExplode.play()
 		"bullet_shoot": $Sfx/BulletShoot.play()
 		"bullet_hit": $Sfx/BulletHit.play()
-		"misile_shoot": 
-			$Sfx/MisileFlight.set_volume_db(0)
-			$Sfx/MisileShoot.set_volume_db(0)
-			$Sfx/MisileShoot.play()
 		"misile_explode": 
 			$Sfx/MisileExplode.play()
 			# ustavim, če se pleja ...
-			$Sfx/MisileFlight.set_volume_db(-80)
-			$Sfx/MisileShoot.set_volume_db(-80)
-			$Sfx/MisileFlight.stop()
-			$Sfx/MisileShoot.stop()
+#			$Sfx/MisileFlight.set_volume_db(-80)
+#			$Sfx/MisileShoot.set_volume_db(-80)
+#			$Sfx/MisileFlight.stop()
+#			$Sfx/MisileShoot.stop()
 		"misile_dissarm": 
 			$Sfx/MisileDissarm.play()
-			$Sfx/MisileFlight.set_volume_db(-80)
-			$Sfx/MisileShoot.set_volume_db(-80)
-			$Sfx/MisileFlight.stop()
-			$Sfx/MisileShoot.stop()
-		"mina_shoot": $Sfx/MisileDissarm.play()
+#			$Sfx/MisileFlight.set_volume_db(-80)
+#			$Sfx/MisileShoot.set_volume_db(-80)
+#			$Sfx/MisileFlight.stop()
+#			$Sfx/MisileShoot.stop()
 		"mina_explode": 
 			$Sfx/MisileExplode.play()
 			# ustavim, če se pleja ...
@@ -65,16 +71,9 @@ func play_sfx(effect_for: String):
 		"pickable": $Sfx/Pickable.play()
 		"pickable_weapon": $Sfx/PickableWeapon.play()
 		"pickable_nitro": $Sfx/PickableNitro.play()
-		
-		
+		# events
 		"finish_horn": $Sfx/FinishHorn.play()
-		"stray_step":
-			$GameSfx/StraySlide.play()
-		"blinking": # GM na strays spawn, ker se bolje sliši
-			Met.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
-			Met.get_random_member($GameSfx/BlinkingStatic).play()
-		"thunder_strike": # intro in GM na strays spawn
-			$GameSfx/Burst.play()
+
 
 func stop_sfx(effect_for: String):
 	
@@ -131,46 +130,26 @@ func play_gui_sfx(effect_for: String):
 
 func play_music():
 	
-	if game_music_set_to_off:
-		return
-
 	# set track
 	var current_track: AudioStreamPlayer
-	
-	if Ref.game_manager.level_settings["level"] == Set.Levels.NITRO:
-		print("NITTTTTTTTTTTTTI")
+	if Ref.game_manager.level_settings["level"] == Set.Levels.RACE_NITRO:
 		var nitro_track: AudioStreamPlayer = $"GameMusic/Nitro"
 		current_track = game_music.get_node("Nitro")
 	else:
 		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
 		current_track = game_music.get_child(currently_playing_track_index - 1)
 	
-	# Met.sound_play_fade_in(game_music, 0, 2)
-	current_track.play()	
+	printt("muza", current_track)
+	if not music_set_to_mute:	
+		current_track.play()	
 
 
 func stop_music():
-#func stop_music(stop_reason: String):
 	
 	for music in game_music.get_children():
 		if music.is_playing():
 			Met.sound_stop_fade_out(music, 2)
 			
-#	match stop_reason:
-#		"game_music":
-#			for music in game_music.get_children():
-#				if music.is_playing():
-#					music.stop()
-#		"game_music_on_gameover":
-#			for music in game_music.get_children():
-#				if music.is_playing():
-#					var current_music_volume = music.volume_db
-#					var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-#					fade_out.tween_property(music, "volume_db", -80, 2)
-#					fade_out.tween_callback(music, "stop")
-#					# volume reset
-#					fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
-					
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov
 	
@@ -193,10 +172,3 @@ func skip_track():
 			fade_out.tween_callback(music, "stop")
 			fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
 			fade_out.tween_callback(self, "play_music", ["game_music"])
-
-
-func _on_MisileShoot_finished() -> void:
-	$Sfx/MisileFlight.play()
-	
-	
-	pass # Replace with function body.

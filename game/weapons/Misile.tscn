@@ -1,7 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://game/weapons/Misile.gd" type="Script" id=1]
 [ext_resource path="res://assets/weapons/misile.png" type="Texture" id=2]
+[ext_resource path="res://assets/sound/sfx/misile_shoot.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sound/sfx/misile_flight.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sound/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 2.5, 0.5 )
@@ -45,4 +48,19 @@ position = Vector2( -11, 0 )
 enabled = true
 cast_to = Vector2( 20, 0 )
 
+[node name="Sounds" type="Node" parent="."]
+
+[node name="MisileShoot" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 3 )
+bus = "GameSfx"
+
+[node name="MisileFlight" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 4 )
+bus = "GameSfx"
+
+[node name="MisileDetect" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+bus = "GameSfx"
+
 [connection signal="body_entered" from="HommingArea" to="." method="_on_HommingArea_body_entered"]
+[connection signal="finished" from="Sounds/MisileShoot" to="." method="_on_MisileShoot_finished"]

@@ -34,7 +34,8 @@ func _ready() -> void:
 	
 	drop_direction = -transform.x # rikverc na osi x
 	
-	Ref.sound_manager.play_sfx("mina_shoot")
+#	Ref.sound_manager.play_sfx("mina_shoot")
+	$Sounds/ShockerShoot.play()
 	
 	# drop mine
 	var drop_tween = get_tree().create_tween()

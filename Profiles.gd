@@ -29,25 +29,12 @@ var bolt_profiles: Dictionary = {
 }
 
 
-var enemy_profile: Dictionary = {
-	"aim_time": 1,
-	"seek_rotation_range": 60,
-	"seek_rotation_speed": 3,
-	"seek_distance": 640 * 0.7,
-	"racing_engine_power": 78, # 80 ima skoraj identično hitrost kot plejer
-	"idle_engine_power": 35,
-	"battle_engine_power": 120, # je enaka kot od  bolta 
-	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
-}
-
-
 var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# ex bolt stats
 	"life" : 5,
 	"energy" : 10,
 	"points" : 0,
 	"wins" : 2,
-	"bullet_power" : 0.1,
 	"bullet_count" : 100,
 	"misile_count" : 5,
 	"mina_count" : 3,
@@ -58,6 +45,18 @@ var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"level_finished_time" : 0, # sekunde
 	"level_rank" : 0, 
 	"gas_count": 5000,
+}
+
+
+var enemy_profile: Dictionary = {
+	"aim_time": 1,
+	"seek_rotation_range": 60,
+	"seek_rotation_speed": 3,
+	"seek_distance": 640 * 0.7,
+	"racing_engine_power": 78, # 80 ima skoraj identično hitrost kot plejer
+	"idle_engine_power": 35,
+	"battle_engine_power": 120, # je enaka kot od  bolta 
+	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
 }
 
 

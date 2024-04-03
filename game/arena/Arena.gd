@@ -9,6 +9,8 @@ func _ready() -> void:
 	
 	if not Set.debug_mode:
 		enemy_navigation_line.hide()
-		
-	Ref.node_creation_parent = self
+	
+			
+	Ref.node_creation_parent = $NCP
+#	Ref.node_creation_parent = self
 	print("ARENA")

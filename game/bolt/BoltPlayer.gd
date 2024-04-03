@@ -51,7 +51,7 @@ func _input(event: InputEvent) -> void:
 	# rotation ... rotation_angle se računa na inputu (turn_angle)
 	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
-	# feature select is tilt
+	# feature select
 	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_pressed(feature_action):# and Ref.game_manager.game_settings["full_equip_mode"]:
 			select_feature()
@@ -90,7 +90,7 @@ func _physics_process(delta: float) -> void:
 
 
 func shoot():
-#	selected_feat_index = 2
+	selected_feature_index = 2
 	match selected_feature_index:
 		0: # no feature
 			return
@@ -107,7 +107,7 @@ func shoot():
 func select_feature():
 	
 	# timer setup
-	var selector_timer: Timer = $BoltHud/VBoxContainer/FeatSelector/SelectorTimer
+	var selector_timer: Timer = $BoltHud/VBoxContainer/FeatureSelector/SelectorTimer
 	var selector_visibily_time: float = 1
 	selector_timer.wait_time = selector_visibily_time
 	selector_timer.start()
@@ -118,11 +118,12 @@ func select_feature():
 	selected_feature_index += 1
 	if selected_feature_index > available_features.size(): # reset, če je prevelik
 		selected_feature_index = 1 # 0 je prazen feature
-	
+		
 	# vidnost ikon
 	for feature in available_features:
 		feature.hide() # najprej vse skrijem
 		if feature == available_features[selected_feature_index - 1]: # potem pokažem izbrano .. - 1, ker je 0 prazen feature
+			
 			feature.show()		
 
 

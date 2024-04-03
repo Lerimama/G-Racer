@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/weapons/Bullet.gd" type="Script" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://assets/sound/sfx/misile_shoot.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sound/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=4]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 0.2, 0.1 )
@@ -30,6 +30,6 @@ cast_to = Vector2( 14, 0 )
 
 [node name="Sounds" type="Node" parent="."]
 
-[node name="Shoot" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 3 )
+[node name="BulletShoot" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 4 )
 bus = "GameSfx"

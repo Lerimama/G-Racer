@@ -1,8 +1,6 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=1]
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
-[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=3]
 [ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=4]
 [ext_resource path="res://game/bolt/BoltPlayer.gd" type="Script" id=5]
 
@@ -18,18 +16,6 @@ shader_param/color_to_cut = Color( 1, 1, 1, 1 )
 shader_param/color_intensity = 1.0
 shader_param/texture_size = Vector2( 32, 32 )
 
-[sub_resource type="AtlasTexture" id=121]
-atlas = ExtResource( 3 )
-region = Rect2( 0, 0, 8, 8 )
-
-[sub_resource type="AtlasTexture" id=118]
-atlas = ExtResource( 2 )
-region = Rect2( 48, 8, 8, 8 )
-
-[sub_resource type="AtlasTexture" id=119]
-atlas = ExtResource( 3 )
-region = Rect2( 8, 0, 8, 8 )
-
 [node name="Player" instance=ExtResource( 4 )]
 script = ExtResource( 5 )
 
@@ -39,26 +25,9 @@ material = SubResource( 1 )
 [node name="VBoxContainer" parent="BoltHud" index="0"]
 custom_constants/separation = 3
 
-[node name="FeatSelector" parent="BoltHud/VBoxContainer" index="1"]
+[node name="FeatureSelector" parent="BoltHud/VBoxContainer" index="1"]
 margin_top = 4.0
 margin_bottom = 12.0
 
-[node name="IconBullet" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="0"]
-texture = SubResource( 121 )
-
-[node name="IconEdge" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet" index="0"]
-texture = SubResource( 118 )
-
-[node name="IconMisile" parent="BoltHud/VBoxContainer/FeatSelector/Icons" index="1"]
-texture = SubResource( 119 )
-
-[node name="IconEdge" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile" index="0"]
-texture = SubResource( 118 )
-
-[node name="IconEdge" parent="BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker" index="0"]
-texture = SubResource( 118 )
-
 [node name="TiltTimer" type="Timer" parent="." index="7"]
 one_shot = true
-
-[connection signal="timeout" from="BoltHud/VBoxContainer/FeatSelector/SelectorTimer" to="." method="_on_SelectorTimer_timeout"]

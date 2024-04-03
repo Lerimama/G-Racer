@@ -63,9 +63,6 @@ onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda
 onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
-onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
-onready var feat_selector:  = $BoltHud/VBoxContainer/FeatSelector
 onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 
 onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
@@ -118,6 +115,10 @@ onready var sounds: Node = $Sounds
 # racing
 var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
 var current_lap_time: float # statistika
+# izoliraj
+onready var feat_selector:  = $BoltHud/VBoxContainer/FeatureSelector
+onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
+onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 
 
 func _ready() -> void:
@@ -178,10 +179,10 @@ func _physics_process(delta: float) -> void:
 	
 	manage_motion_states(delta)
 	manage_motion_fx()
+	manage_bolt_hud()
 	update_bolt_stats()
 	
 	if Ref.game_manager.game_settings["race_mode"]:
-		
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
 			selected_feature_index = 1
@@ -193,9 +194,6 @@ func _physics_process(delta: float) -> void:
 			selected_feature_index = 4
 		else:
 			selected_feature_index = 0
-	else:
-		update_feature_selector()
-		manage_bolt_hud()
 
 			
 func _exit_tree() -> void:
@@ -372,7 +370,10 @@ func manage_gas(gas_usage: float):
 
 
 func manage_bolt_hud():
-	
+
+	if Ref.game_manager.game_settings["race_mode"]:
+		return
+			
 	if not bolt_hud.visible:
 		bolt_hud.show()
 		
@@ -386,14 +387,6 @@ func manage_bolt_hud():
 			energy_bar.color = Set.color_red
 		else:
 			energy_bar.color = Set.color_green
-			
-
-func update_feature_selector():
-	
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconBullet.get_node("Label").text = "%02d" % bullet_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMisile.get_node("Label").text = "%02d" % misile_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconMina.get_node("Label").text = "%02d" % mina_count
-	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
 
 
 func update_bolt_stats():
@@ -616,7 +609,6 @@ func spawn_floating_tag(lap_time_seconds: float, best_lap: bool):
 		new_floating_tag.modulate = Set.color_green
 	else:
 		new_floating_tag.modulate = Set.color_red
-	
 	
 		
 # UTILITY ----------------------------------------------------------------------------

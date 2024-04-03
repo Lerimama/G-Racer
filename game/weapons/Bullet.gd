@@ -43,7 +43,8 @@ func _ready() -> void:
 	
 	velocity = direction * speed # velocity is the velocity vector in pixels per second?
 	
-	Ref.sound_manager.play_sfx("bullet_shoot")
+	$Sounds/BulletShoot.play()
+#	Ref.sound_manager.play_sfx("bullet_shoot")
 			
 			
 func _physics_process(delta: float) -> void:

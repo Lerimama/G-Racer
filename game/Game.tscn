@@ -209,26 +209,10 @@ pitch_scale = 0.9
 stream = ExtResource( 34 )
 bus = "GameSfx"
 
-[node name="BulletShoot2" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
-stream = ExtResource( 23 )
-bus = "GameSfx"
-
 [node name="BulletHit" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
 stream = SubResource( 13 )
 volume_db = -15.0
 pitch_scale = 0.7
-bus = "GameSfx"
-
-[node name="MisileShoot" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
-stream = ExtResource( 17 )
-bus = "GameSfx"
-
-[node name="MisileFlight" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
-stream = ExtResource( 14 )
-bus = "GameSfx"
-
-[node name="MisileDetect" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
-stream = ExtResource( 19 )
 bus = "GameSfx"
 
 [node name="MisileExplode" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
@@ -268,4 +252,18 @@ bus = "GameSfx"
 
 [node name="Music" type="Node" parent="SoundManager"]
 
-[connection signal="finished" from="SoundManager/Sfx/MisileShoot" to="SoundManager" method="_on_MisileShoot_finished"]
+[node name="BulletShoot2" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource( 23 )
+bus = "GameSfx"
+
+[node name="MisileShoot" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource( 17 )
+bus = "GameSfx"
+
+[node name="MisileFlight" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource( 14 )
+bus = "GameSfx"
+
+[node name="MisileDetect" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource( 19 )
+bus = "GameSfx"
