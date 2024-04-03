@@ -25,7 +25,7 @@ onready var music: Node = $Music
 	
 		
 func play_sfx(effect_for: String):
-	
+	return
 	if game_sfx_set_to_off:
 		return	
 		

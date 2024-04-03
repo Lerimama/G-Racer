@@ -122,8 +122,8 @@ func _set_spawned_bolt_hud(bolt: KinematicBody2D):
 			stat_lines_owners[bolt.bolt_id] = stat_line_btmR 
 	
 	# data
-	var bolt_stats: Dictionary = bolt.player_stats
-	var player_profiles: Dictionary = Pro.default_player_profiles
+	var bolt_stats: Dictionary = bolt.bolt_stats
+	var player_profiles: Dictionary = Pro.player_profiles
 	
 	current_stat_line.stat_name.modulate = player_profiles[bolt.bolt_id]["player_color"]
 	current_stat_line.stat_name.text = player_profiles[bolt.bolt_id]["player_name"]

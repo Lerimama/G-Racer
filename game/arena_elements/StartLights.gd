@@ -9,14 +9,11 @@ onready var all_lights: Array = [$Light1, $Light2, $Light3]
 
 func _ready() -> void:
 
-#	if not Ref.game_manager.game_settings["start_countdown"]:	
-#		visible = false
 	pass
 	
 func start_countdown():
 	
 	if visible:
-#	if Ref.game_manager.game_settings["start_countdown"]:
 		yield(get_tree().create_timer(2), "timeout")
 		$Timer.start()
 		turn_on_light()

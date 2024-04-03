@@ -1,10 +1,9 @@
 extends Node2D
 
 
-onready var enemy_navigation_line: Line2D = $NavigationPath
-onready var camera_screen_area: Area2D = $ScreenArea
-onready var level_placeholder: Position2D = $LevelPosition
-
+onready var enemy_navigation_line: Line2D = $NavigationPath # greba GM
+onready var camera_screen_area: Area2D = $ScreenArea # greba GM
+onready var level_placeholder: Position2D = $LevelPosition # greba GM
 
 func _ready() -> void:
 	

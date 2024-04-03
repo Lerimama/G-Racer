@@ -18,7 +18,7 @@ func draw_racing_lines():
 	
 func split_line(racing_path: Line2D):
 	
-	var cut_distance: float = 5 # dolžina, ki jo želim med pikami
+	var cut_distance: float = 2 # najmanjša dolžina za razrez
 	var cut_count_limit: int = 1000 # največ tolikokrat razreže vsak segment
 	
 	# za vsako piko v original liniji, razdelim njen vektor do naslednje pike

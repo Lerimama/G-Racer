@@ -50,6 +50,8 @@ position = Vector2( -448, -156 )
 
 [node name="RacingPath" parent="RacingLine" index="0"]
 points = PoolVector2Array( 1568, 1184, 1520, 496, 1432, 384, 1384, 192, 1344, 152, 1256, 160, 1216, 192, 1200, 512, 1208, 656, 1232, 760, 1024, 992, 848, 1112, 742.968, 1112, 640, 984, 640, 704, 720, 664, 720, 400, 672, 312, 176, 272, 131.166, -19.4241, 104, -360 )
+width = 10.0
+default_color = Color( 0.4, 0.501961, 1, 0.431373 )
 
 [node name="RacingPath2" type="Line2D" parent="RacingLine" index="1"]
 position = Vector2( 1, 0 )

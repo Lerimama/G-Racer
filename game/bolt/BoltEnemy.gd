@@ -4,7 +4,7 @@ class_name Enemy
 signal path_changed (path)
 
 var player_name: String # za opredelitev statistike
-var player_profile: Dictionary
+var player_profile: Dictionary = Pro.player_profiles[bolt_id]
 var level_goal_position: Vector2 = Ref.game_manager.level_goal_position
 
 # vision
@@ -28,7 +28,6 @@ onready var idle_engine_power = Pro.enemy_profile["idle_engine_power"]
 func _ready() -> void:
 
 	# player setup
-	player_profile = Pro.default_player_profiles[bolt_id]
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
 	bolt_sprite.modulate = bolt_color

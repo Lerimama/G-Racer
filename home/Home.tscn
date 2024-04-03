@@ -1341,7 +1341,6 @@ anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -160.0
 margin_top = 128.0
-margin_right = 160.0
 margin_bottom = 160.0
 custom_styles/panel = SubResource( 777 )
 
@@ -1354,13 +1353,47 @@ toggle_mode = true
 [node name="Label" type="Label" parent="HomeUI/Players/ItemList/thumb5/EnemiesBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
-margin_top = -1.0
 margin_bottom = 32.0
 custom_fonts/font = ExtResource( 16 )
 text = "ADD AI"
 align = 1
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label"]
+visible = false
+anchor_right = 1.0
+margin_top = 43.0
+margin_bottom = 104.0
+text = "Joypad 2
+Dpad
+Y
+A"
+align = 1
+uppercase = true
+
+[node name="thumb6" type="Panel" parent="HomeUI/Players/ItemList"]
+self_modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -160.0
+margin_top = 128.0
+margin_bottom = 160.0
+custom_styles/panel = SubResource( 777 )
+
+[node name="EasyBtn" type="Button" parent="HomeUI/Players/ItemList/thumb6"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+toggle_mode = true
+
+[node name="Label" type="Label" parent="HomeUI/Players/ItemList/thumb6/EasyBtn"]
+modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
+anchor_right = 1.0
+margin_bottom = 32.0
+custom_fonts/font = ExtResource( 16 )
+text = "ADD AI"
+align = 1
+
+[node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb6/EasyBtn/Label"]
 visible = false
 anchor_right = 1.0
 margin_top = 43.0
@@ -1630,5 +1663,6 @@ pitch_scale = 1.1
 [connection signal="toggled" from="HomeUI/Players/ItemList/thumb3/PlayersBtn" to="." method="_on_PlayersBtn_3_toggled"]
 [connection signal="toggled" from="HomeUI/Players/ItemList/thumb4/PlayersBtn" to="." method="_on_PlayersBtn_4_toggled"]
 [connection signal="toggled" from="HomeUI/Players/ItemList/thumb5/EnemiesBtn" to="." method="_on_EnemiesBtn_5_toggled"]
+[connection signal="toggled" from="HomeUI/Players/ItemList/thumb6/EasyBtn" to="." method="_on_EasyBtn_6_toggled"]
 [connection signal="pressed" from="HomeUI/Players/PlayBtn" to="." method="_on_PlayBtn_pressed"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

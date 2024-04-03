@@ -3,6 +3,7 @@ extends Node
 	
 var players_activated: Array
 var enemies_mode: bool 
+var easy_mode: bool 
 var arena_on = false
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -12,7 +13,6 @@ onready var play_btn: Button = $HomeUI/MainMenu/Menu/PlayBtn
 onready var settings_btn: Button = $HomeUI/MainMenu/Menu/SettingsBtn
 onready var about_btn: Button = $HomeUI/MainMenu/Menu/AboutBtn
 onready var quit_btn: Button = $HomeUI/MainMenu/Menu/QuitBtn
-
 # arena
 onready var generate_arena_btn: Button = $HomeUI/Arena/GenerateBtn
 onready var arena_confirm_btn: Button = $HomeUI/Arena/ConfirmBtn
@@ -22,7 +22,6 @@ onready var arena_world: PackedScene = preload("res://home/ArenaGenerator.tscn")
 onready var arena_view: Panel = $HomeUI/Arena/ArenaView
 onready var new_world # : InstancePlaceholder
 onready var clean_up_btn: Button = $HomeUI/Arena/CleanUpBtn
-
 # backs
 onready var about_back_btn: Button = $HomeUI/About/BackBtn
 onready var settings_back_btn: Button = $HomeUI/Settings/BackBtn
@@ -79,6 +78,10 @@ func _process(delta: float) -> void:
 		$HomeUI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Color.white
 	else:
 		$HomeUI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Set.color_gray0
+	if $HomeUI/Players/ItemList/thumb6/EasyBtn.has_focus():
+		$HomeUI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Color.white
+	else:
+		$HomeUI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Set.color_gray0
 		
 	
 func _on_AnimationPlayer_animation_finished(animation) -> void:
@@ -158,7 +161,7 @@ func _on_ConfirmBtn_8_pressed() -> void:
 	Set.current_game_levels = [Set.Levels.RACE_SNAKE]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_6_pressed() -> void:
-#	Set.current_game_levels = [Set.Levels.OSMICA, Set.Levels.NITRO_STRAIGHT]
+	Set.current_game_levels = [Set.Levels.RACE_DIRECT, Set.Levels.RACE_CIRCO, Set.Levels.RACE_ROUND, Set.Levels.RACE_SNAKE, Set.Levels.RACE_NITRO]
 	animation_player.play("players_in")
 
 # debug
@@ -210,7 +213,6 @@ func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Set.color_gray0
-			
 func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label
 	if button_pressed:
@@ -219,7 +221,14 @@ func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 	else:
 		enemies_mode = false
 		btn_label_node.modulate = Set.color_gray0
-			
+func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
+	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label
+	if button_pressed:
+		easy_mode = true
+		btn_label_node.modulate = Color.white
+	else:
+		easy_mode = false
+		btn_label_node.modulate = Set.color_gray0
 func _on_PlayBtn_pressed() -> void:
 	
 	if players_activated.empty():
@@ -257,6 +266,7 @@ func _on_clean_up_btn_pressed():
 		new_world.cleanup_map()
 func _on_temp_back_btn_pressed():
 	animation_player.play_backwards("start_game")
+
 
 
 

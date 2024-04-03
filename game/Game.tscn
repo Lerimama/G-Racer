@@ -11,7 +11,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_3.wav" type="AudioStream" id=9]
 [ext_resource path="res://game/managers/GameManager.gd" type="Script" id=10]
 [ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=11]
-[ext_resource path="res://game/ui/screens/LevelComplete.tscn" type="PackedScene" id=13]
+[ext_resource path="res://game/ui/screens/LevelFinished.tscn" type="PackedScene" id=13]
 [ext_resource path="res://assets/sound/sfx/misile_flight.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sound/sfx/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=16]
@@ -83,7 +83,7 @@ __meta__ = {
 
 [node name="PauseGame" parent="UI" instance=ExtResource( 7 )]
 
-[node name="LevelCompleted" parent="UI" instance=ExtResource( 13 )]
+[node name="LevelFinished" parent="UI" instance=ExtResource( 13 )]
 
 [node name="GameOver" parent="UI" instance=ExtResource( 3 )]
 

@@ -54,7 +54,7 @@ var bolt_on_gravel_count: int = 0
 var bolt_on_tracking_count: int = 0
 
 # fighting
-var selected_feat_index: int = 0
+var selected_feature_index: int = 0
 var available_features: Array = [] # feature icons
 
 onready var bolt_hud: Node2D = $BoltHud
@@ -78,23 +78,23 @@ onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 # basic stats
-onready var player_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
-onready var points: int = player_stats["points"] setget _on_score_points
-onready var wins: int = player_stats["wins"]
-onready var life: int = player_stats["life"]
-onready var energy: float = player_stats["energy"]
-onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
+onready var bolt_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
+onready var points: int = bolt_stats["points"] setget _on_score_points
+onready var wins: int = bolt_stats["wins"]
+onready var life: int = bolt_stats["life"]
+onready var energy: float = bolt_stats["energy"]
+onready var max_energy: float = bolt_stats["energy"] # zato, da se lahko resetira
 # weapon stats
-onready var gas_count: float = player_stats["gas_count"]
-onready var bullet_count: float = player_stats["bullet_count"]
-onready var misile_count: float = player_stats["misile_count"]
-onready var mina_count: float = player_stats["mina_count"]
-onready var shocker_count: float = player_stats["shocker_count"]
+onready var gas_count: float = bolt_stats["gas_count"]
+onready var bullet_count: float = bolt_stats["bullet_count"]
+onready var misile_count: float = bolt_stats["misile_count"]
+onready var mina_count: float = bolt_stats["mina_count"]
+onready var shocker_count: float = bolt_stats["shocker_count"]
 # race stats
-onready var laps_finished_count: float = player_stats["laps_finished_count"]
-onready var fastest_lap_time: float = player_stats["fastest_lap_time"]
-onready var level_finished_time: float = player_stats["level_finished_time"]
-onready var level_rank: int = player_stats["level_rank"] setget _on_bolt_rank_changed
+onready var laps_finished_count: float = bolt_stats["laps_finished_count"]
+onready var fastest_lap_time: float = bolt_stats["fastest_lap_time"]
+onready var level_finished_time: float = bolt_stats["level_finished_time"]
+onready var level_rank: int = bolt_stats["level_rank"] setget _on_bolt_rank_changed
 # bolt profil ...  default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
 onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
@@ -122,7 +122,7 @@ var current_lap_time: float # statistika
 
 func _ready() -> void:
 	
-	printt("BOLT", bolt_id, global_position)#, player_stats)
+	printt("BOLT", bolt_id, global_position)
 	
 	# bolt 
 	add_to_group(Ref.group_bolts)	
@@ -148,7 +148,7 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
 	available_features.append(feat_selector.get_node("Icons/IconMina"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
-	
+
 	$Sounds/EngineStart.play()
 
 
@@ -178,21 +178,21 @@ func _physics_process(delta: float) -> void:
 	
 	manage_motion_states(delta)
 	manage_motion_fx()
-	update_player_stats()
+	update_bolt_stats()
 	
 	if Ref.game_manager.game_settings["race_mode"]:
 		
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bullet_count > 0:
-			selected_feat_index = 1
+			selected_feature_index = 1
 		elif misile_count > 0:
-			selected_feat_index = 2
+			selected_feature_index = 2
 		elif mina_count > 0:
-			selected_feat_index = 3
+			selected_feature_index = 3
 		elif shocker_count > 0:
-			selected_feat_index = 4
+			selected_feature_index = 4
 		else:
-			selected_feat_index = 0
+			selected_feature_index = 0
 	else:
 		update_feature_selector()
 		manage_bolt_hud()
@@ -396,21 +396,21 @@ func update_feature_selector():
 	$BoltHud/VBoxContainer/FeatSelector/Icons/IconShocker.get_node("Label").text = "%02d" % shocker_count
 
 
-func update_player_stats():
+func update_bolt_stats():
 	
-	player_stats["points"] = points
-	player_stats["wins"] = wins
-	player_stats["life"] = life
-	player_stats["energy"] = energy
-	player_stats["gas_count"] = gas_count
-	player_stats["bullet_count"] = bullet_count
-	player_stats["misile_count"] = misile_count
-	player_stats["mina_count"] = mina_count
-	player_stats["shocker_count"] = shocker_count
-	player_stats["laps_finished_count"] = laps_finished_count
-	player_stats["fastest_lap_time"] = fastest_lap_time
-	player_stats["level_finished_time"] = level_finished_time
-	player_stats["level_rank"] = level_rank	
+	bolt_stats["points"] = points
+	bolt_stats["wins"] = wins
+	bolt_stats["life"] = life
+	bolt_stats["energy"] = energy
+	bolt_stats["gas_count"] = gas_count
+	bolt_stats["bullet_count"] = bullet_count
+	bolt_stats["misile_count"] = misile_count
+	bolt_stats["mina_count"] = mina_count
+	bolt_stats["shocker_count"] = shocker_count
+	bolt_stats["laps_finished_count"] = laps_finished_count
+	bolt_stats["fastest_lap_time"] = fastest_lap_time
+	bolt_stats["level_finished_time"] = level_finished_time
+	bolt_stats["level_rank"] = level_rank	
 	
 	
 # LIFE CYCLE ----------------------------------------------------------------------------
@@ -775,7 +775,7 @@ func on_item_picked(pickable_type_key: String):
 		"BULLET":
 			bullet_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
-			selected_feat_index = 1
+			selected_feature_index = 1
 			
 			if Ref.game_manager.game_settings["race_mode"]:
 				misile_count = 0
@@ -787,7 +787,7 @@ func on_item_picked(pickable_type_key: String):
 		"MISILE":
 			misile_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
-			selected_feat_index = 2
+			selected_feature_index = 2
 			
 			if Ref.game_manager.game_settings["race_mode"]:
 				bullet_count = 0
@@ -799,7 +799,7 @@ func on_item_picked(pickable_type_key: String):
 		"MINA":
 			mina_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
-			selected_feat_index = 3
+			selected_feature_index = 3
 			
 			if Ref.game_manager.game_settings["race_mode"]:
 				bullet_count = 0
@@ -811,7 +811,7 @@ func on_item_picked(pickable_type_key: String):
 		"SHOCKER":
 			shocker_count += pickable_value
 			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
-			selected_feat_index = 4
+			selected_feature_index = 4
 			
 			if Ref.game_manager.game_settings["race_mode"]:
 				bullet_count = 0

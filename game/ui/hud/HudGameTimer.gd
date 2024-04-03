@@ -89,6 +89,7 @@ func _process(delta: float) -> void:
 	
 	
 func start_timer():
+	
 	game_time_limit = Ref.game_manager.level_settings["time_limit"]
 	sudden_death_mode = Ref.game_manager.game_settings["sudden_death_mode"]
 	sudden_death_limit = Ref.game_manager.game_settings["sudden_death_limit"]

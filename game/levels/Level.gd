@@ -24,7 +24,6 @@ onready var finish_line: Area2D = $FinishLine
 onready var start_lights: Node2D = $StartLights
 onready var background_space: Sprite = $BackgroundSpace
 
-# obs
 onready var area_hole_scene: PackedScene = preload("res://game/arena_elements/areas/AreaHole.tscn")	
 
 # sounds
@@ -81,11 +80,6 @@ func _ready() -> void:
 		background_space.get_node("Zvezde").emitting = true
 	if finish_line.visible:
 		finish_line.monitoring = true
-#	if not Ref.game_manager.game_settings["start_countdown"]:	
-#		start_lights.hide()
-	if start_lights.visible:
-		pass
-		
 		
 	set_level_floor() # luknje
 	set_level_elements() # elementi

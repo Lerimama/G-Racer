@@ -87,7 +87,6 @@ func _process(delta: float) -> void:
 	
 func set_game():
 	
-	
 	game_settings = Set.get_level_game_settings(current_game_level_index)
 	spawn_level()
 	Ref.hud.set_hud()
@@ -114,9 +113,10 @@ func set_game():
 			for pos in free_bolt_spawn_position_nodes:
 				current_bolts_activated_ids.append(Pro.Bolts.ENEMY) # da prepoznam v spawn funkciji .... trik pač
 				spawn_bolt(10) # scena, pozicija, profile id (barva, ...)
-	
-	Ref.current_level.start_lights.start_countdown()
-	yield(Ref.current_level.start_lights, "countdown_finished") # sproži ga hud po slide-inu
+
+	Ref.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
+	yield(Ref.current_level.start_lights, "countdown_finished")
+		
 		
 	start_game()
 
@@ -132,8 +132,8 @@ func start_game():
 
 	Ref.hud.on_game_start()
 	
-	if game_settings["spawn_pickables_mode"]:
-		spawn_pickable()
+	if not game_settings["race_mode"]:
+		spawn_pickable() # začetek random spawnanja
 		
 	game_on = true
 	
@@ -156,14 +156,18 @@ func level_finished(level_goal_reached: bool):
 	
 	if level_goal_reached and current_game_level_index < (Set.current_game_levels.size() - 1):
 		var last_finished_time: float # da lahko fajkem za enemija
+		# neuvrščenega enemija uvrstim in mu fejkam čas 
 		for bolt in bolts_in_game:
-			if bolts_across_finish_line.has(bolt):
-				last_finished_time = bolt.level_finished_time # na koncu je time od zadnjega uvrščenega
-			# enemy uspe, če zaključim preden je v cilju
+			if bolts_across_finish_line.has(bolt): # na koncu je time od zadnjega še uvrščenega
+				last_finished_time = bolt.level_finished_time
 			else:
 				if bolt.is_in_group(Ref.group_enemies):	
 					bolt.level_finished_time = last_finished_time + enemy_finish_time_addon
 					bolts_across_finish_line.append(bolt)
+				elif bolt.is_in_group(Ref.group_players) and game_settings["easy_mode"]:	
+					bolts_across_finish_line.append(bolt)
+					
+		# vsi čez finiš line so kvalificirani
 		for bolt in bolts_across_finish_line:
 			qualified_bolts.append(bolt)
 		
@@ -212,7 +216,7 @@ func set_next_level():
 	#	level_start_position = Vector2.ZERO
 	set_game()
 #	qualified_bolts = [] # nujno za set game
-	
+			
 			
 func check_for_level_finished(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
 	
@@ -251,7 +255,7 @@ func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish li
 	# RACE FINISHED
 	# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
 	if bolt_finished.laps_finished_count >= level_settings["lap_limit"]:
-		bolt_finished.player_stats["level_finished_time"] = current_race_time
+		bolt_finished.bolt_stats["level_finished_time"] = current_race_time
 		bolts_across_finish_line.append(bolt_finished) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
 		# deaktiviram plejerja in zabležim statistiko 
 		if bolt_finished.is_in_group(Ref.group_players):
@@ -294,11 +298,11 @@ func spawn_bolt(spawned_bolt_id: int):
 
 	if game_settings["enemies_mode"]:
 		if spawned_bolt_id == 10:
-			NewBolt = Pro.default_player_profiles[Pro.Bolts.ENEMY]["player_scene"]
+			NewBolt = Pro.player_profiles[Pro.Bolts.ENEMY]["player_scene"]
 		else:
-			NewBolt = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
+			NewBolt = Pro.player_profiles[spawned_bolt_id]["player_scene"]
 	else:
-		NewBolt = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
+		NewBolt = Pro.player_profiles[spawned_bolt_id]["player_scene"]
 
 	# za prenos v spawnanega
 	var spawned_bolt_stats: Dictionary 
@@ -314,7 +318,7 @@ func spawn_bolt(spawned_bolt_id: int):
 			# če je bolt_id enak trenutno spawnanemu mu podam pripadajočo statistiko
 			for bolt in qualified_bolts:
 				if bolt.bolt_id == spawned_bolt_id:
-					spawned_bolt_stats = bolt.player_stats
+					spawned_bolt_stats = bolt.bolt_stats
 					current_bolt_rank = spawned_bolt_stats["level_rank"]
 		else: # prvi level ...  default statsi
 			spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
@@ -327,7 +331,7 @@ func spawn_bolt(spawned_bolt_id: int):
 	new_bolt.bolt_id = spawned_bolt_id
 	new_bolt.global_position = current_position_node.global_position
 	new_bolt.rotation_degrees = current_position_node.rotation_degrees# - 90 # ob rotaciji 0 je default je obrnjen navzgor
-	new_bolt.player_stats = spawned_bolt_stats
+	new_bolt.bolt_stats = spawned_bolt_stats
 	Ref.node_creation_parent.add_child(new_bolt)
 	
 	# signali

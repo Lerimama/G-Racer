@@ -2,15 +2,12 @@ extends Node
 
 ## lastnosti entitet, pikablov, boltov, plejerja, ai ...
 
-
+enum Bolts {P1, P2, P3, P4, ENEMY}
 enum BoltTypes {SMALL, BASIC, BIG}
-var current_bolt_type
 
 
 var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
-#		"bolt_texture": preload("res://assets/bolt/bolt.png"),
-#		"bolt_texture": preload("res://assets/bolt/bolt_varz/boltbolt_alter.png"),
 		"bolt_texture": preload("res://assets/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
@@ -28,15 +25,87 @@ var bolt_profiles: Dictionary = {
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
 		"tilt_speed": 150, # trenutno off
-		# v1
-#		"fwd_engine_power": 300, # 1 - 500 konjev 
-#		"rev_engine_power": 150, # 1 - 500 konjev 
-#		"turn_angle": 15, # deg per frame
-#		"free_rotation_multiplier": 15, # rotacija kadar miruje
-#		"drag": 1.0, # 1 - 10 # raste kvadratno s hitrostjo
-#		"side_traction": 0.05, # 0 - 1
-#		"bounce_size": 0.3, # 0 - 1 
 		},
+}
+
+
+var enemy_profile: Dictionary = {
+	"aim_time": 1,
+	"seek_rotation_range": 60,
+	"seek_rotation_speed": 3,
+	"seek_distance": 640 * 0.7,
+	"racing_engine_power": 78, # 80 ima skoraj identično hitrost kot plejer
+	"idle_engine_power": 35,
+	"battle_engine_power": 120, # je enaka kot od  bolta 
+	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
+}
+
+
+var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+	# ex bolt stats
+	"life" : 5,
+	"energy" : 10,
+	"points" : 0,
+	"wins" : 2,
+	"bullet_power" : 0.1,
+	"bullet_count" : 100,
+	"misile_count" : 5,
+	"mina_count" : 3,
+	"shocker_count" : 3,
+	# per level/race
+	"fastest_lap_time" : 0,
+	"laps_finished_count" : 0,
+	"level_finished_time" : 0, # sekunde
+	"level_rank" : 0, 
+	"gas_count": 5000,
+}
+
+
+var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
+	Bolts.P1 : {
+		"player_name" : "Moe",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_01.png"),
+		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+		"controller_profile" : "ARROWS",
+		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
+	},
+	Bolts.P2 : {
+		"player_name" : "Zed",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_02.png"),
+		"player_color" : Set.color_red,
+		"controller_profile" : "WASD",
+		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
+	},
+	Bolts.P3 : {
+		"player_name" : "Dot",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
+		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
+#		"controller_profile" : "ARROWS",
+		"controller_profile" : "WASD",
+#		"controller_profile" : "JP1",
+		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
+	},
+	Bolts.P4 : {
+		"player_name" : "Jax",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
+		"player_color" : Set.color_green,
+		"controller_profile" : "WASD",
+#		"controller_profile" : "JP2",
+#		"controller_profile" : "WASD",
+		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
+	},
+	Bolts.ENEMY : {
+		"player_name" : "Rat",
+		"player_avatar" : preload("res://assets/sprites/avatars/avatar_05.png"),
+		"player_color" : Color.whitesmoke,
+		"controller_profile" : "AI",
+		"bolt_type:": BoltTypes.BASIC,
+		"player_scene": preload("res://game/bolt/BoltEnemy.tscn"),
+	},
 }
 
 
@@ -131,111 +200,6 @@ var pickable_profiles: Dictionary = {
 }
 
 
-enum Bolts {P1, P2, P3, P4, ENEMY}
-
-var default_player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
-	Bolts.P1 : { # ključi bodo kasneje samo indexi
-#	"P1" : { # ključi bodo kasneje samo indexi
-		"player_name" : "Moe",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_01.png"),
-		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
-		"controller_profile" : "ARROWS",
-		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
-	},
-	Bolts.P2 : {
-		"player_name" : "Zed",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_02.png"),
-		"player_color" : Set.color_red,
-		"controller_profile" : "WASD",
-		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
-	},
-	Bolts.P3 : {
-		"player_name" : "Dot",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
-		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
-#		"controller_profile" : "ARROWS",
-		"controller_profile" : "WASD",
-#		"controller_profile" : "JP1",
-		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
-	},
-	Bolts.P4 : {
-		"player_name" : "Jax",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
-		"player_color" : Set.color_green,
-		"controller_profile" : "WASD",
-#		"controller_profile" : "JP2",
-#		"controller_profile" : "WASD",
-		"bolt_type:": BoltTypes.BASIC,
-		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
-	},
-	Bolts.ENEMY : {
-		"player_name" : "Rat",
-		# "player_controller" : "Up/Le/Do/Ri/Al",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_05.png"),
-		"player_color" : Set.color_gray0,
-		"controller_profile" : "AI",
-		"bolt_type:": BoltTypes.BASIC,
-#		"player_scene": preload("res://game/bolt/Enemy.tscn"),
-		"player_scene": preload("res://game/bolt/BoltEnemy.tscn"),
-	},
-}
-
-
-var enemy_profile: Dictionary = {
-	
-	"aim_time": 1,
-	"seek_rotation_range": 60,
-	"seek_rotation_speed": 3,
-	"seek_distance": 640 * 0.7,
-	"racing_engine_power": 78, # 80 ima skoraj identično hitrost kot plejer
-	"idle_engine_power": 35,
-	"battle_engine_power": 120, # je enaka kot od  bolta 
-#	"bullet_push_factor": 0.1,
-#	"misile_push_factor": 0.5,
-	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
-}
-
-#var default_bolt_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
-##	"player_start_position" : Vector2(0, 0),
-#	"life" : 5,
-#	"energy" : 10,
-#	"bullet_power" : 0.1,
-#	"bullet_count" : 100,
-#	"misile_count" : 5,
-#	"mina_count" : 3,
-#	"shocker_count" : 3,
-#	"gas_count" : 500, # 300 je kul
-#}
-
-var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-#var default_player_stats : Dictionary = { # tole ne uporabljam v zadnji varianti
-# statse ima tudi enemy
-#	"player_active" : true,
-#	"player_lap_time" : 0,
-#	"player_laps" : 0,
-#	"player_life" : 5,
-	"points" : 0,
-	"wins" : 2,
-	# ex bolt stats
-	"life" : 5,
-	"energy" : 10,
-	"bullet_power" : 0.1,
-	"bullet_count" : 100,
-	"misile_count" : 5,
-	"mina_count" : 3,
-	"shocker_count" : 3,
-	# per level/race
-	"fastest_lap_time" : 0,
-	"laps_finished_count" : 0,
-	"level_finished_time" : 0, # sekunde
-	"level_rank" : 0, 
-#	"race_time": 0,
-	"gas_count": 5000,
-}
-
 var weapon_profiles : Dictionary = {
 	"bullet": {
 		"reload_time": 0.1,
@@ -271,8 +235,8 @@ var weapon_profiles : Dictionary = {
 	},
 }
 
-# v plejerja pošljem imena akcij iz input mapa
-var default_controller_actions : Dictionary = {
+
+var controller_profiles : Dictionary = {
 	"ARROWS" : {
 		fwd_action = "p1_fwd", 
 		rev_action = "p1_rev",

@@ -5,8 +5,8 @@ class_name Player
 var player_name: String # za opredelitev statistike
 var controller_profile: Dictionary
 
-onready var player_profile: Dictionary = Pro.default_player_profiles[bolt_id]
-onready var controller_profiles: Dictionary = Pro.default_controller_actions
+onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
+onready var controller_profiles: Dictionary = Pro.controller_profiles
 onready var controller_profile_name: String = player_profile["controller_profile"]
 onready var controller_actions: Dictionary = controller_profiles[controller_profile_name]
 
@@ -17,9 +17,6 @@ onready var right_action: String = controller_actions["right_action"]
 onready var shoot_action: String = controller_actions["shoot_action"]
 onready var feature_action: String = controller_actions["feature_action"]
 onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
-
-# debug
-onready var ray_cast_2d: RayCast2D = $RayCast2D
 
 
 func _input(event: InputEvent) -> void:
@@ -56,7 +53,7 @@ func _input(event: InputEvent) -> void:
 	
 	# feature select is tilt
 	if Ref.game_manager.game_settings["race_mode"]:
-		if Input.is_action_pressed(feature_action) and Ref.game_manager.game_settings["full_equip_mode"]:
+		if Input.is_action_pressed(feature_action):# and Ref.game_manager.game_settings["full_equip_mode"]:
 			select_feature()
 	else:
 		if Input.is_action_just_pressed(feature_action):
@@ -94,7 +91,7 @@ func _physics_process(delta: float) -> void:
 
 func shoot():
 #	selected_feat_index = 2
-	match selected_feat_index:
+	match selected_feature_index:
 		0: # no feature
 			return
 		1: # bullet
@@ -109,25 +106,23 @@ func shoot():
 
 func select_feature():
 	
+	# timer setup
 	var selector_timer: Timer = $BoltHud/VBoxContainer/FeatSelector/SelectorTimer
 	var selector_visibily_time: float = 1
 	selector_timer.wait_time = selector_visibily_time
 	selector_timer.start()
 
 	if not feat_selector.visible:
-		feat_selector.show() # samo prižgem
-	#	elif feat_selector.visible: # samo dvignem index
-	#		selected_feat_index += 1
-	selected_feat_index += 1
+		feat_selector.show() # prižgem z ikono trenutnega
+		
+	selected_feature_index += 1
+	if selected_feature_index > available_features.size(): # reset, če je prevelik
+		selected_feature_index = 1 # 0 je prazen feature
 	
-	# reset indexa, če je prevelik
-	if selected_feat_index > available_features.size():
-		selected_feat_index = 1 # 0 je prazen feature
-	
-	# setam vidnost ikon
+	# vidnost ikon
 	for feature in available_features:
 		feature.hide() # najprej vse skrijem
-		if feature == available_features[selected_feat_index - 1]: # potem pokažem izbrano .. - 1, ker je 0 prazen feature
+		if feature == available_features[selected_feature_index - 1]: # potem pokažem izbrano .. - 1, ker je 0 prazen feature
 			feature.show()		
 
 
@@ -163,10 +158,7 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, lead
 #	if Ref.game_manager.current_pull_positions.has(pull_position):
 #		Ref.game_manager.current_pull_positions.erase(pull_position)
 	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) 
-	manage_gas(Ref.game_manager.game_settings["pull_penalty_gas"])
-	
-	
-
+	manage_gas(Ref.game_manager.game_settings["pull_gas_penalty"])
 
 
 func _on_SelectorTimer_timeout() -> void:
