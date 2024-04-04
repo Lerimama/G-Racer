@@ -6,22 +6,16 @@ signal countdown_finished
 var light_index: int = 0
 onready var all_lights: Array = [$Light1, $Light2, $Light3]
 
-
-func _ready() -> void:
-
-	pass
 	
 func start_countdown():
 	
 	if Ref.game_manager.game_settings["start_countdown"]:
 		visible = true
-		yield(get_tree().create_timer(2), "timeout")
 		$Timer.start()
 		turn_on_light()
 	else:
 		visible = false
-		yield(get_tree().create_timer(0.5), "timeout")
-		emit_signal("countdown_finished") # GM yielda za ta signal
+		call_deferred("emit_signal", "countdown_finished") # GM yielda za ta signal
 
 
 func turn_on_light():

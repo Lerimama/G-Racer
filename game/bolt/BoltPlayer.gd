@@ -32,9 +32,9 @@ func _input(event: InputEvent) -> void:
 		slow_start_engine_power = 0
 		
 		
-	if Input.is_action_just_pressed(fwd_action):
-#		$Sounds/EngineRevup.play()
-		pass
+#	if Input.is_action_just_pressed(fwd_action):
+##		$Sounds/EngineRevup.play()
+#		pass
 		
 	if Input.is_action_pressed(fwd_action):
 		# slow start

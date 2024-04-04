@@ -40,7 +40,7 @@ func _ready() -> void:
 
 			
 func _physics_process(delta: float) -> void:
-	printt("Enemy", self)	
+#	printt("Enemy", self)	
 	if not bolt_active:
 		return
 

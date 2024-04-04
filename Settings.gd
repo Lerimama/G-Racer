@@ -44,12 +44,20 @@ var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko š
 	"bouncer_brick_points": 10,
 	"magnet_brick_points": 0,
 	"area_tracking_value": 1, # 1 = 100%
+	# level
+	"gravel_drag_div": 25.0, 
+	"hole_drag_div": 5.0,
+	"nitro_drag_div": 500.0,	
 	
-	"area_gravel_drag_force_div": 25.0, 
-	"area_hole_drag_force_div": 5.0,
-	"area_nitro_drag_force_div": 500.0,
-	"precision_start_drag_force_div": 500.0, # drugam
-	
+#	"area_gravel_drag_force_div": 25.0, 
+#	"area_hole_drag_force_div": 5.0,
+#	"area_nitro_drag_force_div": 500.0,
+##	"precision_start_drag_force_div": 500.0, # drugam
+#
+#	"area_gravel_drag": 6,
+#	"area_hole_drag": 30,
+#	"area_nitro_drag": 0.3,
+#	"precision_start_drag": 0.3,
 	
 	# time
 	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
@@ -165,8 +173,8 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [Levels.RACE_8]
-var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_DIRECT, Levels.RACE_SNAKE]
+#var current_game_levels: Array = [Levels.RACE_SNAKE]
+var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
 #var current_game_levels: Array = [Levels.RACE_ROUND, Levels.RACE_DIRECT]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
@@ -182,13 +190,14 @@ func get_level_game_settings(selected_level_index: int):
 		# racing
 		Levels.RACE_DIRECT: 
 			current_game_settings["race_mode"] = true
-#			current_game_settings["start_countdown"] = true
+			current_game_settings["start_countdown"] = true
 		Levels.RACE_CIRCO: 
 			current_game_settings["race_mode"] = true
 		Levels.RACE_ROUND: 
 			current_game_settings["race_mode"] = true
 		Levels.RACE_SNAKE: 
 			current_game_settings["race_mode"] = true
+#			current_game_settings["start_countdown"] = true
 		Levels.RACE_NITRO: 
 			current_game_settings["race_mode"] = true
 		Levels.RACE_8: 

@@ -106,7 +106,7 @@ onready var mass: float = Pro.bolt_profiles[bolt_type]["mass"]
 onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability"]  # reload def gre v weapons
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
-onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div"] 
+onready var drag_div: float = Pro.bolt_profiles[bolt_type]["drag_div"] 
 
 # neu
 var drive_off: bool = false
@@ -169,13 +169,16 @@ func _physics_process(delta: float) -> void:
 		var max_power_drag_loss: float = 0.0023 # da ni prehitro
 		# max power reached ... drag se konstanto niža, da hitrost raste v neskončnost
 		if current_motion_state == MotionStates.FWD:
-			current_drag -= max_power_drag_loss
-			current_drag = clamp(current_drag, min_drag, current_drag)
+			if drag_div == Pro.bolt_profiles[bolt_type]["drag_div"]:
+				current_drag -= max_power_drag_loss
+				current_drag = clamp(current_drag, min_drag, current_drag)
+			else:
+				current_drag = bolt_drag
 		else:
 			current_drag = bolt_drag
 		# printt ("max power", engine_power, current_drag, bolt_drag, velocity.length())
 		# sila upora raste s hitrostjo		
-		var drag_force = current_drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
+		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
 		acceleration -= drag_force
 		# hitrost je pospešek s časom
 		velocity += acceleration * delta
@@ -762,9 +765,12 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		#		# trajanje
 		#		yield(get_tree().create_timer(nitro_time), "timeout")
 		#		fwd_engine_power = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
-		drag_force_div = Ref.game_manager.game_settings["area_nitro_drag_force_div"]
+		var current_drag_div = drag_div
+		drag_div = Ref.game_manager.game_settings["nitro_drag_div"]
+		#		current_drag = Ref.game_manager.game_settings["area_nitro_drag"]
 		yield(get_tree().create_timer(nitro_time), "timeout")
-		drag_force_div = Pro.bolt_profiles[bolt_type]["drag_force_div"]	
+		#		current_drag = bolt_drag
+		drag_div = current_drag_div
 	
 	
 func on_item_picked(pickable_type_key: String):

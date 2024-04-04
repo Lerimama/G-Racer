@@ -17,11 +17,11 @@ var bolt_profiles: Dictionary = {
 		"rev_engine_power": 150, # 1 - 500 konjev 
 		"turn_angle": 10, # deg per frame
 		"free_rotation_multiplier": 15, # rotacija kadar miruje
-		"side_traction": 0.01, # 0 - 1
+		"side_traction": 0.2, # 0 - 1
 		"bounce_size": 0.5, # 0 - 1 	
 		"mass": 100, # kg
 		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
-		"drag_force_div": 100.0, # večji pomeni nižjo drag force
+		"drag_div": 100.0, # večji pomeni nižjo drag force
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
 		"tilt_speed": 150, # trenutno off
