@@ -99,7 +99,7 @@ onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_pow
 onready var rev_engine_power: int = Pro.bolt_profiles[bolt_type]["rev_engine_power"]
 onready var turn_angle: int = Pro.bolt_profiles[bolt_type]["turn_angle"] # deg per frame
 onready var free_rotation_multiplier: int = Pro.bolt_profiles[bolt_type]["free_rotation_multiplier"] # rotacija kadar miruje
-onready var drag: float = Pro.bolt_profiles[bolt_type]["drag"] # raste kvadratno s hitrostjo
+onready var bolt_drag: float = Pro.bolt_profiles[bolt_type]["drag"] # raste kvadratno s hitrostjo
 onready var side_traction: float = Pro.bolt_profiles[bolt_type]["side_traction"]
 onready var bounce_size: float = Pro.bolt_profiles[bolt_type]["bounce_size"]
 onready var mass: float = Pro.bolt_profiles[bolt_type]["mass"]
@@ -111,6 +111,7 @@ onready var drag_force_div: float = Pro.bolt_profiles[bolt_type]["drag_force_div
 # neu
 var drive_off: bool = false
 var engines_on: bool = false
+var max_power_reached: bool = false
 onready var sounds: Node = $Sounds
 # racing
 var checkpoints_reached: Array # spreminja ga element sam, desežene v trneutnem krogu
@@ -119,7 +120,7 @@ var current_lap_time: float # statistika
 onready var feat_selector:  = $BoltHud/VBoxContainer/FeatureSelector
 onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
-
+var current_drag: float# = bolt_drag
 
 func _ready() -> void:
 	
@@ -129,6 +130,7 @@ func _ready() -> void:
 	add_to_group(Ref.group_bolts)	
 	bolt_sprite.texture = bolt_sprite_texture
 	axis_distance = bolt_sprite_texture.get_width()
+	current_drag = bolt_drag
 
 	set_engines() # postavi partikle za pogon
 	
@@ -158,14 +160,22 @@ func _physics_process(delta: float) -> void:
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
-	
 	# animiran bolt .. sprite se ne rotira z zavijanjem ... # bolt_sprite.rotation = - global_rotation
 
 	if current_motion_state == MotionStates.DISARRAY:
 		rotation_angle = rotation_dir * deg2rad(turn_angle)
 	else:
+		var min_drag: float = 0.5 # testirano, da je ne odnese
+		var max_power_drag_loss: float = 0.0023 # da ni prehitro
+		# max power reached ... drag se konstanto niža, da hitrost raste v neskončnost
+		if current_motion_state == MotionStates.FWD:
+			current_drag -= max_power_drag_loss
+			current_drag = clamp(current_drag, min_drag, current_drag)
+		else:
+			current_drag = bolt_drag
+		# printt ("max power", engine_power, current_drag, bolt_drag, velocity.length())
 		# sila upora raste s hitrostjo		
-		var drag_force = drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
+		var drag_force = current_drag * velocity * velocity.length() / drag_force_div # množenje z velocity nam da obliko vektorja
 		acceleration -= drag_force
 		# hitrost je pospešek s časom
 		velocity += acceleration * delta
@@ -295,10 +305,9 @@ func manage_motion_fx():
 		engine_particles_front_left.set_emitting(true)
 		engine_particles_front_right.modulate.a = velocity.length()/10
 		engine_particles_front_right.set_emitting(true)
-		pass
 	elif current_motion_state == MotionStates.IDLE:
 		if $Sounds/Engine.pitch_scale > 1:
-			engine_pitch_tween.tween_property($Sounds/Engine, "pitch_scale", 1, 0.3)
+			engine_pitch_tween.tween_property($Sounds/Engine, "pitch_scale", 1, 0.2)
 		else:
 			engine_pitch_tween.kill()
 			$Sounds/Engine.pitch_scale = 1

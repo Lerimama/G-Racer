@@ -28,7 +28,7 @@ onready var idle_engine_power = Pro.enemy_profile["idle_engine_power"]
 func _ready() -> void:
 	
 	add_to_group(Ref.group_enemies)
-	
+	 
 	# player setup
 	player_name = player_profile["player_name"]
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 
@@ -40,7 +40,7 @@ func _ready() -> void:
 
 			
 func _physics_process(delta: float) -> void:
-		
+	printt("Enemy", self)	
 	if not bolt_active:
 		return
 

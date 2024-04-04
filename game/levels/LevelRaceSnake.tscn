@@ -62,3 +62,10 @@ antialiased = true
 
 [node name="ScreenSize" parent="." index="11"]
 visible = false
+
+[node name="StartLabel" parent="." index="13"]
+margin_left = 1480.0
+margin_top = 1088.0
+margin_right = 1664.0
+margin_bottom = 1152.0
+text = "ZVITO"

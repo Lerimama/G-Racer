@@ -102,7 +102,7 @@ func set_game():
 		for bolt in qualified_bolts:
 			current_bolts_activated_ids.append(bolt.bolt_id)
 	
-	game_settings["enemies_mode"] = true
+#	game_settings["enemies_mode"] = true
 	# za vsako prazno pozicijo dodam enemy bolt_id 			
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
 		var empty_positions_count = level_bolt_position_nodes.size() - current_bolts_activated_ids.size()
@@ -302,23 +302,17 @@ func spawn_level():
 
 func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
-	var NewBolt: PackedScene # = Pro.default_player_profiles[spawned_bolt_id]["player_scene"]
-
-	NewBolt = Pro.player_profiles[spawned_bolt_id]["player_scene"]
-
-	# za prenos v spawnanega
-	var spawned_bolt_stats: Dictionary 
+	var NewBolt: PackedScene = Pro.player_profiles[spawned_bolt_id]["player_scene"]
+	var spawned_bolt_stats: Dictionary # za prenos v spawnanega
 	
-	# upoštevanje rankinga, če ni prvi level
+	# ni prvi level
 	if current_game_level_index > 0:
-		# najprej se spawnajo kvalificirani
-		if not qualified_bolts.empty():
+		if not qualified_bolts.empty(): # najprej se spawnajo kvalificirani
 			spawned_bolt_stats = qualified_bolts[0].bolt_stats
 			qualified_bolts.pop_front()
-		# potem pa še enemy spawn na prazne pozicije
-		else:
+		else: # potem pa še enemy spawn na prazne pozicije
 			spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
-	else: # prvi level ...  default statsi
+	else: # prvi level
 		spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
 		
 	# bolt stats setup
@@ -370,7 +364,7 @@ func spawn_pickable():
 		# spawn
 		var new_pickable = random_pickable_path.instance()
 		new_pickable.global_position = random_cell_position
-		add_child(new_pickable)
+		Ref.node_creation_parent.add_child(new_pickable)
 		# odstranim celico iz arraya tistih na voljo
 		var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
 		available_pickable_positions.remove(random_cell_position_index)		

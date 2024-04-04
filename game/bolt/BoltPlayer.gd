@@ -42,12 +42,12 @@ func _input(event: InputEvent) -> void:
 			var slow_start_tween = get_tree().create_tween()
 			slow_start_tween.tween_property(self, "slow_start_engine_power", 0, 1).set_ease(Tween.EASE_IN)
 		engine_power = fwd_engine_power - slow_start_engine_power
-
+		
 	elif Input.is_action_pressed(rev_action):
 		engine_power = - rev_engine_power
 	else:			
 		engine_power = 0
-	
+		
 	# rotation ... rotation_angle se računa na inputu (turn_angle)
 	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	

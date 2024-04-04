@@ -146,7 +146,7 @@ func _on_ConfirmBtn_2_pressed() -> void:
 	animation_player.play("players_in")
 func _on_ConfirmBtn_3_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.OSMICA)
-	Set.current_game_levels = [Set.Levels.OSMICA]
+	Set.current_game_levels = [Set.Levels.RACE_8]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_5_pressed() -> void:
 #	Set.set_game_settings(Set.Levels.DUEL)

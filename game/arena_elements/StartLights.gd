@@ -13,11 +13,13 @@ func _ready() -> void:
 	
 func start_countdown():
 	
-	if visible:
+	if Ref.game_manager.game_settings["start_countdown"]:
+		visible = true
 		yield(get_tree().create_timer(2), "timeout")
 		$Timer.start()
 		turn_on_light()
 	else:
+		visible = false
 		yield(get_tree().create_timer(0.5), "timeout")
 		emit_signal("countdown_finished") # GM yielda za ta signal
 
@@ -29,7 +31,6 @@ func turn_on_light():
 		
 		var current_light_to_turn_on: Sprite = all_lights[light_index]
 		# print ("prižigam", current_light_to_turn_on)
-		# Ref.sound_manager.play_gui_sfx("start_countdown_b")
 		
 		var turn_on_tween = get_tree().create_tween()
 		turn_on_tween.tween_property(current_light_to_turn_on, "modulate", Set.color_red, 0.1)
@@ -44,7 +45,6 @@ func turn_on_light():
 func turn_off_all_lights():
 	
 	$Timer.stop()
-	# Ref.sound_manager.play_gui_sfx("start_countdown_a")
 	emit_signal("countdown_finished") # GM yielda za ta signal
 	
 	for light in all_lights:

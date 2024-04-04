@@ -44,15 +44,18 @@ var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko š
 	"bouncer_brick_points": 10,
 	"magnet_brick_points": 0,
 	"area_tracking_value": 1, # 1 = 100%
+	
 	"area_gravel_drag_force_div": 25.0, 
 	"area_hole_drag_force_div": 5.0,
 	"area_nitro_drag_force_div": 500.0,
 	"precision_start_drag_force_div": 500.0, # drugam
+	
+	
 	# time
-	"stopwatch_mode": true,
+	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
 	"game_time_limit": 0, # če je 0 ni omejitve
 	# countdown
-#	"start_countdown": true,
+	"start_countdown": false,
 	"gameover_countdown_duration": 5,
 	# race
 	"race_mode": false, # ranking, gas use, enemy AI
@@ -71,7 +74,7 @@ enum Levels {
 	RACE_DIRECT, RACE_ROUND, RACE_CIRCO, RACE_SNAKE, RACE_NITRO
 	TRAINING, 
 	NITRO, 
-	OSMICA, 
+	RACE_8, 
 	DUEL, 
 	DEBUG_RACE, 
 	DEBUG_DUEL, 
@@ -97,8 +100,8 @@ var level_settings: Dictionary = {
 		"time_limit": 0,
 		"lap_limit": 1,
 		},
-	Levels.OSMICA: {
-		"level": Levels.OSMICA,
+	Levels.RACE_8: {
+		"level": Levels.RACE_8,
 		"level_path": "res://game/levels/Level8.tscn",
 		"time_limit": 0,
 		"lap_limit": 2,
@@ -162,9 +165,9 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [Levels.DUEL]
+#var current_game_levels: Array = [Levels.RACE_8]
 var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_DIRECT, Levels.RACE_SNAKE]
-#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_DIRECT]
+#var current_game_levels: Array = [Levels.RACE_ROUND, Levels.RACE_DIRECT]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
@@ -176,25 +179,10 @@ func get_level_game_settings(selected_level_index: int):
 	var current_level: int = current_game_levels[selected_level_index]
 	
 	match current_level:
-		Levels.TRAINING: 
-			current_game_settings["race_mode"] = true
-		Levels.NITRO: 
-			current_game_settings["race_mode"] = true
-		Levels.NITRO_STRAIGHT: 
-			current_game_settings["race_mode"] = true
-		Levels.OSMICA: 
-			current_game_settings["race_mode"] = true
-		Levels.DUEL: 
-			current_game_settings["sudden_death_mode"] = true
-			current_game_settings["stopwatch_mode"] = false		
-		Levels.DEBUG_RACE: 
-			current_game_settings["race_mode"] = true
-		Levels.DEBUG_DUEL: 
-			current_game_settings["stopwatch_mode"] = false		
-			current_game_settings["sudden_death_mode"] = true
-			
+		# racing
 		Levels.RACE_DIRECT: 
 			current_game_settings["race_mode"] = true
+#			current_game_settings["start_countdown"] = true
 		Levels.RACE_CIRCO: 
 			current_game_settings["race_mode"] = true
 		Levels.RACE_ROUND: 
@@ -203,5 +191,26 @@ func get_level_game_settings(selected_level_index: int):
 			current_game_settings["race_mode"] = true
 		Levels.RACE_NITRO: 
 			current_game_settings["race_mode"] = true
+		Levels.RACE_8: 
+			current_game_settings["race_mode"] = true
+		# duel
+		Levels.DUEL: 
+			current_game_settings["start_countdown"] = false
+			current_game_settings["sudden_death_mode"] = true
+			current_game_settings["stopwatch_mode"] = false		
+		# trening
+		Levels.TRAINING: 
+			current_game_settings["race_mode"] = true
+		
+		Levels.NITRO: 
+			current_game_settings["race_mode"] = true
+		Levels.NITRO_STRAIGHT: 
+			current_game_settings["race_mode"] = true
+		Levels.DEBUG_RACE: 
+			current_game_settings["race_mode"] = true
+		Levels.DEBUG_DUEL: 
+			current_game_settings["stopwatch_mode"] = false		
+			current_game_settings["sudden_death_mode"] = true
+			
 
 	return current_game_settings
