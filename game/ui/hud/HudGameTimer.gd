@@ -12,12 +12,6 @@ var absolute_game_time: float # pozitiven čas igre v sekundah
 var coundown_second: int # za uravnavanje GO odštevanja ... opredeli s v ready
 
 var game_time_limit: int
-#onready var game_time_limit: int = Ref.game_manager.level_settings["time_limit"]
-#onready var sudden_death_mode: int = Ref.game_manager.game_settings["sudden_death_mode"]
-#onready var sudden_death_limit: int = Ref.game_manager.game_settings["sudden_death_limit"]
-#onready var stopwatch_mode: bool = Ref.game_manager.game_settings["stopwatch_mode"]
-#onready var gameover_countdown_duration: int = Ref.game_manager.game_settings["gameover_countdown_duration"] # čas, ko je obarvan in se sliši bip bip
-
 var sudden_death_mode: bool
 var sudden_death_limit: int
 var stopwatch_mode: bool
@@ -25,10 +19,9 @@ var gameover_countdown_duration: int
 
 func _ready() -> void:
 	
-	if game_time_limit == 0:
-		limitless_mode = true
-		stopwatch_mode = true # avtomatično pač ...
-	coundown_second = gameover_countdown_duration
+	# večino setam ob štartu tajmerja
+		
+
 	modulate = Set.color_hud_base
 	# debug
 #	stopwatch_mode = true 
@@ -87,15 +80,25 @@ func _process(delta: float) -> void:
 		else:
 			modulate = Set.color_hud_base
 	
+
+func reset_timer():
+	absolute_game_time = 0
+	modulate = Set.color_hud_base
+
 	
 func start_timer():
-	
+
 	game_time_limit = Ref.game_manager.level_settings["time_limit"]
 	sudden_death_mode = Ref.game_manager.game_settings["sudden_death_mode"]
 	sudden_death_limit = Ref.game_manager.game_settings["sudden_death_limit"]
 	stopwatch_mode = Ref.game_manager.game_settings["stopwatch_mode"]
 	gameover_countdown_duration = Ref.game_manager.game_settings["gameover_countdown_duration"] # čas, ko je obarvan in se sliši bip bip	
-	
+
+	if game_time_limit == 0:
+		limitless_mode = true
+		stopwatch_mode = true # avtomatično pač ...
+	coundown_second = gameover_countdown_duration	
+		
 	# reset vrendosti se zgodi na štart (ne na stop)
 	absolute_game_time = 0
 	current_timer_state = TimerStates.COUNTING

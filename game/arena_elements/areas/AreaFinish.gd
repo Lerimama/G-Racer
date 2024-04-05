@@ -1,10 +1,12 @@
 extends Area2D
 
 
+var drive_out_distance: float
 onready var drive_out_line: Line2D = $DriveOutLine
 
-
 func _ready() -> void:
+	
+	drive_out_distance = global_position.distance_to(drive_out_line.global_position)
 	
 	if not Set.debug_mode:
 		drive_out_line.hide()

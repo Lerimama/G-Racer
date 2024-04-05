@@ -250,7 +250,7 @@ margin_bottom = 8.0
 texture = SubResource( 1 )
 
 [node name="DriveOutLine" type="Line2D" parent="FinishLine"]
-position = Vector2( 0, -128 )
+position = Vector2( 0, -256 )
 points = PoolVector2Array( 0, 0, 144, 0 )
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )

@@ -34,6 +34,8 @@ func _ready() -> void:
 
 func set_hud(): # kliče GM
 	
+	game_timer.reset_timer()
+	
 	var stat_lines: Array = [$StatLineRacer1, $StatLineRacer2, $StatLineRacer3, $StatLineRacer4]
 	for stat_line in stat_lines:
 		# najprej skrijem vse in potem pokažem glede na igro
@@ -77,7 +79,7 @@ func on_game_start():
 
 func on_level_finished():
 	game_timer.stop_timer()
-	hide_stats()
+#	hide_stats()
 	
 	
 	

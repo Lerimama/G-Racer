@@ -53,10 +53,24 @@ var enemy_profile: Dictionary = {
 	"seek_rotation_range": 60,
 	"seek_rotation_speed": 3,
 	"seek_distance": 640 * 0.7,
-	"racing_engine_power": 78, # 80 ima skoraj identično hitrost kot plejer
+	"racing_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	"idle_engine_power": 35,
 	"battle_engine_power": 120, # je enaka kot od  bolta 
 	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
+}
+
+var ai_profile: Dictionary = {
+	# ni še implementiran!!!!!!
+	"ai_brake_distance": 0.8, # množenje s hitrostjo
+	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
+	"racing_engine_power": 78, # 80 ima skoraj identično hitrost kot plejer
+	"idle_engine_power": 35,
+	
+	
+#	"seek_rotation_speed": 3,
+#	"seek_distance": 640 * 0.7,
+#	"battle_engine_power": 120, # je enaka kot od  bolta 
+#	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
 }
 
 

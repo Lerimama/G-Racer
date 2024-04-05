@@ -122,6 +122,8 @@ onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 var current_drag: float# = bolt_drag
 
+
+
 func _ready() -> void:
 	
 	printt("BOLT", bolt_id, global_position)
@@ -152,7 +154,6 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconMina"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 
-	$Sounds/EngineStart.play()
 
 
 func _physics_process(delta: float) -> void:
@@ -527,6 +528,7 @@ func explode():
 
 func lose_life():
 	
+	stop_engines()
 	explode()
 	bolt_collision.disabled = true
 	visible = false
@@ -671,7 +673,29 @@ func set_engines():
 	engine_particles_front_right.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_front_right)
 
-		
+
+func stop_engines():
+
+	engines_on = false
+	
+	if $Sounds/Engine.is_playing():
+		var current_engine_volume: float = $Sounds/Engine.get_volume_db()
+		var engine_stop_tween = get_tree().create_tween()
+		engine_stop_tween.tween_property($Sounds/Engine, "pitch_scale", 0.5, 2)
+		engine_stop_tween.tween_property($Sounds/Engine, "volume_db", -80, 2)
+		yield(engine_stop_tween, "finished")
+		$Sounds/Engine.stop()
+		$Sounds/Engine.volume_db = current_engine_volume
+	$Sounds/EngineRevup.stop()
+	$Sounds/EngineStart.stop()
+	
+	
+func start_engines():
+	
+	engines_on = true
+	$Sounds/EngineStart.play()
+	
+			
 func shooting(weapon: String) -> void:
 	
 	var gun_pos: Vector2 = Vector2(6.5, 0.5)
@@ -692,6 +716,7 @@ func shooting(weapon: String) -> void:
 				bullet_count -= 1
 				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) # do GMa
 				bullet_reloaded = false
+				# printt("SHOOOOT")
 				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
 				bullet_reloaded= true
 		"misile":
@@ -883,6 +908,7 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 		var deactivate_tween = get_tree().create_tween()
 		deactivate_tween.tween_property(self, "velocity", Vector2.ZERO, deactivate_time) # tajmiram pojemek 
 		deactivate_tween.parallel().tween_property(self, "engine_power", 0, deactivate_time)
+		stop_engines()
 	emit_signal("bolt_activity_changed", self)
 	printt("bolt_active", bolt_active, self)
 
@@ -913,6 +939,5 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 
 
 func _on_EngineStart_finished() -> void:
-#	engines_on = true
-#	pass
+	
 	$Sounds/Engine.play()

@@ -68,7 +68,6 @@ cast_to = Vector2( 18, 0 )
 [node name="VisionFront" type="RayCast2D" parent="." index="10"]
 enabled = true
 cast_to = Vector2( 100, 0 )
-collide_with_areas = true
 
 [node name="VisionRear" type="RayCast2D" parent="." index="11"]
 visible = false

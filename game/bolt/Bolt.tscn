@@ -432,7 +432,6 @@ bus = "GameSfx"
 
 [node name="EngineRevup" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 15 )
-volume_db = -10.0
 bus = "GameSfx"
 
 [node name="Engine" type="AudioStreamPlayer" parent="Sounds"]

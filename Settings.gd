@@ -32,8 +32,6 @@ var engine_z_index = -1
 var trail_z_index = -1
 var explosion_z_index = 1
 
-var debug_mode = true
-#var debug_mode = false
 
 var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
 	# bricks and area values ... drugam
@@ -112,7 +110,7 @@ var level_settings: Dictionary = {
 		"level": Levels.RACE_8,
 		"level_path": "res://game/levels/Level8.tscn",
 		"time_limit": 0,
-		"lap_limit": 2,
+		"lap_limit": 1,
 		},
 	Levels.DUEL: {
 		"level": Levels.DUEL,
@@ -173,12 +171,16 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
+#var current_game_levels: Array = [Levels.RACE_8]
 #var current_game_levels: Array = [Levels.RACE_SNAKE]
 var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
 #var current_game_levels: Array = [Levels.RACE_ROUND, Levels.RACE_DIRECT]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
+
+var debug_mode = true
+#var debug_mode = false
 
 func get_level_game_settings(selected_level_index: int):
 	# kliče GM pred spawnanjem levela
@@ -190,7 +192,7 @@ func get_level_game_settings(selected_level_index: int):
 		# racing
 		Levels.RACE_DIRECT: 
 			current_game_settings["race_mode"] = true
-#			current_game_settings["start_countdown"] = true
+			current_game_settings["start_countdown"] = true
 		Levels.RACE_CIRCO: 
 			current_game_settings["race_mode"] = true
 		Levels.RACE_ROUND: 
@@ -221,5 +223,4 @@ func get_level_game_settings(selected_level_index: int):
 			current_game_settings["stopwatch_mode"] = false		
 			current_game_settings["sudden_death_mode"] = true
 			
-
-	return current_game_settings
+	return current_game_settings # pobere GM ob setanju igre

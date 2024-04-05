@@ -72,7 +72,7 @@ func collide():
 	# vision_ray.force_raycast_update() # ni glih učinka
 	var current_collider = vision_ray.get_collider()
 	destroy_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
-	if current_collider.has_method("on_hit"): # parenta exkludam v properties
+	if current_collider.has_method("on_hit") and not current_collider == spawned_by: # parenta exkludam v properties
 		# pošljem kolizijo in node ... tam naredimo isto kot v zgornjem signalu
 		current_collider.on_hit(self)	
 	velocity = Vector2.ZERO

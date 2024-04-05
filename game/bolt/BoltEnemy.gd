@@ -53,16 +53,54 @@ func _physics_process(delta: float) -> void:
 		var next_position: Vector2 = navigation_agent.get_next_location()
 		acceleration = position.direction_to(next_position) * engine_power
 		# navigation_agent.set_velocity(velocity) .. to je za avoidance? # vedno za kustom velocity izračunom
-		# steering(delta) # more bi pred rotacijo, da se upošteva ... ne vem če kaj vpliva
+		steering(delta) # more bi pred rotacijo, da se upošteva ... ne vem če kaj vpliva
 		rotation = velocity.angle()
 		# čekiraj ovire pred sabo
-		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost	
+#		vision_ray_front.cast_to = Vector2(velocity.length(), 0) # zmeraj dolg kot je dolga hitrost	
 
 	collision = move_and_collide(velocity * delta, false)
 	if collision:
 		on_collision()
 
+	vision(delta)
 
+
+func shoot():
+#	selected_feature_index = 1
+	match selected_feature_index:
+		0: # no feature
+			return
+		1: # bullet
+			shooting("bullet")
+		2: # misile
+			shooting("misile")
+		3: # mina
+			shooting("mina")
+		4: # shocker 
+			shooting("shocker")
+			
+			
+func vision(delta: float):
+
+	
+	var ai_brake_factor: float = 0.8 # množenje s hitrostjo
+	var ai_brake_distance: float = 50 # večja ko je, bolj je pazljiv
+	var ai_shoot_distance: float = 100 # najbližja pri kateri še strelja 		
+	# čekiraj ovire pred sabo
+	#		var vision_ray_length: float = ai_shoot_distance #velocity.length()
+	var vision_ray_length: float = velocity.length()
+	vision_ray_front.cast_to = Vector2(vision_ray_length, 0) # zmeraj dolg kot je dolga hitrost
+	if vision_ray_front.is_colliding():
+		var current_collider = vision_ray_front.get_collider()
+		var distance_to_collider: float = global_position.distance_to(current_collider.global_position)
+		if current_collider.is_in_group(Ref.group_players) and distance_to_collider > ai_shoot_distance:
+			selected_feature_index = 1
+			printt("aim_at", current_collider)
+			shoot()
+		velocity *= ai_brake_factor
+		#			print("bremzam", current_collider)
+		
+		
 func manage_modes():
 
 	var bolt_to_follow: KinematicBody2D	
@@ -80,7 +118,6 @@ func manage_modes():
 			seek_ray.cast_to.x = global_position.distance_to(navigation_target_position)
 			seek_ray.look_at(navigation_target_position)
 			engine_power = racing_engine_power	
-
 
 
 func on_checkpoint_reached(checkpoint: Area2D):
@@ -124,9 +161,10 @@ func _on_NavigationAgent2D_path_changed() -> void:
 
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
-	print("_on_NavigationAgent2D_navigation_finished")
+#	print("_on_NavigationAgent2D_navigation_finished")
 	pass
 	
+	
 func _on_NavigationAgent2D_target_reached() -> void:
-	print("_on_NavigationAgent2D_target_reached")
+#	print("_on_NavigationAgent2D_target_reached")
 	pass

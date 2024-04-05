@@ -22,17 +22,15 @@ radius = 56.0
 [node name="Enemy" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
-[node name="Shield" parent="." index="3"]
-visible = false
+[node name="Shield" parent="." index="0"]
 material = SubResource( 1 )
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="7"]
 
 [node name="VisionFront" type="RayCast2D" parent="." index="8"]
-visible = false
 enabled = true
 cast_to = Vector2( 100, 0 )
-collide_with_areas = true
+collide_with_bodies = false
 
 [node name="VisionRear" type="RayCast2D" parent="." index="9"]
 visible = false
@@ -78,6 +76,7 @@ monitorable = false
 polygon = PoolVector2Array( 0, 0, 39.6668, -39.6666, 56, 0, 39.6667, 39.6667 )
 
 [node name="DetectFront" type="Area2D" parent="DetectArea" index="2"]
+monitoring = false
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea/DetectFront" index="0"]
