@@ -45,6 +45,9 @@ var current_pull_positions: Array # že zasedene pozicije za preventanje nalagan
 var enemy_finish_time_addon: float = 32
 # debug
 var position_indikator: Node2D	
+onready var game_cover: Control = $"../UI/GameCover"
+onready var level_finished_ui: Control = $"../UI/LevelFinished"
+onready var game_over_ui: Control = $"../UI/GameOver"
 
 
 func _input(event: InputEvent) -> void:
@@ -69,13 +72,15 @@ func _ready() -> void:
 	Ref.current_level = null # da deluje reštart
 	
 	if intro:
-		get_parent().modulate = Color.black
+		game_cover.show()
+		game_cover.modulate = Color.white
+#		get_parent().modulate = Color.black
 
 	call_deferred("set_game")
 
-	
-func _process(delta: float) -> void:
 
+func _process(delta: float) -> void:
+	
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickables)	
 
@@ -86,14 +91,10 @@ func _process(delta: float) -> void:
 	
 func set_game():
 	
-	print("QUAL", qualified_bolts, current_bolts_activated_ids)
-	if intro:
-		get_parent().modulate = Color.black
-	else:	
-		get_parent().modulate = Color.white	
-	
 	game_settings = Set.get_level_game_settings(current_game_level_index)
+	
 	spawn_level()
+	
 	Ref.hud.set_hud()
 	Ref.node_creation_parent.get_parent().camera_screen_area.connect( "body_exited_screen", self, "_on_body_exited_screen")
 		
@@ -128,9 +129,7 @@ func set_game():
 		if intro:
 			if spawned_position_index < current_bolts_activated_ids.size():
 				spawned_position_index += 1
-#				print("ENA")
 			if spawned_position_index == current_bolts_activated_ids.size():
-#				print("INTRO")
 				game_intro()
 		else:
 			spawned_position_index += 1
@@ -143,16 +142,19 @@ func game_intro():
 	
 	var fade_time = 1
 	var fade_in_tween = get_tree().create_tween()
-	fade_in_tween.tween_property(get_parent(), "modulate", Color.white, 1).from(Color.black).set_delay(1) # delay, da se kamera naštima	
+	fade_in_tween.tween_property(game_cover, "modulate:a", 0, fade_time).set_delay(1) # delay, da se kamera naštima	
 	yield(fade_in_tween, "finished")
+	game_cover.hide()
+	
 	yield(get_tree().create_timer(1),"timeout") # za dojet
 	
 	var drive_in_time: float = 2
 	var drive_index: int = 0 # da ugotovim, kdaj so vsi zapeljani
+	var drive_in_distance: float = 50 # da ugotovim, kdaj so vsi zapeljani
 	for bolt in bolts_in_game:
 		# bolt.bolt_collision.set_disabled(true) # da ga ne moti morebitna stena
 		var orig_position: Vector2 = bolt.global_position
-		bolt.global_position -= 50 * bolt.transform.x
+		bolt.global_position -= drive_in_distance * bolt.transform.x
 		bolt.modulate.a = 1
 		bolt.current_motion_state = bolt.MotionStates.FWD # za fx
 		var intro_drive_tween = get_tree().create_tween()
@@ -196,16 +198,22 @@ func level_finished(level_goal_reached: bool):
 	game_on = false
 
 	Ref.current_camera.follow_target = null
-#	qualified_bolts = []
 	
 	yield(get_tree().create_timer(2), "timeout") # za dojet
 	
+	# bolje ob zatemnitvi ... 
+#	for bolt in bolts_in_game: 
+#		# player se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
+#		# enemy se deaktivira, ko gre čez cilj ... in tukaj
+#		if bolt.bolt_active:
+#			bolt.bolt_active = false
+			
 	if level_goal_reached and current_game_level_index < (Set.current_game_levels.size() - 1):
-		var last_finished_time: float # da lahko fajkem za enemija
+		printt("Level SUCCESS", bolts_across_finish_line.size())
 		# če ni v cilju, ga dodam me tiste v cilju
 		# enemija uvrstim in mu fejkam čas 
 		# plejerja uvrstim če je izi mode 
-		printt("FL", bolts_across_finish_line)
+		var last_finished_time: float # da lahko fajkem za enemija
 		for bolt in bolts_in_game:
 			if bolts_across_finish_line.has(bolt): # na koncu je time od zadnjega še uvrščenega
 				last_finished_time = bolt.level_finished_time
@@ -215,18 +223,24 @@ func level_finished(level_goal_reached: bool):
 					bolts_across_finish_line.append(bolt)
 				elif game_settings["easy_mode"] and bolt.is_in_group(Ref.group_players):	
 					bolts_across_finish_line.append(bolt)
-					
 		# vsi čez finiš line so kvalificirani
 		qualified_bolts = bolts_across_finish_line
+		yield(get_tree().create_timer(2), "timeout") # za dojet
 		
-		Ref.level_completed.open(bolts_across_finish_line, bolts_in_game)
-		printt("Level SUCCESS", bolts_across_finish_line.size())
+		# cover fejd
+		var fade_time = 1
+		var fade_in_tween = get_tree().create_tween()
+		fade_in_tween.tween_callback(game_cover, "show")
+		fade_in_tween.tween_property(game_cover, "modulate:a", 1, fade_time)	
+		yield(fade_in_tween, "finished")
+		# open level_screen
+		level_finished_ui.open(bolts_across_finish_line, bolts_in_game)
+#		Ref.level_completed.open(bolts_across_finish_line, bolts_in_game)
 	else:
-		Ref.game_over.open_gameover(bolts_across_finish_line, bolts_in_game)
 		print("Level FAIL")
+		game_over_ui.open_gameover(bolts_across_finish_line, bolts_in_game)
+#		Ref.game_over.open_gameover(bolts_across_finish_line, bolts_in_game)
 	
-	# level reset
-	#	yield(get_tree().create_timer(1), "timeout") # da se GO do konca prifejda
 	# HUD reset
 	Ref.hud.on_level_finished()
 	# music stop
@@ -298,8 +312,6 @@ func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish li
 		return
 		
 	var time_to_finish: float = 2 # čas za druge, da dosežejo cilj
-	#	var current_race_time: float  = Ref.hud.game_timer.current_game_time # beleženje časa
-	
 	var current_race_time: float  = Ref.hud.game_timer.absolute_game_time # pozitiven game čas v sekundahF
 	
 	# LAP FINISHED
@@ -310,16 +322,27 @@ func on_finish_line_crossed(bolt_finished: KinematicBody2D): # sproži finish li
 		Ref.sound_manager.play_sfx("finish_horn")
 	
 	# RACE FINISHED
-	# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
 	if bolt_finished.laps_finished_count >= level_settings["lap_limit"]:
-		bolt_finished.bolt_stats["level_finished_time"] = current_race_time
+		# če je izpolnil število krogov, ga pripnem, ki tistim ki so končali 
 		bolts_across_finish_line.append(bolt_finished) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
+		bolt_finished.bolt_stats["level_finished_time"] = current_race_time
 		# deaktiviram plejerja in zabležim statistiko 
-		if bolt_finished.is_in_group(Ref.group_players):
-			bolt_finished.bolt_active = false # enemy se disebla ko doseže target
-		elif bolt_finished.is_in_group(Ref.group_enemies):
-			bolt_finished.on_race_finished()
+		bolt_finished.bolt_active = false
+		# drive out
+		bolt_finished.current_motion_state = bolt_finished.MotionStates.FWD # za fx
+		var level_finish_line = Ref.current_level.finish_line
+		var drive_out_time: float = 1
+		var drive_out_distance: float = 128 # črta v finish line 
+		var drive_out_rotation: float = level_finish_line.get_rotation_degrees() - 90
+		var drive_out_position: Vector2 = bolt_finished.global_position - drive_out_distance * level_finish_line.transform.y
+		bolt_finished.bolt_collision.set_disabled(true) # če konča na steni
+		var drive_out_tween = get_tree().create_tween()
+		drive_out_tween.tween_property(bolt_finished, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_CUBIC)
+		drive_out_tween.parallel().tween_property(bolt_finished, "rotation_degrees", drive_out_rotation, drive_out_time/5)
+		drive_out_tween.tween_property(bolt_finished, ",modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
+		# yield(drive_out_tween, "finished")
 	
+
 
 # SPAWNING ---------------------------------------------------------------------------------------------
 

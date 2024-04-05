@@ -12,5 +12,6 @@ func _ready() -> void:
 	
 			
 	Ref.node_creation_parent = $NCP
+#	modulate = Color.black
 #	Ref.node_creation_parent = self
 	print("ARENA")

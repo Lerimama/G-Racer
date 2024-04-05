@@ -12,22 +12,23 @@ anchor_bottom = 1.0
 theme = ExtResource( 6 )
 script = ExtResource( 1 )
 __meta__ = {
+"_edit_horizontal_guides_": [ 180.0 ],
 "_edit_vertical_guides_": [ 320.0 ]
 }
 
 [node name="Panel" type="Panel" parent="."]
-modulate = Color( 1, 1, 1, 0.941176 )
+modulate = Color( 0, 0, 0, 0.941176 )
 margin_right = 640.0
 margin_bottom = 360.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Content" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 27.0
 margin_bottom = -24.0
 custom_constants/separation = 16
 
-[node name="Title" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Title" type="HBoxContainer" parent="Content"]
 margin_left = 172.0
 margin_right = 467.0
 margin_bottom = 64.0
@@ -35,20 +36,20 @@ size_flags_horizontal = 4
 custom_constants/separation = 0
 alignment = 1
 
-[node name="Letter" type="Label" parent="VBoxContainer/Title"]
+[node name="Letter" type="Label" parent="Content/Title"]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 margin_right = 295.0
 margin_bottom = 64.0
 custom_fonts/font = ExtResource( 3 )
 text = "LEVEL OVER"
 
-[node name="Content" type="Control" parent="VBoxContainer"]
+[node name="Summary" type="Control" parent="Content"]
 margin_top = 80.0
 margin_right = 640.0
 margin_bottom = 250.0
 rect_min_size = Vector2( 0, 170 )
 
-[node name="Text" type="Label" parent="VBoxContainer/Content"]
+[node name="Text" type="Label" parent="Content/Summary"]
 visible = false
 margin_left = 224.0
 margin_top = 18.0
@@ -61,13 +62,13 @@ text = "If you're looking for a term that refers specifically."
 align = 1
 autowrap = true
 
-[node name="Results" type="VBoxContainer" parent="VBoxContainer/Content"]
+[node name="Results" type="VBoxContainer" parent="Content/Summary"]
 margin_top = 15.0
 margin_right = 640.0
 margin_bottom = 41.0
 custom_constants/separation = 8
 
-[node name="Title" type="Label" parent="VBoxContainer/Content/Results"]
+[node name="Title" type="Label" parent="Content/Summary/Results"]
 margin_left = 281.0
 margin_right = 359.0
 margin_bottom = 26.0
@@ -75,21 +76,21 @@ size_flags_horizontal = 4
 custom_fonts/font = ExtResource( 2 )
 text = "Results"
 
-[node name="RankingLine" parent="VBoxContainer/Content/Results" instance=ExtResource( 4 )]
+[node name="RankingLine" parent="Content/Summary/Results" instance=ExtResource( 4 )]
 visible = false
 margin_left = 275.0
 margin_top = 34.0
 margin_right = 364.0
 margin_bottom = 47.0
 
-[node name="RankingLine2" parent="VBoxContainer/Content/Results" instance=ExtResource( 4 )]
+[node name="RankingLine2" parent="Content/Summary/Results" instance=ExtResource( 4 )]
 visible = false
 margin_left = 275.0
 margin_top = 55.0
 margin_right = 364.0
 margin_bottom = 68.0
 
-[node name="Menu" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Menu" type="HBoxContainer" parent="Content"]
 margin_left = 234.0
 margin_top = 266.0
 margin_right = 406.0
@@ -97,20 +98,20 @@ margin_bottom = 279.0
 size_flags_horizontal = 4
 custom_constants/separation = 16
 
-[node name="QuitBtn" type="Button" parent="VBoxContainer/Menu"]
+[node name="QuitBtn" type="Button" parent="Content/Menu"]
 margin_right = 106.0
 margin_bottom = 13.0
 size_flags_vertical = 8
 text = "QUIT TO MAIN MENU"
 
-[node name="ContinueBtn" type="Button" parent="VBoxContainer/Menu"]
+[node name="ContinueBtn" type="Button" parent="Content/Menu"]
 margin_left = 122.0
 margin_right = 172.0
 margin_bottom = 13.0
 size_flags_vertical = 8
 text = "CONTINUE"
 
-[node name="QuitGameBtn" type="Button" parent="VBoxContainer/Menu"]
+[node name="QuitGameBtn" type="Button" parent="Content/Menu"]
 visible = false
 margin_left = 188.0
 margin_right = 244.0
@@ -118,6 +119,6 @@ margin_bottom = 13.0
 size_flags_vertical = 8
 text = "QUIT GAME"
 
-[connection signal="pressed" from="VBoxContainer/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
-[connection signal="pressed" from="VBoxContainer/Menu/ContinueBtn" to="." method="_on_ContinueBtn_pressed"]
-[connection signal="pressed" from="VBoxContainer/Menu/QuitGameBtn" to="." method="_on_QuitGameBtn_pressed"]
+[connection signal="pressed" from="Content/Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="Content/Menu/ContinueBtn" to="." method="_on_ContinueBtn_pressed"]
+[connection signal="pressed" from="Content/Menu/QuitGameBtn" to="." method="_on_QuitGameBtn_pressed"]

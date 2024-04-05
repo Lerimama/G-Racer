@@ -82,44 +82,6 @@ func manage_modes():
 			engine_power = racing_engine_power	
 
 
-#		current_ai_state = AIStates.RACING
-#	
-#
-#func manage_ai_states():
-#
-#	enum AIStates {IDLE, RACING, FOLLOWING, FIGHTING} # MONITORING, ATTACKING, SEARCHING, PATROLING, WANDERING, DYING, DISSARAY,	
-#	var current_ai_state: int = AIStates.IDLE	
-#
-#	var bolt_to_follow: KinematicBody2D	
-#
-#	match current_ai_state:
-#		AIStates.IDLE:
-#			seek_ray.enabled = false
-#			bolt_to_follow = null
-#			engine_power = idle_engine_power
-#		AIStates.RACING:
-#			seek_ray.enabled = false
-#			bolt_to_follow = null
-#			# target pošilja GM
-#			seek_ray.cast_to.x = velocity.length()
-#			seek_ray.look_at(Vector2.RIGHT + global_position)
-#			engine_power = 50
-##			engine_power = racing_engine_power
-#		AIStates.FOLLOWING: # plejer je dovlj blizu, da mu sledi
-#			seek_ray.cast_to.x = global_position.distance_to(navigation_target_position)
-#			seek_ray.look_at(navigation_target_position)
-#			engine_power = racing_engine_power	
-
-	
-#func manage_motion_states():
-#
-#	if engine_power > 0:
-#		current_motion_state = MotionStates.FWD
-#	elif engine_power < 0:
-#		current_motion_state = MotionStates.REV
-#	else:
-#		current_motion_state = MotionStates.IDLE
-
 
 func on_checkpoint_reached(checkpoint: Area2D):
 	
@@ -162,9 +124,9 @@ func _on_NavigationAgent2D_path_changed() -> void:
 
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
-#	print("_on_NavigationAgent2D_navigation_finished")
+	print("_on_NavigationAgent2D_navigation_finished")
 	pass
 	
 func _on_NavigationAgent2D_target_reached() -> void:
-#	print("_on_NavigationAgent2D_target_reached")
+	print("_on_NavigationAgent2D_target_reached")
 	pass

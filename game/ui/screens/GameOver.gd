@@ -2,7 +2,7 @@ extends Control
 
 
 onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingLine.tscn")
-
+onready var content: Control = $Content
 
 func _ready() -> void:
 	
@@ -16,7 +16,7 @@ func open_gameover(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 	var background_fadein_transparency: float = 1
 	
-	$VBoxContainer/Menu/RestartBtn.grab_focus()
+	$Content/Menu/RestartBtn.grab_focus()
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_callback(self, "show")
@@ -29,7 +29,7 @@ func open_gameover(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
-	var results: VBoxContainer = $VBoxContainer/Content/Results
+	var results: VBoxContainer = $Content/Summary/Results
 	
 	
 	# uvrščeni
@@ -62,7 +62,7 @@ func _on_RestartBtn_pressed() -> void:
 
 
 func _on_QuitBtn_pressed() -> void:
-	
+	$Content/Menu/QuitBtn.set_disabled(true)	
 	Ref.main_node.game_out()
 
 

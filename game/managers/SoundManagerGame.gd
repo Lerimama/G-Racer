@@ -11,21 +11,21 @@ onready var game_music: Node2D = $GameMusic
 #onready var menu_music: AudioStreamPlayer = $Music/MenuMusic/WarmUpShort
 #onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
 
+onready var music_bus_index: int = AudioServer.get_bus_index("GameMusic")
+onready	var sfx_bus_index: int = AudioServer.get_bus_index("GameSfx")
 
 
 func _input(event: InputEvent) -> void:
 	
 	# un/mute
 	if Input.is_action_just_pressed("m"):
-		var bus_index: int = AudioServer.get_bus_index("GameMusic")
-		var is_bus_mute: bool = AudioServer.is_bus_mute(bus_index)
-		AudioServer.set_bus_mute(bus_index, not is_bus_mute)
+		var is_bus_mute: bool = AudioServer.is_bus_mute(music_bus_index)
+		AudioServer.set_bus_mute(music_bus_index, not is_bus_mute)
 		music_set_to_mute = not is_bus_mute
 
 	if Input.is_action_just_pressed("f"):	
-		var bus_index: int = AudioServer.get_bus_index("GameSfx")
-		var is_bus_mute: bool = AudioServer.is_bus_mute(bus_index)
-		AudioServer.set_bus_mute(bus_index, not is_bus_mute)
+		var is_bus_mute: bool = AudioServer.is_bus_mute(sfx_bus_index)
+		AudioServer.set_bus_mute(sfx_bus_index, not is_bus_mute)
 		sfx_set_to_mute = not is_bus_mute	
 	
 			
@@ -34,6 +34,9 @@ func _ready() -> void:
 	Ref.sound_manager = self
 	randomize()
 
+	# če je bus na štartu setan na mute je mute
+	music_set_to_mute = AudioServer.is_bus_mute(music_bus_index)
+	sfx_set_to_mute = AudioServer.is_bus_mute(sfx_bus_index)	
 	
 # SFX --------------------------------------------------------------------------------------------------------
 	

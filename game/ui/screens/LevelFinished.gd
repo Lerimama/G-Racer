@@ -2,6 +2,8 @@ extends Control
 
 
 onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingLine.tscn")
+onready var content: Control = $Content
+onready var undi: Panel = $Panel
 
 
 func _ready() -> void:
@@ -14,22 +16,17 @@ func open(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 	set_scorelist(bolts_on_finish_line, bolts_on_start)
 	
-	var background_fadein_transparency: float = 1
-	
-	$VBoxContainer/Menu/ContinueBtn.grab_focus()
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_callback(self, "show")
 	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)
-	# fade_in.parallel().tween_callback(Global.sound_manager, "stop_music", ["game_music_on_gameover"])
-	# fade_in.parallel().tween_callback(Global.sound_manager, "play_gui_sfx", [selected_gameover_jingle])
-	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
-#	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)	
+	yield(fade_in, "finished")
+	$Content/Menu/ContinueBtn.grab_focus()
 	
 	
 func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
-	var results: VBoxContainer = $VBoxContainer/Content/Results
+	var results: VBoxContainer = $Content/Summary/Results
 	# če je še od prejšnjega levela
 	if not results.get_children().empty():
 		for result_line in results.get_children():
@@ -62,6 +59,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
 func _on_QuitBtn_pressed() -> void:
 	Ref.main_node.game_out()
+	$Content/Menu/QuitBtn.set_disabled(true)
 
 
 func _on_QuitGameBtn_pressed() -> void:
@@ -69,13 +67,11 @@ func _on_QuitGameBtn_pressed() -> void:
 
 
 func _on_ContinueBtn_pressed() -> void:
+	$Content/Menu/ContinueBtn.set_disabled(true)
 	
 	var fade_out_tween = get_tree().create_tween()
 	fade_out_tween.tween_property(self, "modulate:a", 0, 1)
 	fade_out_tween.tween_callback(self, "hide")
-	# fade_in.parallel().tween_callback(Global.sound_manager, "stop_music", ["game_music_on_gameover"])
-	# fade_in.parallel().tween_callback(Global.sound_manager, "play_gui_sfx", [selected_gameover_jingle])
-#	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
-#	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)	
 	yield(fade_out_tween, "finished")
 	Ref.game_manager.set_next_level()
+	

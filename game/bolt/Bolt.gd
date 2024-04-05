@@ -884,6 +884,7 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 		deactivate_tween.tween_property(self, "velocity", Vector2.ZERO, deactivate_time) # tajmiram pojemek 
 		deactivate_tween.parallel().tween_property(self, "engine_power", 0, deactivate_time)
 	emit_signal("bolt_activity_changed", self)
+	printt("bolt_active", bolt_active, self)
 
 
 func _on_shield_animation_finished(anim_name: String) -> void:

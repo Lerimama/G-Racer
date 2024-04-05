@@ -190,7 +190,7 @@ func get_level_game_settings(selected_level_index: int):
 		# racing
 		Levels.RACE_DIRECT: 
 			current_game_settings["race_mode"] = true
-			current_game_settings["start_countdown"] = true
+#			current_game_settings["start_countdown"] = true
 		Levels.RACE_CIRCO: 
 			current_game_settings["race_mode"] = true
 		Levels.RACE_ROUND: 
