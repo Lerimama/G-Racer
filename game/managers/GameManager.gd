@@ -85,13 +85,21 @@ func _process(delta: float) -> void:
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickables)	
 
-	if game_on: 
-		if game_settings["race_mode"]:
-			get_bolts_ranking()
+#	if game_on: 
+	if game_settings["race_mode"]:
+		get_bolts_ranking()
 	
 	
 func set_game():
 	
+	# debug
+#	if Set.debug_mode:
+#	#	Set.current_game_levels = []
+#	#	Set.current_game_levels = [Levels.RACE_8]
+#	#	Set.current_game_levels = [Levels.RACE_SNAKE]
+#	#	Set.current_game_levels = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
+#		Set.current_game_levels = [Set.Levels.RACE_ROUND, Set.Levels.RACE_DIRECT]
+		
 	game_settings = Set.get_level_game_settings(current_game_level_index)
 	
 	spawn_level()
@@ -104,8 +112,8 @@ func set_game():
 		current_bolts_activated_ids = Set.players_on_game_start
 	elif current_game_level_index == 0 and Set.players_on_game_start.empty(): # debug ... kadar ne štartam igre iz home menija
 #		current_bolts_activated_ids = [Pro.Bolts.P1] 
-#		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2] 	
-		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
+		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2] 	
+#		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY] 
 #		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.ENEMY, Pro.Bolts.P2 ] 
 #		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2,Pro.Bolts.ENEMY, Pro.Bolts.ENEMY] 
 #		current_bolts_activated_ids = [Pro.Bolts.P1, Pro.Bolts.P2, Pro.Bolts.P3, Pro.Bolts.P4]
@@ -119,8 +127,6 @@ func set_game():
 	game_settings["enemies_mode"] = true
 	# za vsako prazno pozicijo dodam enemy bolt_id 			
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
-#		if current_bolts_activated_ids.size() > level_bolt_position_nodes.size():
-#			current_bolts_activated_ids.pop
 		var empty_positions_count = level_bolt_position_nodes.size() - current_bolts_activated_ids.size()
 		for empty_position in empty_positions_count:
 			current_bolts_activated_ids.append(Pro.Bolts.ENEMY) # da prepoznam v spawn funkciji .... trik pač
@@ -136,10 +142,9 @@ func set_game():
 			spawned_position_index += 1
 		if spawned_position_index == current_bolts_activated_ids.size():
 			game_intro()
-		print("IND", spawned_position_index)
+#		print("IND", spawned_position_index)
 #		else:
 #			spawned_position_index += 1
-	
 #	if not intro:
 #		start_game()
 	
@@ -213,8 +218,6 @@ func level_finished(level_goal_reached: bool):
 	
 	yield(get_tree().create_timer(2), "timeout") # za dojet
 	
-	# bolje ob zatemnitvi ... 
-			
 	if level_goal_reached and current_game_level_index < (Set.current_game_levels.size() - 1):
 		printt("Level SUCCESS", bolts_across_finish_line.size())
 		# če ni v cilju, ga dodam me tiste v cilju
@@ -243,6 +246,12 @@ func level_finished(level_goal_reached: bool):
 		level_finished_ui.open(bolts_across_finish_line, bolts_in_game)
 #		Ref.level_completed.open(bolts_across_finish_line, bolts_in_game)
 	else:
+		# cover fejd
+		var fade_time = 1
+		var fade_in_tween = get_tree().create_tween()
+		fade_in_tween.tween_callback(game_cover, "show")
+		fade_in_tween.tween_property(game_cover, "modulate:a", 1, fade_time)	
+		yield(fade_in_tween, "finished")
 		print("Level FAIL")
 		game_over_ui.open_gameover(bolts_across_finish_line, bolts_in_game)
 #		Ref.game_over.open_gameover(bolts_across_finish_line, bolts_in_game)

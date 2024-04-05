@@ -1204,8 +1204,7 @@ custom_styles/panel = SubResource( 777 )
 [node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-focus_neighbour_left = NodePath("../../../BackBtn")
-focus_neighbour_bottom = NodePath("../../thumb5/EnemiesBtn")
+focus_neighbour_top = NodePath("../../../PlayBtn")
 size_flags_horizontal = 3
 toggle_mode = true
 
@@ -1240,7 +1239,7 @@ custom_styles/panel = SubResource( 777 )
 [node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-focus_neighbour_bottom = NodePath("../../thumb5/EnemiesBtn")
+focus_neighbour_top = NodePath("../../../PlayBtn")
 size_flags_horizontal = 3
 toggle_mode = true
 
@@ -1275,7 +1274,7 @@ custom_styles/panel = SubResource( 777 )
 [node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb3"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-focus_neighbour_bottom = NodePath("../../thumb5/EnemiesBtn")
+focus_neighbour_top = NodePath("../../../PlayBtn")
 size_flags_horizontal = 3
 toggle_mode = true
 
@@ -1311,7 +1310,7 @@ custom_styles/panel = SubResource( 777 )
 [node name="PlayersBtn" type="Button" parent="HomeUI/Players/ItemList/thumb4"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-focus_neighbour_bottom = NodePath("../../thumb5/EnemiesBtn")
+focus_neighbour_top = NodePath("../../../PlayBtn")
 size_flags_horizontal = 3
 toggle_mode = true
 
@@ -1355,7 +1354,7 @@ modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_bottom = 32.0
 custom_fonts/font = ExtResource( 16 )
-text = "ADD AI"
+text = "ADD ENEMIES"
 align = 1
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label"]
@@ -1374,8 +1373,8 @@ uppercase = true
 self_modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -160.0
 margin_top = 128.0
+margin_right = 160.0
 margin_bottom = 160.0
 custom_styles/panel = SubResource( 777 )
 
@@ -1390,8 +1389,9 @@ modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_bottom = 32.0
 custom_fonts/font = ExtResource( 16 )
-text = "ADD AI"
+text = "Easy mode"
 align = 1
+uppercase = true
 
 [node name="Txt" type="Label" parent="HomeUI/Players/ItemList/thumb6/EasyBtn/Label"]
 visible = false
@@ -1422,6 +1422,7 @@ margin_top = 274.0
 margin_right = 416.0
 margin_bottom = 300.0
 focus_neighbour_top = NodePath("../ItemList/thumb5/EnemiesBtn")
+focus_neighbour_bottom = NodePath("../ItemList/thumb/PlayersBtn")
 custom_fonts/font = ExtResource( 16 )
 text = "PLAY"
 

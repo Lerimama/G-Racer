@@ -5,7 +5,7 @@ extends Control
 func _input(event: InputEvent) -> void:
 	
 			
-	if Ref.game_manager.game_on:
+#	if Ref.game_manager.game_on:
 		if Input.is_action_just_pressed("ui_cancel"):
 			if not visible:
 				pause_game()

@@ -36,63 +36,63 @@ position = Vector2( 72, 376 )
 rotation = -6.28319
 monitoring = true
 
-[node name="CollisionPolygon2D" parent="FinishLine" index="19"]
+[node name="CollisionPolygon2D" parent="FinishLine" index="1"]
 position = Vector2( 128, 4 )
 shape = SubResource( 2 )
 
-[node name="Sprite19" type="Sprite" parent="FinishLine" index="20"]
+[node name="Sprite19" type="Sprite" parent="FinishLine" index="4"]
 position = Vector2( 148, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite20" type="Sprite" parent="FinishLine" index="21"]
+[node name="Sprite20" type="Sprite" parent="FinishLine" index="5"]
 position = Vector2( 156, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite21" type="Sprite" parent="FinishLine" index="22"]
+[node name="Sprite21" type="Sprite" parent="FinishLine" index="6"]
 position = Vector2( 164, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite22" type="Sprite" parent="FinishLine" index="23"]
+[node name="Sprite22" type="Sprite" parent="FinishLine" index="7"]
 position = Vector2( 172, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite23" type="Sprite" parent="FinishLine" index="24"]
+[node name="Sprite23" type="Sprite" parent="FinishLine" index="8"]
 position = Vector2( 180, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite24" type="Sprite" parent="FinishLine" index="25"]
+[node name="Sprite24" type="Sprite" parent="FinishLine" index="9"]
 position = Vector2( 188, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite25" type="Sprite" parent="FinishLine" index="26"]
+[node name="Sprite25" type="Sprite" parent="FinishLine" index="10"]
 position = Vector2( 196, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite26" type="Sprite" parent="FinishLine" index="27"]
+[node name="Sprite26" type="Sprite" parent="FinishLine" index="11"]
 position = Vector2( 204, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite27" type="Sprite" parent="FinishLine" index="28"]
+[node name="Sprite27" type="Sprite" parent="FinishLine" index="12"]
 position = Vector2( 212, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite28" type="Sprite" parent="FinishLine" index="29"]
+[node name="Sprite28" type="Sprite" parent="FinishLine" index="13"]
 position = Vector2( 220, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite29" type="Sprite" parent="FinishLine" index="30"]
+[node name="Sprite29" type="Sprite" parent="FinishLine" index="14"]
 position = Vector2( 228, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite30" type="Sprite" parent="FinishLine" index="31"]
+[node name="Sprite30" type="Sprite" parent="FinishLine" index="15"]
 position = Vector2( 236, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite31" type="Sprite" parent="FinishLine" index="32"]
+[node name="Sprite31" type="Sprite" parent="FinishLine" index="16"]
 position = Vector2( 244, 4 )
 texture = SubResource( 1 )
 
-[node name="Sprite32" type="Sprite" parent="FinishLine" index="33"]
+[node name="Sprite32" type="Sprite" parent="FinishLine" index="17"]
 position = Vector2( 252, 4 )
 texture = SubResource( 1 )
 
@@ -129,7 +129,6 @@ scale = Vector2( 0.999292, 1 )
 points = PoolVector2Array( 303.215, 376, 303.215, 336, 359.254, 304, 767.543, 304, 1077.31, 304, 1111.79, 336, 1097.27, 568.082, 1023.72, 600, 919.651, 600 )
 width = 10.0
 default_color = Color( 0.4, 0.501961, 1, 0.145098 )
-antialiased = true
 
 [node name="RacingPath2" type="Line2D" parent="RacingLine" index="1"]
 position = Vector2( 1, 0 )
@@ -161,5 +160,5 @@ margin_left = 38.0
 margin_top = 272.0
 margin_right = 358.0
 margin_bottom = 351.0
-text = "BENCIN 
+text = "BENCIN
 NITRO"

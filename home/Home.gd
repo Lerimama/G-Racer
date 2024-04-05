@@ -224,7 +224,7 @@ func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 		enemies_mode = false
 		btn_label_node.modulate = Set.color_gray0
 func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label
+	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb6/EasyBtn/Label
 	if button_pressed:
 		easy_mode = true
 		btn_label_node.modulate = Color.white

@@ -182,6 +182,8 @@ var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
 var debug_mode = true
 #var debug_mode = false
 
+	
+	
 func get_level_game_settings(selected_level_index: int):
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
