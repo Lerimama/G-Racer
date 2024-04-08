@@ -4,27 +4,52 @@ signal level_navigation_finished(navigation)
 signal level_is_set(navigation, spawn_positions, other_)
 
 
+var single_tile_offset: Vector2 = Vector2(4,4)
+var double_tile_offset: Vector2 = Vector2(8,8)
+	
 # navigacija
 var navigation_cells: Array
 var navigation_cells_positions: Array
-var checkpoints_count: int
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
-onready var racing_navigation_agent: NavigationAgent2D = $Positions/StartPosition/NavigationAgent2D
+onready var level_navigation_line: Line2D = $LevelNavigationLine # zaenkrat ne uporabljam
+onready var racing_navigation_agent: NavigationAgent2D = $StartPosition/NavigationAgent2D
 
 # tilemaps
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
 
-# level elements
-onready var level_navigation_line: Line2D = $LevelNavigationLine # zaenkrat ne uporabljam
-onready var position_nodes: Array = $Positions.get_children()
-onready var racing_line: Node2D = $RacingLine
-onready var finish_line: Area2D = $FinishLine
+# level
+var checkpoints_count: int
+#onready var position_nodes: Array = $Positions.get_children()
 onready var start_lights: Node2D = $StartLights
+onready var checkpoints: Node2D = $Checkpoints
+onready var finish_line: Area2D = $FinishLine
+onready var racing_line: Node2D = $RacingLine
 onready var background_space: Sprite = $BackgroundSpace
 
-onready var area_hole_scene: PackedScene = preload("res://game/arena_elements/areas/AreaHole.tscn")	
+# floor
+onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
+onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
+onready var AreaHole: PackedScene = preload("res://game/arena_elements/areas/AreaHole.tscn")	
+# elements
+onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
+onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
+onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
+onready var BrickTarget: PackedScene = preload("res://game/arena_elements/bricks/BrickTarget.tscn")
+onready var BrickLight: PackedScene = preload("res://game/arena_elements/bricks/BrickLight.tscn")
+onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
+onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
+onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
+onready var PickableShocker: PackedScene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
+onready var PickableShield: PackedScene = Pro.pickable_profiles["SHIELD"]["scene_path"]
+onready var PickableEnergy: PackedScene = Pro.pickable_profiles["ENERGY"]["scene_path"]
+onready var PickableLife: PackedScene = Pro.pickable_profiles["LIFE"]["scene_path"]
+onready var PickableNitro: PackedScene = Pro.pickable_profiles["NITRO"]["scene_path"]
+onready var PickableTracking: PackedScene = Pro.pickable_profiles["TRACKING"]["scene_path"]
+onready var PickableRandom: PackedScene = Pro.pickable_profiles["RANDOM"]["scene_path"]
+onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"]
+onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
 
 # sounds
 onready var sounds: Node = $Sounds
@@ -38,28 +63,11 @@ onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
 onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
 onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
-# elements
-onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
-onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
-onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
-onready var BrickTarget: PackedScene = preload("res://game/arena_elements/bricks/BrickTarget.tscn")
-onready var BrickLight: PackedScene = preload("res://game/arena_elements/bricks/BrickLight.tscn")
-onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
-onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
-onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
-onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
-onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
-onready var PickableShocker: PackedScene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
-onready var PickableShield: PackedScene = Pro.pickable_profiles["SHIELD"]["scene_path"]
-onready var PickableEnergy: PackedScene = Pro.pickable_profiles["ENERGY"]["scene_path"]
-onready var PickableLife: PackedScene = Pro.pickable_profiles["LIFE"]["scene_path"]
-onready var PickableNitro: PackedScene = Pro.pickable_profiles["NITRO"]["scene_path"]
-onready var PickableTracking: PackedScene = Pro.pickable_profiles["TRACKING"]["scene_path"]
-onready var PickableRandom: PackedScene = Pro.pickable_profiles["RANDOM"]["scene_path"]
-onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"]
-onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
-	
-	
+#neu
+onready var start_position_node: Position2D = $StartPosition
+onready var goal_position_node: Position2D = $GoalPosition
+onready var spawn_position_nodes: Node2D = $Positions
+
 	
 func _ready() -> void:
 	# debug
@@ -80,6 +88,12 @@ func _ready() -> void:
 		background_space.get_node("Zvezde").emitting = true
 	if finish_line.visible:
 		finish_line.monitoring = true
+	if checkpoints.visible:
+		checkpoints_count = checkpoints.get_child_count()
+		for checkpoint in checkpoints.get_children():
+			checkpoint.monitoring = true
+	else: 
+		checkpoints_count = 0
 		
 	set_level_floor() # luknje
 	set_level_elements() # elementi
@@ -90,7 +104,7 @@ func _ready() -> void:
 
 func get_navigation_racing_line():
 	
-	racing_navigation_agent.set_target_location(position_nodes[5].global_position)
+	racing_navigation_agent.set_target_location(goal_position_node.global_position)
 	level_navigation_line.points = racing_navigation_agent.get_nav_path()
 
 	
@@ -101,30 +115,35 @@ func _physics_process(delta: float) -> void:
 	
 func on_all_is_set():
 	
-	emit_signal("level_is_set", position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
+
+	#	emit_signal("level_is_set", position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
+	emit_signal("level_is_set", navigation_cells, navigation_cells_positions)
 
 
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
 
 		
 func set_level_floor():
-	# poberi vse celice podna, tudi prazne
-	# vsem praznim pripiši luknjo
-	# vse ostale so background	
 	
-	var floor_cells = get_tilemap_cells(tilemap_floor)
-	
-	if floor_cells.empty(): # če je prazen se navigacija ne seta
-		return
+			
+	for cell in tilemap_floor.get_used_cells():
 		
-	for cell in floor_cells:
 		var cell_index = tilemap_floor.get_cellv(cell)
-		var cell_local_position = tilemap_floor.map_to_world(cell)
-		var cell_global_position = tilemap_floor.to_global(cell_local_position)
 		
-		if cell_index == -1:
-			spawn_hole(cell_global_position)
-			non_navigation_cell_positions.append(cell_global_position)
+		var cell_local_position = tilemap_floor.map_to_world(cell)
+		var cell_global_position = tilemap_floor.to_global(cell_local_position)	
+		var scene_to_spawn: PackedScene
+		
+		match cell_index:
+
+			1: # area nitro
+				spawn_element(cell_global_position, AreaNitro, single_tile_offset)
+			2: # area gravel
+				spawn_element(cell_global_position, AreaGravel, single_tile_offset)
+				non_navigation_cell_positions.append(cell_global_position)
+			3: # area hole
+				spawn_element(cell_global_position, AreaHole, single_tile_offset)
+				non_navigation_cell_positions.append(cell_global_position)
 
 
 func set_level_elements():
@@ -139,10 +158,6 @@ func set_level_elements():
 		var cell_local_position = tilemap_elements.map_to_world(cell)
 		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
 		var scene_to_spawn: PackedScene
-		var single_tile_offset: Vector2 = Vector2(4,4)
-		var double_tile_offset: Vector2 = Vector2(8,8)
-		
-		
 		
 		match cell_index:
 
@@ -165,18 +180,6 @@ func set_level_elements():
 			11: # brick light
 				spawn_element(cell_global_position, BrickLight, single_tile_offset)
 				tilemap_elements.set_cellv(cell, -1)
-				
-			# ------------------------------------------------------------------------------------------------------
-				
-			28: # area nitro ... 12
-				spawn_element(cell_global_position, AreaNitro, single_tile_offset)
-			29: # area gravel ... 13
-				spawn_element(cell_global_position, AreaGravel, single_tile_offset)
-				non_navigation_cell_positions.append(cell_global_position)
-#			23: # area finish
-#				spawn_element(cell_global_position, scene_to_spawn, single_tile_offset)
-#				non_navigation_cell_positions.append(cell_global_position)
-##				tilemap_elements.set_cellv(cell, -1)
 
 			# ------------------------------------------------------------------------------------------------------
 
@@ -218,24 +221,12 @@ func set_level_elements():
 				tilemap_elements.set_cellv(cell, -1)
 
 			# ------------------------------------------------------------------------------------------------------
-			
+				
 			6: # goal pillar
 				var GoalPillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
 				spawn_element(cell_global_position, scene_to_spawn, Vector2(36,36))
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
-#			32: # semafor
-#				scene_to_spawn = preload("res://game/arena_elements/StartLights.tscn")
-#				start_lights = spawn_element(cell_global_position, scene_to_spawn, double_tile_offset)
-#				tilemap_elements.set_cellv(cell, -1)
-			33: # checkpoint_hor
-				var checkpoint_rotation: float = 0
-				spawn_checkpoint(cell_global_position, checkpoint_rotation)
-				tilemap_elements.set_cellv(cell, -1)
-			34: # checkpoint_ver
-				var checkpoint_rotation: float = 90
-				spawn_checkpoint(cell_global_position, checkpoint_rotation)
-				tilemap_elements.set_cellv(cell, -1)
 
 
 func set_level_navigation():
@@ -269,7 +260,6 @@ func set_level_navigation():
 							empy_cell_in_check_count += 1
 						else:
 							empy_cell_in_check_count = 0
-#							break
 		
 		tilemap_edge.bake_navigation = true
 		
@@ -321,18 +311,9 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 	return new_element_scene
 		
 
-func spawn_hole(global_pos):
-	
-	return
-	var new_hole_scene = area_hole_scene.instance()
-	new_hole_scene.global_position = global_pos + Vector2(5,4)
-	get_parent().call_deferred("add_child", new_hole_scene)
-	
-
 # SIGNALI --------------------------------------------------------------------------------------------------------------------------------
 
 
 func _on_NavigationAgent2D_path_changed() -> void:
 	
 	level_navigation_line.points = racing_navigation_agent.get_nav_path()
-	

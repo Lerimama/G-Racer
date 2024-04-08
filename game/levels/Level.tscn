@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=1]
 [ext_resource path="res://game/levels/Level.gd" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=4]
 [ext_resource path="res://assets/shaders/FloorShaderMaterial.tres" type="Material" id=5]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=6]
+[ext_resource path="res://game/arena_elements/Checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/resources/tileset_arena_elements.tres" type="TileSet" id=8]
 [ext_resource path="res://game/levels/RacingLine.gd" type="Script" id=9]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=10]
@@ -160,6 +161,12 @@ script = ExtResource( 6 )
 visible = false
 position = Vector2( 32, 24 )
 
+[node name="Checkpoints" type="Node2D" parent="."]
+visible = false
+
+[node name="Checkpoint" parent="Checkpoints" instance=ExtResource( 7 )]
+monitoring = false
+
 [node name="FinishLine" type="Area2D" parent="."]
 monitoring = false
 monitorable = false
@@ -297,12 +304,15 @@ points = PoolVector2Array( 0, 0, 144, 0 )
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )
 
-[node name="Positions" type="Node2D" parent="."]
-
-[node name="StartPosition" type="Position2D" parent="Positions"]
+[node name="StartPosition" type="Position2D" parent="."]
 position = Vector2( 169, 96 )
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Positions/StartPosition"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="StartPosition"]
+
+[node name="GoalPosition" type="Position2D" parent="."]
+position = Vector2( 480, 232 )
+
+[node name="Positions" type="Node2D" parent="."]
 
 [node name="SpawnPosition1" type="Position2D" parent="Positions"]
 position = Vector2( 96, 72 )
@@ -403,9 +413,6 @@ polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 1
 material = SubResource( 516 )
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 27 )
-
-[node name="GoalPosition" type="Position2D" parent="Positions"]
-position = Vector2( 480, 232 )
 
 [node name="RacingLine" type="Node2D" parent="."]
 script = ExtResource( 9 )
@@ -516,4 +523,4 @@ autowrap = true
 uppercase = true
 
 [connection signal="body_entered" from="FinishLine" to="FinishLine" method="_on_AreaFinish_body_entered"]
-[connection signal="path_changed" from="Positions/StartPosition/NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
+[connection signal="path_changed" from="StartPosition/NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]

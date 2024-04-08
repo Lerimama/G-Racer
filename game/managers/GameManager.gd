@@ -709,7 +709,8 @@ func _on_bolt_activity_changed(bolt: KinematicBody2D):
 		check_for_level_finished()
 	
 	
-func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array, level_checkpoints_count: int):
+func _on_level_is_set(tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
+#func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array, level_checkpoints_count: int):
 	
 	# navigacija za enemy AI
 	navigation_area = tilemap_navigation_cells
@@ -722,22 +723,26 @@ func _on_level_is_set(level_positions_nodes: Array, tilemap_navigation_cells: Ar
 	level_racing_lines = Ref.current_level.racing_line.draw_racing_lines()
 	for line in level_racing_lines:
 		level_racing_points.append_array(line.get_points())
-		
-	# pozicije
-	level_bolt_position_nodes = level_positions_nodes
-	level_start_position_node = level_positions_nodes.pop_front()
-	level_goal_position_node = level_positions_nodes.pop_back()
+	
+	# čekpointi
+	checkpoints_per_lap = Ref.current_level.checkpoints_count	
+	
+	# spawn poz
+#	level_bolt_position_nodes = level_positions_nodes
+#	level_start_position_node = level_positions_nodes.pop_front()
+#	level_goal_position_node = level_positions_nodes.pop_back()
+	level_bolt_position_nodes = Ref.current_level.spawn_position_nodes.get_children()
+	free_bolt_position_nodes = level_bolt_position_nodes.duplicate()
+	
+	# start and goal poz
+	level_start_position_node = Ref.current_level.start_position_node
+	level_goal_position_node = Ref.current_level.goal_position_node
 	level_start_position = level_start_position_node.global_position
 	level_goal_position = level_goal_position_node.global_position # vedno zadnja v arrayu
-	# po popanju 
-	free_bolt_position_nodes = level_bolt_position_nodes.duplicate()
 	
 	# kamera
 	Ref.current_camera.position = level_start_position
 	Ref.current_camera.set_camera_limits()	
-	
-	# čekpointi
-	checkpoints_per_lap = level_checkpoints_count
 	
 	# debug
 	if Set.debug_mode and position_indikator == null:

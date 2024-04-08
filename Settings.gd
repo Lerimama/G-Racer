@@ -172,8 +172,9 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 
 #var current_game_levels: Array = []
 #var current_game_levels: Array = [Levels.RACE_8]
-#var current_game_levels: Array = [Levels.RACE_SNAKE]
-var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
+var current_game_levels: Array = [Levels.RACE_SNAKE]
+#var current_game_levels: Array = [Levels.RACE_CIRCO]
+#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
 #var current_game_levels: Array = [Levels.RACE_ROUND, Levels.RACE_DIRECT]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]

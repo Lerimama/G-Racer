@@ -22,28 +22,29 @@ visible = true
 position = Vector2( 176, 64 )
 rotation = -1.5708
 
-[node name="FinishLine" parent="." index="5"]
+[node name="Checkpoints" parent="." index="5"]
+visible = true
+position = Vector2( 504, 168 )
+
+[node name="Checkpoint" parent="Checkpoints" index="0"]
+scale = Vector2( 0.5, 1 )
+
+[node name="FinishLine" parent="." index="6"]
 position = Vector2( 160, 0 )
 rotation = 1.5708
 monitoring = true
 
-[node name="StartPosition" parent="Positions" index="0"]
-position = Vector2( 112, 64 )
-
-[node name="SpawnPosition1" parent="Positions" index="1"]
+[node name="SpawnPosition1" parent="Positions" index="0"]
 position = Vector2( 129, 88 )
 
-[node name="SpawnPosition2" parent="Positions" index="2"]
+[node name="SpawnPosition2" parent="Positions" index="1"]
 position = Vector2( 129, 40 )
 
-[node name="SpawnPosition3" parent="Positions" index="3"]
+[node name="SpawnPosition3" parent="Positions" index="2"]
 position = Vector2( 97, 40 )
 
-[node name="SpawnPosition4" parent="Positions" index="4"]
+[node name="SpawnPosition4" parent="Positions" index="3"]
 position = Vector2( 97, 88 )
-
-[node name="GoalPosition" parent="Positions" index="5"]
-position = Vector2( 264, 104 )
 
 [node name="RacingPath" parent="RacingLine" index="0"]
 points = PoolVector2Array( 160, 64, 176, 64, 440, 248, 531.701, 234.9, 528, 120, 408, 112, 240, 256 )
@@ -54,10 +55,10 @@ default_color = Color( 0.4, 0.501961, 1, 0.576471 )
 points = PoolVector2Array( 232, 256, 88, 256, 88, 64, 152, 64 )
 default_color = Color( 0.4, 0.501961, 1, 0.576471 )
 
-[node name="StartLabel" parent="." index="13"]
-margin_left = 148.0
-margin_top = 26.0
-margin_right = 266.0
-margin_bottom = 90.0
+[node name="StartLabel" parent="." index="16"]
+margin_left = 263.0
+margin_top = 138.0
+margin_right = 381.0
+margin_bottom = 202.0
 custom_fonts/font = ExtResource( 2 )
 text = "8"

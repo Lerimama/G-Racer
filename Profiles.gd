@@ -186,7 +186,7 @@ var pickable_profiles: Dictionary = {
 		"for_random_selection": false,
 		"pickable_color": Set.color_yellow,
 		"pickable_value": 700,
-		"pickable_time": 1, # sekunde
+		"pickable_time": 1.5, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
 	},
 	"TRACKING": {
