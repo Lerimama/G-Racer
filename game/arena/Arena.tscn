@@ -40,6 +40,11 @@ z_index = 5
 width = 2.0
 default_color = Color( 1, 0.752941, 0.0156863, 0.392157 )
 
+[node name="BoltNavigationLine" type="Line2D" parent="."]
+z_index = 5
+width = 2.0
+default_color = Color( 0.952941, 0.356863, 0.498039, 1 )
+
 [node name="ScreenArea" type="Area2D" parent="."]
 visible = false
 position = Vector2( 320, 184 )

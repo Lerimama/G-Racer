@@ -18,6 +18,7 @@ onready var shoot_action: String = controller_actions["shoot_action"]
 onready var feature_action: String = controller_actions["feature_action"]
 onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
 
+#neu
 
 func _input(event: InputEvent) -> void:
 
@@ -170,3 +171,4 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, lead
 func _on_SelectorTimer_timeout() -> void:
 	
 	feat_selector.hide()
+

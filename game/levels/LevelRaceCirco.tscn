@@ -103,6 +103,12 @@ texture = SubResource( 1 )
 position = Vector2( 252, 4 )
 texture = SubResource( 1 )
 
+[node name="StartPosition" parent="." index="7"]
+position = Vector2( 192, 392 )
+
+[node name="GoalPosition" parent="." index="8"]
+position = Vector2( 192, 368 )
+
 [node name="SpawnPosition1" parent="Positions" index="0"]
 position = Vector2( 168, 410 )
 rotation = -1.5708

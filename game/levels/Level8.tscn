@@ -34,6 +34,12 @@ position = Vector2( 160, 0 )
 rotation = 1.5708
 monitoring = true
 
+[node name="StartPosition" parent="." index="7"]
+position = Vector2( 169, 64 )
+
+[node name="GoalPosition" parent="." index="8"]
+position = Vector2( 144, 64 )
+
 [node name="SpawnPosition1" parent="Positions" index="0"]
 position = Vector2( 129, 88 )
 

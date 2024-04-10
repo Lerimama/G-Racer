@@ -99,6 +99,7 @@ func _ready() -> void:
 	set_level_elements() # elementi
 	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
 	# get_navigation_racing_line() ... uporabno ko bo main racing line avtomatiziran 
+	set_level_shaders()
 	on_all_is_set() # pošljem vsebino levela v GM
 
 
@@ -115,9 +116,22 @@ func _physics_process(delta: float) -> void:
 	
 func on_all_is_set():
 	
-
-	#	emit_signal("level_is_set", position_nodes, navigation_cells, navigation_cells_positions, checkpoints_count)
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions)
+
+
+# SET SHADERS --------------------------------------------------------------------------------------------------------
+
+func set_level_shaders():
+	
+	var shaders = $Shaders
+	
+	var all_cells = tilemap_floor.get_used_cells()
+	var first_cell = tilemap_floor.get_used_cells().pop_front()
+	var last_cell = tilemap_floor.get_used_cells().pop_back()
+	var new_position = tilemap_floor.map_to_world(first_cell)
+	var new_size = tilemap_floor.map_to_world(last_cell) - tilemap_floor.map_to_world(first_cell)
+	shaders.texture_rect.rect_position = new_position
+	shaders.texture_rect.rect_size = new_size
 
 
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
@@ -125,7 +139,8 @@ func on_all_is_set():
 		
 func set_level_floor():
 	
-			
+	
+		
 	for cell in tilemap_floor.get_used_cells():
 		
 		var cell_index = tilemap_floor.get_cellv(cell)
@@ -142,6 +157,7 @@ func set_level_floor():
 				spawn_element(cell_global_position, AreaGravel, single_tile_offset)
 				non_navigation_cell_positions.append(cell_global_position)
 			3: # area hole
+				return
 				spawn_element(cell_global_position, AreaHole, single_tile_offset)
 				non_navigation_cell_positions.append(cell_global_position)
 

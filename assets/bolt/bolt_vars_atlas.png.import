@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt.png-983ff688eaae6775ade885c670d67303.stex"
+path="res://.import/bolt_vars_atlas.png-2836fc6e225fea0c3afd680437117051.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/bolt/bolt_varz/bolt.png"
-dest_files=[ "res://.import/bolt.png-983ff688eaae6775ade885c670d67303.stex" ]
+source_file="res://assets/bolt/bolt_vars_atlas.png"
+dest_files=[ "res://.import/bolt_vars_atlas.png-2836fc6e225fea0c3afd680437117051.stex" ]
 
 [params]
 
@@ -31,5 +31,5 @@ process/invert_color=false
 process/normal_map_invert_y=false
 stream=false
 size_limit=0
-detect_3d=true
+detect_3d=false
 svg/scale=1.0

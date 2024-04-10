@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=21]
+code = "shader_type canvas_item;
+
+uniform float pixelFactor : hint_range(0, 1) = 0.5;
+
+void fragment() {
+	// pixel number naj bo proporcionalna to sprite resolution ... multiply pixel texture width sprite size
+	vec2 pixelNumber = vec2(textureSize(TEXTURE, 0)) / pixelFactor; // število pixlov
+//	vec2 pixelatedUV = round(UV * pixelFactor) / pixelFactor; // snaping (round) to pixelsize and dividing to ge back to 0 - 1 interval
+//	vec2 pixelatedUV = round(UV * pixelNumber) / pixelNumber; // snaping (round) to pixelsize and dividing to ge back to 0 - 1 interval
+	vec2 pixelatedUV = (floor(UV * pixelNumber) + 0.5) / pixelNumber; // These pixelizations are aligned to the top left. If you do a bit of trickery with offsets, you can centre them. 
+//	COLOR = vec4(pixelatedUV.x, pixelatedUV.y, 0, 1);
+	COLOR = texture(TEXTURE, pixelatedUV);
+}"
+
+[resource]
+shader = SubResource( 21 )
+shader_param/pixelFactor = 0.223

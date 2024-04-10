@@ -58,7 +58,7 @@ var selected_feature_index: int = 0
 var available_features: Array = [] # feature icons
 
 onready var bolt_hud: Node2D = $BoltHud
-onready var bolt_sprite: Sprite = $Bolt
+onready var bolt_sprite: Sprite = $Bolt_old
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
 onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
@@ -94,7 +94,7 @@ onready var level_finished_time: float = bolt_stats["level_finished_time"]
 onready var level_rank: int = bolt_stats["level_rank"] setget _on_bolt_rank_changed
 # bolt profil ...  default vrednosti, ki jih lahko med igro spreminjam
 onready var bolt_type: int = Pro.BoltTypes.BASIC
-onready var bolt_sprite_texture: Texture = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
+onready var bolt_sprite_texture: Texture# = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
 onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 onready var rev_engine_power: int = Pro.bolt_profiles[bolt_type]["rev_engine_power"]
 onready var turn_angle: int = Pro.bolt_profiles[bolt_type]["turn_angle"] # deg per frame
@@ -122,16 +122,20 @@ onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 var current_drag: float# = bolt_drag
 
+onready var to_goal_agent: NavigationAgent2D = $ToGoalAgent
+signal bolt_path_changed (path)
 
 
 func _ready() -> void:
+	
 	
 	printt("BOLT", bolt_id, global_position)
 	
 	# bolt 
 	add_to_group(Ref.group_bolts)	
-	bolt_sprite.texture = bolt_sprite_texture
-	axis_distance = bolt_sprite_texture.get_width()
+	if bolt_sprite_texture:
+		bolt_sprite.texture = bolt_sprite_texture
+	axis_distance = bolt_sprite.texture.get_width()
 	current_drag = bolt_drag
 
 	set_engines() # postavi partikle za pogon
@@ -153,10 +157,13 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconMisile"))
 	available_features.append(feat_selector.get_node("Icons/IconMina"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
-
+	
+	to_goal_agent.set_target_location(Ref.game_manager.level_goal_position)
+#	navigation_target_position = new_position
 
 
 func _physics_process(delta: float) -> void:
+#	var next_position: Vector2 = to_goal_agent.get_next_location()
 	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
@@ -941,3 +948,8 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 func _on_EngineStart_finished() -> void:
 	
 	$Sounds/Engine.play()
+
+
+func _on_ToGoalAgent_path_changed() -> void:
+	emit_signal("bolt_path_changed", to_goal_agent.get_nav_path()) # levelu preko arene pošljemo točke poti do cilja	¨
+	pass # Replace with function body.

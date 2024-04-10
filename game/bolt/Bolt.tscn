@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://assets/bolt/bolt_alt.png" type="Texture" id=1]
 [ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=5]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=6]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
+[ext_resource path="res://assets/bolt/bolt_vars_atlas.png" type="Texture" id=8]
 [ext_resource path="res://assets/sound/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=10]
 [ext_resource path="res://assets/sound/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav" type="AudioStream" id=11]
@@ -65,6 +66,10 @@ shader = ExtResource( 4 )
 shader_param/noise_factor = 0.0
 shader_param/speed = 0.0
 shader_param/noise_texture = SubResource( 127 )
+
+[sub_resource type="AtlasTexture" id=128]
+atlas = ExtResource( 8 )
+region = Rect2( 2, 83, 10, 10 )
 
 [sub_resource type="Animation" id=117]
 length = 0.001
@@ -217,10 +222,68 @@ visible = false
 shape = SubResource( 30 )
 disabled = true
 
-[node name="Bolt" type="Sprite" parent="."]
+[node name="Bolt_old" type="Sprite" parent="."]
+visible = false
 material = SubResource( 114 )
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 1 )
+
+[node name="FrontEnginePositionL" type="Position2D" parent="Bolt_old"]
+position = Vector2( 2, -4 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="indikator3" type="Sprite" parent="Bolt_old/FrontEnginePositionL"]
+visible = false
+position = Vector2( 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="FrontEnginePositionR" type="Position2D" parent="Bolt_old"]
+position = Vector2( 2.00001, 2.99999 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="indikator2" type="Sprite" parent="Bolt_old/FrontEnginePositionR"]
+visible = false
+texture = ExtResource( 2 )
+
+[node name="RearEnginePosition" type="Position2D" parent="Bolt_old"]
+position = Vector2( -4, -0.499986 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="indikator" type="Sprite" parent="Bolt_old/RearEnginePosition"]
+visible = false
+position = Vector2( 0, 0.5 )
+texture = ExtResource( 2 )
+
+[node name="TrailPosition" type="Position2D" parent="Bolt_old"]
+position = Vector2( -3, -0.499993 )
+__meta__ = {
+"_gizmo_extents_": 2.0
+}
+
+[node name="GunPosition" type="Position2D" parent="Bolt_old"]
+position = Vector2( 3, -0.5 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="indikator" type="Sprite" parent="Bolt_old/GunPosition"]
+visible = false
+modulate = Color( 1, 0, 0, 1 )
+position = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+
+[node name="Bolt" type="Sprite" parent="."]
+texture = SubResource( 128 )
 
 [node name="FrontEnginePositionL" type="Position2D" parent="Bolt"]
 position = Vector2( 2, -4 )
@@ -470,7 +533,11 @@ stream = ExtResource( 9 )
 pitch_scale = 1.1
 bus = "GameSfx"
 
+[node name="ToGoalAgent" type="NavigationAgent2D" parent="."]
+target_desired_distance = 20.0
+
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_started"]
 [connection signal="finished" from="Sounds/EngineStart" to="." method="_on_EngineStart_finished"]
 [connection signal="finished" from="Sounds/EngineRevup" to="." method="_on_EngineStart_finished"]
+[connection signal="path_changed" from="ToGoalAgent" to="." method="_on_ToGoalAgent_path_changed"]
