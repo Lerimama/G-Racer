@@ -18,53 +18,52 @@ uniform vec4 casting_color_1: hint_color = vec4(1.0, 1.0, 1.0, 1.0); // senčena
 uniform vec4 casting_color_2: hint_color = vec4(1.0, 0.0, 0.0, 0.0); // senčena barva
 uniform vec4 casting_color_3: hint_color = vec4(0.0, 1.0, 0.0, 0.0); // senčena barva
 
+uniform bool casting_object_is_flat = false; // ploščata alai debela senčka
 uniform vec4 shadow_color: hint_color = vec4(1.0, 0.0, 0.0, 1.0);
+uniform int shadow_distance = 3; // število pixlov ... imitira dolžino sence
+uniform float shadow_rotation_deg: hint_range(0.0, 360.0) = 90; // rotacija v stopinjah (dol)
+uniform float pixel_scale = 1.0; // 3.0 je fajn adaptacija, da je vsak korak en pixel
 
 uniform bool switch_cast_and_receive = false;
 uniform vec4 new_casting_color: hint_color = vec4(0.0, 0.0, 0.0, 0.0);
-//uniform vec4 shadow_receiving_color: hint_color = vec4(1.0, 1.0, 0.0, 1.0); // barva, ki sprejema senco ... trenutno ni v uporabi
 uniform vec4 new_receiving_color: hint_color = vec4(0.0, 0.0, 0.0, 0.0);
 
-uniform float shadow_rotation_deg: hint_range(0.0, 360.0) = 180; // rotacija v stopinjah (dol)
-uniform float shadow_distance_px: hint_range(0.0, 640.0, 1.0) = 0.0; // imitacija višine z odmikom celotne sence od senčenega objekta
+uniform vec2 screen_size = vec2(640.0, 360.0);
 
-uniform int offset_steps = 3; // število korakov ... imitira dolžino sence
-uniform float step_to_px: hint_range(0.0, 1.0) = 1.0; // offset per step v pixlih
 
-//uniform vec2 screen_size = vec2(640.0, 360.0);
 
 void fragment(){
 	
-//	vec4 new_shadow_receiving_color = vec4(0.0, 0.0, 0.0, 0.0);
-	vec2 screen_size = vec2(640.0, 360.0);
-
 	vec4 original_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0);
-//	vec4 original_color = texture(SCREEN_TEXTURE, SCREEN_UV); // textura pred editiranjem
 	vec4 step_offset_color; // zamik teksture na korak
 	vec4 offset_color; // barva vsek korakov skupaj
 	
 	float shadow_rotation_rad = radians(shadow_rotation_deg);
-	float step_pixel_offset_y = cos(shadow_rotation_rad) * step_to_px;
-	float step_pixel_offset_x = sin(shadow_rotation_rad) * step_to_px;
+	float step_pixel_offset_y = cos(shadow_rotation_rad) ;//* pixel_scale;
+	float step_pixel_offset_x = sin(shadow_rotation_rad);// * pixel_scale;
 	
 	float step_count = 0.0;
 	
 	// multiplikacija sence
-	for (int i = 0; i < offset_steps; i++) {
+	for (int i = 0; i < shadow_distance; i++) {
 		
 		step_count += 1.0; // štejemo korake ... pusti na ena
 		
 		// zamik texture v smeri (preračun texlov v pixle) ... z vsakim korakom se prišteje zamik-na-korak
-		vec2 uvs = SCREEN_UV + vec2(step_pixel_offset_x / screen_size.x, step_pixel_offset_y / screen_size.y) * -1.0 * step_count; 
-		
-		// opredelimo barvo zamaknjene tekstue in jo premaknemo še za željeno oddaljenost teksture (preračunano v pixle)
-		step_offset_color = texture(SCREEN_TEXTURE, uvs + vec2(step_pixel_offset_x * shadow_distance_px / screen_size.x, step_pixel_offset_y * shadow_distance_px / screen_size.y) * -1.0); 
+		vec2 uvs;
+		if (casting_object_is_flat != true){
+			// če je metalec sence debel je senčka brez odmika
+			uvs = SCREEN_UV + vec2(step_pixel_offset_x / screen_size.x, step_pixel_offset_y / screen_size.y) * -1.0 * step_count; 
+		} else {
+			// če je metalec sence ploščat ma senčka odmik
+			uvs = SCREEN_UV + vec2(step_pixel_offset_x * float(shadow_distance) / screen_size.x, step_pixel_offset_y * float(shadow_distance) / screen_size.y) * -1.0
+		}
+		step_offset_color = texture(SCREEN_TEXTURE, uvs); 
 		
 		// ne switchamo
 		if (switch_cast_and_receive != true){
 			// kjer je zamaknjena senčena barva, damo barvo sence
 			if (length(step_offset_color - casting_color_1) < 0.01 || length(step_offset_color - casting_color_2) < 0.01 || length(step_offset_color - casting_color_3) < 0.01){
-//			if (step_offset_color == casting_color_1 || step_offset_color == casting_color_2 || step_offset_color == casting_color_3){
 				step_offset_color = vec4(0.0, 0.0, 0.0, 1.0);
 			}
 			else {
@@ -74,7 +73,6 @@ void fragment(){
 		// switchamo ... samo obrnemo pogoj
 		else if (switch_cast_and_receive == true){
 			if (length(step_offset_color - casting_color_1) > 0.01){
-//			if (step_offset_color != casting_color_1  /*&& original_color != casting_color_2 && original_color != casting_color_3*/){
 				step_offset_color = vec4(0.0, 0.0, 0.0, 1.0);
 			}
 			else {
@@ -93,7 +91,6 @@ void fragment(){
 	if (switch_cast_and_receive != true){
 		// kjer je original barva enaka senčeni barvi, damo original barvo 
 		if (length(original_color - casting_color_1) < 0.01 || length(original_color - casting_color_2) < 0.01 || length(original_color - casting_color_3) < 0.01){
-//		if (original_color == casting_color_1 || original_color == casting_color_2 || original_color == casting_color_3){
 		// alfa 100%, če ne se ne vidi ...  to bom popravil, da se aplcira alpha teksture	
 			COLOR =  new_casting_color;
 			}
@@ -109,7 +106,6 @@ void fragment(){
 	// switchamo ... samo obrnemo pogoj
 	else if (switch_cast_and_receive == true) {
 		if (length(original_color - casting_color_1) > 0.01){
-//		if (original_color != casting_color_1  && original_color != casting_color_2 && original_color != casting_color_3) {
 		// alfa 100%, če ne se ne vidi ...  to bom popravil, da se aplcira alpha teksture
 			COLOR =  new_casting_color; // alfa 100%, če ne se ne vidi ...  to bom popravil, da se aplcira alpha teksture
 			}

@@ -44,5 +44,5 @@ func _process(delta: float) -> void:
 #	pass
 func _on_TextureRect_resized() -> void:
 	
-	texture_rect.material.set_shader_param("node_texture_size", texture_rect.rect_size)
+	texture_rect.material.set_shader_param("node_size", texture_rect.rect_size)
 #	texture_rect.material.set_shader_param("node_texture_size_y", texture_rect.rect_size.y)

@@ -2,8 +2,8 @@
 
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=1]
 [ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://assets/shaders/uporabljam/bolt_wiggle_texture.gdshader" type="Shader" id=3]
-[ext_resource path="res://assets/shaders/uporabljam/bolt_shield_texture.gdshader" type="Shader" id=4]
+[ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_wiggle_texture.gdshader" type="Shader" id=3]
+[ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_shield_texture.gdshader" type="Shader" id=4]
 [ext_resource path="res://assets/sprites/bolt/bolt.png" type="Texture" id=5]
 
 [sub_resource type="OpenSimplexNoise" id=115]

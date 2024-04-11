@@ -1,7 +1,8 @@
 shader_type canvas_item;
 
 // KAJ DELA?
-// menja do 3 barve (nima transparentne barve, ker je nikoli ne zazna)
+// menja do 3 barve
+// menja barvo za prosojnost
 // ---
 // doda noise na texturo
 // pixelizira noise texturo (različne velikosti pixla)
@@ -11,16 +12,21 @@ shader_type canvas_item;
 // ---
 // all texture color value hue shift (ramp)
 // pixelizacija je pravilna, če je vnešena točna dimenzija node texture
+// BUG
+// barve izbira avtomatsko samo na črni in beli ... ostale delajo šele, če je izbran med predvajanjem scene
 
 // colors
 uniform bool change_colors;
-uniform vec4 color_1: hint_color;
+uniform vec4 color_1: hint_color = vec4(0);
 uniform vec4 new_color_1: hint_color;
-uniform vec4 color_2: hint_color;
+uniform vec4 color_2: hint_color = vec4(0);
 uniform vec4 new_color_2: hint_color;
-uniform vec4 color_3: hint_color;
+uniform vec4 color_3: hint_color = vec4(0);
 uniform vec4 new_color_3: hint_color;
-uniform vec4 color_to_noise: hint_color;
+uniform vec4 color_to_transparent: hint_color = vec4(0);
+uniform vec4 color_to_noise: hint_color = vec4(0);
+
+uniform vec2 node_size = vec2(320, 320); // more bit točen, da so pixli pravih dimenzij
 
 // noise
 uniform bool ad_noise; // če je change colors je zbirčen glede barve
@@ -29,7 +35,6 @@ uniform sampler2D noise;
 uniform sampler2D noise_color_ramp : hint_albedo;
 // pixelate
 uniform bool pixelate_noise;
-uniform vec2 node_texture_size = vec2(320, 320);
 uniform	float pixel_size_multiplier = 1.0;
 uniform	vec2 pixel_offset = vec2(0.0, 0.0);
 // animate
@@ -44,15 +49,14 @@ uniform sampler2D shades_color_ramp : hint_albedo;
 
 void fragment() {
 
-
-//	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV);
-	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0); // textura pred editiranjem
+	COLOR = texture(TEXTURE, UV);
 	
 	// COLORS change
 	if (change_colors == true){
-		if (length(COLOR - color_1) < 0.01 ){COLOR = new_color_1;}
-		if (length(COLOR - color_2) < 0.01 ){COLOR = new_color_2;}
-		if (length(COLOR - color_3) < 0.01 ){COLOR = new_color_3;}
+		if (COLOR == color_1){COLOR = new_color_1;}
+		if (COLOR == color_2){COLOR = new_color_2;}
+		if (COLOR == color_3){COLOR = new_color_3;}
+		if (COLOR == color_to_transparent){COLOR.a = 0.0;}
 	}
 	
 	// NOISE
@@ -61,10 +65,8 @@ void fragment() {
 		// pixelate and animate
 		vec2 noise_uvs;
 		if (pixelate_noise == true) {
-//			float xFactor = float(VIEWPORT_SIZE.x) / pixel_size_multiplier;
-//			float yFactor = float(textureSize(SCREEN_TEXTURE, 0).y) / pixel_size_multiplier;
-			float xFactor = float(textureSize(SCREEN_TEXTURE, 0).x) / pixel_size_multiplier;// * SCREEN_PIXEL_SIZE.x;
-			float yFactor = float(textureSize(SCREEN_TEXTURE, 0).y) / pixel_size_multiplier;// * SCREEN_PIXEL_SIZE.y;
+			float xFactor = node_size.x / pixel_size_multiplier;
+			float yFactor = node_size.y / pixel_size_multiplier;
 			float grid_uv_x = round(UV.x * xFactor + pixel_offset.x) / xFactor + TIME * speed_x * speed_scale;
 			float grid_uv_y = round(UV.y * yFactor + pixel_offset.y) / yFactor + TIME * speed_y * speed_scale;
 			noise_uvs = vec2(grid_uv_x, grid_uv_y);
@@ -77,6 +79,13 @@ void fragment() {
 		vec4 noise_texture = texture(noise, noise_uvs);			
 		vec3 noise_color = noise_texture.rgb;
 		float noise_alpha = noise_texture.a; 
+		
+		// Get the colors from the image at specified location
+//		{
+//			vec4 TEXTURE_tex_read = noise_texture;
+//			noise_color = TEXTURE_tex_read.rgb;
+//			noise_alpha = TEXTURE_tex_read.a;
+//		}
 		
 		// shade noise 
 		if (shade_noise == true){
@@ -102,8 +111,7 @@ void fragment() {
 			
 			// noise samo na noise barvo ali povsod
 			if (change_colors == true){
-				if (length(COLOR - color_to_noise) < 0.01){
-//				if (COLOR == color_to_noise){
+				if (COLOR == color_to_noise){
 					COLOR.rgb = noise_color_out;
 					COLOR.a = noise_alpha_out;
 				}
@@ -116,8 +124,7 @@ void fragment() {
 		// noise brez shadinga
 			// noise samo na noise barvo ali povsod
 			if (change_colors == true){
-				if (length(COLOR - color_to_noise) < 0.01){
-//				if (COLOR == color_to_noise){
+				if (COLOR == color_to_noise){
 					COLOR.rgb = noise_color;
 					COLOR.a = noise_alpha;
 				}
