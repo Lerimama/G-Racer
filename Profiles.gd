@@ -8,7 +8,7 @@ enum BoltTypes {SMALL, BASIC, BIG}
 
 var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
-		"bolt_texture": preload("res://assets/bolt/bolt_alt.png"),
+		"bolt_texture": preload("res://assets/sprites/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"shield_loops_limit": 3,

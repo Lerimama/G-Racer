@@ -1,0 +1,25 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://assets/shaders/_obs/GB_allinone.gdshader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/change_colors = null
+shader_param/color_1 = null
+shader_param/new_color_1 = null
+shader_param/color_2 = null
+shader_param/new_color_2 = null
+shader_param/color_3 = null
+shader_param/new_color_3 = null
+shader_param/color_to_transparent = null
+shader_param/color_to_noise = null
+shader_param/ad_noise = null
+shader_param/shade_noise = null
+shader_param/pixelate_noise = null
+shader_param/node_texture_size_x = 320.0
+shader_param/node_texture_size_y = 320.0
+shader_param/pixel_size_multiplier = 1.0
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.0
+shader_param/speed_scale = 0.1
+shader_param/shade_all_colors = null

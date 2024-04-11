@@ -12,7 +12,8 @@ shader_type canvas_item;
 // ---
 // all texture color value hue shift (ramp)
 // pixelizacija je pravilna, če je vnešena točna dimenzija node texture
-
+// BUG
+// noise na določeni barvi se rendrira, če je izbran po scene play() ... pravilno dela samo na ČRNI ali BELI
 
 // colors
 uniform bool change_colors;
@@ -34,11 +35,11 @@ uniform sampler2D noise_color_ramp : hint_albedo;
 uniform bool pixelate_noise;
 uniform float node_texture_size_x = 320;
 uniform float node_texture_size_y = 320;
-uniform	float pixel_size_multiplier = 2.0;
+uniform	float pixel_size_multiplier = 1.0;
 // animate
-uniform float speed_adaptation = 0.1; // da ni prehitro
 uniform float speed_x : hint_range (-10, 10) = 0;
 uniform float speed_y : hint_range (-10, 10) = 0;
+uniform float speed_scale : hint_range (0, 1, 0.01)= 0.1; // da ni prehitro
 
 // shading all
 uniform bool shade_all_colors;
@@ -65,43 +66,47 @@ void fragment() {
 		if (pixelate_noise == true) {
 			float xFactor = node_texture_size_x / pixel_size_multiplier;
 			float yFactor = node_texture_size_y / pixel_size_multiplier;
-			float grid_uv_x = round(UV.x * xFactor + 0.5) / xFactor + TIME * speed_x * speed_adaptation;
-			float grid_uv_y = round(UV.y * yFactor + 0.5) / yFactor + TIME * speed_y * speed_adaptation;
+			float grid_uv_x = round(UV.x * xFactor + 0.5) / xFactor + TIME * speed_x * speed_scale;
+			float grid_uv_y = round(UV.y * yFactor + 0.5) / yFactor + TIME * speed_y * speed_scale;
 			noise_uvs = vec2(grid_uv_x, grid_uv_y);
 		} else {
 		// animate
-			noise_uvs.x = UV.x + TIME * speed_x * speed_adaptation;
-			noise_uvs.y = UV.y + TIME * speed_y * speed_adaptation;			
+			noise_uvs.x = UV.x + TIME * speed_x * speed_scale;
+			noise_uvs.y = UV.y + TIME * speed_y * speed_scale;			
 		}
 		
 		vec4 noise_texture = texture(noise, noise_uvs);			
+		vec3 noise_color = noise_texture.rgb;
+		float noise_alpha = noise_texture.a; 
 		
-		// get noise colors
-		vec3 location = vec3(UV, 0.0); // Get the fragment location
-		vec3 noise_color;
-		float noise_alpha; // Get the colors from the image at specified location
-		{
-			vec4 TEXTURE_tex_read = noise_texture;
-			noise_color = TEXTURE_tex_read.rgb;
-			noise_alpha = TEXTURE_tex_read.a;
-		}
+		// Get the colors from the image at specified location
+//		{
+//			vec4 TEXTURE_tex_read = noise_texture;
+//			noise_color = TEXTURE_tex_read.rgb;
+//			noise_alpha = TEXTURE_tex_read.a;
+//		}
 		
 		// shade noise 
 		if (shade_noise == true){
-			float color_value; // get the greyscale value through the highest of r, g, and b
+			
+			float color_value;
+			// get the greyscale value through the highest of r, g, and b
 			{
 				vec3 c = noise_color.rgb;
 				float max1 = max(c.r, c.g);
 				float max2 = max(max1, c.b);
 				color_value = max2;
 			}
-			vec3 noise_color_out; // Read the colormap and use the greyscale value to map in the new color.
+			
+			vec3 noise_color_out; 
 			float noise_alpha_out;
+			// Read the colormap and use the greyscale value to map in the new color.
 			{
 				vec4 n_tex_read = texture(noise_color_ramp, vec2(color_value, 0.0));
 				noise_color_out = n_tex_read.rgb;
 				noise_alpha_out = n_tex_read.a;
 			}
+	
 			
 			// noise samo na noise barvo ali povsod
 			if (change_colors == true){

@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" load_steps=498 format=2]
 
 [ext_resource path="res://assets/tilesets/tileset_arena_edge.png" type="Texture" id=1]
-[ext_resource path="res://assets/arena/tile_arena_navigation.png" type="Texture" id=2]
+[ext_resource path="res://assets/tilesets/arena/tile_arena_navigation.png" type="Texture" id=2]
 [ext_resource path="res://assets/tilesets/tileset_arena_edge_broken.png" type="Texture" id=3]
-[ext_resource path="res://assets/arena/tile_arena_colored.png" type="Texture" id=5]
+[ext_resource path="res://assets/tilesets/arena/tile_arena_colored.png" type="Texture" id=4]
 
 [sub_resource type="ConvexPolygonShape2D" id=127]
 points = PoolVector2Array( 8, 8, 0, 8, 0, 0, 8, 0 )
@@ -4488,7 +4488,7 @@ points = PoolVector2Array( 0, 0, 8, 0, 8, 8, 0, 8 )
 } ]
 2/z_index = 0
 5/name = "tile_arena_colored.png 5"
-5/texture = ExtResource( 5 )
+5/texture = ExtResource( 4 )
 5/tex_offset = Vector2( 0, 0 )
 5/modulate = Color( 1, 1, 1, 1 )
 5/region = Rect2( 0, 0, 8, 8 )

@@ -124,7 +124,10 @@ var current_drag: float# = bolt_drag
 
 onready var to_goal_agent: NavigationAgent2D = $ToGoalAgent
 signal bolt_path_changed (path)
-
+onready var bolt_shadow: Sprite = $BoltShadow
+var bolt_altitude: float = 3
+var bolt_max_altitude: float = 5
+var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # stopinje ... 0 = levo, 180 = desno, 90 =  gor, -90 = dol  
 
 func _ready() -> void:
 	
@@ -161,9 +164,17 @@ func _ready() -> void:
 	to_goal_agent.set_target_location(Ref.game_manager.level_goal_position)
 #	navigation_target_position = new_position
 
+	bolt_shadow.modulate = Color.black
+	bolt_shadow.modulate.a = 0.2
+	bolt_altitude = 3
+	bolt_shadow.global_position = global_position - bolt_altitude * shadow_direction
+
 
 func _physics_process(delta: float) -> void:
-#	var next_position: Vector2 = to_goal_agent.get_next_location()
+	if Ref.game_manager.game_on:
+		bolt_altitude = bolt_max_altitude
+	
+	bolt_shadow.global_position = global_position - bolt_altitude * shadow_direction
 	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
@@ -351,6 +362,15 @@ func manage_motion_fx():
 		engine_particles_rear.modulate.a = 1
 		engine_particles_front_left.modulate.a = 1
 		engine_particles_front_right.modulate.a = 1
+
+	
+#	var next_position: Vector2 = to_goal_agent.get_next_location()
+#	bolt_shadow.modulate = Color.black
+#	bolt_shadow.modulate.a = 0.5
+#	var bolt_altitude: float = 20
+#	var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # stopinje ... 0 = levo, 180 = desno, 90 =  gor, -90 = dol  
+#	bolt_shadow.global_position = global_position - bolt_altitude * shadow_direction
+
 
 
 func manage_trail():

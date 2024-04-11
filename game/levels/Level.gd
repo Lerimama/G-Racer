@@ -33,6 +33,7 @@ onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/Ar
 onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
 onready var AreaHole: PackedScene = preload("res://game/arena_elements/areas/AreaHole.tscn")	
 # elements
+onready var GoalPillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
 onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
 onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
 onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
@@ -239,8 +240,7 @@ func set_level_elements():
 			# ------------------------------------------------------------------------------------------------------
 				
 			6: # goal pillar
-				var GoalPillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
-				spawn_element(cell_global_position, scene_to_spawn, Vector2(36,36))
+				spawn_element(cell_global_position, GoalPillar, Vector2(36,36))
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 

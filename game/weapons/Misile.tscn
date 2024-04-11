@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://game/weapons/Misile.gd" type="Script" id=1]
-[ext_resource path="res://assets/weapons/misile.png" type="Texture" id=2]
+[ext_resource path="res://assets/sprites/weapons/misile.png" type="Texture" id=2]
 [ext_resource path="res://assets/sound/sfx/misile_shoot.wav" type="AudioStream" id=3]
 [ext_resource path="res://assets/sound/sfx/misile_flight.wav" type="AudioStream" id=4]
-[ext_resource path="res://assets/sound/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sound/_zaloga/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 2.5, 0.5 )

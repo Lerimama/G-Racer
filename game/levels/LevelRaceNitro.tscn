@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://_materiali/nitro_prva_proga.png" type="Texture" id=1]
+[ext_resource path="res://__materiali/nitro_prva_proga.png" type="Texture" id=1]
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=2]
 
 [node name="LevelNitro" instance=ExtResource( 2 )]

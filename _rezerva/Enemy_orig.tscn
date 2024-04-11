@@ -1,10 +1,10 @@
 [gd_scene load_steps=16 format=2]
 
-[ext_resource path="res://assets/weapons/bullet.png" type="Texture" id=1]
-[ext_resource path="res://assets/shaders/bolt_wiggle_texture.gdshader" type="Shader" id=2]
-[ext_resource path="res://assets/shaders/bolt_shield_texture.gdshader" type="Shader" id=3]
+[ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=1]
+[ext_resource path="res://assets/shaders/uporabljam/bolt_wiggle_texture.gdshader" type="Shader" id=2]
+[ext_resource path="res://assets/shaders/uporabljam/bolt_shield_texture.gdshader" type="Shader" id=3]
 [ext_resource path="res://_rezerva/Enemy.gd" type="Script" id=4]
-[ext_resource path="res://assets/bolt/bolt.png" type="Texture" id=5]
+[ext_resource path="res://assets/sprites/bolt/bolt.png" type="Texture" id=5]
 
 [sub_resource type="OpenSimplexNoise" id=523]
 seed = 1

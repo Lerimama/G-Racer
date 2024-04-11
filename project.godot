@@ -27,17 +27,17 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "GameManager",
 "language": "GDScript",
-"path": "res://_izPA/game_manager_class.gd"
+"path": "res://__izPA/game_manager_class.gd"
 }, {
 "base": "Control",
 "class": "GameOver",
 "language": "GDScript",
-"path": "res://_izPA/GameOver_izpa.gd"
+"path": "res://__izPA/GameOver_izpa.gd"
 }, {
 "base": "TileMap",
 "class": "GameTilemap",
 "language": "GDScript",
-"path": "res://_izPA/arena_tilemap.gd"
+"path": "res://__izPA/arena_tilemap.gd"
 }, {
 "base": "Node2D",
 "class": "Mina",
@@ -88,7 +88,7 @@ _global_script_class_icons={
 
 config/name="gravity_bonanza_0.1"
 run/main_scene="res://Main.tscn"
-config/icon="res://_materiali/icon.png"
+config/icon="res://__materiali/icon.png"
 <<<<<<<HEADconfig/name="gravity_bonanza_0.1"
 
 [autoload]

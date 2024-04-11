@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/arena_elements/GoalPillar.gd" type="Script" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
-[ext_resource path="res://assets/arena/pillar_detec_area.png" type="Texture" id=3]
+[ext_resource path="res://assets/tilesets/arena/pillar_detec_area.png" type="Texture" id=3]
 [ext_resource path="res://assets/light.png" type="Texture" id=4]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
