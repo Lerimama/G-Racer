@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tile_arena_colored.png-e3fe5916814bc0a7355dd7d97761f823.stex"
+path="res://.import/tileset_arena_nitro.png-7456fca67a179f30f4ebc8680cb942ca.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/arena/tile_arena_colored.png"
-dest_files=[ "res://.import/tile_arena_colored.png-e3fe5916814bc0a7355dd7d97761f823.stex" ]
+source_file="res://assets/tilesets/orig/tileset_arena_nitro.png"
+dest_files=[ "res://.import/tileset_arena_nitro.png-7456fca67a179f30f4ebc8680cb942ca.stex" ]
 
 [params]
 

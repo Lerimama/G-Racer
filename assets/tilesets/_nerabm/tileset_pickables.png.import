@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tileset_objects.png-39806ee69dd5fa25cabd620dacde6a84.stex"
+path="res://.import/tileset_pickables.png-0f7b4a312fc9a11387d731ba997682f1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/tileset_objects.png"
-dest_files=[ "res://.import/tileset_objects.png-39806ee69dd5fa25cabd620dacde6a84.stex" ]
+source_file="res://assets/tilesets/_nerabm/tileset_pickables.png"
+dest_files=[ "res://.import/tileset_pickables.png-0f7b4a312fc9a11387d731ba997682f1.stex" ]
 
 [params]
 

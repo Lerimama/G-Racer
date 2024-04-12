@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=1]
+[ext_resource path="res://assets/tilesets/atlas_hud.png" type="Texture" id=1]
 [ext_resource path="res://game/ui/hud/statline_stats/Stat.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=3]
 

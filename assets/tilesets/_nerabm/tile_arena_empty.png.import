@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tile_arena_empty.png-ad900d5480f21c3f9db0a3bf9a505e5a.stex"
+path="res://.import/tile_arena_empty.png-a9a4773ce374e1e3425b914949b60ffb.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/arena/tile_arena_empty.png"
-dest_files=[ "res://.import/tile_arena_empty.png-ad900d5480f21c3f9db0a3bf9a505e5a.stex" ]
+source_file="res://assets/tilesets/_nerabm/tile_arena_empty.png"
+dest_files=[ "res://.import/tile_arena_empty.png-a9a4773ce374e1e3425b914949b60ffb.stex" ]
 
 [params]
 

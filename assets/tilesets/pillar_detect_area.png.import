@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tileset_hud.png-26c1a570d8f40c58262f09cabf0a6e03.stex"
+path="res://.import/pillar_detect_area.png-7fe6a453a848fb2dbb1b09487ebcba64.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/tileset_hud.png"
-dest_files=[ "res://.import/tileset_hud.png-26c1a570d8f40c58262f09cabf0a6e03.stex" ]
+source_file="res://assets/tilesets/pillar_detect_area.png"
+dest_files=[ "res://.import/pillar_detect_area.png-7fe6a453a848fb2dbb1b09487ebcba64.stex" ]
 
 [params]
 

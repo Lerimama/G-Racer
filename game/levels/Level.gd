@@ -122,17 +122,33 @@ func on_all_is_set():
 
 # SET SHADERS --------------------------------------------------------------------------------------------------------
 
+
 func set_level_shaders():
 	
-	var shaders = $Shaders
+	# zaporedje je pomembno
 	
-	var all_cells = tilemap_floor.get_used_cells()
-	var first_cell = tilemap_floor.get_used_cells().pop_front()
-	var last_cell = tilemap_floor.get_used_cells().pop_back()
-	var new_position = tilemap_floor.map_to_world(first_cell)
-	var new_size = tilemap_floor.map_to_world(last_cell) - tilemap_floor.map_to_world(first_cell)
-	shaders.texture_rect.rect_position = new_position
-	shaders.texture_rect.rect_size = new_size
+	# floor
+	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
+	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
+	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
+	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
+	for shader_node in tilemap_floor.get_children():
+		shader_node.rect_position = floor_rect_position
+		shader_node.rect_size = floor_rect_size
+		shader_node.material.set_shader_param("node_size", floor_rect_size)
+	
+	# edge
+	var first_edge_cell = tilemap_edge.get_used_cells().pop_front()
+	var last_edge_cell = tilemap_edge.get_used_cells().pop_back()
+	var edge_rect_position = tilemap_edge.map_to_world(first_edge_cell)
+	var edge_rect_size = tilemap_edge.map_to_world(last_edge_cell) - tilemap_edge.map_to_world(first_edge_cell)
+	
+	for shader_node in tilemap_edge.get_children():
+		shader_node.rect_position = edge_rect_position
+		shader_node.rect_size = edge_rect_size
+		shader_node.material.set_shader_param("node_size", edge_rect_size)
+		
+		
 
 
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
@@ -241,7 +257,7 @@ func set_level_elements():
 				
 			6: # goal pillar
 				spawn_element(cell_global_position, GoalPillar, Vector2(36,36))
-				tilemap_elements.set_cellv(cell, -1)
+#				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 
 

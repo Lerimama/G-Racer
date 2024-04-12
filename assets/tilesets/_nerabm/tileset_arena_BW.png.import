@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tile_arena_edge.png-8d45c6531ebd7ee66512e5ade642580d.stex"
+path="res://.import/tileset_arena_BW.png-c97b212009fb34e1dd22f2b542e0db18.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/arena/tile_arena_edge.png"
-dest_files=[ "res://.import/tile_arena_edge.png-8d45c6531ebd7ee66512e5ade642580d.stex" ]
+source_file="res://assets/tilesets/_nerabm/tileset_arena_BW.png"
+dest_files=[ "res://.import/tileset_arena_BW.png-c97b212009fb34e1dd22f2b542e0db18.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

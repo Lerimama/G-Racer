@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://assets/tilesets/arena/tile_arena_edge.png" type="Texture" id=1]
+[ext_resource path="res://assets/tilesets/tile_arena_edge.png" type="Texture" id=1]
 [ext_resource path="res://_modular/base_ExplodingDelaunayPolygon.gd" type="Script" id=2]
 
 [node name="ExplodingDelaunayPolygon" type="Polygon2D"]

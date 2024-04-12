@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://assets/sprites/bolt/bolt_alt.png" type="Texture" id=1]
 [ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=2]
@@ -11,7 +11,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=10]
 [ext_resource path="res://assets/sound/_zaloga/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav" type="AudioStream" id=11]
-[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=12]
+[ext_resource path="res://assets/tilesets/atlas_hud.png" type="Texture" id=12]
 [ext_resource path="res://assets/sound/sfx/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=13]
 [ext_resource path="res://assets/sound/sfx/engine___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sound/sfx/engine_revup___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=15]
@@ -19,6 +19,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
+[ext_resource path="res://game/bolt/Shadow.gd" type="Script" id=20]
 
 [sub_resource type="OpenSimplexNoise" id=25]
 seed = 4
@@ -254,6 +255,8 @@ texture = ExtResource( 2 )
 [node name="BoltShadow" type="Sprite" parent="."]
 modulate = Color( 0, 0, 0, 0.27451 )
 texture = SubResource( 128 )
+script = ExtResource( 20 )
+node_to_copy_name = "Bolt_old"
 
 [node name="Bolt" type="Sprite" parent="."]
 texture = SubResource( 128 )

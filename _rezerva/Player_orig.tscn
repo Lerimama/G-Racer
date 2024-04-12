@@ -5,7 +5,7 @@
 [ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_wiggle_texture.gdshader" type="Shader" id=3]
 [ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_shield_texture.gdshader" type="Shader" id=4]
 [ext_resource path="res://assets/sprites/bolt/bolt.png" type="Texture" id=5]
-[ext_resource path="res://assets/tilesets/tileset_hud.png" type="Texture" id=6]
+[ext_resource path="res://assets/tilesets/atlas_hud.png" type="Texture" id=6]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=7]
 
 [sub_resource type="GDScript" id=121]

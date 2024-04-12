@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/atlas_arena_floor.png-43868650cc6c70d6eec2e65aec6bac03.stex"
+path="res://.import/tileset_arena_edge_broken.png-59467be5d5923191d78cbc3ba9a4b5aa.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/arena/atlas_arena_floor.png"
-dest_files=[ "res://.import/atlas_arena_floor.png-43868650cc6c70d6eec2e65aec6bac03.stex" ]
+source_file="res://assets/tilesets/orig/tileset_arena_edge_broken.png"
+dest_files=[ "res://.import/tileset_arena_edge_broken.png-59467be5d5923191d78cbc3ba9a4b5aa.stex" ]
 
 [params]
 

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tile_arena_floor.png-c15d6c8a4a98944ff43a7d7f0878c3d9.stex"
+path="res://.import/tileset_arena_elements.png-91b2418a78378c6c4d61a0036932b41e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/arena/tile_arena_floor.png"
-dest_files=[ "res://.import/tile_arena_floor.png-c15d6c8a4a98944ff43a7d7f0878c3d9.stex" ]
+source_file="res://assets/tilesets/orig/tileset_arena_elements.png"
+dest_files=[ "res://.import/tileset_arena_elements.png-91b2418a78378c6c4d61a0036932b41e.stex" ]
 
 [params]
 
