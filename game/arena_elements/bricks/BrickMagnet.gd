@@ -7,6 +7,7 @@ var magnet_on: bool
 
 var def_particle_speed: float = 0.5
 var gravity_force: float = 70.0 # sila gravitacije
+var brick_altitude: float = 5
 
 var time: float = 0
 var off_time: float = 2
@@ -16,12 +17,13 @@ onready var force_field: Area2D = $ForceField
 onready var sprite: Sprite = $Sprite
 onready var blackhole_particles: Particles2D = $BlackholeParticles
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-#onready var magnet_points: int = Ref.game_settings["magnet_brick_points"]
+onready var brick_shadow: Sprite = $BrickShadow
 
 
 func _ready() -> void:
 	
-	pass
+	sprite.modulate = magnet_color
+	brick_shadow.shadow_distance = brick_altitude
 
 
 func _physics_process(delta: float) -> void:

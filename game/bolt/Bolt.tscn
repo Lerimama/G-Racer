@@ -19,7 +19,14 @@
 [ext_resource path="res://assets/sound/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
-[ext_resource path="res://game/bolt/Shadow.gd" type="Script" id=20]
+[ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=20]
+
+[sub_resource type="CircleShape2D" id=30]
+radius = 12.0
+
+[sub_resource type="AtlasTexture" id=128]
+atlas = ExtResource( 8 )
+region = Rect2( 2, 83, 10, 10 )
 
 [sub_resource type="OpenSimplexNoise" id=25]
 seed = 4
@@ -33,13 +40,6 @@ height = 32
 seamless = true
 bump_strength = 13.9
 noise = SubResource( 25 )
-
-[sub_resource type="CircleShape2D" id=30]
-radius = 12.0
-
-[sub_resource type="AtlasTexture" id=128]
-atlas = ExtResource( 8 )
-region = Rect2( 2, 83, 10, 10 )
 
 [sub_resource type="Animation" id=117]
 length = 0.001
@@ -182,15 +182,12 @@ random_pitch = 1.05
 [node name="Bolt" type="KinematicBody2D"]
 script = ExtResource( 5 )
 
-[node name="Shield" type="Sprite" parent="."]
-visible = false
-material = ExtResource( 3 )
-texture = SubResource( 109 )
-
 [node name="ShieldCollision" type="CollisionShape2D" parent="."]
 visible = false
 shape = SubResource( 30 )
 disabled = true
+
+[node name="BoltShadow" parent="." instance=ExtResource( 20 )]
 
 [node name="Bolt_old" type="Sprite" parent="."]
 visible = false
@@ -252,13 +249,8 @@ modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
-[node name="BoltShadow" type="Sprite" parent="."]
-modulate = Color( 0, 0, 0, 0.27451 )
-texture = SubResource( 128 )
-script = ExtResource( 20 )
-node_to_copy_name = "Bolt_old"
-
 [node name="Bolt" type="Sprite" parent="."]
+modulate = Color( 0, 0, 0, 1 )
 texture = SubResource( 128 )
 
 [node name="FrontEnginePositionL" type="Position2D" parent="Bolt"]
@@ -319,6 +311,11 @@ texture = ExtResource( 2 )
 position = Vector2( 0, 0.5 )
 rotation = 1.57079
 polygon = PoolVector2Array( -2.99997, -4.00002, -5, -3.13719e-05, -5.00003, 3.99997, 3.99997, 4.00003, 4, 2.50975e-05, 2.00003, -3.99999 )
+
+[node name="Shield" type="Sprite" parent="."]
+visible = false
+material = ExtResource( 3 )
+texture = SubResource( 109 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Shield")
@@ -509,11 +506,7 @@ stream = ExtResource( 9 )
 pitch_scale = 1.1
 bus = "GameSfx"
 
-[node name="ToGoalAgent" type="NavigationAgent2D" parent="."]
-target_desired_distance = 20.0
-
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_started"]
 [connection signal="finished" from="Sounds/EngineStart" to="." method="_on_EngineStart_finished"]
 [connection signal="finished" from="Sounds/EngineRevup" to="." method="_on_EngineStart_finished"]
-[connection signal="path_changed" from="ToGoalAgent" to="." method="_on_ToGoalAgent_path_changed"]

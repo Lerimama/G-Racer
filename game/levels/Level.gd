@@ -116,6 +116,17 @@ func _physics_process(delta: float) -> void:
 	
 	
 func on_all_is_set():
+
+	var tm: TileMap = tilemap_floor
+	var tile_with_shader_id: int = 5
+	var ts: TileSet = tm.tile_set
+	var sm: String = ts.tile_get_name(tile_with_shader_id)
+	var tile = ts.find_tile_by_name(sm)
+	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
+	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
+	var view_to_local: Transform2D = local_to_view.affine_inverse()
+	printt (ts, tm, sm, local_to_view, view_to_local)
+	mat.set_shader_param("view_to_local", view_to_local)
 	
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions)
 
@@ -148,14 +159,14 @@ func set_level_shaders():
 		shader_node.rect_size = edge_rect_size
 		shader_node.material.set_shader_param("node_size", edge_rect_size)
 		
-		
-
 
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
 
 		
 func set_level_floor():
 	
+
+
 	
 		
 	for cell in tilemap_floor.get_used_cells():

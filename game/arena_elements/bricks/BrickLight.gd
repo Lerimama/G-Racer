@@ -5,7 +5,6 @@ var bolts_in_goal_area: Array = []
 
 onready var light_poly: Polygon2D = $LightPoly
 onready var light_2d: Light2D = $Light2D
-#onready var light_points: int = Ref.game_settings["light_points"]
 
 
 func _ready() -> void:

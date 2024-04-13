@@ -8,10 +8,12 @@ export (Pickables) var pickable_type
 var pickable_value: float # = 0 pobere iz profilov
 var pickable_type_key: String
 var pickable_color: Color # = 0 pobere iz profilov
+var pickable_altitude: float = 5
 
 onready var sprite: Sprite = $Sprite
 onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
 onready var animated_sprite: AnimatedSprite = $AnimatedSprite
+onready var pickable_shadow: Sprite = $PickableShadow
 
 #onready var sounds: Node = $Sounds
 #onready var sound_picked: AudioStreamPlayer = $Sounds/PickedDefault
@@ -23,7 +25,8 @@ func _ready() -> void:
 	pickable_value = Pro.pickable_profiles[pickable_type_key]["pickable_value"]
 	pickable_color = Pro.pickable_profiles[pickable_type_key]["pickable_color"]
 	modulate = pickable_color
-	
+	pickable_shadow.shadow_distance = pickable_altitude
+
 	
 func _on_Item_body_entered(body: Node) -> void:
 	

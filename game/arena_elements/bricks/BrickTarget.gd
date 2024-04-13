@@ -5,20 +5,21 @@ var hit_count: int = 0
 var brick_color_1: Color = Set.color_blue
 var brick_color_2: Color = Color.cyan
 var brick_color_3: Color = Color.greenyellow
+var brick_altitude: float = 5
 
 var def_particle_speed = 5
 
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-
-#onready var target_points: int = Ref.game_settings["target_brick_points"]
+onready var brick_shadow: Sprite = $BrickShadow
 
 
 func _ready() -> void:
 
 	sprite.modulate = brick_color_1
-
+	brick_shadow.shadow_distance = brick_altitude
+	
 
 func on_hit(hit_by: Node):
 	

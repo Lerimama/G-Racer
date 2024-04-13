@@ -3,14 +3,17 @@ extends StaticBody2D
 
 var bouncer_color: Color = Set.color_yellow
 var bouncer_bounce_strenght: float = 2
+var brick_altitude: float = 5
 
 onready var sprite: Sprite = $Sprite
-#onready var bouncer_points: int = Ref.game_settings["bouncer_brick_points"]
+onready var brick_shadow: Sprite = $BrickShadow
+
 
 func _ready() -> void:
 
 	sprite.modulate = bouncer_color
-
+	brick_shadow.shadow_distance = brick_altitude
+	
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 

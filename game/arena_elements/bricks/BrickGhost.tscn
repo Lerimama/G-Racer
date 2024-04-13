@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://game/arena_elements/bricks/BrickGhost.gd" type="Script" id=1]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=2]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=3]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=4]
+[ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=5]
 
 [sub_resource type="PhysicsMaterial" id=7]
 
@@ -92,6 +93,9 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="BrickShadow" parent="." instance=ExtResource( 5 )]
+casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 4 )

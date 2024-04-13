@@ -441,7 +441,6 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 #		new_bolt.connect("path_changed", self, "_on_enemy_path_changed") # samo za prikaz nav linije
 	if new_bolt.is_in_group(Ref.group_players):
 #		if spawned_position_index == 0:
-#			new_bolt.connect("bolt_path_changed", self, "_on_bolt_path_changed") # samo za prikaz nav linije
 		new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # statistika med boltom in hudom
 		#		Ref.current_camera.follow_target = new_bolt # začasen holder, ki se obdrži, če se ob štartu ne seta posebej (racing se ...) 
 	emit_signal("new_bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
@@ -763,15 +762,6 @@ func _on_enemy_path_changed(path: Array) -> void: # za prikaz linije
 	navigation_line.points = path
 	
 	
-func _on_bolt_path_changed(path: Array) -> void: # za prikaz linije
-	# ta funkcija je vezana na signal bolta
-	# inline connect za primer, če je bolt spawnan
-	# def signal connect za primer, če je bolt "in-tree" node
-	
-	var navigation_line: Line2D = Ref.node_creation_parent.get_parent().bolt_navigation_line
-	navigation_line.points = path
-
-
 func _on_body_exited_screen(body: Node) -> void:
 	
 	if not game_on:

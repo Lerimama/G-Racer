@@ -3,18 +3,20 @@ extends StaticBody2D
 
 var ghost_color = Set.color_red
 var ghost_brake = 10
-
+var brick_altitude: float = 5
 var def_particle_speed: float = 6
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-#onready var ghost_points: int = Ref.current_game_settings["ghost_brick_points"]
+onready var brick_shadow: Sprite = $BrickShadow
+
 
 func _ready() -> void:
 
 	modulate = ghost_color
-
-
+	brick_shadow.shadow_distance = brick_altitude
+	
+	
 func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Ref.group_bolts):

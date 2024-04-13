@@ -3,17 +3,19 @@ extends StaticBody2D
 
 var turned_on: bool = false
 var bolts_in_goal_area: Array = []
+var pillar_altitude: float = 5
 
 onready var light_2d: Light2D = $Light2D
 onready var light_poly: Polygon2D = $LightPoly
-#onready var goal_points: int = Ref.game_manager.game_settings["goal_points"]
+onready var pillar_shadow: Sprite = $PillarShadow
 
 
 func _ready() -> void:
 	
 	light_2d.color = Set.color_red
 	light_poly.color = Set.color_red
-
+	pillar_shadow.shadow_distance = pillar_altitude
+	
 
 func goal_reached(bolt: KinematicBody2D):
 	
@@ -24,7 +26,6 @@ func goal_reached(bolt: KinematicBody2D):
 		# points
 		var points_reward: float = Ref.game_manager.game_settings["goal_points"]
 		bolt.points = points_reward # setget
-#		bolt.score_points(points_reward)
 	
 
 func _on_DetectArea_body_entered(body: Node) -> void:

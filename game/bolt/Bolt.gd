@@ -122,12 +122,11 @@ onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
 onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
 var current_drag: float# = bolt_drag
 
-onready var to_goal_agent: NavigationAgent2D = $ToGoalAgent
-signal bolt_path_changed (path)
 onready var bolt_shadow: Sprite = $BoltShadow
 var bolt_altitude: float = 3
 var bolt_max_altitude: float = 5
 var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # 0 levo, 180 desno, 90 gor, -90 dol  
+
 
 func _ready() -> void:
 	printt("BOLT", bolt_id, global_position)
@@ -138,7 +137,9 @@ func _ready() -> void:
 		bolt_sprite.texture = bolt_sprite_texture
 	axis_distance = bolt_sprite.texture.get_width()
 	current_drag = bolt_drag
-
+	
+	bolt_shadow.shadow_distance = bolt_max_altitude
+	
 	set_engines() # postavi partikle za pogon
 	
 	# nodes
@@ -159,20 +160,8 @@ func _ready() -> void:
 	available_features.append(feat_selector.get_node("Icons/IconMina"))
 	available_features.append(feat_selector.get_node("Icons/IconShocker"))
 	
-	to_goal_agent.set_target_location(Ref.game_manager.level_goal_position)
-#	navigation_target_position = new_position
-
-	bolt_shadow.modulate = Color.black
-	bolt_shadow.modulate.a = 0.2
-	bolt_altitude = 3
-	bolt_shadow.global_position = global_position - bolt_altitude * shadow_direction
-
 
 func _physics_process(delta: float) -> void:
-	
-	if Ref.game_manager.game_on:
-		bolt_altitude = bolt_max_altitude
-	bolt_shadow.global_position = global_position - bolt_altitude * shadow_direction
 	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
@@ -957,8 +946,3 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 func _on_EngineStart_finished() -> void:
 	
 	$Sounds/Engine.play()
-
-
-func _on_ToGoalAgent_path_changed() -> void:
-	emit_signal("bolt_path_changed", to_goal_agent.get_nav_path()) # levelu preko arene pošljemo točke poti do cilja	¨
-	pass # Replace with function body.

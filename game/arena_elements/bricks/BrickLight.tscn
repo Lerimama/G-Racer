@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=1]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=2]
 [ext_resource path="res://assets/light.png" type="Texture" id=3]
 [ext_resource path="res://game/arena_elements/bricks/BrickLight.gd" type="Script" id=4]
+[ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=5]
 
 [sub_resource type="PhysicsMaterial" id=7]
 
@@ -45,6 +46,9 @@ script = ExtResource( 4 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="BrickShadow" parent="." instance=ExtResource( 5 )]
+casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )

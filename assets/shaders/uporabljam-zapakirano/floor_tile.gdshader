@@ -46,22 +46,28 @@ uniform float speed_scale : hint_range (0, 1, 0.01)= 0.1; // da ni prehitro
 uniform bool shade_all_colors;
 uniform sampler2D shades_color_ramp : hint_albedo;
 
+uniform mat4 view_to_local;
+varying vec2 local;
+void vertex()
+{
+    local = (view_to_local * WORLD_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
+}
 
 void fragment() {
 
-	COLOR = texture(TEXTURE, UV);
-//	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0); // textura pred editiranjem
+//	COLOR = texture(TEXTURE, UV);
+	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0); // textura pred editiranjem
 	
 	// COLORS change
 	if (change_colors == true){
-//		if (COLOR == color_1){COLOR = new_color_1;}
-//		if (COLOR == color_2){COLOR = new_color_2;}
-//		if (COLOR == color_3){COLOR = new_color_3;}
-//		if (COLOR == color_to_transparent){COLOR.a = 0.0;}
-		if (length(COLOR - color_1) < 0.01){COLOR = new_color_1;}
-		if (length(COLOR - color_2) < 0.01){COLOR = new_color_2;}
-		if (length(COLOR - color_3) < 0.01){COLOR = new_color_3;}
-		if (length(COLOR - color_to_transparent) < 0.01){COLOR.a = 0.0;}
+		if (COLOR == color_1){COLOR = new_color_1;}
+		if (COLOR == color_2){COLOR = new_color_2;}
+		if (COLOR == color_3){COLOR = new_color_3;}
+		if (COLOR == color_to_transparent){COLOR.a = 0.0;}
+//		if (length(COLOR - color_1) < 0.01){COLOR = new_color_1;}
+//		if (length(COLOR - color_2) < 0.01){COLOR = new_color_2;}
+//		if (length(COLOR - color_3) < 0.01){COLOR = new_color_3;}
+//		if (length(COLOR - color_to_transparent) < 0.01){COLOR.a = 0.0;}
 	}
 			
 	// NOISE

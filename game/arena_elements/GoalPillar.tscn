@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://game/arena_elements/GoalPillar.gd" type="Script" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=7]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=8]
 [ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=9]
+[ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=10]
 
 [sub_resource type="CircleShape2D" id=559]
 radius = 37.054
@@ -34,6 +35,9 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="PillarShadow" parent="." instance=ExtResource( 10 )]
+casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
