@@ -1,5 +1,5 @@
 shader_type canvas_item;
-
+//render_mode blend_mix
 
 // KAJ ŠEJDER DELA?
 // v prvem koraku naredi senco, jo zamakne ... potem jo izreže, da ne prekriva original barve 

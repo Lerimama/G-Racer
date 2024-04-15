@@ -27,7 +27,7 @@ radius = 12.0
 
 [sub_resource type="AtlasTexture" id=128]
 atlas = ExtResource( 8 )
-region = Rect2( 2, 67, 10, 10 )
+region = Rect2( 3, 83, 9, 10 )
 
 [sub_resource type="OpenSimplexNoise" id=25]
 seed = 4
@@ -273,7 +273,7 @@ position = Vector2( 0, 1 )
 texture = ExtResource( 2 )
 
 [node name="FrontEnginePositionR" type="Position2D" parent="Bolt"]
-position = Vector2( 2.00001, 2.99999 )
+position = Vector2( 2, 4 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0
@@ -284,7 +284,7 @@ visible = false
 texture = ExtResource( 2 )
 
 [node name="RearEnginePosition" type="Position2D" parent="Bolt"]
-position = Vector2( -4, -0.499986 )
+position = Vector2( -7, 0 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0
@@ -296,13 +296,13 @@ position = Vector2( 0, 0.5 )
 texture = ExtResource( 2 )
 
 [node name="TrailPosition" type="Position2D" parent="Bolt"]
-position = Vector2( -3, -0.499993 )
+position = Vector2( -3, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="GunPosition" type="Position2D" parent="Bolt"]
-position = Vector2( 3, -0.5 )
+position = Vector2( 4, 0 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0

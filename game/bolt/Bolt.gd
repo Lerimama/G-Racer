@@ -167,7 +167,6 @@ func _ready() -> void:
 	
 
 func _physics_process(delta: float) -> void:
-	printt( "color", bolt_color, bolt_sprite.modulate)
 	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)

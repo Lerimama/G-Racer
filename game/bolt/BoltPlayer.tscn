@@ -20,6 +20,7 @@ shader_param/texture_size = Vector2( 32, 32 )
 script = ExtResource( 5 )
 
 [node name="Light2D" parent="." index="1"]
+energy = 0.54
 shadow_color = Color( 0, 0, 0, 0.568627 )
 shadow_filter = 3
 

@@ -124,22 +124,54 @@ func get_navigation_racing_line():
 	
 func _physics_process(delta: float) -> void:
 	
-	racing_navigation_agent.get_next_location()
+#	var tm: TileMap = tilemap_edge
+#	var tile_with_shader_id: int = 0
+##	var tm: TileMap = tilemap_elements
+##	var tile_with_shader_id: int = 36
+#	var ts: TileSet = tm.tile_set
+#	var sm: String = ts.tile_get_name(tile_with_shader_id)
+#	var tile = ts.find_tile_by_name(sm)
+#	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
+#	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
+#	var view_to_local: Transform2D = local_to_view.affine_inverse()
+#	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
+#	mat.set_shader_param("view_to_local", view_to_local)
+#	# tile_shader in test imata to kodo	
+#	racing_navigation_agent.get_next_location()
+	update_shaders()
+	pass
 	
 	
 func on_all_is_set():
 
-	var tm: TileMap = tilemap_floor
-	var tile_with_shader_id: int = 5
-	var ts: TileSet = tm.tile_set
-	var sm: String = ts.tile_get_name(tile_with_shader_id)
-	var tile = ts.find_tile_by_name(sm)
-	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
-	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
-	var view_to_local: Transform2D = local_to_view.affine_inverse()
-	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
-	mat.set_shader_param("view_to_local", view_to_local)
+#	var tm: TileMap = tilemap_edge
+#	var tile_with_shader_id: int = 0
+##	var tm: TileMap = tilemap_elements
+##	var tile_with_shader_id: int = 36
+#	var ts: TileSet = tm.tile_set
+#	var sm: String = ts.tile_get_name(tile_with_shader_id)
+#	var tile = ts.find_tile_by_name(sm)
+#	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
+#	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
+#	var view_to_local: Transform2D = local_to_view.affine_inverse()
+#	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
+#	mat.set_shader_param("view_to_local", view_to_local)
+	# tile_shader in test imata to kodo
 	
+#	var tm: TileMap = tilemap_floor
+#	var tile_with_shader_id: int = 5
+##	var tm: TileMap = tilemap_elements
+##	var tile_with_shader_id: int = 36
+#	var ts: TileSet = tm.tile_set
+#	var sm: String = ts.tile_get_name(tile_with_shader_id)
+#	var tile = ts.find_tile_by_name(sm)
+#	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
+#	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
+#	var view_to_local: Transform2D = local_to_view.affine_inverse()
+#	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
+#	mat.set_shader_param("view_to_local", view_to_local)
+	# tile_shader in test imata to kodo
+	update_shaders()
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions)
 
 
@@ -147,6 +179,34 @@ func on_all_is_set():
 
 onready var background: Node2D = $Background
 
+func update_shaders():
+	
+	var tajlmeps: Array = [tilemap_edge, tilemap_floor]
+	
+	var tile_with_shader_id: int
+	
+	for tm in tajlmeps:
+		match tm:
+			tilemap_floor:
+		#		var tm: TileMap = tilemap_floor
+				tile_with_shader_id = 5
+			#	var tm: TileMap = tilemap_elements
+			#	var tile_with_shader_id: int = 36
+			tilemap_edge:
+				tile_with_shader_id = 0
+				pass
+				
+		var ts: TileSet = tm.tile_set
+		var sm: String = ts.tile_get_name(tile_with_shader_id)
+		var tile = ts.find_tile_by_name(sm)
+		var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
+		var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
+		var view_to_local: Transform2D = local_to_view.affine_inverse()
+#		printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
+		mat.set_shader_param("view_to_local", view_to_local)
+	
+	
+	
 func set_level_shaders():
 	
 	# zaporedje je pomembno
