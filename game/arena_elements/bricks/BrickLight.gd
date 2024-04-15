@@ -3,22 +3,27 @@ extends StaticBody2D
 var turned_on: bool = false
 var bolts_in_goal_area: Array = []
 
+var light_off_color: Color = Set.color_brick_light_off
+var light_on_color: Color = Set.color_brick_light_on
+
 onready var light_poly: Polygon2D = $LightPoly
 onready var light_2d: Light2D = $Light2D
 
 
 func _ready() -> void:
 	
-	light_2d.color = Set.color_red
-	light_poly.color = Set.color_red
+	#	light_2d.color = light_off_color
+	#	light_poly.color = light_off_color
+	modulate = light_off_color
 
 
 func light_reached(bolt: KinematicBody2D):
 	
 	if not turned_on:
 		turned_on = true
-		light_2d.color = Set.color_green
-		light_poly.color = Set.color_green
+		#		light_2d.color = light_on_color
+		#		light_poly.color = light_on_color
+		modulate = light_on_color
 		# points
 		var points_reward: float = Ref.game_manager.game_settings["light_points"]
 		bolt.points = points_reward # setget

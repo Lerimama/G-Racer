@@ -13,6 +13,8 @@ var shadow_distance: float = 30 # odvisno od metalca sence
 
 func _ready() -> void:
 	
+	shadow_direction = Set.game_enviroment_settings["shadow_direction"]
+	
 	if casting_node_name == "CastingNodeName":
 		printt ("No casting node on ...", self)
 	else:

@@ -106,7 +106,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 1 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Color( 1, 1, 1, 0.313726 ), Color( 0.952941, 0.356863, 0.498039, 1 ) ]
+"values": [ Color( 1, 1, 1, 0.313726 ), Color( 0, 0, 0, 1 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("ForceField/FF:modulate")
@@ -180,7 +180,7 @@ tracks/3/keys = {
 "times": PoolRealArray( 0, 1 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Color( 0.952941, 0.356863, 0.498039, 1 ), Color( 1, 1, 1, 0.313726 ) ]
+"values": [ Color( 0, 0, 0, 1 ), Color( 1, 1, 1, 0.313726 ) ]
 }
 
 [sub_resource type="AudioStreamRandomPitch" id=27]

@@ -3,9 +3,7 @@ class_name Enemy
 
 signal path_changed (path)
 
-var player_name: String # za opredelitev statistike
 var level_goal_position: Vector2 = Ref.game_manager.level_goal_position
-onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
 
 # vision
 var navigation_cells: Array # sek
@@ -30,9 +28,9 @@ func _ready() -> void:
 	add_to_group(Ref.group_enemies)
 	 
 	# player setup
-	player_name = player_profile["player_name"]
-	bolt_color = player_profile["player_color"] # bolt se obarva ... 
-	bolt_sprite.modulate = bolt_color
+#	player_name = player_profile["player_name"]
+#	bolt_color = player_profile["player_color"] # bolt se obarva ... 
+#	bolt_sprite.modulate = bolt_color
 	
 	randomize()
 	

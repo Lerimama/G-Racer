@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/ui/hud/Hud.gd" type="Script" id=3]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=4]
 [ext_resource path="res://game/ui/hud/StatLineRacer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://game/ui/hud/FpsCounter.gd" type="Script" id=6]
 [ext_resource path="res://game/ui/hud/GameTime.gd" type="Script" id=7]
 [ext_resource path="res://game/ui/hud/HudGameTimer.tscn" type="PackedScene" id=8]
 [ext_resource path="res://game/ui/hud/StartCountdown.tscn" type="PackedScene" id=9]
@@ -135,5 +136,13 @@ margin_right = 122.5
 custom_fonts/font = ExtResource( 1 )
 text = "DEAD!!!"
 align = 1
+
+[node name="FpsCounter" type="Label" parent="."]
+margin_left = 88.0
+margin_top = 5.0
+margin_right = 128.0
+margin_bottom = 18.0
+text = "FPS"
+script = ExtResource( 6 )
 
 [connection signal="gametime_is_up" from="GameStats/GameTimer" to="." method="_on_GameTimer_gametime_is_up"]

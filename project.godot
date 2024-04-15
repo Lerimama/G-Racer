@@ -70,7 +70,7 @@ _global_script_classes=[ {
 "path": "res://game/arena/Walker.gd"
 } ]
 _global_script_class_icons={
-"Bolt": "res://assets/class_icons/bolt_icon.png",
+"Bolt": "",
 "Bullet": "",
 "Enemy": "",
 "GameManager": "",
@@ -78,7 +78,7 @@ _global_script_class_icons={
 "GameTilemap": "",
 "Mina": "",
 "Misile": "",
-"Pickable": "res://assets/class_icons/pickable_icon.png",
+"Pickable": "",
 "Player": "",
 "Shocker": "",
 "Walker": ""
@@ -106,7 +106,8 @@ gdscript/completion/autocomplete_setters_and_getters=true
 
 window/size/width=640
 window/size/height=360
-window/size/always_on_top=true
+window/size/borderless=true
+window/size/fullscreen=true
 window/size/test_width=640
 window/size/test_height=320
 window/stretch/mode="2d"
@@ -336,4 +337,4 @@ common/enable_pause_aware_picking=true
 2d/snapping/use_gpu_pixel_snap=true
 limits/buffers/canvas_polygon_buffer_size_kb=256
 limits/buffers/canvas_polygon_index_buffer_size_kb=256
-environment/default_clear_color=Color( 0.439216, 0.439216, 0.439216, 1 )
+environment/default_clear_color=Color( 0.223529, 0.223529, 0.223529, 1 )

@@ -1,7 +1,7 @@
 extends StaticBody2D
 
 
-var bouncer_color: Color = Set.color_yellow
+var bouncer_color: Color = Set.color_brick_bouncer
 var bouncer_bounce_strenght: float = 2
 var brick_altitude: float = 5
 

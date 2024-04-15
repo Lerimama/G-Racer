@@ -19,8 +19,15 @@ shader_param/texture_size = Vector2( 32, 32 )
 [node name="Player" instance=ExtResource( 4 )]
 script = ExtResource( 5 )
 
-[node name="Shield" parent="." index="0"]
+[node name="Light2D" parent="." index="1"]
+shadow_color = Color( 0, 0, 0, 0.568627 )
+shadow_filter = 3
+
+[node name="Shield" parent="." index="6"]
 material = SubResource( 1 )
+
+[node name="TiltTimer" type="Timer" parent="." index="7"]
+one_shot = true
 
 [node name="VBoxContainer" parent="BoltHud" index="0"]
 custom_constants/separation = 3
@@ -28,6 +35,3 @@ custom_constants/separation = 3
 [node name="FeatureSelector" parent="BoltHud/VBoxContainer" index="1"]
 margin_top = 4.0
 margin_bottom = 12.0
-
-[node name="TiltTimer" type="Timer" parent="." index="7"]
-one_shot = true

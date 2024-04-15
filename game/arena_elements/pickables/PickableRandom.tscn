@@ -5,5 +5,10 @@
 [node name="PickableRandom" instance=ExtResource( 1 )]
 pickable_type = 11
 
-[node name="Sprite" parent="." index="0"]
+[node name="Sprite" parent="." index="1"]
 region_rect = Rect2( 16, 56, 16, 16 )
+
+[node name="Light2D" parent="." index="5"]
+energy = 0.72
+range_layer_min = -4
+range_layer_max = -1

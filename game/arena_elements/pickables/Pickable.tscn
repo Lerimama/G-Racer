@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://game/arena_elements/pickables/Pickable.gd" type="Script" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=3]
 [ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=4]
+[ext_resource path="res://__materiali/light_2.png" type="Texture" id=5]
 
 [sub_resource type="SpriteFrames" id=561]
 animations = [ {
@@ -46,6 +47,14 @@ pause_mode = 2
 stream = ExtResource( 3 )
 volume_db = -15.0
 bus = "GameSfx"
+
+[node name="Light2D" type="Light2D" parent="."]
+visible = false
+z_index = 6
+enabled = false
+texture = ExtResource( 5 )
+energy = 0.15
+shadow_color = Color( 0.976471, 0, 0, 0.807843 )
 
 [connection signal="body_entered" from="." to="." method="_on_Item_body_entered"]
 [connection signal="finished" from="Sounds/PickedDefault" to="." method="_on_Picked_finished"]

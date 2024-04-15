@@ -427,12 +427,15 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
 	var new_bolt = NewBolt.instance()
 	new_bolt.bolt_id = spawned_bolt_id
+#	var current_player_profile: Dictionary = Pro.player_profiles[spawned_bolt_id]
+#	new_bolt.player_name = current_player_profile["player_name"]
+#	new_bolt.bolt_color = current_player_profile["player_color"]
+#	new_bolt.bolt_sprite.modulate = current_player_profile["player_color"]
 	new_bolt.bolt_stats = spawned_bolt_stats
 	new_bolt.modulate.a = 0 # intro
 	new_bolt.rotation_degrees = level_bolt_position_nodes[spawned_position_index].rotation_degrees# - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = level_bolt_position_nodes[spawned_position_index].global_position
 	Ref.node_creation_parent.add_child(new_bolt)
-	
 	
 	# signali
 	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_changed")

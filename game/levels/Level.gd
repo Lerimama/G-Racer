@@ -68,11 +68,13 @@ onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 onready var start_position_node: Position2D = $StartPosition
 onready var goal_position_node: Position2D = $GoalPosition
 onready var spawn_position_nodes: Node2D = $Positions
+onready var start_line: Area2D = $StartLine
 
 	
 func _ready() -> void:
-	# debug
 	printt("LEVEL")
+	
+	# debug hide
 	if not Set.debug_mode:
 		$Positions.hide()
 		$Comments.hide()
@@ -80,15 +82,25 @@ func _ready() -> void:
 		$Instructions.hide()
 		racing_line.hide()
 	level_navigation_line.hide()
-	$StartLabel.show()
+	
 
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
+	
+	if Ref.game_manager:
+		if Ref.game_manager.game_settings["race_mode"]:
+			start_line.show()	
+			$StartLabel.show()
+		else:
+			start_line.hide()	
+			$StartLabel.hide()
+		
 	# kar je skrito, ne deluje
 	if background_space.visible:
 		background_space.get_node("Zvezde").emitting = true
 	if finish_line.visible:
 		finish_line.monitoring = true
+
 	if checkpoints.visible:
 		checkpoints_count = checkpoints.get_child_count()
 		for checkpoint in checkpoints.get_children():
@@ -125,7 +137,7 @@ func on_all_is_set():
 	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
 	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
 	var view_to_local: Transform2D = local_to_view.affine_inverse()
-	printt (ts, tm, sm, local_to_view, view_to_local)
+	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
 	mat.set_shader_param("view_to_local", view_to_local)
 	
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions)
@@ -133,16 +145,26 @@ func on_all_is_set():
 
 # SET SHADERS --------------------------------------------------------------------------------------------------------
 
+onready var background: Node2D = $Background
 
 func set_level_shaders():
 	
 	# zaporedje je pomembno
-	
-	# floor
 	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
 	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
 	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
 	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
+	for shader_node in background.get_children():
+		if shader_node.material:
+			shader_node.rect_position = floor_rect_position
+			shader_node.rect_size = floor_rect_size
+			shader_node.material.set_shader_param("node_size", floor_rect_size)
+	
+	# floor
+#	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
+#	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
+#	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
+#	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
 	for shader_node in tilemap_floor.get_children():
 		shader_node.rect_position = floor_rect_position
 		shader_node.rect_size = floor_rect_size

@@ -48,6 +48,7 @@ __meta__ = {
 }
 
 [node name="BrickShadow" parent="." instance=ExtResource( 5 )]
+visible = false
 casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
@@ -69,11 +70,14 @@ root_node = NodePath("../DetectArea")
 anims/outro = SubResource( 14 )
 
 [node name="LightPoly" type="Polygon2D" parent="."]
+visible = false
 modulate = Color( 1, 1, 1, 0.235294 )
 polygon = PoolVector2Array( -1, 2, 1, 2, 1, 1, 2, 1, 2, -1, 1, -1, 1, -2, -1, -2, -1, -1, -2, -1, -2, 1, -1, 1 )
 
 [node name="Light2D" type="Light2D" parent="."]
+visible = false
 scale = Vector2( 0.041958, 0.041958 )
+enabled = false
 texture = ExtResource( 3 )
 color = Color( 0.952941, 0.356863, 0.498039, 1 )
 mode = 2

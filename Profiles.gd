@@ -128,84 +128,84 @@ var pickable_profiles: Dictionary = {
 	
 	"BULLET": { # BULLET
 		"for_random_selection": true, # vključeno v random izbor?
-		"pickable_color": Set.color_green,
+		"pickable_color": Set.color_pickable_weapon,
 		"pickable_value": 20,
 		"pickable_time": 0, # pomeni, da ni časovno pogojen učinek
 		"scene_path": preload("res://game/arena_elements/pickables/PickableBullet.tscn"), # pot rabim samo pri random spawnanju
 	},
 	"MISILE": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_green,
+		"pickable_color": Set.color_pickable_weapon,
 		"pickable_value": 2,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableMisile.tscn"),
 	}, 
 	"MINA": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_green,
+		"pickable_color": Set.color_pickable_weapon,
 		"pickable_value": 3,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableMina.tscn"),
 	}, 
 	"SHOCKER": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_green,
+		"pickable_color": Set.color_pickable_weapon,
 		"pickable_value": 3,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShocker.tscn"),
 	}, 
 	"SHIELD": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_green,
+		"pickable_color": Set.color_pickable_feature,
 		"pickable_value": 1,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableShield.tscn"),
 	},
 	"ENERGY": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_red,
+		"pickable_color": Set.color_pickable_stat,
 		"pickable_value": 0,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableEnergy.tscn"),
 	},
 	"LIFE": {
 		"for_random_selection": true,
-		"pickable_color": Set.color_blue,
+		"pickable_color": Set.color_pickable_stat,
 		"pickable_value": 1,
 		"pickable_time": 0, 
 		"scene_path": preload("res://game/arena_elements/pickables/PickableLife.tscn"),
 	},
 	"GAS": {
 		"for_random_selection": false,
-		"pickable_color": Set.color_red,
+		"pickable_color": Set.color_pickable_stat,
 		"pickable_value": 200,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableGas.tscn"),
 	},
 	"NITRO": {
 		"for_random_selection": false,
-		"pickable_color": Set.color_yellow,
+		"pickable_color": Set.color_pickable_feature,
 		"pickable_value": 700,
 		"pickable_time": 1.5, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableNitro.tscn"),
 	},
 	"TRACKING": {
 		"for_random_selection": false,
-		"pickable_color": Set.color_green,
+		"pickable_color": Set.color_pickable_feature,
 		"pickable_value": 0.7,
 		"pickable_time": 5,
 		"scene_path": preload("res://game/arena_elements/pickables/PickableTracking.tscn"),
 	},
 	"POINTS": {
 		"for_random_selection": false,
-		"pickable_color": Set.color_blue,
+		"pickable_color": Set.color_pickable_stat,
 		"pickable_value": 100,
 		"pickable_time": 0,
 		"scene_path": preload("res://game/arena_elements/pickables/PickablePoints.tscn"),
 	},
 	"RANDOM": {
 		"for_random_selection": false,
-		"pickable_color": Color.white,
+		"pickable_color": Set.color_pickable_random,
 		"pickable_value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"pickable_time": 0, # sekunde
 		"scene_path": preload("res://game/arena_elements/pickables/PickableRandom.tscn"),

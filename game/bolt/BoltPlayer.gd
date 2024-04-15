@@ -2,10 +2,10 @@ extends Bolt
 class_name Player
 
 
-var player_name: String # za opredelitev statistike
+#var player_name: String # za opredelitev statistike
 var controller_profile: Dictionary
 
-onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
+#onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
 onready var controller_profiles: Dictionary = Pro.controller_profiles
 onready var controller_profile_name: String = player_profile["controller_profile"]
 onready var controller_actions: Dictionary = controller_profiles[controller_profile_name]
@@ -71,10 +71,10 @@ func _ready() -> void:
 	
 	add_to_group(Ref.group_players)
 	
-	# player setup
-	player_name = player_profile["player_name"]
-	bolt_color = player_profile["player_color"]
-	bolt_sprite.modulate = bolt_color
+#	# player setup
+#	player_name = player_profile["player_name"]
+#	bolt_color = player_profile["player_color"]
+#	bolt_sprite.modulate = bolt_color
 
 
 func _physics_process(delta: float) -> void:

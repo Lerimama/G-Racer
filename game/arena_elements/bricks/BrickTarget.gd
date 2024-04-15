@@ -2,9 +2,9 @@ extends StaticBody2D
 
 
 var hit_count: int = 0
-var brick_color_1: Color = Set.color_blue
-var brick_color_2: Color = Color.cyan
-var brick_color_3: Color = Color.greenyellow
+var brick_color_1: Color = Set.color_brick_target
+var brick_color_2: Color = Set.color_brick_target_hit_1
+var brick_color_3: Color = Set.color_brick_target_hit_2
 var brick_altitude: float = 5
 
 var def_particle_speed = 5

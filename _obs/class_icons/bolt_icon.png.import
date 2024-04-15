@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt_icon.png-c96667a3ce7c675599cd63890c257b33.stex"
+path="res://.import/bolt_icon.png-66669bafe1fea4ab1e426838074b8559.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/class_icons/bolt_icon.png"
-dest_files=[ "res://.import/bolt_icon.png-c96667a3ce7c675599cd63890c257b33.stex" ]
+source_file="res://_obs/class_icons/bolt_icon.png"
+dest_files=[ "res://.import/bolt_icon.png-66669bafe1fea4ab1e426838074b8559.stex" ]
 
 [params]
 

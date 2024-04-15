@@ -1,5 +1,5 @@
 extends KinematicBody2D
-class_name Bolt, "res://assets/class_icons/bolt_icon.png"
+class_name Bolt#, "res://assets/class_icons/bolt_icon.png"
 
 
 signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
@@ -13,7 +13,8 @@ var current_mode: int = Modes.RACING
 
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 var bolt_id: int # ga seta spawner
-var bolt_color: Color = Color.white
+var bolt_color: Color = Color.red
+var player_name: String # za opredelitev statistike
 
 var acceleration: Vector2
 var velocity: Vector2 = Vector2.ZERO
@@ -58,7 +59,7 @@ var selected_feature_index: int = 0
 var available_features: Array = [] # feature icons
 
 onready var bolt_hud: Node2D = $BoltHud
-onready var bolt_sprite: Sprite = $Bolt_old
+onready var bolt_sprite: Sprite = $Bolt
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
 onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
@@ -126,6 +127,7 @@ onready var bolt_shadow: Sprite = $BoltShadow
 var bolt_altitude: float = 3
 var bolt_max_altitude: float = 5
 var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # 0 levo, 180 desno, 90 gor, -90 dol  
+onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
 
 
 func _ready() -> void:
@@ -137,7 +139,10 @@ func _ready() -> void:
 		bolt_sprite.texture = bolt_sprite_texture
 	axis_distance = bolt_sprite.texture.get_width()
 	current_drag = bolt_drag
-	
+
+	player_name = player_profile["player_name"]
+	bolt_color = player_profile["player_color"] # bolt se obarva ... 	
+	bolt_sprite.modulate = bolt_color	
 	bolt_shadow.shadow_distance = bolt_max_altitude
 	
 	set_engines() # postavi partikle za pogon
@@ -162,6 +167,7 @@ func _ready() -> void:
 	
 
 func _physics_process(delta: float) -> void:
+	printt( "color", bolt_color, bolt_sprite.modulate)
 	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)

@@ -30,7 +30,7 @@ func _ready() -> void:
 	stat_line_btmR.visible = false
 	
 	Ref.game_manager.connect("new_bolt_spawned", self, "_set_spawned_bolt_hud") # signal pride iz GM in pošlje spremenjeno statistiko
-	
+
 
 func set_hud(): # kliče GM
 	

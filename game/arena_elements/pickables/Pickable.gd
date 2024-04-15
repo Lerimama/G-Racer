@@ -1,5 +1,5 @@
 extends Area2D
-class_name Pickable, "res://assets/class_icons/pickable_icon.png"
+class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 
 enum Pickables {BULLET, MISILE, MINA, SHOCKER, SHIELD, ENERGY, GAS, LIFE, NITRO, TRACKING, POINTS, RANDOM} # mešanje zaporedja meša izbrane tipe

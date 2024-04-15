@@ -18,12 +18,29 @@ var color_gray2 = Color("#2f3649")
 var color_gray3 = Color("#272d3d")
 var color_gray4 = Color("#1d212d")
 var color_gray5 = Color("#171a23") # najtemnejša
-var color_gray_trans = Color("#272d3d00") # transparentna
+var color_gray_trans = Color("#00272d3d") # transparentna
 var color_red = Color("#f35b7f")
 var color_green = Color("#5effa9")
 var color_blue = Color("#4b9fff")
 var color_yellow = Color("#fef98b")
+# --- specs
 var color_hud_base = Color("#ffffff")
+
+var color_brick_ghost = Color.white
+var color_brick_magnet_off = Color("#99ffffff")
+var color_brick_magnet_on = Color("#ffffff")
+var color_brick_target = Color.white
+var color_brick_target_hit_1 = Color.white
+var color_brick_target_hit_2 = Color.white
+var color_brick_bouncer = Color.white
+var color_brick_light_off = Color.black
+var color_brick_light_on = Color.white
+
+var color_pickable_random = Color.pink 
+var color_pickable_stat = Color.black
+var color_pickable_feature = Color.white
+var color_pickable_weapon = Color.yellow
+
 
 ## Z index spawnanih elementov ... relativno glede na tistega, ki jih spawna
 #var bolt_z_index = -1
@@ -33,6 +50,13 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 
+var game_enviroment_settings: Dictionary = { 
+	# shadows_direction
+	"shadow_direction": Vector2.DOWN,
+	"shadow_color": Color.black,
+	"shadow_transparency": Color.black,
+	}
+	
 var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
 	# bricks and area values ... drugam
 	"goal_points": 1000,
@@ -46,17 +70,6 @@ var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko š
 	"gravel_drag_div": 25.0, 
 	"hole_drag_div": 5.0,
 	"nitro_drag_div": 500.0,	
-	
-#	"area_gravel_drag_force_div": 25.0, 
-#	"area_hole_drag_force_div": 5.0,
-#	"area_nitro_drag_force_div": 500.0,
-##	"precision_start_drag_force_div": 500.0, # drugam
-#
-#	"area_gravel_drag": 6,
-#	"area_hole_drag": 30,
-#	"area_nitro_drag": 0.3,
-#	"precision_start_drag": 0.3,
-	
 	# time
 	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
 	"game_time_limit": 0, # če je 0 ni omejitve
@@ -91,7 +104,7 @@ var level_settings: Dictionary = {
 	Levels.TRAINING: {
 		"level": Levels.TRAINING,
 		"level_path": "res://game/levels/LevelTraining.tscn",
-		"time_limit": 10,
+		"time_limit": 0,
 		"lap_limit": 0,
 		},
 	Levels.NITRO: {
@@ -171,10 +184,10 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [Levels.RACE_8]
+var current_game_levels: Array = [Levels.TRAINING]
 #var current_game_levels: Array = [Levels.RACE_SNAKE]
 #var current_game_levels: Array = [Levels.RACE_CIRCO]
-var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
+#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
 #var current_game_levels: Array = [Levels.RACE_ROUND, Levels.RACE_DIRECT]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
@@ -214,8 +227,8 @@ func get_level_game_settings(selected_level_index: int):
 			current_game_settings["stopwatch_mode"] = false		
 		# trening
 		Levels.TRAINING: 
-			current_game_settings["race_mode"] = true
-		
+#			current_game_settings["race_mode"] = true
+			pass
 		Levels.NITRO: 
 			current_game_settings["race_mode"] = true
 		Levels.NITRO_STRAIGHT: 

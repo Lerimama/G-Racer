@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://game/arena_elements/bricks/BrickBouncer.gd" type="Script" id=1]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=2]
@@ -19,6 +19,9 @@ audio_stream = ExtResource( 3 )
 [sub_resource type="AudioStreamRandomPitch" id=9]
 audio_stream = ExtResource( 2 )
 random_pitch = 1.05
+
+[sub_resource type="OccluderPolygon2D" id=10]
+polygon = PoolVector2Array( -3, 3, -3, -3, 3, -3, 3, 3 )
 
 [node name="BouncerBrick" type="StaticBody2D"]
 script = ExtResource( 1 )
@@ -56,6 +59,9 @@ bus = "GameSfx"
 stream = ExtResource( 5 )
 volume_db = -15.0
 bus = "GameSfx"
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource( 10 )
 
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]
