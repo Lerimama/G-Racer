@@ -1,9 +1,9 @@
-[gd_scene load_steps=37 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://assets/sprites/bolt/bolt_alt.png" type="Texture" id=1]
 [ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_shield.material" type="Material" id=3]
-[ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_wiggle.material" type="Material" id=4]
+[ext_resource path="res://assets/shaders/_zaloga/originali_uporabljanega/bolt_shield.material" type="Material" id=3]
+[ext_resource path="res://assets/shaders/_zaloga/originali_uporabljanega/bolt_wiggle.material" type="Material" id=4]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=5]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=6]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
@@ -21,9 +21,13 @@
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
 [ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=20]
 [ext_resource path="res://__materiali/light_2.png" type="Texture" id=21]
+[ext_resource path="res://assets/sprites/glow_light.png" type="Texture" id=22]
 
 [sub_resource type="CircleShape2D" id=30]
 radius = 12.0
+
+[sub_resource type="CanvasItemMaterial" id=129]
+blend_mode = 1
 
 [sub_resource type="AtlasTexture" id=128]
 atlas = ExtResource( 8 )
@@ -194,6 +198,13 @@ enabled = false
 texture = ExtResource( 21 )
 shadow_color = Color( 0.976471, 0, 0, 0.807843 )
 
+[node name="LightF" type="Sprite" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.156863 )
+material = SubResource( 129 )
+scale = Vector2( 0.7, 0.7 )
+texture = ExtResource( 22 )
+
 [node name="BoltShadow" parent="." instance=ExtResource( 20 )]
 
 [node name="Bolt_old" type="Sprite" parent="."]
@@ -261,7 +272,7 @@ material = ExtResource( 4 )
 texture = SubResource( 128 )
 
 [node name="FrontEnginePositionL" type="Position2D" parent="Bolt"]
-position = Vector2( 2, -4 )
+position = Vector2( 3, -4 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0
@@ -273,7 +284,7 @@ position = Vector2( 0, 1 )
 texture = ExtResource( 2 )
 
 [node name="FrontEnginePositionR" type="Position2D" parent="Bolt"]
-position = Vector2( 2, 4 )
+position = Vector2( 3, 4 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0
@@ -284,7 +295,7 @@ visible = false
 texture = ExtResource( 2 )
 
 [node name="RearEnginePosition" type="Position2D" parent="Bolt"]
-position = Vector2( -7, 0 )
+position = Vector2( -6, 0 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0
@@ -296,7 +307,7 @@ position = Vector2( 0, 0.5 )
 texture = ExtResource( 2 )
 
 [node name="TrailPosition" type="Position2D" parent="Bolt"]
-position = Vector2( -3, 0 )
+position = Vector2( -1, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }

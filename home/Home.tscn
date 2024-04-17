@@ -1,6 +1,6 @@
 [gd_scene load_steps=41 format=2]
 
-[ext_resource path="res://assets/shaders/arena_colors_texture.gdshader" type="Shader" id=1]
+[ext_resource path="res://assets/shaders/home/arena_colors_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=2]
 [ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=4]

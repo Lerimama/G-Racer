@@ -14,8 +14,8 @@
 [ext_resource path="res://game/ui/hud/statline_stats/StatLapsCount.tscn" type="PackedScene" id=12]
 [ext_resource path="res://game/ui/hud/statline_stats/StatFastestLap.tscn" type="PackedScene" id=13]
 [ext_resource path="res://game/ui/hud/statline_stats/StatMina.tscn" type="PackedScene" id=14]
-[ext_resource path="res://StatLevelTime.tscn" type="PackedScene" id=15]
-[ext_resource path="res://StatRank.tscn" type="PackedScene" id=16]
+[ext_resource path="res://game/ui/hud/statline_stats/StatLevelTime.tscn" type="PackedScene" id=15]
+[ext_resource path="res://game/ui/hud/statline_stats/StatRank.tscn" type="PackedScene" id=16]
 
 [sub_resource type="AtlasTexture" id=147]
 atlas = ExtResource( 10 )

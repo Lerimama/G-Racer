@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/shaders/arena_colors_texture.gdshader" type="Shader" id=1]
+[ext_resource path="res://assets/shaders/home/arena_colors_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=2]
 [ext_resource path="res://home/ArenaGenerator.gd" type="Script" id=3]
 

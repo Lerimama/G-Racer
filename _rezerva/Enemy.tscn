@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=1]
 [ext_resource path="res://_rezerva/Enemy.gd" type="Script" id=2]
-[ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_shield_texture.gdshader" type="Shader" id=3]
+[ext_resource path="res://assets/shaders/_zaloga/originali_uporabljanega/bolt_shield_texture.gdshader" type="Shader" id=3]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true

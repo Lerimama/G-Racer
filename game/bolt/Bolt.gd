@@ -68,7 +68,8 @@ onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 
 onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
-onready var EngineParticles: PackedScene = preload("res://game/bolt/EngineParticles.tscn") 
+onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/EngineParticlesRear.tscn") 
+onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/EngineParticlesFront.tscn") 
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
 onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
 onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
@@ -128,6 +129,12 @@ var bolt_altitude: float = 3
 var bolt_max_altitude: float = 5
 var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # 0 levo, 180 desno, 90 gor, -90 dol  
 onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
+
+onready var rear_engine_position: Position2D = $Bolt/RearEnginePosition
+onready var front_engine_position_L: Position2D = $Bolt/FrontEnginePositionL
+onready var front_engine_position_R: Position2D = $Bolt/FrontEnginePositionR
+onready var trail_position: Position2D = $Bolt/TrailPosition
+onready var gun_position: Position2D = $Bolt/GunPosition
 
 
 func _ready() -> void:
@@ -229,7 +236,6 @@ func _exit_tree() -> void:
 		engine_particles_front_left.queue_free()
 	if engine_particles_front_right:
 		engine_particles_front_right.queue_free()
-#	printt("trail", current_active_trail) # trail decay tween start
 #	current_active_trail.start_decay() # trail decay tween start
 	bolt_trail_active = false
 	if Ref.current_camera.follow_target == self:
@@ -300,24 +306,23 @@ func manage_motion_states(delta):
 
 func manage_motion_fx():
 
-	var rear_engine_pos: Vector2 = Vector2(-2.7, 0.5)
-	var front_engine_pos_L: Vector2 = Vector2(3, -4)
-	var front_engine_pos_R: Vector2 = Vector2(3, 4.5)	
-	
 	shield.rotation = -rotation # negiramo rotacijo bolta, da je pri miru
+	engine_particles_rear.global_position = rear_engine_position.global_position
+	engine_particles_rear.global_rotation = rear_engine_position.global_rotation
+	engine_particles_front_left.global_position = front_engine_position_L.global_position
+	engine_particles_front_left.global_rotation = front_engine_position_L.global_rotation - deg2rad(180)
+	engine_particles_front_right.global_position = front_engine_position_R.global_position
+	engine_particles_front_right.global_rotation = front_engine_position_R.global_rotation - deg2rad(180)
 	
 	var engine_pitch_tween = get_tree().create_tween()
 	if current_motion_state == MotionStates.FWD:
 		engine_pitch_tween.kill() # more bit
 		$Sounds/Engine.pitch_scale = 1 + velocity.length()/180
-		engine_particles_rear.modulate.a = velocity.length()/50
 		engine_particles_rear.set_emitting(true)
 	elif current_motion_state == MotionStates.REV:
 		engine_pitch_tween.kill() # more bit
 		$Sounds/Engine.pitch_scale = 1 + velocity.length()/180
-		engine_particles_front_left.modulate.a = velocity.length()/10
 		engine_particles_front_left.set_emitting(true)
-		engine_particles_front_right.modulate.a = velocity.length()/10
 		engine_particles_front_right.set_emitting(true)
 	elif current_motion_state == MotionStates.IDLE:
 		if $Sounds/Engine.pitch_scale > 1:
@@ -325,17 +330,6 @@ func manage_motion_fx():
 		else:
 			engine_pitch_tween.kill()
 			$Sounds/Engine.pitch_scale = 1
-		engine_particles_rear.modulate.a = 0
-		engine_particles_front_left.modulate.a = 0
-		engine_particles_front_right.modulate.a = 0
-		
-	# pozicije vseh motorjev
-	engine_particles_front_left.global_position = to_global(front_engine_pos_L)
-	engine_particles_front_left.global_rotation = bolt_sprite.global_rotation - deg2rad(180)
-	engine_particles_rear.global_position = to_global(rear_engine_pos)
-	engine_particles_rear.global_rotation = bolt_sprite.global_rotation
-	engine_particles_front_right.global_position = to_global(front_engine_pos_R)
-	engine_particles_front_right.global_rotation = bolt_sprite.global_rotation - deg2rad(180)	
 		
 	# spawn trail if not active
 	if not bolt_trail_active and velocity.length() > 0: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
@@ -344,16 +338,6 @@ func manage_motion_fx():
 	# manage trail
 	if bolt_trail_active:
 		manage_trail()
-
-	# engine transparency
-	if velocity.length() < 100:
-		engine_particles_rear.modulate.a = velocity.length()/100
-		engine_particles_front_left.modulate.a = velocity.length()/100
-		engine_particles_front_right.modulate.a = velocity.length()/100
-	else:
-		engine_particles_rear.modulate.a = 1
-		engine_particles_front_left.modulate.a = 1
-		engine_particles_front_right.modulate.a = 1
 
 	
 func manage_trail():
@@ -653,33 +637,21 @@ func spawn_new_trail():
 			
 func set_engines():
 	
-	var rear_engine_pos: Vector2 = Vector2(-3.5, 0.5)
-	var front_engine_pos_L: Vector2 = Vector2( 2.5, -2.5)
-	var front_engine_pos_R: Vector2 = Vector2(2.5, 3.5)	
-		
-	engine_particles_rear = EngineParticles.instance()
-	# rotacija in pozicija se morata apdejta vsak frejm ... FP
+	engine_particles_rear = EngineParticlesRear.instance()
+	engine_particles_rear.global_position = rear_engine_position.global_position
 	engine_particles_rear.z_index = z_index + Set.engine_z_index
+#	engine_particles_rear.modulate.a = 0
 	Ref.node_creation_parent.add_child(engine_particles_rear)
-	engine_particles_rear.modulate.a = 0
 	
-	engine_particles_front_left = EngineParticles.instance()
-	# rotacija in pozicija se morata apdejta vsak frejm ... FP
-	engine_particles_front_left.emission_rect_extents = Vector2.ZERO
-	engine_particles_front_left.amount = 20
-	engine_particles_front_left.initial_velocity = 50
-	engine_particles_front_left.lifetime = 0.05
-	engine_particles_front_left.modulate.a = 0
+	engine_particles_front_left = EngineParticlesFront.instance()
+	engine_particles_front_left.global_position = front_engine_position_L.global_position
+#	engine_particles_front_left.modulate.a = 0
 	engine_particles_front_left.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_front_left)
 	
-	engine_particles_front_right = EngineParticles.instance()
-	# rotacija in pozicija se morata apdejta vsak frejm ... FP
-	engine_particles_front_right.emission_rect_extents = Vector2.ZERO
-	engine_particles_front_right.amount = 20
-	engine_particles_front_right.initial_velocity = 50
-	engine_particles_front_right.lifetime = 0.05
-	engine_particles_front_right.modulate.a = 0
+	engine_particles_front_right = EngineParticlesFront.instance()
+	engine_particles_front_right.global_position = front_engine_position_R.global_position
+#	engine_particles_front_right.modulate.a = 0
 	engine_particles_front_right.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_front_right)
 
@@ -708,8 +680,7 @@ func start_engines():
 			
 func shooting(weapon: String) -> void:
 	
-	var gun_pos: Vector2 = Vector2(6.5, 0.5)
-	var shocker_pos: Vector2 = Vector2(-4.5, 0.5)	
+	var shocker_position: Vector2 = rear_engine_position.global_position
 	
 	match weapon:
 		"bullet":
@@ -717,7 +688,7 @@ func shooting(weapon: String) -> void:
 				if bullet_count <= 0:
 					return
 				var new_bullet = BulletScene.instance()
-				new_bullet.global_position = to_global(gun_pos)
+				new_bullet.global_position = gun_position.global_position
 				new_bullet.global_rotation = bolt_sprite.global_rotation
 				new_bullet.spawned_by = self # ime avtorja izstrelka
 				new_bullet.spawned_by_color = bolt_color
@@ -732,7 +703,7 @@ func shooting(weapon: String) -> void:
 		"misile":
 			if misile_reloaded and misile_count > 0:			
 				var new_misile = MisileScene.instance()
-				new_misile.global_position = to_global(gun_pos)
+				new_misile.global_position = gun_position.global_position
 				new_misile.global_rotation = bolt_sprite.global_rotation
 				new_misile.spawned_by = self # zato, da lahko dobiva "točke ali kazni nadaljavo
 				new_misile.spawned_by_color = bolt_color
@@ -747,7 +718,7 @@ func shooting(weapon: String) -> void:
 		"mina":
 			if mina_reloaded and mina_count > 0:			
 				var new_mina = MinaScene.instance()
-				new_mina.global_position = to_global(shocker_pos)
+				new_mina.global_position = shocker_position
 				new_mina.global_rotation = bolt_sprite.global_rotation
 				new_mina.spawned_by = self # ime avtorja izstrelka
 				new_mina.spawned_by_color = bolt_color
@@ -761,7 +732,7 @@ func shooting(weapon: String) -> void:
 		"shocker":
 			if shocker_reloaded and shocker_count > 0:			
 				var new_shocker = ShockerScene.instance()
-				new_shocker.global_position = to_global(shocker_pos)
+				new_shocker.global_position = shocker_position
 				new_shocker.global_rotation = bolt_sprite.global_rotation
 				new_shocker.spawned_by = self # ime avtorja izstrelka
 				new_shocker.spawned_by_color = bolt_color

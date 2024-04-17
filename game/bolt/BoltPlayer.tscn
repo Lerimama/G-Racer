@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/shaders/uporabljam-zapakirano/bolt_shield_texture.gdshader" type="Shader" id=1]
+[ext_resource path="res://assets/shaders/_zaloga/originali_uporabljanega/bolt_shield_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=4]
 [ext_resource path="res://game/bolt/BoltPlayer.gd" type="Script" id=5]
 
@@ -20,15 +20,16 @@ shader_param/texture_size = Vector2( 32, 32 )
 script = ExtResource( 5 )
 
 [node name="Light2D" parent="." index="1"]
+show_behind_parent = true
 energy = 0.54
 shadow_color = Color( 0, 0, 0, 0.568627 )
 shadow_filter = 3
 
-[node name="Shield" parent="." index="6"]
-material = SubResource( 1 )
-
 [node name="TiltTimer" type="Timer" parent="." index="7"]
 one_shot = true
+
+[node name="Shield" parent="." index="8"]
+material = SubResource( 1 )
 
 [node name="VBoxContainer" parent="BoltHud" index="0"]
 custom_constants/separation = 3

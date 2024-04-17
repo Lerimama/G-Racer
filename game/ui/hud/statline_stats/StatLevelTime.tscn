@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
+[ext_resource path="res://game/ui/hud/statline_stats/Stat.tscn" type="PackedScene" id=2]
+
+[node name="StatLevelTime" instance=ExtResource( 2 )]
+margin_left = -6.0
+margin_right = 40.32
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Icon" parent="." index="0"]
+visible = false
+
+[node name="Name" type="Label" parent="." index="1"]
+margin_right = 30.0
+margin_bottom = 13.0
+grow_horizontal = 0
+theme = ExtResource( 1 )
+text = "LEVEL"
+
+[node name="Label" parent="." index="2"]
+margin_left = 34.0
+margin_right = 76.0
+text = "00:00:00"

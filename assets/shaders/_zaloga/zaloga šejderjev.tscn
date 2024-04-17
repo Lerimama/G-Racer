@@ -1,0 +1,1754 @@
+[gd_scene load_steps=75 format=2]
+
+[ext_resource path="res://__materiali/eksplozija.png" type="Texture" id=1]
+[ext_resource path="res://assets/shaders/_obs/screen_outline_prefekten_hmmm.gdshader" type="Shader" id=2]
+[ext_resource path="res://assets/blast.png" type="Texture" id=3]
+[ext_resource path="res://assets/shaders/_zaloga/donut.png" type="Texture" id=4]
+
+[sub_resource type="Shader" id=500]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform float max_line_width = 10.0;
+uniform float min_line_width = 5.0;
+//uniform float freq = 1.0;
+//uniform float block_size = 20.0; // velikost bloka kjer se pobira noise ... resolucija noiseta 
+
+uniform vec4 starting_colour: hint_color = vec4(0,0,0,1);
+uniform vec4 ending_colour: hint_color = vec4(1);
+
+const float pi = 3.1415;
+const int ang_res = 4;
+const int grad_res = 8;
+
+//float hash(vec2 p, float s) {
+//	return fract(35.1 * sin(dot(vec3(112.3, 459.2, 753.2), vec3(p, s))));
+//}
+
+//float noise(vec2 p, float s) {
+//	vec2 d = vec2(0, 1);
+//	vec2 b = floor(p);
+//	vec2 f = fract(p);
+//	return mix(
+//		mix(hash(b + d.xx, s), hash(b + d.yx, s), f.x),
+//		mix(hash(b + d.xy, s), hash(b + d.yy, s), f.x), f.y);
+//}
+
+//float getLineWidth(vec2 p/*, float s*/) {
+//	p /= block_size;
+//	float w = 0.0;
+//	float intensity = 1.0;
+//	for (int i = 0; i < 3; i++) {
+//		w = mix(w, noise(p, s), intensity);
+//		p /= 2.0;
+//		intensity /= 2.0;
+//	}
+	
+//	return max_line_width;
+//	return mix(max_line_width, min_line_width, w);
+//	return mix(max_line_width, min_line_width, 0.5);
+//}
+
+bool pixelInRange(sampler2D text, vec2 uv, vec2 dist) {
+	float alpha = 0.0;
+	for (int i = 0; i < ang_res; i++) {
+		float angle = 2.0 * pi * float(i) / float(ang_res);
+		vec2 disp = dist * vec2(cos(angle), sin(angle));
+		if (texture(text, uv + disp).a > 0.0) return true;
+	}
+	return false;
+}
+
+float getClosestDistance(sampler2D text, vec2 uv, vec2 maxDist) {
+	if (!pixelInRange(text, uv, maxDist)) return -1.0;
+	
+	float hi = 1.0; 
+	float lo = 0.0;
+	
+	for (int i = 1; i <= grad_res; i++) {
+		float curr = (hi + lo) / 2.0;
+		if (pixelInRange(text, uv, curr * maxDist)) {
+			hi = curr;
+		}
+		else {
+			lo = curr;
+		}
+	}
+	return hi;
+	
+}
+
+void fragment() {
+//	float timeStep = floor(freq * TIME);
+	
+ 	// širina glowa
+	vec2 scaledDist = TEXTURE_PIXEL_SIZE; // original scale pixla
+	scaledDist *= mix(max_line_width, min_line_width, 0.5); // original velikost množimo z želeno debelino glowa 
+	
+	
+	float w = getClosestDistance(TEXTURE, UV, scaledDist);
+//	scaledDist *= getLineWidth(UV / TEXTURE_PIXEL_SIZE/*, timeStep*/);
+	
+	if (( w > 0.0) && (texture(TEXTURE, UV).a < 0.2)) {
+		COLOR = mix(starting_colour, ending_colour, tanh(3.0*w));
+	}
+	else {
+		COLOR = texture(TEXTURE, UV);
+	}
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=501]
+shader = SubResource( 500 )
+shader_param/max_line_width = 1.0
+shader_param/min_line_width = 20.891
+shader_param/starting_colour = Color( 0, 0, 0, 1 )
+shader_param/ending_colour = Color( 1, 1, 1, 1 )
+
+[sub_resource type="Shader" id=4]
+code = "shader_type canvas_item;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+	
+	
+}
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	
+	
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 4 )
+shader_param/intensity = 0.5
+shader_param/layers = 5.0
+shader_param/speed = 4.0
+
+[sub_resource type="OpenSimplexNoise" id=100]
+period = 20.0
+
+[sub_resource type="NoiseTexture" id=3]
+width = 48
+height = 48
+seamless = true
+noise = SubResource( 100 )
+
+[sub_resource type="Shader" id=11]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
+	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+//	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=101]
+shader = SubResource( 11 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="OpenSimplexNoise" id=111]
+period = 14.5
+persistence = 1.0
+
+[sub_resource type="NoiseTexture" id=102]
+width = 36
+height = 36
+seamless = true
+noise = SubResource( 111 )
+
+[sub_resource type="Shader" id=103]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
+	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+//	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=104]
+shader = SubResource( 103 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="Shader" id=12]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+//	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=105]
+shader = SubResource( 12 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="Shader" id=26]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
+	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=106]
+shader = SubResource( 26 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="Shader" id=17]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+//	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
+	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=18]
+shader = SubResource( 17 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="Shader" id=21]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+//	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+	return (0.5f - distance(vec2(0.0f, uv.y), vec2(0.0f, 0.5f))); // gradient from top to bottom, focus middle
+//	return (1.0f - distance(vec2(0.0f, uv.y), vec2(0.0f, 0.0f))); // gradient from top
+//	return (1.0f - distance(vec2(0.0f, uv.y), vec2(0.0f, 0.0f))); // gradient from bottom
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+	pallete = vec4(col, col, col, a);  // col je podan red kanal ... tole je potem čb
+	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=22]
+shader = SubResource( 21 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="Shader" id=19]
+code = "shader_type canvas_item;
+render_mode blend_mix ;
+
+uniform float intensity = 0.5f;
+uniform float layers = 5.0f;
+uniform float speed = 4.0f;
+
+float gradient(vec2 uv){
+	
+	// čekiramo razdaljo od centra sprajta do koordinate trenutne pike
+//	return (0.5f - distance(vec2(uv.x, uv.y), vec2(0.5f, 0.5f))); // nastane krog, ker je razdalja od centra konstantna
+//	return (0.5f - distance(vec2(0.0f, uv.y), vec2(0.0f, 0.5f))); // gradient from top to bottom, focus middle
+//	return (1.0f - distance(vec2(0.0f, uv.y), vec2(0.0f, 0.0f))); // gradient from top
+	return (1.0f - distance(vec2(0.0f, uv.y), vec2(0.0f, 0.0f))); // gradient from bottom
+}
+
+vec4 colorize (float col, float a) {
+	
+	vec4 pallete;
+	
+//	// grayscale
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+
+//	// monochrome
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.g = float(col >= 0.0f); // en kanal setamo, da je ves čas 0, razen ko je poln (? ... full je white?)
+	
+//	// darken vse kar ni belo
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.g = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+//	pallete.b = max(float(col >= 1.0f), col / 3.0f); // višja vrednost od dveh ...?
+	
+//	// raznobarvno
+	pallete = vec4(col, col, col, a);  // col je podan red kanal
+	pallete.r = float(col > 0.3 && col < 0.7 || col > 0.9); 
+	pallete.g = float(col > 0.7); // višja vrednost od dveh ...?
+	pallete.b = float(col > 0.5 || col > 0.9); // višja vrednost od dveh ...?
+	
+//	// ta bi bila za ščit
+//	pallete = vec4(col, col, col, a);  // col je podan red kanal
+//	pallete.r = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.g = float(col > 0.3); // višja vrednost od dveh ...?
+//	pallete.b = float(col > 0.3); // višja vrednost od dveh ...?
+	
+	return pallete; // ta vrednost gre v barvo
+}
+
+
+void fragment(){
+	vec4 bg = texture(TEXTURE, UV - TIME/speed); // tukjaj je že notri premikanje
+	
+	COLOR = bg;
+	COLOR.r = gradient(UV); // red kanal damo rezultat gradient funkcije 
+	
+	// množimo oz. združimo red channel z intensity in teksturo noisa
+	COLOR.r = clamp(COLOR.r * bg.r * intensity * 10.0f, 0.0f, 1.0f); // klempam, da ne gre pod nulo in ne nad ena (ker je to barvni kanal)
+	//	current color * intensity
+	COLOR.r = floor(COLOR.r * layers) / layers; // floor ... zaokrožimo zato, ker ker je št. lejerja zmeraj cela številka ... delimo z lejerji, da je vsak lejer na 0.2 vrednosti
+	COLOR.a = float(COLOR.r > 0.0f); // ?
+	
+	COLOR = colorize(COLOR.r, COLOR.a); // igranje z barvami
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=20]
+shader = SubResource( 19 )
+shader_param/intensity = 1.0
+shader_param/layers = 4.0
+shader_param/speed = 4.0
+
+[sub_resource type="Shader" id=455]
+code = "
+
+shader_type canvas_item;
+
+uniform vec4 line_color : hint_color = vec4(1.0);
+uniform float line_thickness : hint_range(0, 10) = 1.0;
+
+const vec2 OFFSETS[8] = {
+	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
+	vec2(1, -1), vec2(1, 0), vec2(1, 1)
+};
+
+void fragment() {
+	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
+	float outline = 1.0;
+	
+	for (int i = 0; i < OFFSETS.length(); i++) {
+		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
+	}
+	outline = 1.0 - outline;
+	
+	vec4 color = texture(TEXTURE, UV);
+	vec4 outlined_result = mix(color, line_color, outline * color.a);
+	vec4 outlined_color = mix(color, outlined_result, outlined_result.a);
+
+
+
+	vec2 center = vec2(0.5, 0.5); // center of the texture
+	vec2 pixel_pos = UV; // position of the current pixel
+	float max_distance = 0.9; // maximum distance for full gradient effect
+	vec4 pixel_color = texture(TEXTURE, pixel_pos); // color of the current pixel
+	vec4 pixel_line_color = texture(TEXTURE, pixel_pos); // color of the current pixel
+
+	float current_distance; // initialize distance to -1 (invalid value) ... transparenco da v belo
+//	float current_distance = -1.0; // initialize distance to -1 (invalid value) ... transparenco da v belo
+//	float gradient;
+
+
+//	if (pixel_color == line_color) // check for red pixel
+	if (pixel_color.a != 0.0) // check for red pixel
+	{
+		current_distance = distance(center, pixel_pos); // calculate distance
+//		COLOR = vec4(1.0);
+//		COLOR.a = 0.0;
+	}
+//	else if (pixel_color.rgb == vec3(0.0)) // check for red pixel
+//	{
+//		current_distance = distance(center, pixel_pos); // calculate distance
+////		COLOR = pixel_color;
+//		COLOR.a = 0.0;
+//		COLOR.rgb = vec3(0.5, 0.0, 1.5);
+//	}
+//	else {
+//		current_distance = distance(center, pixel_pos); // calculate distance
+//		current_distance = distance(pixel_pos,center); // calculate distance
+
+	if (current_distance >= 0.0) // check if distance is valid
+	{
+		float gradient = smoothstep(0.0, max_distance, current_distance); // calculate gradient
+		    // or: float gradient = mix(0.0, 1.0, distance / max_distance); // using mix function
+
+		    // use the gradient value in your shader as needed
+//			COLOR = vec4(gradient*0.01, gradient*0.0, 0.0, 1.0);
+//			COLOR = vec4(gradient) ;
+
+		COLOR = pixel_color * gradient;
+	}
+//	}
+	
+	
+//	COLOR = outlined_color;
+	
+}
+
+
+
+
+
+//shader_type canvas_item;
+//
+//uniform vec4 line_color : hint_color = vec4(1.0);
+//uniform float line_thickness : hint_range(0, 10) = 1.0;
+//
+//const vec2 OFFSETS[8] = {
+//	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
+//	vec2(1, -1), vec2(1, 0), vec2(1, 1)
+//};
+//
+//void fragment() {
+//	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
+//	float outline = 1.0;
+//
+//	for (int i = 0; i < OFFSETS.length(); i++) {
+//		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
+//	}
+//	outline = 1.0 - outline;
+//
+//	vec4 color = texture(TEXTURE, UV);
+//	vec4 outlined_result = mix(color, line_color, outline * color.a);
+//	vec4 outlined_color = mix(color, outlined_result, outlined_result.a);
+//
+//
+//
+//	vec2 center = vec2(0.5, 0.5); // center of the texture
+//	vec2 pixel_pos = UV; // position of the current pixel
+//	float max_distance = 0.9; // maximum distance for full gradient effect
+//	vec4 pixel_color = texture(TEXTURE, pixel_pos); // color of the current pixel
+//
+//	float current_distance; // = -1.0; // initialize distance to -1 (invalid value)
+////	float gradient;
+//
+//
+//	if (pixel_color == line_color) // check for red pixel
+//	{
+//		current_distance = distance(center, pixel_pos); // calculate distance
+////		COLOR = vec4(1.0);
+////		COLOR.a = 0.0;
+//	}
+////	else if (pixel_color.rgb == vec3(0.0)) // check for red pixel
+////	{
+////		current_distance = distance(center, pixel_pos); // calculate distance
+//////		COLOR = pixel_color;
+////		COLOR.a = 0.0;
+////		COLOR.rgb = vec3(0.5, 0.0, 1.5);
+////	}
+//	else {
+////		current_distance = distance(center, pixel_pos); // calculate distance
+//		current_distance = distance(pixel_pos,center); // calculate distance
+//
+//		if (current_distance >= 0.0) // check if distance is valid
+//		{
+//			float gradient = smoothstep(0.0, max_distance, current_distance); // calculate gradient
+//			    // or: float gradient = mix(0.0, 1.0, distance / max_distance); // using mix function
+//
+//			    // use the gradient value in your shader as needed
+////			COLOR = vec4(gradient*0.01, gradient*0.0, 0.0, 1.0);
+//			COLOR = pixel_color * gradient;
+////			COLOR = vec4(gradient) ;
+//
+//		}
+//	}
+//
+//
+//	COLOR = outlined_color;
+//}"
+
+[sub_resource type="ShaderMaterial" id=456]
+shader = SubResource( 455 )
+shader_param/line_color = Color( 1, 1, 1, 1 )
+shader_param/line_thickness = 1.0
+
+[sub_resource type="Shader" id=476]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D image_texture;
+uniform sampler2D image_multiply: hint_black; // barva, ki jo pomnožimo ... vidi se tam kjer je original textura polna
+uniform sampler2D image_add: hint_black; // barva, ki jo prištejemo v ozadje ... vidi se tam kjer je original textura prazna
+uniform sampler2D image_tint: hint_black; // obarva vse skupaj
+uniform float extra_power = 1.0;
+ 
+uniform float effect_scale = 4.0;
+uniform float effect_repeat = 4.0;
+uniform vec2 uv_mod = vec2(0.5); // .... isto kot efekt scale
+uniform vec2 effect_center = vec2(0.5);
+uniform vec2 scroll_speed = vec2(0.1);
+
+const float TAU = 6.2832; // 2 krat PI
+
+// manipulacija koordinat
+vec2 coordinates (vec2 uv, vec2 center, float scale, float repeat){
+// takes UV, effect_center, returns vec2, 
+	
+	vec2 dir = uv - center;
+	float radius = length(dir) * 2.0; // ker je center 0.5, moramo množit z 2, da dobimo cel spekter
+	
+//	float angle = atan (dir.x, dir.y);
+//	COLOR = vec4(angle, 0.0, 0.0, 1.0);
+	
+	// r kanal ima rotiran gradient
+	float angle = (atan (dir.x, dir.y) / TAU) + 0.5; // 0.5 zarotira teksturo
+	return (vec2(angle * repeat, radius * scale));
+	
+}
+
+void fragment(){
+	
+//	COLOR = vec4(angle + 0.5, 0.0, 0.0, 1.0);
+	
+	// g kanal dobi krožen gradient
+//	COLOR = vec4(angle, radius, 0.0, 1.0);
+	
+	// vmešamo teksturo 
+	vec2 uv = uv_mod * coordinates(UV, effect_center, effect_scale, effect_repeat);
+//	vec4 image_tex = texture(image_texture, uv + TIME * 0.05);
+	vec4 image_tex = texture(image_texture, uv + (TIME * scroll_speed));
+	
+	// multiply gradient na valove
+	image_tex *= texture(image_multiply, UV); 
+	// add gradient
+	COLOR = image_tex;
+//	image_tex += texture(image_add, UV); 
+//	COLOR = texture(image_tint, vec2(image_tex.r, 0.0));
+//	COLOR = textureLod(image_tint, vec2(image_tex.r, 0.0), 1.0);
+//	COLOR = textureLod(image_tint, vec2(clamp(image_tex.r, 0.0, 1.0))* extra_power, 0.0);
+	
+//	if (texture(TEXTURE,UV) == vec4(0.0)){
+//		COLOR.a = 0.0;
+//	}
+	
+}
+"
+
+[sub_resource type="Gradient" id=477]
+colors = PoolColorArray( 0, 0, 0, 1, 0.304688, 0.304688, 0.304688, 1 )
+
+[sub_resource type="GradientTexture2D" id=478]
+gradient = SubResource( 477 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="Gradient" id=492]
+offsets = PoolRealArray( 0, 0.633094, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=493]
+gradient = SubResource( 492 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 1, 0.5 )
+
+[sub_resource type="Gradient" id=474]
+
+[sub_resource type="GradientTexture" id=480]
+gradient = SubResource( 474 )
+
+[sub_resource type="ShaderMaterial" id=483]
+shader = SubResource( 476 )
+shader_param/extra_power = 1.0
+shader_param/effect_scale = 8.0
+shader_param/effect_repeat = 4.0
+shader_param/uv_mod = Vector2( 0.5, 0.5 )
+shader_param/effect_center = Vector2( 0.5, 0.5 )
+shader_param/scroll_speed = Vector2( 0.1, 2 )
+shader_param/image_texture = ExtResource( 3 )
+shader_param/image_multiply = SubResource( 493 )
+shader_param/image_add = SubResource( 478 )
+shader_param/image_tint = SubResource( 480 )
+
+[sub_resource type="Shader" id=518]
+code = "shader_type canvas_item;
+render_mode blend_premul_alpha;
+
+uniform float size_px: hint_range(0.0, 40.0, 1.0) = 40; 
+uniform float hole_size_px: hint_range(0.0, 40.0, 1.0) = 20;
+uniform int outside_trans_px = 0;
+uniform int inside_trans_px = 0;
+
+
+void fragment() {
+		
+	
+	vec2 texture_center = vec2(0.5, 0.5);
+	vec2 texture_size = vec2(80.0); // najbolje je, če je tekstura kvadrat
+	float texture_ratio = TEXTURE_PIXEL_SIZE.x / TEXTURE_PIXEL_SIZE.y; // razmerje ekrana, da ni elipsaste oblike (pixel size x = 1/text oz. screen width)
+	
+	vec2 grid_uv = round(UV * texture_size.x) / texture_size.y; // pixelizacija efekta
+	
+	vec2 center_corrected = vec2((texture_center.x - (1.0 - texture_ratio)/2.0)/texture_ratio, texture_center.y);
+	
+	// texli v pixle
+	float size = size_px / texture_size.x;
+	float hole_size = hole_size_px / texture_size.x;
+	float outside_trans = float(outside_trans_px) / texture_size.x;
+	float inside_trans = float(inside_trans_px) / texture_size.x;
+	
+	// aplikacija razmerja ekrana
+	vec2 scale_uv = (grid_uv - vec2(0.5, 0.0)) / vec2 (texture_ratio, 1.0) + vec2 (0.5, 0.0);
+	// scale_uv = (skrin uv - offset x, da ga premaknemo v origin, da ga lahko pravilno skejlamo) / ratio x osi, ker je popačeno samo v eno smer + offset x, da ga popravimo s tistim, ki smo ga želeli
+	
+	float shape = (1.0 - smoothstep(size - outside_trans, size, length(scale_uv - center_corrected))) *
+		smoothstep(hole_size - inside_trans, hole_size, length(scale_uv - center_corrected));
+	
+	COLOR.rgb = vec3(shape);
+	COLOR.a = shape;
+
+}"
+
+[sub_resource type="ShaderMaterial" id=517]
+resource_local_to_scene = true
+shader = SubResource( 518 )
+shader_param/size_px = 40.0
+shader_param/hole_size_px = 20.0
+shader_param/outside_trans_px = 0
+shader_param/inside_trans_px = 0
+
+[sub_resource type="Shader" id=484]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D image_texture;
+uniform sampler2D texture_multiplier;
+uniform sampler2D image_add: hint_black;
+uniform sampler2D image_tint: hint_black;
+uniform float extra_power = 1.0;
+ 
+uniform float effect_scale = 4.0;
+uniform float effect_repeat = 4.0;
+uniform vec2 effect_center = vec2(0.5);
+uniform vec2 uv_mod = vec2(0.5);
+uniform vec2 scroll_speed = vec2(0.1);
+
+const float TAU = 6.2832; // 2 krat PI
+
+// manipulacija koordinat
+vec2 coordinates (vec2 uv, vec2 center, float scale, float repeat){
+// takes UV, effect_center, returns vec2, 
+	
+	vec2 dir = uv - center;
+	float radius = length(dir) * 2.0; // ker je center 0.5, moramo množit z 2, da dobimo cel spekter
+	
+//	float angle = atan (dir.x, dir.y);
+//	COLOR = vec4(angle, 0.0, 0.0, 1.0);
+	
+	// r kanal ima rotiran gradient
+	float angle = (atan (dir.x, dir.y) / TAU) + 0.5; // 0.5 zarotira teksturo
+	return (vec2(angle * repeat, radius * scale));
+	
+}
+
+void fragment(){
+	
+//	COLOR = vec4(angle + 0.5, 0.0, 0.0, 1.0);
+	
+	// g kanal dobi krožen gradient
+//	COLOR = vec4(angle, radius, 0.0, 1.0);
+	
+	// vmešamo teksturo 
+	vec2 uv = uv_mod * coordinates(UV, effect_center, effect_scale, effect_repeat);
+//	vec4 image_tex = texture(image_texture, uv + TIME * 0.05);
+	vec4 image_tex = texture(image_texture, uv + (TIME * scroll_speed));
+	
+	// multiply texture multiplier
+	image_tex *= texture(texture_multiplier, UV); 
+	// add image_add
+	image_tex += texture(image_add, UV); 
+//	COLOR = image_tex;
+	COLOR = textureLod(image_tint, vec2(clamp(image_tex.r, 0.0, 1.0))* extra_power, 0.0);
+	
+	if (texture(TEXTURE,UV) == vec4(0.0)){
+		COLOR.a = 0.0;
+	}
+	
+}
+"
+
+[sub_resource type="Gradient" id=485]
+offsets = PoolRealArray( 0.0828877, 1 )
+colors = PoolColorArray( 0.0813009, 0.0813009, 0.0813009, 1, 0.378906, 0.378906, 0.378906, 1 )
+
+[sub_resource type="GradientTexture2D" id=486]
+gradient = SubResource( 485 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="StreamTexture" id=487]
+flags = 2
+
+[sub_resource type="GradientTexture" id=488]
+gradient = SubResource( 474 )
+
+[sub_resource type="Gradient" id=489]
+offsets = PoolRealArray( 0, 0.502674, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=490]
+gradient = SubResource( 489 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="ShaderMaterial" id=491]
+shader = SubResource( 484 )
+shader_param/extra_power = 1.0
+shader_param/effect_scale = 4.0
+shader_param/effect_repeat = 4.0
+shader_param/effect_center = Vector2( 0.5, 0.5 )
+shader_param/uv_mod = Vector2( 0.5, 0.5 )
+shader_param/scroll_speed = Vector2( 0.1, 0.1 )
+shader_param/image_texture = SubResource( 487 )
+shader_param/texture_multiplier = SubResource( 490 )
+shader_param/image_add = SubResource( 486 )
+shader_param/image_tint = SubResource( 488 )
+
+[sub_resource type="Shader" id=494]
+code = "
+shader_type canvas_item;
+
+uniform int amount = 40;
+
+void fragment()
+{
+	vec2 grid_uv = round(UV * float(amount)) / float(amount);
+	
+	vec4 text = texture(TEXTURE, grid_uv);
+	
+	COLOR = text;
+}"
+
+[sub_resource type="ShaderMaterial" id=495]
+shader = SubResource( 494 )
+shader_param/amount = 10
+
+[sub_resource type="Shader" id=107]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform float max_line_width = 10.0;
+uniform float min_line_width = 5.0;
+uniform float freq = 1.0;
+uniform float block_size = 20.0;
+uniform vec4 starting_colour = vec4(0,0,0,1);
+uniform vec4 ending_colour = vec4(1);
+
+const float pi = 3.1415;
+const int ang_res = 16;
+const int grad_res = 8;
+
+float hash(vec2 p, float s) {
+	return fract(35.1 * sin(dot(vec3(112.3, 459.2, 753.2), vec3(p, s))));
+}
+
+float noise(vec2 p, float s) {
+	vec2 d = vec2(0, 1);
+	vec2 b = floor(p);
+	vec2 f = fract(p);
+	return mix(
+		mix(hash(b + d.xx, s), hash(b + d.yx, s), f.x),
+		mix(hash(b + d.xy, s), hash(b + d.yy, s), f.x), f.y);
+}
+
+float getLineWidth(vec2 p, float s) {
+	p /= block_size;
+	float w = 0.0;
+	float intensity = 1.0;
+	for (int i = 0; i < 3; i++) {
+		w = mix(w, noise(p, s), intensity);
+		p /= 2.0;
+		intensity /= 2.0;
+	}
+	
+	return mix(max_line_width, min_line_width, w);
+}
+
+bool pixelInRange(sampler2D text, vec2 uv, vec2 dist) {
+	float alpha = 0.0;
+	for (int i = 0; i < ang_res; i++) {
+		float angle = 2.0 * pi * float(i) / float(ang_res);
+		vec2 disp = dist * vec2(cos(angle), sin(angle));
+		if (texture(text, uv + disp).a > 0.0) return true;
+	}
+	return false;
+}
+
+float getClosestDistance(sampler2D text, vec2 uv, vec2 maxDist) {
+	if (!pixelInRange(text, uv, maxDist)) return -1.0;
+	
+	float hi = 1.0; float lo = 0.0;
+	
+	for (int i = 1; i <= grad_res; i++) {
+		float curr = (hi + lo) / 2.0;
+		if (pixelInRange(text, uv, curr * maxDist)) {
+			hi = curr;
+		}
+		else {
+			lo = curr;
+		}
+	}
+	return hi;
+	
+}
+
+void fragment() {
+	float timeStep = floor(freq * TIME);
+	vec2 scaledDist = TEXTURE_PIXEL_SIZE;
+	scaledDist *= getLineWidth(UV / TEXTURE_PIXEL_SIZE, timeStep);
+	float w = getClosestDistance(TEXTURE, UV, scaledDist);
+	
+	if (( w > 0.0) && (texture(TEXTURE, UV).a < 0.2)) {
+		COLOR = mix(starting_colour, ending_colour, tanh(3.0*w));
+	}
+	else {
+		COLOR = texture(TEXTURE, UV);
+	}
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=97]
+shader = SubResource( 107 )
+shader_param/max_line_width = 40.0
+shader_param/min_line_width = 20.0
+shader_param/freq = 5.0
+shader_param/block_size = 20.0
+shader_param/starting_colour = Plane( 1, 0, 1, 1 )
+shader_param/ending_colour = Plane( 0.418, 0, 1, 0 )
+
+[sub_resource type="Shader" id=442]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+
+// KAJ DELA ŠEJDER?
+// naredi drop shadow in jo zamaskira, tako, da je oritginal textura vidna
+// shadow steps 1 da flat senco brez debeline ... več kot je korakov bolj debela je senca
+// shadow_offset zamika senco, tako da dobimo občutek oddaljenosti od tal (če je nič, je objekt na tleh)
+
+// UPGRADE?
+// 3 barve za 3 različne nastavitve (višina in dvignjenost)
+// razmerja pixel/texel
+
+uniform vec4 shadow_color : hint_color = vec4(0.0, 1.0, 0.0, 1.0);
+uniform int shadow_steps = 1; // debelina oz. dolžina sence ... je število duplikatov, ki so zamaknjeni za \"en\" pixel vsak
+uniform float shadow_step_offset : hint_range(0, 10) = 1.0; // zamik posameznega koraka za en pixel
+uniform float shadow_offset = 0.0; // zamik celotne sence ... 
+uniform vec2 shadow_direction = vec2(-1,-1);
+
+// dimenzija teksture za uskladitev texlov s pixli (1/texture original size)  
+uniform float texture_width = 640.0;
+uniform float texture_height = 360.0;
+
+
+void fragment(){
+
+	// preračun pravega offseta sence ... pixle konvertamo v texle
+//	vec2 shadow_offset = vec2(shadow_direction.x / texture_width, shadow_direction.y / texture_height);
+	
+	vec2 size = TEXTURE_PIXEL_SIZE * shadow_step_offset;
+	float shadow = 0.0;
+	
+	float stretch_factor = 0.0;
+	float offset_x = shadow_offset * shadow_direction.x / 100.0; // z deljenjem dobimo bolj normalen slide
+	float offset_y = shadow_offset * shadow_direction.y / 100.0;
+	
+	for (int i = 0; i < shadow_steps; i++) {
+		stretch_factor += 1.0; // lahko bi uporabil \"i\" pa mi ne pusti
+		shadow += texture(TEXTURE, UV + (size * shadow_direction * stretch_factor) + vec2(offset_x, offset_y)).a;
+		
+	}
+	
+	// ta vrstica maska senco, da je kao pod teksturo ... podobno kot step funkcij?
+	shadow = min(shadow, 1.0);
+	
+	vec4 color = texture(TEXTURE, UV);
+	COLOR = mix(color, shadow_color, shadow - color.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=443]
+resource_local_to_scene = true
+shader = SubResource( 442 )
+shader_param/shadow_color = Color( 0, 0, 0, 0.321569 )
+shader_param/shadow_steps = 1
+shader_param/shadow_step_offset = 1.0
+shader_param/shadow_offset = 0.0
+shader_param/shadow_direction = Vector2( -1, -1 )
+shader_param/texture_width = 640.0
+shader_param/texture_height = 360.0
+
+[sub_resource type="Shader" id=451]
+code = "shader_type canvas_item;
+
+uniform sampler2D emission_teture;
+uniform vec4 glow_color : hint_color = vec4(1.0);
+
+void fragment()
+{
+	vec4 current_color = texture(TEXTURE,UV); // what's our current sprite pixel
+	vec4 emission_color = texture(emission_teture,UV); // what's our current emission pixel
+	
+	if(emission_color.r > 0.0f) // check if we're not black in the emission color.
+	{
+		COLOR = (emission_color + glow_color) // add brightness corrosponding with the emission pixel
+	}
+	else
+	{
+		COLOR = current_color; // we arent over an emission pixel leave alone
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=452]
+resource_local_to_scene = true
+shader = SubResource( 451 )
+shader_param/glow_color = Color( 1, 1, 1, 1 )
+shader_param/emission_teture = ExtResource( 4 )
+
+[sub_resource type="Shader" id=431]
+code = "
+
+shader_type canvas_item;
+
+uniform vec4 line_color : hint_color = vec4(1.0);
+uniform float line_thickness : hint_range(0, 10) = 1.0;
+
+const vec2 OFFSETS[8] = {
+	vec2(-1, -1), vec2(-1, 0), vec2(-1, 1), vec2(0, -1), vec2(0, 1), 
+	vec2(1, -1), vec2(1, 0), vec2(1, 1)
+};
+
+void fragment() {
+	vec2 size = TEXTURE_PIXEL_SIZE * line_thickness;
+	float outline = 1.0;
+	
+	for (int i = 0; i < OFFSETS.length(); i++) {
+		outline *= texture(TEXTURE, UV + size * OFFSETS[i]).a;
+	}
+	outline = 1.0 - outline;
+	
+	vec4 color = texture(TEXTURE, UV);
+	vec4 outlined_result = mix(color, line_color, outline * color.a);
+	COLOR = mix(color, outlined_result, outlined_result.a);
+}"
+
+[sub_resource type="ShaderMaterial" id=432]
+shader = SubResource( 431 )
+shader_param/line_color = Color( 1, 0, 0, 1 )
+shader_param/line_thickness = 1.0
+
+[sub_resource type="Shader" id=447]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise_texture;
+uniform float intensity = 0.0f;
+uniform float speed = 1.0f;
+
+void fragment(){
+	vec4 orig_texture = texture(TEXTURE,UV);
+	vec4 noise = texture(noise_texture,UV - TIME / (1.0f + speed ));
+	
+	COLOR.a = clamp(orig_texture.r * noise.r * intensity, 0.0f, 1.0f); // vrednost klempamo med nič in ena
+	COLOR.a = pow(COLOR.a, 2.0); // kvadratiramo, da so razlike bolj očitne
+//	COLOR = noise;
+	
+	
+	
+	
+	
+	
+	
+}"
+
+[sub_resource type="OpenSimplexNoise" id=449]
+period = 133.5
+
+[sub_resource type="NoiseTexture" id=450]
+seamless = true
+noise = SubResource( 449 )
+
+[sub_resource type="ShaderMaterial" id=448]
+shader = SubResource( 447 )
+shader_param/intensity = 1.566
+shader_param/speed = 1.047
+shader_param/noise_texture = SubResource( 450 )
+
+[sub_resource type="Shader" id=466]
+code = "shader_type canvas_item;
+
+uniform sampler2D tex;
+
+float sample (in vec2 st){ // returns float, takes input \"input vec2 named st\" 
+	// sample texture at \"st\", return its alpha
+	return texture(tex, st).a;
+	
+}
+
+void fragment(){
+	
+	// dobimo velikost pixla napram texlu
+	vec2 px = vec2(1.0)/vec2(textureSize(tex, 0)); // ničla je LOD ... level of details ... v tem primeru tolk da je nekej
+	// textureSize vrne ivec2 (integer vec2) zato damo vec2 objem
+	
+	// za vsak textel poberemo sosednje pixle v vse štiri smeri
+	float neighbour = 
+		sample(UV + px * vec2(1.0, 0.0)) + 
+		sample(UV + px * vec2(0.0, 1.0)) + 
+		sample(UV + px * vec2(-1.0, 0.0)) + 
+		sample(UV + px * vec2(0.0, -1.0));
+	
+	// poberemo \"trenutni pixel\" krat 4 (strani neba)
+	// trenutni pixel je pixel na robu, ki mu damo soseda
+	float center = sample(UV)*4.0;
+	
+	// ugotavljamo edge, 
+	// tam kjer alpha med sosedom in centrom, je rob
+	float edge = neighbour - center; // tole da alpha razliko med trenutnim pixlom in sosedom
+	
+	// dodamo visibility gradient
+	float lit =  UV.y + TIME; // hor
+//	float lit =  UV.y + UV.x + TIME; // diag
+//	float lit =  dot(UV, vec2(cos(TIME), sin(TIME))) - TIME; // rotirano ... \"nejasna smer\"
+//	float lit =  dot(UV - vec2(0.5), vec2(cos(TIME), sin(TIME))) - TIME; // relativno s centrom
+	
+	// da se lupa
+	lit = mod(lit, 1.0); // variabla in površina teksture 
+//	lit = mod(lit, -3.0) + mod(lit, 3.0);
+	
+	
+	COLOR = vec4(vec3(1.0), edge*lit);
+//	COLOR = vec4(vec3(1.0), edge);
+//	COLOR = texture(tex, UV);
+	
+	
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=467]
+shader = SubResource( 466 )
+shader_param/tex = ExtResource( 4 )
+
+[sub_resource type="Shader" id=496]
+code = "shader_type canvas_item;
+
+uniform vec4 background_color : hint_color;
+uniform vec4 shadow_color : hint_color;
+// Currently pixels always in application size, so zooming in further wouldn't increase the size of the dropdown
+// but changing that would also be relatively trivial
+uniform vec2 offset_in_pixels;
+
+void fragment() {
+	
+	// Read screen texture
+	vec4 current_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0);
+	
+	// Check if the current color is our background color
+	if (length(current_color - background_color) < 0.01) {
+		
+		vec4 offset_color = textureLod(SCREEN_TEXTURE, SCREEN_UV - offset_in_pixels * SCREEN_PIXEL_SIZE, 0.0);
+		
+		// Check if at our offset position we have a color which is not the background (meaning here we need a shadow actually)
+		if (length(offset_color - background_color) > 0.01) {
+			// If so set it to our shadow color
+			current_color = shadow_color;
+		}
+	}
+	
+	COLOR = current_color;
+}"
+
+[sub_resource type="ShaderMaterial" id=497]
+shader = SubResource( 496 )
+shader_param/background_color = Color( 0.32549, 0.356863, 0.407843, 1 )
+shader_param/shadow_color = Color( 0.0901961, 0.101961, 0.137255, 1 )
+shader_param/offset_in_pixels = Vector2( -5, 5 )
+
+[sub_resource type="Shader" id=468]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D image_texture;
+uniform sampler2D texture_multiplier;
+uniform sampler2D image_add: hint_black;
+uniform sampler2D image_tint: hint_black;
+uniform float extra_power = 1.0;
+ 
+uniform float effect_scale = 1.0;
+uniform float effect_repeat = 2.0;
+uniform vec2 effect_center = vec2(0.5);
+uniform vec2 uv_mod = vec2(0.5);
+uniform vec2 scroll_speed = vec2(0.0);
+
+const float TAU = 6.2832; // 2 krat PI
+
+// manipulacija koordinat
+vec2 coordinates (vec2 uv, vec2 center, float scale, float repeat){
+// takes UV, effect_center, returns vec2, 
+	
+	vec2 dir = uv - center;
+	float radius = length(dir) * 2.0; // ker je center 0.5, moramo množit z 2, da dobimo cel spekter
+	
+//	float angle = atan (dir.x, dir.y);
+//	COLOR = vec4(angle, 0.0, 0.0, 1.0);
+	
+	// r kanal ima rotiran gradient
+	float angle = (atan (dir.x, dir.y) / TAU) + 0.5; // 0.5 zarotira teksturo
+	return (vec2(angle * repeat, radius * scale));
+	
+}
+
+void fragment(){
+	
+//	COLOR = vec4(angle + 0.5, 0.0, 0.0, 1.0);
+	
+	// g kanal dobi krožen gradient
+//	COLOR = vec4(angle, radius, 0.0, 1.0);
+	
+	// vmešamo teksturo 
+	vec2 uv = uv_mod * coordinates(UV, effect_center, effect_scale, effect_repeat);
+//	vec4 image_tex = texture(image_texture, uv + TIME * 0.05);
+	vec4 image_tex = texture(image_texture, uv + (TIME * scroll_speed));
+	
+	// multiply texture multiplier
+//	image_tex *= texture(texture_multiplier, UV); 
+	// add image_add
+//	image_tex += texture(image_add, UV); 
+	COLOR = image_tex;
+//	COLOR.a = image_tex.r;
+//	COLOR = textureLod(image_tint, vec2(clamp(image_tex.r, 0.0, 1.0))* extra_power, 0.0);
+	
+	
+}
+"
+
+[sub_resource type="Gradient" id=472]
+offsets = PoolRealArray( 0.0828877, 1 )
+colors = PoolColorArray( 0.0813009, 0.0813009, 0.0813009, 1, 0.378906, 0.378906, 0.378906, 1 )
+
+[sub_resource type="GradientTexture2D" id=473]
+gradient = SubResource( 472 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="GradientTexture" id=475]
+gradient = SubResource( 474 )
+
+[sub_resource type="Gradient" id=470]
+offsets = PoolRealArray( 0, 0.502674, 1 )
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture2D" id=471]
+gradient = SubResource( 470 )
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2( 0.5, 0.5 )
+fill_to = Vector2( 0.5, 0 )
+
+[sub_resource type="ShaderMaterial" id=469]
+shader = SubResource( 468 )
+shader_param/extra_power = 1.0
+shader_param/effect_scale = 1.0
+shader_param/effect_repeat = 2.0
+shader_param/effect_center = Vector2( 0.5, 0.5 )
+shader_param/uv_mod = Vector2( 1, 7.163 )
+shader_param/scroll_speed = Vector2( 0.1, -0.547 )
+shader_param/image_texture = ExtResource( 1 )
+shader_param/texture_multiplier = SubResource( 471 )
+shader_param/image_add = SubResource( 473 )
+shader_param/image_tint = SubResource( 475 )
+
+[sub_resource type="ShaderMaterial" id=505]
+shader = ExtResource( 2 )
+shader_param/outlined_color = Color( 0.32549, 0.356863, 0.407843, 1 )
+shader_param/outline_color = Color( 0.415686, 0.745098, 0.309804, 1 )
+shader_param/outline_width_px = 1.0
+shader_param/new_outline_steps = 1.0
+shader_param/step_count_max = 40
+
+[sub_resource type="Shader" id=514]
+code = "shader_type canvas_item;
+render_mode blend_add;
+
+uniform bool mask_on = true;// = vec2(0.5, 0.5);
+uniform vec2 center;// = vec2(0.5, 0.5);
+uniform float force = 0.5; // displacement vector ... globina podomače
+uniform float size = 0.2; 
+uniform float hole_thickness = 0.2;
+//uniform float inside_trans = 0.2;
+//uniform float outside_trans = 0.2;
+
+uniform int outside_trans_px = 0;
+uniform int inside_trans_px = 0;
+
+
+uniform vec2 texture_size = vec2(640.0, 360.0);
+
+//uniform int amount = 40;
+
+
+void fragment() {
+		
+	
+	// razmerje ekrana, da ni elipsaste oblike (pixel size x = 1/text oz. screen width)
+	float screen_ratio = SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y;
+	// (1/640) / (1/360) = 0,5625
+	
+	// pixelizacija
+	vec2 grid_uv = round(SCREEN_UV * texture_size.x) / texture_size.y;
+	
+	// korektura centra, ker je x = y
+	vec2 center_corrected = vec2((center.x - (1.0 - screen_ratio)/2.0)/screen_ratio, center.y);
+	// od original x pozicije odštejem polovico od nezasedene x dolžine (
+	// zasedena dolžine je screen_ratio -> nezasedena je 1 - screen_ratio)
+	// zamaknjeno x pozicijo potem delimo z screen_ratio, da se 1.0 x vektor raztegne na širino ekrana
+	// delimo s šrino in višino ekrana, da enote iz texlov spremenimo v pixle
+	
+//	vec2 grid_uv = round(SCREEN_UV * float(amount)) / float(amount);
+//	vec2 grid_uv = round(SCREEN_UV / (1.0 / 640.0)) * (1.0 / 360.0);
+//	vec2 grid_uv = round(SCREEN_UV / (SCREEN_PIXEL_SIZE.x)) * (SCREEN_PIXEL_SIZE.y);
+	
+	float outside_trans = float(outside_trans_px) / 100.0 * 0.5625;
+	float inside_trans = float(inside_trans_px) / 100.0 * 0.5625;
+	
+	// aplikacija razmerja ekrana
+	vec2 scale_uv = (grid_uv - vec2(0.5, 0.0)) / vec2 (screen_ratio, 1.0) + vec2 (0.5, 0.0);
+	// scale_uv = (skrin uv - offset x, da ga premaknemo v origin, da ga lahko pravilno skejlamo) / ratio x osi, ker je popačeno samo v eno smer + offset x, da ga popravimo s tistim, ki smo ga želeli
+	
+	float mask = (1.0 - smoothstep(size - outside_trans, size, length(scale_uv - center_corrected))) *
+		smoothstep(hole_thickness - inside_trans, hole_thickness, length(scale_uv - center_corrected));
+	
+	// mavrični stožec
+	vec2 disp = normalize(scale_uv - center_corrected) * force * mask; // apliciramo masko (multiply pomeni, da je vidna samo, kjer je bele barve ... kot prava maska)
+	
+	
+	// tukaj grebamo teksturo in jo vmešamo s šejpom
+	vec2 pixelated_uv = SCREEN_UV - disp;
+	COLOR = texture(SCREEN_TEXTURE, pixelated_uv);
+	
+	// čb test maske
+//	if (mask_on == true){
+//		COLOR.rgb = vec3(mask);
+//	}
+
+}"
+
+[sub_resource type="ShaderMaterial" id=515]
+resource_local_to_scene = true
+shader = SubResource( 514 )
+shader_param/mask_on = true
+shader_param/center = Vector2( 0.5, 0.5 )
+shader_param/force = 1.313
+shader_param/size = 0.6
+shader_param/hole_thickness = 0.5
+shader_param/outside_trans_px = 0
+shader_param/inside_trans_px = 0
+shader_param/texture_size = Vector2( 640, 360 )
+
+[node name="zaloga šejderjev" type="Node2D"]
+position = Vector2( 407.401, 53.2947 )
+
+[node name="samo glow" type="Sprite" parent="."]
+material = SubResource( 501 )
+position = Vector2( -159.401, 164.705 )
+texture = ExtResource( 4 )
+
+[node name="displace" type="Node2D" parent="."]
+position = Vector2( -319.401, 226.705 )
+
+[node name="v1" type="Sprite" parent="displace"]
+material = SubResource( 2 )
+texture = SubResource( 3 )
+
+[node name="v3" type="Sprite" parent="displace"]
+material = SubResource( 101 )
+position = Vector2( 93, -1.00031 )
+texture = SubResource( 102 )
+
+[node name="v4" type="Sprite" parent="displace"]
+material = SubResource( 104 )
+position = Vector2( 210, -1.00031 )
+texture = SubResource( 102 )
+
+[node name="v2" type="Sprite" parent="displace"]
+material = SubResource( 105 )
+position = Vector2( 54, -1 )
+texture = SubResource( 102 )
+
+[node name="v5" type="Sprite" parent="displace"]
+material = SubResource( 106 )
+position = Vector2( 132, -1 )
+texture = SubResource( 102 )
+
+[node name="v6" type="Sprite" parent="displace"]
+material = SubResource( 18 )
+position = Vector2( 171, -1.00031 )
+texture = SubResource( 102 )
+
+[node name="v7 hor" type="Sprite" parent="displace"]
+material = SubResource( 22 )
+position = Vector2( 250, -1 )
+texture = SubResource( 102 )
+
+[node name="v7 hor3" type="Sprite" parent="displace"]
+material = SubResource( 20 )
+position = Vector2( 295, -1 )
+texture = SubResource( 102 )
+
+[node name="gradient mask" type="Sprite" parent="."]
+material = SubResource( 456 )
+position = Vector2( -239.401, 162.705 )
+texture = ExtResource( 4 )
+
+[node name="waves3" type="Sprite" parent="."]
+material = SubResource( 483 )
+position = Vector2( -159.401, 82.7053 )
+texture = ExtResource( 4 )
+
+[node name="shock" type="Sprite" parent="."]
+material = SubResource( 517 )
+position = Vector2( -79.401, 82.7053 )
+texture = ExtResource( 4 )
+
+[node name="blackhole" type="Sprite" parent="."]
+material = SubResource( 491 )
+position = Vector2( -159.401, 2.70531 )
+texture = ExtResource( 4 )
+
+[node name="pixelate" type="Sprite" parent="."]
+material = SubResource( 495 )
+position = Vector2( -79.401, 2.70531 )
+texture = ExtResource( 3 )
+
+[node name="neon light" type="Sprite" parent="."]
+material = SubResource( 97 )
+position = Vector2( -79.401, 164.705 )
+texture = ExtResource( 4 )
+
+[node name="drophadows" type="Sprite" parent="."]
+material = SubResource( 443 )
+position = Vector2( -319.401, 2.7053 )
+texture = ExtResource( 4 )
+
+[node name="glow s kapco" type="Sprite" parent="."]
+material = SubResource( 452 )
+position = Vector2( -239.401, 82.7053 )
+texture = ExtResource( 4 )
+
+[node name="outline inner original" type="Sprite" parent="."]
+material = SubResource( 432 )
+position = Vector2( -239.401, 1.7053 )
+texture = ExtResource( 4 )
+
+[node name="aura" type="Sprite" parent="."]
+material = SubResource( 448 )
+position = Vector2( -319.401, 162.705 )
+texture = ExtResource( 4 )
+
+[node name="edge_loop" type="Sprite" parent="."]
+material = SubResource( 467 )
+position = Vector2( -319.401, 81.7053 )
+texture = ExtResource( 4 )
+
+[node name="Shadows glede na background" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 497 )
+margin_left = -407.401
+margin_top = -53.2947
+margin_right = 232.599
+margin_bottom = 306.705
+rect_min_size = Vector2( 640, 360 )
+
+[node name="black hole orig" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 469 )
+margin_left = -67.401
+margin_top = 41.7053
+margin_right = -27.401
+margin_bottom = 81.7053
+rect_scale = Vector2( 1.85666, 1.85666 )
+
+[node name="Outline2 - perfekten\?2" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 505 )
+margin_left = -407.401
+margin_top = -53.2947
+margin_right = 232.599
+margin_bottom = 306.705
+rect_min_size = Vector2( 640, 360 )
+
+[node name="ShockwaveNode" type="Node2D" parent="."]
+visible = false
+position = Vector2( -407.401, -53.2947 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Shockwave" type="ColorRect" parent="ShockwaveNode"]
+material = SubResource( 515 )
+margin_top = 1.0
+margin_right = 640.0
+margin_bottom = 361.0
+rect_min_size = Vector2( 640, 360 )
+
+[node name="BackBuffer" type="BackBufferCopy" parent="ShockwaveNode"]
+copy_mode = 2
