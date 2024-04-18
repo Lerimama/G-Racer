@@ -22,6 +22,9 @@ func open(bolts_on_finish_line: Array, bolts_on_start: Array):
 	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)
 	yield(fade_in, "finished")
 	$Content/Menu/ContinueBtn.grab_focus()
+	$Content/Menu/QuitBtn.set_disabled(false)
+	$Content/Menu/ContinueBtn.set_disabled(false)
+
 	
 	
 func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
@@ -60,7 +63,6 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 func _on_QuitBtn_pressed() -> void:
 	Ref.main_node.game_out()
 	$Content/Menu/QuitBtn.set_disabled(true)
-
 
 func _on_QuitGameBtn_pressed() -> void:
 	get_tree().quit()

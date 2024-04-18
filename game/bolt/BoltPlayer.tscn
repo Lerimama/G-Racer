@@ -25,6 +25,9 @@ energy = 0.54
 shadow_color = Color( 0, 0, 0, 0.568627 )
 shadow_filter = 3
 
+[node name="LightF" parent="." index="2"]
+modulate = Color( 1, 1, 1, 0.0901961 )
+
 [node name="TiltTimer" type="Timer" parent="." index="7"]
 one_shot = true
 

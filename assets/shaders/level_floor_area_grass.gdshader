@@ -1,5 +1,4 @@
 shader_type canvas_item;
-//render_mode ble;
 // tilemap ready!!!
 
 // KAJ DELA?

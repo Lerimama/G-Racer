@@ -123,7 +123,6 @@ anims/preload = SubResource( 14 )
 visible = false
 
 [node name="LevelFinished" parent="UI" instance=ExtResource( 13 )]
-visible = false
 __meta__ = {
 "_edit_vertical_guides_": [ 320.0 ]
 }

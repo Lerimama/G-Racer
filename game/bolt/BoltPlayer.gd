@@ -95,7 +95,7 @@ func _physics_process(delta: float) -> void:
 func shoot():
 	
 	if Set.debug_mode:
-		selected_feature_index = 3
+		selected_feature_index = 2
 		
 	match selected_feature_index:
 		0: # no feature

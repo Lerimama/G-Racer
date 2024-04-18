@@ -5,10 +5,10 @@
 [resource]
 shader = ExtResource( 1 )
 shader_param/change_colors = true
-shader_param/color_1 = Color( 0.584314, 0.584314, 0.584314, 1 )
-shader_param/new_color_1 = Color( 1, 1, 1, 1 )
-shader_param/color_2 = Color( 0, 0, 0, 0.5 )
-shader_param/new_color_2 = null
+shader_param/color_1 = Color( 0, 1, 0, 1 )
+shader_param/new_color_1 = Color( 0.933594, 0.933594, 0.933594, 1 )
+shader_param/color_2 = Color( 0.819608, 0.819608, 0.819608, 1 )
+shader_param/new_color_2 = Color( 0.796078, 0.796078, 0.796078, 1 )
 shader_param/color_3 = Color( 0, 0, 0, 0.5 )
 shader_param/new_color_3 = null
 shader_param/color_to_transparent = Color( 0, 0, 0, 0.5 )

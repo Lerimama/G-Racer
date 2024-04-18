@@ -99,7 +99,7 @@ noise = SubResource( 676 )
 [sub_resource type="Gradient" id=678]
 interpolation_mode = 1
 offsets = PoolRealArray( 0, 0.563333 )
-colors = PoolColorArray( 0, 1, 0, 1, 1, 1, 1, 0 )
+colors = PoolColorArray( 0, 1, 1, 1, 1, 1, 1, 0 )
 
 [sub_resource type="GradientTexture" id=679]
 gradient = SubResource( 678 )
@@ -107,14 +107,14 @@ gradient = SubResource( 678 )
 [sub_resource type="ShaderMaterial" id=669]
 shader = ExtResource( 5 )
 shader_param/change_colors = true
-shader_param/color_1 = Color( 0.180392, 0.180392, 0.180392, 1 )
-shader_param/new_color_1 = Color( 0, 1, 0, 1 )
+shader_param/color_1 = Color( 0, 0, 0, 0.5 )
+shader_param/new_color_1 = Color( 0, 0, 0, 1 )
 shader_param/color_2 = Color( 0, 0, 0, 0.5 )
-shader_param/new_color_2 = Color( 0.152941, 0.705882, 0.658824, 1 )
+shader_param/new_color_2 = Color( 0, 0, 0, 1 )
 shader_param/color_3 = Color( 0, 0, 0, 0.5 )
 shader_param/new_color_3 = null
 shader_param/color_to_transparent = Color( 0, 0, 0, 0.5 )
-shader_param/color_to_noise = Color( 0.305882, 0.305882, 0.305882, 1 )
+shader_param/color_to_noise = Color( 1, 0, 1, 1 )
 shader_param/node_size = Vector2( 320, 320 )
 shader_param/ad_noise = true
 shader_param/shade_noise = true

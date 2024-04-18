@@ -18,15 +18,15 @@ onready var racing_navigation_agent: NavigationAgent2D = $StartPosition/Navigati
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
+onready var background_space: Sprite = $BackgroundSpace
+onready var background: Node2D = $Background
 
-# level
+# main elements
 var checkpoints_count: int
-#onready var position_nodes: Array = $Positions.get_children()
 onready var start_lights: Node2D = $StartLights
 onready var checkpoints: Node2D = $Checkpoints
 onready var finish_line: Area2D = $FinishLine
 onready var racing_line: Node2D = $RacingLine
-onready var background_space: Sprite = $BackgroundSpace
 
 # floor
 onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
@@ -82,7 +82,6 @@ func _ready() -> void:
 		$Instructions.hide()
 		racing_line.hide()
 	level_navigation_line.hide()
-	
 
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
@@ -90,97 +89,95 @@ func _ready() -> void:
 	if Ref.game_manager:
 		if Ref.game_manager.game_settings["race_mode"]:
 			start_line.show()	
+			finish_line.show()
 			$StartLabel.show()
 		else:
 			start_line.hide()	
+			finish_line.hide()
+			checkpoints.hide()
 			$StartLabel.hide()
-		
 	# kar je skrito, ne deluje
-	if background_space.visible:
-		background_space.get_node("Zvezde").emitting = true
-	if finish_line.visible:
-		finish_line.monitoring = true
-
 	if checkpoints.visible:
 		checkpoints_count = checkpoints.get_child_count()
 		for checkpoint in checkpoints.get_children():
 			checkpoint.monitoring = true
 	else: 
 		checkpoints_count = 0
+	if finish_line.visible:
+		finish_line.monitoring = true
+	if background_space.visible:
+		background_space.get_node("Zvezde").emitting = true
 		
 	set_level_floor() # luknje
 	set_level_elements() # elementi
 	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
 	# get_navigation_racing_line() ... uporabno ko bo main racing line avtomatiziran 
-	set_level_shaders()
 	on_all_is_set() # pošljem vsebino levela v GM
 
 
-func get_navigation_racing_line():
-	
-	racing_navigation_agent.set_target_location(goal_position_node.global_position)
-	level_navigation_line.points = racing_navigation_agent.get_nav_path()
-
-	
 func _physics_process(delta: float) -> void:
 	
-#	var tm: TileMap = tilemap_edge
-#	var tile_with_shader_id: int = 0
-##	var tm: TileMap = tilemap_elements
-##	var tile_with_shader_id: int = 36
-#	var ts: TileSet = tm.tile_set
-#	var sm: String = ts.tile_get_name(tile_with_shader_id)
-#	var tile = ts.find_tile_by_name(sm)
-#	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
-#	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
-#	var view_to_local: Transform2D = local_to_view.affine_inverse()
-#	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
-#	mat.set_shader_param("view_to_local", view_to_local)
-#	# tile_shader in test imata to kodo	
-#	racing_navigation_agent.get_next_location()
-	update_shaders()
-	pass
+	update_tile_shaders()
 	
 	
 func on_all_is_set():
-
-#	var tm: TileMap = tilemap_edge
-#	var tile_with_shader_id: int = 0
-##	var tm: TileMap = tilemap_elements
-##	var tile_with_shader_id: int = 36
-#	var ts: TileSet = tm.tile_set
-#	var sm: String = ts.tile_get_name(tile_with_shader_id)
-#	var tile = ts.find_tile_by_name(sm)
-#	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
-#	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
-#	var view_to_local: Transform2D = local_to_view.affine_inverse()
-#	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
-#	mat.set_shader_param("view_to_local", view_to_local)
-	# tile_shader in test imata to kodo
 	
-#	var tm: TileMap = tilemap_floor
-#	var tile_with_shader_id: int = 5
-##	var tm: TileMap = tilemap_elements
-##	var tile_with_shader_id: int = 36
-#	var ts: TileSet = tm.tile_set
-#	var sm: String = ts.tile_get_name(tile_with_shader_id)
-#	var tile = ts.find_tile_by_name(sm)
-#	var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
-#	var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
-#	var view_to_local: Transform2D = local_to_view.affine_inverse()
-#	printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
-#	mat.set_shader_param("view_to_local", view_to_local)
-	# tile_shader in test imata to kodo
-	update_shaders()
+	# setam šejderje
+	set_level_shaders()
+	update_tile_shaders()
+	# pošljem signal
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions)
 
 
 # SET SHADERS --------------------------------------------------------------------------------------------------------
 
-onready var background: Node2D = $Background
 
-func update_shaders():
+func update_tile_shaders():
 	
+	
+	var tile_with_shader_id: int # za kateri tajl setamo transforme
+	
+	for tilemap in [tilemap_edge, tilemap_floor]:
+		match tilemap:
+			tilemap_floor:
+				tile_with_shader_id = 5
+			tilemap_edge:
+				tile_with_shader_id = 0
+				
+		var tilemap_material: ShaderMaterial = tilemap.tile_set.tile_get_material(tile_with_shader_id)
+		var local_to_view: Transform2D = tilemap.get_viewport_transform() * tilemap.global_transform
+		var view_to_local: Transform2D = local_to_view.affine_inverse()
+		tilemap_material.set_shader_param("view_to_local", view_to_local)
+	
+	
+func set_level_shaders():
+	# shader node resizam ne velikost floor tilemapa
+	# setam šejder parametre
+	
+	# velikost floor tilemapa
+	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
+	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
+	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
+	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
+	
+	var nodes_to_resize: Array
+	# background
+	for node in background.get_children():
+		if node.material:
+			nodes_to_resize.append(node)
+	# floor
+	for node in tilemap_floor.get_children():
+		nodes_to_resize.append(node)
+	# edge
+	for node in tilemap_edge.get_children():
+		nodes_to_resize.append(node)
+	# resize and set shader
+	for node in nodes_to_resize:
+		node.rect_position = floor_rect_position
+		node.rect_size = floor_rect_size
+		node.material.set_shader_param("node_size", floor_rect_size)
+
+	# noise screen
 	var tajlmeps: Array = [tilemap_edge, tilemap_floor]
 	
 	var tile_with_shader_id: int
@@ -202,45 +199,9 @@ func update_shaders():
 		var mat: ShaderMaterial = ts.tile_get_material(tile_with_shader_id)
 		var local_to_view: Transform2D = tm.get_viewport_transform() * tm.global_transform
 		var view_to_local: Transform2D = local_to_view.affine_inverse()
-#		printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
-		mat.set_shader_param("view_to_local", view_to_local)
-	
-	
-	
-func set_level_shaders():
-	
-	# zaporedje je pomembno
-	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
-	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
-	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
-	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
-	for shader_node in background.get_children():
-		if shader_node.material:
-			shader_node.rect_position = floor_rect_position
-			shader_node.rect_size = floor_rect_size
-			shader_node.material.set_shader_param("node_size", floor_rect_size)
-	
-	# floor
-#	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
-#	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
-#	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
-#	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
-	for shader_node in tilemap_floor.get_children():
-		shader_node.rect_position = floor_rect_position
-		shader_node.rect_size = floor_rect_size
-		shader_node.material.set_shader_param("node_size", floor_rect_size)
-	
-	# edge
-	var first_edge_cell = tilemap_edge.get_used_cells().pop_front()
-	var last_edge_cell = tilemap_edge.get_used_cells().pop_back()
-	var edge_rect_position = tilemap_edge.map_to_world(first_edge_cell)
-	var edge_rect_size = tilemap_edge.map_to_world(last_edge_cell) - tilemap_edge.map_to_world(first_edge_cell)
-	
-	for shader_node in tilemap_edge.get_children():
-		shader_node.rect_position = edge_rect_position
-		shader_node.rect_size = edge_rect_size
-		shader_node.material.set_shader_param("node_size", edge_rect_size)
-		
+		#		printt ("shader_par", ts, tm, sm, local_to_view, view_to_local)
+		mat.set_shader_param("view_to_local", view_to_local)		
+
 
 # SET TILEMAPS --------------------------------------------------------------------------------------------------------
 
@@ -350,7 +311,7 @@ func set_level_elements():
 				
 			6: # goal pillar
 				spawn_element(cell_global_position, GoalPillar, Vector2(36,36))
-#				tilemap_elements.set_cellv(cell, -1)
+				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 
 
@@ -406,6 +367,13 @@ func get_tilemap_cells(tilemap: TileMap):
 			tilemap_cells.append(cell)
 	
 	return tilemap_cells
+	
+	
+func get_navigation_racing_line(): # za avtomatizirano racing liijo
+	
+	racing_navigation_agent.set_target_location(goal_position_node.global_position)
+	level_navigation_line.points = racing_navigation_agent.get_nav_path()
+	
 	
 	
 # SPAWN --------------------------------------------------------------------------------------------------------

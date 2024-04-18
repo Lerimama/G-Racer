@@ -1,6 +1,4 @@
 shader_type canvas_item;
-//render_mode ble;
-// tilemap ready!!!
 
 // KAJ DELA?
 // menja do 3 barve
@@ -14,19 +12,18 @@ shader_type canvas_item;
 // ---
 // all texture color value hue shift (ramp)
 // pixelizacija je pravilna, če je vnešena točna dimenzija node texture
-// BUG
-// barve izbira avtomatsko samo na črni in beli ... ostale delajo šele, če je izbran med predvajanjem scene
+
 
 // colors
 uniform bool change_colors;
-uniform vec4 color_1: hint_color = vec4(0,0,0,0.5);
+uniform vec4 color_1: hint_color = vec4(0);
 uniform vec4 new_color_1: hint_color;
-uniform vec4 color_2: hint_color = vec4(0,0,0,0.5);
+uniform vec4 color_2: hint_color = vec4(0);
 uniform vec4 new_color_2: hint_color;
-uniform vec4 color_3: hint_color = vec4(0,0,0,0.5);
+uniform vec4 color_3: hint_color = vec4(0);
 uniform vec4 new_color_3: hint_color;
-uniform vec4 color_to_transparent: hint_color = vec4(0,0,0,0.5);
-uniform vec4 color_to_noise: hint_color = vec4(0,0,0,0.5);
+uniform vec4 color_to_transparent: hint_color = vec4(0);
+uniform vec4 color_to_noise: hint_color = vec4(0);
 
 uniform vec2 node_size = vec2(320, 320); // more bit točen, da so pixli pravih dimenzij
 
@@ -43,18 +40,11 @@ uniform	vec2 pixel_offset = vec2(0.0, 0.0);
 uniform float speed_x : hint_range (-10, 10) = 0;
 uniform float speed_y : hint_range (-10, 10) = 0;
 uniform float speed_scale : hint_range (0, 1, 0.01)= 0.1; // da ni prehitro
-// shade all
+
+// shading all
 uniform bool shade_all_colors;
 uniform sampler2D shades_color_ramp : hint_albedo;
 
-// tile transform info
-uniform mat4 view_to_local;
-varying vec2 local;
-
-void vertex()
-{
-    local = (view_to_local * WORLD_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
-}
 
 void fragment() {
 
@@ -71,22 +61,20 @@ void fragment() {
 	// NOISE
 	if (ad_noise == true){
 		
-		vec2 uv = local / vec2(textureSize(noise, 0));
-		
 		// pixelate and animate
 		vec2 noise_uvs;
 		if (pixelate_noise == true) {
 			float xFactor = node_size.x / pixel_size_multiplier;
 			float yFactor = node_size.y / pixel_size_multiplier;
-			float grid_uv_x = round(uv.x * xFactor + pixel_offset.x) / xFactor + TIME * speed_x * speed_scale;
-			float grid_uv_y = round(uv.y * yFactor + pixel_offset.y) / yFactor + TIME * speed_y * speed_scale;
+			float grid_uv_x = round(UV.x * xFactor + pixel_offset.x) / xFactor + TIME * speed_x * speed_scale;
+			float grid_uv_y = round(UV.y * yFactor + pixel_offset.y) / yFactor + TIME * speed_y * speed_scale;
 			noise_uvs = vec2(grid_uv_x, grid_uv_y);
 		} else {
 		// animate
-			noise_uvs.x = uv.x + TIME * speed_x * speed_scale;
-			noise_uvs.y = uv.y + TIME * speed_y * speed_scale;	
+			noise_uvs.x = UV.x + TIME * speed_x * speed_scale;
+			noise_uvs.y = UV.y + TIME * speed_y * speed_scale;			
 		}
-
+		
 		vec4 noise_texture = texture(noise, noise_uvs);			
 		vec3 noise_color = noise_texture.rgb;
 		float noise_alpha = noise_texture.a; 
@@ -112,6 +100,7 @@ void fragment() {
 				noise_alpha_out = n_tex_read.a;
 			}
 	
+			
 			// noise samo na noise barvo ali povsod
 			if (change_colors == true){
 				if (length(COLOR - color_to_noise) < 0.01){
