@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 1575, 1252, 0, 0, 0, 0, 1523, 503, 0, 0, 0, 0, 1399, 394, 0, 0, 0, 0, 1381, 144, 0, 0, 0, 0, 1286, 115, 0, 0, 0, 0, 1205, 174, 0, 0, 0, 0, 1198, 545, 0, 0, 0, 0, 1231, 764, 0, 0, 0, 0, 937, 1069, 0, 0, 0, 0, 767, 1125, 0, 0, 0, 0, 661, 1064, 0, 0, 0, 0, 628, 930, 0, 0, 0, 0, 647, 662, 0, 0, 0, 0, 719, 597, 0, 0, 0, 0, 719, 389, 0, 0, 0, 0, 683, 300, 0, 0, 0, 0, 342, 295, 0, 0, 0, 0, 170, 294, 0, 0, 0, 0, 113, 98, 0, 0, 0, 0, 129, -68, 0, 0, 0, 0, 137, -208 )
+}
 
 [node name="LevelRace" instance=ExtResource( 1 )]
 
@@ -63,6 +68,9 @@ rotation = -1.5708
 [node name="SpawnPosition4" parent="Positions" index="3"]
 position = Vector2( 1016, 1116 )
 rotation = -1.5708
+
+[node name="RacingTrack" parent="." index="13"]
+curve = SubResource( 1 )
 
 [node name="RacingPath" parent="RacingLine" index="0"]
 points = PoolVector2Array( 1568, 1184, 1520, 496, 1432, 384, 1384, 192, 1344, 152, 1256, 160, 1216, 192, 1200, 512, 1208, 656, 1232, 760, 1024, 992, 848, 1112, 742.968, 1112, 640, 984, 640, 704, 720, 664, 720, 400, 672, 312, 176, 272, 131.166, -19.4241, 104, -360 )

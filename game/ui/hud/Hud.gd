@@ -3,14 +3,14 @@ extends Control
 
 var stat_lines_owners: Dictionary = {}
 var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
+var record_lap_time: int = 0 #setget _on_lap_record_changed # stotinke 
+var record_level_time: int = 0 # setget _on_level_record_changed # stotinke 
 
 onready var stat_line_topL: Control = $StatLineRacer1
 onready var stat_line_topR: Control = $StatLineRacer2
 onready var stat_line_btmL: Control = $StatLineRacer3
 onready var stat_line_btmR: Control = $StatLineRacer4
 
-var record_lap_time: int = 0 #setget _on_lap_record_changed # stotinke 
-var record_level_time: int = 0# setget _on_level_record_changed # stotinke 
 onready var record_lap_label: Label = $GameStats/RecordLap
 onready var game_stats: VBoxContainer = $GameStats
 onready var game_timer: Control = $"%GameTimer"

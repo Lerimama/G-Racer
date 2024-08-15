@@ -81,7 +81,7 @@ visible = false
 cast_to = Vector2( 10, 40 )
 collide_with_areas = true
 
-[node name="Shield" parent="." index="14"]
+[node name="Shield" parent="." index="15"]
 material = SubResource( 1 )
 
 [connection signal="body_entered" from="DetectArea/DetectFront" to="." method="_on_DetectArea_body_entered"]

@@ -31,7 +31,7 @@ modulate = Color( 1, 1, 1, 0.0901961 )
 [node name="TiltTimer" type="Timer" parent="." index="7"]
 one_shot = true
 
-[node name="Shield" parent="." index="8"]
+[node name="Shield" parent="." index="9"]
 material = SubResource( 1 )
 
 [node name="VBoxContainer" parent="BoltHud" index="0"]

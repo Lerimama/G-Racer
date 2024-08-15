@@ -26,19 +26,18 @@ var checkpoints_count: int
 onready var start_lights: Node2D = $StartLights
 onready var checkpoints: Node2D = $Checkpoints
 onready var finish_line: Area2D = $FinishLine
-onready var racing_line: Node2D = $RacingLine
 
 # floor
-onready var AreaNitro: PackedScene = preload("res://game/arena_elements/areas/AreaNitro.tscn")
-onready var AreaGravel: PackedScene = preload("res://game/arena_elements/areas/AreaGravel.tscn")
-onready var AreaHole: PackedScene = preload("res://game/arena_elements/areas/AreaHole.tscn")	
+onready var AreaNitro: PackedScene = preload("res://game/arena/areas/AreaNitro.tscn")
+onready var AreaGravel: PackedScene = preload("res://game/arena/areas/AreaGravel.tscn")
+onready var AreaHole: PackedScene = preload("res://game/arena/areas/AreaHole.tscn")	
 # elements
-onready var GoalPillar: PackedScene = preload("res://game/arena_elements/GoalPillar.tscn")
-onready var BrickGhost: PackedScene = preload("res://game/arena_elements/bricks/BrickGhost.tscn")
-onready var BrickBouncer: PackedScene = preload("res://game/arena_elements/bricks/BrickBouncer.tscn")
-onready var BrickMagnet: PackedScene = preload("res://game/arena_elements/bricks/BrickMagnet.tscn")
-onready var BrickTarget: PackedScene = preload("res://game/arena_elements/bricks/BrickTarget.tscn")
-onready var BrickLight: PackedScene = preload("res://game/arena_elements/bricks/BrickLight.tscn")
+onready var GoalPillar: PackedScene = preload("res://game/arena/elements/GoalPillar.tscn")
+onready var BrickGhost: PackedScene = preload("res://game/arena/bricks/BrickGhost.tscn")
+onready var BrickBouncer: PackedScene = preload("res://game/arena/bricks/BrickBouncer.tscn")
+onready var BrickMagnet: PackedScene = preload("res://game/arena/bricks/BrickMagnet.tscn")
+onready var BrickTarget: PackedScene = preload("res://game/arena/bricks/BrickTarget.tscn")
+onready var BrickLight: PackedScene = preload("res://game/arena/bricks/BrickLight.tscn")
 onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
 onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
 onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
@@ -70,6 +69,13 @@ onready var goal_position_node: Position2D = $GoalPosition
 onready var spawn_position_nodes: Node2D = $Positions
 onready var start_line: Area2D = $StartLine
 
+# neu
+var path_target: KinematicBody2D = null
+onready var racing_track: Path2D = $RacingTrack
+onready var player_follower: PathFollow2D = $RacingTrack/PlayerFollower
+#onready var racing_line: Node2D = $RacingLine
+
+
 	
 func _ready() -> void:
 	printt("LEVEL")
@@ -80,7 +86,7 @@ func _ready() -> void:
 		$Comments.hide()
 		$ScreenSize.hide()
 		$Instructions.hide()
-		racing_line.hide()
+#		racing_line.hide()
 	level_navigation_line.hide()
 
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
@@ -369,10 +375,10 @@ func get_tilemap_cells(tilemap: TileMap):
 	return tilemap_cells
 	
 	
-func get_navigation_racing_line(): # za avtomatizirano racing liijo
-	
-	racing_navigation_agent.set_target_location(goal_position_node.global_position)
-	level_navigation_line.points = racing_navigation_agent.get_nav_path()
+#func get_navigation_racing_line(): # za avtomatizirano racing liijo
+#
+#	racing_navigation_agent.set_target_location(goal_position_node.global_position)
+#	level_navigation_line.points = racing_navigation_agent.get_nav_path()
 	
 	
 	
@@ -382,7 +388,7 @@ func get_navigation_racing_line(): # za avtomatizirano racing liijo
 func spawn_checkpoint(checkpoint_global_position: Vector2, checkpoint_rotation: float):
 	
 	checkpoints_count += 1
-	var Checkpoint: PackedScene =  preload("res://game/arena_elements/Checkpoint.tscn")
+	var Checkpoint: PackedScene =  preload("res://game/arena/elements/Checkpoint.tscn")
 	var new_checkpoint_scene = Checkpoint.instance() #
 	new_checkpoint_scene.position = checkpoint_global_position# + element_center_offset
 	if checkpoint_rotation == 90: # če rotiram je hor zamik

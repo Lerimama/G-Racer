@@ -3,7 +3,7 @@
 [sub_resource type="DynamicFontData" id=1]
 antialiased = false
 hinting = 0
-font_path = "res://assets/theme/fonts/pixelated.ttf"
+font_path = "res://assets/theme/fonts/TTNorms/TTNorms-Regular.ttf"
 
 [resource]
 size = 8

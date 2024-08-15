@@ -12,6 +12,7 @@ func _process(delta: float) -> void:
 		frame_second -= delta
 		frames_per_second += 1
 	else:
-		text = "FPS " + str(frames_per_second)
+#		text = "FPS " + str(frames_per_second)
+		text = "FPS real " + str(OS.get_screen_refresh_rate())
 		frame_second = 1
 		frames_per_second = 0	

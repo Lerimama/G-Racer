@@ -1,8 +1,8 @@
 [gd_resource type="DynamicFont" load_steps=2 format=2]
 
-[sub_resource type="DynamicFontData" id=773]
-font_path = "res://assets/theme/fonts/Gamer.ttf"
+[ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-ExtraBold.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 32
-font_data = SubResource( 773 )
+size = 40
+extra_spacing_char = 1
+font_data = ExtResource( 1 )

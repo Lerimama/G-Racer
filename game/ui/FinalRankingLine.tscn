@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=1]
 
 [node name="Line" type="HBoxContainer"]
 margin_left = 289.0

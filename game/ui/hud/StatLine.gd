@@ -25,10 +25,10 @@ onready var stat_mina: HBoxContainer = $StatMina
 onready var stat_shocker: HBoxContainer = $StatShocker
 
 onready var stat_gas: HBoxContainer = $StatGas
-onready var stat_laps_count: HBoxContainer = $StatLapsCount
+onready var stat_laps_count: HBoxContainer = $StatLap
 onready var stat_fastest_lap: HBoxContainer = $StatFastestLap
-onready var stat_level_time: HBoxContainer = $StatLevelTime
-onready var stat_level_rank: HBoxContainer = $StatLevelRank
+onready var stat_level_time: HBoxContainer = $StatTime
+onready var stat_level_rank: HBoxContainer = $StatRank
 
 
 func _ready() -> void:

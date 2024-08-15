@@ -158,6 +158,7 @@ func _on_NavigationAgent2D_path_changed() -> void:
 #	emit_signal("path_changed", navigation_agent.get_nav_path()) # levelu preko arene pošljemo točke poti do cilja	
 	pass
 
+
 func _on_NavigationAgent2D_navigation_finished() -> void:
 #	print("_on_NavigationAgent2D_navigation_finished")
 	pass

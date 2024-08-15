@@ -111,6 +111,7 @@ func game_in():
 #	get_tree().reload_current_scene()	
 
 func game_over_in():
+	
 	printt ("GO", Met.current_scene)
 	$Sounds/MenuFade.play()	
 

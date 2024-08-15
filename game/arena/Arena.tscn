@@ -1,11 +1,9 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=1]
-[ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/arena/ScreenArea.gd" type="Script" id=3]
 [ext_resource path="res://game/arena/Arena.gd" type="Script" id=4]
-[ext_resource path="res://game/managers/RaceManager.gd" type="Script" id=5]
-[ext_resource path="res://_rezerva/GameManagerArena.gd" type="Script" id=6]
+[ext_resource path="res://managers/RaceManager.gd" type="Script" id=5]
 [ext_resource path="res://assets/resources/arena_environment.tres" type="Environment" id=7]
 
 [sub_resource type="RectangleShape2D" id=772]
@@ -23,9 +21,6 @@ script = ExtResource( 4 )
 __meta__ = {
 "_edit_horizontal_guides_": [ -64.0 ]
 }
-
-[node name="GameManager" type="Node" parent="."]
-script = ExtResource( 6 )
 
 [node name="RaceManager" type="Node" parent="."]
 script = ExtResource( 5 )
@@ -68,10 +63,6 @@ custom_styles/panel = SubResource( 773 )
 
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 7 )
-
-[node name="Camera" parent="." instance=ExtResource( 2 )]
-z_index = 0
-current = true
 
 [node name="Sounds" type="Node" parent="."]
 

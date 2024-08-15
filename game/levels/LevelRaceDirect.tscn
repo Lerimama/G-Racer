@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=3]
@@ -9,6 +9,11 @@ extents = Vector2( 128, 4 )
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 3 )
 region = Rect2( 24, 16, 8, 8 )
+
+[sub_resource type="Curve2D" id=3]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 320, 1344, 0, 0, 0, 0, 320, 8 )
+}
 
 [node name="LevelRace" instance=ExtResource( 1 )]
 
@@ -135,7 +140,13 @@ rotation = -1.5708
 position = Vector2( 344, 1296 )
 rotation = -1.5708
 
-[node name="RacingLine" parent="." index="13"]
+[node name="RacingTrack" parent="." index="13"]
+curve = SubResource( 3 )
+
+[node name="FinishBestPos" type="Position2D" parent="." index="14"]
+position = Vector2( 184, 312 )
+
+[node name="RacingLine" parent="." index="15"]
 __meta__ = {
 "_edit_lock_": true
 }
@@ -147,8 +158,5 @@ points = PoolVector2Array( 319.226, 1280, 319.226, 96 )
 width = 10.0
 default_color = Color( 0.4, 0.501961, 1, 0.145098 )
 
-[node name="FinishBestPos" type="Position2D" parent="." index="14"]
-position = Vector2( 184, 312 )
-
-[node name="LevelNavigationLine" parent="." index="15"]
+[node name="LevelNavigationLine" parent="." index="16"]
 visible = false

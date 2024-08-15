@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://game/ui/hud/Stat.tscn" type="PackedScene" id=1]
+
+[node name="StatLevelRank" instance=ExtResource( 1 )]
+margin_left = -12.0
+margin_right = 40.32
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Icon" parent="." index="0"]
+visible = false
+
+[node name="Name00" parent="." index="1"]
+visible = true
+margin_left = 0.0
+margin_right = 41.0
+text = "R:"
+
+[node name="Label" parent="." index="2"]
+margin_left = 57.0
+margin_right = 114.0

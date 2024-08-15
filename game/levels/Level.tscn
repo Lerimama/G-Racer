@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=2]
+[gd_scene load_steps=76 format=2]
 
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=1]
 [ext_resource path="res://game/levels/Level.gd" type="Script" id=2]
@@ -6,11 +6,11 @@
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=4]
 [ext_resource path="res://assets/shaders/backgrounds/level_edge_shadows_screen.gdshader" type="Shader" id=5]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=6]
-[ext_resource path="res://game/arena_elements/Checkpoint.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/arena/elements/Checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/resources/tileset_arena_elements.tres" type="TileSet" id=8]
 [ext_resource path="res://game/levels/RacingLine.gd" type="Script" id=9]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=10]
-[ext_resource path="res://game/arena_elements/areas/AreaFinish.gd" type="Script" id=11]
+[ext_resource path="res://game/arena/areas/AreaFinish.gd" type="Script" id=11]
 [ext_resource path="res://__materiali/light_2.png" type="Texture" id=12]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=13]
 [ext_resource path="res://assets/sound/sfx/hit_wall.wav" type="AudioStream" id=14]
@@ -20,17 +20,20 @@
 [ext_resource path="res://assets/shaders/backgrounds/level_background_pixelate_screen.gdshader" type="Shader" id=18]
 [ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=19]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=20]
-[ext_resource path="res://game/arena_elements/StartLights.tscn" type="PackedScene" id=21]
+[ext_resource path="res://game/arena/elements/StartLights.tscn" type="PackedScene" id=21]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=22]
 [ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=23]
 [ext_resource path="res://assets/theme/fonts/LevelLabel.tres" type="DynamicFont" id=24]
-[ext_resource path="res://assets/theme/gravity_theme.tres" type="Theme" id=25]
+[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=25]
 [ext_resource path="res://assets/shaders/_zaloga/originali_uporabljanega/bolt_wiggle_texture.gdshader" type="Shader" id=26]
 [ext_resource path="res://assets/sprites/bolt/bolt_alt.png" type="Texture" id=27]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_water_canvas.gdshader" type="Shader" id=28]
 [ext_resource path="res://assets/shaders/level_edge_dirt_screen.gdshader" type="Shader" id=29]
 [ext_resource path="res://game/levels/Floor_temp.gd" type="Script" id=30]
+[ext_resource path="res://game/_DebugIndikator.tscn" type="PackedScene" id=31]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_lava_canvas.gdshader" type="Shader" id=32]
+[ext_resource path="res://game/levels/RacingTrack.gd" type="Script" id=33]
+[ext_resource path="res://game/levels/BoltFollower.gd" type="Script" id=34]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_nebula_screen.gdshader" type="Shader" id=35]
 
 [sub_resource type="Gradient" id=1]
@@ -993,6 +996,16 @@ polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 1
 material = SubResource( 516 )
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 27 )
+
+[node name="RacingTrack" type="Path2D" parent="."]
+script = ExtResource( 33 )
+
+[node name="BoltFollower" type="PathFollow2D" parent="RacingTrack"]
+script = ExtResource( 34 )
+
+[node name="indikator" parent="RacingTrack/BoltFollower" instance=ExtResource( 31 )]
+position = Vector2( 2, 2 )
+scale = Vector2( 4, 4 )
 
 [node name="RacingLine" type="Node2D" parent="."]
 script = ExtResource( 9 )

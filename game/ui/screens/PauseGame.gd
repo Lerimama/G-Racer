@@ -26,7 +26,7 @@ func pause_game():
 	visible = true
 	
 #	Global.sound_manager.play_gui_sfx("screen_slide")
-	$VBoxContainer/Menu/PlayBtn.grab_focus()
+	$Menu/PlayBtn.grab_focus()
 	
 	var pause_in_time: float = 0.5
 	var fade_in_tween = get_tree().create_tween()

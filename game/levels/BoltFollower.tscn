@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://game/_DebugIndikator.tscn" type="PackedScene" id=2]
+
+[node name="BoltFollower" type="PathFollow2D"]
+position = Vector2( 298, 1210 )
+rotation = -1.66075
+
+[node name="indikator" parent="." instance=ExtResource( 2 )]
+position = Vector2( 2, 2 )
+scale = Vector2( 4, 4 )

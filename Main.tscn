@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://DataManager.gd" type="Script" id=25]
+[ext_resource path="res://_obs/_DataManager.gd" type="Script" id=25]
 [ext_resource path="res://Main.gd" type="Script" id=26]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/screen_slide.wav" type="AudioStream" id=28]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/menu_fade.wav" type="AudioStream" id=40]

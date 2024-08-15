@@ -3,7 +3,7 @@
 [ext_resource path="res://assets/shaders/_obs/effect_shadows_screen.gdshader" type="Shader" id=1]
 [ext_resource path="res://assets/shaders/_obs/effect_colors_screen.gdshader" type="Shader" id=2]
 [ext_resource path="res://_rezerva/LayerEffects.gd" type="Script" id=3]
-[ext_resource path="res://game/arena/Effects.gd" type="Script" id=4]
+[ext_resource path="res://_rezerva/Effects.gd" type="Script" id=4]
 
 [sub_resource type="ShaderMaterial" id=88]
 shader = ExtResource( 1 )
