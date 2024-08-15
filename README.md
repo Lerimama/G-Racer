@@ -1,2 +1,3 @@
-# Gravity Bonanza
- Gravity Force and Nitro blended into one simple and fun local multiplayer game. 
+# G Racer
+
+ Gravity Force, Revolt and Nitro blended into one simple and fun local multiplayer game. 
