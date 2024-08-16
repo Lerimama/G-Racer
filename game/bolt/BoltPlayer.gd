@@ -18,7 +18,6 @@ onready var shoot_action: String = controller_actions["shoot_action"]
 onready var feature_action: String = controller_actions["feature_action"]
 onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
 
-#neu
 
 func _input(event: InputEvent) -> void:
 
@@ -133,7 +132,8 @@ func select_feature():
 			feature.show()		
 
 
-func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, leader_checkpoints_reached: Array):
+func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int):
+#func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, leader_checkpoints_reached: Array):
 	
 	if not bolt_active:
 		return
@@ -158,13 +158,19 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, lead
 	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	yield(pull_tween, "finished")
 	# če preskoči ciljno linijo in checkpoint
-	if laps_finished_count < leader_laps_finished:
-		laps_finished_count = leader_laps_finished
+	if bolt_stats["laps_finished_count"] < leader_laps_finished:
+		var laps_finished_difference: int = leader_laps_finished - bolt_stats["laps_finished_count"]
+		change_stat("laps_finished_count", laps_finished_difference)
+		
+		
+#		laps_finished_count = leader_laps_finished
 	
 	# ne dela
 #	if Ref.game_manager.current_pull_positions.has(pull_position):
 #		Ref.game_manager.current_pull_positions.erase(pull_position)
-	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) 
+
+
+#	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) # _temp # OPT
 	manage_gas(Ref.game_manager.game_settings["pull_gas_penalty"])
 
 

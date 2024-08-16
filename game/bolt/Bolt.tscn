@@ -20,7 +20,7 @@
 [ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
 [ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=20]
-[ext_resource path="res://__materiali/light_2.png" type="Texture" id=21]
+[ext_resource path="res://_materiali/light_2.png" type="Texture" id=21]
 [ext_resource path="res://assets/sprites/glow_light.png" type="Texture" id=22]
 [ext_resource path="res://assets/sprites/bolt/bolt_HRes.png" type="Texture" id=23]
 

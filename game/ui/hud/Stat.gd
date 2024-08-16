@@ -20,20 +20,21 @@ onready var stat_label: Label = $Label
 
 func _ready() -> void:
 	
-#	def_stat_color = get_parent().stat_line_color
+#	def_stat_color = get_parent().statbox_color
 	stat_label.modulate = def_stat_color
 	stat_icon.modulate = def_stat_color
 	
 	get_node("Icon").texture = icon_texture
 	
+	
 func _on_stat_change(new_stat_value):
 	
-	# če je string ga ne primerjam s trnutnim
+	# če je string ga ne primerjam s trenutnim in ga kar zapišem
 	if new_stat_value is String:
 		stat_label.text = str(new_stat_value)
-#		stat_label.modulate = plus_color
-#		yield(get_tree().create_timer(color_blink_time), "timeout")
-#		stat_label.modulate = def_stat_color
+		#		stat_label.modulate = plus_color
+		#		yield(get_tree().create_timer(color_blink_time), "timeout")
+		#		stat_label.modulate = def_stat_color
 	else:
 		# če bo šlo navzgor
 		if new_stat_value > current_stat_value:

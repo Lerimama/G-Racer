@@ -1,27 +1,16 @@
-[gd_scene load_steps=76 format=2]
+[gd_scene load_steps=62 format=2]
 
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=1]
 [ext_resource path="res://game/levels/Level.gd" type="Script" id=2]
 [ext_resource path="res://assets/resources/tileset_arena_floor.tres" type="TileSet" id=3]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=4]
 [ext_resource path="res://assets/shaders/backgrounds/level_edge_shadows_screen.gdshader" type="Shader" id=5]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=6]
-[ext_resource path="res://game/arena/elements/Checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/resources/tileset_arena_elements.tres" type="TileSet" id=8]
-[ext_resource path="res://game/levels/RacingLine.gd" type="Script" id=9]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=10]
-[ext_resource path="res://game/arena/areas/AreaFinish.gd" type="Script" id=11]
-[ext_resource path="res://__materiali/light_2.png" type="Texture" id=12]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=13]
-[ext_resource path="res://assets/sound/sfx/hit_wall.wav" type="AudioStream" id=14]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=15]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=16]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=17]
+[ext_resource path="res://_materiali/light_2.png" type="Texture" id=12]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_pixelate_screen.gdshader" type="Shader" id=18]
-[ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=19]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=20]
 [ext_resource path="res://game/arena/elements/StartLights.tscn" type="PackedScene" id=21]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=22]
 [ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=23]
 [ext_resource path="res://assets/theme/fonts/LevelLabel.tres" type="DynamicFont" id=24]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=25]
@@ -30,10 +19,9 @@
 [ext_resource path="res://assets/shaders/backgrounds/level_background_water_canvas.gdshader" type="Shader" id=28]
 [ext_resource path="res://assets/shaders/level_edge_dirt_screen.gdshader" type="Shader" id=29]
 [ext_resource path="res://game/levels/Floor_temp.gd" type="Script" id=30]
-[ext_resource path="res://game/_DebugIndikator.tscn" type="PackedScene" id=31]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_lava_canvas.gdshader" type="Shader" id=32]
-[ext_resource path="res://game/levels/RacingTrack.gd" type="Script" id=33]
-[ext_resource path="res://game/levels/BoltFollower.gd" type="Script" id=34]
+[ext_resource path="res://game/levels/RaceTrack.gd" type="Script" id=33]
+[ext_resource path="res://game/levels/BoltTracker.gd" type="Script" id=34]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_nebula_screen.gdshader" type="Shader" id=35]
 
 [sub_resource type="Gradient" id=1]
@@ -312,19 +300,8 @@ shader_param/switch_cast_and_receive = false
 shader_param/new_casting_color = Color( 0, 0, 0, 0 )
 shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
 
-[sub_resource type="RectangleShape2D" id=568]
-extents = Vector2( 144, 4 )
-
-[sub_resource type="AtlasTexture" id=599]
-atlas = ExtResource( 10 )
-region = Rect2( 40, 16, 8, 8 )
-
-[sub_resource type="AtlasTexture" id=515]
-atlas = ExtResource( 10 )
-region = Rect2( 32, 16, 8, 8 )
-
 [sub_resource type="RectangleShape2D" id=514]
-extents = Vector2( 72, 4 )
+extents = Vector2( 168, 4 )
 
 [sub_resource type="AtlasTexture" id=517]
 atlas = ExtResource( 10 )
@@ -349,15 +326,21 @@ shader_param/noise_factor = 0.0
 shader_param/speed = 0.0
 shader_param/noise_texture = SubResource( 116 )
 
-[sub_resource type="AudioStreamRandomPitch" id=510]
-audio_stream = ExtResource( 19 )
+[sub_resource type="RectangleShape2D" id=568]
+extents = Vector2( 144, 4 )
 
-[sub_resource type="AudioStreamRandomPitch" id=511]
-audio_stream = ExtResource( 14 )
+[sub_resource type="AtlasTexture" id=599]
+atlas = ExtResource( 10 )
+region = Rect2( 40, 16, 8, 8 )
 
-[sub_resource type="AudioStreamRandomPitch" id=512]
-audio_stream = ExtResource( 17 )
-random_pitch = 1.05
+[sub_resource type="AtlasTexture" id=515]
+atlas = ExtResource( 10 )
+region = Rect2( 32, 16, 8, 8 )
+
+[sub_resource type="Curve2D" id=612]
+_data = {
+"points": PoolVector2Array(  )
+}
 
 [sub_resource type="StyleBoxFlat" id=513]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
@@ -505,407 +488,597 @@ align = 1
 autowrap = true
 uppercase = true
 
-[node name="StartLine" type="Area2D" parent="."]
+[node name="Checkpoint" type="Area2D" parent="."]
+position = Vector2( 320, 192 )
 monitoring = false
 monitorable = false
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionPolygon2D" type="CollisionShape2D" parent="StartLine"]
-visible = false
-position = Vector2( 144, 4 )
-shape = SubResource( 568 )
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Checkpoint"]
+position = Vector2( 0, 4 )
+shape = SubResource( 514 )
 
-[node name="Sprite" type="TextureRect" parent="StartLine"]
-margin_right = 288.0
+[node name="HBoxContainer" type="HBoxContainer" parent="Checkpoint"]
+modulate = Color( 1, 1, 1, 0.313726 )
+margin_left = -168.0
+margin_right = 168.0
 margin_bottom = 8.0
-texture = SubResource( 599 )
-expand = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="StartLine"]
-margin_right = 288.0
-margin_bottom = 8.0
+grow_horizontal = 2
 custom_constants/separation = 0
+alignment = 1
 
-[node name="Sprite2" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_right = 8.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite3" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite2" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 8.0
 margin_right = 16.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite4" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite3" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 16.0
 margin_right = 24.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite5" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite4" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 24.0
 margin_right = 32.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite6" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite5" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 32.0
 margin_right = 40.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite7" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite6" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 40.0
 margin_right = 48.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite8" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite7" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 48.0
 margin_right = 56.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite9" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite8" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 56.0
 margin_right = 64.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite10" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite9" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 64.0
 margin_right = 72.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite11" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite10" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 72.0
 margin_right = 80.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite12" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite11" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 80.0
 margin_right = 88.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite13" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite12" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 88.0
 margin_right = 96.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite14" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite13" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 96.0
 margin_right = 104.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite15" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite14" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 104.0
 margin_right = 112.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite16" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite15" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 112.0
 margin_right = 120.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite17" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite16" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 120.0
 margin_right = 128.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite18" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite17" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 128.0
 margin_right = 136.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite19" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite18" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 136.0
 margin_right = 144.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite20" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite19" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 144.0
 margin_right = 152.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite21" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite20" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 152.0
 margin_right = 160.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite22" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite21" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 160.0
 margin_right = 168.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite23" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite22" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 168.0
 margin_right = 176.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite24" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite23" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 176.0
 margin_right = 184.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite25" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite24" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 184.0
 margin_right = 192.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite26" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite25" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 192.0
 margin_right = 200.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite27" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite26" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 200.0
 margin_right = 208.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite28" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite27" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 208.0
 margin_right = 216.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite29" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite28" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 216.0
 margin_right = 224.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite30" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite29" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 224.0
 margin_right = 232.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite31" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite30" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 232.0
 margin_right = 240.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite32" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite31" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 240.0
 margin_right = 248.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite33" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite32" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 248.0
 margin_right = 256.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite34" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite33" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 256.0
 margin_right = 264.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite35" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite34" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 264.0
 margin_right = 272.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Sprite36" type="TextureRect" parent="StartLine/HBoxContainer"]
+[node name="Sprite35" type="TextureRect" parent="Checkpoint/HBoxContainer"]
 margin_left = 272.0
 margin_right = 280.0
 margin_bottom = 8.0
-texture = SubResource( 515 )
+texture = SubResource( 517 )
 
-[node name="Checkpoints" type="Node2D" parent="."]
-position = Vector2( 0, 8 )
+[node name="Sprite36" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 280.0
+margin_right = 288.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
 
-[node name="Checkpoint" parent="Checkpoints" instance=ExtResource( 7 )]
-monitoring = false
+[node name="Sprite37" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 288.0
+margin_right = 296.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
 
-[node name="FinishLine" type="Area2D" parent="."]
-position = Vector2( 0, 16 )
-monitoring = false
-monitorable = false
-script = ExtResource( 11 )
+[node name="Sprite38" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 296.0
+margin_right = 304.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite39" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 304.0
+margin_right = 312.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite40" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 312.0
+margin_right = 320.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite41" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 320.0
+margin_right = 328.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite42" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 328.0
+margin_right = 336.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="RaceFinish" type="Node2D" parent="."]
+position = Vector2( 512, 128 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Sounds" type="Node" parent="FinishLine"]
+[node name="FinishLine" type="Area2D" parent="RaceFinish"]
+monitoring = false
+monitorable = false
+__meta__ = {
+"_edit_group_": true
+}
 
-[node name="Nitro" type="AudioStreamPlayer" parent="FinishLine/Sounds"]
-stream = ExtResource( 22 )
-volume_db = -15.0
-bus = "GameSfx"
-
-[node name="CollisionPolygon2D" type="CollisionShape2D" parent="FinishLine"]
-position = Vector2( 72, 4 )
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceFinish/FinishLine"]
+position = Vector2( 0, 4 )
 shape = SubResource( 514 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="FinishLine"]
-margin_right = 144.0
+[node name="HBoxContainer" type="HBoxContainer" parent="RaceFinish/FinishLine"]
+margin_left = -168.0
+margin_right = 168.0
 margin_bottom = 8.0
+grow_horizontal = 2
 custom_constants/separation = 0
+alignment = 1
 
-[node name="Sprite" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_right = 8.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite2" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite2" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 8.0
 margin_right = 16.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite3" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite3" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 16.0
 margin_right = 24.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite4" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite4" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 24.0
 margin_right = 32.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite5" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite5" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 32.0
 margin_right = 40.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite6" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite6" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 40.0
 margin_right = 48.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite7" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite7" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 48.0
 margin_right = 56.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite8" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite8" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 56.0
 margin_right = 64.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite9" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite9" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 64.0
 margin_right = 72.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite10" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite10" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 72.0
 margin_right = 80.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite11" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite11" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 80.0
 margin_right = 88.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite12" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite12" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 88.0
 margin_right = 96.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite13" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite13" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 96.0
 margin_right = 104.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite14" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite14" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 104.0
 margin_right = 112.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite15" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite15" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 112.0
 margin_right = 120.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite16" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite16" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 120.0
 margin_right = 128.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite17" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite17" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 128.0
 margin_right = 136.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="Sprite18" type="TextureRect" parent="FinishLine/HBoxContainer"]
+[node name="Sprite18" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
 margin_left = 136.0
 margin_right = 144.0
 margin_bottom = 8.0
 texture = SubResource( 517 )
 
-[node name="DriveOutLine" type="Line2D" parent="FinishLine"]
+[node name="Sprite19" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 144.0
+margin_right = 152.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite20" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 152.0
+margin_right = 160.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite21" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 160.0
+margin_right = 168.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite22" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 168.0
+margin_right = 176.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite23" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 176.0
+margin_right = 184.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite24" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 184.0
+margin_right = 192.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite25" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 192.0
+margin_right = 200.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite26" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 200.0
+margin_right = 208.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite27" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 208.0
+margin_right = 216.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite28" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 216.0
+margin_right = 224.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite29" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 224.0
+margin_right = 232.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite30" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 232.0
+margin_right = 240.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite31" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 240.0
+margin_right = 248.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite32" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 248.0
+margin_right = 256.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite33" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 256.0
+margin_right = 264.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite34" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 264.0
+margin_right = 272.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite35" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 272.0
+margin_right = 280.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite36" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 280.0
+margin_right = 288.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite37" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 288.0
+margin_right = 296.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite38" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 296.0
+margin_right = 304.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite39" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 304.0
+margin_right = 312.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite40" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 312.0
+margin_right = 320.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite41" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 320.0
+margin_right = 328.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="Sprite42" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 328.0
+margin_right = 336.0
+margin_bottom = 8.0
+texture = SubResource( 517 )
+
+[node name="CameraPosition" type="Position2D" parent="RaceFinish"]
+position = Vector2( 0, -16 )
+
+[node name="FinishOutPosition" type="Position2D" parent="RaceFinish"]
 position = Vector2( 0, -256 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Line2d" type="Line2D" parent="RaceFinish/FinishOutPosition"]
+position = Vector2( -72, 0 )
 points = PoolVector2Array( 0, 0, 144, 0 )
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )
 
-[node name="StartLights" parent="." instance=ExtResource( 21 )]
-position = Vector2( 32, 32 )
-
-[node name="StartPosition" type="Position2D" parent="."]
-position = Vector2( 169, 96 )
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="StartPosition"]
-
-[node name="GoalPosition" type="Position2D" parent="."]
-position = Vector2( 480, 232 )
-
-[node name="Positions" type="Node2D" parent="."]
-
-[node name="SpawnPosition1" type="Position2D" parent="Positions"]
-position = Vector2( 96, 72 )
+[node name="RaceStart" type="Node2D" parent="."]
+position = Vector2( 128, 128 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="Positions/SpawnPosition1"]
+[node name="StartLights" parent="RaceStart" instance=ExtResource( 21 )]
+position = Vector2( -7.62939e-06, -16 )
+
+[node name="StartPositions" type="Node2D" parent="RaceStart"]
+position = Vector2( 16, 56 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StartPosition1" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( -40, -24 )
+rotation = -1.5708
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition1"]
 visible = false
 position = Vector2( -14, -2 )
 polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
-[node name="Label" type="Label" parent="Positions/SpawnPosition1"]
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition1"]
 margin_left = -5.0
 margin_top = 5.0
 margin_right = 6.0
@@ -914,21 +1087,22 @@ theme = ExtResource( 25 )
 text = "1"
 align = 1
 
-[node name="Bolt" type="Sprite" parent="Positions/SpawnPosition1"]
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition1"]
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 27 )
 
-[node name="Light2D" type="Light2D" parent="Positions/SpawnPosition1"]
+[node name="Light2D" type="Light2D" parent="RaceStart/StartPositions/StartPosition1"]
 enabled = false
 texture = ExtResource( 12 )
 
-[node name="SpawnPosition2" type="Position2D" parent="Positions"]
-position = Vector2( 545, 72 )
+[node name="StartPosition2" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( 8, -24 )
+rotation = -1.5708
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Label" type="Label" parent="Positions/SpawnPosition2"]
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition2"]
 margin_left = -5.0
 margin_top = 5.0
 margin_right = 6.0
@@ -937,23 +1111,24 @@ theme = ExtResource( 25 )
 text = "2"
 align = 1
 
-[node name="Polygon2D" type="Polygon2D" parent="Positions/SpawnPosition2"]
+[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition2"]
 visible = false
 position = Vector2( -14, -2 )
 polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
-[node name="Bolt" type="Sprite" parent="Positions/SpawnPosition2"]
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition2"]
 material = SubResource( 516 )
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 27 )
 
-[node name="SpawnPosition3" type="Position2D" parent="Positions"]
-position = Vector2( 97, 272 )
+[node name="StartPosition3" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( -40, 8 )
+rotation = -1.5708
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Label" type="Label" parent="Positions/SpawnPosition3"]
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition3"]
 margin_left = -4.0
 margin_top = 5.0
 margin_right = 7.0
@@ -962,23 +1137,24 @@ theme = ExtResource( 25 )
 text = "3"
 align = 1
 
-[node name="Polygon2D" type="Polygon2D" parent="Positions/SpawnPosition3"]
+[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition3"]
 visible = false
 position = Vector2( -14, -2 )
 polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
-[node name="Bolt" type="Sprite" parent="Positions/SpawnPosition3"]
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition3"]
 material = SubResource( 516 )
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 27 )
 
-[node name="SpawnPosition4" type="Position2D" parent="Positions"]
-position = Vector2( 545, 272 )
+[node name="StartPosition4" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( 8, 8 )
+rotation = -1.5708
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Label" type="Label" parent="Positions/SpawnPosition4"]
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition4"]
 margin_left = -5.0
 margin_top = 5.0
 margin_right = 6.0
@@ -987,89 +1163,267 @@ theme = ExtResource( 25 )
 text = "4"
 align = 1
 
-[node name="Polygon2D" type="Polygon2D" parent="Positions/SpawnPosition4"]
+[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition4"]
 visible = false
 position = Vector2( -14, -2 )
 polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
-[node name="Bolt" type="Sprite" parent="Positions/SpawnPosition4"]
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition4"]
 material = SubResource( 516 )
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 27 )
 
-[node name="RacingTrack" type="Path2D" parent="."]
-script = ExtResource( 33 )
-
-[node name="BoltFollower" type="PathFollow2D" parent="RacingTrack"]
-script = ExtResource( 34 )
-
-[node name="indikator" parent="RacingTrack/BoltFollower" instance=ExtResource( 31 )]
-position = Vector2( 2, 2 )
-scale = Vector2( 4, 4 )
-
-[node name="RacingLine" type="Node2D" parent="."]
-script = ExtResource( 9 )
-
-[node name="RacingPath" type="Line2D" parent="RacingLine"]
-width = 2.0
-default_color = Color( 0.4, 0.501961, 1, 1 )
-antialiased = true
-
-[node name="LevelNavigationLine" type="Line2D" parent="."]
-default_color = Color( 0.4, 0.501961, 1, 0.501961 )
-antialiased = true
+[node name="StartLine" type="Area2D" parent="RaceStart"]
+monitoring = false
+monitorable = false
 __meta__ = {
-"_editor_description_": ""
+"_edit_group_": true
 }
 
-[node name="Sounds" type="Node" parent="."]
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceStart/StartLine"]
+visible = false
+position = Vector2( 144, 4 )
+shape = SubResource( 568 )
 
-[node name="HitBullet" type="AudioStreamPlayer" parent="Sounds"]
-stream = SubResource( 510 )
-volume_db = -10.0
-pitch_scale = 0.9
-bus = "GameSfx"
+[node name="Sprite" type="TextureRect" parent="RaceStart/StartLine"]
+margin_left = -144.0
+margin_right = 144.0
+margin_bottom = 8.0
+texture = SubResource( 599 )
+expand = true
 
-[node name="HitBulletWall" type="AudioStreamPlayer" parent="Sounds"]
-stream = SubResource( 511 )
-volume_db = -7.0
-pitch_scale = 0.9
-bus = "GameSfx"
+[node name="HBoxContainer" type="HBoxContainer" parent="RaceStart/StartLine"]
+margin_left = -144.0
+margin_right = 144.0
+margin_bottom = 8.0
+custom_constants/separation = 0
 
-[node name="HitBulletBrick" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 20 )
-volume_db = -7.0
-bus = "GameSfx"
+[node name="Sprite2" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
 
-[node name="HitMisile" type="AudioStreamPlayer" parent="Sounds"]
-stream = SubResource( 512 )
-volume_db = -10.0
-bus = "GameSfx"
+[node name="Sprite3" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 8.0
+margin_right = 16.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
 
-[node name="Nitro" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 22 )
-volume_db = -15.0
-bus = "GameSfx"
+[node name="Sprite4" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 16.0
+margin_right = 24.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
 
-[node name="DeNitro" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 4 )
-volume_db = -15.0
-bus = "GameSfx"
+[node name="Sprite5" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 24.0
+margin_right = 32.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
 
-[node name="MagnetIn" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 13 )
-volume_db = -10.0
-bus = "GameSfx"
+[node name="Sprite6" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 32.0
+margin_right = 40.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
 
-[node name="MagnetLoop" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 16 )
-volume_db = -10.0
-bus = "GameSfx"
+[node name="Sprite7" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 40.0
+margin_right = 48.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
 
-[node name="MagnetOut" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 15 )
-volume_db = -10.0
-bus = "GameSfx"
+[node name="Sprite8" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 48.0
+margin_right = 56.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite9" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 56.0
+margin_right = 64.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite10" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 64.0
+margin_right = 72.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite11" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 72.0
+margin_right = 80.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite12" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 80.0
+margin_right = 88.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite13" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 88.0
+margin_right = 96.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite14" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 96.0
+margin_right = 104.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite15" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 104.0
+margin_right = 112.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite16" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 112.0
+margin_right = 120.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite17" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 120.0
+margin_right = 128.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite18" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 128.0
+margin_right = 136.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite19" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 136.0
+margin_right = 144.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite20" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 144.0
+margin_right = 152.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite21" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 152.0
+margin_right = 160.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite22" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 160.0
+margin_right = 168.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite23" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 168.0
+margin_right = 176.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite24" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 176.0
+margin_right = 184.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite25" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 184.0
+margin_right = 192.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite26" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 192.0
+margin_right = 200.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite27" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 200.0
+margin_right = 208.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite28" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 208.0
+margin_right = 216.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite29" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 216.0
+margin_right = 224.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite30" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 224.0
+margin_right = 232.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite31" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 232.0
+margin_right = 240.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite32" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 240.0
+margin_right = 248.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite33" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 248.0
+margin_right = 256.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite34" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 256.0
+margin_right = 264.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite35" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 264.0
+margin_right = 272.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite36" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 272.0
+margin_right = 280.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="CameraPosition" type="Position2D" parent="RaceStart"]
+position = Vector2( 0, 48 )
+
+[node name="RacingTrack" type="Path2D" parent="."]
+curve = SubResource( 612 )
+script = ExtResource( 33 )
+
+[node name="BoltTracker" type="PathFollow2D" parent="RacingTrack"]
+position = Vector2( 216, 464 )
+rotation = -1.57081
+script = ExtResource( 34 )
+
+[node name="indikator" type="Sprite" parent="RacingTrack/BoltTracker"]
+modulate = Color( 0, 0.811765, 1, 1 )
+position = Vector2( 2, 2 )
+scale = Vector2( 4, 4 )
+texture = ExtResource( 4 )
 
 [node name="Comments" type="Label" parent="."]
 margin_right = 40.0
@@ -1116,5 +1470,5 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[connection signal="body_entered" from="FinishLine" to="FinishLine" method="_on_AreaFinish_body_entered"]
-[connection signal="path_changed" from="StartPosition/NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
+[connection signal="body_entered" from="Checkpoint" to="." method="_on_Checkpoint_body_entered"]
+[connection signal="body_entered" from="RaceFinish/FinishLine" to="." method="_on_AreaFinish_body_entered"]

@@ -48,7 +48,7 @@ func get_random_member(group_of_elements):
 		return group_of_elements[selected_int]
 
 	
-onready var indikator: PackedScene = preload("res://game/_DebugIndikator.tscn")
+onready var indikator: PackedScene = preload("res://common/DebugIndikator.tscn")
 
 func spawn_indikator(pos, rot): # neki ne štima
 	

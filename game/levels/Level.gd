@@ -11,8 +11,7 @@ var double_tile_offset: Vector2 = Vector2(8,8)
 var navigation_cells: Array
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
-onready var level_navigation_line: Line2D = $LevelNavigationLine # zaenkrat ne uporabljam
-onready var racing_navigation_agent: NavigationAgent2D = $StartPosition/NavigationAgent2D
+onready var racing_track: Path2D = $RacingTrack
 
 # tilemaps
 onready var tilemap_floor: TileMap = $Floor
@@ -20,12 +19,6 @@ onready var tilemap_elements: TileMap = $Elements
 onready var tilemap_edge: TileMap = $Edge
 onready var background_space: Sprite = $BackgroundSpace
 onready var background: Node2D = $Background
-
-# main elements
-var checkpoints_count: int
-onready var start_lights: Node2D = $StartLights
-onready var checkpoints: Node2D = $Checkpoints
-onready var finish_line: Area2D = $FinishLine
 
 # floor
 onready var AreaNitro: PackedScene = preload("res://game/arena/areas/AreaNitro.tscn")
@@ -52,29 +45,29 @@ onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"
 onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
 
 # sounds
-onready var sounds: Node = $Sounds
-onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
-onready var hit_bullet_wall: AudioStreamPlayer = $Sounds/HitBulletWall
-onready var hit_bullet_brick: AudioStreamPlayer = $Sounds/HitBulletBrick
-onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
-onready var nitro: AudioStreamPlayer = $Sounds/Nitro
-onready var de_nitro: AudioStreamPlayer = $Sounds/DeNitro
-onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
-onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
-onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
-
-#neu
-onready var start_position_node: Position2D = $StartPosition
-onready var goal_position_node: Position2D = $GoalPosition
-onready var spawn_position_nodes: Node2D = $Positions
-onready var start_line: Area2D = $StartLine
+#onready var sounds: Node = $Sounds
+#onready var hit_bullet: AudioStreamPlayer = $Sounds/HitBullet
+#onready var hit_bullet_wall: AudioStreamPlayer = $Sounds/HitBulletWall
+#onready var hit_bullet_brick: AudioStreamPlayer = $Sounds/HitBulletBrick
+#onready var hit_misile: AudioStreamPlayer = $Sounds/HitMisile
+#onready var nitro: AudioStreamPlayer = $Sounds/Nitro
+#onready var de_nitro: AudioStreamPlayer = $Sounds/DeNitro
+#onready var magnet_in: AudioStreamPlayer = $Sounds/MagnetIn
+#onready var magnet_loop: AudioStreamPlayer = $Sounds/MagnetLoop
+#onready var magnet_out: AudioStreamPlayer = $Sounds/MagnetOut
 
 # neu
-var path_target: KinematicBody2D = null
-onready var racing_track: Path2D = $RacingTrack
-onready var player_follower: PathFollow2D = $RacingTrack/PlayerFollower
-#onready var racing_line: Node2D = $RacingLine
-
+onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
+onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
+onready var finish_line: Area2D = $RaceFinish/FinishLine
+onready var race_start_node: Node2D = $RaceStart
+onready var start_lights: Node2D = $RaceStart/StartLights
+onready var race_finish_node: Node2D = $RaceFinish
+onready	var checkpoint: Area2D = $Checkpoint 
+onready var start_positions_node: Node2D = $RaceStart/StartPositions
+#onready var finish_out_line: Line2D = $RaceFinish/DriveOutLine
+onready var finish_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_position
+onready var finish_out_distance: float = race_finish_node.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 
 	
 func _ready() -> void:
@@ -82,33 +75,29 @@ func _ready() -> void:
 	
 	# debug hide
 	if not Set.debug_mode:
-		$Positions.hide()
 		$Comments.hide()
 		$ScreenSize.hide()
 		$Instructions.hide()
-#		racing_line.hide()
-	level_navigation_line.hide()
 
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	
 	
 	if Ref.game_manager:
 		if Ref.game_manager.game_settings["race_mode"]:
-			start_line.show()	
+			$RaceStart/StartLine.show()	
 			finish_line.show()
 			$StartLabel.show()
 		else:
-			start_line.hide()	
-			finish_line.hide()
-			checkpoints.hide()
+			$RaceStart/StartLine.hide()	
+			.hide()
+#			checkpoints.hide()
 			$StartLabel.hide()
+	
 	# kar je skrito, ne deluje
-	if checkpoints.visible:
-		checkpoints_count = checkpoints.get_child_count()
-		for checkpoint in checkpoints.get_children():
-			checkpoint.monitoring = true
+	if checkpoint.visible:
+		checkpoint.monitoring = true
 	else: 
-		checkpoints_count = 0
+		checkpoint.monitoring = false
 	if finish_line.visible:
 		finish_line.monitoring = true
 	if background_space.visible:
@@ -375,30 +364,7 @@ func get_tilemap_cells(tilemap: TileMap):
 	return tilemap_cells
 	
 	
-#func get_navigation_racing_line(): # za avtomatizirano racing liijo
-#
-#	racing_navigation_agent.set_target_location(goal_position_node.global_position)
-#	level_navigation_line.points = racing_navigation_agent.get_nav_path()
-	
-	
-	
 # SPAWN --------------------------------------------------------------------------------------------------------
-
-
-func spawn_checkpoint(checkpoint_global_position: Vector2, checkpoint_rotation: float):
-	
-	checkpoints_count += 1
-	var Checkpoint: PackedScene =  preload("res://game/arena/elements/Checkpoint.tscn")
-	var new_checkpoint_scene = Checkpoint.instance() #
-	new_checkpoint_scene.position = checkpoint_global_position# + element_center_offset
-	if checkpoint_rotation == 90: # če rotiram je hor zamik
-		new_checkpoint_scene.global_rotation = deg2rad(checkpoint_rotation) # + element_center_offset
-		new_checkpoint_scene.position.x += 8# + element_center_offset
-	if not Set.debug_mode:
-		new_checkpoint_scene.modulate.a = 0
-	add_child(new_checkpoint_scene)
-	
-	return new_checkpoint_scene
 
 
 func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):
@@ -408,11 +374,15 @@ func spawn_element(element_global_position: Vector2, element_scene: PackedScene,
 	add_child(new_element_scene)
 	
 	return new_element_scene
-		
-
-# SIGNALI --------------------------------------------------------------------------------------------------------------------------------
 
 
-func _on_NavigationAgent2D_path_changed() -> void:
+func _on_AreaFinish_body_entered(body: Node) -> void:
 	
-	level_navigation_line.points = racing_navigation_agent.get_nav_path()
+	if body.is_in_group(Ref.group_bolts):
+		Ref.game_manager.on_finish_line_crossed(body)
+	
+
+func _on_Checkpoint_body_entered(body: Node) -> void:
+	
+	if body.is_in_group(Ref.group_bolts):
+		Ref.game_manager.bolts_checked.append(body)

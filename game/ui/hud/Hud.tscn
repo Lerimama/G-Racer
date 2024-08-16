@@ -4,7 +4,7 @@
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/ui/hud/Hud.gd" type="Script" id=3]
 [ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=4]
-[ext_resource path="res://game/ui/hud/StatLineRacer.tscn" type="PackedScene" id=5]
+[ext_resource path="res://game/ui/hud/StatBox.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/ui/hud/FpsCounter.gd" type="Script" id=6]
 [ext_resource path="res://game/ui/hud/GameTime.gd" type="Script" id=7]
 [ext_resource path="res://game/ui/hud/HudGameTimer.tscn" type="PackedScene" id=8]
@@ -20,13 +20,13 @@ __meta__ = {
 "_edit_vertical_guides_": [ 640.0, 0.0, 320.0, 8.0 ]
 }
 
-[node name="StatLineRacer1" parent="." instance=ExtResource( 5 )]
+[node name="StatBox" parent="." instance=ExtResource( 5 )]
 margin_left = 9.0
 margin_top = 5.0
 margin_right = 49.0
 margin_bottom = 121.0
 
-[node name="StatLineRacer2" parent="." instance=ExtResource( 5 )]
+[node name="StatBox2" parent="." instance=ExtResource( 5 )]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -56.0
@@ -35,7 +35,7 @@ margin_right = -16.0
 margin_bottom = 161.0
 grow_horizontal = 0
 
-[node name="StatLineRacer3" parent="." instance=ExtResource( 5 )]
+[node name="StatBox3" parent="." instance=ExtResource( 5 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0
@@ -45,7 +45,7 @@ margin_bottom = -7.0
 grow_vertical = 0
 alignment = 2
 
-[node name="StatLineRacer4" parent="." instance=ExtResource( 5 )]
+[node name="StatBox4" parent="." instance=ExtResource( 5 )]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0

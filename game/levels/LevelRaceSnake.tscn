@@ -32,54 +32,18 @@ margin_right = 1664.0
 margin_bottom = 1152.0
 text = "ZVITO"
 
-[node name="StartLine" parent="." index="6"]
-position = Vector2( 1424, 1168 )
-
-[node name="Checkpoints" parent="." index="7"]
+[node name="Checkpoint" parent="." index="6"]
 visible = false
 
-[node name="FinishLine" parent="." index="8"]
-position = Vector2( 56, 48 )
+[node name="RaceFinish" parent="." index="7"]
+position = Vector2( 128, 64 )
 
-[node name="StartLights" parent="." index="9"]
+[node name="RaceStart" parent="." index="8"]
 position = Vector2( 1568, 1152 )
 
-[node name="StartPosition" parent="." index="10"]
-position = Vector2( 1568, 1176 )
-
-[node name="GoalPosition" parent="." index="11"]
-position = Vector2( 128, 48 )
-
-[node name="Positions" parent="." index="12"]
-position = Vector2( 576, 116 )
-
-[node name="SpawnPosition1" parent="Positions" index="0"]
-position = Vector2( 968, 1084 )
-rotation = -1.5708
-
-[node name="SpawnPosition2" parent="Positions" index="1"]
-position = Vector2( 1016, 1084 )
-rotation = -1.5708
-
-[node name="SpawnPosition3" parent="Positions" index="2"]
-position = Vector2( 968, 1116 )
-rotation = -1.5708
-
-[node name="SpawnPosition4" parent="Positions" index="3"]
-position = Vector2( 1016, 1116 )
-rotation = -1.5708
-
-[node name="RacingTrack" parent="." index="13"]
+[node name="RacingTrack" parent="." index="9"]
 curve = SubResource( 1 )
 
-[node name="RacingPath" parent="RacingLine" index="0"]
-points = PoolVector2Array( 1568, 1184, 1520, 496, 1432, 384, 1384, 192, 1344, 152, 1256, 160, 1216, 192, 1200, 512, 1208, 656, 1232, 760, 1024, 992, 848, 1112, 742.968, 1112, 640, 984, 640, 704, 720, 664, 720, 400, 672, 312, 176, 272, 131.166, -19.4241, 104, -360 )
-width = 10.0
-default_color = Color( 0.4, 0.501961, 1, 0.431373 )
-
-[node name="RacingPath2" type="Line2D" parent="RacingLine" index="1"]
-position = Vector2( 1, 0 )
-scale = Vector2( 0.999292, 1 )
-points = PoolVector2Array( 631.447, 984, 511.362, 1008, 319.226, 1008, 175.124, 984, 175.124, 512, 175.124, 280 )
-default_color = Color( 0.4, 0.501961, 1, 0.145098 )
-antialiased = true
+[node name="BoltTracker" parent="RacingTrack" index="0"]
+position = Vector2( 1575, 1252 )
+rotation = -1.64012

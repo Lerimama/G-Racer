@@ -1,14 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=3]
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 128, 4 )
-
-[sub_resource type="AtlasTexture" id=1]
-atlas = ExtResource( 3 )
-region = Rect2( 24, 16, 8, 8 )
 
 [sub_resource type="Curve2D" id=3]
 _data = {
@@ -43,120 +35,17 @@ margin_right = 448.0
 margin_bottom = 1197.0
 text = "hitri štart"
 
-[node name="StartLine" parent="." index="6"]
-position = Vector2( 184, 1240 )
-
-[node name="Checkpoints" parent="." index="7"]
+[node name="Checkpoint" parent="." index="6"]
 visible = false
 
-[node name="FinishLine" parent="." index="8"]
-position = Vector2( 184, 312 )
+[node name="RaceFinish" parent="." index="7"]
+position = Vector2( 320, 120 )
 
-[node name="CollisionPolygon2D" parent="FinishLine" index="1"]
-position = Vector2( 128, 4 )
-shape = SubResource( 2 )
+[node name="RaceStart" parent="." index="8"]
+position = Vector2( 312, 1216 )
 
-[node name="Sprite19" type="Sprite" parent="FinishLine" index="4"]
-position = Vector2( 148, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite20" type="Sprite" parent="FinishLine" index="5"]
-position = Vector2( 156, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite21" type="Sprite" parent="FinishLine" index="6"]
-position = Vector2( 164, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite22" type="Sprite" parent="FinishLine" index="7"]
-position = Vector2( 172, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite23" type="Sprite" parent="FinishLine" index="8"]
-position = Vector2( 180, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite24" type="Sprite" parent="FinishLine" index="9"]
-position = Vector2( 188, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite25" type="Sprite" parent="FinishLine" index="10"]
-position = Vector2( 196, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite26" type="Sprite" parent="FinishLine" index="11"]
-position = Vector2( 204, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite27" type="Sprite" parent="FinishLine" index="12"]
-position = Vector2( 212, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite28" type="Sprite" parent="FinishLine" index="13"]
-position = Vector2( 220, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite29" type="Sprite" parent="FinishLine" index="14"]
-position = Vector2( 228, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite30" type="Sprite" parent="FinishLine" index="15"]
-position = Vector2( 236, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite31" type="Sprite" parent="FinishLine" index="16"]
-position = Vector2( 244, 4 )
-texture = SubResource( 1 )
-
-[node name="Sprite32" type="Sprite" parent="FinishLine" index="17"]
-position = Vector2( 252, 4 )
-texture = SubResource( 1 )
-
-[node name="StartLights" parent="." index="9"]
-position = Vector2( 320, 1224 )
-
-[node name="StartPosition" parent="." index="10"]
-position = Vector2( 320, 1248 )
-
-[node name="GoalPosition" parent="." index="11"]
-position = Vector2( 320, 312 )
-
-[node name="SpawnPosition1" parent="Positions" index="0"]
-position = Vector2( 296, 1264 )
-rotation = -1.5708
-
-[node name="Light2D" parent="Positions/SpawnPosition1" index="3"]
-visible = false
-
-[node name="SpawnPosition2" parent="Positions" index="1"]
-position = Vector2( 344, 1264 )
-rotation = -1.5708
-
-[node name="SpawnPosition3" parent="Positions" index="2"]
-position = Vector2( 296, 1296 )
-rotation = -1.5708
-
-[node name="SpawnPosition4" parent="Positions" index="3"]
-position = Vector2( 344, 1296 )
-rotation = -1.5708
-
-[node name="RacingTrack" parent="." index="13"]
+[node name="RacingTrack" parent="." index="9"]
 curve = SubResource( 3 )
 
-[node name="FinishBestPos" type="Position2D" parent="." index="14"]
-position = Vector2( 184, 312 )
-
-[node name="RacingLine" parent="." index="15"]
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="RacingPath" parent="RacingLine" index="0"]
-position = Vector2( 1, 0 )
-scale = Vector2( 0.999292, 1 )
-points = PoolVector2Array( 319.226, 1280, 319.226, 96 )
-width = 10.0
-default_color = Color( 0.4, 0.501961, 1, 0.145098 )
-
-[node name="LevelNavigationLine" parent="." index="16"]
-visible = false
+[node name="BoltTracker" parent="RacingTrack" index="0"]
+position = Vector2( 320, 1344 )

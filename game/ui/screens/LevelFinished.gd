@@ -43,7 +43,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
 		new_ranking_line.get_node("Bolt").text = bolt.player_name
-		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt.level_finished_time)
+		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt.bolt_stats["level_finished_time"])
 		results.add_child(new_ranking_line)
 		
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih

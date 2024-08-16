@@ -1,9 +1,10 @@
-[gd_scene load_steps=46 format=2]
+[gd_scene load_steps=57 format=2]
 
 [ext_resource path="res://game/arena/Arena.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/ui/screens/GameOver.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=4]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_2.wav" type="AudioStream" id=6]
 [ext_resource path="res://game/ui/screens/PauseGame.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/ui/hud/Hud.tscn" type="PackedScene" id=8]
@@ -29,11 +30,18 @@
 [ext_resource path="res://assets/sound/sfx/nitro_short___491407__samsterbirdies__jet-engine-startup.wav" type="AudioStream" id=28]
 [ext_resource path="res://assets/sound/sfx/_pa/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
 [ext_resource path="res://assets/sound/sfx/weapon_reload_short___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=30]
+[ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=31]
 [ext_resource path="res://assets/sound/sfx/hit_wall.wav" type="AudioStream" id=32]
 [ext_resource path="res://assets/sound/sfx/hit_explosion2___677934__logicogonist__explosion-4.wav" type="AudioStream" id=33]
 [ext_resource path="res://assets/sound/sfx/finish_horn_217138__lonemonk__1964-chrysler-horn-honk-short.wav" type="AudioStream" id=34]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=35]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=36]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=37]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/btn_focus_change.wav" type="AudioStream" id=38]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=39]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=40]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=41]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=42]
 [ext_resource path="res://assets/sound/sfx/_pa/events/countdown-a.ogg" type="AudioStream" id=46]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_5.wav" type="AudioStream" id=47]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=48]
@@ -62,6 +70,16 @@ tracks/0/keys = {
 
 [sub_resource type="AudioStreamRandomPitch" id=13]
 audio_stream = ExtResource( 32 )
+
+[sub_resource type="AudioStreamRandomPitch" id=15]
+audio_stream = ExtResource( 31 )
+
+[sub_resource type="AudioStreamRandomPitch" id=16]
+audio_stream = ExtResource( 32 )
+
+[sub_resource type="AudioStreamRandomPitch" id=17]
+audio_stream = ExtResource( 5 )
+random_pitch = 1.05
 
 [node name="Game" type="Node2D"]
 
@@ -300,6 +318,55 @@ bus = "GameSfx"
 
 [node name="PickableNitro" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
 stream = ExtResource( 28 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="LevelSounds" type="Node" parent="SoundManager"]
+
+[node name="HitBullet" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = SubResource( 15 )
+volume_db = -10.0
+pitch_scale = 0.9
+bus = "GameSfx"
+
+[node name="HitBulletWall" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = SubResource( 16 )
+volume_db = -7.0
+pitch_scale = 0.9
+bus = "GameSfx"
+
+[node name="HitBulletBrick" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = ExtResource( 41 )
+volume_db = -7.0
+bus = "GameSfx"
+
+[node name="HitMisile" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = SubResource( 17 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="Nitro" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = ExtResource( 35 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="DeNitro" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = ExtResource( 39 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="MagnetIn" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = ExtResource( 40 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetLoop" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = ExtResource( 37 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetOut" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
+stream = ExtResource( 42 )
 volume_db = -10.0
 bus = "GameSfx"
 

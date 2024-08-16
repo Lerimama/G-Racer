@@ -2,7 +2,7 @@ extends Node
 
 ## lastnosti entitet, pikablov, boltov, plejerja, ai ...
 
-enum Bolts {P1, P2, P3, P4, ENEMY}
+enum Players {P1, P2, P3, P4, ENEMY}
 enum BoltTypes {SMALL, BASIC, BIG}
 
 
@@ -30,21 +30,21 @@ var bolt_profiles: Dictionary = {
 
 
 var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-	# ex bolt stats
+	# bolt stats
+	"wins" : 2,
 	"life" : 5,
 	"energy" : 10,
-	"points" : 0,
-	"wins" : 2,
 	"bullet_count" : 100,
 	"misile_count" : 5,
 	"mina_count" : 3,
 	"shocker_count" : 3,
-	# per level/race
-	"fastest_lap_time" : 0,
-	"laps_finished_count" : 0,
-	"level_finished_time" : 0, # sekunde
-	"level_rank" : 0, 
 	"gas_count": 5000,
+	# score
+	"points" : 0,
+	"level_rank" : 0, 
+	"laps_finished_count" : 0,
+	"fastest_lap_time" : 0,
+	"level_finished_time" : 0, # sekunde ... naj bodo stotinke
 }
 
 
@@ -75,7 +75,7 @@ var ai_profile: Dictionary = {
 
 
 var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
-	Bolts.P1 : {
+	Players.P1 : {
 		"player_name" : "Moe",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_01.png"),
 		"player_color" : Set.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
@@ -83,7 +83,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"bolt_type:": BoltTypes.BASIC,
 		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
-	Bolts.P2 : {
+	Players.P2 : {
 		"player_name" : "Zed",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_02.png"),
 		"player_color" : Set.color_red,
@@ -91,7 +91,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"bolt_type:": BoltTypes.BASIC,
 		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
-	Bolts.P3 : {
+	Players.P3 : {
 		"player_name" : "Dot",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
 		"player_color" : Set.color_yellow, # color_yellow, color_green, color_red
@@ -101,7 +101,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"bolt_type:": BoltTypes.BASIC,
 		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
-	Bolts.P4 : {
+	Players.P4 : {
 		"player_name" : "Jax",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
 		"player_color" : Set.color_green,
@@ -111,7 +111,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"bolt_type:": BoltTypes.BASIC,
 		"player_scene": preload("res://game/bolt/BoltPlayer.tscn"),
 	},
-	Bolts.ENEMY : {
+	Players.ENEMY : {
 		"player_name" : "Rat",
 		"player_avatar" : preload("res://assets/sprites/avatars/avatar_05.png"),
 		"player_color" : Color.whitesmoke,

@@ -142,7 +142,7 @@ func play_music():
 		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
 		current_track = game_music.get_child(currently_playing_track_index - 1)
 	
-	printt("muza", current_track)
+	#	printt("muza", current_track)
 	if not music_set_to_mute:	
 		current_track.play()	
 

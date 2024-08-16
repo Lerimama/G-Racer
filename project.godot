@@ -24,21 +24,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://game/bolt/BoltEnemy.gd"
 }, {
-"base": "Node",
-"class": "GameManager",
-"language": "GDScript",
-"path": "res://__izPA/game_manager_class.gd"
-}, {
-"base": "Control",
-"class": "GameOver",
-"language": "GDScript",
-"path": "res://__izPA/GameOver_izpa.gd"
-}, {
-"base": "TileMap",
-"class": "GameTilemap",
-"language": "GDScript",
-"path": "res://__izPA/arena_tilemap.gd"
-}, {
 "base": "Node2D",
 "class": "Mina",
 "language": "GDScript",
@@ -208,9 +193,6 @@ _global_script_class_icons={
 "Bolt": "",
 "Bullet": "",
 "Enemy": "",
-"GameManager": "",
-"GameOver": "",
-"GameTilemap": "",
 "Mina": "",
 "Misile": "",
 "Pickable": "",
@@ -250,7 +232,7 @@ _global_script_class_icons={
 
 config/name="G Racer"
 run/main_scene="res://Main.tscn"
-config/icon="res://__materiali/icon.png"
+config/icon="res://_materiali/icon.png"
 <<<<<<<HEADconfig/name="gravity_bonanza_0.1"
 
 [autoload]
