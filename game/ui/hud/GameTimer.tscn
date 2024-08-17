@@ -1,0 +1,63 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/ui/hud/GameTimer.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
+
+[node name="GameTimer" type="HBoxContainer"]
+margin_left = -100.0
+margin_right = 101.0
+margin_bottom = 57.0
+grow_horizontal = 2
+rect_min_size = Vector2( 0, 57 )
+theme = ExtResource( 2 )
+custom_constants/separation = 2
+alignment = 1
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Mins" type="Label" parent="."]
+margin_top = 4.0
+margin_right = 57.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 26, 48 )
+text = "00"
+align = 2
+
+[node name="Dots" type="Label" parent="."]
+margin_left = 59.0
+margin_right = 70.0
+margin_bottom = 48.0
+size_flags_horizontal = 4
+size_flags_vertical = 2
+text = ":"
+align = 1
+
+[node name="Secs" type="Label" parent="."]
+margin_left = 72.0
+margin_top = 4.0
+margin_right = 129.0
+margin_bottom = 52.0
+grow_horizontal = 2
+rect_min_size = Vector2( 26, 48 )
+text = "00"
+align = 1
+
+[node name="Dots2" type="Label" parent="."]
+margin_left = 131.0
+margin_right = 142.0
+margin_bottom = 48.0
+size_flags_horizontal = 4
+size_flags_vertical = 2
+text = ":"
+align = 1
+
+[node name="Hunds" type="Label" parent="."]
+margin_left = 144.0
+margin_top = 4.0
+margin_right = 201.0
+margin_bottom = 52.0
+grow_horizontal = 0
+rect_min_size = Vector2( 26, 48 )
+text = "00"

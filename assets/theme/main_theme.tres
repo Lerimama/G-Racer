@@ -1,8 +1,7 @@
-[gd_resource type="Theme" load_steps=11 format=2]
+[gd_resource type="Theme" load_steps=10 format=2]
 
 [ext_resource path="res://assets/theme/fonts/body_small_font.tres" type="DynamicFont" id=1]
-[ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=2]
-[ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=2]
 
 [sub_resource type="StyleBoxEmpty" id=2]
 
@@ -40,6 +39,6 @@ HSeparator/styles/separator = SubResource( 5 )
 Label/colors/font_color = Color( 1, 1, 1, 1 )
 Label/colors/font_color_shadow = Color( 0, 0, 0, 0 )
 Label/colors/font_outline_modulate = Color( 1, 1, 1, 1 )
-Label/fonts/font = ExtResource( 3 )
+Label/fonts/font = ExtResource( 2 )
 Label/styles/normal = null
 Panel/styles/panel = SubResource( 7 )

@@ -24,11 +24,8 @@ func light_reached(bolt: KinematicBody2D):
 		#		light_2d.color = light_on_color
 		#		light_poly.color = light_on_color
 		modulate = light_on_color
-		# points
 		var points_reward: float = Ref.game_manager.game_settings["light_points"]
-		bolt.points = points_reward # setget
-#		bolt.score_points(points_reward)
-	
+		bolt.update_bolt_points(points_reward)
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 	

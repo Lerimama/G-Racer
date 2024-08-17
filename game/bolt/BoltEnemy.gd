@@ -113,15 +113,6 @@ func manage_modes():
 			seek_ray.look_at(navigation_target_position)
 			engine_power = racing_engine_power	
 
-
-#func on_race_finished():
-#
-#	var finish_tween = get_tree().create_tween()
-#	finish_tween.tween_property(self, "velocity", Vector2.ZERO, 1).set_ease(Tween.EASE_OUT).set_delay(1)
-#	yield(finish_tween, "finished")
-#	self.bolt_active = false
-#	set_physics_process(false)
-	
 				
 func _on_target_position_changed(new_position: Vector2):
 	

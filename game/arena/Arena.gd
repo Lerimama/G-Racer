@@ -13,8 +13,8 @@ func _ready() -> void:
 	if not Set.debug_mode:
 		enemy_navigation_line.hide()
 	
-			
-	Ref.node_creation_parent = $NCP
-#	modulate = Color.black
-#	Ref.node_creation_parent = self
+	# OPT NCP
+#	Ref.node_creation_parent = $NCP
+	Ref.node_creation_parent = self 
+	Ref.game_arena = self
 	print("ARENA")

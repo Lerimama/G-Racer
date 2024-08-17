@@ -35,17 +35,11 @@ func on_hit(hit_by: Node):
 			3:
 				animation_player.play("outro")
 				modulate = Set.color_red
-				# points
-				hit_by.spawned_by.points = points_reward # setget
-#				hit_by.spawned_by.score_points(points_reward)
+				hit_by.spawned_by.update_bolt_points(points_reward)
 	elif hit_by is Misile:
 		modulate = Set.color_red
 		animation_player.play("outro")
-		# points
-		hit_by.spawned_by.points = points_reward # setget
-#		hit_by.spawned_by.score_points(points_reward)
-	
-			
+		hit_by.spawned_by.update_bolt_points(points_reward)
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

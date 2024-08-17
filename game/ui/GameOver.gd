@@ -2,21 +2,21 @@ extends Control
 
 
 onready var FinalRankingLine: PackedScene = preload("res://game/ui/FinalRankingLine.tscn")
-
+onready var content: Control = $Content
 
 func _ready() -> void:
 	
-#	Ref.game_over = self
-#	visible = false
-	pass
+	Ref.game_over = self
+	visible = false
 
-func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolts_on_start: Array):
+
+func open_gameover(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 	set_scorelist(bolts_on_finish_line, bolts_on_start)
 	
-	var background_fadein_transparency: float = 0.9
+	var background_fadein_transparency: float = 1
 	
-	$VBoxContainer/Menu/RestartBtn.grab_focus()
+	$Menu/RestartBtn.grab_focus()
 	
 	var fade_in = get_tree().create_tween()
 	fade_in.tween_callback(self, "show")
@@ -29,22 +29,22 @@ func open_gameover(gameover_reason: int, bolts_on_finish_line: Array, bolts_on_s
 	
 func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
-	var results: VBoxContainer = $VBoxContainer/Content/Results
+	var results: VBoxContainer = $Content/Results
 	
 	# uvrščeni
-	for bolt_on_finish_line in bolts_on_finish_line:
+	for bolt in bolts_on_finish_line:
 		# spawn ranking line
 		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
 		# set ranking line
-		var bolt_index = bolts_on_finish_line.find(bolt_on_finish_line)
+		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
-		new_ranking_line.get_node("Bolt").text = bolt_on_finish_line[0].player_name
-		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt_on_finish_line[1])
+		new_ranking_line.get_node("Bolt").text = bolt.player_name
+		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt.bolt_stats["level_time"])
 		results.add_child(new_ranking_line)
 		
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
-		if bolts_on_start.has(bolt_on_finish_line[0]):
-			bolts_on_start.erase(bolt_on_finish_line[0])
+		if bolts_on_start.has(bolt):
+			bolts_on_start.erase(bolt)
 			
 	# neuvrščeni
 	for bolt in bolts_on_start: # array je že brez uvrščenih
@@ -61,6 +61,7 @@ func _on_RestartBtn_pressed() -> void:
 
 
 func _on_QuitBtn_pressed() -> void:
+	$Menu/QuitBtn.set_disabled(true)	
 	Ref.main_node.game_out()
 
 

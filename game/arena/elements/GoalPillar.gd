@@ -23,9 +23,8 @@ func goal_reached(bolt: KinematicBody2D):
 		turned_on = true
 		light_2d.color = Set.color_green
 		light_poly.color = Set.color_green
-		# points
 		var points_reward: float = Ref.game_manager.game_settings["goal_points"]
-		bolt.points = points_reward # setget
+		bolt.update_bolt_points(points_reward)
 	
 
 func _on_DetectArea_body_entered(body: Node) -> void:

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://assets/theme/fonts/title_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=2]
 
 [sub_resource type="Curve2D" id=1]
@@ -9,6 +9,7 @@ _data = {
 }
 
 [node name="Level8" instance=ExtResource( 2 )]
+level_type = 1
 
 [node name="BackgroundSpace" parent="." index="0"]
 position = Vector2( 8, -32 )

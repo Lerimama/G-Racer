@@ -2,7 +2,8 @@ extends Node
 
 
 var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
-var node_creation_parent = null
+var node_creation_parent = null # VEN
+var game_arena = null
 var current_camera = null
 var game_manager = null
 var hud = null

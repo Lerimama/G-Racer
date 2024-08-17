@@ -3,6 +3,8 @@ extends Node2D
 signal level_navigation_finished(navigation)
 signal level_is_set(navigation, spawn_positions, other_)
 
+enum LevelTypes {RACE, RACE_LAPS, BATTLE}
+export (LevelTypes) var level_type: int = LevelTypes.RACE
 
 var single_tile_offset: Vector2 = Vector2(4,4)
 var double_tile_offset: Vector2 = Vector2(8,8)
@@ -65,7 +67,6 @@ onready var start_lights: Node2D = $RaceStart/StartLights
 onready var race_finish_node: Node2D = $RaceFinish
 onready	var checkpoint: Area2D = $Checkpoint 
 onready var start_positions_node: Node2D = $RaceStart/StartPositions
-#onready var finish_out_line: Line2D = $RaceFinish/DriveOutLine
 onready var finish_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_position
 onready var finish_out_distance: float = race_finish_node.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 
@@ -73,26 +74,30 @@ onready var finish_out_distance: float = race_finish_node.global_position.distan
 func _ready() -> void:
 	printt("LEVEL")
 	
+	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
+
 	# debug hide
 	if not Set.debug_mode:
-		$Comments.hide()
-		$ScreenSize.hide()
-		$Instructions.hide()
+		$_Comments.hide()
+		$_ScreenSize.hide()
+		$_Instructions.hide()
 
-	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
-	
-	
-	if Ref.game_manager:
-		if Ref.game_manager.game_settings["race_mode"]:
-			$RaceStart/StartLine.show()	
-			finish_line.show()
-			$StartLabel.show()
-		else:
-			$RaceStart/StartLine.hide()	
-			.hide()
-#			checkpoints.hide()
-			$StartLabel.hide()
-	
+	match level_type:
+		LevelTypes.BATTLE:
+			race_start_node.hide()
+			race_finish_node.hide()
+			checkpoint.hide()
+		LevelTypes.RACE:
+			race_start_node.show()
+			race_finish_node.show()
+			checkpoint.hide()
+			race_start_node.get_node("StartLine").show()	
+		LevelTypes.RACE_LAPS:
+			race_start_node.show()
+			race_finish_node.show()
+			checkpoint.show()
+			race_start_node.get_node("StartLine").hide()	
+			
 	# kar je skrito, ne deluje
 	if checkpoint.visible:
 		checkpoint.monitoring = true
@@ -385,4 +390,5 @@ func _on_AreaFinish_body_entered(body: Node) -> void:
 func _on_Checkpoint_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
-		Ref.game_manager.bolts_checked.append(body)
+		if not Ref.game_manager.bolts_checked.has(body):
+			Ref.game_manager.bolts_checked.append(body)

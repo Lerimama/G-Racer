@@ -11,15 +11,52 @@ extends Node2D
 #	print ("root: ", root)
 #	print ("current_scene: ", current_scene)
 
-func get_clock_time(time_to_split: float): # sekunde
-	
-	var minutes: int = floor(time_to_split / 60) # vse cele sekunde delim s 60
-	var seconds: int = floor(time_to_split) - minutes * 60 # vse sekunde minus sekunde v celih minutah
-	var hundreds: int = round((time_to_split - floor(time_to_split)) * 100) # decimalke množim x 100 in zaokrožim na celo
+#func get_clock_time_old(time_to_split: float): # sekunde
+#
+#	var minutes: int = floor(time_to_split / 60) # vse cele sekunde delim s 60
+#	var seconds: int = floor(time_to_split) - minutes * 60 # vse sekunde minus sekunde v celih minutah
+#	var hundreds: int = round((time_to_split - floor(time_to_split)) * 100) # decimalke množim x 100 in zaokrožim na celo
+#
+#	# return [minutes, seconds, hundreds]	
+#	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds	
+#	return time_on_clock
 
+	
+func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
+	
+	# če so podane stotinke, pretvorim v sekunde z decimalko
+	var seconds_to_split: float = hundreds_to_split / 100.0
+	
+	# če so podane sekunde
+	var minutes: int = floor(seconds_to_split / 60) # vse cele sekunde delim s 60
+	var seconds: int = floor(seconds_to_split) - minutes * 60 # vse sekunde minus sekunde v celih minutah
+	var hundreds: int = round((seconds_to_split - floor(seconds_to_split)) * 100) # decimalke množim x 100 in zaokrožim na celo
+	
+	# če je točno 100 stotink doda 1 sekundo da stotinke na 0
+	if hundreds == 100:
+		seconds += 1
+		hundreds = 0	
+		
 	# return [minutes, seconds, hundreds]	
 	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds	
+	
 	return time_on_clock
+
+	
+func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde
+	
+	var seconds: float = hundreds / 100.0
+	var rounded_minutes: int = floor(seconds / 60) # vse cele sekunde delim s 60
+	var rounded_seconds_leftover: int = floor(seconds) - rounded_minutes * 60 # vse sekunde minus sekunde v celih minutah
+	var rounded_hundreds_leftover: int = round((seconds - floor(seconds)) * 100) # decimalke množim x 100 in zaokrožim na celo
+	# če je točno 100 stotink doda 1 sekundo da stotinke na 0
+	if rounded_hundreds_leftover == 100:
+		rounded_seconds_leftover += 1
+		rounded_hundreds_leftover = 0	
+	
+	time_label.get_node("Mins").text = "%02d" % rounded_minutes
+	time_label.get_node("Secs").text = "%02d" % rounded_seconds_leftover
+	time_label.get_node("Hunds").text = "%02d" % rounded_hundreds_leftover	
 	
 	
 func sound_stop_fade_out(sound, fade_time: float):

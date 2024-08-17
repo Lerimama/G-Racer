@@ -1,16 +1,20 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/sprites/avatars/avatar_04.png" type="Texture" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
-[ext_resource path="res://assets/theme/fonts/menu_font.tres" type="DynamicFont" id=3]
-[ext_resource path="res://game/ui/hud/StatIcons.tscn" type="PackedScene" id=4]
-[ext_resource path="res://game/ui/hud/Stat.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://game/ui/hud/StatLine.tscn" type="PackedScene" id=6]
 [ext_resource path="res://game/ui/hud/StatBox.gd" type="Script" id=7]
 [ext_resource path="res://assets/tilesets/atlas_hud.png" type="Texture" id=10]
 
 [sub_resource type="AtlasTexture" id=6]
 atlas = ExtResource( 10 )
 region = Rect2( 40, 0, 8, 8 )
+margin = Rect2( -2, 0, 0, 0 )
+
+[sub_resource type="AtlasTexture" id=147]
+atlas = ExtResource( 10 )
+region = Rect2( 32, 0, 8, 8 )
 margin = Rect2( -2, 0, 0, 0 )
 
 [sub_resource type="AtlasTexture" id=5]
@@ -25,6 +29,10 @@ region = Rect2( 8, 0, 8, 8 )
 atlas = ExtResource( 10 )
 region = Rect2( 16, 0, 8, 8 )
 
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 10 )
+region = Rect2( 24, 0, 8, 8 )
+
 [node name="StatLineRacer" type="VBoxContainer"]
 margin_top = -3.0
 margin_right = 48.0
@@ -33,7 +41,7 @@ theme = ExtResource( 2 )
 script = ExtResource( 7 )
 
 [node name="PlayerLine" type="Control" parent="."]
-margin_right = 511.0
+margin_right = 653.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
 
@@ -53,7 +61,6 @@ margin_bottom = 47.0
 rect_min_size = Vector2( 0, 13 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
-custom_fonts/font = ExtResource( 3 )
 text = "AXL"
 uppercase = true
 __meta__ = {
@@ -64,7 +71,6 @@ __meta__ = {
 visible = false
 margin_right = 95.0
 margin_bottom = 13.0
-custom_fonts/font = ExtResource( 3 )
 text = "... ZATE JE KONEC!"
 __meta__ = {
 "_editor_description_": ""
@@ -74,172 +80,110 @@ __meta__ = {
 visible = false
 margin_right = 95.0
 margin_bottom = 13.0
-custom_fonts/font = ExtResource( 3 )
 text = "... ZMAGA!!!!!!"
 __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="StatIconsWins" parent="." instance=ExtResource( 4 )]
-margin_top = 44.0
-margin_right = 511.0
-margin_bottom = 84.0
-icon_texture = SubResource( 6 )
+[node name="_Comments" type="Label" parent="PlayerLine"]
+margin_left = -468.0
+margin_top = 4.0
+margin_right = -191.0
+margin_bottom = 397.0
+custom_fonts/font = ExtResource( 3 )
+text = "stat node imajo exportane variable za setup"
+autowrap = true
 
-[node name="StatIconsLife" parent="." instance=ExtResource( 4 )]
-margin_top = 88.0
-margin_right = 511.0
-margin_bottom = 128.0
+[node name="StatWins" parent="." instance=ExtResource( 6 )]
+margin_top = 44.0
+margin_right = 653.0
+margin_bottom = 101.0
+stat_type = 2
+icon_texture = SubResource( 6 )
+show_icons = true
+
+[node name="StatLife" parent="." instance=ExtResource( 6 )]
+margin_top = 105.0
+margin_right = 653.0
+margin_bottom = 162.0
+stat_type = 2
+icon_texture = SubResource( 147 )
+show_icons = true
 
 [node name="StatBullet" parent="." instance=ExtResource( 6 )]
-margin_top = 132.0
-margin_right = 113.0
-margin_bottom = 180.0
+margin_top = 166.0
+margin_right = 653.0
+margin_bottom = 223.0
 size_flags_horizontal = 0
 icon_texture = SubResource( 5 )
+show_name_icon = true
 
 [node name="StatMisile" parent="." instance=ExtResource( 6 )]
-margin_top = 184.0
-margin_right = 113.0
-margin_bottom = 232.0
-size_flags_horizontal = 0
-icon_texture = SubResource( 2 )
-
-[node name="StatMina" parent="." instance=ExtResource( 6 )]
-margin_top = 236.0
-margin_right = 113.0
+margin_top = 227.0
+margin_right = 653.0
 margin_bottom = 284.0
 size_flags_horizontal = 0
+icon_texture = SubResource( 2 )
+show_name_icon = true
+
+[node name="StatMina" parent="." instance=ExtResource( 6 )]
+margin_top = 288.0
+margin_right = 653.0
+margin_bottom = 345.0
+size_flags_horizontal = 0
 icon_texture = SubResource( 3 )
+show_name_icon = true
 
 [node name="StatShocker" parent="." instance=ExtResource( 6 )]
-margin_top = 288.0
-margin_right = 113.0
-margin_bottom = 336.0
+margin_top = 349.0
+margin_right = 653.0
+margin_bottom = 406.0
 size_flags_horizontal = 0
+icon_texture = SubResource( 1 )
+show_name_icon = true
 
 [node name="StatGas" parent="." instance=ExtResource( 6 )]
-margin_top = 340.0
-margin_right = 175.0
-margin_bottom = 388.0
+margin_top = 410.0
+margin_right = 653.0
+margin_bottom = 467.0
 size_flags_horizontal = 0
-
-[node name="Icon" parent="StatGas" index="0"]
-visible = false
-
-[node name="Name" parent="StatGas" index="1"]
-visible = true
-margin_left = 0.0
-margin_right = 44.0
-text = "G:"
-
-[node name="Label" parent="StatGas" index="2"]
-margin_left = 60.0
-margin_right = 175.0
-text = "0000"
+label_name = "GAS"
 
 [node name="StatPoints" parent="." instance=ExtResource( 6 )]
-margin_top = 392.0
-margin_right = 171.0
-margin_bottom = 440.0
+margin_top = 471.0
+margin_right = 653.0
+margin_bottom = 528.0
 size_flags_horizontal = 0
-
-[node name="Icon" parent="StatPoints" index="0"]
-visible = false
-
-[node name="Name" parent="StatPoints" index="1"]
-visible = true
-margin_left = 0.0
-margin_right = 40.0
-text = "P:"
-
-[node name="Label" parent="StatPoints" index="2"]
-margin_right = 171.0
-text = "0000"
+label_name = "POINTS"
 
 [node name="StatRank" parent="." instance=ExtResource( 6 )]
-margin_top = 444.0
-margin_right = 123.0
-margin_bottom = 492.0
+margin_top = 532.0
+margin_right = 653.0
+margin_bottom = 589.0
 size_flags_horizontal = 0
-
-[node name="Icon" parent="StatRank" index="0"]
-visible = false
-
-[node name="Name" parent="StatRank" index="1"]
-visible = true
-margin_left = 0.0
-margin_right = 41.0
-text = "R:"
-
-[node name="Label" parent="StatRank" index="2"]
-margin_left = 57.0
-margin_right = 123.0
-text = " 00"
+label_name = "RANK"
 
 [node name="StatLap" parent="." instance=ExtResource( 6 )]
-margin_top = 496.0
-margin_right = 178.0
-margin_bottom = 544.0
+margin_top = 593.0
+margin_right = 653.0
+margin_bottom = 650.0
 size_flags_horizontal = 0
+label_name = "CURRENT LAP"
 
-[node name="Icon" parent="StatLap" index="0"]
-visible = false
-
-[node name="Name" parent="StatLap" index="1"]
-visible = true
-margin_left = 0.0
-margin_right = 96.0
-text = "LAP:"
-
-[node name="Label" parent="StatLap" index="2"]
-margin_left = 112.0
-margin_right = 178.0
-text = " 00"
-
-[node name="StatFastestLap" parent="." instance=ExtResource( 6 )]
-margin_top = 548.0
-margin_right = 511.0
-margin_bottom = 596.0
+[node name="StatBestLap" parent="." instance=ExtResource( 6 )]
+margin_top = 654.0
+margin_right = 653.0
+margin_bottom = 711.0
 size_flags_horizontal = 0
-
-[node name="Icon" parent="StatFastestLap" index="0"]
-visible = false
-
-[node name="Name" parent="StatFastestLap" index="1"]
-visible = true
-margin_left = 0.0
-margin_right = 289.0
-text = "FASTEST LAP:"
-
-[node name="Label" parent="StatFastestLap" index="2"]
-margin_left = 305.0
-margin_right = 511.0
-text = " 00:00:00"
+stat_type = 1
+label_name = "BEST LAP TIME"
+show_time = true
 
 [node name="StatLevelTime" parent="." instance=ExtResource( 6 )]
-margin_top = 600.0
-margin_right = 467.0
-margin_bottom = 648.0
+margin_top = 715.0
+margin_right = 653.0
+margin_bottom = 772.0
 size_flags_horizontal = 0
-
-[node name="Icon" parent="StatLevelTime" index="0"]
-visible = false
-
-[node name="Name" parent="StatLevelTime" index="1"]
-visible = true
-margin_left = 0.0
-margin_right = 245.0
-text = "RACE TIME:"
-
-[node name="Label" parent="StatLevelTime" index="2"]
-margin_left = 261.0
-margin_right = 467.0
-text = " 00:00:00"
-
-[editable path="StatGas"]
-[editable path="StatPoints"]
-[editable path="StatRank"]
-[editable path="StatLap"]
-[editable path="StatFastestLap"]
-[editable path="StatLevelTime"]
+stat_type = 1
+label_name = "RACE TIME"
+show_time = true

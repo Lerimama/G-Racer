@@ -1,10 +1,7 @@
 extends KinematicBody2D
-class_name Bolt#, "res://assets/class_icons/bolt_icon.png"
+class_name Bolt #, "res://assets/class_icons/bolt_icon.png"
 
-
-signal stat_changed (stat_owner, stat, stat_change) # bolt in damage
 signal stats_changed (stats_owner_id, bolt_stats) # bolt in damage
-signal bolt_activity_changed (bolt_is_active)
 
 enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
@@ -67,7 +64,7 @@ onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 
-onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
+#onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/EngineParticlesRear.tscn") 
 onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/EngineParticlesFront.tscn") 
@@ -117,6 +114,11 @@ onready var front_engine_position_L: Position2D = $Bolt/FrontEnginePositionL
 onready var front_engine_position_R: Position2D = $Bolt/FrontEnginePositionR
 onready var trail_position: Position2D = $Bolt/TrailPosition
 onready var gun_position: Position2D = $Bolt/GunPosition
+
+# neu neu
+onready var bolt_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
+onready var max_energy: float = bolt_stats["energy"] # zato, da se lahko resetira
+var race_time_on_previous_lap: float = 0
 
 
 func _ready() -> void:
@@ -192,10 +194,11 @@ func _physics_process(delta: float) -> void:
 	
 	manage_motion_states(delta)
 	manage_motion_fx()
-	manage_bolt_hud()
-#	update_bolt_stats()
 	
-	if Ref.game_manager.game_settings["race_mode"]:
+	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+		manage_bolt_hud()
+	else:
+#	if Ref.game_manager.game_settings["race_mode"]:
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bolt_stats["bullet_count"] > 0:
 			selected_feature_index = 1
@@ -207,7 +210,7 @@ func _physics_process(delta: float) -> void:
 			selected_feature_index = 4
 		else:
 			selected_feature_index = 0
-
+	
 			
 func _exit_tree() -> void:
 	for sound in sounds.get_children():
@@ -349,23 +352,15 @@ func manage_gas(gas_usage: float):
 	if not bolt_active: 
 		return
 		
-#	gas_count += gas_usage
-#	gas_count = clamp(gas_count, 0, gas_count)
-	
-#	emit_signal("stat_changed", bolt_id, "gas_count", gas_count)	
-	
 	change_stat("gas_count", gas_usage)
 	
-	
 	if bolt_stats["gas_count"] <= 0: # če zmanjka bencina je deaktiviran
+		bolt_stats["gas_count"] = 0
 		self.bolt_active = false
 
 
 func manage_bolt_hud():
 
-	if Ref.game_manager.game_settings["race_mode"]:
-		return
-			
 	if not bolt_hud.visible:
 		bolt_hud.show()
 		
@@ -380,25 +375,8 @@ func manage_bolt_hud():
 		else:
 			energy_bar.color = Set.color_green
 
-
-#func update_bolt_stats():
-#
-#	bolt_stats["points"] = points
-#	bolt_stats["wins"] = wins
-#	bolt_stats["life"] = life
-#	bolt_stats["energy"] = energy
-#	bolt_stats["gas_count"] = gas_count
-#	bolt_stats["bullet_count"] = bullet_count
-#	bolt_stats["misile_count"] = misile_count
-#	bolt_stats["mina_count"] = mina_count
-#	bolt_stats["shocker_count"] = shocker_count
-#	bolt_stats["laps_finished_count"] = laps_finished_count
-#	bolt_stats["fastest_lap_time"] = fastest_lap_time
-#	bolt_stats["level_finished_time"] = level_finished_time
-#	bolt_stats["level_rank"] = level_rank	
 	
-	
-# LIFE CYCLE ----------------------------------------------------------------------------
+# LIFE LOOP ----------------------------------------------------------------------------
 
 
 func on_hit(hit_by: Node):
@@ -406,9 +384,8 @@ func on_hit(hit_by: Node):
 	if shields_on:
 		return
 
-	if not Ref.game_manager.game_settings["race_mode"]:
-#		energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
-#		emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
+	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if not Ref.game_manager.game_settings["race_mode"]:
 		change_stat("energy", - hit_by.hit_damage)
 				
 	if hit_by.is_in_group(Ref.group_bullets):
@@ -435,10 +412,7 @@ func on_hit(hit_by: Node):
 		
 	elif hit_by.is_in_group(Ref.group_shockers):
 		# damage
-#		energy -= hit_by.hit_damage # če je nula se pedena zadeve urejajo na dnu funkcije
-#		emit_signal("stat_changed", bolt_id, "energy", energy) # do GMa 
 		change_stat("energy", - hit_by.hit_damage)
-		
 		# efekt
 		set_process_input(false)
 		var catch_tween = get_tree().create_tween()
@@ -516,8 +490,7 @@ func lose_life():
 	visible = false
 	set_process_input(false)		
 	set_physics_process(false)
-#	life -= 1
-#	emit_signal("stat_changed", bolt_id, "life", life)
+	
 	change_stat("life", - 1)
 	
 	if bolt_stats["life"] > 0:
@@ -534,7 +507,6 @@ func revive_bolt():
 	# on new life
 	bolt_collision.disabled = false
 	# reset pred prikazom
-#	energy = max_energy
 	current_motion_state = MotionStates.IDLE
 	dissaray_tween.kill()
 	velocity = Vector2.ZERO
@@ -543,61 +515,69 @@ func revive_bolt():
 	set_process_input(true)		
 	set_physics_process(true)
 	visible = true
-	bolt_active = true
+	self.bolt_active = true
 	
-#	emit_signal("stat_changed", bolt_id, "energy", energy)
 	var difference_to_max_energy: float = max_energy - bolt_stats["energy"]
 	change_stat("energy", difference_to_max_energy)
 
 
-# RACE ----------------------------------------------------------------------------
+# UTILITY ----------------------------------------------------------------------------
 
-var race_time_on_previous_lap: float = 0
+
+func drive_in(drive_in_time: float):
+	
+	# da ugotovim, kdaj so vsi zapeljani# bolt.bolt_collision.set_disabled(true) # da ga ne moti morebitna stena
+	var drive_in_finished_position: Vector2 = global_position
+	var drive_in_distance: float = 50
+	global_position -= drive_in_distance * transform.x
+	
+	modulate.a = 1
+	current_motion_state = MotionStates.FWD # za fx
+	start_engines()
+	
+	var intro_drive_tween = get_tree().create_tween()
+	intro_drive_tween.tween_property(self, "global_position", drive_in_finished_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	
+	
+func drive_out():
+	
+	var drive_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
+	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.finish_out_position
+	var drive_out_position: Vector2 = global_position - drive_out_vector
+
+	var drive_out_time: float = 2
+	var drive_out_tween = get_tree().create_tween()
+	drive_out_tween.tween_callback(bolt_collision, "set_disabled", [true])
+	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
+	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
+	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
+
 
 func on_lap_finished(level_lap_limit: int):
 	
 	# lap time
-	var current_race_time: float = Ref.hud.game_timer.absolute_game_time
+	var current_race_time: float = Ref.hud.game_timer.game_time_hunds
 	var current_lap_time: float = current_race_time - race_time_on_previous_lap # če je slednja 0, je prvi krog
-	var fastest_lap_time: float = bolt_stats["fastest_lap_time"]
 	
-	if current_lap_time < fastest_lap_time or fastest_lap_time == 0:
-		change_stat("fastest_lap_time", current_lap_time)
-		spawn_floating_tag(current_lap_time, true) # time, is fastest
-#	else:
-#		spawn_floating_tag(current_lap_time, false) # time, not fastest
-
-	change_stat("laps_finished_count", 1)
+	var best_lap_time: float = bolt_stats["best_lap_time"]
 	
-	if bolt_stats["laps_finished_count"] >= level_lap_limit: # trenutno končan krog je že dodan
-		Ref.game_manager.bolts_finished.append(self) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
-		self.bolt_active = false
-		change_stat("level_finished_time", current_race_time)
-	
-	#	printt ("STAT", bolt_stats["level_finished_time"])
-
-func spawn_floating_tag(lap_time_seconds: float, best_lap: bool):
-	
-	if lap_time_seconds == 0:
-		return
-		
-	var current_lap_time_on_clock: String = Met.get_clock_time(lap_time_seconds)
-	
-	var new_floating_tag = FloatingTag.instance()
-	new_floating_tag.z_index = 4 # višje od straysa in playerja
-	# če je zadnji krog njegov čas ostane na liniji
-	new_floating_tag.global_position = global_position
-	new_floating_tag.tag_owner = self
-	Ref.node_creation_parent.add_child(new_floating_tag)
-	
-	new_floating_tag.label.text = current_lap_time_on_clock
-	if best_lap == true:
-		new_floating_tag.modulate = Set.color_green
+	if current_lap_time < best_lap_time or best_lap_time == 0:
+		change_stat("best_lap_time", current_lap_time)
+		Ref.hud.spawn_bolt_floating_tag(self, current_lap_time, true)
 	else:
-		new_floating_tag.modulate = Set.color_red
+		Ref.hud.spawn_bolt_floating_tag(self, current_lap_time, false)
+
+	change_stat("laps_count", 1)
 	
-		
-# UTILITY ----------------------------------------------------------------------------
+	race_time_on_previous_lap = current_race_time # za naslednji krog
+	
+	if bolt_stats["laps_count"] >= level_lap_limit: # trenutno končan krog je že dodan
+		Ref.game_manager.bolts_finished.append(self)
+		change_stat("level_time", current_race_time)
+		self.bolt_active = false # more bit za spremembo statistike
+		drive_out()
+	
+	#	printt ("STAT", bolt_stats)
 
 
 func spawn_new_trail():
@@ -618,18 +598,18 @@ func set_engines():
 	engine_particles_rear = EngineParticlesRear.instance()
 	engine_particles_rear.global_position = rear_engine_position.global_position
 	engine_particles_rear.z_index = z_index + Set.engine_z_index
-#	engine_particles_rear.modulate.a = 0
+	#	engine_particles_rear.modulate.a = 0
 	Ref.node_creation_parent.add_child(engine_particles_rear)
 	
 	engine_particles_front_left = EngineParticlesFront.instance()
 	engine_particles_front_left.global_position = front_engine_position_L.global_position
-#	engine_particles_front_left.modulate.a = 0
+	#	engine_particles_front_left.modulate.a = 0
 	engine_particles_front_left.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_front_left)
 	
 	engine_particles_front_right = EngineParticlesFront.instance()
 	engine_particles_front_right.global_position = front_engine_position_R.global_position
-#	engine_particles_front_right.modulate.a = 0
+	#	engine_particles_front_right.modulate.a = 0
 	engine_particles_front_right.z_index = z_index + Set.engine_z_index
 	Ref.node_creation_parent.add_child(engine_particles_front_right)
 
@@ -672,17 +652,12 @@ func shooting(weapon: String) -> void:
 				new_bullet.spawned_by_color = bolt_color
 				new_bullet.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_bullet)
-#				bullet_count -= 1
-#				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) # do GMa
 				change_stat("bullet_count", - 1)
-				
 				bullet_reloaded = false
-				# printt("SHOOOOT")
 				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
 				bullet_reloaded= true
 		"misile":
 			if misile_reloaded and bolt_stats["misile_count"] > 0:			
-#			if misile_reloaded and misile_count > 0:			
 				var new_misile = MisileScene.instance()
 				new_misile.global_position = gun_position.global_position
 				new_misile.global_rotation = bolt_sprite.global_rotation
@@ -691,15 +666,12 @@ func shooting(weapon: String) -> void:
 				new_misile.spawned_by_speed = velocity.length()
 				new_misile.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_misile)
-#				misile_count -= 1
-#				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) # do GMa
 				change_stat("misile_count", - 1)
 				misile_reloaded = false
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
 				misile_reloaded= true
 		"mina":
 			if mina_reloaded and bolt_stats["mina_count"] > 0:			
-#			if mina_reloaded and mina_count > 0:			
 				var new_mina = MinaScene.instance()
 				new_mina.global_position = shocker_position
 				new_mina.global_rotation = bolt_sprite.global_rotation
@@ -707,15 +679,12 @@ func shooting(weapon: String) -> void:
 				new_mina.spawned_by_color = bolt_color
 				new_mina.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_mina)
-#				mina_count -= 1
-#				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) # do GMa
 				change_stat("mina_count", - 1)
 				mina_reloaded = false
 				yield(get_tree().create_timer(new_mina.reload_time / reload_ability), "timeout")
 				mina_reloaded = true
 		"shocker":
 			if shocker_reloaded and bolt_stats["shocker_count"] > 0:			
-#			if shocker_reloaded and shocker_count > 0:			
 				var new_shocker = ShockerScene.instance()
 				new_shocker.global_position = shocker_position
 				new_shocker.global_rotation = bolt_sprite.global_rotation
@@ -723,8 +692,6 @@ func shooting(weapon: String) -> void:
 				new_shocker.spawned_by_color = bolt_color
 				new_shocker.z_index = z_index + Set.weapons_z_index
 				Ref.node_creation_parent.add_child(new_shocker)
-#				shocker_count -= 1
-#				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) # do GMa
 				change_stat("shocker_count", - 1)
 				shocker_reloaded = false
 				yield(get_tree().create_timer(new_shocker.reload_time / reload_ability), "timeout")
@@ -772,97 +739,46 @@ func on_item_picked(pickable_type_key: String):
 	
 	match pickable_type_key:
 		"BULLET":
-#			bullet_count += pickable_value
-#			emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
-#			bolt_stats["bullet_count"] += pickable_value
 			change_stat("bullet_count", pickable_value)
-			
 			selected_feature_index = 1
-			
-			if Ref.game_manager.game_settings["race_mode"]:
-#				misile_count = 0
-#				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
+			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("misile_count", - bolt_stats["misile_count"])
-				
-#				mina_count = 0
-#				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
 				change_stat("mina_count", - bolt_stats["mina_count"])
-				
-#				shocker_count = 0
-#				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 				change_stat("shocker_count", - bolt_stats["shocker_count"])
-				
 		"MISILE":
-#			misile_count += pickable_value
-#			emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
-#			bolt_stats["bullet_count"] += pickable_value
 			change_stat("misile_count", pickable_value)
-			
 			selected_feature_index = 2
-			
-			if Ref.game_manager.game_settings["race_mode"]:
-#				bullet_count = 0
-#				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("bullet_count", - bolt_stats["bullet_count"])
-#				mina_count = 0
-#				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
 				change_stat("mina_count", - bolt_stats["mina_count"])
-#				shocker_count = 0
-#				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 				change_stat("shocker_count", - bolt_stats["shocker_count"])
 		"MINA":
-#			mina_count += pickable_value
-#			emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
-#			bolt_stats["bullet_count"] += pickable_value
 			change_stat("mina_count", pickable_value)
-			
 			selected_feature_index = 3
-			
-			if Ref.game_manager.game_settings["race_mode"]:
-#				bullet_count = 0
-#				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("bullet_count", - bolt_stats["bullet_count"])
-#				misile_count = 0
-#				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
 				change_stat("misile_count", - bolt_stats["misile_count"])
-#				shocker_count = 0
-#				emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
 				change_stat("shocker_count", - bolt_stats["shocker_count"])
 		"SHOCKER":
-#			shocker_count += pickable_value
-#			emit_signal("stat_changed", bolt_id, "shocker_count", shocker_count) 
-#			bolt_stats["shocker_count"] += pickable_value
 			change_stat("shocker_count", pickable_value)
-			
 			selected_feature_index = 4
-			
-			if Ref.game_manager.game_settings["race_mode"]:
-#				bullet_count = 0
-#				emit_signal("stat_changed", bolt_id, "bullet_count", bullet_count) 
+			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("bullet_count", - bolt_stats["bullet_count"])
-#				mina_count = 0
-#				emit_signal("stat_changed", bolt_id, "mina_count", mina_count) 
 				change_stat("mina_count", - bolt_stats["mina_count"])
-#				misile_count = 0
-#				emit_signal("stat_changed", bolt_id, "misile_count", misile_count) 
 				change_stat("misile_count", - bolt_stats["misile_count"])
-				
-				
-				
-				
 		"SHIELD":
 			shield_loops_limit = pickable_value
 			activate_shield()
 		"ENERGY":
 			bolt_stats["energy"] = max_energy
 		"GAS":
-#			gas_count += pickable_value
-#			emit_signal("stat_changed", bolt_id, "gas_count", gas_count)
 			change_stat("gas_count", pickable_value)
 			
 		"LIFE":
-#			life += pickable_value
-#			emit_signal("stat_changed", bolt_id, "life", life)
 			change_stat("life", pickable_value)
 		"NITRO":
 			activate_nitro(pickable_value, pickable_time)
@@ -872,8 +788,7 @@ func on_item_picked(pickable_type_key: String):
 			yield(get_tree().create_timer(pickable_time), "timeout")
 			side_traction = default_traction
 		"POINTS":
-			self.points += pickable_value
-			# emit_signal("stat_changed", bolt_id, "points", points) ... signal gre iz setget 
+			update_bolt_points(pickable_value)
 		"RANDOM":
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
@@ -884,27 +799,10 @@ func on_item_picked(pickable_type_key: String):
 # PRIVAT ------------------------------------------------------------------------------------------------
 
 
-func _on_score_points(points_added: int): # setget ob dodajanju točk ... ni samo na "item picked"
-	
-	points += points_added
-#	points = clamp(points, 0, points)
-#	emit_signal("stat_changed", bolt_id, "points", points)
-	change_stat("points", points_added)
-
-
-func _on_bolt_rank_changed(new_bolt_rank: int):
-	
-	# če je aktiven ga upočacnim v trenutni smeri
-	level_rank = new_bolt_rank
-#	emit_signal("stat_changed", bolt_id, "level_rank", level_rank) 
-	change_stat("level_rank", new_bolt_rank)
-	
-
 func _on_bolt_active_changed(bolt_is_active: bool):
 	
-	# če je aktiven ga upočacnim v trenutni smeri
 	bolt_active = bolt_is_active
-	
+	# če je aktiven ga upočasnim v trenutni smeri
 	var deactivate_time: float = 1.5
 	if bolt_active == false:
 		rotation_dir = 0
@@ -912,8 +810,9 @@ func _on_bolt_active_changed(bolt_is_active: bool):
 		deactivate_tween.tween_property(self, "velocity", Vector2.ZERO, deactivate_time) # tajmiram pojemek 
 		deactivate_tween.parallel().tween_property(self, "engine_power", 0, deactivate_time)
 		stop_engines()
-	emit_signal("bolt_activity_changed", self)
-	printt("bolt_active", bolt_active, self)
+		Ref.game_manager.check_for_level_finished()
+		
+	printt("bolt_active", bolt_is_active, self)
 
 
 func _on_shield_animation_finished(anim_name: String) -> void:
@@ -946,76 +845,31 @@ func _on_EngineStart_finished() -> void:
 	$Sounds/Engine.play()
 
 
+# STATS ------------------------------------------------------------------------------------------------
 
-# stats
 
-# basic stats
-onready var bolt_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
-onready var points: int = bolt_stats["points"] setget _on_score_points # ke jo pedenajo ostale entitete
-#onready var wins: int = bolt_stats["wins"]
-#onready var life: int = bolt_stats["life"]
-#onready var energy: float = bolt_stats["energy"]
-onready var max_energy: float = bolt_stats["energy"] # zato, da se lahko resetira
-# weapon stats
-#onready var gas_count: float = bolt_stats["gas_count"]
-#onready var bullet_count: float = bolt_stats["bullet_count"]
-#onready var misile_count: float = bolt_stats["misile_count"]
-#onready var mina_count: float = bolt_stats["mina_count"]
-#onready var shocker_count: float = bolt_stats["shocker_count"]
-# race stats
-#onready var laps_finished_count: int = bolt_stats["laps_finished_count"]
-#onready var fastest_lap_time_: float = bolt_stats["fastest_lap_time"]
-#onready var _level_finished_time: float = bolt_stats["level_finished_time"]
-onready var level_rank: int = bolt_stats["level_rank"] setget _on_bolt_rank_changed
+func update_bolt_points(points_change: int):
+	
+	change_stat("points", points_change)
+	
+
+func update_bolt_rank(new_bolt_rank: int):
+	
+	change_stat("level_rank", new_bolt_rank)
+
 
 func change_stat(stat_name: String, change_value: float):
-	
-	if stat_name == "fastest_lap_time": 
-#		pass
-			bolt_stats[stat_name] = change_value
-	elif stat_name == "level_finished_time": 
-			bolt_stats[stat_name] = change_value
-	elif stat_name == "level_rank" : 
-			bolt_stats[stat_name] = change_value
+
+	if not Ref.game_manager.game_on:
+		return
+			
+	if stat_name == "best_lap_time": 
+		bolt_stats[stat_name] = change_value
+	elif stat_name == "level_time": 
+		bolt_stats[stat_name] = change_value
+	elif stat_name == "level_rank": 
+		bolt_stats[stat_name] = change_value
 	else:
 		bolt_stats[stat_name] += change_value # change_value je + ali -
 		
-		
-#	match stat_name:
-#		"points": 
-#			pass
-#		"wins": 
-#			pass
-#		"life": 
-#			pass
-#		"energy": 
-#			pass
-#		"energy": 
-#			pass
-#
-#		"gas_count": 
-#			pass
-#		"bullet_count": 
-#			pass
-#		"misile_count": 
-#			pass
-#		"mina_count": 
-#			pass
-#		"shocker_count": 
-#			pass
-#
-#		"laps_finished_count": 
-#			pass
-#
-#
-#
-#
-#		"fastest_lap_time": 
-#			pass
-#		"level_finished_time": 
-#			pass
-#		"level_rank" : 
-#			pass
-		
-
 	emit_signal("stats_changed", bolt_id, bolt_stats)

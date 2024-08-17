@@ -32,7 +32,8 @@ func _input(event: InputEvent) -> void:
 		return
 	
 	# fast start detection
-	if Ref.game_manager.game_settings["race_mode"]:
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: # če še ni štartal (drugače bi bila slow start power še defoltna)
 			slow_start_engine_power = 0
 	else:
@@ -54,7 +55,8 @@ func _input(event: InputEvent) -> void:
 	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
 	# feature select
-	if Ref.game_manager.game_settings["race_mode"]:
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_pressed(feature_action):# and Ref.game_manager.game_settings["full_equip_mode"]:
 			select_feature()
 	else:
@@ -84,7 +86,8 @@ func _physics_process(delta: float) -> void:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 	
 	# poraba bencina
-	if Ref.game_manager.game_settings["race_mode"]:
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if Ref.game_manager.game_settings["race_mode"]:
 		if current_motion_state == MotionStates.FWD:
 			manage_gas(fwd_gas_usage)
 		elif current_motion_state == MotionStates.REV:
@@ -132,8 +135,7 @@ func select_feature():
 			feature.show()		
 
 
-func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int):
-#func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int, leader_checkpoints_reached: Array):
+func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D):
 	
 	if not bolt_active:
 		return
@@ -141,36 +143,32 @@ func pull_bolt_on_screen(pull_position: Vector2, leader_laps_finished: int):
 	bolt_collision.disabled = true
 	shield_collision.disabled = true
 	
+	
 	# reštartam trail
 	if bolt_trail_active:
 		current_active_trail.start_decay() # trail decay tween start
 		bolt_trail_active = false
 
-#	printt ("pre", checkpoints_reached)
-#	if not leader_checkpoints_reached.empty():
-##		if not checkpoints_reached.size() == leader_checkpoints_reached.size():
-#		checkpoints_reached = leader_checkpoints_reached
-#	printt ("aft", checkpoints_reached)
-		
 	var pull_time: float = 0.2
 	var pull_tween = get_tree().create_tween()
 	pull_tween.tween_property(self, "global_position", pull_position, pull_time).set_ease(Tween.EASE_OUT)
 	pull_tween.tween_callback(self.bolt_collision, "set_disabled", [false])
 	yield(pull_tween, "finished")
-	# če preskoči ciljno linijo in checkpoint
-	if bolt_stats["laps_finished_count"] < leader_laps_finished:
-		var laps_finished_difference: int = leader_laps_finished - bolt_stats["laps_finished_count"]
-		change_stat("laps_finished_count", laps_finished_difference)
-		
-		
-#		laps_finished_count = leader_laps_finished
 	
+	# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
+	if bolt_stats["laps_count"] < current_leader.bolt_stats["laps_count"]:
+		var laps_finished_difference: int = current_leader.bolt_stats["laps_count"] - bolt_stats["laps_count"]
+		change_stat("laps_count", laps_finished_difference)
+	
+	# če preskoči checkpoint, ga dodaj, če ga leader ima
+	var all_checked_bolts: Array = Ref.game_manager.bolts_checked
+	if all_checked_bolts.has(current_leader):
+		all_checked_bolts.append(self)
+
 	# ne dela
-#	if Ref.game_manager.current_pull_positions.has(pull_position):
-#		Ref.game_manager.current_pull_positions.erase(pull_position)
+	#	if Ref.game_manager.current_pull_positions.has(pull_position):
+	#		Ref.game_manager.current_pull_positions.erase(pull_position)
 
-
-#	emit_signal("stat_changed", bolt_id, "laps_finished_count", laps_finished_count) # _temp # OPT
 	manage_gas(Ref.game_manager.game_settings["pull_gas_penalty"])
 
 

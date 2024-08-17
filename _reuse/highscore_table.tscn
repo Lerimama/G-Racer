@@ -1,0 +1,88 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://game/gui/highscore_table.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme/font_body.tres" type="DynamicFont" id=2]
+[ext_resource path="res://assets/theme/theme_lerimama.tres" type="Theme" id=3]
+
+[node name="HighscoreTable" type="VBoxContainer"]
+margin_top = -2.0
+margin_right = 300.0
+margin_bottom = 296.0
+rect_min_size = Vector2( 208, 0 )
+theme = ExtResource( 3 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 296.0 ],
+"_edit_vertical_guides_": [ -128.0, 232.0 ]
+}
+
+[node name="Title" type="Label" parent="."]
+margin_right = 300.0
+margin_bottom = 27.0
+rect_min_size = Vector2( 28, 27 )
+size_flags_vertical = 0
+custom_colors/font_color = Color( 1, 1, 1, 0.470588 )
+text = "%Game XL Top 10"
+align = 1
+
+[node name="TableScroller" type="ScrollContainer" parent="."]
+margin_top = 31.0
+margin_right = 202.0
+margin_bottom = 298.0
+rect_min_size = Vector2( 0, 267 )
+size_flags_horizontal = 0
+scroll_horizontal_enabled = false
+
+[node name="Table" type="VBoxContainer" parent="TableScroller"]
+margin_right = 202.0
+margin_bottom = 24.0
+custom_constants/separation = 0
+
+[node name="ScoreLine" type="HBoxContainer" parent="TableScroller/Table"]
+margin_right = 202.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 72, 24 )
+size_flags_horizontal = 3
+custom_constants/separation = 8
+
+[node name="Rank" type="Label" parent="TableScroller/Table/ScoreLine"]
+margin_top = 3.0
+margin_right = 18.0
+margin_bottom = 21.0
+rect_min_size = Vector2( 18, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "RR"
+
+[node name="AltRank" type="Label" parent="TableScroller/Table/ScoreLine"]
+visible = false
+margin_left = 26.0
+margin_top = 153.0
+margin_right = 53.0
+margin_bottom = 171.0
+rect_min_size = Vector2( 27, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "GR"
+
+[node name="Owner" type="Label" parent="TableScroller/Table/ScoreLine"]
+margin_left = 26.0
+margin_top = 3.0
+margin_right = 116.0
+margin_bottom = 21.0
+rect_min_size = Vector2( 90, 0 )
+custom_fonts/font = ExtResource( 2 )
+text = "Player"
+clip_text = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Score" type="Label" parent="TableScroller/Table/ScoreLine"]
+margin_left = 124.0
+margin_top = 3.0
+margin_right = 202.0
+margin_bottom = 21.0
+rect_min_size = Vector2( 78, 0 )
+size_flags_horizontal = 10
+custom_fonts/font = ExtResource( 2 )
+text = "Score"
+align = 2

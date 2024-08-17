@@ -31,9 +31,8 @@ var bolts_checked: Array
 var start_bolt_position_nodes: Array # dobi od tilemapa
 var enemy_finish_time_addon: float = 32
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
-onready var game_cover: Control = $"../GUI/GameCover"
-onready var level_finished_ui: Control = $"../GUI/LevelFinished"
-onready var game_over_ui: Control = $"../GUI/GameOver"
+onready var level_finished_ui: Control = $"../UI/LevelFinished"
+onready var game_over_ui: Control = $"../UI/GameOver"
 
 
 func _input(event: InputEvent) -> void:
@@ -59,8 +58,9 @@ func _ready() -> void:
 	Ref.current_level = null # da deluje reštart
 	
 	# intro:
-	game_cover.show()
-	game_cover.modulate = Color.white
+	get_parent().modulate = Color.black
+#	get_parent().modulate.a = Color.white
+
 
 	call_deferred("set_game")
 
@@ -70,8 +70,9 @@ func _process(delta: float) -> void:
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickables)	
 
-#	if game_on: 
-	if game_settings["race_mode"]:
+	#	if game_on: 
+#	if game_settings["race_mode"]:
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 		get_bolts_ranking()
 	
 	
@@ -82,7 +83,7 @@ func set_game():
 	spawn_level()
 	
 	Ref.hud.set_hud()
-	Ref.node_creation_parent.get_parent().camera_screen_area.connect( "body_exited_screen", self, "_on_body_exited_screen")
+	Ref.game_arena.camera_screen_area.connect( "body_exited_screen", self, "_on_body_exited_screen")
 	Ref.current_camera.follow_target = Ref.current_level.start_camera_position_node
 		
 	if current_game_level_index == 0 and not Set.players_on_game_start.empty():
@@ -123,33 +124,21 @@ func set_game():
 	
 func game_intro():
 	
-	var fade_time = 1
-	var fade_in_tween = get_tree().create_tween()
-	fade_in_tween.tween_property(game_cover, "modulate:a", 0, fade_time).set_delay(1) # delay, da se kamera naštima	
-	yield(fade_in_tween, "finished")
-	game_cover.hide()
+	var fade_time: float = 1
+	var setup_delay: float = 1 # delay, da se kamera naštima
+	
+	var fade_tween = get_tree().create_tween()
+	fade_tween.tween_property(get_parent(), "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
+	yield(fade_tween, "finished")
 	
 	yield(get_tree().create_timer(1),"timeout") # za dojet
 	
 	var drive_in_time: float = 2
-	var drive_index: int = 0 # da ugotovim, kdaj so vsi zapeljani
-	var drive_in_distance: float = 50 # da ugotovim, kdaj so vsi zapeljani
 	for bolt in bolts_in_game:
-		# bolt.bolt_collision.set_disabled(true) # da ga ne moti morebitna stena
-		var orig_position: Vector2 = bolt.global_position
-		bolt.global_position -= drive_in_distance * bolt.transform.x
-		bolt.modulate.a = 1
-		bolt.current_motion_state = bolt.MotionStates.FWD # za fx
-		bolt.start_engines()
-		var intro_drive_tween = get_tree().create_tween()
-		intro_drive_tween.tween_property(bolt, "global_position", orig_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		# intro_drive_tween.tween_callback(bolt.bolt_collision, "set_disabled", [false])
-		# še kakšen drive?
-		drive_index += 1
-		# če je zadnji drive počakam, da se drive konča in potem zaženem igro
-		if drive_index == bolts_in_game.size():
-			yield(intro_drive_tween, "finished")
-			start_game()
+		bolt.drive_in(drive_in_time)
+	yield(get_tree().create_timer(drive_in_time),"timeout") # za dojet
+	
+	start_game()
 
 
 func start_game():
@@ -160,11 +149,13 @@ func start_game():
 	
 	# start
 	for bolt in bolts_in_game:
-#		if not bolt.is_in_group(Ref.group_enemies):
+	#		if not bolt.is_in_group(Ref.group_enemies):
 			bolt.bolt_active = true
 	Ref.sound_manager.play_music()
 	Ref.hud.on_game_start()
-	if not game_settings["race_mode"]:
+	
+	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if not game_settings["race_mode"]:
 		spawn_pickable() # začetek random spawnanja
 	
 	game_on = true
@@ -195,10 +186,10 @@ func level_finished(level_goal_reached: bool):
 		var last_finished_time: float # da lahko fajkem za enemija
 		for bolt in bolts_in_game:
 			if bolts_finished.has(bolt): # na koncu je time od zadnjega še uvrščenega
-				last_finished_time = bolt.bolt_stats["level_finished_time"]
+				last_finished_time = bolt.bolt_stats["level_time"]
 			elif not bolts_finished.has(bolt):
 				if bolt.is_in_group(Ref.group_enemies):	
-					bolt.bolt_stats["level_finished_time"] = last_finished_time + enemy_finish_time_addon
+					bolt.bolt_stats["level_time"] = last_finished_time + enemy_finish_time_addon
 					bolts_finished.append(bolt)
 				elif game_settings["easy_mode"] and bolt.is_in_group(Ref.group_players):	
 					bolts_finished.append(bolt)
@@ -206,31 +197,29 @@ func level_finished(level_goal_reached: bool):
 		bolts_qualified = bolts_finished
 		yield(get_tree().create_timer(2), "timeout") # za dojet
 		# cover fejd
-		var fade_time = 1
-		var fade_in_tween = get_tree().create_tween()
-		fade_in_tween.tween_callback(game_cover, "show")
-		fade_in_tween.tween_property(game_cover, "modulate:a", 1, fade_time)	
-		yield(fade_in_tween, "finished")
+#		var fade_time = 1
+#		var fade_in_tween = get_tree().create_tween()
+#		fade_in_tween.tween_property(get_parent(), "modulate", Color.black, fade_time)	
+#		yield(fade_in_tween, "finished")
 		# open level_screen
 		level_finished_ui.open(bolts_finished, bolts_in_game)
 #		Ref.level_completed.open(bolts_finished, bolts_in_game)
 	else:
 		# cover fejd
-		var fade_time = 1
-		var fade_in_tween = get_tree().create_tween()
-		fade_in_tween.tween_callback(game_cover, "show")
-		fade_in_tween.tween_property(game_cover, "modulate:a", 1, fade_time)	
-		yield(fade_in_tween, "finished")
+#		var fade_time = 1
+#		var fade_in_tween = get_tree().create_tween()
+#		fade_in_tween.tween_property(get_parent(), "modulate", Color.black, fade_time)	
+#		yield(fade_in_tween, "finished")
 		print("Level FAIL")
 		game_over_ui.open_gameover(bolts_finished, bolts_in_game)
-#		Ref.game_over.open_gameover(bolts_finished, bolts_in_game)
+		#		Ref.game_over.open_gameover(bolts_finished, bolts_in_game)
 	
 	for bolt in bolts_in_game: 
 		# player se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
 		# enemy se deaktivira, ko gre čez cilj ... in tukaj
-		if bolt.bolt_active:
+		if bolt.bolt_active: # zazih
 			bolt.bolt_active = false
-			bolt.set_physics_process(false)
+		bolt.set_physics_process(false)
 			
 	# music stop
 	Ref.sound_manager.stop_music()
@@ -253,7 +242,7 @@ func set_next_level():
 		# odstrani nekvalificirane bolte iz aktiviranih
 		if not bolts_qualified.has(bolt):
 			activated_player_ids.erase(bolt.bolt_id)
-#		bolt.queue_free() # aktivirane respawnam 
+	#		bolt.queue_free() # aktivirane respawnam 
 	printt("activated_player_ids", activated_player_ids)		
 	# unmute sfx 
 	if not Ref.sound_manager.sfx_set_to_mute:
@@ -293,7 +282,7 @@ func get_bolts_ranking():
 	var ranked_enemies: Array
 	for ranked_bolt in all_bolts_ranked:
 		var current_bolt_rank: int = all_bolts_ranked.find(ranked_bolt) + 1
-		ranked_bolt.level_rank = current_bolt_rank
+		ranked_bolt.update_bolt_rank(current_bolt_rank)
 		# če je plejer ga dodam me plejerje
 		if ranked_bolt.is_in_group(Ref.group_players) and ranked_bolt.bolt_active:
 			ranked_players.append(ranked_bolt)
@@ -331,7 +320,7 @@ func get_bolts_ranking():
 
 func sort_bolts_by_laps(bolt_on_racing_line_1, bolt_on_racing_line_2): # ascending ... večji index je boljši
 	
-	if bolt_on_racing_line_1.bolt_stats["laps_finished_count"] > bolt_on_racing_line_2.bolt_stats["laps_finished_count"]:
+	if bolt_on_racing_line_1.bolt_stats["laps_count"] > bolt_on_racing_line_2.bolt_stats["laps_count"]:
 	    return true
 	return false
 
@@ -414,48 +403,15 @@ func on_finish_line_crossed(bolt_across_finish_line: KinematicBody2D): # sproži
 	if not game_on: # preventam, da gre čez črto ko je konec igre
 		return
 	
-	# če je čekpoint prižgan
-	# če ni čekiran ... returnam
-	# če je čekiram, ga odčekiram za naslednji krog in grem dalje
-	if Ref.current_level.checkpoint.monitoring == true:
-		if not bolts_checked.has(bolt_across_finish_line):
-			return
-		else:
-			bolts_checked.erase(bolt_across_finish_line)
+	# če je čekpoint prižgan in, če ni čekiran ... returnam
+	if not bolts_checked.has(bolt_across_finish_line) and Ref.current_level.checkpoint.monitoring == true:
+		return
 	
-	# lap finished
 	Ref.sound_manager.play_sfx("finish_horn")
 	bolt_across_finish_line.on_lap_finished(level_settings["lap_limit"])
 	
-#	bolt_across_finish_line.laps_finished_count += 1
-	
-	# race finished
-#	var current_race_time: float = Ref.hud.game_timer.absolute_game_time # pozitiven game čas v sekundahF
-#
-#
-#	# če je izpolnil število krogov, ga pripnem k tistim, ki so končali in odpeljem 
-#	if bolt_across_finish_line.laps_finished_count >= level_settings["lap_limit"]:
-#		bolts_finished.append(bolt_across_finish_line) # pripnem šele tukaj, da lahko prej čekiram, če je prvi plejer
-#		# deaktiviram plejerja in zabležim statistiko 
-##		bolt_across_finish_line.bolt_stats["level_finished_time"] = current_race_time
-#
-#		bolt_across_finish_line.bolt_active = false
-#
-#		# finish out
-#		var finish_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
-#		var finish_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.finish_out_position
-#		var finish_out_position: Vector2 = bolt_across_finish_line.global_position - finish_out_vector
-#
-#		var finish_out_time: float = 2
-#		var finish_out_tween = get_tree().create_tween()
-#		finish_out_tween.tween_callback(bolt_across_finish_line.bolt_collision, "set_disabled", [true])
-#		finish_out_tween.tween_property(bolt_across_finish_line, "rotation_degrees", finish_out_rotation, finish_out_time/5)
-#		finish_out_tween.parallel().tween_property(bolt_across_finish_line, "global_position", finish_out_position, finish_out_time)
-#		finish_out_tween.tween_property(bolt_across_finish_line, "modulate:a", 0, finish_out_time) # če je krožna dirka in ne gre iz ekrana
-#	else:
-#		bolt_across_finish_line.on_lap_finished()
-		
-#	printt("LAPS",bolt_across_finish_line.laps_finished_count)
+	# odčekiram za naslednji krog in grem dalje
+	bolts_checked.erase(bolt_across_finish_line)
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
@@ -475,8 +431,8 @@ func spawn_level():
 		Ref.current_level.set_physics_process(false)
 		Ref.current_level.free()
 	else: # če je samo level marker
-		level_z_index = Ref.node_creation_parent.get_parent().level_placeholder.z_index
-#		level_z_index = Ref.node_creation_parent.get_node("LevelPosition").z_index
+		level_z_index = Ref.game_arena.level_placeholder.z_index
+	#		level_z_index = Ref.node_creation_parent.get_node("LevelPosition").z_index
 		
 	# spawn level
 	var NewLevel: PackedScene = ResourceLoader.load(level_to_load_path)
@@ -484,7 +440,7 @@ func spawn_level():
 	new_level.z_index = level_z_index
 	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 #	printt("level_to_load_path", level_to_load_path, level_settings, Ref.node_creation_parent)
-	Ref.node_creation_parent.get_parent().add_child(new_level)	
+	Ref.game_arena.add_child(new_level)	
 	
 	
 func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
@@ -509,7 +465,8 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 		
 	# bolt stats setup
 	#	game_settings["full_equip_mode"] = true
-	if game_settings["race_mode"]: # izpraznem orožje
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if game_settings["race_mode"]: # izpraznem orožje
 		spawned_bolt_stats["bullet_count"] = 0
 		spawned_bolt_stats["misile_count"] = 0
 		spawned_bolt_stats["mina_count"] = 0
@@ -535,7 +492,7 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
 	
 	# signali
-	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_changed")
+#	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_changed")
 	if new_bolt.is_in_group(Ref.group_enemies):
 		new_bolt.navigation_cells = navigation_area
 	if new_bolt.is_in_group(Ref.group_players):
@@ -578,12 +535,6 @@ func spawn_pickable():
 # PRIVAT ----------------------------------------------------------------------------------------------------
 
 
-func _on_bolt_activity_changed(bolt: KinematicBody2D):
-	
-	if bolt.bolt_active == false:
-		check_for_level_finished()
-
-
 func _on_level_is_set(tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
 	
 	# navigacija za enemy AI
@@ -592,9 +543,6 @@ func _on_level_is_set(tilemap_navigation_cells: Array, tilemap_navigation_cells_
 	
 	# random pickable pozicije 
 	available_pickable_positions = navigation_area.duplicate()
-	
-	# čekpointi
-#	checkpoints_per_lap = Ref.current_level.checkpoints_count	
 	
 	# spawn poz
 	start_bolt_position_nodes = Ref.current_level.start_positions_node.get_children()
@@ -610,14 +558,14 @@ func _on_body_exited_screen(body: Node) -> void:
 	
 	if not game_on:
 		return
-	# player pull	
-	if game_settings["race_mode"]:
+	# player pull
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if game_settings["race_mode"]:
 		if body.is_in_group(Ref.group_players) and body.bolt_active:
 			var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
-			var leader_laps_finished_count: int = leading_player.bolt_stats["laps_finished_count"]
-#			var leader_checkpoints_reached: Array = leading_player.checkpoints_reached
-#			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leader_laps_finished_count, leader_checkpoints_reached)
-			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leader_laps_finished_count)
+			var leader_laps_count: int = leading_player.bolt_stats["laps_count"]
+#			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leader_laps_count)
+			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leading_player)
 	
 	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
 			body.call_deferred("set_physics_process", false)

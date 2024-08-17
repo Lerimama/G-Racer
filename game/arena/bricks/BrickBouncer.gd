@@ -33,7 +33,5 @@ func _on_DetectArea_body_exited(body: Node) -> void:
 		body.bounce_size = Pro.bolt_profiles[body.bolt_type]["bounce_size"]
 		body.set_process_input(true)
 		sprite.modulate = bouncer_color
-		# points
 		var points_reward: float = Ref.game_manager.game_settings["bouncer_brick_points"]
-		body.points = points_reward # setget
-#		body.score_points(points_reward)
+		body.update_bolt_points(points_reward)

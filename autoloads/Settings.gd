@@ -2,6 +2,7 @@ extends Node
 
 ## settings(namesto slovarja so variable), zagon levela), home_settings
 
+var game_camera_zoom_factor: float = 0.25 # resolucija igre je 4 krat manjša 2560x1440 proti 640x360
 
 ## temp
 var odmik_od_roba = 20
@@ -67,9 +68,9 @@ var color_pickable_weapon = Color.yellow
 #var color_background: Color = Color.black
 #
 ## gui colors
-#var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi
+var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi
 var color_gui_gray: Color = Color("#78ffffff") # siv text s transparenco (ikone ...#838383) ... v kodi samo na btn defocus
-#var color_hud_text: Color = color_almost_white_text # za vse, ki modulirajo barvo glede na + ali -
+var color_hud_text: Color = color_almost_white_text # za vse, ki modulirajo barvo glede na + ali -
 #
 ## pixel colors
 #var color_almost_black_pixel: Color = Color("#141414") 
@@ -117,7 +118,7 @@ var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko š
 	"start_countdown": false,
 	"gameover_countdown_duration": 5,
 	# race
-	"race_mode": false, # ranking, gas use, enemy AI
+#	"race_mode": false, # ranking, gas use, enemy AI
 	"pull_gas_penalty": -20,
 	# duel
 	"pickables_count_limit": 5,
@@ -237,30 +238,21 @@ func get_level_game_settings(selected_level_index: int):
 	match current_level:
 		# racing
 		Levels.RACE_DIRECT: 
-			current_game_settings["race_mode"] = true
 			current_game_settings["start_countdown"] = true
-		Levels.RACE_CIRCO: 
-			current_game_settings["race_mode"] = true
-		Levels.RACE_ROUND: 
-			current_game_settings["race_mode"] = true
-		Levels.RACE_SNAKE: 
-			current_game_settings["race_mode"] = true
+		Levels.RACE_CIRCO: pass
+		Levels.RACE_ROUND: pass 
+		Levels.RACE_SNAKE: pass
 #			current_game_settings["start_countdown"] = true
-		Levels.RACE_NITRO:
-			current_game_settings["race_mode"] = true
-		Levels.RACE_8: 
-			current_game_settings["race_mode"] = true
+		Levels.RACE_NITRO: pass
+		Levels.RACE_8: pass
 		# duel
 		Levels.DUEL: 
 			current_game_settings["start_countdown"] = false
 			current_game_settings["sudden_death_mode"] = true
 			current_game_settings["stopwatch_mode"] = false		
 		# trening
-		Levels.TRAINING: 
-#			current_game_settings["race_mode"] = true
-			pass
-		Levels.DEBUG_RACE: 
-			current_game_settings["race_mode"] = true
+		Levels.TRAINING: pass
+		Levels.DEBUG_RACE: pass
 		Levels.DEBUG_DUEL: 
 			current_game_settings["stopwatch_mode"] = false		
 			current_game_settings["sudden_death_mode"] = true

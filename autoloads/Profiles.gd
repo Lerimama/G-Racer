@@ -42,9 +42,9 @@ var default_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# score
 	"points" : 0,
 	"level_rank" : 0, 
-	"laps_finished_count" : 0,
-	"fastest_lap_time" : 0,
-	"level_finished_time" : 0, # sekunde ... naj bodo stotinke
+	"laps_count" : 0,
+	"best_lap_time" : 0,
+	"level_time" : 0, # sekunde ... naj bodo stotinke
 }
 
 

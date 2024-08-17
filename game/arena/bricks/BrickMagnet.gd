@@ -45,10 +45,8 @@ func _physics_process(delta: float) -> void:
 				var distance_to_magnet: float = body.global_position.distance_to(global_position)
 				var gravity_velocity: float = gravity_force / (distance_to_magnet * 1)
 				body.velocity += Vector2(gravity_velocity, 0).rotated(vector_to_magnet.angle())
-				# points
 				var points_reward: float = Ref.game_manager.game_settings["magnet_brick_points"]
-				body.points = points_reward # setget
-#				body.score_points(points_reward)
+				body.update_bolt_points(points_reward)
 		
 
 func intro():

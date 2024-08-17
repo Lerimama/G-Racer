@@ -9,25 +9,25 @@ var arena_on = false
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 # main
-onready var play_btn: Button = $HomeUI/MainMenu/Menu/PlayBtn
-onready var settings_btn: Button = $HomeUI/MainMenu/Menu/SettingsBtn
-onready var about_btn: Button = $HomeUI/MainMenu/Menu/AboutBtn
-onready var quit_btn: Button = $HomeUI/MainMenu/Menu/QuitBtn
+onready var play_btn: Button = $UI/MainMenu/Menu/PlayBtn
+onready var settings_btn: Button = $UI/MainMenu/Menu/SettingsBtn
+onready var about_btn: Button = $UI/MainMenu/Menu/AboutBtn
+onready var quit_btn: Button = $UI/MainMenu/Menu/QuitBtn
 # arena
-onready var generate_arena_btn: Button = $HomeUI/Arena/GenerateBtn
-onready var arena_confirm_btn: Button = $HomeUI/Arena/ConfirmBtn
-onready var temp_back_btn: Button = $HomeUI/Arena/temp_BackBtn
+onready var generate_arena_btn: Button = $UI/Arena/GenerateBtn
+onready var arena_confirm_btn: Button = $UI/Arena/ConfirmBtn
+onready var temp_back_btn: Button = $UI/Arena/temp_BackBtn
 # generate
 onready var arena_world: PackedScene = preload("res://home/ArenaGenerator.tscn")
-onready var arena_view: Panel = $HomeUI/Arena/ArenaView
+onready var arena_view: Panel = $UI/Arena/ArenaView
 onready var new_world # : InstancePlaceholder
-onready var clean_up_btn: Button = $HomeUI/Arena/CleanUpBtn
+onready var clean_up_btn: Button = $UI/Arena/CleanUpBtn
 # backs
-onready var about_back_btn: Button = $HomeUI/About/BackBtn
-onready var settings_back_btn: Button = $HomeUI/Settings/BackBtn
-onready var play_back_btn: Button = $HomeUI/Play/BackBtn
-onready var players_back_btn: Button = $HomeUI/Players/BackBtn
-onready var arena_back_btn: Button = $HomeUI/Arena/BackBtn
+onready var about_back_btn: Button = $UI/About/BackBtn
+onready var settings_back_btn: Button = $UI/Settings/BackBtn
+onready var play_back_btn: Button = $UI/Play/BackBtn
+onready var players_back_btn: Button = $UI/Players/BackBtn
+onready var arena_back_btn: Button = $UI/Arena/BackBtn
 
 	
 func _ready() -> void:
@@ -60,30 +60,30 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	# temp barvanje player gumbov
-	if $HomeUI/Players/ItemList/thumb/PlayersBtn.has_focus():
-		$HomeUI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Color.white
+	if $UI/Players/ItemList/thumb/PlayersBtn.has_focus():
+		$UI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Set.color_blue
-	if $HomeUI/Players/ItemList/thumb2/PlayersBtn.has_focus():
-		$HomeUI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Color.white
+		$UI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Set.color_blue
+	if $UI/Players/ItemList/thumb2/PlayersBtn.has_focus():
+		$UI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Set.color_red
-	if $HomeUI/Players/ItemList/thumb3/PlayersBtn.has_focus():
-		$HomeUI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Color.white
+		$UI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Set.color_red
+	if $UI/Players/ItemList/thumb3/PlayersBtn.has_focus():
+		$UI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Set.color_yellow
-	if $HomeUI/Players/ItemList/thumb4/PlayersBtn.has_focus():
-		$HomeUI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Color.white
+		$UI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Set.color_yellow
+	if $UI/Players/ItemList/thumb4/PlayersBtn.has_focus():
+		$UI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Set.color_green	
-	if $HomeUI/Players/ItemList/thumb5/EnemiesBtn.has_focus():
-		$HomeUI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Color.white
+		$UI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Set.color_green	
+	if $UI/Players/ItemList/thumb5/EnemiesBtn.has_focus():
+		$UI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Set.color_gray0
-	if $HomeUI/Players/ItemList/thumb6/EasyBtn.has_focus():
-		$HomeUI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Color.white
+		$UI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Set.color_gray0
+	if $UI/Players/ItemList/thumb6/EasyBtn.has_focus():
+		$UI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Color.white
 	else:
-		$HomeUI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Set.color_gray0
+		$UI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Set.color_gray0
 		
 	
 func _on_AnimationPlayer_animation_finished(animation) -> void:
@@ -93,12 +93,12 @@ func _on_AnimationPlayer_animation_finished(animation) -> void:
 			if animation_player.get_current_animation_position() == 0:
 				play_btn.grab_focus()
 			else:
-				$HomeUI/Play/thumb7/ConfirmBtn.grab_focus()
+				$UI/Play/thumb7/ConfirmBtn.grab_focus()
 		"players_in":
 			if animation_player.get_current_animation_position() == 0:
-				$HomeUI/Play/thumb/ConfirmBtn.grab_focus()
+				$UI/Play/thumb/ConfirmBtn.grab_focus()
 			else:
-				$HomeUI/Players/ItemList/thumb/PlayersBtn.grab_focus()
+				$UI/Players/ItemList/thumb/PlayersBtn.grab_focus()
 		"arena_in": 
 			if not arena_on:
 				arena_on = true
@@ -177,7 +177,7 @@ func _on_ConfirmBtn_4_pressed() -> void:
 # players
 func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P1
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb/PlayersBtn/Label
+	var btn_label_node: Control = $UI/Players/ItemList/thumb/PlayersBtn/Label
 	if button_pressed:
 		btn_label_node.modulate = Color.white
 		players_activated.append(bolt_to_manage)
@@ -187,7 +187,7 @@ func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
 			btn_label_node.modulate = Set.color_gray0
 func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P2
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb2/PlayersBtn/Label
+	var btn_label_node: Control = $UI/Players/ItemList/thumb2/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
@@ -197,7 +197,7 @@ func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
 			btn_label_node.modulate = Set.color_gray0
 func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P3
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb3/PlayersBtn/Label
+	var btn_label_node: Control = $UI/Players/ItemList/thumb3/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
@@ -207,7 +207,7 @@ func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
 			btn_label_node.modulate = Set.color_gray0
 func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P4
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb4/PlayersBtn/Label
+	var btn_label_node: Control = $UI/Players/ItemList/thumb4/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
@@ -216,7 +216,7 @@ func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 			players_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Set.color_gray0
 func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb5/EnemiesBtn/Label
+	var btn_label_node: Control = $UI/Players/ItemList/thumb5/EnemiesBtn/Label
 	if button_pressed:
 		enemies_mode = true
 		btn_label_node.modulate = Color.white
@@ -224,7 +224,7 @@ func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 		enemies_mode = false
 		btn_label_node.modulate = Set.color_gray0
 func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
-	var btn_label_node: Control = $HomeUI/Players/ItemList/thumb6/EasyBtn/Label
+	var btn_label_node: Control = $UI/Players/ItemList/thumb6/EasyBtn/Label
 	if button_pressed:
 		easy_mode = true
 		btn_label_node.modulate = Color.white

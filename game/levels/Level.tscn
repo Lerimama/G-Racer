@@ -6,16 +6,15 @@
 [ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=4]
 [ext_resource path="res://assets/shaders/backgrounds/level_edge_shadows_screen.gdshader" type="Shader" id=5]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=6]
+[ext_resource path="res://assets/sprites/bolt/bolt_vars_atlas.png" type="Texture" id=7]
 [ext_resource path="res://assets/resources/tileset_arena_elements.tres" type="TileSet" id=8]
+[ext_resource path="res://assets/theme/fonts/body_small_font.tres" type="DynamicFont" id=9]
 [ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=10]
-[ext_resource path="res://_materiali/light_2.png" type="Texture" id=12]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_pixelate_screen.gdshader" type="Shader" id=18]
 [ext_resource path="res://game/arena/elements/StartLights.tscn" type="PackedScene" id=21]
 [ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=23]
-[ext_resource path="res://assets/theme/fonts/LevelLabel.tres" type="DynamicFont" id=24]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=25]
 [ext_resource path="res://assets/shaders/_zaloga/originali_uporabljanega/bolt_wiggle_texture.gdshader" type="Shader" id=26]
-[ext_resource path="res://assets/sprites/bolt/bolt_alt.png" type="Texture" id=27]
 [ext_resource path="res://assets/shaders/backgrounds/level_background_water_canvas.gdshader" type="Shader" id=28]
 [ext_resource path="res://assets/shaders/level_edge_dirt_screen.gdshader" type="Shader" id=29]
 [ext_resource path="res://game/levels/Floor_temp.gd" type="Script" id=30]
@@ -307,6 +306,10 @@ extents = Vector2( 168, 4 )
 atlas = ExtResource( 10 )
 region = Rect2( 24, 16, 8, 8 )
 
+[sub_resource type="AtlasTexture" id=128]
+atlas = ExtResource( 7 )
+region = Rect2( 3, 83, 9, 10 )
+
 [sub_resource type="OpenSimplexNoise" id=569]
 seed = 1
 octaves = 4
@@ -342,12 +345,12 @@ _data = {
 "points": PoolVector2Array(  )
 }
 
-[sub_resource type="StyleBoxFlat" id=513]
+[sub_resource type="StyleBoxFlat" id=613]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 
 [node name="Level" type="Node2D"]
 script = ExtResource( 2 )
@@ -482,7 +485,7 @@ margin_top = 284.0
 margin_right = 452.0
 margin_bottom = 348.0
 grow_horizontal = 2
-custom_fonts/font = ExtResource( 24 )
+theme = ExtResource( 25 )
 text = "Kaj je Level?"
 align = 1
 autowrap = true
@@ -1053,132 +1056,92 @@ default_color = Color( 1, 1, 1, 1 )
 
 [node name="RaceStart" type="Node2D" parent="."]
 position = Vector2( 128, 128 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="StartLights" parent="RaceStart" instance=ExtResource( 21 )]
 position = Vector2( -7.62939e-06, -16 )
 
 [node name="StartPositions" type="Node2D" parent="RaceStart"]
+modulate = Color( 1, 1, 1, 0.470588 )
 position = Vector2( 16, 56 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="StartPosition1" type="Position2D" parent="RaceStart/StartPositions"]
 position = Vector2( -40, -24 )
 rotation = -1.5708
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition1"]
-visible = false
-position = Vector2( -14, -2 )
-polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
 [node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition1"]
-margin_left = -5.0
-margin_top = 5.0
-margin_right = 6.0
-margin_bottom = 19.0
+margin_left = 4.99988
+margin_top = 8.00003
+margin_right = 38.9999
+margin_bottom = 47.0
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
 theme = ExtResource( 25 )
-text = "1"
+text = "P1"
 align = 1
 
 [node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition1"]
-position = Vector2( 0, 0.5 )
-texture = ExtResource( 27 )
-
-[node name="Light2D" type="Light2D" parent="RaceStart/StartPositions/StartPosition1"]
-enabled = false
-texture = ExtResource( 12 )
+texture = SubResource( 128 )
 
 [node name="StartPosition2" type="Position2D" parent="RaceStart/StartPositions"]
 position = Vector2( 8, -24 )
 rotation = -1.5708
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition2"]
-margin_left = -5.0
-margin_top = 5.0
-margin_right = 6.0
-margin_bottom = 19.0
+margin_left = 5.0
+margin_top = 8.00003
+margin_right = 45.0
+margin_bottom = 47.0
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
 theme = ExtResource( 25 )
-text = "2"
+text = "P2"
 align = 1
-
-[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition2"]
-visible = false
-position = Vector2( -14, -2 )
-polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
 [node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition2"]
 material = SubResource( 516 )
-position = Vector2( 0, 0.5 )
-texture = ExtResource( 27 )
+texture = SubResource( 128 )
 
 [node name="StartPosition3" type="Position2D" parent="RaceStart/StartPositions"]
 position = Vector2( -40, 8 )
 rotation = -1.5708
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition3"]
-margin_left = -4.0
-margin_top = 5.0
-margin_right = 7.0
-margin_bottom = 19.0
+margin_left = 6.00006
+margin_top = 8.00006
+margin_right = 46.0001
+margin_bottom = 47.0001
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
 theme = ExtResource( 25 )
-text = "3"
+text = "P3"
 align = 1
-
-[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition3"]
-visible = false
-position = Vector2( -14, -2 )
-polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
 [node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition3"]
 material = SubResource( 516 )
-position = Vector2( 0, 0.5 )
-texture = ExtResource( 27 )
+texture = SubResource( 128 )
 
 [node name="StartPosition4" type="Position2D" parent="RaceStart/StartPositions"]
 position = Vector2( 8, 8 )
 rotation = -1.5708
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition4"]
-margin_left = -5.0
-margin_top = 5.0
-margin_right = 6.0
-margin_bottom = 19.0
+margin_left = 5.0
+margin_top = 8.00006
+margin_right = 47.0
+margin_bottom = 47.0001
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
 theme = ExtResource( 25 )
-text = "4"
+text = "P4"
 align = 1
-
-[node name="Polygon2D" type="Polygon2D" parent="RaceStart/StartPositions/StartPosition4"]
-visible = false
-position = Vector2( -14, -2 )
-polygon = PoolVector2Array( 9, -11, 13, -11, 13, -5, 15, -5, 15, -11, 20, -11, 14, -17 )
 
 [node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition4"]
 material = SubResource( 516 )
-position = Vector2( 0, 0.5 )
-texture = ExtResource( 27 )
+texture = SubResource( 128 )
 
 [node name="StartLine" type="Area2D" parent="RaceStart"]
 monitoring = false
 monitorable = false
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceStart/StartLine"]
 visible = false
@@ -1419,49 +1382,40 @@ position = Vector2( 216, 464 )
 rotation = -1.57081
 script = ExtResource( 34 )
 
-[node name="indikator" type="Sprite" parent="RacingTrack/BoltTracker"]
-modulate = Color( 0, 0.811765, 1, 1 )
+[node name="CrossIndicator" type="Sprite" parent="RacingTrack/BoltTracker"]
 position = Vector2( 2, 2 )
-scale = Vector2( 4, 4 )
+scale = Vector2( 2, 2 )
 texture = ExtResource( 4 )
 
-[node name="Comments" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
-
-[node name="ScreenSize" type="Panel" parent="."]
-visible = false
+[node name="_ScreenSize" type="Panel" parent="."]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 margin_right = 640.0
 margin_bottom = 360.0
-custom_styles/panel = SubResource( 513 )
+custom_styles/panel = SubResource( 613 )
+
+[node name="_Instructions" type="Label" parent="."]
+margin_left = -720.0
+margin_top = 16.0
+margin_right = -104.0
+margin_bottom = 237.0
+custom_fonts/font = ExtResource( 9 )
+text = "ELEMENTI
+- chekpoint skrit ne deluje (rabim ga za krožne dirke)
+- finish-line skrit ne deluje
+- start-line je samo grafika
+- start-lights skrit ne deluje: countdown off"
+autowrap = true
 __meta__ = {
-"_edit_lock_": true
+"_editor_description_": ""
 }
 
-[node name="Instructions" type="Label" parent="."]
-margin_left = -656.0
-margin_top = 24.0
+[node name="_Instructions2" type="Label" parent="."]
+margin_left = -720.0
+margin_top = 272.0
 margin_right = -72.0
-margin_bottom = 378.0
-text = "PRAVILA DELOVANJA
-- ce so checkpointi nepotrebni, naj bodo skriti (avtomaticno imajo monitoring off in se ne stejejo v checkpoints count))
-- start line je samo grafika
-- start lights je skrit ce je countdown off ... ce je skrit, poslje signal signal za start takoj
-- kadar je finishh line skrit je njegov minotring off
-
-
-GRADNJA
-- glavna linija je linija, ki jo vozi tudi enemy in mora bit za stratno in ciljno linijo
-- ko je bolt v cilju izvede drive-off do bele linije v finish line
-- glavna linija je kar do konca
-- krozna dirka
-	- chepointi so nujni
-	- dve liniji ... prva pa zacne tik za startom, zadnja konca tik za ciljem
-- dobra praksa
-	- linije, ko jih je vec, niso prevec blizu
-	- če linija kriza samo sebe je treb z obcutkom
-
-LNF
+margin_bottom = 397.0
+custom_fonts/font = ExtResource( 9 )
+text = "LNF
 - floor je BW in njegov odtenek se regulirat skozi modulate
 - flor in edge imata shaderje na  tiletih
 "

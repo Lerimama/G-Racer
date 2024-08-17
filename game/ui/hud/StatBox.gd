@@ -7,16 +7,13 @@ var player_name: String = "NN"
 var statbox_color: Color = Color.white setget _on_bolt_color_set
 
 # values
-var def_stat_value: int = 000
-var current_stat_value: int
-
 onready var player_line: Control = $PlayerLine
 
 onready var stat_avatar: TextureRect = $Avatar
 onready var stat_name: Label = $PlayerLine/PlayerName
 
-onready var stat_wins: Control = $StatIconsWins
-onready var stat_life: Control = $StatIconsLife
+onready var stat_wins: Control = $StatWins
+onready var stat_life: Control = $StatLife
 onready var stat_points: HBoxContainer = $StatPoints
 
 onready var stat_bullet: HBoxContainer = $StatBullet
@@ -26,7 +23,7 @@ onready var stat_shocker: HBoxContainer = $StatShocker
 
 onready var stat_gas: HBoxContainer = $StatGas
 onready var stat_laps_count: HBoxContainer = $StatLap
-onready var stat_fastest_lap: HBoxContainer = $StatFastestLap
+onready var stat_best_lap: HBoxContainer = $StatBestLap
 onready var stat_level_time: HBoxContainer = $StatLevelTime
 onready var stat_level_rank: HBoxContainer = $StatRank
 
@@ -52,7 +49,7 @@ func _on_bolt_color_set(bolt_color):
 #	stat_bullet.def_stat_color = bolt_color # setget
 #	stat_gas.def_stat_color = bolt_color # setget
 #	stat_laps_count.def_stat_color = bolt_color
-#	stat_fastest_lap.def_stat_color = bolt_color	
+#	stat_best_lap.def_stat_color = bolt_color	
 #	stat_level_time.def_stat_color = bolt_color	
 
 

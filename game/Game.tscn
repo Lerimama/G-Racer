@@ -1,18 +1,17 @@
-[gd_scene load_steps=57 format=2]
+[gd_scene load_steps=54 format=2]
 
 [ext_resource path="res://game/arena/Arena.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
-[ext_resource path="res://game/ui/screens/GameOver.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/ui/GameOver.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=4]
 [ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_2.wav" type="AudioStream" id=6]
-[ext_resource path="res://game/ui/screens/PauseGame.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/ui/PauseGame.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/ui/hud/Hud.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_3.wav" type="AudioStream" id=9]
 [ext_resource path="res://managers/GameManager.gd" type="Script" id=10]
 [ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=11]
-[ext_resource path="res://assets/resources/preloader.tres" type="SpriteFrames" id=12]
-[ext_resource path="res://game/ui/screens/LevelFinished.tscn" type="PackedScene" id=13]
+[ext_resource path="res://game/ui/LevelFinished.tscn" type="PackedScene" id=13]
 [ext_resource path="res://assets/sound/sfx/misile_flight.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sound/sfx/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=16]
@@ -25,7 +24,6 @@
 [ext_resource path="res://assets/sound/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=23]
 [ext_resource path="res://assets/sound/sfx/shocker_efekt___PA_skilled_frcer.wav" type="AudioStream" id=24]
 [ext_resource path="res://assets/sound/sfx/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=25]
-[ext_resource path="res://game/ui/screens/Preloader.gd" type="Script" id=26]
 [ext_resource path="res://assets/sound/sfx/pickup___39026__wildweasel__keypickup.wav" type="AudioStream" id=27]
 [ext_resource path="res://assets/sound/sfx/nitro_short___491407__samsterbirdies__jet-engine-startup.wav" type="AudioStream" id=28]
 [ext_resource path="res://assets/sound/sfx/_pa/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
@@ -51,22 +49,6 @@
 [ext_resource path="res://assets/sound/sfx/_pa/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=65]
 [ext_resource path="res://assets/sound/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=66]
 [ext_resource path="res://assets/sound/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=68]
-
-[sub_resource type="Animation" id=14]
-resource_name = "preload"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/path = NodePath("AnimatedSprite:visible")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
-}
 
 [sub_resource type="AudioStreamRandomPitch" id=13]
 audio_stream = ExtResource( 32 )
@@ -117,45 +99,26 @@ z_index = 0
 current = true
 zoom = Vector2( 0.25, 0.25 )
 
-[node name="GUI" type="CanvasLayer" parent="."]
+[node name="UI" type="Control" parent="."]
+margin_right = 2560.0
+margin_bottom = 1440.0
 
-[node name="Hud" parent="GUI" instance=ExtResource( 8 )]
+[node name="Hud" parent="UI" instance=ExtResource( 8 )]
 __meta__ = {
 "_edit_horizontal_guides_": [ 360.0 ],
 "_edit_vertical_guides_": [ 640.0, 0.0 ]
 }
 
-[node name="GameCover" type="Control" parent="GUI"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-script = ExtResource( 26 )
-
-[node name="Undi" type="ColorRect" parent="GUI/GameCover"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color( 0, 0, 0, 1 )
-
-[node name="AnimatedSprite" type="AnimatedSprite" parent="GUI/GameCover"]
-visible = false
-position = Vector2( 320, 180 )
-frames = ExtResource( 12 )
-animation = "loop"
-frame = 5
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="GUI/GameCover"]
-anims/preload = SubResource( 14 )
-
-[node name="PauseGame" parent="GUI" instance=ExtResource( 7 )]
+[node name="PauseGame" parent="UI" instance=ExtResource( 7 )]
 visible = false
 
-[node name="LevelFinished" parent="GUI" instance=ExtResource( 13 )]
+[node name="LevelFinished" parent="UI" instance=ExtResource( 13 )]
 visible = false
 __meta__ = {
 "_edit_vertical_guides_": [ 320.0 ]
 }
 
-[node name="GameOver" parent="GUI" instance=ExtResource( 3 )]
+[node name="GameOver" parent="UI" instance=ExtResource( 3 )]
 visible = false
 
 [node name="SoundManager" type="Node" parent="."]
