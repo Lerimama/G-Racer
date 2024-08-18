@@ -18,11 +18,12 @@ margin = Rect2( -2, 0, 0, 0 )
 [sub_resource type="AtlasTexture" id=148]
 atlas = ExtResource( 1 )
 region = Rect2( 32, 0, 8, 8 )
-margin = Rect2( -2, 1, 0, 0 )
+margin = Rect2( -1, 0, 0, 0 )
 
 [node name="StatLine" type="HBoxContainer"]
-margin_right = 105.0
-margin_bottom = 48.0
+margin_right = 653.0
+margin_bottom = 57.0
+rect_min_size = Vector2( 0, 48 )
 custom_constants/separation = 16
 script = ExtResource( 4 )
 
@@ -61,19 +62,17 @@ margin_bottom = 57.0
 
 [node name="StatIcons" type="HBoxContainer" parent="."]
 margin_left = 497.0
-margin_top = 17.0
-margin_right = 653.0
+margin_right = 733.0
 margin_bottom = 57.0
 rect_min_size = Vector2( 0, 40 )
-size_flags_vertical = 8
 custom_constants/separation = -1
 script = ExtResource( 5 )
 icon_texture = SubResource( 147 )
 
 [node name="StatIcon" type="Control" parent="StatIcons"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
+margin_right = 48.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
 size_flags_vertical = 0
 
 [node name="OffIcon" type="TextureRect" parent="StatIcons/StatIcon"]
@@ -90,10 +89,10 @@ texture = SubResource( 148 )
 expand = true
 
 [node name="StatIcon2" type="Control" parent="StatIcons"]
-margin_left = 31.0
-margin_right = 63.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
+margin_left = 47.0
+margin_right = 95.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
 size_flags_vertical = 0
 
 [node name="OffIcon" type="TextureRect" parent="StatIcons/StatIcon2"]
@@ -110,10 +109,10 @@ texture = SubResource( 148 )
 expand = true
 
 [node name="StatIcon3" type="Control" parent="StatIcons"]
-margin_left = 62.0
-margin_right = 94.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
+margin_left = 94.0
+margin_right = 142.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
 size_flags_vertical = 0
 
 [node name="OffIcon" type="TextureRect" parent="StatIcons/StatIcon3"]
@@ -130,10 +129,10 @@ texture = SubResource( 148 )
 expand = true
 
 [node name="StatIcon4" type="Control" parent="StatIcons"]
-margin_left = 93.0
-margin_right = 125.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
+margin_left = 141.0
+margin_right = 189.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
 size_flags_vertical = 0
 
 [node name="OffIcon" type="TextureRect" parent="StatIcons/StatIcon4"]
@@ -150,10 +149,10 @@ texture = SubResource( 148 )
 expand = true
 
 [node name="StatIcon5" type="Control" parent="StatIcons"]
-margin_left = 124.0
-margin_right = 156.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
+margin_left = 188.0
+margin_right = 236.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
 size_flags_vertical = 0
 
 [node name="OffIcon" type="TextureRect" parent="StatIcons/StatIcon5"]

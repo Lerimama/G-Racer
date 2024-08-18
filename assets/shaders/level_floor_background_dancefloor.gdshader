@@ -17,11 +17,11 @@ shader_type canvas_item;
 // colors
 uniform bool change_colors;
 uniform vec4 color_1: hint_color = vec4(0);
-uniform vec4 new_color_1: hint_color;
+uniform vec4 new_color_1: hint_color = vec4(0);
 uniform vec4 color_2: hint_color = vec4(0);
-uniform vec4 new_color_2: hint_color;
+uniform vec4 new_color_2: hint_color = vec4(0);
 uniform vec4 color_3: hint_color = vec4(0);
-uniform vec4 new_color_3: hint_color;
+uniform vec4 new_color_3: hint_color = vec4(0);
 uniform vec4 color_to_transparent: hint_color = vec4(0);
 uniform vec4 color_to_noise: hint_color = vec4(0);
 

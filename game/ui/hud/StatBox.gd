@@ -1,18 +1,12 @@
 extends Control
 
 
-var player_name: String = "NN"
-
-# hud colors
-var statbox_color: Color = Color.white setget _on_bolt_color_set
-
-# values
 onready var player_line: Control = $PlayerLine
+onready var player_avatar: TextureRect = $PlayerLine/Avatar
+onready var player_name_label: Label = $PlayerLine/PlayerName
 
-onready var stat_avatar: TextureRect = $Avatar
-onready var stat_name: Label = $PlayerLine/PlayerName
-
-onready var stat_wins: Control = $StatWins
+#onready var stat_wins: Control = $StatWins
+onready var stat_wins: Control = $PlayerLine/StatWins
 onready var stat_life: Control = $StatLife
 onready var stat_points: HBoxContainer = $StatPoints
 
@@ -27,29 +21,14 @@ onready var stat_best_lap: HBoxContainer = $StatBestLap
 onready var stat_level_time: HBoxContainer = $StatLevelTime
 onready var stat_level_rank: HBoxContainer = $StatRank
 
+#var player_name: String = "NN"
+#var player_avatar_texture: Texture
+#var player_color: Color = Color.white
 
-func _ready() -> void:
-	
-	stat_name.text = player_name
-
-
-func _on_bolt_color_set(bolt_color):
-	# mroajo bit ločeno, da jih lahko abrvam med igro
-	
-	for stat in get_children():
-		stat.modulate = bolt_color # setget
-#	stat_avatar.modulate = bolt_color # setget
-#	stat_name.modulate = bolt_color # setget
-#	stat_wins.def_stat_color = bolt_color # setget
-#	stat_life.def_stat_color = bolt_color # setget
-#	stat_misile.def_stat_color = bolt_color # setget
-#	stat_mina.def_stat_color = bolt_color # setget
-#	stat_shocker.def_stat_color = bolt_color # setget
-#	stat_points.def_stat_color = bolt_color # setget
-#	stat_bullet.def_stat_color = bolt_color # setget
-#	stat_gas.def_stat_color = bolt_color # setget
-#	stat_laps_count.def_stat_color = bolt_color
-#	stat_best_lap.def_stat_color = bolt_color	
-#	stat_level_time.def_stat_color = bolt_color	
+#func _ready() -> void:
+#
+#	player_name_label.modulate = player_color
+#	stat_wins.modulate = player_color
+#	player_name_label.text = player_name
 
 

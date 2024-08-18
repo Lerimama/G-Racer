@@ -31,20 +31,20 @@ func _ready() -> void:
 	statbox_btmL.visible = false
 	statbox_btmR.visible = false
 	
-	Ref.game_manager.connect("new_bolt_spawned", self, "_set_spawned_bolt_hud") # signal pride iz GM in pošlje spremenjeno statistiko
+	Ref.game_manager.connect("new_bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
 func set_hud(): # kliče GM
 	
 	game_timer.reset_timer()
 	
-	var stat_boxes: Array = [$StatBox, $StatBox2, $StatBox3, $StatBox4]
-	for box in stat_boxes:
-		# najprej skrijem vse in potem pokažem glede na igro
+#	var stat_boxes: Array = [$StatBox, $StatBox2, $StatBox3, $StatBox4]
+#	for box in stat_boxes:
+#		# najprej skrijem vse in potem pokažem glede na igro
 #		for stat in box.get_children():
 #			stat.hide()
-		box.player_line.show()
-#		if Ref.game_manager.game_settings["race_mode"]:
+#		box.player_line.show()
+#		if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 #			# player stats
 #			box.stat_gas.show()
 #			box.stat_level_rank.show()	
@@ -115,27 +115,12 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	else:
 		new_floating_tag.modulate = Set.color_red
 	
-	# OPT ... floating tag			
-	#	var hud_floating_tag = FloatingTag.instance()
-	#	hud_floating_tag.z_index = 4 # višje od straysa in playerja
-	#	# če je zadnji krog njegov čas ostane na liniji
-	#	hud_floating_tag.tag_owner = tag_owner
-	#	hud_floating_tag.global_position = tag_owner.global_position / Set.game_camera_zoom_factor
-	#	hud_floating_tag.name = "HUD"
-	#	add_child(hud_floating_tag) # OPT
-	#
-	#	new_floating_tag.label.text = current_lap_time_on_clock
-	#	if best_lap == true:
-	#		new_floating_tag.modulate = Set.color_green
-	#	else:
-	#		new_floating_tag.modulate = Set.color_red
-		
 	
 	
 # PRIVAT ------------------------------------------------------------------------------------------------------------
 
 	
-func _set_spawned_bolt_hud(bolt: KinematicBody2D):
+func _set_bolt_statbox(bolt: KinematicBody2D):
 	
 	if bolt.bolt_id == Pro.Players.ENEMY: # če je enemy ne rabim hud statsov ... zaenkrat
 		return
@@ -156,14 +141,8 @@ func _set_spawned_bolt_hud(bolt: KinematicBody2D):
 			current_statbox = statbox_btmR
 			statbox_owners[bolt.bolt_id] = statbox_btmR 
 	
-	# data
-	var bolt_stats: Dictionary = bolt.bolt_stats
-	var player_profiles: Dictionary = Pro.player_profiles
-	
-	current_statbox.stat_name.modulate = player_profiles[bolt.bolt_id]["player_color"]
-	current_statbox.stat_name.text = player_profiles[bolt.bolt_id]["player_name"]
-	
 	# bolt stats
+	var bolt_stats: Dictionary = bolt.bolt_stats
 	current_statbox.stat_bullet.stat_value = bolt_stats["bullet_count"]
 	current_statbox.stat_misile.stat_value = bolt_stats["misile_count"]
 	current_statbox.stat_mina.stat_value = bolt_stats["mina_count"]
@@ -173,6 +152,15 @@ func _set_spawned_bolt_hud(bolt: KinematicBody2D):
 	current_statbox.stat_points.stat_value = bolt_stats["points"]
 	current_statbox.stat_wins.stat_value = bolt_stats["wins"]
 	
+		
+	# player line
+	var player_profiles: Dictionary = Pro.player_profiles
+	current_statbox.player_name_label.modulate = player_profiles[bolt.bolt_id]["player_color"]
+#	current_statbox.stat_wins.modulate = player_profiles[bolt.bolt_id]["player_color"]
+	current_statbox.player_name_label.text = player_profiles[bolt.bolt_id]["player_name"]
+	var new_text: Texture = player_profiles[bolt.bolt_id]["player_avatar"]
+	current_statbox.player_avatar.set_texture(new_text)
+	current_statbox.stat_wins.modulate = Color.red
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	current_statbox.visible = true
 
@@ -180,7 +168,6 @@ func _set_spawned_bolt_hud(bolt: KinematicBody2D):
 func _on_GameTimer_gametime_is_up() -> void:
 	
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if not Ref.game_manager.game_settings["race_mode"]:
 		Ref.game_manager.level_completed(Ref.game_manager.GameoverReason.TIME)
 	# v dirki je trenutno je game over samo, če ti zmanjka bencina
 
@@ -201,28 +188,24 @@ func _on_stats_changed(bolt_id: int, bolt_stats: Dictionary):
 	# weapons	
 	statbox_to_change.stat_bullet.stat_value = bolt_stats["bullet_count"] # setget
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if statbox_to_change.stat_bullet.stat_value == 0:
 			statbox_to_change.stat_bullet.hide()
 		else:
 			statbox_to_change.stat_bullet.show()	
 	statbox_to_change.stat_misile.stat_value = bolt_stats["misile_count"] # setget
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if statbox_to_change.stat_misile.stat_value == 0:
 			statbox_to_change.stat_misile.hide()
 		else:
 			statbox_to_change.stat_misile.show()	
 	statbox_to_change.stat_mina.stat_value = bolt_stats["mina_count"] # setget
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if statbox_to_change.stat_mina.stat_value == 0:
 			statbox_to_change.stat_mina.hide()
 		else:
 			statbox_to_change.stat_mina.show()		
 	statbox_to_change.stat_shocker.stat_value = bolt_stats["shocker_count"] # setget
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if statbox_to_change.stat_shocker.stat_value == 0:
 			statbox_to_change.stat_shocker.hide()
 		else:

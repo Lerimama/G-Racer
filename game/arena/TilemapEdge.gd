@@ -1,7 +1,7 @@
 extends TileMap
 
 
-signal navigation_completed # pošljem lokacije floor tiletov
+#signal navigation_completed # pošljem lokacije floor tiletov
 
 var light_color: Color = Color.white # za barvanje debrisa		
 

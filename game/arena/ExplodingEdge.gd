@@ -40,7 +40,7 @@ func triangulate_polygon():
 	var polygon_points = polygon # array s točkami v trenutnem poligonu (vec2 pozicija)
 	
 	# fragmentiranje ... dodajanje točk znotraj poligona
-	for point in range(add_points_count):
+	for poly_point in range(add_points_count):
 		var random_x = randi() % texture_width
 		var random_y = randi() % texture_height
 		var random_point: Vector2 = Vector2(random_x, random_y)

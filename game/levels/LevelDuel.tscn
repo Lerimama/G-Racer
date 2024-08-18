@@ -4,6 +4,7 @@
 
 [node name="LevelDuel" instance=ExtResource( 1 )]
 position = Vector2( -1, 0 )
+level_type = 2
 
 [node name="BackgroundSpace" parent="." index="0"]
 position = Vector2( 151, 70 )
@@ -24,31 +25,3 @@ margin_left = 128.0
 margin_top = 304.0
 margin_right = 536.0
 margin_bottom = 368.0
-
-[node name="StartLine" parent="." index="6"]
-visible = false
-
-[node name="Checkpoints" parent="." index="7"]
-visible = false
-
-[node name="FinishLine" parent="." index="8"]
-visible = false
-
-[node name="StartLights" parent="." index="9"]
-visible = false
-
-[node name="SpawnPosition1" parent="Positions" index="0"]
-position = Vector2( 64, 64 )
-
-[node name="SpawnPosition2" parent="Positions" index="1"]
-position = Vector2( 576, 64 )
-rotation = -3.14159
-
-[node name="SpawnPosition3" parent="Positions" index="2"]
-position = Vector2( 64, 296 )
-
-[node name="SpawnPosition4" parent="Positions" index="3"]
-position = Vector2( 576, 296 )
-rotation = -3.14159
-
-[connection signal="navigation_completed" from="Edge" to="Edge" method="_on_Edge_navigation_completed"]

@@ -1,7 +1,6 @@
 extends KinematicBody2D
 class_name Misile
 
-signal misile_destroyed
 
 var spawned_by: Node
 var spawned_by_color: Color

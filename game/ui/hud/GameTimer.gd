@@ -23,7 +23,6 @@ onready var mins_label: Label = $Mins
 onready var secs_label: Label = $Secs
 onready var hunds_label: Label = $Hunds
 
-
 func _ready() -> void:
 	
 	# večino setam ob štartu tajmerja
@@ -41,7 +40,7 @@ func _process(delta: float) -> void:
 	if not current_timer_state == TimerStates.COUNTING:
 		if game_time == 0:
 			if not stopwatch_mode:
-				mins_label.text = "%02d" % (game_time_limit / 60)
+				mins_label.text = "%02d" % (game_time_limit / 60.0)
 				secs_label.text = "%02d" % (game_time_limit % 60)
 				hunds_label.text = "00"
 				pass				
@@ -58,12 +57,12 @@ func _process(delta: float) -> void:
 	# display
 	if stopwatch_mode:	
 		mins_label.text = "%02d" % floor(game_time/60)
-		secs_label.text = "%02d" % (floor(game_time) - floor(game_time/60) * 60)
+		secs_label.text = "%02d" % (floor(game_time) - floor(game_time / 60.0) * 60)
 		hunds_label.text = "%02d" % floor((game_time - floor(game_time)) * 100)
 	else:
 		var game_time_left = game_time_limit - game_time # stotinke
 		mins_label.text = "%02d" % (floor(game_time_left/60))
-		secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left/60) * 60)
+		secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60.0) * 60)
 		hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)	
 	
 	# time limits ... višja limita je prva, nižje sledijo 

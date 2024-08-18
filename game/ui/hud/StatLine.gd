@@ -12,7 +12,7 @@ export var show_name_icon: bool = false
 var stat_value: int = 0 setget _on_stat_change
 
 # colors
-var def_stat_color: Color = Set.color_hud_text setget _on_bolt_color_set
+var def_stat_color: Color = Set.color_hud_text
 var minus_color: Color = Set.color_red
 var plus_color: Color = Set.color_green
 var color_blink_time: float = 0.5
@@ -29,9 +29,8 @@ onready var stat_icons: HBoxContainer = $StatIcons
 
 func _ready() -> void:
 	
-#	def_stat_color = get_parent().statbox_color
-	stat_label.modulate = def_stat_color
-	stat_icon.modulate = def_stat_color
+#	stat_label.modulate = def_stat_color
+#	stat_icon.modulate = def_stat_color
 	
 	get_node("Icon").texture = icon_texture
 	stat_name.text = "%s " % label_name
@@ -86,44 +85,38 @@ func _on_stat_change(new_stat_value):
 			modulate = plus_color
 			if show_time:
 				write_clock_time(stat_value, stat_time_label)
-				stat_time_label.modulate = def_stat_color
 			else:
 				stat_label.text = "%02d" % new_stat_value
 			yield(get_tree().create_timer(color_blink_time), "timeout")
-			modulate = def_stat_color
 		# [-]
 		elif new_stat_value < stat_value:
 			stat_value = new_stat_value
 			modulate = minus_color
 			if show_time:
 				write_clock_time(stat_value, stat_time_label)
-				stat_time_label.modulate = def_stat_color
 			else:
 				stat_label.text = "%02d" % new_stat_value
-			yield(get_tree().create_timer(color_blink_time), "timeout")
-			modulate = def_stat_color
+		
 		if show_icons:
 			set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon 
+		
+		yield(get_tree().create_timer(color_blink_time), "timeout")
+		modulate = def_stat_color
 	
-
-func _on_bolt_color_set(bolt_color):
-	
-	def_stat_color = bolt_color
-	stat_label.modulate = def_stat_color
-	stat_icon.modulate = def_stat_color
-
 
 func set_icons_state(on_icons_count: int):
 	
 	var loop_index: int = 0	
 	for icon in stat_icons.get_children():
 		loop_index += 1
-		if loop_index >= on_icons_count + 1: # če je ena preveč
+		if loop_index >= on_icons_count + 1: # če je ena preveč in jo odvzame
 			icon.get_node("OnIcon").hide()
 			icon.get_node("OffIcon").show()
+			modulate = minus_color
 		else:
 			icon.get_node("OnIcon").show()
 			icon.get_node("OffIcon").hide()
+			modulate = plus_color
 
 	
 func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde

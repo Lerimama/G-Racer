@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=1]
 [ext_resource path="res://game/arena/ScreenArea.gd" type="Script" id=3]
 [ext_resource path="res://game/arena/Arena.gd" type="Script" id=4]
-[ext_resource path="res://managers/RaceManager.gd" type="Script" id=5]
 [ext_resource path="res://assets/resources/arena_environment.tres" type="Environment" id=7]
 
 [sub_resource type="RectangleShape2D" id=772]
@@ -22,23 +21,10 @@ __meta__ = {
 "_edit_horizontal_guides_": [ -64.0 ]
 }
 
-[node name="RaceManager" type="Node" parent="."]
-script = ExtResource( 5 )
-
 [node name="LevelPosition" type="Position2D" parent="."]
 
 [node name="NCP" type="Node2D" parent="."]
 z_index = 1
-
-[node name="NavigationPath" type="Line2D" parent="."]
-z_index = 5
-width = 2.0
-default_color = Color( 1, 0.752941, 0.0156863, 0.392157 )
-
-[node name="BoltNavigationLine" type="Line2D" parent="."]
-z_index = 5
-width = 2.0
-default_color = Color( 0.952941, 0.356863, 0.498039, 1 )
 
 [node name="ScreenArea" type="Area2D" parent="."]
 visible = false

@@ -6,14 +6,12 @@ signal stats_changed (stats_owner_id, bolt_stats) # bolt in damage
 enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
 
-enum Modes {RACING, FOLLOWING, FIGHTING} # RACING ... kadar šiba proti cilju, FOLLOWING ... kadar sledi gibajoči se tarči, FIGHTING ... kadar želi tarčo zadeti
-var current_mode: int = Modes.RACING
+var player_name: String # za opredelitev statistike
+var bolt_stats: Dictionary
 
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 var bolt_id: int # ga seta spawner
 var bolt_color: Color = Color.red
-var player_name: String # za opredelitev statistike
-
 var acceleration: Vector2
 var velocity: Vector2 = Vector2.ZERO
 var collision: KinematicCollision2D
@@ -22,6 +20,7 @@ var rotation_angle: float
 var rotation_dir: float
 var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 var revive_time: float = 2
+var current_drag: float # = bolt_drag
 
 # weapons
 var bullet_reloaded: bool = true
@@ -34,6 +33,11 @@ var shields_on = false
 var shield_loops_counter: int = 0
 var shield_loops_limit: int = 1 # poberem jo iz profilov, ali pa kot veleva pickable
 
+# bolt shadow
+var bolt_altitude: float = 3
+var bolt_max_altitude: float = 5
+var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # 0 levo, 180 desno, 90 gor, -90 dol  
+
 # trail
 var bolt_trail_active: bool = false # aktivna je ravno spawnana, neaktiva je "odklopljena"
 var bolt_trail_alpha = 0.05
@@ -41,12 +45,14 @@ var trail_pseudodecay_color = Color.white
 var current_active_trail: Line2D
 
 # engine
+var engines_on: bool = false
 var engine_power = 0 # ob štartu je noga z gasa
+var max_power_reached: bool = false
 var engine_particles_rear : CPUParticles2D
 var engine_particles_front_left : CPUParticles2D
 var engine_particles_front_right : CPUParticles2D
 
-# za level area efekte
+# level area efekti
 var bolt_on_nitro_count: int = 0
 var bolt_on_hole_count: int = 0
 var bolt_on_gravel_count: int = 0
@@ -56,15 +62,27 @@ var bolt_on_tracking_count: int = 0
 var selected_feature_index: int = 0
 var available_features: Array = [] # feature icons
 
+# racing
+var race_time_on_previous_lap: float = 0
+
+onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 onready var bolt_hud: Node2D = $BoltHud
 onready var bolt_sprite: Sprite = $Bolt
 onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
 onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
+onready var sounds: Node = $Sounds
+onready var bolt_shadow: Sprite = $BoltShadow
+onready var feat_selector:  = $BoltHud/VBoxContainer/FeatureSelector
+onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
+onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
+onready var rear_engine_position: Position2D = $Bolt/RearEnginePosition
+onready var front_engine_position_L: Position2D = $Bolt/FrontEnginePositionL
+onready var front_engine_position_R: Position2D = $Bolt/FrontEnginePositionR
+onready var trail_position: Position2D = $Bolt/TrailPosition
+onready var gun_position: Position2D = $Bolt/GunPosition
 
-#onready var FloatingTag: PackedScene = preload("res://game/arena/FloatingTag.tscn")
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
 onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/EngineParticlesRear.tscn") 
 onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/EngineParticlesFront.tscn") 
@@ -76,8 +94,10 @@ onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 
 # bolt profil ...  default vrednosti, ki jih lahko med igro spreminjam
+onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
 onready var bolt_type: int = Pro.BoltTypes.BASIC
-onready var bolt_sprite_texture: Texture# = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
+onready var max_energy: float = bolt_stats["energy"] # zato, da se lahko resetira
+onready var bolt_sprite_texture: Texture # = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
 onready var fwd_engine_power: int = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 onready var rev_engine_power: int = Pro.bolt_profiles[bolt_type]["rev_engine_power"]
 onready var turn_angle: int = Pro.bolt_profiles[bolt_type]["turn_angle"] # deg per frame
@@ -90,35 +110,6 @@ onready var reload_ability: float = Pro.bolt_profiles[bolt_type]["reload_ability
 onready var fwd_gas_usage: float = Pro.bolt_profiles[bolt_type]["fwd_gas_usage"] 
 onready var rev_gas_usage: float = Pro.bolt_profiles[bolt_type]["rev_gas_usage"] 
 onready var drag_div: float = Pro.bolt_profiles[bolt_type]["drag_div"] 
-
-# neu
-var engines_on: bool = false
-var max_power_reached: bool = false
-onready var sounds: Node = $Sounds
-# racing
-var current_lap_time: float # statistika
-# izoliraj
-onready var feat_selector:  = $BoltHud/VBoxContainer/FeatureSelector
-onready var energy_bar_holder: Control = $BoltHud/VBoxContainer/EnergyBar
-onready var energy_bar: Polygon2D = $BoltHud/VBoxContainer/EnergyBar/Bar
-var current_drag: float# = bolt_drag
-
-onready var bolt_shadow: Sprite = $BoltShadow
-var bolt_altitude: float = 3
-var bolt_max_altitude: float = 5
-var shadow_direction: Vector2 = Vector2(1,0).rotated(deg2rad(-90)) # 0 levo, 180 desno, 90 gor, -90 dol  
-onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
-
-onready var rear_engine_position: Position2D = $Bolt/RearEnginePosition
-onready var front_engine_position_L: Position2D = $Bolt/FrontEnginePositionL
-onready var front_engine_position_R: Position2D = $Bolt/FrontEnginePositionR
-onready var trail_position: Position2D = $Bolt/TrailPosition
-onready var gun_position: Position2D = $Bolt/GunPosition
-
-# neu neu
-onready var bolt_stats: Dictionary # = Pro.default_player_stats.duplicate() # ob spawnanju jih poda GM
-onready var max_energy: float = bolt_stats["energy"] # zato, da se lahko resetira
-var race_time_on_previous_lap: float = 0
 
 
 func _ready() -> void:
@@ -158,6 +149,9 @@ func _ready() -> void:
 	
 
 func _physics_process(delta: float) -> void:
+
+	if Set.kamera_frcera:
+		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
 	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
@@ -198,7 +192,6 @@ func _physics_process(delta: float) -> void:
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 		manage_bolt_hud()
 	else:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		# setam feature index, da je izbran tisti, ki ima količino večjo od 0
 		if bolt_stats["bullet_count"] > 0:
 			selected_feature_index = 1
@@ -385,7 +378,6 @@ func on_hit(hit_by: Node):
 		return
 
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if not Ref.game_manager.game_settings["race_mode"]:
 		change_stat("energy", - hit_by.hit_damage)
 				
 	if hit_by.is_in_group(Ref.group_bullets):
@@ -742,7 +734,6 @@ func on_item_picked(pickable_type_key: String):
 			change_stat("bullet_count", pickable_value)
 			selected_feature_index = 1
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("misile_count", - bolt_stats["misile_count"])
 				change_stat("mina_count", - bolt_stats["mina_count"])
 				change_stat("shocker_count", - bolt_stats["shocker_count"])
@@ -750,7 +741,6 @@ func on_item_picked(pickable_type_key: String):
 			change_stat("misile_count", pickable_value)
 			selected_feature_index = 2
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("bullet_count", - bolt_stats["bullet_count"])
 				change_stat("mina_count", - bolt_stats["mina_count"])
 				change_stat("shocker_count", - bolt_stats["shocker_count"])
@@ -758,7 +748,6 @@ func on_item_picked(pickable_type_key: String):
 			change_stat("mina_count", pickable_value)
 			selected_feature_index = 3
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("bullet_count", - bolt_stats["bullet_count"])
 				change_stat("misile_count", - bolt_stats["misile_count"])
 				change_stat("shocker_count", - bolt_stats["shocker_count"])
@@ -766,7 +755,6 @@ func on_item_picked(pickable_type_key: String):
 			change_stat("shocker_count", pickable_value)
 			selected_feature_index = 4
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#			if Ref.game_manager.game_settings["race_mode"]:
 				change_stat("bullet_count", - bolt_stats["bullet_count"])
 				change_stat("mina_count", - bolt_stats["mina_count"])
 				change_stat("misile_count", - bolt_stats["misile_count"])
@@ -859,7 +847,7 @@ func update_bolt_rank(new_bolt_rank: int):
 
 
 func change_stat(stat_name: String, change_value: float):
-
+	
 	if not Ref.game_manager.game_on:
 		return
 			

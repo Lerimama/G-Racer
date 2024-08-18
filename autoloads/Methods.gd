@@ -20,7 +20,17 @@ extends Node2D
 #	# return [minutes, seconds, hundreds]	
 #	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds	
 #	return time_on_clock
-
+		
+#func get_all_nodes_in_node(node_to_check: Node = get_tree().root, all_nodes_of_nodes: Array = []):
+#
+#	all_nodes_of_nodes.push_back(node_to_check)
+#
+#	for node in node_to_check.get_children():
+#		all_nodes_of_nodes = get_all_nodes_in_node(node)
+#
+#	#	print("Nodes in node",  all_nodes_of_nodes.size())
+#	return all_nodes_of_nodes	
+	
 	
 func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 	

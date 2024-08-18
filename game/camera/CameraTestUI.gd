@@ -130,7 +130,7 @@ func _process(delta):
 		parent_camera.position += mouse_position_on_drag_start - parent_camera.get_global_mouse_position()
 
 
-func add_trauma(added_trauma):
+func shake_camera(added_trauma):
 	trauma = clamp(trauma + added_trauma, 0, 1)
 
 
@@ -161,7 +161,7 @@ func _on_ShakeToggle_toggled(button_pressed: bool) -> void:
 
 func _on_AddTraumaBtn_pressed() -> void:
 	mouse_used = true
-	add_trauma(add_trauma)
+	shake_camera(add_trauma)
 
 func _on_TimeSlider_value_changed(value: float) -> void:
 	Engine.time_scale = value

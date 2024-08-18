@@ -32,8 +32,6 @@ onready var arena_back_btn: Button = $UI/Arena/BackBtn
 	
 func _ready() -> void:
 
-	if Set.debug_mode:
-		Set.debug_mode = false
 	# main
 	play_btn.connect("pressed", self, "_on_play_btn_pressed")
 	settings_btn.connect("pressed", self, "_on_settings_btn_pressed")

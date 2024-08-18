@@ -136,7 +136,6 @@ func play_music():
 	# set track
 	var current_track: AudioStreamPlayer
 	if Ref.game_manager.level_settings["level"] == Set.Levels.RACE_NITRO:
-		var nitro_track: AudioStreamPlayer = $"GameMusic/Nitro"
 		current_track = game_music.get_node("Nitro")
 	else:
 		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
@@ -149,8 +148,8 @@ func play_music():
 
 func stop_music():
 	
-	for music in game_music.get_children():
-		if music.is_playing():
+	for music_track in game_music.get_children():
+		if music_track.is_playing():
 			Met.sound_stop_fade_out(music, 2)
 			
 
@@ -167,11 +166,11 @@ func skip_track():
 	if currently_playing_track_index > game_music.get_child_count():
 		currently_playing_track_index = 1
 	
-	for music in game_music.get_children():
-		if music.is_playing():
-			var current_music_volume = music.volume_db
+	for music_track in game_music.get_children():
+		if music_track.is_playing():
+			var current_music_volume = music_track.volume_db
 			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)	
-			fade_out.tween_property(music, "volume_db", -80, 0.5)
-			fade_out.tween_callback(music, "stop")
-			fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
+			fade_out.tween_property(music_track, "volume_db", -80, 0.5)
+			fade_out.tween_callback(music_track, "stop")
+			fade_out.tween_callback(music_track, "set_volume_db", [current_music_volume]) # reset glasnosti
 			fade_out.tween_callback(self, "play_music", ["game_music"])

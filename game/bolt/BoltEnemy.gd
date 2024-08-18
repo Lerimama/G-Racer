@@ -1,7 +1,12 @@
 extends Bolt
 class_name Enemy
 
-signal path_changed (path)
+
+#signal path_changed (path)
+
+
+enum AiModes {RACING, FOLLOWING, FIGHTING} # RACING ... kadar šiba proti cilju, FOLLOWING ... kadar sledi gibajoči se tarči, FIGHTING ... kadar želi tarčo zadeti
+var current_ai_mode: int = AiModes.RACING
 
 # vision
 var navigation_cells: Array # sek
@@ -34,6 +39,12 @@ func _ready() -> void:
 	
 			
 func _physics_process(delta: float) -> void:
+	
+#	printt("FPS", Performance.get_monitor(Performance.TIME_FPS))# _temp
+	if Set.kamera_frcera:
+		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
+
+	
 #	printt("Enemy", self)	
 	if not bolt_active:
 		return
@@ -78,7 +89,7 @@ func vision(delta: float):
 
 	
 	var ai_brake_factor: float = 0.8 # množenje s hitrostjo
-	var ai_brake_distance: float = 50 # večja ko je, bolj je pazljiv
+	#	var ai_brake_distance: float = 50 # večja ko je, bolj je pazljiv
 	var ai_shoot_distance: float = 100 # najbližja pri kateri še strelja 		
 	# čekiraj ovire pred sabo
 	#		var vision_ray_length: float = ai_shoot_distance #velocity.length()
@@ -97,18 +108,18 @@ func vision(delta: float):
 		
 func manage_modes():
 
-	var bolt_to_follow: KinematicBody2D	
+#	var bolt_to_follow: KinematicBody2D	
 
-	match current_mode:
-		Modes.RACING:
+	match current_ai_mode:
+		AiModes.RACING:
 			seek_ray.enabled = false
-			bolt_to_follow = null
+#			bolt_to_follow = null
 			# target pošilja GM
 			seek_ray.cast_to.x = velocity.length()
 			seek_ray.look_at(Vector2.RIGHT + global_position)
 #			engine_power = 30
 			engine_power = racing_engine_power
-		Modes.FOLLOWING: # plejer je dovlj blizu, da mu sledi
+		AiModes.FOLLOWING: # plejer je dovlj blizu, da mu sledi
 			seek_ray.cast_to.x = global_position.distance_to(navigation_target_position)
 			seek_ray.look_at(navigation_target_position)
 			engine_power = racing_engine_power	

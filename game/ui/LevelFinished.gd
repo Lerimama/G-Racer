@@ -11,7 +11,7 @@ func _ready() -> void:
 	visible = false
 
 
-func open(bolts_on_finish_line: Array, bolts_on_start: Array):
+func open_level_finished(bolts_on_finish_line: Array, bolts_on_start: Array):
 	
 	set_scorelist(bolts_on_finish_line, bolts_on_start)
 	

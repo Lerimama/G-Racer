@@ -3,8 +3,10 @@ extends Node
 ## settings(namesto slovarja so variable), zagon levela), home_settings
 
 var game_camera_zoom_factor: float = 0.25 # resolucija igre je 4 krat manjša 2560x1440 proti 640x360
+var camera_shake_on: bool =  true
+var get_it_time: float = 2
 
-## temp
+# OPT ... brez tega
 var odmik_od_roba = 20
 var playerstats_w = 500
 var playerstats_h = 32
@@ -41,7 +43,6 @@ var color_pickable_random = Color.pink
 var color_pickable_stat = Color.black
 var color_pickable_feature = Color.white
 var color_pickable_weapon = Color.yellow
-
 
 # iz PA
 
@@ -118,8 +119,8 @@ var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko š
 	"start_countdown": false,
 	"gameover_countdown_duration": 5,
 	# race
-#	"race_mode": false, # ranking, gas use, enemy AI
 	"pull_gas_penalty": -20,
+	"fast_start_window_time": 0.32,
 	# duel
 	"pickables_count_limit": 5,
 	"sudden_death_mode": false,
@@ -132,6 +133,7 @@ var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko š
 
 enum Levels {
 	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 
+	RACE_TRAINING, 
 	TRAINING, 
 	DUEL, 
 	DEBUG_RACE, 
@@ -144,6 +146,12 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
+		},
+	Levels.RACE_TRAINING: {
+		"level": Levels.RACE_TRAINING,
+		"level_path": "res://game/levels/LevelRaceTraining.tscn",
+		"time_limit": 0,
+		"lap_limit": 2,
 		},
 	Levels.RACE_8: {
 		"level": Levels.RACE_8,
@@ -210,9 +218,10 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [Levels.TRAINING]
+var current_game_levels: Array = [Levels.TRAINING]
+#var current_game_levels: Array = [Levels.RACE_TRAINING]
 #var current_game_levels: Array = [Levels.RACE_SNAKE]
-var current_game_levels: Array = [Levels.RACE_8]
+#var current_game_levels: Array = [Levels.RACE_8]
 #var current_game_levels: Array = [Levels.RACE_ROUND]
 #var current_game_levels: Array = [Levels.RACE_CIRCO]
 #var current_game_levels: Array = [Levels.RACE_DIRECT]
@@ -222,6 +231,8 @@ var current_game_levels: Array = [Levels.RACE_8]
 #var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
 #var current_game_levels: Array = [Levels.RACE_SNAKE, Levels.RACE_NITRO]
 #var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
+
+var kamera_frcera = false # _temp	
 
 
 var debug_mode = true

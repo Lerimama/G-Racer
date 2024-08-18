@@ -1,12 +1,22 @@
 extends Node
 
 var fade_time = 0.7
-var camera_shake_on: bool =  true #_temp
 
 onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
 
+#func _input(event: InputEvent) -> void:
+#
+#	if Input.is_action_just_pressed("r"):
+#		var all_nodes = Met.get_all_nodes_in_node(self)
+#
+#		for node in all_nodes:
+#			if node.name[0] == "_" and node.name[1] == "_":
+#				printt("_NODE",node.name)
+#
+#		print("All nodes in MAIN scene",  all_nodes.size())
 
+	
 func _ready() -> void:
 	
 	Ref.main_node = self
@@ -15,12 +25,11 @@ func _ready() -> void:
 #	home_in_no_intro()
 	game_in()
 
+	
+#	printt("FPS", Performance.get_monitor(Performance.TIME_FPS))# _temp
+#	if Set.kamera_frcera:
+#		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
 
-#var m: float = 0 	
-#func _process(delta: float) -> void:
-#
-#	m += delta 
-#	print(m)
 	
 func home_in_intro():
 	

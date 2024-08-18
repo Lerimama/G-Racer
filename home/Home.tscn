@@ -1,9 +1,10 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=48 format=2]
 
-[ext_resource path="res://assets/shaders/home/arena_colors_texture.gdshader" type="Shader" id=1]
+[ext_resource path="res://assets/shaders/home_colors_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=2]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/resources/tileset_arena_edge.tres" type="TileSet" id=4]
+[ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=5]
 [ext_resource path="res://home/Home.gd" type="Script" id=6]
 [ext_resource path="res://assets/theme/fonts/large_font.tres" type="DynamicFont" id=7]
 [ext_resource path="res://assets/atlas/gui_elements_atlas.png" type="Texture" id=8]
@@ -41,6 +42,57 @@ shader_param/new_color_other = Color( 0.5, 0.5, 0.5, 1 )
 shader_param/manipulate_all = false
 shader_param/new_color_manipulate_all = Color( 0.5, 0.5, 0.5, 1 )
 shader_param/transparent_to_color = Color( 0, 0, 0, 0 )
+
+[sub_resource type="OpenSimplexNoise" id=788]
+seed = 17
+octaves = 5
+period = 3.2
+persistence = 0.0
+lacunarity = 4.0
+
+[sub_resource type="NoiseTexture" id=543]
+seamless = true
+noise = SubResource( 788 )
+
+[sub_resource type="Gradient" id=789]
+interpolation_mode = 1
+offsets = PoolRealArray( 0, 0.21692, 0.420824, 0.509761, 0.590022, 0.698482 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.111714, 0.111714, 0.111714, 1, 0.223427, 0.223427, 0.223427, 1, 0.472885, 0.472885, 0.472885, 1, 0.698482, 0.698482, 0.698482, 1, 0.881836, 0.881836, 0.881836, 1 )
+
+[sub_resource type="GradientTexture" id=549]
+gradient = SubResource( 789 )
+
+[sub_resource type="Gradient" id=790]
+offsets = PoolRealArray( 0, 0.650735 )
+colors = PoolColorArray( 0.168945, 0.168945, 0.168945, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=600]
+gradient = SubResource( 790 )
+
+[sub_resource type="ShaderMaterial" id=791]
+shader = ExtResource( 5 )
+shader_param/change_colors = false
+shader_param/color_1 = Color( 0, 0, 0, 0 )
+shader_param/new_color_1 = Color( 0.996078, 0.976471, 0.545098, 1 )
+shader_param/color_2 = Color( 0, 0, 0, 0 )
+shader_param/new_color_2 = null
+shader_param/color_3 = Color( 0, 0, 0, 0 )
+shader_param/new_color_3 = null
+shader_param/color_to_transparent = Color( 0, 0, 0, 0 )
+shader_param/color_to_noise = Color( 0, 0, 0, 0 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/ad_noise = true
+shader_param/shade_noise = true
+shader_param/pixelate_noise = true
+shader_param/pixel_size_multiplier = 4.0
+shader_param/pixel_offset = Vector2( 0.5, 0.5 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.05
+shader_param/speed_scale = 0.1
+shader_param/shade_all_colors = true
+shader_param/noise = SubResource( 543 )
+shader_param/noise_color_ramp = SubResource( 549 )
+shader_param/shades_color_ramp = SubResource( 600 )
 
 [sub_resource type="AtlasTexture" id=786]
 atlas = ExtResource( 8 )
@@ -465,6 +517,16 @@ texture = ExtResource( 19 )
 margin_right = 2560.0
 margin_bottom = 1440.0
 theme = ExtResource( 3 )
+
+[node name="NoiseUnder" type="ColorRect" parent="UI"]
+modulate = Color( 0.647059, 0.647059, 0.639216, 1 )
+show_behind_parent = true
+material = SubResource( 791 )
+margin_left = 160.0
+margin_top = 256.0
+margin_right = 440.0
+margin_bottom = 512.0
+color = Color( 1, 1, 1, 0 )
 
 [node name="MainMenu" type="Control" parent="UI"]
 margin_right = 2560.0

@@ -33,7 +33,6 @@ func _input(event: InputEvent) -> void:
 	
 	# fast start detection
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: # če še ni štartal (drugače bi bila slow start power še defoltna)
 			slow_start_engine_power = 0
 	else:
@@ -56,7 +55,6 @@ func _input(event: InputEvent) -> void:
 	
 	# feature select
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if Input.is_action_pressed(feature_action):# and Ref.game_manager.game_settings["full_equip_mode"]:
 			select_feature()
 	else:
@@ -79,7 +77,10 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	
+
+	if Set.kamera_frcera:
+		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
+
 	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
 	
 	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
@@ -87,7 +88,6 @@ func _physics_process(delta: float) -> void:
 	
 	# poraba bencina
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-#	if Ref.game_manager.game_settings["race_mode"]:
 		if current_motion_state == MotionStates.FWD:
 			manage_gas(fwd_gas_usage)
 		elif current_motion_state == MotionStates.REV:
@@ -96,6 +96,7 @@ func _physics_process(delta: float) -> void:
 
 func shoot():
 	
+	# debug
 	if Set.debug_mode:
 		selected_feature_index = 2
 		
