@@ -5,14 +5,18 @@ var magnet_color_off: Color = Set.color_brick_magnet_off
 var magnet_color_on: Color = Set.color_brick_magnet_on # opredeli se v animaciji
 
 var magnet_on: bool
-
 var def_particle_speed: float = 0.5
-var gravity_force: float = 70.0 # sila gravitacije
-var brick_altitude: float = 5
 
 var time: float = 0
 var off_time: float = 2
 var on_time: float = 2
+
+var key_as_name: String # poda spawner, uravnava vse ostalo
+
+onready var brick_color: Color = Pro.arena_element_profiles[key_as_name]["color"]
+onready var brick_altitude: float = Pro.arena_element_profiles[key_as_name]["altitude"]
+onready var reward_points: float = Pro.arena_element_profiles[key_as_name]["value"]
+onready var gravity_force: float = Pro.arena_element_profiles[key_as_name]["parameter"]
 
 onready var force_field: Area2D = $ForceField
 onready var sprite: Sprite = $Sprite
@@ -45,44 +49,43 @@ func _physics_process(delta: float) -> void:
 				var distance_to_magnet: float = body.global_position.distance_to(global_position)
 				var gravity_velocity: float = gravity_force / (distance_to_magnet * 1)
 				body.velocity += Vector2(gravity_velocity, 0).rotated(vector_to_magnet.angle())
-				var points_reward: float = Ref.game_manager.game_settings["magnet_brick_points"]
-				body.update_bolt_points(points_reward)
+				body.update_bolt_points(reward_points)
 		
 
 func intro():
-#		blackhole_particles.emitting = true
-#		blackhole_particles.speed_scale = def_particle_speed
-#		animation_player.play("intro")
+		#		blackhole_particles.emitting = true
+		#		blackhole_particles.speed_scale = def_particle_speed
+		#		animation_player.play("intro")
 		
 		var tween_time: float = 0.5
 		var magnet_on_tween = get_tree().create_tween()#.set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 		magnet_on_tween.tween_property(self, "modulate", magnet_color_on, tween_time)
-#		magnet_on_tween.tween_property(self, "modulate:a", 1, intro_time)
+		#		magnet_on_tween.tween_property(self, "modulate:a", 1, intro_time)
 		yield(magnet_on_tween, "finished")
 		magnet_on = true
 
 func outro():
-#		magnet_on = false
-#		animation_player.play("outro")
-#		blackhole_particles.speed_scale = 0.7
-#		blackhole_particles.emitting = false
+		#		magnet_on = false
+		#		animation_player.play("outro")
+		#		blackhole_particles.speed_scale = 0.7
+		#		blackhole_particles.emitting = false
 		magnet_on = false	
 		var tween_time: float = 0.5
 		var magnet_off_tween = get_tree().create_tween()#.set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 		magnet_off_tween.tween_property(self, "modulate", magnet_color_off, tween_time)
-#		magnet_off_tween.tween_property(self, "modulate:a", 0.4, intro_time)
+		#		magnet_off_tween.tween_property(self, "modulate:a", 0.4, intro_time)
 
 
 func pause_me():
 	set_physics_process(false)
 	blackhole_particles.speed_scale = 0
-#	animation_player.stop(false)
+	#	animation_player.stop(false)
 
 
 func unpause_me():
 	set_physics_process(true)
 	blackhole_particles.speed_scale = def_particle_speed
-#	animation_player.play()
+	#	animation_player.play()
 
 
 

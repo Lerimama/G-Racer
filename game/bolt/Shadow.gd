@@ -15,14 +15,14 @@ func _ready() -> void:
 	
 	shadow_direction = Set.game_enviroment_settings["shadow_direction"]
 	
-	if casting_node_name == "CastingNodeName":
-		printt ("No casting node on ...", self)
-	else:
-		casting_node = get_parent().get_node(casting_node_name)
-		texture = casting_node.texture
-		if casting_node.region_enabled: # za atlas teksture
-			region_enabled = true
-			region_rect = casting_node.region_rect
+#	if casting_node_name == "CastingNodeName":
+#		printt ("No casting node on ...", self)
+#	else:
+#		casting_node = get_parent().get_node(casting_node_name)
+#		texture = casting_node.texture
+#		if casting_node.region_enabled: # za atlas teksture
+#			region_enabled = true
+#			region_rect = casting_node.region_rect
 	
 	
 func _process(delta: float) -> void:

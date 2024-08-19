@@ -122,12 +122,13 @@ func set_game():
 	if current_level_index == 0 and not Set.players_on_game_start.empty():
 		activated_player_ids = Set.players_on_game_start
 	elif current_level_index == 0 and Set.players_on_game_start.empty(): # debug ... kadar ne štartam igre iz home menija
-#		activated_player_ids = [Pro.Players.P1] 
-		activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
+		activated_player_ids = [Pro.Players.P1] 
+#		activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
 #		activated_player_ids = [Pro.Players.P1, Pro.Players.ENEMY] 
 #		activated_player_ids = [Pro.Players.P1, Pro.Players.ENEMY, Pro.Players.P2 ] 
 #		activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.ENEMY, Pro.Players.ENEMY] 
 #		activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.P3, Pro.Players.P4]
+	
 	# resetiram aktivirane ID in jim dodam kvalificirane bolt_id
 	elif current_level_index > 0 and not bolts_qualified.empty():
 		activated_player_ids.clear()
@@ -135,7 +136,7 @@ func set_game():
 		for bolt in bolts_qualified:
 			activated_player_ids.append(bolt.bolt_id)
 	
-	game_settings["enemies_mode"] = false # debug
+	game_settings["enemies_mode"] = true # debug
 	
 	# za vsako prazno pozicijo dodam enemy bolt_id 			
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
@@ -503,7 +504,7 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
 
 
-func spawn_pickable():
+func spawn_pickable(): # OPT ime funkcije je duplikat
 	
 	if available_pickable_positions.empty():
 		return
@@ -514,14 +515,12 @@ func spawn_pickable():
 		for pickable in Pro.pickable_profiles:
 			if Pro.pickable_profiles[pickable]["for_random_selection"]:
 				pickables_for_selection.append(pickable)
-		var random_pickables_key: String = Met.get_random_member(pickables_for_selection)
-		var random_pickable_path = Pro.pickable_profiles[random_pickables_key]["scene_path"]
-		# žrebanje pozicije
+				
+		# _temp žrebanje
+		var random_pickable_key: String = Met.get_random_member(pickables_for_selection)
 		var random_cell_position: Vector2 = Met.get_random_member(navigation_positions)
-		# spawn
-		var new_pickable = random_pickable_path.instance()
-		new_pickable.global_position = random_cell_position
-		Ref.node_creation_parent.add_child(new_pickable)
+		Ref.current_level.spawn_pickable(random_cell_position, random_pickable_key)
+		
 		# odstranim celico iz arraya tistih na voljo
 		var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
 		available_pickable_positions.remove(random_cell_position_index)		

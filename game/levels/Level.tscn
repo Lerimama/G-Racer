@@ -76,7 +76,7 @@ shader_param/screen_size = Vector2( 640, 360 )
 shader_param/casting_color_1 = Color( 1, 1, 0, 1 )
 shader_param/casting_color_2 = Color( 0.729412, 0.729412, 0.435294, 1 )
 shader_param/casting_color_3 = Color( 0, 1, 0, 0 )
-shader_param/casting_object_is_flat = false
+shader_param/casting_object_on_floor = true
 shader_param/shadow_color = Color( 0, 0, 0, 0.54902 )
 shader_param/shadow_distance = 10
 shader_param/shadow_rotation_deg = 180.0
@@ -1161,4 +1161,4 @@ __meta__ = {
 }
 
 [connection signal="body_entered" from="Checkpoint" to="." method="_on_Checkpoint_body_entered"]
-[connection signal="body_entered" from="RaceFinish/FinishLine" to="." method="_on_AreaFinish_body_entered"]
+[connection signal="body_entered" from="RaceFinish/FinishLine" to="." method="_on_FinishLine_body_entered"]

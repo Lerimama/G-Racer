@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/atlas_hud.png-94fb3dfcee1f46bc98ae3761b024fc3c.stex"
+path="res://.import/atlas_hud.png-f261a41ba143f7f67c1cdee75167b2a5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/atlas_hud.png"
-dest_files=[ "res://.import/atlas_hud.png-94fb3dfcee1f46bc98ae3761b024fc3c.stex" ]
+source_file="res://assets/atlas/atlas_hud.png"
+dest_files=[ "res://.import/atlas_hud.png-f261a41ba143f7f67c1cdee75167b2a5.stex" ]
 
 [params]
 

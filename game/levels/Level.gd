@@ -29,29 +29,6 @@ var navigation_cells: Array
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
-# elements
-onready var AreaNitro: PackedScene = preload("res://game/arena/areas/AreaNitro.tscn")
-onready var AreaGravel: PackedScene = preload("res://game/arena/areas/AreaGravel.tscn")
-onready var AreaHole: PackedScene = preload("res://game/arena/areas/AreaHole.tscn")	
-onready var GoalPillar: PackedScene = preload("res://game/arena/elements/GoalPillar.tscn")
-onready var BrickGhost: PackedScene = preload("res://game/arena/bricks/BrickGhost.tscn")
-onready var BrickBouncer: PackedScene = preload("res://game/arena/bricks/BrickBouncer.tscn")
-onready var BrickMagnet: PackedScene = preload("res://game/arena/bricks/BrickMagnet.tscn")
-onready var BrickTarget: PackedScene = preload("res://game/arena/bricks/BrickTarget.tscn")
-onready var BrickLight: PackedScene = preload("res://game/arena/bricks/BrickLight.tscn")
-onready var PickableBullet: PackedScene = Pro.pickable_profiles["BULLET"]["scene_path"]
-onready var PickableMisile: PackedScene = Pro.pickable_profiles["MISILE"]["scene_path"]
-onready var PickableMina: PackedScene = Pro.pickable_profiles["MINA"]["scene_path"]
-onready var PickableShocker: PackedScene = Pro.pickable_profiles["SHOCKER"]["scene_path"]
-onready var PickableShield: PackedScene = Pro.pickable_profiles["SHIELD"]["scene_path"]
-onready var PickableEnergy: PackedScene = Pro.pickable_profiles["ENERGY"]["scene_path"]
-onready var PickableLife: PackedScene = Pro.pickable_profiles["LIFE"]["scene_path"]
-onready var PickableNitro: PackedScene = Pro.pickable_profiles["NITRO"]["scene_path"]
-onready var PickableTracking: PackedScene = Pro.pickable_profiles["TRACKING"]["scene_path"]
-onready var PickableRandom: PackedScene = Pro.pickable_profiles["RANDOM"]["scene_path"]
-onready var PickableGas: PackedScene = Pro.pickable_profiles["GAS"]["scene_path"]
-onready var PickablePoints: PackedScene = Pro.pickable_profiles["POINTS"]["scene_path"]
-
 	
 func _ready() -> void:
 	printt("LEVEL")
@@ -90,37 +67,14 @@ func _ready() -> void:
 		finish_line.monitoring = false
 		
 	set_level_floor() # luknje
-	set_level_elements() # elementi
+	set_elements() # elementi
+	set_pickables()
 	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
-	#	get_navigation_racing_line() ... uporabno ko bo main racing line avtomatiziran 
 	resize_to_level_size()
 	
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
 	
-
-# SET TILEMAPS --------------------------------------------------------------------------------------------------------
-
-
-func resize_to_level_size():
 	
-	# dobim velikost levela (floor tilemapa)
-	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
-	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
-	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
-	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
-	
-	# naberem rektangle za risajzat
-	var nodes_to_resize: Array = tilemap_edge.get_children()
-	nodes_to_resize.append_array($Background.get_children())
-	
-	# resize and set
-	for node in nodes_to_resize:
-		node.rect_position = floor_rect_position
-		node.rect_size = floor_rect_size
-		if node.material:
-			node.material.set_shader_param("node_size", floor_rect_size)
-
-		
 func set_level_floor():
 		
 	for cell in tilemap_floor.get_used_cells():
@@ -130,20 +84,21 @@ func set_level_floor():
 		var cell_local_position = tilemap_floor.map_to_world(cell)
 		var cell_global_position = tilemap_floor.to_global(cell_local_position)	
 		
+		var element_name_as_key: String
+		
 		match cell_index:
-
 			1: # area nitro
-				spawn_element(cell_global_position, AreaNitro, single_tile_offset)
+				element_name_as_key = "AREA_NITRO"
 			2: # area gravel
-				spawn_element(cell_global_position, AreaGravel, single_tile_offset)
+				element_name_as_key = "AREA_GRAVEL"
 				non_navigation_cell_positions.append(cell_global_position)
 			3: # area hole
-		#				spawn_element(cell_global_position, AreaHole, single_tile_offset)
-		#				non_navigation_cell_positions.append(cell_global_position)
-				pass # debug
+				element_name_as_key = "AREA_HOLE"
+				non_navigation_cell_positions.append(cell_global_position)
+		
+	
 
-
-func set_level_elements():
+func set_elements():
 	
 	if tilemap_elements.get_used_cells().empty():
 		return
@@ -155,75 +110,105 @@ func set_level_elements():
 		var cell_local_position = tilemap_elements.map_to_world(cell)
 		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
 		
+		var spawn_tile_offset: Vector2
+		var element_name_as_key: String
 		match cell_index:
-
+			6: # goal pillar
+				element_name_as_key = "GOAL"
+				spawn_tile_offset = Vector2(36,36)
+				tilemap_elements.set_cellv(cell, -1)
+				non_navigation_cell_positions.append(cell_global_position)
+			# ------------------------------------------------------------------------------------------------------
 			7: # brick ghost
-				spawn_element(cell_global_position, BrickGhost, single_tile_offset)
+				element_name_as_key = "BRICK_GHOST"
+				spawn_tile_offset = single_tile_offset
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			8: # brick bouncer
-				spawn_element(cell_global_position, BrickBouncer, single_tile_offset)
+				element_name_as_key = "BRICK_BOUNCER"
+				spawn_tile_offset = single_tile_offset
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			9: # brick magnet
-				spawn_element(cell_global_position, BrickMagnet, single_tile_offset)
+				element_name_as_key = "BRICK_MAGNET"
+				spawn_tile_offset = single_tile_offset
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			10: # brick target
-				spawn_element(cell_global_position, BrickTarget, single_tile_offset)
+				element_name_as_key = "BRICK_TARGET"
+				spawn_tile_offset = single_tile_offset
 				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			11: # brick light
-				spawn_element(cell_global_position, BrickLight, single_tile_offset)
+				element_name_as_key = "BRICK_LIGHT"
+				spawn_tile_offset = single_tile_offset
 				tilemap_elements.set_cellv(cell, -1)
 
-			# ------------------------------------------------------------------------------------------------------
 
-			14: # pickable bullet
-				spawn_element(cell_global_position, PickableBullet, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			15: # pickable misile
-				spawn_element(cell_global_position, PickableMisile, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			35: # pickable mina
-				spawn_element(cell_global_position, PickableMina, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			16: # pickable shocker
-				spawn_element(cell_global_position, PickableShocker, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			17: # pickable shield
-				spawn_element(cell_global_position, PickableShield, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			18: # pickable energy
-				spawn_element(cell_global_position, PickableEnergy, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			19: # pickable life
-				spawn_element(cell_global_position, PickableLife, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			20: # pickable nitro
-				spawn_element(cell_global_position, PickableNitro, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			21: # pickable tracking
-				spawn_element(cell_global_position, PickableTracking, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			22: # pickable random
-				spawn_element(cell_global_position, PickableRandom, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			27: # pickable gas
-				spawn_element(cell_global_position, PickableGas, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-			30: # pickable points
-				spawn_element(cell_global_position, PickablePoints, double_tile_offset)
-				tilemap_elements.set_cellv(cell, -1)
-
-			# ------------------------------------------------------------------------------------------------------
-				
-			6: # goal pillar
-				spawn_element(cell_global_position, GoalPillar, Vector2(36,36))
-				tilemap_elements.set_cellv(cell, -1)
-				non_navigation_cell_positions.append(cell_global_position)
-
-
+		if element_name_as_key: # preskok celic, ki imajo druge id-je
+			print("ELEMENT", element_name_as_key)
+			
+			var scene_to_spawn: PackedScene = Pro.arena_element_profiles[element_name_as_key]["element_scene"]	
+			
+			var new_element_scene = scene_to_spawn.instance()
+			new_element_scene.position = cell_global_position + spawn_tile_offset
+			new_element_scene.key_as_name = element_name_as_key
+			add_child(new_element_scene)
+			
+	
+func set_pickables():
+	
+	if tilemap_elements.get_used_cells().empty():
+		return
+		
+	for cell in tilemap_elements.get_used_cells():
+		
+		var cell_index = tilemap_elements.get_cellv(cell)
+		var cell_local_position = tilemap_elements.map_to_world(cell)
+		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
+		
+		var pickable_name_as_key: String
+		match cell_index:
+			14:
+				pickable_name_as_key = "BULLET"
+			15:
+				pickable_name_as_key = "MISILE"
+			35:
+				pickable_name_as_key = "MINA"
+			16:
+				pickable_name_as_key = "SHOCKER"
+			17:
+				pickable_name_as_key = "SHIELD"
+			18:
+				pickable_name_as_key = "ENERGY"
+			19:
+				pickable_name_as_key = "LIFE"
+			20:
+				pickable_name_as_key = "NITRO"
+			21:
+				pickable_name_as_key = "TRACKING"
+			27:
+				pickable_name_as_key = "GAS"
+			30:
+				pickable_name_as_key = "POINTS"
+			22:
+				pickable_name_as_key = "RANDOM"
+		
+		if pickable_name_as_key: # preskok celic, ki imajo druge id-je
+			tilemap_elements.set_cellv(cell, -1)
+			spawn_pickable(cell_global_position, pickable_name_as_key)
+		
+		
+func spawn_pickable(spawn_global_position: Vector2, pickable_name: String):
+	
+		var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
+		
+		var new_pickable_scene = scene_to_spawn.instance() #
+		new_pickable_scene.position = spawn_global_position + double_tile_offset
+		new_pickable_scene.pickable_key_as_name = pickable_name
+		add_child(new_pickable_scene)
+	
+			
 func set_level_navigation():
 	
 	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
@@ -265,6 +250,26 @@ func set_level_navigation():
 			tilemap_edge.set_cellv(cell, -1)
 
 
+func resize_to_level_size():
+	
+	# dobim velikost levela (floor tilemapa)
+	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
+	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
+	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
+	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
+	
+	# naberem rektangle za risajzat
+	var nodes_to_resize: Array = tilemap_edge.get_children()
+	nodes_to_resize.append_array($Background.get_children())
+	
+	# resize and set
+	for node in nodes_to_resize:
+		node.rect_position = floor_rect_position
+		node.rect_size = floor_rect_size
+		if node.material:
+			node.material.set_shader_param("node_size", floor_rect_size)
+
+	
 func get_tilemap_cells(tilemap: TileMap):
 	# kadar me zanimajo tudi prazne celice
 	
@@ -277,20 +282,8 @@ func get_tilemap_cells(tilemap: TileMap):
 	
 	return tilemap_cells
 	
-	
-# SPAWN --------------------------------------------------------------------------------------------------------
 
-
-func spawn_element(element_global_position: Vector2, element_scene: PackedScene, element_center_offset: Vector2):
-	
-	var new_element_scene = element_scene.instance() #
-	new_element_scene.position = element_global_position + element_center_offset
-	add_child(new_element_scene)
-	
-	return new_element_scene
-
-
-func _on_AreaFinish_body_entered(body: Node) -> void:
+func _on_FinishLine_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
 		Ref.game_manager.on_finish_line_crossed(body)

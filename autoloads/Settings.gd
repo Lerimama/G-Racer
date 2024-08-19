@@ -33,8 +33,9 @@ var color_brick_ghost = Color.white
 var color_brick_magnet_off = Color("#99ffffff")
 var color_brick_magnet_on = Color("#ffffff")
 var color_brick_target = Color.white
-var color_brick_target_hit_1 = Color.white
-var color_brick_target_hit_2 = Color.white
+var color_brick_target_hit_1 = Color.red
+var color_brick_target_hit_2 = Color.blue
+var color_brick_target_hit_3 = Color.yellow
 var color_brick_bouncer = Color.white
 var color_brick_light_off = Color.black
 var color_brick_light_on = Color.white
@@ -100,15 +101,8 @@ var game_enviroment_settings: Dictionary = {
 	}
 	
 var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
-	# bricks and area values ... drugam
-	"goal_points": 1000,
-	"light_points": 10,
-	"target_brick_points": 100,
-	"ghost_brick_points": 30,
-	"bouncer_brick_points": 10,
-	"magnet_brick_points": 0,
-	"area_tracking_value": 1, # 1 = 100%
 	# level
+	"area_tracking_value": 1, # 1 = 100%
 	"gravel_drag_div": 25.0, 
 	"hole_drag_div": 5.0,
 	"nitro_drag_div": 500.0,	

@@ -724,12 +724,12 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_div = current_drag_div
 	
 	
-func on_item_picked(pickable_type_key: String):
+func on_item_picked(pickable_name: String):
 	
-	var pickable_value: float = Pro.pickable_profiles[pickable_type_key]["pickable_value"]
-	var pickable_time: float = Pro.pickable_profiles[pickable_type_key]["pickable_time"]
+	var pickable_value: float = Pro.pickable_profiles[pickable_name]["pickable_value"]
+	var pickable_time: float = Pro.pickable_profiles[pickable_name]["pickable_time"]
 	
-	match pickable_type_key:
+	match pickable_name:
 		"BULLET":
 			change_stat("bullet_count", pickable_value)
 			selected_feature_index = 1

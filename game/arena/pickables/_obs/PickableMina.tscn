@@ -1,17 +1,16 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://assets/sound/sfx/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=1]
 [ext_resource path="res://game/arena/pickables/Pickable.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/arena/pickables/icon_pickable_bullet.tres" type="Texture" id=3]
 
-[node name="PickableMisile" instance=ExtResource( 2 )]
-pickable_type = 1
+[node name="PickableMina" instance=ExtResource( 2 )]
 
-[node name="Sprite" parent="." index="0"]
-region_rect = Rect2( 16, 24, 16, 16 )
+[node name="Icon" parent="." index="1"]
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 16, 16 )
 
 [node name="WeaponPicked" type="AudioStreamPlayer" parent="Sounds" index="1"]
 stream = ExtResource( 1 )
 volume_db = -15.0
 bus = "GameSfx"
-
-[connection signal="finished" from="Sounds/WeaponPicked" to="." method="_on_Picked_finished"]

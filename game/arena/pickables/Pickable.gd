@@ -2,14 +2,23 @@ extends Area2D
 class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 
-enum Pickables {BULLET, MISILE, MINA, SHOCKER, SHIELD, ENERGY, GAS, LIFE, NITRO, TRACKING, POINTS, RANDOM} # mešanje zaporedja meša izbrane tipe
-export (Pickables) var pickable_type 
 
-var pickable_value: float # = 0 pobere iz profilov
-var pickable_type_key: String
-var pickable_color: Color # = 0 pobere iz profilov
-var pickable_altitude: float = 5
 
+#onready var pickable_value: float = Pro.pickable_profiles[pickable_type_key]["pickable_value"]
+#onready var pickable_color: Color = Pro.pickable_profiles[pickable_type_key]["pickable_color"]
+#var pickable_type_key: String # seta spawner
+
+#var pickable_value: float
+#var pickable_color: Color
+#var pickable_altitude: float
+var pickable_key_as_name: String # poda ga spawner
+onready var pickable_value: float = Pro.pickable_profiles[pickable_key_as_name]["pickable_value"]
+onready var pickable_color: Color = Pro.pickable_profiles[pickable_key_as_name]["pickable_color"]
+onready var icon_texture: Texture = Pro.pickable_profiles[pickable_key_as_name]["icon_scene"]
+
+onready var pickable_altitude: float = 5 
+
+onready var icon: Sprite = $Icon
 onready var sprite: Sprite = $Sprite
 onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
 onready var animated_sprite: AnimatedSprite = $AnimatedSprite
@@ -21,9 +30,8 @@ onready var pickable_shadow: Sprite = $PickableShadow
 func _ready() -> void:
 	
 	add_to_group(Ref.group_pickables)
-	pickable_type_key = Pickables.keys()[pickable_type]
-	pickable_value = Pro.pickable_profiles[pickable_type_key]["pickable_value"]
-	pickable_color = Pro.pickable_profiles[pickable_type_key]["pickable_color"]
+	
+	icon.texture = icon_texture
 	modulate = pickable_color
 	pickable_shadow.shadow_distance = pickable_altitude
 
@@ -36,16 +44,16 @@ func _on_Item_body_entered(body: Node) -> void:
 #		sound_picked = all_sounds[all_sounds.size() - 1] 
 	
 	if body.has_method("on_item_picked"):
-		if pickable_type == Pickables.BULLET or pickable_type == Pickables.MISILE \
-		or pickable_type == Pickables.MINA or pickable_type == Pickables.SHOCKER:
+		if pickable_key_as_name == "BULLET" or pickable_key_as_name == "MISILE" \
+		or pickable_key_as_name == "MINA" or pickable_key_as_name == "SHOCKER":
 			Ref.sound_manager.play_sfx("pickable_weapon")
-		elif pickable_type == Pickables.NITRO:
+		elif pickable_key_as_name == "NITRO":
 			Ref.sound_manager.play_sfx("pickable_nitro")
 		else:
 			Ref.sound_manager.play_sfx("pickable")
 			pass
 #		sound_picked.play()
-		body.on_item_picked(pickable_type_key)
+		body.on_item_picked(pickable_key_as_name)
 #		modulate.a = 0
 #		monitorable = false
 #		monitoring = false
