@@ -260,8 +260,8 @@ custom_constants/separation = 0
 
 [node name="label" type="Label" parent="Countdown"]
 modulate = Color( 1, 1, 1, 0.7 )
-margin_right = 256.0
-margin_bottom = 13.0
+margin_right = 463.0
+margin_bottom = 48.0
 size_flags_vertical = 8
 text = "LEVEL 01 STARTS IN ..."
 align = 1
@@ -271,9 +271,9 @@ __meta__ = {
 }
 
 [node name="PositionControl" type="Control" parent="Countdown"]
-margin_top = 13.0
-margin_right = 256.0
-margin_bottom = 13.0
+margin_top = 48.0
+margin_right = 463.0
+margin_bottom = 48.0
 size_flags_vertical = 3
 
 [node name="noz" type="Label" parent="Countdown/PositionControl"]

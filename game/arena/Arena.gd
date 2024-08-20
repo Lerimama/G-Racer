@@ -9,6 +9,6 @@ func _ready() -> void:
 	print("ARENA")
 	
 	# RFK NCP
-#	Ref.node_creation_parent = $NCP
-	Ref.node_creation_parent = self 
+	Ref.node_creation_parent = $NCP
+#	Ref.node_creation_parent = self 
 	Ref.game_arena = self

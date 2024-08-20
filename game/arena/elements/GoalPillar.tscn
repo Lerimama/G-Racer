@@ -1,22 +1,22 @@
 [gd_scene load_steps=15 format=2]
 
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=1]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
 [ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=2]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=3]
-[ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=4]
-[ext_resource path="res://game/arena/elements/GoalPillar.gd" type="Script" id=5]
-[ext_resource path="res://assets/sprites/light.png" type="Texture" id=6]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=7]
+[ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=4]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/tilesets/pillar_detect_area.png" type="Texture" id=6]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=7]
 [ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=8]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=9]
-[ext_resource path="res://assets/tilesets/pillar_detect_area.png" type="Texture" id=10]
+[ext_resource path="res://game/arena/elements/GoalPillar.gd" type="Script" id=9]
+[ext_resource path="res://assets/sprites/light.png" type="Texture" id=10]
 
 [sub_resource type="CircleShape2D" id=559]
 radius = 37.054
 
 [sub_resource type="SpriteFrames" id=560]
 animations = [ {
-"frames": [ ExtResource( 10 ) ],
+"frames": [ ExtResource( 6 ) ],
 "loop": true,
 "name": "default",
 "speed": 5.0
@@ -26,22 +26,22 @@ animations = [ {
 audio_stream = ExtResource( 2 )
 
 [sub_resource type="AudioStreamRandomPitch" id=562]
-audio_stream = ExtResource( 3 )
+audio_stream = ExtResource( 1 )
 random_pitch = 1.05
 
 [node name="GoalPillar" type="StaticBody2D"]
 position = Vector2( 102, 107 )
-script = ExtResource( 5 )
+script = ExtResource( 9 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="PillarShadow" parent="." instance=ExtResource( 4 )]
+[node name="PillarShadow" parent="." instance=ExtResource( 3 )]
 visible = false
 casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 1 )
+texture = ExtResource( 4 )
 region_enabled = true
 region_rect = Rect2( 104, 24, 24, 24 )
 
@@ -66,7 +66,7 @@ polygon = PoolVector2Array( -3, -2, -4, -2, -4, 2, -3, 2, -3, 3, -2, 3, -2, 4, 2
 
 [node name="Light2D" type="Light2D" parent="."]
 scale = Vector2( 0.13986, 0.13986 )
-texture = ExtResource( 6 )
+texture = ExtResource( 10 )
 mode = 2
 
 [node name="Sounds" type="Node" parent="."]
@@ -83,12 +83,12 @@ volume_db = -10.0
 bus = "GameSfx"
 
 [node name="MagnetIn" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 9 )
+stream = ExtResource( 7 )
 volume_db = -10.0
 bus = "GameSfx"
 
 [node name="MagnetLoop" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 7 )
+stream = ExtResource( 5 )
 volume_db = -10.0
 bus = "GameSfx"
 

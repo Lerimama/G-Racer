@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=1]
+[ext_resource path="res://game/arena/Arena.gd" type="Script" id=1]
+[ext_resource path="res://assets/resources/arena_environment.tres" type="Environment" id=2]
 [ext_resource path="res://game/arena/ScreenArea.gd" type="Script" id=3]
-[ext_resource path="res://game/arena/Arena.gd" type="Script" id=4]
-[ext_resource path="res://assets/resources/arena_environment.tres" type="Environment" id=7]
+[ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=4]
 
 [sub_resource type="RectangleShape2D" id=772]
 extents = Vector2( 319, 179 )
@@ -16,7 +16,7 @@ border_width_right = 2
 border_width_bottom = 2
 
 [node name="Arena" type="Node2D"]
-script = ExtResource( 4 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_horizontal_guides_": [ -64.0 ]
 }
@@ -48,12 +48,12 @@ margin_bottom = 115.0
 custom_styles/panel = SubResource( 773 )
 
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource( 7 )
+environment = ExtResource( 2 )
 
 [node name="Sounds" type="Node" parent="."]
 
 [node name="NitroMusic" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 1 )
+stream = ExtResource( 4 )
 bus = "GameMusic"
 
 [connection signal="body_exited" from="ScreenArea" to="ScreenArea" method="_on_ScreenArea_body_exited"]

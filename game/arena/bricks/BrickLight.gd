@@ -3,14 +3,13 @@ extends StaticBody2D
 var turned_on: bool = false
 
 var bolts_in_light_area: Array = []
-var light_off_color: Color = Set.color_brick_light_off
-var light_on_color: Color = Set.color_brick_light_on
+var light_on_color: Color = Ref.color_brick_light_on
 
-var key_as_name: String # poda spawner, uravnava vse ostalo
+var element_key: int # poda spawner, uravnava vse ostalo
 
-onready var brick_color: Color = Pro.arena_element_profiles[key_as_name]["color"]
-onready var brick_altitude: float = Pro.arena_element_profiles[key_as_name]["altitude"]
-onready var reward_points: float = Pro.arena_element_profiles[key_as_name]["value"]
+onready var light_off_color: Color = Pro.level_elements_profiles[element_key]["color"]
+onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
+onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
 
 onready var brick_shadow: Sprite = $BrickShadow
 onready var light_poly: Polygon2D = $LightPoly

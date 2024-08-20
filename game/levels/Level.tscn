@@ -4,7 +4,7 @@
 [ext_resource path="res://game/levels/Level.gd" type="Script" id=2]
 [ext_resource path="res://assets/resources/tileset_arena_floor.tres" type="TileSet" id=3]
 [ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=4]
-[ext_resource path="res://assets/shaders/dropshadows_screen.gdshader" type="Shader" id=5]
+[ext_resource path="res://assets/shaders/level_dropshadows_screen.gdshader" type="Shader" id=5]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=6]
 [ext_resource path="res://assets/sprites/bolt/bolt_vars_atlas.png" type="Texture" id=7]
 [ext_resource path="res://assets/resources/tileset_arena_elements.tres" type="TileSet" id=8]
@@ -73,7 +73,7 @@ shader_param/shades_color_ramp = SubResource( 616 )
 shader = ExtResource( 5 )
 shader_param/node_size = Vector2( 320, 320 )
 shader_param/screen_size = Vector2( 640, 360 )
-shader_param/casting_color_1 = Color( 1, 1, 0, 1 )
+shader_param/casting_color_1 = Color( 1, 1, 0.0117647, 1 )
 shader_param/casting_color_2 = Color( 0.729412, 0.729412, 0.435294, 1 )
 shader_param/casting_color_3 = Color( 0, 1, 0, 0 )
 shader_param/casting_object_on_floor = true
@@ -84,13 +84,6 @@ shader_param/pixel_scale = 10.0
 shader_param/switch_cast_and_receive = false
 shader_param/new_casting_color = Color( 0, 0, 0, 0 )
 shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
-
-[sub_resource type="RectangleShape2D" id=514]
-extents = Vector2( 168, 4 )
-
-[sub_resource type="AtlasTexture" id=517]
-atlas = ExtResource( 10 )
-region = Rect2( 24, 16, 8, 8 )
 
 [sub_resource type="AtlasTexture" id=128]
 atlas = ExtResource( 7 )
@@ -126,6 +119,13 @@ region = Rect2( 40, 16, 8, 8 )
 atlas = ExtResource( 10 )
 region = Rect2( 32, 16, 8, 8 )
 
+[sub_resource type="RectangleShape2D" id=514]
+extents = Vector2( 168, 4 )
+
+[sub_resource type="AtlasTexture" id=517]
+atlas = ExtResource( 10 )
+region = Rect2( 24, 16, 8, 8 )
+
 [sub_resource type="Curve2D" id=612]
 _data = {
 "points": PoolVector2Array(  )
@@ -141,14 +141,7 @@ border_width_bottom = 4
 [node name="Level" type="Node2D"]
 script = ExtResource( 2 )
 __meta__ = {
-"_editor_description_": "NAVODILA ZA IGRADNJO LEVELA
-- glavna linija je linija, ki jo vozi tudi enemy
-- če so krogi morajo biti nujno tudi čekpointi
-- ko  je cilj .. gre enemy na goal target
-- glavna linija je kar do konca
-- _temp samo na en čekpoint
-- dobra praksa je, da si linije, ko jih je več, niso preveč blizu
-- krožna dirka ima vedno dve liniji ... zadnja  linija se konča konča tik pred ciljem, prva pa začne tik za štartom"
+"_editor_description_": ""
 }
 
 [node name="Background" type="Node2D" parent="."]
@@ -220,6 +213,326 @@ text = "Kaj je Level?"
 align = 1
 autowrap = true
 uppercase = true
+
+[node name="RaceStart" type="Node2D" parent="."]
+visible = false
+position = Vector2( 128, 128 )
+
+[node name="StartLights" parent="RaceStart" instance=ExtResource( 21 )]
+position = Vector2( -7.62939e-06, -16 )
+
+[node name="StartPositions" type="Node2D" parent="RaceStart"]
+modulate = Color( 1, 1, 1, 0.470588 )
+position = Vector2( 16, 56 )
+
+[node name="StartPosition1" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( -40, -24 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition1"]
+margin_left = 4.99988
+margin_top = 8.00003
+margin_right = 38.9999
+margin_bottom = 47.0
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 25 )
+text = "P1"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition1"]
+texture = SubResource( 128 )
+
+[node name="StartPosition2" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( 8, -24 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition2"]
+margin_left = 5.0
+margin_top = 8.00003
+margin_right = 45.0
+margin_bottom = 47.0
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 25 )
+text = "P2"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition2"]
+material = SubResource( 516 )
+texture = SubResource( 128 )
+
+[node name="StartPosition3" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( -40, 8 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition3"]
+margin_left = 6.00006
+margin_top = 8.00006
+margin_right = 46.0001
+margin_bottom = 47.0001
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 25 )
+text = "P3"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition3"]
+material = SubResource( 516 )
+texture = SubResource( 128 )
+
+[node name="StartPosition4" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( 8, 8 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition4"]
+margin_left = 5.0
+margin_top = 8.00006
+margin_right = 47.0
+margin_bottom = 47.0001
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 25 )
+text = "P4"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition4"]
+material = SubResource( 516 )
+texture = SubResource( 128 )
+
+[node name="StartLine" type="Area2D" parent="RaceStart"]
+monitoring = false
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceStart/StartLine"]
+visible = false
+position = Vector2( 144, 4 )
+shape = SubResource( 568 )
+
+[node name="Sprite" type="TextureRect" parent="RaceStart/StartLine"]
+margin_left = -144.0
+margin_right = 144.0
+margin_bottom = 8.0
+texture = SubResource( 599 )
+expand = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RaceStart/StartLine"]
+margin_left = -144.0
+margin_right = 144.0
+margin_bottom = 8.0
+custom_constants/separation = 0
+
+[node name="Sprite2" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_right = 8.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite3" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 8.0
+margin_right = 16.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite4" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 16.0
+margin_right = 24.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite5" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 24.0
+margin_right = 32.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite6" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 32.0
+margin_right = 40.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite7" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 40.0
+margin_right = 48.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite8" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 48.0
+margin_right = 56.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite9" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 56.0
+margin_right = 64.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite10" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 64.0
+margin_right = 72.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite11" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 72.0
+margin_right = 80.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite12" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 80.0
+margin_right = 88.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite13" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 88.0
+margin_right = 96.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite14" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 96.0
+margin_right = 104.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite15" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 104.0
+margin_right = 112.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite16" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 112.0
+margin_right = 120.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite17" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 120.0
+margin_right = 128.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite18" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 128.0
+margin_right = 136.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite19" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 136.0
+margin_right = 144.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite20" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 144.0
+margin_right = 152.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite21" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 152.0
+margin_right = 160.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite22" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 160.0
+margin_right = 168.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite23" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 168.0
+margin_right = 176.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite24" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 176.0
+margin_right = 184.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite25" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 184.0
+margin_right = 192.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite26" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 192.0
+margin_right = 200.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite27" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 200.0
+margin_right = 208.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite28" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 208.0
+margin_right = 216.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite29" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 216.0
+margin_right = 224.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite30" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 224.0
+margin_right = 232.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite31" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 232.0
+margin_right = 240.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite32" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 240.0
+margin_right = 248.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite33" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 248.0
+margin_right = 256.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite34" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 256.0
+margin_right = 264.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite35" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 264.0
+margin_right = 272.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite36" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
+margin_left = 272.0
+margin_right = 280.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="CameraPosition" type="Position2D" parent="RaceStart"]
+position = Vector2( 0, 48 )
 
 [node name="Checkpoint" type="Area2D" parent="."]
 visible = false
@@ -785,326 +1098,6 @@ position = Vector2( -72, 0 )
 points = PoolVector2Array( 0, 0, 144, 0 )
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )
-
-[node name="RaceStart" type="Node2D" parent="."]
-visible = false
-position = Vector2( 128, 128 )
-
-[node name="StartLights" parent="RaceStart" instance=ExtResource( 21 )]
-position = Vector2( -7.62939e-06, -16 )
-
-[node name="StartPositions" type="Node2D" parent="RaceStart"]
-modulate = Color( 1, 1, 1, 0.470588 )
-position = Vector2( 16, 56 )
-
-[node name="StartPosition1" type="Position2D" parent="RaceStart/StartPositions"]
-position = Vector2( -40, -24 )
-rotation = -1.5708
-
-[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition1"]
-margin_left = 4.99988
-margin_top = 8.00003
-margin_right = 38.9999
-margin_bottom = 47.0
-rect_rotation = 90.0
-rect_scale = Vector2( 0.25, 0.25 )
-theme = ExtResource( 25 )
-text = "P1"
-align = 1
-
-[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition1"]
-texture = SubResource( 128 )
-
-[node name="StartPosition2" type="Position2D" parent="RaceStart/StartPositions"]
-position = Vector2( 8, -24 )
-rotation = -1.5708
-
-[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition2"]
-margin_left = 5.0
-margin_top = 8.00003
-margin_right = 45.0
-margin_bottom = 47.0
-rect_rotation = 90.0
-rect_scale = Vector2( 0.25, 0.25 )
-theme = ExtResource( 25 )
-text = "P2"
-align = 1
-
-[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition2"]
-material = SubResource( 516 )
-texture = SubResource( 128 )
-
-[node name="StartPosition3" type="Position2D" parent="RaceStart/StartPositions"]
-position = Vector2( -40, 8 )
-rotation = -1.5708
-
-[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition3"]
-margin_left = 6.00006
-margin_top = 8.00006
-margin_right = 46.0001
-margin_bottom = 47.0001
-rect_rotation = 90.0
-rect_scale = Vector2( 0.25, 0.25 )
-theme = ExtResource( 25 )
-text = "P3"
-align = 1
-
-[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition3"]
-material = SubResource( 516 )
-texture = SubResource( 128 )
-
-[node name="StartPosition4" type="Position2D" parent="RaceStart/StartPositions"]
-position = Vector2( 8, 8 )
-rotation = -1.5708
-
-[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition4"]
-margin_left = 5.0
-margin_top = 8.00006
-margin_right = 47.0
-margin_bottom = 47.0001
-rect_rotation = 90.0
-rect_scale = Vector2( 0.25, 0.25 )
-theme = ExtResource( 25 )
-text = "P4"
-align = 1
-
-[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition4"]
-material = SubResource( 516 )
-texture = SubResource( 128 )
-
-[node name="StartLine" type="Area2D" parent="RaceStart"]
-monitoring = false
-monitorable = false
-
-[node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceStart/StartLine"]
-visible = false
-position = Vector2( 144, 4 )
-shape = SubResource( 568 )
-
-[node name="Sprite" type="TextureRect" parent="RaceStart/StartLine"]
-margin_left = -144.0
-margin_right = 144.0
-margin_bottom = 8.0
-texture = SubResource( 599 )
-expand = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="RaceStart/StartLine"]
-margin_left = -144.0
-margin_right = 144.0
-margin_bottom = 8.0
-custom_constants/separation = 0
-
-[node name="Sprite2" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_right = 8.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite3" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 8.0
-margin_right = 16.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite4" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 16.0
-margin_right = 24.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite5" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 24.0
-margin_right = 32.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite6" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 32.0
-margin_right = 40.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite7" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 40.0
-margin_right = 48.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite8" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 48.0
-margin_right = 56.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite9" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 56.0
-margin_right = 64.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite10" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 64.0
-margin_right = 72.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite11" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 72.0
-margin_right = 80.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite12" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 80.0
-margin_right = 88.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite13" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 88.0
-margin_right = 96.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite14" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 96.0
-margin_right = 104.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite15" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 104.0
-margin_right = 112.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite16" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 112.0
-margin_right = 120.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite17" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 120.0
-margin_right = 128.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite18" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 128.0
-margin_right = 136.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite19" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 136.0
-margin_right = 144.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite20" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 144.0
-margin_right = 152.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite21" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 152.0
-margin_right = 160.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite22" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 160.0
-margin_right = 168.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite23" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 168.0
-margin_right = 176.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite24" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 176.0
-margin_right = 184.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite25" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 184.0
-margin_right = 192.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite26" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 192.0
-margin_right = 200.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite27" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 200.0
-margin_right = 208.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite28" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 208.0
-margin_right = 216.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite29" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 216.0
-margin_right = 224.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite30" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 224.0
-margin_right = 232.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite31" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 232.0
-margin_right = 240.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite32" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 240.0
-margin_right = 248.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite33" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 248.0
-margin_right = 256.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite34" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 256.0
-margin_right = 264.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite35" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 264.0
-margin_right = 272.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="Sprite36" type="TextureRect" parent="RaceStart/StartLine/HBoxContainer"]
-margin_left = 272.0
-margin_right = 280.0
-margin_bottom = 8.0
-texture = SubResource( 515 )
-
-[node name="CameraPosition" type="Position2D" parent="RaceStart"]
-position = Vector2( 0, 48 )
 
 [node name="RacingTrack" type="Path2D" parent="."]
 curve = SubResource( 612 )

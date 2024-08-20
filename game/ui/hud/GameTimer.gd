@@ -28,7 +28,7 @@ func _ready() -> void:
 	# večino setam ob štartu tajmerja
 		
 
-	modulate = Set.color_hud_base
+	modulate = Ref.color_hud_base
 	# debug
 #	stopwatch_mode = true 
 #	game_time_limit = 10
@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 	if not limitless_mode:
 		# game time is up
 		if game_time >= game_time_limit: 
-			modulate = Set.color_red
+			modulate = Ref.color_red
 			Ref.sound_manager.play_gui_sfx("game_countdown_a")
 			stop_timer()
 			emit_signal("gametime_is_up") # pošlje se v hud, ki javi GM	
@@ -78,19 +78,19 @@ func _process(delta: float) -> void:
 			# za vsakič, ko mine sekunda 
 			if game_time == (game_time_limit - coundown_second): 
 				coundown_second -= 1
-				modulate = Set.color_yellow
+				modulate = Ref.color_yellow
 				Ref.sound_manager.play_gui_sfx("game_countdown_b")
 		# sudden death 
 		elif game_time > (game_time_limit - sudden_death_limit) and sudden_death_mode: 
-			modulate = Set.color_green
+			modulate = Ref.color_green
 			emit_signal("sudden_death_activated") # pošlje se v hud, ki javi game managerju
 		else:
-			modulate = Set.color_hud_base
+			modulate = Ref.color_hud_base
 	
 
 func reset_timer():
 	game_time = 0
-	modulate = Set.color_hud_base
+	modulate = Ref.color_hud_base
 
 	
 func start_timer():
@@ -114,7 +114,7 @@ func start_timer():
 func pause_timer():
 	
 	current_timer_state = TimerStates.PAUSED
-	modulate = Set.color_blue
+	modulate = Ref.color_blue
 	
 
 func unpause_timer():
@@ -125,4 +125,4 @@ func unpause_timer():
 func stop_timer():
 	
 	current_timer_state = TimerStates.STOPPED
-	modulate = Set.color_red
+	modulate = Ref.color_red

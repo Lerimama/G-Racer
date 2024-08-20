@@ -17,7 +17,8 @@ var new_bullet_trail: Object
 onready var trail_position: Position2D = $TrailPosition
 onready var BulletTrail: PackedScene = preload("res://game/weapons/BulletTrail.tscn") 
 onready var HitParticles: PackedScene = preload("res://game/weapons/BulletHitParticles.tscn")
-onready var weapon_profile: Dictionary = Pro.weapon_profiles["bullet"]
+
+onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.Weapons.BULLET]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var lifetime: float = weapon_profile["lifetime"]

@@ -22,9 +22,9 @@ var navigation_area: Array # vsi navigation tileti
 var navigation_positions: Array # pozicije vseh navigation tiletov
 
 # racing
-var leading_player: KinematicBody2D # trenutno vodilni igralec (rabim za camera target in pull target)
+var leading_human_player: KinematicBody2D # trenutno vodilni igralec (rabim za camera target in pull target)
 var bolts_finished: Array # bolti v cilju
-var bolts_qualified: Array # za naslednji level
+var bolts_qualified: Array # obstaja za prenos med leveloma
 var bolts_checked: Array
 
 onready var level_finished_ui: Control = $"../UI/LevelFinished"
@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
 		
 		get_bolts_ranking()
 			
-		# loči playerje in enemyje
+		# loči playerje in AI
 		var active_players: Array = []
 		var active_enemies: Array = []
 		for bolt in bolts_in_game:
@@ -80,33 +80,31 @@ func _process(delta: float) -> void:
 				active_players.append(bolt)
 			elif bolt.is_in_group(Ref.group_enemies) and bolt.bolt_active:
 				active_enemies.append(bolt)
-		# PLAYER	
-		# setam vodilnega med playerji in tarčo kamere
+				
+		# PLAYER ...setam vodilnega med playerji in tarčo kamere
 		if active_players.empty(): 
 			# če so vsi neaktivni, lokacija kamere ostane ista
 			Ref.current_camera.follow_target = null
 		else:
-			leading_player = active_players[0]
-			if not Ref.current_camera.follow_target == leading_player: # da kamera ne reagira, če je že setan isti plejer
-				Ref.current_camera.follow_target = leading_player
+			leading_human_player = active_players[0]
+			if not Ref.current_camera.follow_target == leading_human_player: # da kamera ne reagira, če je že setan isti plejer
+				Ref.current_camera.follow_target = leading_human_player
 
-		# ENEMIES ... setam 
-		# get offset trackerja in setam next nav_target malo naprej
-		for active_enemy in active_enemies:
+		# ENEMIES ... get offset trackerja in setam next nav_target malo naprej
+		for active_ai in active_enemies:
 			# poiščem pripadajočega trackerja
 			var current_bolt_tracker: PathFollow2D
 			for bolt_tracker in Ref.current_level.racing_track.get_children():
-				if bolt_tracker.tracking_target == active_enemy:
+				if bolt_tracker.tracking_target == active_ai:
 					current_bolt_tracker = bolt_tracker
 					break
 			# lociram target točko na krivulji
-			var enemy_target_point_on_curve: Vector2
-			var enemy_target_prediction: float = 50
-			var enemy_target_total_offset: float = current_bolt_tracker.offset + enemy_target_prediction
+			var ai_target_point_on_curve: Vector2
+			var ai_target_prediction: float = 50
+			var ai_target_total_offset: float = current_bolt_tracker.offset + ai_target_prediction
 			var bolt_tracker_curve: Curve2D = current_bolt_tracker.get_parent().get_curve()
-			enemy_target_point_on_curve = bolt_tracker_curve.interpolate_baked(enemy_target_total_offset)
-					
-			active_enemy.navigation_target_position = enemy_target_point_on_curve	
+			ai_target_point_on_curve = bolt_tracker_curve.interpolate_baked(ai_target_total_offset)
+			active_ai.navigation_target_position = ai_target_point_on_curve	
 	
 	
 func set_game():
@@ -118,79 +116,99 @@ func set_game():
 	Ref.hud.set_hud()
 	Ref.game_arena.camera_screen_area.connect( "body_exited_screen", self, "_on_body_exited_screen")
 	Ref.current_camera.follow_target = Ref.current_level.start_camera_position_node
-		
+	
+	# get activated players
+	activated_player_ids = []
+	
+
+	# če je prvi level so aktivirani dodani v meniju
 	if current_level_index == 0 and not Set.players_on_game_start.empty():
 		activated_player_ids = Set.players_on_game_start
-	elif current_level_index == 0 and Set.players_on_game_start.empty(): # debug ... kadar ne štartam igre iz home menija
-		activated_player_ids = [Pro.Players.P1] 
-#		activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
-#		activated_player_ids = [Pro.Players.P1, Pro.Players.ENEMY] 
-#		activated_player_ids = [Pro.Players.P1, Pro.Players.ENEMY, Pro.Players.P2 ] 
-#		activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.ENEMY, Pro.Players.ENEMY] 
+	# debug ... kadar ne štartam igre iz home menija
+	elif current_level_index == 0 and Set.players_on_game_start.empty():
+#		activated_player_ids = [Pro.Players.P1] 
+		activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
 #		activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.P3, Pro.Players.P4]
-	
-	# resetiram aktivirane ID in jim dodam kvalificirane bolt_id
+	# če ni prvi level dodam kvalificirane bolt_id
 	elif current_level_index > 0 and not bolts_qualified.empty():
-		activated_player_ids.clear()
-		printt ("Q2", bolts_qualified)
 		for bolt in bolts_qualified:
 			activated_player_ids.append(bolt.bolt_id)
+	bolts_qualified = []
 	
+	# get enemies 			
 	game_settings["enemies_mode"] = true # debug
-	
-	# za vsako prazno pozicijo dodam enemy bolt_id 			
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
+		# za vsako prazno pozicijo dodam AI bolt_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_player_ids.size()
 		for empty_position in empty_positions_count:
-			activated_player_ids.append(Pro.Players.ENEMY) # da prepoznam v spawn funkciji .... trik pač
+			# dobim štatni id bolta in 
+			var new_player_index: int = activated_player_ids.size()
+			var new_player_id: int = Pro.player_profiles.keys()[new_player_index]
+			Pro.player_profiles[new_player_id]["controller_profile"] = Pro.ai_profile["controller_profile"]
+			Pro.player_profiles[new_player_id]["bolt_scene"] = Pro.ai_profile["bolt_scene"]
+			activated_player_ids.append(new_player_id) # da prepoznam v spawn funkciji .... trik pač
 	
-	printt("ID", activated_player_ids)
+	printt("IDS", activated_player_ids)	
+		
+	# adaptacija količine orožij
+	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+		Pro.default_player_stats["bullet_count"] = 0
+		Pro.default_player_stats["misile_count"] = 0
+		Pro.default_player_stats["mina_count"] = 0
+		Pro.default_player_stats["shocker_count"] = 0
+	if game_settings["full_equip_mode"]:
+		Pro.default_player_stats["bullet_count"] = 100
+		Pro.default_player_stats["misile_count"] = 100
+		Pro.default_player_stats["mina_count"] = 100
+		Pro.default_player_stats["shocker_count"] = 100	
+
+	# spawn bolts on positions (po vrsti aktivacije) 
 	var spawned_position_index = 0
 	for bolt_id in activated_player_ids: # so v ranking zaporedju
 		spawn_bolt(bolt_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
-		# ko so spoawnani vsi bolti
-		# intro:
-		if spawned_position_index < activated_player_ids.size():
-			spawned_position_index += 1
-		if spawned_position_index == activated_player_ids.size():
-			game_intro()
+		spawned_position_index += 1
+	
+	game_intro()
 	
 	
 func game_intro():
 	
+	# pokažem sceno
 	var fade_time: float = 1
 	var setup_delay: float = 1 # delay, da se kamera naštima
-	
 	var fade_tween = get_tree().create_tween()
 	fade_tween.tween_property(get_parent(), "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
 	yield(fade_tween, "finished")
 	
 	yield(get_tree().create_timer(Set.get_it_time),"timeout")
 	
+	# bolts drive-in
 	var drive_in_time: float = 2
 	for bolt in bolts_in_game:
 		bolt.drive_in(drive_in_time)
+		
 	yield(get_tree().create_timer(Set.get_it_time),"timeout")
+
+	# start countdown	
+	Ref.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
+	yield(Ref.current_level.start_lights, "countdown_finished")		
 	
 	start_game()
 
 
 func start_game():
 	
-	# start countdown	
-	Ref.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
-	yield(Ref.current_level.start_lights, "countdown_finished")	
-	
 	# start
 	for bolt in bolts_in_game:
-	#		if not bolt.is_in_group(Ref.group_enemies):
-			bolt.bolt_active = true
+		bolt.bolt_active = true
+	
 	Ref.sound_manager.play_music()
 	Ref.hud.on_game_start()
 	
+	# random pickables spawn
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		spawn_pickable() # začetek random spawnanja
-	
+		start_spawning_pickables() 
+
 	game_on = true
 	
 	# fast start
@@ -212,7 +230,6 @@ func level_finished(level_goal_reached: bool):
 	yield(get_tree().create_timer(Set.get_it_time), "timeout")
 	
 	if level_goal_reached:
-		print("Level SUCCES")
 		# ranking ob koncu levela
 		var bolts_ranked_on_level_finished: Array = []
 		# najprej dodam bolts finished, ki je že pravilno rangiran 
@@ -222,7 +239,7 @@ func level_finished(level_goal_reached: bool):
 			if not bolts_finished.has(bolt):
 				bolts_ranked_on_level_finished.append(bolt)
 				if bolt.is_in_group(Ref.group_enemies):	
-					# enemy se vedno uvrsti in dobi nekaj časa glede na zadnjega v cilju
+					# AI se vedno uvrsti in dobi nekaj časa glede na zadnjega v cilju
 					var worst_time_among_finished: float = bolts_finished[bolts_finished.size() - 1].bolt_stats["level_time"]
 					bolt.bolt_stats["level_time"] = worst_time_among_finished + worst_time_among_finished / 5
 					bolts_finished.append(bolt)
@@ -231,8 +248,7 @@ func level_finished(level_goal_reached: bool):
 					if game_settings["easy_mode"]:
 						bolts_finished.append(bolt)
 		
-		# vsi čez finiš line so kvalificirani v naslednji level
-		bolts_qualified = bolts_finished
+
 		
 		# je level zadnji?
 		if current_level_index < (Set.current_game_levels.size() - 1):
@@ -241,18 +257,16 @@ func level_finished(level_goal_reached: bool):
 			game_over_ui.open_gameover(bolts_finished, bolts_in_game)
 			
 	else:
-		print("Level FAIL")
 		game_over_ui.open_gameover(bolts_finished, bolts_in_game)
-		
-	#		var fade_time = 1
-	#		var fade_in_tween = get_tree().create_tween()
-	#		fade_in_tween.tween_property(get_parent(), "modulate", Color.black, fade_time)	
-	#		yield(fade_in_tween, "finished")	
+		#		var fade_time = 1
+		#		var fade_in_tween = get_tree().create_tween()
+		#		fade_in_tween.tween_property(get_parent(), "modulate", Color.black, fade_time)	
+		#		yield(fade_in_tween, "finished")	
 	
 	
 	for bolt in bolts_in_game: # zazih
 		# player se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
-		# enemy se deaktivira, ko gre čez cilj
+		# AI se deaktivira, ko gre čez cilj
 		if bolt.bolt_active: # zazih
 			bolt.bolt_active = false
 		bolt.set_physics_process(false)
@@ -265,7 +279,7 @@ func level_finished(level_goal_reached: bool):
 	
 	# best lap stats reset
 	# looping sounds stop
-	# navigacija enemyja
+	# navigacija AI
 	# kvefri elementov, ki so v areni
 	
 	
@@ -273,13 +287,10 @@ func set_next_level():
 
 	current_level_index += 1
 	
-	# manage bolts
-	for bolt in bolts_in_game:
-		# odstrani nekvalificirane bolte iz aktiviranih
-		if not bolts_qualified.has(bolt):
-			activated_player_ids.erase(bolt.bolt_id)
-	#		bolt.queue_free() # aktivirane respawnam 
-	printt("activated_player_ids", activated_player_ids)		
+	# predam vse v cilju med kvalificirani v naslednji level
+	bolts_qualified = bolts_finished
+	bolts_finished = []	
+	
 	# unmute sfx 
 	if not Ref.sound_manager.sfx_set_to_mute:
 		var bus_index: int = AudioServer.get_bus_index("GameSfx")
@@ -291,10 +302,9 @@ func set_next_level():
 		child.queue_free()
 
 	# reset level values
-	leading_player = null # trenutno vodilni igralec (rabim za camera target in pull target)
-	bolts_finished = []
+	leading_human_player = null # trenutno vodilni igralec (rabim za camera target in pull target)
 	
-	set_game()
+	call_deferred("set_game")
 
 	
 # RACING ---------------------------------------------------------------------------------------------
@@ -334,11 +344,12 @@ func sort_trackers_by_offset(first_bolt_tracker, second_bolt_tracker): # ascendi
 	
 
 func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
-#	printt ("current_pull_positions",current_pull_positions.size())
 	# na koncu izbrana pull pozicija:
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
 	# - se ne pokriva z drugim plejerjem	
+	
+	#	printt ("current_pull_positions",current_pull_positions.size())
 	
 	if game_on:
 		
@@ -346,8 +357,8 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 		var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja  
 		var pull_position_distance_from_leader_correction: float = bolt_to_pull.bolt_sprite.get_rect().size.y * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
 	
-		var vector_to_leading_player: Vector2 = leading_player.global_position - bolt_to_pull.global_position
-		var vector_to_pull_position: Vector2 = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
+		var vector_to_leading_human_player: Vector2 = leading_human_player.global_position - bolt_to_pull.global_position
+		var vector_to_pull_position: Vector2 = vector_to_leading_human_player - vector_to_leading_human_player.normalized() * pull_position_distance_from_leader
 		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
 		
 		# implementacija omejitev, da ni na steni ali elementu ali drugemu plejerju
@@ -364,7 +375,7 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 				# preverim, če je bližja od trenutno opredeljene ... itak da je 
 				if cell_position.distance_to(bolt_pull_position) < navigation_position_as_pull_position.distance_to(bolt_pull_position):
 					# preverim, da je dovolj stran od vodilnega
-					if cell_position.distance_to(leading_player.global_position) > pull_position_distance_from_leader:
+					if cell_position.distance_to(leading_human_player.global_position) > pull_position_distance_from_leader:
 						# preverim, da pozicija ni že zasedena
 						# če poza ni zasedena ga dodaj med zasedene
 						if not current_pull_positions.has(cell_position):
@@ -372,7 +383,7 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 						else: # če je poza zasedena dobim njen in dex med zasedenimi dodam korekcijo na zahtevani razdalji od vodilnega
 							var pull_pos_index: int = current_pull_positions.find(cell_position)
 							var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index * pull_position_distance_from_leader_correction
-							if cell_position.distance_to(leading_player.global_position) > corrected_pull_position:
+							if cell_position.distance_to(leading_human_player.global_position) > corrected_pull_position:
 								navigation_position_as_pull_position = cell_position
 
 		current_pull_positions.append(navigation_position_as_pull_position)
@@ -433,58 +444,22 @@ func spawn_level():
 		Ref.current_level.free()
 	else: # če je samo level marker
 		level_z_index = Ref.game_arena.level_placeholder.z_index
-	#		level_z_index = Ref.node_creation_parent.get_node("LevelPosition").z_index
 		
 	# spawn level
 	var NewLevel: PackedScene = ResourceLoader.load(level_to_load_path)
 	var new_level = NewLevel.instance()
 	new_level.z_index = level_z_index
 	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
-#	printt("level_to_load_path", level_to_load_path, level_settings, Ref.node_creation_parent)
 	Ref.game_arena.add_child(new_level)	
 	
 	
 func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
-	var NewBolt: PackedScene = Pro.player_profiles[spawned_bolt_id]["player_scene"]
-	var spawned_bolt_stats: Dictionary # za prenos v spawnanega
+	var NewBoltInstance: PackedScene = Pro.player_profiles[spawned_bolt_id]["bolt_scene"]
 	
-	# ni prvi level
-	if current_level_index > 0:
-		if not bolts_qualified.empty(): # najprej se spawnajo kvalificirani
-			for bolt in bolts_qualified:
-				if bolt.bolt_id == spawned_bolt_id:
-					spawned_bolt_stats = bolt.bolt_stats
-					bolts_qualified.pop_front()
-					break
-#			spawned_bolt_stats = bolts_qualified[0].bolt_stats
-#			bolts_qualified.pop_front()
-		else: # potem pa še enemy spawn na prazne pozicije
-			spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
-	else: # prvi level
-		spawned_bolt_stats = Pro.default_bolt_stats.duplicate()	
-		
-	# bolt stats setup
-	#	game_settings["full_equip_mode"] = true
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		spawned_bolt_stats["bullet_count"] = 0
-		spawned_bolt_stats["misile_count"] = 0
-		spawned_bolt_stats["mina_count"] = 0
-		spawned_bolt_stats["shocker_count"] = 0
-	if game_settings["full_equip_mode"]:
-		spawned_bolt_stats["bullet_count"] = 100
-		spawned_bolt_stats["misile_count"] = 100
-		spawned_bolt_stats["mina_count"] = 100
-		spawned_bolt_stats["shocker_count"] = 100		
-	
-	var new_bolt = NewBolt.instance()
+	var new_bolt = NewBoltInstance.instance()
 	new_bolt.bolt_id = spawned_bolt_id
-	#	var current_player_profile: Dictionary = Pro.player_profiles[spawned_bolt_id]
-	#	new_bolt.player_name = current_player_profile["player_name"]
-	#	new_bolt.bolt_color = current_player_profile["player_color"]
-	#	new_bolt.bolt_sprite.modulate = current_player_profile["player_color"]
-	new_bolt.bolt_stats = spawned_bolt_stats
-	new_bolt.modulate.a = 0 # intro
+	new_bolt.modulate.a = 0 # za intro
 	new_bolt.rotation_degrees = Ref.current_level.race_start_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 	Ref.node_creation_parent.add_child(new_bolt)
@@ -493,33 +468,27 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 		Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
 	
 	# signali
-#	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_changed")
 	if new_bolt.is_in_group(Ref.group_enemies):
 		new_bolt.navigation_cells = navigation_area
 	if new_bolt.is_in_group(Ref.group_players):
-#		new_bolt.connect("stat_changed", Ref.hud, "_on_stat_changed") # statistika med boltom in hudom
 		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
 	
 	emit_signal("new_bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
 	
 
 
-func spawn_pickable(): # OPT ime funkcije je duplikat
+func start_spawning_pickables():
 	
 	if available_pickable_positions.empty():
 		return
 	
-	if pickables_in_game.size() <= Ref.game_manager.game_settings["pickables_count_limit"] - 1:
-		# žrebanje tipa
-		var pickables_for_selection: Array = []
-		for pickable in Pro.pickable_profiles:
-			if Pro.pickable_profiles[pickable]["for_random_selection"]:
-				pickables_for_selection.append(pickable)
+	if pickables_in_game.size() <= 20:
+#	if pickables_in_game.size() <= Ref.game_manager.game_settings["pickables_count_limit"] - 1: # _temp
 				
-		# _temp žrebanje
-		var random_pickable_key: String = Met.get_random_member(pickables_for_selection)
+		# žrebanje tipa
+		var random_pickable_key = Met.get_random_member(Pro.pickable_profiles.keys())
 		var random_cell_position: Vector2 = Met.get_random_member(navigation_positions)
-		Ref.current_level.spawn_pickable(random_cell_position, random_pickable_key)
+		Ref.current_level.spawn_pickable(random_cell_position, "random_pickable_key", random_pickable_key)
 		
 		# odstranim celico iz arraya tistih na voljo
 		var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
@@ -528,7 +497,7 @@ func spawn_pickable(): # OPT ime funkcije je duplikat
 	# random timer reštart
 	var random_pickable_spawn_time: int = Met.get_random_member([1,2,3])
 	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout")
-	spawn_pickable()
+	start_spawning_pickables()
 
 	
 # PRIVAT ----------------------------------------------------------------------------------------------------
@@ -536,7 +505,7 @@ func spawn_pickable(): # OPT ime funkcije je duplikat
 
 func _on_level_is_set(tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
 	
-	# navigacija za enemy AI
+	# navigacija za AI
 	navigation_area = tilemap_navigation_cells
 	navigation_positions = tilemap_navigation_cells_positions
 	
@@ -562,9 +531,9 @@ func _on_body_exited_screen(body: Node) -> void:
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 		if body.is_in_group(Ref.group_players) and body.bolt_active:
 			var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
-#			var leader_laps_count: int = leading_player.bolt_stats["laps_count"]
+#			var leader_laps_count: int = leading_human_player.bolt_stats["laps_count"]
 #			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leader_laps_count)
-			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leading_player)
+			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, leading_human_player)
 	
 	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
 			body.call_deferred("set_physics_process", false)

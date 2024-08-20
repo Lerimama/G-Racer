@@ -1,8 +1,4 @@
 extends Bolt
-class_name Enemy
-
-
-#signal path_changed (path)
 
 
 enum AiModes {RACING, FOLLOWING, FIGHTING} # RACING ... kadar šiba proti cilju, FOLLOWING ... kadar sledi gibajoči se tarči, FIGHTING ... kadar želi tarčo zadeti
@@ -21,31 +17,24 @@ onready var detect_left: Area2D = $DetectArea/DetectLeft
 onready var detect_right: Area2D = $DetectArea/DetectRight
 onready var detect_front: Area2D = $DetectArea/DetectFront
 onready var detect_back: Area2D = $DetectArea/DetectBack
-# enemy profil
-onready var racing_engine_power = Pro.enemy_profile["racing_engine_power"]
-onready var idle_engine_power = Pro.enemy_profile["idle_engine_power"]
+
+# ai profil
+onready var racing_engine_power = Pro.ai_profile["racing_engine_power"]
+onready var idle_engine_power = Pro.ai_profile["idle_engine_power"]
 
 
 func _ready() -> void:
 	
 	add_to_group(Ref.group_enemies)
 	 
-	# player setup
-#	player_name = player_profile["player_name"]
-#	bolt_color = player_profile["player_color"] # bolt se obarva ... 
-#	bolt_sprite.modulate = bolt_color
-	
 	randomize()
 	
 			
 func _physics_process(delta: float) -> void:
 	
-#	printt("FPS", Performance.get_monitor(Performance.TIME_FPS))# _temp
 	if Set.kamera_frcera:
 		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
 
-	
-#	printt("Enemy", self)	
 	if not bolt_active:
 		return
 
@@ -69,21 +58,6 @@ func _physics_process(delta: float) -> void:
 
 	vision(delta)
 
-
-func shoot():
-#	selected_feature_index = 1
-	match selected_feature_index:
-		0: # no feature
-			return
-		1: # bullet
-			shooting("bullet")
-		2: # misile
-			shooting("misile")
-		3: # mina
-			shooting("mina")
-		4: # shocker 
-			shooting("shocker")
-			
 			
 func vision(delta: float):
 
@@ -99,9 +73,8 @@ func vision(delta: float):
 		var current_collider = vision_ray_front.get_collider()
 		var distance_to_collider: float = global_position.distance_to(current_collider.global_position)
 		if current_collider.is_in_group(Ref.group_players) and distance_to_collider > ai_shoot_distance:
-			selected_feature_index = 1
 			printt("aim_at", current_collider)
-			shoot()
+			shoot(1)
 		velocity *= ai_brake_factor
 		#			print("bremzam", current_collider)
 		

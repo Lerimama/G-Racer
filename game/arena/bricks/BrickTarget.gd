@@ -4,11 +4,11 @@ extends StaticBody2D
 var hit_count: int = 0
 var def_particle_speed = 5
 
-var key_as_name: String # poda spawner, uravnava vse ostalo
+var element_key: int # poda spawner, uravnava vse ostalo
 
-onready var brick_color: Color = Pro.arena_element_profiles[key_as_name]["color"]
-onready var brick_altitude: float = Pro.arena_element_profiles[key_as_name]["altitude"]
-onready var reward_points: float = Pro.arena_element_profiles[key_as_name]["value"]
+onready var brick_color: Color = Pro.level_elements_profiles[element_key]["color"]
+onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
+onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
 
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
@@ -28,15 +28,15 @@ func on_hit(hit_by: Node):
 		hit_count += 1
 		match hit_count:
 			1:
-				sprite.modulate = Set.color_brick_target_hit_1
+				sprite.modulate = Ref.color_brick_target_hit_1
 			2:
-				sprite.modulate = Set.color_brick_target_hit_2
+				sprite.modulate = Ref.color_brick_target_hit_2
 			3:
 				animation_player.play("outro")
-				modulate = Set.color_brick_target_hit_3
+				modulate = Ref.color_brick_target_hit_3
 				hit_by.spawned_by.update_bolt_points(reward_points)
 	elif hit_by is Misile:
-		modulate = Set.color_red
+		modulate = Ref.color_red
 		animation_player.play("outro")
 		hit_by.spawned_by.update_bolt_points(reward_points)
 

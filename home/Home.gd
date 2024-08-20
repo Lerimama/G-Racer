@@ -61,27 +61,27 @@ func _process(delta: float) -> void:
 	if $UI/Players/ItemList/thumb/PlayersBtn.has_focus():
 		$UI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Set.color_blue
+		$UI/Players/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Ref.color_blue
 	if $UI/Players/ItemList/thumb2/PlayersBtn.has_focus():
 		$UI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Set.color_red
+		$UI/Players/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Ref.color_red
 	if $UI/Players/ItemList/thumb3/PlayersBtn.has_focus():
 		$UI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Set.color_yellow
+		$UI/Players/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Ref.color_yellow
 	if $UI/Players/ItemList/thumb4/PlayersBtn.has_focus():
 		$UI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Set.color_green	
+		$UI/Players/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Ref.color_green	
 	if $UI/Players/ItemList/thumb5/EnemiesBtn.has_focus():
 		$UI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Set.color_gray0
+		$UI/Players/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Ref.color_gray0
 	if $UI/Players/ItemList/thumb6/EasyBtn.has_focus():
 		$UI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Set.color_gray0
+		$UI/Players/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Ref.color_gray0
 		
 	
 func _on_AnimationPlayer_animation_finished(animation) -> void:
@@ -182,7 +182,7 @@ func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Set.color_gray0
+			btn_label_node.modulate = Ref.color_gray0
 func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P2
 	var btn_label_node: Control = $UI/Players/ItemList/thumb2/PlayersBtn/Label
@@ -192,7 +192,7 @@ func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Set.color_gray0
+			btn_label_node.modulate = Ref.color_gray0
 func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P3
 	var btn_label_node: Control = $UI/Players/ItemList/thumb3/PlayersBtn/Label
@@ -202,7 +202,7 @@ func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Set.color_gray0
+			btn_label_node.modulate = Ref.color_gray0
 func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 	var bolt_to_manage: int = Pro.Players.P4
 	var btn_label_node: Control = $UI/Players/ItemList/thumb4/PlayersBtn/Label
@@ -212,7 +212,7 @@ func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Set.color_gray0
+			btn_label_node.modulate = Ref.color_gray0
 func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $UI/Players/ItemList/thumb5/EnemiesBtn/Label
 	if button_pressed:
@@ -220,7 +220,7 @@ func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 		btn_label_node.modulate = Color.white
 	else:
 		enemies_mode = false
-		btn_label_node.modulate = Set.color_gray0
+		btn_label_node.modulate = Ref.color_gray0
 func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $UI/Players/ItemList/thumb6/EasyBtn/Label
 	if button_pressed:
@@ -228,7 +228,7 @@ func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
 		btn_label_node.modulate = Color.white
 	else:
 		easy_mode = false
-		btn_label_node.modulate = Set.color_gray0
+		btn_label_node.modulate = Ref.color_gray0
 func _on_PlayBtn_pressed() -> void:
 	
 	if players_activated.empty():

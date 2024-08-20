@@ -1,13 +1,8 @@
 extends Bolt
-class_name Player
 
 
-#var player_name: String # za opredelitev statistike
-var controller_profile: Dictionary
-
-#onready var player_profile: Dictionary = Pro.player_profiles[bolt_id]
 onready var controller_profiles: Dictionary = Pro.controller_profiles
-onready var controller_profile_name: String = player_profile["controller_profile"]
+onready var controller_profile_name: int = player_profile["controller_profile"]
 onready var controller_actions: Dictionary = controller_profiles[controller_profile_name]
 
 onready var fwd_action: String = controller_actions["fwd_action"]
@@ -15,7 +10,7 @@ onready var rev_action: String = controller_actions["rev_action"]
 onready var left_action: String = controller_actions["left_action"]
 onready var right_action: String = controller_actions["right_action"]
 onready var shoot_action: String = controller_actions["shoot_action"]
-onready var feature_action: String = controller_actions["feature_action"]
+onready var selector_action: String = controller_actions["selector_action"]
 onready var slow_start_engine_power: float = fwd_engine_power # poveča se samo če zgrešiš start
 
 
@@ -53,28 +48,23 @@ func _input(event: InputEvent) -> void:
 	# rotation ... rotation_angle se računa na inputu (turn_angle)
 	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
-	# feature select
+	# weapon select
 	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if Input.is_action_pressed(feature_action):# and Ref.game_manager.game_settings["full_equip_mode"]:
-			select_feature()
+		if Input.is_action_pressed(selector_action):
+			bolt_hud.selected_active_weapon_index += 1
 	else:
-		if Input.is_action_just_pressed(feature_action):
-			select_feature()
+		if Input.is_action_just_pressed(selector_action):
+			bolt_hud.selected_active_weapon_index += 1
 	
-	# select feature and shoot
+	# select weapon and shoot
 	if Input.is_action_just_pressed(shoot_action):
-		shoot()
+		shoot(bolt_hud.selected_weapon_index)
 		
 	
 func _ready() -> void:
 	
 	add_to_group(Ref.group_players)
 	
-#	# player setup
-#	player_name = player_profile["player_name"]
-#	bolt_color = player_profile["player_color"]
-#	bolt_sprite.modulate = bolt_color
-
 
 func _physics_process(delta: float) -> void:
 
@@ -94,54 +84,13 @@ func _physics_process(delta: float) -> void:
 			manage_gas(rev_gas_usage)
 
 
-func shoot():
-	
-	selected_feature_index = 1 # debug
-		
-	match selected_feature_index:
-		0: # no feature
-			return
-		1: # bullet
-			shooting("bullet")
-		2: # misile
-			shooting("misile")
-		3: # mina
-			shooting("mina")
-		4: # shocker 
-			shooting("shocker")
-
-
-func select_feature():
-	
-	# timer setup
-	var selector_timer: Timer = $BoltHud/VBoxContainer/FeatureSelector/SelectorTimer
-	var selector_visibily_time: float = 1
-	selector_timer.wait_time = selector_visibily_time
-	selector_timer.start()
-
-	if not feat_selector.visible:
-		feat_selector.show() # prižgem z ikono trenutnega
-		
-	selected_feature_index += 1
-	if selected_feature_index > available_features.size(): # reset, če je prevelik
-		selected_feature_index = 1 # 0 je prazen feature
-		
-	# vidnost ikon
-	for feature in available_features:
-		feature.hide() # najprej vse skrijem
-		if feature == available_features[selected_feature_index - 1]: # potem pokažem izbrano .. - 1, ker je 0 prazen feature
-			
-			feature.show()		
-
-
 func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D):
 	
 	if not bolt_active:
 		return
 		
-	bolt_collision.disabled = true
-	shield_collision.disabled = true
-	
+	bolt_collision.set_deferred("disabled", true)
+	shield_collision.set_deferred("disabled", true)	
 	
 	# reštartam trail
 	if bolt_trail_active:
@@ -157,7 +106,7 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D
 	# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
 	if bolt_stats["laps_count"] < current_leader.bolt_stats["laps_count"]:
 		var laps_finished_difference: int = current_leader.bolt_stats["laps_count"] - bolt_stats["laps_count"]
-		change_stat("laps_count", laps_finished_difference)
+		update_stat("laps_count", laps_finished_difference)
 	
 	# če preskoči checkpoint, ga dodaj, če ga leader ima
 	var all_checked_bolts: Array = Ref.game_manager.bolts_checked
@@ -169,9 +118,3 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D
 	#		Ref.game_manager.current_pull_positions.erase(pull_position)
 
 	manage_gas(Ref.game_manager.game_settings["pull_gas_penalty"])
-
-
-func _on_SelectorTimer_timeout() -> void:
-	
-	feat_selector.hide()
-

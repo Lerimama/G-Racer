@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 #			minutes.text = "%02d" % time_minutes	
 #
 #		if time_minutes < 1:
-#			clock.modulate = Set.color_red
+#			clock.modulate = Ref.color_red
 #		if time_minutes < 0:
 #			game_is_on = false
 #			clock.visible = false

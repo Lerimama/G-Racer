@@ -1,10 +1,10 @@
 [gd_scene load_steps=14 format=2]
 
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=1]
+[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
 [ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=3]
-[ext_resource path="res://game/arena/bricks/BrickTarget.gd" type="Script" id=4]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=3]
+[ext_resource path="res://assets/sound/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=4]
+[ext_resource path="res://game/arena/bricks/BrickTarget.gd" type="Script" id=5]
 
 [sub_resource type="PhysicsMaterial" id=14]
 
@@ -108,12 +108,12 @@ radial_accel = 30.0
 color_ramp = SubResource( 9 )
 
 [sub_resource type="AudioStreamRandomPitch" id=25]
-audio_stream = ExtResource( 3 )
+audio_stream = ExtResource( 1 )
 random_pitch = 1.05
 
 [node name="TargetBrick" type="StaticBody2D"]
 physics_material_override = SubResource( 14 )
-script = ExtResource( 4 )
+script = ExtResource( 5 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -122,7 +122,7 @@ __meta__ = {
 casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 1 )
+texture = ExtResource( 3 )
 region_enabled = true
 region_rect = Rect2( 32, 8, 8, 8 )
 
@@ -146,7 +146,7 @@ process_material = SubResource( 23 )
 [node name="Sounds" type="Node" parent="."]
 
 [node name="HitBulletBrick" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 5 )
+stream = ExtResource( 4 )
 volume_db = -7.0
 bus = "GameSfx"
 

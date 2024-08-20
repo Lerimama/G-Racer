@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://_materiali/_zaloga_shaderjev/originali_uporabljanega/bolt_shield_texture.gdshader" type="Shader" id=1]
-[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=2]
-[ext_resource path="res://game/bolt/BoltEnemy.gd" type="Script" id=3]
+[ext_resource path="res://game/bolt/BoltAI.gd" type="Script" id=2]
+[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=3]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -16,8 +16,8 @@ shader_param/color_to_cut = Color( 1, 1, 1, 1 )
 shader_param/color_intensity = 1.0
 shader_param/texture_size = Vector2( 32, 32 )
 
-[node name="EnemyRacing" instance=ExtResource( 2 )]
-script = ExtResource( 3 )
+[node name="EnemyRacing" instance=ExtResource( 3 )]
+script = ExtResource( 2 )
 
 [node name="DetectArea" type="Node2D" parent="." index="7"]
 scale = Vector2( 3, 3 )

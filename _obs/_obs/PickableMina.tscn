@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/sound/sfx/weapon_reload___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=1]
 [ext_resource path="res://game/arena/pickables/Pickable.tscn" type="PackedScene" id=2]
-[ext_resource path="res://game/arena/pickables/icon_pickable_bullet.tres" type="Texture" id=3]
+[ext_resource path="res://assets/icons/icon_pickable_bullet.tres" type="Texture" id=3]
 
 [node name="PickableMina" instance=ExtResource( 2 )]
 

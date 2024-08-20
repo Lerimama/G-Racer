@@ -111,9 +111,9 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	new_floating_tag.tag_type = new_floating_tag.TagTypes.TIME
 	Ref.node_creation_parent.add_child(new_floating_tag) # OPT
 	if best_lap == true:
-		new_floating_tag.modulate = Set.color_green
+		new_floating_tag.modulate = Ref.color_green
 	else:
-		new_floating_tag.modulate = Set.color_red
+		new_floating_tag.modulate = Ref.color_red
 	
 	
 	
@@ -122,9 +122,9 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	
 func _set_bolt_statbox(bolt: KinematicBody2D):
 	
-	if bolt.bolt_id == Pro.Players.ENEMY: # če je enemy ne rabim hud statsov ... zaenkrat
+	if bolt.is_in_group(Ref.group_enemies): # če je AI ne rabim hud statsov ... zaenkrat
 		return
-	
+		
 	var current_statbox: Control
 	
 	match bolt.bolt_id:
@@ -234,6 +234,4 @@ func _on_stats_changed(bolt_id: int, bolt_stats: Dictionary):
 	#	if level_finished_time < record_level_time or record_level_time == 0:
 	#		record_level_time = level_finished_time 
 	#		var game_record_time_on_clock: String = "Record: " + Met.get_clock_time(record_level_time)
-	#		statbox_to_change.stat_level_time.modulate = Set.color_green
-
-
+	#		statbox_to_change.stat_level_time.modulate = Ref.color_green

@@ -84,18 +84,23 @@ func set_level_floor():
 		var cell_local_position = tilemap_floor.map_to_world(cell)
 		var cell_global_position = tilemap_floor.to_global(cell_local_position)	
 		
-		var element_name_as_key: String
-		
+		var area_key: int = -1
 		match cell_index:
-			1: # area nitro
-				element_name_as_key = "AREA_NITRO"
-			2: # area gravel
-				element_name_as_key = "AREA_GRAVEL"
+			1:
+				area_key = Pro.LevelElements.AREA_NITRO
+			2:
+				area_key = Pro.LevelElements.AREA_GRAVEL
 				non_navigation_cell_positions.append(cell_global_position)
-			3: # area hole
-				element_name_as_key = "AREA_HOLE"
+			3:
+				area_key = Pro.LevelElements.AREA_HOLE
 				non_navigation_cell_positions.append(cell_global_position)
-		
+
+		if area_key > -1: # preskok celic, ki imajo druge id-je
+			var scene_to_spawn: PackedScene = Pro.level_elements_profiles[area_key]["element_scene"]	
+			var new_area_scene = scene_to_spawn.instance()
+			new_area_scene.position = cell_global_position + single_tile_offset
+			new_area_scene.area_key = area_key
+			add_child(new_area_scene)
 	
 
 func set_elements():
@@ -106,53 +111,42 @@ func set_elements():
 	for cell in tilemap_elements.get_used_cells():
 		
 		var cell_index = tilemap_elements.get_cellv(cell)
-		
 		var cell_local_position = tilemap_elements.map_to_world(cell)
 		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
 		
 		var spawn_tile_offset: Vector2
-		var element_name_as_key: String
+		var element_key: int = -1
 		match cell_index:
 			6: # goal pillar
-				element_name_as_key = "GOAL"
+				element_key = Pro.LevelElements.GOAL_PILLAR
 				spawn_tile_offset = Vector2(36,36)
-				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
-			# ------------------------------------------------------------------------------------------------------
 			7: # brick ghost
-				element_name_as_key = "BRICK_GHOST"
+				element_key = Pro.LevelElements.BRICK_GHOST
 				spawn_tile_offset = single_tile_offset
-				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			8: # brick bouncer
-				element_name_as_key = "BRICK_BOUNCER"
+				element_key = Pro.LevelElements.BRICK_BOUNCER
 				spawn_tile_offset = single_tile_offset
-				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			9: # brick magnet
-				element_name_as_key = "BRICK_MAGNET"
+				element_key = Pro.LevelElements.BRICK_MAGNET
 				spawn_tile_offset = single_tile_offset
-				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			10: # brick target
-				element_name_as_key = "BRICK_TARGET"
+				element_key = Pro.LevelElements.BRICK_TARGET
 				spawn_tile_offset = single_tile_offset
-				tilemap_elements.set_cellv(cell, -1)
 				non_navigation_cell_positions.append(cell_global_position)
 			11: # brick light
-				element_name_as_key = "BRICK_LIGHT"
+				element_key = Pro.LevelElements.BRICK_LIGHT
 				spawn_tile_offset = single_tile_offset
-				tilemap_elements.set_cellv(cell, -1)
 
-
-		if element_name_as_key: # preskok celic, ki imajo druge id-je
-			print("ELEMENT", element_name_as_key)
-			
-			var scene_to_spawn: PackedScene = Pro.arena_element_profiles[element_name_as_key]["element_scene"]	
-			
+		if element_key > -1: # preskok celic, ki imajo druge id-je
+			tilemap_elements.set_cellv(cell, -1)
+			var scene_to_spawn: PackedScene = Pro.level_elements_profiles[element_key]["element_scene"]	
 			var new_element_scene = scene_to_spawn.instance()
 			new_element_scene.position = cell_global_position + spawn_tile_offset
-			new_element_scene.key_as_name = element_name_as_key
+			new_element_scene.element_key = element_key
 			add_child(new_element_scene)
 			
 	
@@ -167,47 +161,47 @@ func set_pickables():
 		var cell_local_position = tilemap_elements.map_to_world(cell)
 		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
 		
-		var pickable_name_as_key: String
+		var pickable_key: int = -1
 		match cell_index:
 			14:
-				pickable_name_as_key = "BULLET"
+				pickable_key = Pro.Pickables.PICKABLE_BULLET
 			15:
-				pickable_name_as_key = "MISILE"
+				pickable_key = Pro.Pickables.PICKABLE_MISILE
 			35:
-				pickable_name_as_key = "MINA"
+				pickable_key = Pro.Pickables.PICKABLE_MINA
 			16:
-				pickable_name_as_key = "SHOCKER"
+				pickable_key = Pro.Pickables.PICKABLE_SHOCKER
 			17:
-				pickable_name_as_key = "SHIELD"
+				pickable_key = Pro.Pickables.PICKABLE_SHIELD
 			18:
-				pickable_name_as_key = "ENERGY"
+				pickable_key = Pro.Pickables.PICKABLE_ENERGY
 			19:
-				pickable_name_as_key = "LIFE"
+				pickable_key = Pro.Pickables.PICKABLE_LIFE
 			20:
-				pickable_name_as_key = "NITRO"
+				pickable_key = Pro.Pickables.PICKABLE_NITRO
 			21:
-				pickable_name_as_key = "TRACKING"
+				pickable_key = Pro.Pickables.PICKABLE_TRACKING
 			27:
-				pickable_name_as_key = "GAS"
+				pickable_key = Pro.Pickables.PICKABLE_GAS
 			30:
-				pickable_name_as_key = "POINTS"
+				pickable_key = Pro.Pickables.PICKABLE_POINTS
 			22:
-				pickable_name_as_key = "RANDOM"
+				pickable_key = Pro.Pickables.PICKABLE_RANDOM
 		
-		if pickable_name_as_key: # preskok celic, ki imajo druge id-je
+		if pickable_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_elements.set_cellv(cell, -1)
-			spawn_pickable(cell_global_position, pickable_name_as_key)
+			spawn_pickable(cell_global_position, "pickable_name_as_key", pickable_key)
 		
 		
-func spawn_pickable(spawn_global_position: Vector2, pickable_name: String):
+func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
 	
 		var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
 		
 		var new_pickable_scene = scene_to_spawn.instance() #
 		new_pickable_scene.position = spawn_global_position + double_tile_offset
-		new_pickable_scene.pickable_key_as_name = pickable_name
+		new_pickable_scene.pickable_key = pickable_index
 		add_child(new_pickable_scene)
-	
+			
 			
 func set_level_navigation():
 	

@@ -34,7 +34,7 @@ onready var MisileExplosion = preload("res://game/weapons/MisileExplosionParticl
 onready var MisileTrail = preload("res://game/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://game/weapons/MisileDropParticles.tscn")
 
-onready var weapon_profile: Dictionary = Pro.weapon_profiles["misile"]
+onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.Weapons.MISILE]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var max_speed: float = weapon_profile["speed"]

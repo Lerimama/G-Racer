@@ -3,12 +3,12 @@ extends StaticBody2D
 
 var def_particle_speed: float = 6
 
-var key_as_name: String # poda spawner, uravnava vse ostalo
+var element_key: int # poda spawner, uravnava vse ostalo
 
-onready var brick_color: Color = Pro.arena_element_profiles[key_as_name]["color"]
-onready var brick_altitude: float = Pro.arena_element_profiles[key_as_name]["altitude"]
-onready var reward_points: float = Pro.arena_element_profiles[key_as_name]["value"]
-onready var ghost_brake: float = Pro.arena_element_profiles[key_as_name]["parameter"]
+onready var brick_color: Color = Pro.level_elements_profiles[element_key]["color"]
+onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
+onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
+onready var speed_brake_div: float = Pro.level_elements_profiles[element_key]["speed_brake_div"]
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -24,7 +24,7 @@ func _ready() -> void:
 func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Ref.group_bolts):
-		body.velocity /= ghost_brake
+		body.velocity /= speed_brake_div
 		animation_player.play("outro")
 		body.update_bolt_points(reward_points)
 		

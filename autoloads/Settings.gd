@@ -14,76 +14,6 @@ var bolt_explosion_shake
 var bullet_hit_shake
 var misile_hit_shake
 
-# game colors
-var color_gray0 = Color("#535b68") # najsvetlejša
-var color_gray1 = Color("#404954")
-var color_gray2 = Color("#2f3649")
-var color_gray3 = Color("#272d3d")
-var color_gray4 = Color("#1d212d")
-var color_gray5 = Color("#171a23") # najtemnejša
-var color_gray_trans = Color("#00272d3d") # transparentna
-var color_red = Color("#f35b7f")
-var color_green = Color("#5effa9")
-var color_blue = Color("#4b9fff")
-var color_yellow = Color("#fef98b")
-# --- specs
-var color_hud_base = Color("#ffffff")
-
-var color_brick_ghost = Color.white
-var color_brick_magnet_off = Color("#99ffffff")
-var color_brick_magnet_on = Color("#ffffff")
-var color_brick_target = Color.white
-var color_brick_target_hit_1 = Color.red
-var color_brick_target_hit_2 = Color.blue
-var color_brick_target_hit_3 = Color.yellow
-var color_brick_bouncer = Color.white
-var color_brick_light_off = Color.black
-var color_brick_light_on = Color.white
-
-var color_pickable_random = Color.pink 
-var color_pickable_stat = Color.black
-var color_pickable_feature = Color.white
-var color_pickable_weapon = Color.yellow
-
-# iz PA
-
-# groups
-#var group_players = "Players"
-#var group_strays = "Strays"
-#var group_tilemap = "Tilemap" # defender in patterns
-#var group_ghosts = "Ghosts"
-#var group_menu_confirm_btns = "Menu confirm btns"
-#var group_menu_cancel_btns = "Menu cancel btns"
-#const SAVING = "saving"
-# colors
-#var color_blue: Color = Color("#4b9fff")
-#var color_green: Color = Color("#5effa9")
-#var color_red: Color = Color("#f35b7f")
-#var color_yellow: Color = Color("#fef98b")
-#var color_orange: Color = Color("#ff9990")
-#var color_purple: Color = Color("#c774f5")
-
-# tilemap colors
-#var color_wall: Color = Color("#141414") # Color("#232323")
-#var color_edge: Color = Color.black
-#var color_floor: Color = Color("#20ffffff")
-#var color_background: Color = Color.black
-#
-## gui colors
-var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi
-var color_gui_gray: Color = Color("#78ffffff") # siv text s transparenco (ikone ...#838383) ... v kodi samo na btn defocus
-var color_hud_text: Color = color_almost_white_text # za vse, ki modulirajo barvo glede na + ali -
-#
-## pixel colors
-#var color_almost_black_pixel: Color = Color("#141414") 
-#var color_dark_gray_pixel: Color = Color("#232323")#Color("#323232") # start normal
-#var color_white_pixel: Color = Color(1, 1, 1, 1.22)
-#var color_thumb_hover: Color = Color("#232323")
-#var strays_on_screen: Array = [] # za stray position indikatorje
-#
-#var allow_focus_sfx: bool = false # focus sounds
-
-
 
 ## Z index spawnanih elementov ... relativno glede na tistega, ki jih spawna
 #var bolt_z_index = -1
@@ -93,24 +23,14 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 
-var game_enviroment_settings: Dictionary = { 
-	# shadows_direction
-	"shadow_direction": Vector2.DOWN,
-	"shadow_color": Color.black,
-	"shadow_transparency": Color.black,
-	}
 	
 var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
-	# level
-	"area_tracking_value": 1, # 1 = 100%
-	"gravel_drag_div": 25.0, 
-	"hole_drag_div": 5.0,
-	"nitro_drag_div": 500.0,	
+	
 	# time
 	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
 	"game_time_limit": 0, # če je 0 ni omejitve
 	# countdown
-	"start_countdown": false,
+	"start_countdown": true,
 	"gameover_countdown_duration": 5,
 	# race
 	"pull_gas_penalty": -20,

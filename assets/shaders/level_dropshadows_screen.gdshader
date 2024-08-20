@@ -52,7 +52,7 @@ void fragment(){
 		
 		// zamik texture v smeri (preračun texlov v pixle) ... z vsakim korakom se prišteje zamik-na-korak
 		vec2 uvs;
-		if (casting_object_on_floor != true){
+		if (casting_object_on_floor == true){
 			// če je metalec sence debel je senčka brez odmika
 //			uvs = SCREEN_UV + vec2(step_pixel_offset_x / node_size.x, step_pixel_offset_y / node_size.y) * -1.0 * step_count; 
 			uvs = SCREEN_UV + vec2(step_pixel_offset_x / screen_size.x, step_pixel_offset_y / screen_size.y) * -1.0 * step_count; 

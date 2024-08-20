@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://_materiali/_zaloga_shaderjev/originali_uporabljanega/bolt_shield_texture.gdshader" type="Shader" id=1]
-[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=4]
-[ext_resource path="res://game/bolt/BoltPlayer.gd" type="Script" id=5]
+[ext_resource path="res://game/bolt/BoltHuman.gd" type="Script" id=2]
+[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=3]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -16,8 +16,8 @@ shader_param/color_to_cut = Color( 1, 1, 1, 1 )
 shader_param/color_intensity = 1.0
 shader_param/texture_size = Vector2( 32, 32 )
 
-[node name="Player" instance=ExtResource( 4 )]
-script = ExtResource( 5 )
+[node name="Player" instance=ExtResource( 3 )]
+script = ExtResource( 2 )
 
 [node name="Light2D" parent="." index="1"]
 show_behind_parent = true
@@ -28,15 +28,8 @@ shadow_filter = 3
 [node name="LightF" parent="." index="2"]
 modulate = Color( 1, 1, 1, 0.0901961 )
 
-[node name="TiltTimer" type="Timer" parent="." index="7"]
-one_shot = true
-
-[node name="Shield" parent="." index="9"]
+[node name="Shield" parent="." index="6"]
 material = SubResource( 1 )
 
-[node name="VBoxContainer" parent="BoltHud" index="0"]
-custom_constants/separation = 3
-
-[node name="FeatureSelector" parent="BoltHud/VBoxContainer" index="1"]
-margin_top = 4.0
-margin_bottom = 12.0
+[node name="TiltTimer" type="Timer" parent="." index="7"]
+one_shot = true

@@ -1,12 +1,12 @@
 extends StaticBody2D
 
 
-var key_as_name: String = "BRICK_BOUNCER"# poda spawner, uravnava vse ostalo
+var element_key: int # poda spawner, uravnava vse ostalo
 
-onready var brick_color: Color = Pro.arena_element_profiles[key_as_name]["color"]
-onready var brick_altitude: float = Pro.arena_element_profiles[key_as_name]["altitude"]
-onready var reward_points: float = Pro.arena_element_profiles[key_as_name]["value"]
-onready var bounce_strenght: float = Pro.arena_element_profiles[key_as_name]["parameter"]
+onready var brick_color: Color = Pro.level_elements_profiles[element_key]["color"]
+onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
+onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
+onready var bounce_strength: float = Pro.level_elements_profiles[element_key]["bounce_strength"]
 
 onready var sprite: Sprite = $Sprite
 onready var brick_shadow: Sprite = $BrickShadow
@@ -22,7 +22,7 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Ref.group_bolts):
 		body.set_process_input(false)
-		body.bounce_size = bounce_strenght
+		body.bounce_size = bounce_strength
 		sprite.modulate = Color.white
 		# varovalka, da ne obtiči
 		yield(get_tree().create_timer(0.2), "timeout")

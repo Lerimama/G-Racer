@@ -1,7 +1,7 @@
 extends Sprite
 
 
-export var casting_node_name: String  = "CastingNodeName"
+export var casting_node_name: String  = ""
 var casting_node: Node2D
 
 var shadow_color: Color = Color.black
@@ -13,16 +13,16 @@ var shadow_distance: float = 30 # odvisno od metalca sence
 
 func _ready() -> void:
 	
-	shadow_direction = Set.game_enviroment_settings["shadow_direction"]
+	if casting_node_name == "":
+		printt ("No casting node on ...", self)
+	else:
+		casting_node = get_parent().get_node(casting_node_name)
+		texture = casting_node.texture
+		if casting_node.region_enabled: # za atlas teksture
+			region_enabled = true
+			region_rect = casting_node.region_rect
 	
-#	if casting_node_name == "CastingNodeName":
-#		printt ("No casting node on ...", self)
-#	else:
-#		casting_node = get_parent().get_node(casting_node_name)
-#		texture = casting_node.texture
-#		if casting_node.region_enabled: # za atlas teksture
-#			region_enabled = true
-#			region_rect = casting_node.region_rect
+	pass
 	
 	
 func _process(delta: float) -> void:
