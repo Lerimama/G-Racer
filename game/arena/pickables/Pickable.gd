@@ -41,9 +41,9 @@ func _on_Item_body_entered(body: Node) -> void:
 #	if all_sounds.size() > 1:
 #		sound_picked = all_sounds[all_sounds.size() - 1] 
 	
-	if body.has_method("on_item_picked"): # OPT avtomatiziraj
-		if pickable_key == 0 or pickable_key == 1 \
-		or pickable_key == 2 or pickable_key == 3:
+	if body.has_method("on_item_picked"):
+		if pickable_key == Pro.Pickables.PICKABLE_BULLET or pickable_key == Pro.Pickables.PICKABLE_MISILE \
+		or pickable_key == Pro.Pickables.PICKABLE_MINA or pickable_key == Pro.Pickables.PICKABLE_SHOCKER:
 			Ref.sound_manager.play_sfx("pickable_weapon")
 		elif pickable_key == Pro.Pickables.PICKABLE_NITRO:
 			Ref.sound_manager.play_sfx("pickable_nitro")

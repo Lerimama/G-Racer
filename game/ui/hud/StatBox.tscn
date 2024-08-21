@@ -73,7 +73,6 @@ icon_texture = ExtResource( 4 )
 show_icons = true
 
 [node name="StatWins" parent="." instance=ExtResource( 6 )]
-visible = false
 margin_top = 52.0
 margin_right = 733.0
 margin_bottom = 109.0
@@ -82,86 +81,86 @@ icon_texture = ExtResource( 4 )
 show_icons = true
 
 [node name="StatLife" parent="." instance=ExtResource( 6 )]
-margin_top = 52.0
+margin_top = 113.0
 margin_right = 733.0
-margin_bottom = 109.0
+margin_bottom = 170.0
 stat_type = 2
 icon_texture = ExtResource( 3 )
 show_icons = true
 
 [node name="StatBullet" parent="." instance=ExtResource( 6 )]
-margin_top = 113.0
+margin_top = 174.0
 margin_right = 733.0
-margin_bottom = 170.0
+margin_bottom = 231.0
 size_flags_horizontal = 0
 icon_texture = ExtResource( 5 )
 show_name_icon = true
 
 [node name="StatMisile" parent="." instance=ExtResource( 6 )]
-margin_top = 174.0
+margin_top = 235.0
 margin_right = 733.0
-margin_bottom = 231.0
+margin_bottom = 292.0
 size_flags_horizontal = 0
 icon_texture = ExtResource( 8 )
 show_name_icon = true
 
 [node name="StatMina" parent="." instance=ExtResource( 6 )]
-margin_top = 235.0
+margin_top = 296.0
 margin_right = 733.0
-margin_bottom = 292.0
+margin_bottom = 353.0
 size_flags_horizontal = 0
 icon_texture = ExtResource( 9 )
 show_name_icon = true
 
 [node name="StatShocker" parent="." instance=ExtResource( 6 )]
-margin_top = 296.0
+margin_top = 357.0
 margin_right = 733.0
-margin_bottom = 353.0
+margin_bottom = 414.0
 size_flags_horizontal = 0
 icon_texture = ExtResource( 10 )
 show_name_icon = true
 
 [node name="StatGas" parent="." instance=ExtResource( 6 )]
-margin_top = 357.0
-margin_right = 733.0
-margin_bottom = 414.0
-size_flags_horizontal = 0
-label_name = "GAS"
-
-[node name="StatPoints" parent="." instance=ExtResource( 6 )]
 margin_top = 418.0
 margin_right = 733.0
 margin_bottom = 475.0
 size_flags_horizontal = 0
-label_name = "POINTS"
+label_name = "GAS"
 
-[node name="StatRank" parent="." instance=ExtResource( 6 )]
+[node name="StatPoints" parent="." instance=ExtResource( 6 )]
 margin_top = 479.0
 margin_right = 733.0
 margin_bottom = 536.0
 size_flags_horizontal = 0
-label_name = "RANK"
+label_name = "POINTS"
 
-[node name="StatLap" parent="." instance=ExtResource( 6 )]
+[node name="StatRank" parent="." instance=ExtResource( 6 )]
 margin_top = 540.0
 margin_right = 733.0
 margin_bottom = 597.0
 size_flags_horizontal = 0
-label_name = "CURRENT LAP"
+label_name = "RANK"
 
-[node name="StatBestLap" parent="." instance=ExtResource( 6 )]
+[node name="StatLap" parent="." instance=ExtResource( 6 )]
 margin_top = 601.0
 margin_right = 733.0
 margin_bottom = 658.0
+size_flags_horizontal = 0
+label_name = "CURRENT LAP"
+
+[node name="StatBestLap" parent="." instance=ExtResource( 6 )]
+margin_top = 662.0
+margin_right = 733.0
+margin_bottom = 719.0
 size_flags_horizontal = 0
 stat_type = 1
 label_name = "BEST LAP TIME"
 show_time = true
 
 [node name="StatLevelTime" parent="." instance=ExtResource( 6 )]
-margin_top = 662.0
+margin_top = 723.0
 margin_right = 733.0
-margin_bottom = 719.0
+margin_bottom = 780.0
 size_flags_horizontal = 0
 stat_type = 1
 label_name = "RACE TIME"

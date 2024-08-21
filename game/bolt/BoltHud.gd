@@ -30,7 +30,7 @@ func _process(delta: float) -> void:
 	
 	# manage energy bar
 	if energy_bar.visible:
-		energy_bar_line.scale.x = owner_bolt.bolt_stats["energy"] / owner_bolt.max_energy
+		energy_bar_line.scale.x = owner_bolt.player_stats["energy"] / owner_bolt.max_energy
 		if energy_bar_line.scale.x <= 0.5:
 			energy_bar_line.color = Ref.color_red
 		else:
@@ -71,13 +71,13 @@ func get_weapon_stat_value(weapon_icon: Control):
 	
 	match weapon_icon_index:
 		0:
-			weapon_stat = owner_bolt.bolt_stats["bullet_count"]
+			weapon_stat = owner_bolt.player_stats["bullet_count"]
 		1:
-			weapon_stat = owner_bolt.bolt_stats["misile_count"]
+			weapon_stat = owner_bolt.player_stats["misile_count"]
 		2:
-			weapon_stat = owner_bolt.bolt_stats["mina_count"]
+			weapon_stat = owner_bolt.player_stats["mina_count"]
 		3:
-			weapon_stat = owner_bolt.bolt_stats["shocker_count"]
+			weapon_stat = owner_bolt.player_stats["shocker_count"]
 	
 	return weapon_stat		
 
@@ -106,11 +106,11 @@ func _on_select_weapon(new_selected_index: int):
 			if selected_active_weapon_index == active_weapon_icons.find(icon):
 				icon.modulate.a = 1
 				icon.get_node("IconEdge").show()
-				icon.get_node("Label").show()
+				#				icon.get_node("Label").show()
 			else:
 				icon.modulate.a = 0.5
 				icon.get_node("IconEdge").hide()
-				icon.get_node("Label").hide()
+				#				icon.get_node("Label").hide()
 		
 		# konvertam index med aktivnimi orožji v index med vsemi orožji
 		var current_selected_weapon_icon: Control = active_weapon_icons[selected_active_weapon_index]

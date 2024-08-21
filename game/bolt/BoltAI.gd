@@ -25,16 +25,13 @@ onready var idle_engine_power = Pro.ai_profile["idle_engine_power"]
 
 func _ready() -> void:
 	
-	add_to_group(Ref.group_enemies)
+	add_to_group(Ref.group_ai)
 	 
 	randomize()
 	
 			
 func _physics_process(delta: float) -> void:
 	
-	if Set.kamera_frcera:
-		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
-
 	if not bolt_active:
 		return
 

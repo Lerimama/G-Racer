@@ -1,8 +1,8 @@
 extends Node
 
-
+# global nodes
 var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
-var node_creation_parent = null # VEN
+var node_creation_parent = null # NCP ... ven?
 var game_arena = null
 var current_camera = null
 var game_manager = null
@@ -12,19 +12,21 @@ var data_manager = null
 var main_node = null
 var game_over = null
 var level_completed = null
-#var effects_creation_parent = null
-#var game_timer = null
-#var start_countdown = null
 
-var group_players =  "Players"
-var group_enemies =  "Enemies"
-var group_bolts =  "Bolts"
-var group_misiles =  "Misiles"
-var group_bullets =  "Bullets"
+# groups
+var group_players = "Players"
+var group_ai = "Ais"
+var group_bolts = "Bolts"
+var group_misiles = "Misiles"
+var group_bullets = "Bullets"
 var group_mine = "Mine"
-var group_shockers =  "Shockers"
-var group_arena =  "Arena"
-var group_pickables =  "Pickables"
+var group_shockers = "Shockers"
+var group_pickables = "Pickables"
+#var group_arena =  "Arena"
+#var group_tilemap = "Tilemap" # defender in patterns
+#var group_menu_confirm_btns = "Menu confirm btns"
+#var group_menu_cancel_btns = "Menu cancel btns"
+
 
 # game colors
 var color_gray0 = Color("#535b68") # najsvetlejša
@@ -58,26 +60,12 @@ var color_pickable_stat = Color.black
 var color_pickable_feature = Color.white
 var color_pickable_weapon = Color.yellow
 
+# gui colors
 var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi
 var color_gui_gray: Color = Color("#78ffffff") # siv text s transparenco (ikone ...#838383) ... v kodi samo na btn defocus
 var color_hud_text: Color = color_almost_white_text # za vse, ki modulirajo barvo glede na + ali -
-
-# iz PA
-
-# groups
-#var group_tilemap = "Tilemap" # defender in patterns
-#var group_menu_confirm_btns = "Menu confirm btns"
-#var group_menu_cancel_btns = "Menu cancel btns"
-#var color_blue: Color = Color("#4b9fff")
-#var color_green: Color = Color("#5effa9")
-#var color_red: Color = Color("#f35b7f")
-#var color_yellow: Color = Color("#fef98b")
-#var color_orange: Color = Color("#ff9990")
-#var color_purple: Color = Color("#c774f5")
-## gui colors
 #var color_almost_black_pixel: Color = Color("#141414") 
 #var color_dark_gray_pixel: Color = Color("#232323")#Color("#323232") # start normal
 #var color_white_pixel: Color = Color(1, 1, 1, 1.22)
 #var color_thumb_hover: Color = Color("#232323")
 #var strays_on_screen: Array = [] # za stray position indikatorje
-

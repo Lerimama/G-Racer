@@ -190,7 +190,6 @@ var controller_profiles : Dictionary = {
 	},
 }
 
-
 enum LevelElements {
 	BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, BRICK_LIGHT, 
 	AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING, 

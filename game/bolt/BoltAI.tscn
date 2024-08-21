@@ -16,8 +16,11 @@ shader_param/color_to_cut = Color( 1, 1, 1, 1 )
 shader_param/color_intensity = 1.0
 shader_param/texture_size = Vector2( 32, 32 )
 
-[node name="EnemyRacing" instance=ExtResource( 3 )]
+[node name="BoltAI" instance=ExtResource( 3 )]
 script = ExtResource( 2 )
+
+[node name="Shield" parent="." index="6"]
+material = SubResource( 1 )
 
 [node name="DetectArea" type="Node2D" parent="." index="7"]
 scale = Vector2( 3, 3 )
@@ -80,9 +83,6 @@ collide_with_areas = true
 visible = false
 cast_to = Vector2( 10, 40 )
 collide_with_areas = true
-
-[node name="Shield" parent="." index="15"]
-material = SubResource( 1 )
 
 [connection signal="body_entered" from="DetectArea/DetectFront" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea/DetectFront" to="." method="_on_DetectArea_body_exited"]

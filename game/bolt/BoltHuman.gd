@@ -68,9 +68,6 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 
-	if Set.kamera_frcera:
-		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
-
 	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
 	
 	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
@@ -104,8 +101,8 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D
 	yield(pull_tween, "finished")
 	
 	# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
-	if bolt_stats["laps_count"] < current_leader.bolt_stats["laps_count"]:
-		var laps_finished_difference: int = current_leader.bolt_stats["laps_count"] - bolt_stats["laps_count"]
+	if player_stats["laps_count"] < current_leader.player_stats["laps_count"]:
+		var laps_finished_difference: int = current_leader.player_stats["laps_count"] - player_stats["laps_count"]
 		update_stat("laps_count", laps_finished_difference)
 	
 	# če preskoči checkpoint, ga dodaj, če ga leader ima

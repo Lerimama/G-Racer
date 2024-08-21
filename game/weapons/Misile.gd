@@ -123,7 +123,7 @@ func _physics_process(delta: float) -> void:
 #	var current_collider = vision_ray.get_collider()
 #	explode()
 #	if current_collider.has_method("on_hit"):
-#		if current_collider.is_in_group(Ref.group_enemies):
+#		if current_collider.is_in_group(Ref.group_ai):
 #			current_collider.on_hit(self)
 #			print (current_collider)
 #	velocity = Vector2.ZERO

@@ -1,24 +1,18 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://game/arena/Arena.gd" type="Script" id=1]
 [ext_resource path="res://assets/resources/arena_environment.tres" type="Environment" id=2]
 [ext_resource path="res://game/arena/ScreenArea.gd" type="Script" id=3]
 [ext_resource path="res://assets/sound/music/nitro_music.mp3" type="AudioStream" id=4]
 
-[sub_resource type="RectangleShape2D" id=772]
-extents = Vector2( 319, 179 )
-
-[sub_resource type="StyleBoxFlat" id=773]
-bg_color = Color( 0.6, 0.6, 0.6, 0 )
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 320, 180 )
 
 [node name="Arena" type="Node2D"]
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_horizontal_guides_": [ -64.0 ]
+"_edit_horizontal_guides_": [ 360.0 ],
+"_edit_vertical_guides_": [ 640.0 ]
 }
 
 [node name="LevelPosition" type="Position2D" parent="."]
@@ -26,26 +20,52 @@ __meta__ = {
 [node name="NCP" type="Node2D" parent="."]
 z_index = 1
 
-[node name="ScreenArea" type="Area2D" parent="."]
-visible = false
-position = Vector2( 320, 184 )
+[node name="PlayingField" type="Node2D" parent="."]
+position = Vector2( 320, 180 )
 z_index = 5
-monitorable = false
 script = ExtResource( 3 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ScreenArea"]
-position = Vector2( 0, -5 )
-shape = SubResource( 772 )
-
-[node name="Panel" type="Panel" parent="ScreenArea"]
+[node name="_screen_size" type="ColorRect" parent="PlayingField"]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -257.0
-margin_top = -115.0
-margin_right = 257.0
-margin_bottom = 115.0
-custom_styles/panel = SubResource( 773 )
+margin_left = -320.0
+margin_top = -180.0
+margin_right = 320.0
+margin_bottom = 180.0
+color = Color( 1, 1, 0, 1 )
+
+[node name="_pull_area" type="ColorRect" parent="PlayingField"]
+visible = false
+margin_left = -320.0
+margin_top = -180.0
+margin_right = 320.0
+margin_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color( 1, 1, 1, 0.380392 )
+
+[node name="ScreenArea" type="Area2D" parent="PlayingField"]
+monitorable = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayingField/ScreenArea"]
+shape = SubResource( 1 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="PlayingField"]
+collision_layer = 2
+collision_mask = 0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="_show" type="Polygon2D" parent="PlayingField/StaticBody2D"]
+visible = false
+color = Color( 1, 0, 1, 1 )
+polygon = PoolVector2Array( -343, -180, -320, -180, 320, -180, 320, 180, -320, 180, -320, -180, -339, -180, -343, -170, -338, 206, 349, 210, 335, -194, -319, -204 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayingField/StaticBody2D"]
+polygon = PoolVector2Array( -343, -180, -320, -180, 320, -180, 320, 180, -320, 180, -320, -180, -339, -180, -343, -170, -338, 206, 349, 210, 335, -194, -319, -204 )
 
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 2 )
@@ -56,4 +76,4 @@ environment = ExtResource( 2 )
 stream = ExtResource( 4 )
 bus = "GameMusic"
 
-[connection signal="body_exited" from="ScreenArea" to="ScreenArea" method="_on_ScreenArea_body_exited"]
+[connection signal="body_exited" from="PlayingField/ScreenArea" to="PlayingField" method="_on_ScreenArea_body_exited"]

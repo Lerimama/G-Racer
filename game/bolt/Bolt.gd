@@ -1,7 +1,7 @@
 extends KinematicBody2D
 class_name Bolt #, "res://assets/class_icons/bolt_icon.png"
 
-signal stats_changed (stats_owner_id, bolt_stats) # bolt in damage
+signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 
 enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
@@ -86,8 +86,8 @@ onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
 onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 
 # bolt stats
-onready var bolt_stats: Dictionary = Pro.default_player_stats.duplicate()
-onready var max_energy: float = bolt_stats["energy"] # zato, da se lahko resetira
+onready var player_stats: Dictionary = Pro.default_player_stats.duplicate()
+onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
 # player profil
 onready var player_profile: Dictionary = Pro.player_profiles[bolt_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
@@ -137,9 +137,6 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 
-	if Set.kamera_frcera:
-		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
-	
 	# aktivacija pospeška je setana na vozniku
 	# plejer ... acceleration = transform.x * engine_power # transform.x je (-1, 0)
 	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
@@ -319,8 +316,8 @@ func manage_gas(gas_usage: float):
 		
 	update_stat("gas_count", gas_usage)
 	
-	if bolt_stats["gas_count"] <= 0: # če zmanjka bencina je deaktiviran
-		bolt_stats["gas_count"] = 0
+	if player_stats["gas_count"] <= 0: # če zmanjka bencina je deaktiviran
+		player_stats["gas_count"] = 0
 		self.bolt_active = false
 
 
@@ -381,9 +378,9 @@ func on_hit(hit_by: Node):
 		Ref.sound_manager.stop_sfx("shocker_effect")
 		
 	# energy management	
-#	bolt_stats["energy"] = clamp(bolt_stats["energy"], 0, max_energy)
-#	energy_bar.scale.x = bolt_stats["energy"]/10
-	if bolt_stats["energy"] <= 0:
+#	player_stats["energy"] = clamp(player_stats["energy"], 0, max_energy)
+#	energy_bar.scale.x = player_stats["energy"]/10
+	if player_stats["energy"] <= 0:
 		lose_life()
 
 
@@ -440,7 +437,7 @@ func lose_life():
 	
 	update_stat("life", - 1)
 	
-	if bolt_stats["life"] > 0:
+	if player_stats["life"] > 0:
 		revive_bolt()
 	else:
 		self.bolt_active = false
@@ -464,7 +461,7 @@ func revive_bolt():
 	visible = true
 	self.bolt_active = true
 	
-	var difference_to_max_energy: float = max_energy - bolt_stats["energy"]
+	var difference_to_max_energy: float = max_energy - player_stats["energy"]
 	update_stat("energy", difference_to_max_energy)
 
 
@@ -506,7 +503,7 @@ func on_lap_finished(level_lap_limit: int):
 	var current_race_time: float = Ref.hud.game_timer.game_time_hunds
 	var current_lap_time: float = current_race_time - race_time_on_previous_lap # če je slednja 0, je prvi krog
 	
-	var best_lap_time: float = bolt_stats["best_lap_time"]
+	var best_lap_time: float = player_stats["best_lap_time"]
 	
 	if current_lap_time < best_lap_time or best_lap_time == 0:
 		update_stat("best_lap_time", current_lap_time)
@@ -518,13 +515,13 @@ func on_lap_finished(level_lap_limit: int):
 	
 	race_time_on_previous_lap = current_race_time # za naslednji krog
 	
-	if bolt_stats["laps_count"] >= level_lap_limit: # trenutno končan krog je že dodan
+	if player_stats["laps_count"] >= level_lap_limit: # trenutno končan krog je že dodan
 		Ref.game_manager.bolts_finished.append(self)
 		update_stat("level_time", current_race_time)
 		self.bolt_active = false # more bit za spremembo statistike
 		drive_out()
 	
-	#	printt ("STAT", bolt_stats)
+	#	printt ("STAT", player_stats)
 
 
 func spawn_new_trail():
@@ -590,7 +587,7 @@ func shoot(weapon_index: int) -> void:
 	match weapon_index:
 		0: # "bullet":
 			if bullet_reloaded:
-				if bolt_stats["bullet_count"] <= 0:
+				if player_stats["bullet_count"] <= 0:
 					return
 				var new_bullet = BulletScene.instance()
 				new_bullet.global_position = gun_position.global_position
@@ -604,7 +601,7 @@ func shoot(weapon_index: int) -> void:
 				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
 				bullet_reloaded= true
 		1: # "misile":
-			if misile_reloaded and bolt_stats["misile_count"] > 0:			
+			if misile_reloaded and player_stats["misile_count"] > 0:			
 				var new_misile = MisileScene.instance()
 				new_misile.global_position = gun_position.global_position
 				new_misile.global_rotation = bolt_sprite.global_rotation
@@ -618,7 +615,7 @@ func shoot(weapon_index: int) -> void:
 				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
 				misile_reloaded= true
 		2: # "mina":
-			if mina_reloaded and bolt_stats["mina_count"] > 0:			
+			if mina_reloaded and player_stats["mina_count"] > 0:			
 				var new_mina = MinaScene.instance()
 				new_mina.global_position = shocker_position
 				new_mina.global_rotation = bolt_sprite.global_rotation
@@ -631,7 +628,7 @@ func shoot(weapon_index: int) -> void:
 				yield(get_tree().create_timer(new_mina.reload_time / reload_ability), "timeout")
 				mina_reloaded = true
 		3: # "shocker":
-			if shocker_reloaded and bolt_stats["shocker_count"] > 0:			
+			if shocker_reloaded and player_stats["shocker_count"] > 0:			
 				var new_shocker = ShockerScene.instance()
 				new_shocker.global_position = shocker_position
 				new_shocker.global_rotation = bolt_sprite.global_rotation
@@ -686,33 +683,33 @@ func on_item_picked(pickable_key: int):
 	match pickable_key:
 		Pro.Pickables.PICKABLE_BULLET:
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				bolt_stats["misile_count"] = 0
-				bolt_stats["mina_count"] = 0
-				bolt_stats["shocker_count"] = 0
+				player_stats["misile_count"] = 0
+				player_stats["mina_count"] = 0
+				player_stats["shocker_count"] = 0
 			update_stat("bullet_count", pickable_value)
 		Pro.Pickables.PICKABLE_MISILE:
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				bolt_stats["bullet_count"] = 0
-				bolt_stats["mina_count"] = 0
-				bolt_stats["shocker_count"] = 0
+				player_stats["bullet_count"] = 0
+				player_stats["mina_count"] = 0
+				player_stats["shocker_count"] = 0
 			update_stat("misile_count", pickable_value)
 		Pro.Pickables.PICKABLE_MINA:
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				bolt_stats["bullet_count"] = 0
-				bolt_stats["misile_count"] = 0
-				bolt_stats["shocker_count"] = 0
+				player_stats["bullet_count"] = 0
+				player_stats["misile_count"] = 0
+				player_stats["shocker_count"] = 0
 			update_stat("mina_count", pickable_value)
 		Pro.Pickables.PICKABLE_SHOCKER:
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				bolt_stats["bullet_count"] = 0
-				bolt_stats["misile_count"] = 0
-				bolt_stats["mina_count"] = 0
+				player_stats["bullet_count"] = 0
+				player_stats["misile_count"] = 0
+				player_stats["mina_count"] = 0
 			update_stat("shocker_count", pickable_value)
 		Pro.Pickables.PICKABLE_SHIELD:
 			shield_loops_limit = pickable_value
 			activate_shield()
 		Pro.Pickables.PICKABLE_ENERGY:
-			bolt_stats["energy"] = max_energy
+			player_stats["energy"] = max_energy
 		Pro.Pickables.PICKABLE_GAS:
 			update_stat("gas_count", pickable_value)
 		Pro.Pickables.PICKABLE_LIFE:
@@ -801,12 +798,12 @@ func update_stat(stat_name: String, change_value: float):  # OPT prevečkrat se 
 		return
 			
 	if stat_name == "best_lap_time": 
-		bolt_stats[stat_name] = change_value
+		player_stats[stat_name] = change_value
 	elif stat_name == "level_time": 
-		bolt_stats[stat_name] = change_value
+		player_stats[stat_name] = change_value
 	elif stat_name == "level_rank": 
-		bolt_stats[stat_name] = change_value
+		player_stats[stat_name] = change_value
 	else:
-		bolt_stats[stat_name] += change_value # change_value je + ali -
+		player_stats[stat_name] += change_value # change_value je + ali -
 		
-	emit_signal("stats_changed", bolt_id, bolt_stats)
+	emit_signal("stats_changed", bolt_id, player_stats)

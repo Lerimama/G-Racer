@@ -16,7 +16,8 @@ shader_param/color_to_cut = Color( 1, 1, 1, 1 )
 shader_param/color_intensity = 1.0
 shader_param/texture_size = Vector2( 32, 32 )
 
-[node name="Player" instance=ExtResource( 3 )]
+[node name="BoltHuman" instance=ExtResource( 3 )]
+collision_mask = 3
 script = ExtResource( 2 )
 
 [node name="Light2D" parent="." index="1"]

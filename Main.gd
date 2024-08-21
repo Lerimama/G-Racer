@@ -24,12 +24,7 @@ func _ready() -> void:
 #	home_in_intro()
 #	home_in_no_intro()
 	game_in()
-
 	
-#	printt("FPS", Performance.get_monitor(Performance.TIME_FPS))# _temp
-#	if Set.kamera_frcera:
-#		printt("FPS", Engine.get_physics_frames(), self.name) # _temp	
-
 	
 func home_in_intro():
 	

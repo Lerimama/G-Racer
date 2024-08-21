@@ -1,49 +1,15 @@
 extends Node
 
-## settings(namesto slovarja so variable), zagon levela), home_settings
 
 var game_camera_zoom_factor: float = 0.25 # resolucija igre je 4 krat manjša 2560x1440 proti 640x360
 var camera_shake_on: bool =  true
 var get_it_time: float = 2
 
-# OPT ... brez tega
-var odmik_od_roba = 20
-var playerstats_w = 500
-var playerstats_h = 32
-var bolt_explosion_shake
-var bullet_hit_shake
-var misile_hit_shake
-
-
-## Z index spawnanih elementov ... relativno glede na tistega, ki jih spawna
-#var bolt_z_index = -1
+# Z-index spawnanih elementov ... relativno glede na tistega, ki jih spawna
 var weapons_z_index = -1 # bolt je 0
 var engine_z_index = -1
 var trail_z_index = -1
 var explosion_z_index = 1
-
-
-	
-var default_game_settings: Dictionary = { # tukaj imam settingse ki jih lahko še spreminjam glede na tip igre
-	
-	# time
-	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
-	"game_time_limit": 0, # če je 0 ni omejitve
-	# countdown
-	"start_countdown": true,
-	"gameover_countdown_duration": 5,
-	# race
-	"pull_gas_penalty": -20,
-	"fast_start_window_time": 0.32,
-	# duel
-	"pickables_count_limit": 5,
-	"sudden_death_mode": false,
-	"sudden_death_limit": 10, # koliko pred koncem
-	# modes
-	"enemies_mode": false,
-	"easy_mode": false,
-	"full_equip_mode": true,
-}
 
 enum Levels {
 	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 
@@ -53,7 +19,6 @@ enum Levels {
 	DEBUG_RACE, 
 	DEBUG_DUEL, 
 	}
-
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
 		"level": Levels.TRAINING,
@@ -123,6 +88,27 @@ var level_settings: Dictionary = {
 		},
 }
 
+enum GameModes {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
+var default_game_settings: Dictionary = { # setano za dirkanje
+	
+	# time
+#	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
+	"game_time_limit": 0, # če je 0 ni omejitve
+	# countdown
+	"start_countdown": true,
+	"countdown_start_limit": 5,
+	# race
+	"pull_gas_penalty": -20,
+	"fast_start_window_time": 0.32,
+	# duel
+	"pickables_count_limit": 5,
+	"sudden_death_mode": false, # vklopljen, če čas ni omejen
+	# modes
+	"enemies_mode": false,
+	"easy_mode": false,
+	"full_equip_mode": true,
+}
+
 
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
@@ -141,45 +127,37 @@ var current_game_levels: Array = [Levels.TRAINING]
 #var current_game_levels: Array = [Levels.RACE_DIRECT]
 #var current_game_levels: Array = [Levels.RACE_NITRO]
 #var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
-#var current_game_levels: Array = [Levels.RACE_ROUND, Levels.RACE_DIRECT]
-#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE, Levels.RACE_DIRECT, Levels.RACE_ROUND]
-#var current_game_levels: Array = [Levels.RACE_SNAKE, Levels.RACE_NITRO]
 #var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
 
-var kamera_frcera = false # _temp	
-
-
-var debug_mode = true
-#var debug_mode = false
-
-	
 	
 func get_level_game_settings(selected_level_index: int):
+	
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
 	current_game_settings = default_game_settings.duplicate() # naloži default, potrebne spremeni ob loadanju igre
 	var current_level: int = current_game_levels[selected_level_index]
 	
+	# debug
+	current_game_settings["start_countdown"] = false
+	
 	match current_level:
 		# racing
-		Levels.RACE_DIRECT: 
-			current_game_settings["start_countdown"] = true
+		Levels.RACE_DIRECT: pass
 		Levels.RACE_CIRCO: pass
 		Levels.RACE_ROUND: pass 
 		Levels.RACE_SNAKE: pass
-#			current_game_settings["start_countdown"] = true
 		Levels.RACE_NITRO: pass
 		Levels.RACE_8: pass
 		# duel
 		Levels.DUEL: 
 			current_game_settings["start_countdown"] = false
 			current_game_settings["sudden_death_mode"] = true
-			current_game_settings["stopwatch_mode"] = false		
+#			current_game_settings["stopwatch_mode"] = false		
 		# trening
 		Levels.TRAINING: pass
 		Levels.DEBUG_RACE: pass
 		Levels.DEBUG_DUEL: 
 			current_game_settings["stopwatch_mode"] = false		
-			current_game_settings["sudden_death_mode"] = true
+#			current_game_settings["sudden_death_mode"] = true
 			
 	return current_game_settings # pobere GM ob setanju igre

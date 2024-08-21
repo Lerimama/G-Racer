@@ -18,12 +18,12 @@ margin_top = 304.0
 margin_right = 536.0
 margin_bottom = 368.0
 
-[node name="Checkpoint" parent="." index="6"]
+[node name="RaceStart" parent="." index="6"]
+visible = true
+position = Vector2( 288, 128 )
+
+[node name="Checkpoint" parent="." index="7"]
 monitoring = true
 
 [node name="FinishLine" parent="RaceFinish" index="0"]
 monitoring = true
-
-[node name="RaceStart" parent="." index="8"]
-visible = true
-position = Vector2( 288, 128 )
