@@ -97,7 +97,7 @@ func get_random_member(group_of_elements):
 	
 onready var indikator: PackedScene = preload("res://common/DebugIndikator.tscn")
 
-func spawn_indikator(pos, rot): # neki ne štima
+func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D): # neki ne štima
 	
 	var new_indikator = indikator.instance()
 	new_indikator.global_position = pos
@@ -106,7 +106,7 @@ func spawn_indikator(pos, rot): # neki ne štima
 #	new_indikator.global_rotation = bolt_sprite.global_rotation
 	new_indikator.modulate = Color.red
 	new_indikator.z_index = 10
-	Ref.node_creation_parent.add_child(new_indikator)
+	parent_node.add_child(new_indikator)
 	
 	return new_indikator
 

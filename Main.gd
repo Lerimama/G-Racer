@@ -7,7 +7,7 @@ onready var game_scene_path: String = "res://game/Game.tscn"
 
 #func _input(event: InputEvent) -> void:
 #
-#	if Input.is_action_just_pressed("r"):
+#	if Input.is_action_just_pressed("no1"):
 #		var all_nodes = Met.get_all_nodes_in_node(self)
 #
 #		for node in all_nodes:

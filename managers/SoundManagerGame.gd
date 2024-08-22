@@ -18,12 +18,12 @@ onready	var sfx_bus_index: int = AudioServer.get_bus_index("GameSfx")
 func _input(event: InputEvent) -> void:
 	
 	# un/mute
-	if Input.is_action_just_pressed("m"):
+	if Input.is_action_just_pressed("mute_track"):
 		var is_bus_mute: bool = AudioServer.is_bus_mute(music_bus_index)
 		AudioServer.set_bus_mute(music_bus_index, not is_bus_mute)
 		music_set_to_mute = not is_bus_mute
 
-	if Input.is_action_just_pressed("f"):	
+	if Input.is_action_just_pressed("skip_track"):	
 		var is_bus_mute: bool = AudioServer.is_bus_mute(sfx_bus_index)
 		AudioServer.set_bus_mute(sfx_bus_index, not is_bus_mute)
 		sfx_set_to_mute = not is_bus_mute	

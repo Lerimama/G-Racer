@@ -5,17 +5,12 @@ class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 var pickable_key_as_name: int # poda ga spawner
 var pickable_key: int #= Pro.Pickables[pickable_key_as_name]# poda ga spawner
 
-#var ime = Pro.Pickables.keys()[pickable_key]
-#var index = Pro.Pickables.keys()[0]
 onready var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 onready var pickable_color: Color = Pro.pickable_profiles[pickable_key]["color"]
 onready var icon_texture: Texture = Pro.pickable_profiles[pickable_key]["icon_scene"]
-#onready var pickable_value: float = Pro.pickable_profiles[pickable_key_as_name]["value"]
-#onready var pickable_color: Color = Pro.pickable_profiles[pickable_key_as_name]["color"]
-#onready var icon_texture: Texture = Pro.pickable_profiles[pickable_key_as_name]["icon_scene"]
-
-#onready var pickable_altitude: float = 5 
 onready var pickable_altitude: float = Pro.pickable_profiles[pickable_key]["altitude"]
+
+onready var ai_target_rank: int = Pro.pickable_profiles[pickable_key]["ai_target_rank"]
 
 onready var icon: Sprite = $Icon
 onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D

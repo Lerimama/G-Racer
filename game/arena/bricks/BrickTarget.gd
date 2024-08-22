@@ -10,6 +10,8 @@ onready var brick_color: Color = Pro.level_elements_profiles[element_key]["color
 onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
 onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
 
+onready var ai_target_rank: int = Pro.level_elements_profiles[element_key]["ai_target_rank"]
+
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer

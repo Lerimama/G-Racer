@@ -10,6 +10,8 @@ onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["al
 onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
 onready var speed_brake_div: float = Pro.level_elements_profiles[element_key]["speed_brake_div"]
 
+onready var ai_target_rank: int = Pro.level_elements_profiles[element_key]["ai_target_rank"]
+
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var brick_shadow: Sprite = $BrickShadow

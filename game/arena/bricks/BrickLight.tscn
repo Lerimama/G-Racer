@@ -53,7 +53,7 @@ casting_node_name = "Sprite"
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 region_enabled = true
-region_rect = Rect2( 56, 16, 8, 8 )
+region_rect = Rect2( 48, 8, 8, 8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 6 )

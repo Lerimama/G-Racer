@@ -8,6 +8,8 @@ onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["al
 onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
 onready var bounce_strength: float = Pro.level_elements_profiles[element_key]["bounce_strength"]
 
+onready var ai_target_rank: int = Pro.level_elements_profiles[element_key]["ai_target_rank"]
+
 onready var sprite: Sprite = $Sprite
 onready var brick_shadow: Sprite = $BrickShadow
 

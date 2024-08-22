@@ -34,6 +34,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_profile": Controller.ARROWS,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"ai_target_rank": 10,
 	},
 	Players.P2 : {
 		"player_name": "P2",
@@ -42,6 +43,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_profile" : Controller.WASD,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"ai_target_rank": 10,
 	},
 	Players.P3 : {
 		"player_name" : "P3",
@@ -51,6 +53,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		#		"controller_profile" : Controller.JP1,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"ai_target_rank": 10,
 	},
 	Players.P4 : {
 		"player_name" : "P4",
@@ -60,6 +63,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		#		"controller_profile" : Controller.JP2,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"ai_target_rank": 10,
 	},
 }
 
@@ -69,9 +73,8 @@ var ai_profile: Dictionary = {
 	"controller_profile" : Controller.AI,
 	"bolt_scene": preload("res://game/bolt/BoltAI.tscn"),
 	# race
-	"racing_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
+	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	# battle
-	"idle_engine_power": 35,
 	"battle_engine_power": 120, # je enaka kot od  bolta 
 	"aim_time": 1,
 	"seek_rotation_range": 60,
@@ -81,6 +84,7 @@ var ai_profile: Dictionary = {
 	# ni še implementiran!!!!!!
 	"ai_brake_distance": 0.8, # množenje s hitrostjo
 	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
+	"ai_target_rank": 5,
 }
 
 enum BoltTypes {SMALL, BASIC, BIG}
@@ -203,6 +207,7 @@ var level_elements_profiles: Dictionary = {
 		"speed_brake_div": 10,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickGhost.tscn"),
+		"ai_target_rank": 0,
 	},
 	LevelElements.BRICK_BOUNCER: {
 		"color": Ref.color_brick_bouncer,
@@ -210,6 +215,7 @@ var level_elements_profiles: Dictionary = {
 		"bounce_strength": 2,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickBouncer.tscn"),
+		"ai_target_rank": 5,
 	},
 	LevelElements.BRICK_MAGNET: {
 		"color": Ref.color_brick_magnet_off,
@@ -217,18 +223,21 @@ var level_elements_profiles: Dictionary = {
 		"gravity_force": 70.0,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickMagnet.tscn"),
+		"ai_target_rank": 0,
 	},	
 	LevelElements.BRICK_TARGET: {
 		"color": Ref.color_brick_target,
 		"value": 100,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickTarget.tscn"),
+		"ai_target_rank": 5,
 	},
 	LevelElements.BRICK_LIGHT: {
 		"color": Ref.color_brick_light_off,
 		"value": 10,
 		"altitude": 0,
 		"element_scene": preload("res://game/arena/bricks/BrickLight.tscn"),
+		"ai_target_rank": 5,
 	},
 	LevelElements.AREA_NITRO: {
 		"drag_div": 500,
@@ -250,6 +259,7 @@ var level_elements_profiles: Dictionary = {
 		"value": 1000,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/elements/GoalPillar.tscn"),
+		"ai_target_rank": 5,
 	},
 }
 
@@ -267,6 +277,7 @@ var pickable_profiles: Dictionary = {
 		"value": 20,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_bullet.tres"),
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_MISILE: {
 		"in_random_selection": true,
@@ -274,6 +285,7 @@ var pickable_profiles: Dictionary = {
 		"value": 2,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_misile.tres"),
+		"ai_target_rank": 5,
 	}, 
 	Pickables.PICKABLE_MINA: {
 		"in_random_selection": true,
@@ -281,6 +293,7 @@ var pickable_profiles: Dictionary = {
 		"value": 3,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_mina.tres"),
+		"ai_target_rank": 5,
 	}, 
 	Pickables.PICKABLE_SHOCKER: {
 		"in_random_selection": true,
@@ -288,6 +301,7 @@ var pickable_profiles: Dictionary = {
 		"value": 3,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_shocker.tres"),
+		"ai_target_rank": 5,
 	}, 
 	Pickables.PICKABLE_SHIELD: {
 		"in_random_selection": true,
@@ -295,6 +309,7 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_shield.tres"),
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_ENERGY: {
 		"in_random_selection": true,
@@ -302,6 +317,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_energy.tres"),
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_LIFE: {
 		"in_random_selection": true,
@@ -309,6 +325,7 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_life.tres"),
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_GAS: {
 		"in_random_selection": false,
@@ -316,6 +333,7 @@ var pickable_profiles: Dictionary = {
 		"value": 200,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_gas.tres"),
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_POINTS: {
 		"in_random_selection": false,
@@ -323,6 +341,7 @@ var pickable_profiles: Dictionary = {
 		"value": 100,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_points.tres"),
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_NITRO: {
 		"in_random_selection": false,
@@ -331,6 +350,7 @@ var pickable_profiles: Dictionary = {
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_nitro.tres"),
 		"duration": 1.5, # sekunde
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_TRACKING: {
 		"in_random_selection": false,
@@ -339,6 +359,7 @@ var pickable_profiles: Dictionary = {
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_tracking.tres"),
 		"duration": 5,
+		"ai_target_rank": 5,
 	},
 	Pickables.PICKABLE_RANDOM: {
 		"in_random_selection": false,
@@ -346,6 +367,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_random.tres"),
+		"ai_target_rank": 5,
 	},
 }
 

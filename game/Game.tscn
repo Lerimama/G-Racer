@@ -103,6 +103,18 @@ zoom = Vector2( 0.25, 0.25 )
 margin_right = 2560.0
 margin_bottom = 1440.0
 
+[node name="_debug" type="Control" parent="UI"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="label" type="Label" parent="UI/_debug"]
+margin_right = 40.0
+margin_bottom = 14.0
+
+[node name="label2" type="Label" parent="UI/_debug"]
+margin_right = 40.0
+margin_bottom = 14.0
+
 [node name="Hud" parent="UI" instance=ExtResource( 8 )]
 __meta__ = {
 "_edit_horizontal_guides_": [ 360.0 ],

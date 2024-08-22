@@ -99,7 +99,7 @@ func set_level_floor():
 			var scene_to_spawn: PackedScene = Pro.level_elements_profiles[area_key]["element_scene"]	
 			var new_area_scene = scene_to_spawn.instance()
 			new_area_scene.position = cell_global_position + single_tile_offset
-			new_area_scene.area_key = area_key
+			new_area_scene.element_key = area_key
 			add_child(new_area_scene)
 	
 

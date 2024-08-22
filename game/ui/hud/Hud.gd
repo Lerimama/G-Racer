@@ -34,6 +34,7 @@ func set_hud(): # kliče GM
 	for box in statboxes:
 		# najprej skrijem vse in potem pokažem glede na igro
 		for stat in box.get_children():
+			record_lap_label.hide()
 			stat.hide()
 		match Ref.current_level.level_type:
 			Ref.current_level.LevelTypes.BATTLE:
@@ -63,11 +64,9 @@ func set_hud(): # kliče GM
 				box.stat_best_lap.show()
 				box.stat_level_time.show()
 	
-	# game stats
-	game_timer.reset_timer()
+	# timer
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		game_timer.get_node("Dots2").hide()
-		game_timer.get_node("Hunds").hide()
+		game_timer.hunds_mode = false
 	
 							
 func on_game_start():
@@ -78,7 +77,6 @@ func on_game_start():
 
 func on_level_finished():
 	game_timer.stop_timer()
-	#	hide_stats()
 	
 	
 func on_game_over():
@@ -98,6 +96,7 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	
 	var new_floating_tag = FloatingTag.instance()
 	new_floating_tag.z_index = 4 # višje od straysa in playerja
+	
 	# če je zadnji krog njegov čas ostane na liniji
 	new_floating_tag.global_position = tag_owner.global_position
 	new_floating_tag.tag_owner = tag_owner
@@ -137,9 +136,7 @@ func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
 	
 	# player line
 	spawned_player_statbox.player_name_label.modulate = spawned_player_profile["player_color"]
-	#	spawned_player_statbox.stat_wins.modulate = spawned_player_profile["player_color"]
 	spawned_player_statbox.player_name_label.text = spawned_player_profile["player_name"]
-	#	var new_text: Texture = spawned_player_profile["player_avatar"]
 	spawned_player_statbox.player_avatar.set_texture(spawned_player_profile["player_avatar"])
 	spawned_player_statbox.stat_wins.modulate = Color.red
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
@@ -149,8 +146,7 @@ func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
 func _on_GameTimer_gametime_is_up() -> void:
 	
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		Ref.game_manager.level_finished(false)
-	# v dirki je trenutno je game over samo, če ti zmanjka bencina
+		Ref.game_manager.level_finished()
 
 	
 func _on_stats_changed(bolt_id: int, player_stats: Dictionary):

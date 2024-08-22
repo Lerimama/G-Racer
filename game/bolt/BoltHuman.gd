@@ -74,11 +74,11 @@ func _physics_process(delta: float) -> void:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 	
 	# poraba bencina
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if current_motion_state == MotionStates.FWD:
-			manage_gas(fwd_gas_usage)
-		elif current_motion_state == MotionStates.REV:
-			manage_gas(rev_gas_usage)
+	#	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if current_motion_state == MotionStates.FWD:
+		manage_gas(fwd_gas_usage)
+	elif current_motion_state == MotionStates.REV:
+		manage_gas(rev_gas_usage)
 
 
 func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D):

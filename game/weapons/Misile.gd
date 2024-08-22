@@ -190,5 +190,5 @@ func _on_HommingArea_body_entered(body: Node) -> void:
 
 
 func _on_MisileShoot_finished() -> void:
-	print("konc")
+	
 	$Sounds/MisileFlight.play()

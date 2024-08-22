@@ -3,9 +3,8 @@ class_name Bolt #, "res://assets/class_icons/bolt_icon.png"
 
 signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 
-enum MotionStates {IDLE, FWD, REV, DIZZY, DISARRAY, DYING} # glede na moč motorja
+enum MotionStates {IDLE, FWD, REV, DISARRAY} # DIZZY, DYING glede na moč motorja
 var current_motion_state: int = MotionStates.IDLE
-
 
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
 var bolt_id: int # ga seta spawner
@@ -23,6 +22,7 @@ var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 var revive_time: float = 2
 var current_drag: float # = bolt_drag
 var race_time_on_previous_lap: float = 0
+var bolt_position_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju  
 
 # weapons
 var bullet_reloaded: bool = true
@@ -88,9 +88,12 @@ onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn
 # bolt stats
 onready var player_stats: Dictionary = Pro.default_player_stats.duplicate()
 onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
+
 # player profil
 onready var player_profile: Dictionary = Pro.player_profiles[bolt_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
+onready var ai_target_rank: int = player_profile["ai_target_rank"]
+
 # bolt type profil
 onready var bolt_profile: Dictionary = Pro.bolt_profiles[bolt_type].duplicate()
 onready var bolt_sprite_texture: Texture # = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
@@ -378,8 +381,6 @@ func on_hit(hit_by: Node):
 		Ref.sound_manager.stop_sfx("shocker_effect")
 		
 	# energy management	
-#	player_stats["energy"] = clamp(player_stats["energy"], 0, max_energy)
-#	energy_bar.scale.x = player_stats["energy"]/10
 	if player_stats["energy"] <= 0:
 		lose_life()
 

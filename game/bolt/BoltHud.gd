@@ -24,7 +24,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 
 	# manage positions and rotation
-	if visible:
+	if visible: # določi bolt
 		rotation = -owner_bolt.rotation # negiramo rotacijo bolta, da je pri miru
 		global_position = owner_bolt.global_position + Vector2(0, 8)
 	

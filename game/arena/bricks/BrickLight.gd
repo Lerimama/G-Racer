@@ -11,6 +11,8 @@ onready var light_off_color: Color = Pro.level_elements_profiles[element_key]["c
 onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
 onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
 
+onready var ai_target_rank: int = Pro.level_elements_profiles[element_key]["ai_target_rank"]
+
 onready var brick_shadow: Sprite = $BrickShadow
 onready var light_poly: Polygon2D = $LightPoly
 onready var light_2d: Light2D = $Light2D

@@ -11,11 +11,12 @@ var game_time: float # čas igre v sekundah z decimalkami
 var game_time_hunds: int # čas igre v zaokroženih stotinkah
 
 # opredelijo se bo štartu tajmerja
+var hunds_mode: bool
 var stopwatch_mode: bool 
-var sudden_death_mode: bool # dela samo, če ni stopwatch mode 
+var sudden_death_mode: bool # dela samo, če ni stopwatch mode
+ 
 var game_time_limit: float
 var countdown_start_limit: int
-
 onready var mins_label: Label = $Mins
 onready var secs_label: Label = $Secs
 onready var hunds_label: Label = $Hunds
@@ -68,6 +69,11 @@ func _process(delta: float) -> void:
 	
 
 func reset_timer():
+	
+	# skrijem stotinke?
+	if not hunds_mode:
+		get_node("Dots2").hide()
+		hunds_label.hide()
 	
 	modulate = Ref.color_hud_base
 	
