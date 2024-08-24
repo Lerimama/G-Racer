@@ -31,30 +31,23 @@ material = SubResource( 1 )
 shape = SubResource( 2 )
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="8"]
+path_desired_distance = 30.0
 target_desired_distance = 20.0
 
-[node name="SeekRay" type="RayCast2D" parent="." index="9"]
+[node name="CheckRay" type="RayCast2D" parent="." index="9"]
+visible = false
+enabled = true
+cast_to = Vector2( 0, 128 )
+
+[node name="SeekRay" type="RayCast2D" parent="." index="10"]
+visible = false
 enabled = true
 cast_to = Vector2( 18, 0 )
 
-[node name="VisionFront" type="RayCast2D" parent="." index="10"]
+[node name="VisionFront" type="RayCast2D" parent="." index="11"]
+position = Vector2( 1, 0 )
 enabled = true
-cast_to = Vector2( 100, 0 )
-
-[node name="VisionRear" type="RayCast2D" parent="." index="11"]
-visible = false
-cast_to = Vector2( -50, 0 )
-collide_with_areas = true
-
-[node name="VisionLeft" type="RayCast2D" parent="." index="12"]
-visible = false
-cast_to = Vector2( 10, -40 )
-collide_with_areas = true
-
-[node name="VisionRight" type="RayCast2D" parent="." index="13"]
-visible = false
-cast_to = Vector2( 10, 40 )
-collide_with_areas = true
+cast_to = Vector2( 64, 0 )
 
 [connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_navigation_finished"]
 [connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]

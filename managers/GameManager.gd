@@ -22,7 +22,6 @@ var current_pull_positions: Array # že zasedene pozicije za preventanje nalagan
 var level_settings: Dictionary
 var current_level_index = 0
 var available_pickable_positions: Array # za random spawn
-var navigation_area: Array # vsi navigation tileti
 var navigation_positions: Array # pozicije vseh navigation tiletov
 var pickables_in_game: Array
 
@@ -49,7 +48,6 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("no3"):
 		for bolt in bolts_in_game: # search
 			if bolt.is_in_group(Ref.group_ai):
-				bolt.not_searcing = true
 				bolt.set_ai_target(Ref.current_level.tilemap_edge)
 	if Input.is_action_just_pressed("no4"): # follow leader
 		for bolt in bolts_in_game:
@@ -155,12 +153,10 @@ func set_game():
 		Pro.default_player_stats["bullet_count"] = 0
 		Pro.default_player_stats["misile_count"] = 0
 		Pro.default_player_stats["mina_count"] = 0
-		Pro.default_player_stats["shocker_count"] = 0
 	if game_settings["full_equip_mode"]:
 		Pro.default_player_stats["bullet_count"] = 100
 		Pro.default_player_stats["misile_count"] = 100
 		Pro.default_player_stats["mina_count"] = 100
-		Pro.default_player_stats["shocker_count"] = 100	
 
 	# spawn bolts on positions (po vrsti aktivacije) 
 	var spawned_position_index = 0
@@ -328,7 +324,6 @@ func set_next_level():
 # RACING ---------------------------------------------------------------------------------------------
 
 	
-#func get_bolts_ranking():
 func update_ranking():
 	
 	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
@@ -480,7 +475,6 @@ func spawn_level():
 	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	Ref.game_arena.add_child(new_level)	
 	
-	
 func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
 	var NewBoltInstance: PackedScene = Pro.player_profiles[spawned_bolt_id]["bolt_scene"]
@@ -496,11 +490,11 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 		new_bolt.bolt_position_tracker = Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
 	
 	# signali
-	if new_bolt.is_in_group(Ref.group_ai):
-		new_bolt.navigation_cells = navigation_area
 	if new_bolt.is_in_group(Ref.group_players):
 		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
-	
+	if new_bolt.is_in_group(Ref.group_ai):
+		new_bolt.level_navigation_positions = navigation_positions
+		
 	emit_signal("bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
 	
 
@@ -533,11 +527,11 @@ func start_spawning_pickables():
 func _on_level_is_set(tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
 	
 	# navigacija za AI
-	navigation_area = tilemap_navigation_cells
 	navigation_positions = tilemap_navigation_cells_positions
 	
 	# random pickable pozicije 
-	available_pickable_positions = navigation_area.duplicate()
+#	available_pickable_positions = tilemap_navigation_cells.duplicate()
+	available_pickable_positions = tilemap_navigation_cells_positions.duplicate()
 	
 	# spawn poz
 	start_bolt_position_nodes = Ref.current_level.start_positions_node.get_children()

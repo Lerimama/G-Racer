@@ -29,8 +29,6 @@ var bullet_reloaded: bool = true
 var misile_reloaded: bool = true
 var mina_reloaded: bool = true
 var mina_released: bool # če je že odvržen v trenutni ožini
-var shocker_reloaded: bool = true
-var shocker_released: bool # če je že odvržen v trenutni ožini
 var shields_on = false
 var shield_loops_counter: int = 0
 var shield_loops_limit: int = 1 # poberem jo iz profilov, ali pa kot veleva pickable
@@ -83,7 +81,6 @@ onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
 onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
-onready var ShockerScene: PackedScene = preload("res://game/weapons/Shocker.tscn")
 
 # bolt stats
 onready var player_stats: Dictionary = Pro.default_player_stats.duplicate()
@@ -92,10 +89,10 @@ onready var max_energy: float = player_stats["energy"] # zato, da se lahko reset
 # player profil
 onready var player_profile: Dictionary = Pro.player_profiles[bolt_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
-onready var ai_target_rank: int = player_profile["ai_target_rank"]
 
 # bolt type profil
 onready var bolt_profile: Dictionary = Pro.bolt_profiles[bolt_type].duplicate()
+onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
 onready var bolt_sprite_texture: Texture # = Pro.bolt_profiles[bolt_type]["bolt_texture"] 
 onready var fwd_engine_power: int = bolt_profile["fwd_engine_power"]
 onready var rev_engine_power: int = bolt_profile["rev_engine_power"]
@@ -351,34 +348,13 @@ func on_hit(hit_by: Node):
 			velocity = hit_by.velocity
 		else:
 			velocity += hit_by.velocity * hit_by.mass / mass
+		if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE: 
+			explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 		in_disarray(hit_by.hit_damage)
 		
 	elif hit_by.is_in_group(Ref.group_mine):
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		in_disarray(hit_by.hit_damage)
-		
-	elif hit_by.is_in_group(Ref.group_shockers):
-		# damage
-		update_stat("energy", - hit_by.hit_damage)
-		# efekt
-		set_process_input(false)
-		var catch_tween = get_tree().create_tween()
-		catch_tween.tween_property(self, "engine_power", 0, 0.1) # izklopim motorje, da se čist neha premikat
-		catch_tween.parallel().tween_property(self, "velocity", Vector2.ZERO, 1.0) # tajmiram pojemek 
-		catch_tween.parallel().tween_property(bolt_sprite, "modulate:a", 0.5, 0.5)
-		bolt_sprite.material.set_shader_param("noise_factor", 2.0)
-		bolt_sprite.material.set_shader_param("speed", 0.7)
-		yield(get_tree().create_timer(hit_by.shock_time), "timeout") # controlls off time
-		# release
-		var relase_tween = get_tree().create_tween()
-		relase_tween.tween_property(self, "engine_power", engine_power, 0.1)
-		relase_tween.parallel().tween_property(bolt_sprite, "modulate:a", 1.0, 0.5)				
-		yield(relase_tween, "finished")
-		# reset shader
-		bolt_sprite.material.set_shader_param("noise_factor", 0.0)
-		bolt_sprite.material.set_shader_param("speed", 0.0)
-		set_process_input(true)
-		Ref.sound_manager.stop_sfx("shocker_effect")
 		
 	# energy management	
 	if player_stats["energy"] <= 0:
@@ -583,8 +559,6 @@ func start_engines():
 			
 func shoot(weapon_index: int) -> void:
 	
-	var shocker_position: Vector2 = rear_engine_position.global_position
-	
 	match weapon_index:
 		0: # "bullet":
 			if bullet_reloaded:
@@ -618,7 +592,7 @@ func shoot(weapon_index: int) -> void:
 		2: # "mina":
 			if mina_reloaded and player_stats["mina_count"] > 0:			
 				var new_mina = MinaScene.instance()
-				new_mina.global_position = shocker_position
+				new_mina.global_position = rear_engine_position.global_position
 				new_mina.global_rotation = bolt_sprite.global_rotation
 				new_mina.spawned_by = self # ime avtorja izstrelka
 				new_mina.spawned_by_color = bolt_color
@@ -628,19 +602,6 @@ func shoot(weapon_index: int) -> void:
 				mina_reloaded = false
 				yield(get_tree().create_timer(new_mina.reload_time / reload_ability), "timeout")
 				mina_reloaded = true
-		3: # "shocker":
-			if shocker_reloaded and player_stats["shocker_count"] > 0:			
-				var new_shocker = ShockerScene.instance()
-				new_shocker.global_position = shocker_position
-				new_shocker.global_rotation = bolt_sprite.global_rotation
-				new_shocker.spawned_by = self # ime avtorja izstrelka
-				new_shocker.spawned_by_color = bolt_color
-				new_shocker.z_index = z_index + Set.weapons_z_index
-				Ref.node_creation_parent.add_child(new_shocker)
-				update_stat("shocker_count", - 1)
-				shocker_reloaded = false
-				yield(get_tree().create_timer(new_shocker.reload_time / reload_ability), "timeout")
-				shocker_reloaded= true
 
 			
 func activate_shield():
@@ -686,26 +647,17 @@ func on_item_picked(pickable_key: int):
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 				player_stats["misile_count"] = 0
 				player_stats["mina_count"] = 0
-				player_stats["shocker_count"] = 0
 			update_stat("bullet_count", pickable_value)
 		Pro.Pickables.PICKABLE_MISILE:
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 				player_stats["bullet_count"] = 0
 				player_stats["mina_count"] = 0
-				player_stats["shocker_count"] = 0
 			update_stat("misile_count", pickable_value)
 		Pro.Pickables.PICKABLE_MINA:
 			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 				player_stats["bullet_count"] = 0
 				player_stats["misile_count"] = 0
-				player_stats["shocker_count"] = 0
 			update_stat("mina_count", pickable_value)
-		Pro.Pickables.PICKABLE_SHOCKER:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				player_stats["bullet_count"] = 0
-				player_stats["misile_count"] = 0
-				player_stats["mina_count"] = 0
-			update_stat("shocker_count", pickable_value)
 		Pro.Pickables.PICKABLE_SHIELD:
 			shield_loops_limit = pickable_value
 			activate_shield()

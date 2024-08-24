@@ -38,7 +38,7 @@ func _on_Item_body_entered(body: Node) -> void:
 	
 	if body.has_method("on_item_picked"):
 		if pickable_key == Pro.Pickables.PICKABLE_BULLET or pickable_key == Pro.Pickables.PICKABLE_MISILE \
-		or pickable_key == Pro.Pickables.PICKABLE_MINA or pickable_key == Pro.Pickables.PICKABLE_SHOCKER:
+		or pickable_key == Pro.Pickables.PICKABLE_MINA:
 			Ref.sound_manager.play_sfx("pickable_weapon")
 		elif pickable_key == Pro.Pickables.PICKABLE_NITRO:
 			Ref.sound_manager.play_sfx("pickable_nitro")

@@ -13,7 +13,7 @@ var is_expanded: bool = false
 var detect_expand_size: float = 3.5 # doseg šoka
 
 onready var detect: Area2D = $DetectArea
-onready var shocker_sprite: AnimatedSprite = $ShockerSprite
+onready var mina_sprite: AnimatedSprite = $Sprite
 onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
@@ -53,9 +53,9 @@ func _physics_process(delta: float) -> void:
 func activate():
 	
 	detect.monitoring = true
-	shocker_sprite.play("loop")
-	active_timer.set_wait_time(lifetime)
-	active_timer.start()
+	mina_sprite.play("loop")
+	if lifetime > 0:
+		active_timer.start(lifetime)
 
 func explode():
 
@@ -86,15 +86,15 @@ func _on_CollisionArea_body_entered(body: Node) -> void:
 		animation_player.play("shockwave_mina")
 					
 		# ugasnem kar ne rabim
-		shocker_sprite.stop()
-		shocker_sprite.visible = false
+		mina_sprite.stop()
+		mina_sprite.visible = false
 	
 		body.on_hit(self)
 	
 	
 func _on_ActiveTimer_timeout() -> void:
 	
-	shocker_sprite.play("deactivate")
+	mina_sprite.play("deactivate")
 	
 	var deactivate_tween = get_tree().create_tween() # tween dam zato, da se animacija lahko odvije
 	deactivate_tween.tween_property(detect, "scale", Vector2.ZERO, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)

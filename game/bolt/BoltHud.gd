@@ -14,6 +14,7 @@ onready var weapon_icons: Array = $BoltHudLines/WeaponSelector/Weapons.get_child
 onready var energy_bar_line: Polygon2D = $BoltHudLines/EnergyBar/Bar
 onready var energy_bar: Control = $BoltHudLines/EnergyBar
 
+onready var test_hud: ColorRect = $"../BoltHudLayer/TestHud" # _temp ... hud layer
 
 func _ready() -> void:
 
@@ -27,6 +28,7 @@ func _process(delta: float) -> void:
 	if visible: # določi bolt
 		rotation = -owner_bolt.rotation # negiramo rotacijo bolta, da je pri miru
 		global_position = owner_bolt.global_position + Vector2(0, 8)
+	#	test_hud.rect_global_position = (owner_bolt.global_position + Vector2(0, 8))*4 + Vector2(640, 360)# + Vector2(2560, 1440)*0.5
 	
 	# manage energy bar
 	if energy_bar.visible:
@@ -76,9 +78,6 @@ func get_weapon_stat_value(weapon_icon: Control):
 			weapon_stat = owner_bolt.player_stats["misile_count"]
 		2:
 			weapon_stat = owner_bolt.player_stats["mina_count"]
-		3:
-			weapon_stat = owner_bolt.player_stats["shocker_count"]
-	
 	return weapon_stat		
 
 

@@ -253,6 +253,7 @@ position = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
 [node name="BoltCollision" type="CollisionPolygon2D" parent="."]
+visible = false
 position = Vector2( 0, 0.5 )
 rotation = 1.57079
 polygon = PoolVector2Array( -2.99997, -4.00002, -5, -3.13719e-05, -5.00003, 3.99997, 3.99997, 4.00003, 4, 2.50975e-05, 2.00003, -3.99999 )
@@ -501,6 +502,14 @@ bus = "GameSfx"
 stream = ExtResource( 9 )
 pitch_scale = 1.1
 bus = "GameSfx"
+
+[node name="BoltHudLayer" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="TestHud" type="ColorRect" parent="BoltHudLayer"]
+margin_left = -24.0
+margin_right = 24.0
+margin_bottom = 24.0
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_shield_animation_finished"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_started"]

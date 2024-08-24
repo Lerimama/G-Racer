@@ -15,7 +15,6 @@ var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"bullet_count" : 100,
 	"misile_count" : 5,
 	"mina_count" : 3,
-	"shocker_count" : 3,
 	"gas_count": 5000,
 	# score
 	"points" : 0,
@@ -34,7 +33,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_profile": Controller.ARROWS,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
-		"ai_target_rank": 10,
 	},
 	Players.P2 : {
 		"player_name": "P2",
@@ -43,7 +41,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_profile" : Controller.WASD,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
-		"ai_target_rank": 10,
 	},
 	Players.P3 : {
 		"player_name" : "P3",
@@ -53,7 +50,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		#		"controller_profile" : Controller.JP1,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
-		"ai_target_rank": 10,
 	},
 	Players.P4 : {
 		"player_name" : "P4",
@@ -63,7 +59,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		#		"controller_profile" : Controller.JP2,
 		"bolt_type": BoltTypes.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
-		"ai_target_rank": 10,
 	},
 }
 
@@ -84,7 +79,6 @@ var ai_profile: Dictionary = {
 	# ni še implementiran!!!!!!
 	"ai_brake_distance": 0.8, # množenje s hitrostjo
 	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
-	"ai_target_rank": 5,
 }
 
 enum BoltTypes {SMALL, BASIC, BIG}
@@ -107,16 +101,17 @@ var bolt_profiles: Dictionary = {
 		"fwd_gas_usage": -0.1, # per fram
 		"rev_gas_usage": -0.05, # per fram
 		"tilt_speed": 150, # trenutno off
+		"ai_target_rank": 5,
 		},
 }
 
-enum Weapons {BULLET, MISILE, MINA, SHOCKER}
+enum Weapons {BULLET, MISILE, MINA}
 var weapon_profiles : Dictionary = {
 	Weapons.BULLET: {
 		"reload_time": 0.1,
 		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
 		"speed": 1000,
-		"lifetime": 1.0, #domet vedno merim s časom
+		"lifetime": 1.0, # domet vedno merim s časom
 		"mass": 1.5, # glede na to kakšno inercijo hočem
 		"direction_start_range": [0, 0] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
@@ -125,7 +120,7 @@ var weapon_profiles : Dictionary = {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 5, # 10 je max energija
 		"speed": 100,
-		"lifetime": 1.0, #domet vedno merim s časom
+		"lifetime": 1.0, # domet vedno merim s časom
 		"mass": 5,
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
@@ -134,19 +129,10 @@ var weapon_profiles : Dictionary = {
 		"reload_time": 0.1, #
 		"hit_damage": 5,
 		"speed": 50,
-		"lifetime": 10, #domet vedno merim s časom
+		"lifetime": 0, # 0 pomeni večno
 		"mass": 3,
 		"direction_start_range": [0, 0] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
-	},
-	Weapons.SHOCKER: {
-		"reload_time": 1.0, #
-		"hit_damage": 2,
-		"speed": 50,
-		"lifetime": 10, #domet vedno merim s časom
-		"mass": 10,
-		"direction_start_range": [0, 0] , # natančnost misile
-		#		"icon_scene": preload("res://assets/icons/icon_shocker.tres"),
 	},
 }
 
@@ -215,7 +201,7 @@ var level_elements_profiles: Dictionary = {
 		"bounce_strength": 2,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickBouncer.tscn"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 2,
 	},
 	LevelElements.BRICK_MAGNET: {
 		"color": Ref.color_brick_magnet_off,
@@ -223,21 +209,21 @@ var level_elements_profiles: Dictionary = {
 		"gravity_force": 70.0,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickMagnet.tscn"),
-		"ai_target_rank": 0,
+		"ai_target_rank": 0, # 0 pomeni, da se izogneš
 	},	
 	LevelElements.BRICK_TARGET: {
 		"color": Ref.color_brick_target,
 		"value": 100,
 		"altitude": 5,
 		"element_scene": preload("res://game/arena/bricks/BrickTarget.tscn"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 2,
 	},
 	LevelElements.BRICK_LIGHT: {
 		"color": Ref.color_brick_light_off,
 		"value": 10,
 		"altitude": 0,
 		"element_scene": preload("res://game/arena/bricks/BrickLight.tscn"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	},
 	LevelElements.AREA_NITRO: {
 		"drag_div": 500,
@@ -264,7 +250,7 @@ var level_elements_profiles: Dictionary = {
 }
 
 enum Pickables{
-	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA, PICKABLE_SHOCKER, PICKABLE_SHIELD, 
+	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA, PICKABLE_SHIELD, 
 	PICKABLE_ENERGY, PICKABLE_LIFE, PICKABLE_GAS, PICKABLE_POINTS
 	PICKABLE_NITRO, PICKABLE_TRACKING, 
 	PICKABLE_RANDOM
@@ -277,7 +263,7 @@ var pickable_profiles: Dictionary = {
 		"value": 20,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_bullet.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_MISILE: {
 		"in_random_selection": true,
@@ -285,7 +271,7 @@ var pickable_profiles: Dictionary = {
 		"value": 2,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_misile.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	}, 
 	Pickables.PICKABLE_MINA: {
 		"in_random_selection": true,
@@ -293,15 +279,7 @@ var pickable_profiles: Dictionary = {
 		"value": 3,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_mina.tres"),
-		"ai_target_rank": 5,
-	}, 
-	Pickables.PICKABLE_SHOCKER: {
-		"in_random_selection": true,
-		"color": Ref.color_pickable_weapon,
-		"value": 3,
-		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_shocker.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	}, 
 	Pickables.PICKABLE_SHIELD: {
 		"in_random_selection": true,
@@ -309,7 +287,7 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_shield.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_ENERGY: {
 		"in_random_selection": true,
@@ -317,7 +295,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_energy.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_LIFE: {
 		"in_random_selection": true,
@@ -325,7 +303,7 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_life.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_GAS: {
 		"in_random_selection": false,
@@ -333,7 +311,7 @@ var pickable_profiles: Dictionary = {
 		"value": 200,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_gas.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_POINTS: {
 		"in_random_selection": false,
@@ -341,7 +319,7 @@ var pickable_profiles: Dictionary = {
 		"value": 100,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_points.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 2,
 	},
 	Pickables.PICKABLE_NITRO: {
 		"in_random_selection": false,
@@ -350,7 +328,7 @@ var pickable_profiles: Dictionary = {
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_nitro.tres"),
 		"duration": 1.5, # sekunde
-		"ai_target_rank": 5,
+		"ai_target_rank": 1,
 	},
 	Pickables.PICKABLE_TRACKING: {
 		"in_random_selection": false,
@@ -359,7 +337,7 @@ var pickable_profiles: Dictionary = {
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_tracking.tres"),
 		"duration": 5,
-		"ai_target_rank": 5,
+		"ai_target_rank": 1,
 	},
 	Pickables.PICKABLE_RANDOM: {
 		"in_random_selection": false,
@@ -367,7 +345,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_random.tres"),
-		"ai_target_rank": 5,
+		"ai_target_rank": 2,
 	},
 }
 

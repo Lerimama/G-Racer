@@ -39,7 +39,7 @@ func shake_camera(shake_power: float):
 	
 
 func set_camera_limits():
-	return # _temp
+	
 	var tilemap_edge: Rect2 = Ref.current_level.tilemap_edge.get_used_rect()
 	
 	var corner_TL: float
@@ -48,10 +48,14 @@ func set_camera_limits():
 	var corner_BR: float
 	var cell_size_x = Ref.current_level.tilemap_edge.cell_size.x
 	
-	corner_TL = tilemap_edge.position.x * cell_size_x + cell_size_x # k mejam prištejem edge debelino
-	corner_TR = tilemap_edge.end.x * cell_size_x - cell_size_x
-	corner_BL = tilemap_edge.position.y * cell_size_x + cell_size_x
-	corner_BR = tilemap_edge.end.y * cell_size_x - cell_size_x
+#	corner_TL = tilemap_edge.position.x * cell_size_x + cell_size_x # k mejam prištejem edge debelino
+#	corner_TR = tilemap_edge.end.x * cell_size_x - cell_size_x
+#	corner_BL = tilemap_edge.position.y * cell_size_x + cell_size_x
+#	corner_BR = tilemap_edge.end.y * cell_size_x - cell_size_x	
+	corner_TL = tilemap_edge.position.x * cell_size_x
+	corner_TR = tilemap_edge.end.x * cell_size_x
+	corner_BL = tilemap_edge.position.y * cell_size_x
+	corner_BR = tilemap_edge.end.y * cell_size_x
 	
 	if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
 		return	

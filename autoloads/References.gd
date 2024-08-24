@@ -20,7 +20,6 @@ var group_bolts = "Bolts"
 var group_misiles = "Misiles"
 var group_bullets = "Bullets"
 var group_mine = "Mine"
-var group_shockers = "Shockers"
 var group_pickables = "Pickables"
 #var group_arena =  "Arena"
 #var group_tilemap = "Tilemap" # defender in patterns

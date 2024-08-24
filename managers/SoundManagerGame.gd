@@ -66,11 +66,10 @@ func play_sfx(effect_for: String):
 		"mina_explode": 
 			$Sfx/MisileExplode.play()
 			# ustavim, če se pleja ...
-			$Sfx/MisileFlight.set_volume_db(-80)
-			$Sfx/MisileShoot.set_volume_db(-80)
-			$Sfx/MisileFlight.stop()
-			$Sfx/MisileShoot.stop()
-		"shocker_effect": $Sfx/ShockerEffect.play()
+#			$Sfx/MisileFlight.set_volume_db(-80)
+#			$Sfx/MisileShoot.set_volume_db(-80)
+#			$Sfx/MisileFlight.stop()
+#			$Sfx/MisileShoot.stop()
 		"pickable": $Sfx/Pickable.play()
 		"pickable_weapon": $Sfx/PickableWeapon.play()
 		"pickable_nitro": $Sfx/PickableNitro.play()
@@ -81,10 +80,6 @@ func play_sfx(effect_for: String):
 func stop_sfx(effect_for: String):
 	
 	match effect_for:
-		"shocker_effect":
-			$Sfx/ShockerEffect.stop()
-#			if $Sfx/ShockerEffect.is_playing():
-#				 $Sfx/ShockerEffect.stop()
 		"bolt_engine": 
 			pass
 			if $Sfx/BoltEngine.is_playing():

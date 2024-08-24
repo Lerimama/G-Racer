@@ -2,35 +2,6 @@ extends Node2D
 
 ## metode in njihove variable ... bivši global
 
-
-#func _ready():
-#
-#	# za menjavo scen
-#	var root = get_tree().root
-#	current_scene = root.get_child(root.get_child_count() - 1)
-#	print ("root: ", root)
-#	print ("current_scene: ", current_scene)
-
-#func get_clock_time_old(time_to_split: float): # sekunde
-#
-#	var minutes: int = floor(time_to_split / 60) # vse cele sekunde delim s 60
-#	var seconds: int = floor(time_to_split) - minutes * 60 # vse sekunde minus sekunde v celih minutah
-#	var hundreds: int = round((time_to_split - floor(time_to_split)) * 100) # decimalke množim x 100 in zaokrožim na celo
-#
-#	# return [minutes, seconds, hundreds]	
-#	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds	
-#	return time_on_clock
-		
-#func get_all_nodes_in_node(node_to_check: Node = get_tree().root, all_nodes_of_nodes: Array = []):
-#
-#	all_nodes_of_nodes.push_back(node_to_check)
-#
-#	for node in node_to_check.get_children():
-#		all_nodes_of_nodes = get_all_nodes_in_node(node)
-#
-#	#	print("Nodes in node",  all_nodes_of_nodes.size())
-#	return all_nodes_of_nodes	
-	
 	
 func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 	
@@ -94,11 +65,46 @@ func get_random_member(group_of_elements):
 		
 		return group_of_elements[selected_int]
 
+
+func get_random_name(string_length: int):
+	
+	randomize()
+	
+	var woves: String = "aeiouy"
+	var silables: String = "bcdfghjklmnpqrstvwxz"
+	var random_generated_name: String = ""
+	var random_start_index: int = randi() % 2
+	for i in string_length:
+		var letters: String
+		if i % 2 == 0:
+			if random_start_index == 0:
+				letters = woves
+			else:
+				letters = silables
+				
+		else:
+			if random_start_index == 0:
+				letters = silables
+			else:
+				letters = woves
+		var random_letter: String = letters[randi() % letters.length()]
+		random_generated_name += random_letter
+	
+	random_generated_name = random_generated_name.capitalize()
+	
+	return random_generated_name
+	
 	
 onready var indikator: PackedScene = preload("res://common/DebugIndikator.tscn")
+var all_indikators_spawned: Array = []
 
-func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D): # neki ne štima
+func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = true):
 	
+	if clear_spawned_before:
+		for indi in all_indikators_spawned:
+			indi.queue_free()
+		all_indikators_spawned.clear()
+
 	var new_indikator = indikator.instance()
 	new_indikator.global_position = pos
 	new_indikator.global_rotation = rot
@@ -108,6 +114,8 @@ func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D): # neki ne �
 	new_indikator.z_index = 10
 	parent_node.add_child(new_indikator)
 	
+	all_indikators_spawned.append(new_indikator)
+		
 	return new_indikator
 
 
@@ -138,8 +146,6 @@ func spawn_new_scene(scene_path, parent_node): # spawn scene
 	
 	return current_scene
 	
-	
-	
 
 # BUTTONS --------------------------------------------------------------------------------------------------
 
@@ -148,6 +154,7 @@ func spawn_new_scene(scene_path, parent_node): # spawn scene
 # dodam sounde na confirm, cancel, quit
 # dodam modulate na Checkbutton focus
 
+var allow_focus_sfx: bool = false # focus sounds
 
 func _on_SceneTree_node_added(node: Control):
 	
@@ -220,8 +227,6 @@ func _on_control_unfocused(control: Control):
 	if control is CheckButton or control is HSlider:
 		control.modulate = Color.red # color_gui_gray # Color.white
 
-
-var allow_focus_sfx: bool = false # focus sounds
 
 func grab_focus_no_sfx(control_to_focus: Control):
 	

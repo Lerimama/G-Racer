@@ -21,9 +21,9 @@ region = Rect2( 32, 0, 8, 8 )
 margin = Rect2( -1, 0, 0, 0 )
 
 [node name="StatLine" type="HBoxContainer"]
-margin_right = 653.0
+margin_right = 733.0
 margin_bottom = 57.0
-rect_min_size = Vector2( 0, 48 )
+rect_min_size = Vector2( 0, 57 )
 custom_constants/separation = 16
 script = ExtResource( 4 )
 

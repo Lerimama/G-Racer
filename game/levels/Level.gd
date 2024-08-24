@@ -125,18 +125,30 @@ func set_elements():
 				element_key = Pro.LevelElements.BRICK_GHOST
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
+				for surrounding_cell in get_surrounding_cells(cell, true):
+					if not non_navigation_cell_positions.has(surrounding_cell):
+						non_navigation_cell_positions.append(surrounding_cell)
 			8: # brick bouncer
 				element_key = Pro.LevelElements.BRICK_BOUNCER
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
+				for surrounding_cell in get_surrounding_cells(cell, true):
+					if not non_navigation_cell_positions.has(surrounding_cell):
+						non_navigation_cell_positions.append(surrounding_cell)
 			9: # brick magnet
 				element_key = Pro.LevelElements.BRICK_MAGNET
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
+				for surrounding_cell in get_surrounding_cells(cell, true):
+					if not non_navigation_cell_positions.has(surrounding_cell):
+						non_navigation_cell_positions.append(surrounding_cell)
 			10: # brick target
 				element_key = Pro.LevelElements.BRICK_TARGET
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
+				for surrounding_cell in get_surrounding_cells(cell, true):
+					if not non_navigation_cell_positions.has(surrounding_cell):
+						non_navigation_cell_positions.append(surrounding_cell)
 			11: # brick light
 				element_key = Pro.LevelElements.BRICK_LIGHT
 				spawn_tile_offset = single_tile_offset
@@ -169,8 +181,6 @@ func set_pickables():
 				pickable_key = Pro.Pickables.PICKABLE_MISILE
 			35:
 				pickable_key = Pro.Pickables.PICKABLE_MINA
-			16:
-				pickable_key = Pro.Pickables.PICKABLE_SHOCKER
 			17:
 				pickable_key = Pro.Pickables.PICKABLE_SHIELD
 			18:
@@ -192,16 +202,6 @@ func set_pickables():
 			tilemap_elements.set_cellv(cell, -1)
 			spawn_pickable(cell_global_position, "pickable_name_as_key", pickable_key)
 		
-		
-func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
-	
-		var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
-		
-		var new_pickable_scene = scene_to_spawn.instance() #
-		new_pickable_scene.position = spawn_global_position + double_tile_offset
-		new_pickable_scene.pickable_key = pickable_index
-		add_child(new_pickable_scene)
-			
 			
 func set_level_navigation():
 	
@@ -243,6 +243,19 @@ func set_level_navigation():
 		if cell_index == 5:
 			tilemap_edge.set_cellv(cell, -1)
 
+		
+# UTILITI ---------------------------------------------------------------------------------------------------------------------------------------
+
+
+func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
+	
+		var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
+		
+		var new_pickable_scene = scene_to_spawn.instance() #
+		new_pickable_scene.position = spawn_global_position + double_tile_offset
+		new_pickable_scene.pickable_key = pickable_index
+		add_child(new_pickable_scene)
+			
 
 func resize_to_level_size():
 	
@@ -276,6 +289,31 @@ func get_tilemap_cells(tilemap: TileMap):
 	
 	return tilemap_cells
 	
+	
+func get_surrounding_cells(surrounded_cell: Vector2, return_global_positions: bool = false):
+	
+	var surrounding_cells: Array = []
+	var surrounding_cells_global_positions: Array = []
+	var target_cell: Vector2
+	
+	for y in 3:
+		for x in 3:
+			target_cell = surrounded_cell + Vector2(x - 1, y - 1)
+			if surrounded_cell != target_cell:
+				surrounding_cells.append(target_cell)
+	
+	if return_global_positions:
+		for loc_cell in surrounding_cells:
+			var cell_loc_position = tilemap_elements.map_to_world(loc_cell)
+			var cell_glo_position = tilemap_elements.to_global(cell_loc_position)
+			surrounding_cells_global_positions.append(cell_glo_position)
+		return surrounding_cells_global_positions
+	else:
+		return surrounding_cells
+
+
+# SIGNALI ---------------------------------------------------------------------------------------------------------------------------------------
+
 
 func _on_FinishLine_body_entered(body: Node) -> void:
 	

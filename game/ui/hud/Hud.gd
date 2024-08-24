@@ -1,13 +1,12 @@
 extends Control
 
 
-var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
-var record_lap_time: int = 0 #setget _on_lap_record_changed # stotinke 
-var record_level_time: int = 0 # setget _on_level_record_changed # stotinke 
+var record_lap_time: int = 0
+var record_level_time: int = 0
 
 onready var statboxes: Array = [$StatBox, $StatBox2, $StatBox3, $StatBox4]
 
-onready var record_lap_label: Label = $GameStats/RecordLap
+onready var record_lap_label: Label = $RecordLap
 onready var game_stats: VBoxContainer = $GameStats
 onready var game_timer: Control = $"%GameTimer"
 onready var start_countdown: Control = $"%StartCountdown"
@@ -30,6 +29,12 @@ func _ready() -> void:
 
 func set_hud(): # kliče GM
 	
+	# game stats
+	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+		game_timer.hunds_mode = false
+	game_timer.show()
+	record_lap_label.hide()
+		
 	# player stats
 	for box in statboxes:
 		# najprej skrijem vse in potem pokažem glede na igro
@@ -64,14 +69,9 @@ func set_hud(): # kliče GM
 				box.stat_best_lap.show()
 				box.stat_level_time.show()
 	
-	# timer
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		game_timer.hunds_mode = false
-	
 							
 func on_game_start():
 	
-	game_stats.show()
 	game_timer.start_timer()
 
 
@@ -89,7 +89,8 @@ func hide_stats():
 
 	for box in statboxes:
 		box.hide() 	
-	game_stats.hide()
+	game_timer.hide()
+	record_lap_label.hide()
 
 
 func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_lap: bool):
@@ -117,9 +118,10 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	
 func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
 	
-	if spawned_bolt.is_in_group(Ref.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
-		return
+#	if spawned_bolt.is_in_group(Ref.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
+#		return
 		
+	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
 	var spawned_player_statbox: Control = statboxes[spawned_bolt.bolt_id]
 	var spawned_player_stats: Dictionary = spawned_bolt.player_stats
 	var spawned_player_profile: Dictionary = Pro.player_profiles[spawned_bolt.bolt_id]
@@ -128,15 +130,14 @@ func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
 	spawned_player_statbox.stat_bullet.stat_value = spawned_player_stats["bullet_count"]
 	spawned_player_statbox.stat_misile.stat_value = spawned_player_stats["misile_count"]
 	spawned_player_statbox.stat_mina.stat_value = spawned_player_stats["mina_count"]
-	spawned_player_statbox.stat_shocker.stat_value = spawned_player_stats["shocker_count"]
 	spawned_player_statbox.stat_gas.stat_value = spawned_player_stats["gas_count"]
 	spawned_player_statbox.stat_life.stat_value = spawned_player_stats["life"]
 	spawned_player_statbox.stat_points.stat_value = spawned_player_stats["points"]
 	spawned_player_statbox.stat_wins.stat_value = spawned_player_stats["wins"]
 	
 	# player line
+	spawned_player_statbox.player_name_label.text = Met.get_random_name(5) # spawned_player_profile["player_name"]
 	spawned_player_statbox.player_name_label.modulate = spawned_player_profile["player_color"]
-	spawned_player_statbox.player_name_label.text = spawned_player_profile["player_name"]
 	spawned_player_statbox.player_avatar.set_texture(spawned_player_profile["player_avatar"])
 	spawned_player_statbox.stat_wins.modulate = Color.red
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
@@ -154,57 +155,21 @@ func _on_stats_changed(bolt_id: int, player_stats: Dictionary):
 	var statbox_to_change: Control = statboxes[bolt_id] # bolt id kot index je enak indexu statboxa v statboxih
 			
 	statbox_to_change.stat_wins.stat_value = player_stats["wins"] # setget
-	statbox_to_change.stat_life.stat_value = player_stats["life"] # setget
-	statbox_to_change.stat_points.stat_value = player_stats["points"] # setget
-	statbox_to_change.stat_gas.stat_value = player_stats["gas_count"] # setget	
-	statbox_to_change.stat_level_rank.stat_value = player_stats["level_rank"] # setget
-	statbox_to_change.stat_laps_count.stat_value = player_stats["laps_count"] + 1 # setget
-	
-	# weapons	
-	statbox_to_change.stat_bullet.stat_value = player_stats["bullet_count"] # setget
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if statbox_to_change.stat_bullet.stat_value == 0:
-			statbox_to_change.stat_bullet.hide()
-		else:
-			statbox_to_change.stat_bullet.show()	
-	statbox_to_change.stat_misile.stat_value = player_stats["misile_count"] # setget
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if statbox_to_change.stat_misile.stat_value == 0:
-			statbox_to_change.stat_misile.hide()
-		else:
-			statbox_to_change.stat_misile.show()	
-	statbox_to_change.stat_mina.stat_value = player_stats["mina_count"] # setget
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if statbox_to_change.stat_mina.stat_value == 0:
-			statbox_to_change.stat_mina.hide()
-		else:
-			statbox_to_change.stat_mina.show()		
-	statbox_to_change.stat_shocker.stat_value = player_stats["shocker_count"] # setget
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if statbox_to_change.stat_shocker.stat_value == 0:
-			statbox_to_change.stat_shocker.hide()
-		else:
-			statbox_to_change.stat_shocker.show()	
-
-	# best lap time
+	statbox_to_change.stat_life.stat_value = player_stats["life"]
+	statbox_to_change.stat_bullet.stat_value = player_stats["bullet_count"]
+	statbox_to_change.stat_misile.stat_value = player_stats["misile_count"]
+	statbox_to_change.stat_mina.stat_value = player_stats["mina_count"]
+	statbox_to_change.stat_points.stat_value = player_stats["points"]
+	statbox_to_change.stat_gas.stat_value = player_stats["gas_count"]	
+	statbox_to_change.stat_level_rank.stat_value = player_stats["level_rank"]
+	statbox_to_change.stat_laps_count.stat_value = player_stats["laps_count"] + 1 # +1 ker kaže trnenutnega, ne končanega
 	statbox_to_change.stat_best_lap.stat_value = player_stats["best_lap_time"]
-	if not statbox_to_change.stat_best_lap.visible: # če je prvi krog moram stat še pokazat
-		statbox_to_change.stat_best_lap.show()
-	
-	# level finished time
 	statbox_to_change.stat_level_time.stat_value = player_stats["level_time"]
-	if not statbox_to_change.stat_level_time.visible:
-		statbox_to_change.stat_level_time.show()
 	
-	# record lap
-	if player_stats["best_lap_time"] < record_lap_time or record_lap_time == 0:
-		record_lap_time = player_stats["best_lap_time"] 
-		Met.write_clock_time(record_lap_time, record_lap_label.get_node("TimeLabel"))
-		if not record_lap_label.visible:
-			record_lap_label.show()		
-	
-	# level record
-	#	if level_finished_time < record_level_time or record_level_time == 0:
-	#		record_level_time = level_finished_time 
-	#		var game_record_time_on_clock: String = "Record: " + Met.get_clock_time(record_level_time)
-	#		statbox_to_change.stat_level_time.modulate = Ref.color_green
+	# level record time
+	if not player_stats["best_lap_time"] == 0:
+		if player_stats["best_lap_time"] < record_lap_time or record_lap_time == 0:
+			record_lap_time = player_stats["best_lap_time"] 
+			Met.write_clock_time(record_lap_time, record_lap_label.get_node("TimeLabel"))
+			if not record_lap_label.visible:
+				record_lap_label.show()		
