@@ -180,74 +180,77 @@ var controller_profiles : Dictionary = {
 	},
 }
 
-enum LevelElements {
-	BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, BRICK_LIGHT, 
-	AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING, 
-	GOAL_PILLAR
-	}
-var level_elements_profiles: Dictionary = { 
+
+enum LevelAreas {AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING}
+var level_areas_profiles: Dictionary = {
+	LevelAreas.AREA_NITRO: {
+		"drag_div": 500,
+		"area_scene": preload("res://game/arena/areas/AreaNitro.tscn"),
+	},
+	LevelAreas.AREA_GRAVEL: {
+		"drag_div": 25.0, 
+		"area_scene": preload("res://game/arena/areas/AreaGravel.tscn"),
+	},
+	LevelAreas.AREA_HOLE: {
+		"drag_div": 5.0,
+		"area_scene": preload("res://game/arena/areas/AreaHole.tscn"),
+	},
+	LevelAreas.AREA_TRACKING: {
+		"area_tracking_value": 1,
+		"area_scene": preload("res://game/arena/areas/AreaHole.tscn"),
+	},
+}
+
+
+enum LevelObjects {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, BRICK_LIGHT, GOAL_PILLAR}
+var level_object_profiles: Dictionary = { 
 	# ne rabiš povsod istih vsebin, ker element vleče samo postavke, ki jih rabi
-	LevelElements.BRICK_GHOST: {
+	LevelObjects.BRICK_GHOST: {
 		"color": Ref.color_brick_ghost,
 		"value": 30,
 		"speed_brake_div": 10,
 		"altitude": 5,
-		"element_scene": preload("res://game/arena/bricks/BrickGhost.tscn"),
+		"object_scene": preload("res://game/arena/bricks/BrickGhost.tscn"),
 		"ai_target_rank": 0,
 	},
-	LevelElements.BRICK_BOUNCER: {
+	LevelObjects.BRICK_BOUNCER: {
 		"color": Ref.color_brick_bouncer,
 		"value": 10,
 		"bounce_strength": 2,
 		"altitude": 5,
-		"element_scene": preload("res://game/arena/bricks/BrickBouncer.tscn"),
-		"ai_target_rank": 2,
+		"object_scene": preload("res://game/arena/bricks/BrickBouncer.tscn"),
+		"ai_target_rank": 0,
 	},
-	LevelElements.BRICK_MAGNET: {
+	LevelObjects.BRICK_MAGNET: {
 		"color": Ref.color_brick_magnet_off,
 		"value": 0,
 		"gravity_force": 70.0,
 		"altitude": 5,
-		"element_scene": preload("res://game/arena/bricks/BrickMagnet.tscn"),
+		"object_scene": preload("res://game/arena/bricks/BrickMagnet.tscn"),
 		"ai_target_rank": 0, # 0 pomeni, da se izogneš
 	},	
-	LevelElements.BRICK_TARGET: {
+	LevelObjects.BRICK_TARGET: {
 		"color": Ref.color_brick_target,
 		"value": 100,
 		"altitude": 5,
-		"element_scene": preload("res://game/arena/bricks/BrickTarget.tscn"),
-		"ai_target_rank": 2,
+		"object_scene": preload("res://game/arena/bricks/BrickTarget.tscn"),
+		"ai_target_rank": 0,
 	},
-	LevelElements.BRICK_LIGHT: {
+	LevelObjects.BRICK_LIGHT: {
 		"color": Ref.color_brick_light_off,
 		"value": 10,
 		"altitude": 0,
-		"element_scene": preload("res://game/arena/bricks/BrickLight.tscn"),
+		"object_scene": preload("res://game/arena/bricks/BrickLight.tscn"),
 		"ai_target_rank": 3,
 	},
-	LevelElements.AREA_NITRO: {
-		"drag_div": 500,
-		"element_scene": preload("res://game/arena/areas/AreaNitro.tscn"),
-	},
-	LevelElements.AREA_GRAVEL: {
-		"drag_div": 25.0, 
-		"element_scene": preload("res://game/arena/areas/AreaGravel.tscn"),
-	},
-	LevelElements.AREA_HOLE: {
-		"drag_div": 5.0,
-		"element_scene": preload("res://game/arena/areas/AreaHole.tscn"),
-	},
-	LevelElements.AREA_TRACKING: {
-		"area_tracking_value": 1,
-		"element_scene": preload("res://game/arena/areas/AreaHole.tscn"),
-	},
-	LevelElements.GOAL_PILLAR: {
+	LevelObjects.GOAL_PILLAR: {
 		"value": 1000,
 		"altitude": 5,
-		"element_scene": preload("res://game/arena/elements/GoalPillar.tscn"),
+		"object_scene": preload("res://game/arena/GoalPillar.tscn"),
 		"ai_target_rank": 5,
 	},
 }
+
 
 enum Pickables{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA, PICKABLE_SHIELD, 
@@ -256,7 +259,6 @@ enum Pickables{
 	PICKABLE_RANDOM
 	}
 var pickable_profiles: Dictionary = {
-	
 	Pickables.PICKABLE_BULLET: {
 		"in_random_selection": true, # vključeno v random izbor?
 		"color": Ref.color_pickable_weapon,

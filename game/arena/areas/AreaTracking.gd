@@ -1,9 +1,9 @@
 extends Area2D
 
 
-var element_key: int # poda spawner, uravnava vse ostalo
+var level_area_key: int # poda spawner, uravnava vse ostalo
 
-onready var area_tracking_value = Pro.level_elements_profiles[element_key]["area_tracking_value"]
+onready var area_tracking_value = Pro.level_areas_profiles[level_area_key]["area_tracking_value"]
 
 
 func _on_AreaTracking_body_entered(body: Node) -> void:

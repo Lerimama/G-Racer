@@ -1,9 +1,9 @@
 extends Area2D
 
 
-var element_key: int # poda spawner, uravnava vse ostalo
+var level_area_key: int # poda spawner, uravnava vse ostalo
 
-onready var hole_drag_div = Pro.level_elements_profiles[element_key]["drag_div"]
+onready var hole_drag_div = Pro.level_areas_profiles[level_area_key]["drag_div"]
 
 
 func _on_AreaHole_body_entered(body: Node) -> void:

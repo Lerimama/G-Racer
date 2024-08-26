@@ -1,7 +1,7 @@
 extends Node2D
 
 onready var tilemap_floor: TileMap
-onready var tilemap_elements: TileMap
+onready var tilemap_objects: TileMap
 onready var tilemap_edge: TileMap
 
 func _ready() -> void:
@@ -46,7 +46,7 @@ func set_level_shaders():
 			tilemap_floor:
 		#		var tm: TileMap = tilemap_floor
 				tile_with_shader_id = 5
-			#	var tm: TileMap = tilemap_elements
+			#	var tm: TileMap = tilemap_objects
 			#	var tile_with_shader_id: int = 36
 			tilemap_edge:
 				tile_with_shader_id = 0

@@ -21,7 +21,7 @@ onready var finish_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_
 onready var finish_out_distance: float = race_finish_node.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 onready var racing_track: Path2D = $RacingTrack
 onready var tilemap_floor: TileMap = $Floor
-onready var tilemap_elements: TileMap = $Elements
+onready var tilemap_objects: TileMap = $Objects
 onready var tilemap_edge: TileMap = $Edge
 
 # navigacija
@@ -67,9 +67,8 @@ func _ready() -> void:
 		finish_line.monitoring = false
 		
 	set_level_floor() # luknje
-	set_elements() # elementi
-	set_pickables()
-	set_level_navigation() # navigacija ... more bit po elementsih zato, da se prilagodi navigacija ... 
+	set_level_objects() # elementi
+	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
 	resize_to_level_size()
 	
 	emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
@@ -87,91 +86,91 @@ func set_level_floor():
 		var area_key: int = -1
 		match cell_index:
 			1:
-				area_key = Pro.LevelElements.AREA_NITRO
+				area_key = Pro.LevelAreas.AREA_NITRO
 			2:
-				area_key = Pro.LevelElements.AREA_GRAVEL
-				non_navigation_cell_positions.append(cell_global_position)
+				area_key = Pro.LevelAreas.AREA_GRAVEL
 			3:
-				area_key = Pro.LevelElements.AREA_HOLE
-				non_navigation_cell_positions.append(cell_global_position)
+				area_key = Pro.LevelAreas.AREA_HOLE
 
 		if area_key > -1: # preskok celic, ki imajo druge id-je
-			var scene_to_spawn: PackedScene = Pro.level_elements_profiles[area_key]["element_scene"]	
+			var scene_to_spawn: PackedScene = Pro.level_areas_profiles[area_key]["area_scene"]	
 			var new_area_scene = scene_to_spawn.instance()
 			new_area_scene.position = cell_global_position + single_tile_offset
-			new_area_scene.element_key = area_key
+			new_area_scene.level_area_key = area_key
 			add_child(new_area_scene)
 	
 
-func set_elements():
+func set_level_objects():
 	
-	if tilemap_elements.get_used_cells().empty():
+	if tilemap_objects.get_used_cells().empty():
 		return
 		
-	for cell in tilemap_elements.get_used_cells():
+	for cell in tilemap_objects.get_used_cells():
 		
-		var cell_index = tilemap_elements.get_cellv(cell)
-		var cell_local_position = tilemap_elements.map_to_world(cell)
-		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
+		var cell_index = tilemap_objects.get_cellv(cell)
+		var cell_local_position = tilemap_objects.map_to_world(cell)
+		var cell_global_position = tilemap_objects.to_global(cell_local_position)	
 		
 		var spawn_tile_offset: Vector2
-		var element_key: int = -1
+		var level_object_key: int = -1
 		match cell_index:
 			6: # goal pillar
-				element_key = Pro.LevelElements.GOAL_PILLAR
+				level_object_key = Pro.LevelObjects.GOAL_PILLAR
 				spawn_tile_offset = Vector2(36,36)
 				non_navigation_cell_positions.append(cell_global_position)
 			7: # brick ghost
-				element_key = Pro.LevelElements.BRICK_GHOST
+				level_object_key = Pro.LevelObjects.BRICK_GHOST
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			8: # brick bouncer
-				element_key = Pro.LevelElements.BRICK_BOUNCER
+				level_object_key = Pro.LevelObjects.BRICK_BOUNCER
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			9: # brick magnet
-				element_key = Pro.LevelElements.BRICK_MAGNET
+				level_object_key = Pro.LevelObjects.BRICK_MAGNET
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			10: # brick target
-				element_key = Pro.LevelElements.BRICK_TARGET
+				level_object_key = Pro.LevelObjects.BRICK_TARGET
 				spawn_tile_offset = single_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			11: # brick light
-				element_key = Pro.LevelElements.BRICK_LIGHT
+				level_object_key = Pro.LevelObjects.BRICK_LIGHT
 				spawn_tile_offset = single_tile_offset
 
-		if element_key > -1: # preskok celic, ki imajo druge id-je
-			tilemap_elements.set_cellv(cell, -1)
-			var scene_to_spawn: PackedScene = Pro.level_elements_profiles[element_key]["element_scene"]	
-			var new_element_scene = scene_to_spawn.instance()
-			new_element_scene.position = cell_global_position + spawn_tile_offset
-			new_element_scene.element_key = element_key
-			add_child(new_element_scene)
+		if level_object_key > -1: # preskok celic, ki imajo druge id-je
+			tilemap_objects.set_cellv(cell, -1)
+			var scene_to_spawn: PackedScene = Pro.level_object_profiles[level_object_key]["object_scene"]	
+			var new_object_scene = scene_to_spawn.instance()
+			new_object_scene.position = cell_global_position + spawn_tile_offset
+			new_object_scene.level_object_key = level_object_key
+			add_child(new_object_scene)
+	
+	set_pickables()
 			
 	
 func set_pickables():
 	
-	if tilemap_elements.get_used_cells().empty():
+	if tilemap_objects.get_used_cells().empty():
 		return
 		
-	for cell in tilemap_elements.get_used_cells():
+	for cell in tilemap_objects.get_used_cells():
 		
-		var cell_index = tilemap_elements.get_cellv(cell)
-		var cell_local_position = tilemap_elements.map_to_world(cell)
-		var cell_global_position = tilemap_elements.to_global(cell_local_position)	
+		var cell_index = tilemap_objects.get_cellv(cell)
+		var cell_local_position = tilemap_objects.map_to_world(cell)
+		var cell_global_position = tilemap_objects.to_global(cell_local_position)	
 		
 		var pickable_key: int = -1
 		match cell_index:
@@ -199,7 +198,7 @@ func set_pickables():
 				pickable_key = Pro.Pickables.PICKABLE_RANDOM
 		
 		if pickable_key > -1: # preskok celic, ki imajo druge id-je
-			tilemap_elements.set_cellv(cell, -1)
+			tilemap_objects.set_cellv(cell, -1)
 			spawn_pickable(cell_global_position, "pickable_name_as_key", pickable_key)
 		
 			
@@ -304,8 +303,8 @@ func get_surrounding_cells(surrounded_cell: Vector2, return_global_positions: bo
 	
 	if return_global_positions:
 		for loc_cell in surrounding_cells:
-			var cell_loc_position = tilemap_elements.map_to_world(loc_cell)
-			var cell_glo_position = tilemap_elements.to_global(cell_loc_position)
+			var cell_loc_position = tilemap_objects.map_to_world(loc_cell)
+			var cell_glo_position = tilemap_objects.to_global(cell_loc_position)
 			surrounding_cells_global_positions.append(cell_glo_position)
 		return surrounding_cells_global_positions
 	else:

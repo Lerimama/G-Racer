@@ -31,9 +31,9 @@ func _ready() -> void:
 func _on_Item_body_entered(body: Node) -> void:
 	
 	# če je med soundi kakšen poleg defaultnega, potem zaigraj zadnjega
-#	var all_sounds: Array = sounds.get_children()
-#	if all_sounds.size() > 1:
-#		sound_picked = all_sounds[all_sounds.size() - 1] 
+	#	var all_sounds: Array = sounds.get_children()
+	#	if all_sounds.size() > 1:
+	#		sound_picked = all_sounds[all_sounds.size() - 1] 
 
 	if body.has_method("on_item_picked"):
 		if pickable_key == Pro.Pickables.PICKABLE_BULLET or pickable_key == Pro.Pickables.PICKABLE_MISILE \
@@ -45,10 +45,9 @@ func _on_Item_body_entered(body: Node) -> void:
 			Ref.sound_manager.play_sfx("pickable")
 			pass
 			
+		body.on_item_picked(pickable_key)
+		#		body.call_deferred("on_item_picked", pickable_key)
 #		sound_picked.play()
-#		body.on_item_picked(pickable_key)
-		body.call_deferred("on_item_picked", pickable_key)
-		
 #		modulate.a = 0
 #		monitorable = false
 #		monitoring = false

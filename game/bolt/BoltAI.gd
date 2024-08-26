@@ -28,12 +28,14 @@ var ai_urgent_stop_distance: float = 20
 var ai_target_min_distance: float = 70
 var ai_target_max_distance: float = 120
 onready var edge_navigation_tilemap: TileMap = Ref.current_level.tilemap_edge
-		
+var valid_target_group: String = "valid_target_group"	
+var last_follow_target_position: Vector2
+
 
 func _ready() -> void:
 	
 	add_to_group(Ref.group_ai)
-#	bolt_hud.hide()
+	#	bolt_hud.hide()
 	
 	# debug ... spawn navigation line
 	ai_navigation_line = Line2D.new()
@@ -67,23 +69,28 @@ func _physics_process(delta: float) -> void:
 
 	
 func manage_ai_states(delta: float):
-
+	
+	# če node tarče še obstaja, ga pošlje v SEARCH mode
+	if not get_tree().get_nodes_in_group(valid_target_group).has(ai_target): # preverjam s strani grupe
+		set_ai_target(edge_navigation_tilemap)	
+		return
+			
 	match current_ai_state:
 		
 		AiStates.IDLE: 
-			# target = null	
 			# miruje s prižganim motorjem
+			# target = null	
 			engine_power = 0
 		
 		AiStates.RACE: 
-			# target = position tracker
 			# šiba po najbližji poti do tarče
+			# target = position tracker
 			navigation_agent.set_target_location(get_racing_position(ai_target))
 			engine_power = max_engine_power	
 		
 		AiStates.SEARCH: 
-			# target = edge_navigation_tilemap
 			# išče novo tarčo, dokler je ne najde
+			# target = edge_navigation_tilemap
 			var possible_targets: Array = get_possible_targets()
 			if not possible_targets.empty():
 				if "ai_target_rank" in ai_target:
@@ -92,14 +99,16 @@ func manage_ai_states(delta: float):
 						set_ai_target(possible_targets[0]) # postane CHASE
 				else:
 					set_ai_target(possible_targets[0]) # postane CHASE
-			
 			engine_power = max_engine_power
 	
-		AiStates.FOLLOW: # sledi tarči, dokler se ji ne približa ... če je ne vidi ima problem
-			
+		AiStates.FOLLOW: 
+			# sledi tarči, dokler se ji ne približa ... če je ne vidi ima problem
+			# target = bolt
 			# apdejt pozicije tarče, če se premika
 			if not navigation_agent.get_target_location() == ai_target.global_position: 
 				navigation_agent.set_target_location(ai_target.global_position)
+				# sharanjujem zadnjo pozicijo, da lažje sledim
+				last_follow_target_position = ai_target.global_position
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
 			var target_ray_length: float = global_position.distance_to(ai_target.global_position)
@@ -117,8 +126,9 @@ func manage_ai_states(delta: float):
 			if target_ray.is_colliding() or ai_target == null:
 				set_ai_target(edge_navigation_tilemap)
 		
-		AiStates.CHASE: # pobere tarčo, ki jo je videl ... ne izgubi pogleda
-			
+		AiStates.CHASE: 
+			# pobere tarčo, ki jo je videl ... ne izgubi pogleda
+			# tarča = level object
 			# apdejt pozicije tarče, če se premika
 			if not navigation_agent.get_target_location() == ai_target.global_position: 
 				navigation_agent.set_target_location(ai_target.global_position)			
@@ -140,6 +150,7 @@ func manage_ai_states(delta: float):
 	
 	# printt("Current state: %s" % AiStates.keys()[current_ai_state], ai_target)
 	
+	# če tarča ni več d
 	if ai_target and not navigation_agent.is_target_reachable(): # sanira tudi bug, ker je lahko izbran kakšen za steno
 		set_ai_target(edge_navigation_tilemap)	
 	
@@ -149,41 +160,35 @@ func set_ai_target(new_ai_target: Node2D):
 	detect_ray.enabled = false
 	target_ray.enabled = false
 	
+	# reset "valid target" grupe
+	if get_tree().get_nodes_in_group(valid_target_group).has(ai_target): # preverjam s strani grupe in ne tarče, ki je lahko že ne obstaja več
+		ai_target.remove_from_group(valid_target_group)
+	
 	if new_ai_target is Bolt: # debug
 		printt("start FOLLOW from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
-		
 		target_ray.enabled = true
-	
 		current_ai_state = AiStates.FOLLOW
 	
 	elif new_ai_target is Pickable:		
 		printt("start CHASE from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
-		
 		target_ray.enabled = true
-	
 		navigation_agent.set_target_location(new_ai_target.global_position)
 		current_ai_state = AiStates.CHASE
 	
 	elif new_ai_target is PathFollow2D:
 		printt("start RACE from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
-		
 		current_ai_state = AiStates.RACE	
 	
 	elif new_ai_target == edge_navigation_tilemap:
 		printt("start SEARCH from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
-
 		detect_ray.enabled = true
-				
 		var target_navigation_cell_position: Vector2 = Vector2.ZERO
 		# če je bil FOLLOW je nova tarča na zadnji vidni lokaciji stare tarče, drugače je random nav cell
 		if current_ai_state == AiStates.FOLLOW:
-			var last_follow_target_position: Vector2 = ai_target.global_position
 			target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
 		else:
 			target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
 		navigation_agent.set_target_location(target_navigation_cell_position)
-	
-
 		current_ai_state = AiStates.SEARCH
 	
 	elif new_ai_target == null:
@@ -191,7 +196,9 @@ func set_ai_target(new_ai_target: Node2D):
 		printt("start IDLE from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		current_ai_state = AiStates.IDLE
 	
+	# apliciram target in ga dam v "valid target" grupo
 	ai_target = new_ai_target	
+	ai_target.add_to_group(valid_target_group)
 	
 
 # PER STATE ----------------------------------------------------------------------------------------------
@@ -275,17 +282,17 @@ func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, m
 				var vector_to_position: Vector2 = nav_position - global_position
 				var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
 				# če je najbolj spredaj
-#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
+				#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
 				if current_angle_to_bolt_deg < 30  and current_angle_to_bolt_deg > - 30 :
 					front_cells_for_random_selection.append(nav_position)
 				# če je na straneh
 				elif current_angle_to_bolt_deg < 90  and current_angle_to_bolt_deg > -90 :
 					side_cells_for_random_selection.append(nav_position)
-#					indi.modulate = Color.black
+				#					indi.modulate = Color.black
 				# če ni v razponu kota
 				else:
 					all_cells_for_random_selection.append(nav_position)
-#					indi.modulate = Color.green
+				#					indi.modulate = Color.green
 			else:
 				# random select, samo nabiram za žrebanje, 
 				if random_select:
@@ -333,68 +340,12 @@ func _on_NavigationAgent2D_path_changed() -> void: # debug
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
 
-#	print("navigation finished")
 	if current_ai_state == AiStates.SEARCH:
 		set_ai_target(edge_navigation_tilemap)	
-	#	elif current_ai_state == AiStates.CHASE:
-	#		set_ai_target(edge_navigation_tilemap)	
 	
 	
 func _on_NavigationAgent2D_target_reached() -> void:
-	
 	print("target reached")
-	#	if current_ai_state == AiStates.SEARCH:
+	#	if current_ai_state == AiStates.CHASE:
 	#		set_ai_target(edge_navigation_tilemap)	
-	if current_ai_state == AiStates.CHASE:
-		set_ai_target(edge_navigation_tilemap)	
-	
 	pass
-
-	
-func on_item_picked(pickable_key: int):
-	
-	if "pickable_key" in ai_target: # OPT ... on item picked
-		if pickable_key == ai_target.pickable_key:
-			set_ai_target(edge_navigation_tilemap)
-		
-	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
-	
-	match pickable_key:
-		Pro.Pickables.PICKABLE_BULLET:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				player_stats["misile_count"] = 0
-				player_stats["mina_count"] = 0
-			update_stat("bullet_count", pickable_value)
-		Pro.Pickables.PICKABLE_MISILE:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				player_stats["bullet_count"] = 0
-				player_stats["mina_count"] = 0
-			update_stat("misile_count", pickable_value)
-		Pro.Pickables.PICKABLE_MINA:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-				player_stats["bullet_count"] = 0
-				player_stats["misile_count"] = 0
-			update_stat("mina_count", pickable_value)
-		Pro.Pickables.PICKABLE_SHIELD:
-			shield_loops_limit = pickable_value
-			activate_shield()
-		Pro.Pickables.PICKABLE_ENERGY:
-			player_stats["energy"] = max_energy
-		Pro.Pickables.PICKABLE_GAS:
-			update_stat("gas_count", pickable_value)
-		Pro.Pickables.PICKABLE_LIFE:
-			update_stat("life", pickable_value)
-		Pro.Pickables.PICKABLE_NITRO:
-			activate_nitro(pickable_value, Pro.pickable_profiles[pickable_key]["duration"])
-		Pro.Pickables.PICKABLE_TRACKING:
-			var default_traction = side_traction
-			side_traction = pickable_value
-			yield(get_tree().create_timer(Pro.pickable_profiles[pickable_key]["duration"]), "timeout")
-			side_traction = default_traction
-		Pro.Pickables.PICKABLE_POINTS:
-			update_bolt_points(pickable_value)
-		Pro.Pickables.PICKABLE_RANDOM:
-			var random_range: int = Pro.pickable_profiles.keys().size()
-			var random_pickable_index = randi() % random_range
-			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
-			on_item_picked(random_pickable_key) # pick selected

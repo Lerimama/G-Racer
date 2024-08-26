@@ -56,9 +56,10 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("no5"):
 		for bolt in bolts_in_game:
 			if bolt.is_in_group(Ref.group_players):
-				bolt.player_stats["gas_count"] = 0
-			if bolt.is_in_group(Ref.group_ai):
-				bolt.player_stats["gas_count"] = 0			
+				bolt.queue_free()
+				#				bolt.player_stats["gas_count"] = 0
+				#			if bolt.is_in_group(Ref.group_ai):
+				#				bolt.player_stats["gas_count"] = 0			
 
 func _ready() -> void:
 	printt("GM")

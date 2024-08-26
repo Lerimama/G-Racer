@@ -57,13 +57,12 @@ func sound_play_fade_in(sound, new_volume: int, fade_time: float):
 	fade_out.tween_property(sound, "volume_db", new_volume, fade_time)
 	
 	
-func get_random_member(group_of_elements):
+func get_random_member(group_of_members):
 		
-		var random_range = group_of_elements.size()
+		var random_range = group_of_members.size()
 		var selected_int = randi() % int(random_range)
-		# printt ("Random:", group_of_elements.size(), selected_int, group_of_elements[selected_int])
 		
-		return group_of_elements[selected_int]
+		return group_of_members[selected_int]
 
 
 func get_random_name(string_length: int):

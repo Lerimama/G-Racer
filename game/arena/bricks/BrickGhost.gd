@@ -3,14 +3,14 @@ extends StaticBody2D
 
 var def_particle_speed: float = 6
 
-var element_key: int # poda spawner, uravnava vse ostalo
+var level_object_key: int # poda spawner, uravnava vse ostalo
 
-onready var brick_color: Color = Pro.level_elements_profiles[element_key]["color"]
-onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
-onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
-onready var speed_brake_div: float = Pro.level_elements_profiles[element_key]["speed_brake_div"]
+onready var brick_color: Color = Pro.level_object_profiles[level_object_key]["color"]
+onready var brick_altitude: float = Pro.level_object_profiles[level_object_key]["altitude"]
+onready var reward_points: float = Pro.level_object_profiles[level_object_key]["value"]
+onready var speed_brake_div: float = Pro.level_object_profiles[level_object_key]["speed_brake_div"]
 
-onready var ai_target_rank: int = Pro.level_elements_profiles[element_key]["ai_target_rank"]
+onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer

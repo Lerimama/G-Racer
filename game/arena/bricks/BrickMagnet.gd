@@ -11,14 +11,14 @@ var time: float = 0
 var off_time: float = 2
 var on_time: float = 2
 
-var element_key: int # poda spawner, uravnava vse ostalo
+var level_object_key: int # poda spawner, uravnava vse ostalo
 
-onready var magnet_color_off: Color = Pro.level_elements_profiles[element_key]["color"]
-onready var brick_altitude: float = Pro.level_elements_profiles[element_key]["altitude"]
-onready var reward_points: float = Pro.level_elements_profiles[element_key]["value"]
-onready var gravity_force: float = Pro.level_elements_profiles[element_key]["gravity_force"]
+onready var magnet_color_off: Color = Pro.level_object_profiles[level_object_key]["color"]
+onready var brick_altitude: float = Pro.level_object_profiles[level_object_key]["altitude"]
+onready var reward_points: float = Pro.level_object_profiles[level_object_key]["value"]
+onready var gravity_force: float = Pro.level_object_profiles[level_object_key]["gravity_force"]
 
-onready var ai_target_rank: int = Pro.level_elements_profiles[element_key]["ai_target_rank"]
+onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
 
 onready var force_field: Area2D = $ForceField
 onready var sprite: Sprite = $Sprite
