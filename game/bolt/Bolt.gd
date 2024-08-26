@@ -639,7 +639,10 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 	
 	
 func on_item_picked(pickable_key: int):
+#func on_item_picked(pickable: Node2D):
 	
+#	var pickable_key: int = pickable.pickable_key
+#	var pickable_key: int
 	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 	
 	match pickable_key:
@@ -681,7 +684,7 @@ func on_item_picked(pickable_key: int):
 			var random_pickable_index = randi() % random_range
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
 			on_item_picked(random_pickable_key) # pick selected
-			
+		
 			
 # PRIVAT ------------------------------------------------------------------------------------------------
 

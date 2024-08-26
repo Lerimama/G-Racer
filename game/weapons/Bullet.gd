@@ -70,7 +70,6 @@ func _physics_process(delta: float) -> void:
 				
 func collide():
 	
-	# vision_ray.force_raycast_update() # ni glih učinka
 	var current_collider = vision_ray.get_collider()
 	destroy_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
 	if current_collider.has_method("on_hit") and not current_collider == spawned_by: # parenta exkludam v properties

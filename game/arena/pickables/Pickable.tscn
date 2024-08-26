@@ -24,6 +24,7 @@ animations = [ {
 } ]
 
 [node name="Pickable" type="Area2D"]
+collision_layer = 5
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true

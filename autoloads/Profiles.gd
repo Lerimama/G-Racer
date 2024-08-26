@@ -328,7 +328,7 @@ var pickable_profiles: Dictionary = {
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_nitro.tres"),
 		"duration": 1.5, # sekunde
-		"ai_target_rank": 1,
+		"ai_target_rank": 10,
 	},
 	Pickables.PICKABLE_TRACKING: {
 		"in_random_selection": false,
@@ -345,7 +345,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"altitude": 3,
 		"icon_scene": preload("res://assets/icons/icon_pickable_random.tres"),
-		"ai_target_rank": 2,
+		"ai_target_rank": 9,
 	},
 }
 

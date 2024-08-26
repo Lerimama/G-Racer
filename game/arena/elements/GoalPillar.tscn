@@ -31,6 +31,7 @@ random_pitch = 1.05
 
 [node name="GoalPillar" type="StaticBody2D"]
 position = Vector2( 102, 107 )
+collision_layer = 5
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_group_": true

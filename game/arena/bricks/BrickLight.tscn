@@ -41,6 +41,7 @@ tracks/1/keys = {
 }
 
 [node name="BrickLight" type="StaticBody2D"]
+collision_layer = 5
 physics_material_override = SubResource( 7 )
 script = ExtResource( 5 )
 __meta__ = {

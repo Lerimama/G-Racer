@@ -176,14 +176,14 @@ func game_intro():
 	fade_tween.tween_property(get_parent(), "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
 	yield(fade_tween, "finished")
 	
-	yield(get_tree().create_timer(Set.get_it_time),"timeout")
+#	yield(get_tree().create_timer(Set.get_it_time),"timeout")
 	
 	# bolts drive-in
 	var drive_in_time: float = 2
 	for bolt in bolts_in_game:
 		bolt.drive_in(drive_in_time)
 		
-	yield(get_tree().create_timer(Set.get_it_time),"timeout")
+#	yield(get_tree().create_timer(Set.get_it_time),"timeout")
 
 	# start countdown	
 	Ref.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj

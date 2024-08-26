@@ -35,7 +35,7 @@ func _on_Item_body_entered(body: Node) -> void:
 #	var all_sounds: Array = sounds.get_children()
 #	if all_sounds.size() > 1:
 #		sound_picked = all_sounds[all_sounds.size() - 1] 
-	
+
 	if body.has_method("on_item_picked"):
 		if pickable_key == Pro.Pickables.PICKABLE_BULLET or pickable_key == Pro.Pickables.PICKABLE_MISILE \
 		or pickable_key == Pro.Pickables.PICKABLE_MINA:
@@ -51,7 +51,11 @@ func _on_Item_body_entered(body: Node) -> void:
 #		monitorable = false
 #		monitoring = false
 
+	if body.is_in_group(Ref.group_ai): # OPT
+		if body.ai_target == self:
+			body.ai_target = body.edge_navigation_tilemap
 		queue_free()
-
+		
+			
 #func _on_Picked_finished() -> void:
 #	queue_free()	

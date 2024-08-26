@@ -502,7 +502,9 @@ no5={
 [layer_names]
 
 2d_physics/layer_1="all"
-2d_physics/layer_2="playing_field"
+2d_physics/layer_2="screen_edge"
+2d_physics/layer_3="ai_targets"
+2d_physics/layer_4="vision_breakers"
 
 [logging]
 
