@@ -149,10 +149,12 @@ func set_game():
 	printt("IDS", activated_player_ids)	
 		
 	# adaptacija količine orožij
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
 		Pro.default_player_stats["bullet_count"] = 0
 		Pro.default_player_stats["misile_count"] = 0
 		Pro.default_player_stats["mina_count"] = 0
+	game_settings["full_equip_mode"] = false # debug
 	if game_settings["full_equip_mode"]:
 		Pro.default_player_stats["bullet_count"] = 100
 		Pro.default_player_stats["misile_count"] = 100
@@ -493,6 +495,7 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	if new_bolt.is_in_group(Ref.group_players):
 		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
 	if new_bolt.is_in_group(Ref.group_ai):
+		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
 		new_bolt.level_navigation_positions = navigation_positions
 		
 	emit_signal("bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne

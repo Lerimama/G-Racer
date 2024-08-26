@@ -172,6 +172,7 @@ audio_stream = ExtResource( 16 )
 random_pitch = 1.05
 
 [node name="Bolt" type="KinematicBody2D"]
+collision_layer = 5
 script = ExtResource( 5 )
 
 [node name="ShieldCollision" type="CollisionShape2D" parent="."]

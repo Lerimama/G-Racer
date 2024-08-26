@@ -16,6 +16,7 @@ onready var energy_bar: Control = $BoltHudLines/EnergyBar
 
 onready var test_hud: ColorRect = $"../BoltHudLayer/TestHud" # _temp ... hud layer
 
+
 func _ready() -> void:
 
 	call_deferred("set_active_icons")

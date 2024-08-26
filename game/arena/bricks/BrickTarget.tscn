@@ -8,8 +8,8 @@
 
 [sub_resource type="PhysicsMaterial" id=14]
 
-[sub_resource type="CircleShape2D" id=26]
-radius = 4.0
+[sub_resource type="RectangleShape2D" id=26]
+extents = Vector2( 4, 4 )
 
 [sub_resource type="Animation" id=24]
 length = 0.001

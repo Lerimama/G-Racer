@@ -639,10 +639,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 	
 	
 func on_item_picked(pickable_key: int):
-#func on_item_picked(pickable: Node2D):
 	
-#	var pickable_key: int = pickable.pickable_key
-#	var pickable_key: int
 	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 	
 	match pickable_key:
@@ -748,7 +745,7 @@ func update_bolt_rank(new_bolt_rank: int):
 	update_stat("level_rank", new_bolt_rank)
 
 
-func update_stat(stat_name: String, change_value: float):  # OPT prevečkrat se kliče ... bolje on stat change 
+func update_stat(stat_name: String, change_value: float):
 	 
 	if not Ref.game_manager.game_on:
 		return

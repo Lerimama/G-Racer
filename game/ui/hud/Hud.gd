@@ -105,7 +105,7 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	
 	new_floating_tag.content_to_show = lap_time
 	new_floating_tag.tag_type = new_floating_tag.TagTypes.TIME
-	Ref.node_creation_parent.add_child(new_floating_tag) # OPT
+	Ref.node_creation_parent.add_child(new_floating_tag) # OPT ... floating bi raje v hudu
 	if best_lap == true:
 		new_floating_tag.modulate = Ref.color_green
 	else:
@@ -118,8 +118,8 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 	
 func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
 	
-#	if spawned_bolt.is_in_group(Ref.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
-#		return
+	#	if spawned_bolt.is_in_group(Ref.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
+	#		return
 		
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
 	var spawned_player_statbox: Control = statboxes[spawned_bolt.bolt_id]

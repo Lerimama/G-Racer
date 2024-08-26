@@ -72,9 +72,9 @@ var ai_profile: Dictionary = {
 	# battle
 	"battle_engine_power": 120, # je enaka kot od  bolta 
 	"aim_time": 1,
-	"seek_rotation_range": 60,
-	"seek_rotation_speed": 3,
-	"seek_distance": 640 * 0.7,
+#	"seek_rotation_range": 60,
+#	"seek_rotation_speed": 3,
+#	"seek_distance": 640 * 0.7,
 	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
 	# ni še implementiran!!!!!!
 	"ai_brake_distance": 0.8, # množenje s hitrostjo

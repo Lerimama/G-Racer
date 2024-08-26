@@ -2,7 +2,6 @@ extends Area2D
 class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 
-var pickable_key_as_name: int # poda ga spawner
 var pickable_key: int #= Pro.Pickables[pickable_key_as_name]# poda ga spawner
 
 onready var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
@@ -45,17 +44,13 @@ func _on_Item_body_entered(body: Node) -> void:
 		else:
 			Ref.sound_manager.play_sfx("pickable")
 			pass
+			
 #		sound_picked.play()
-		body.on_item_picked(pickable_key)
+#		body.on_item_picked(pickable_key)
+		body.call_deferred("on_item_picked", pickable_key)
+		
 #		modulate.a = 0
 #		monitorable = false
 #		monitoring = false
-
-	if body.is_in_group(Ref.group_ai): # OPT
-		if body.ai_target == self:
-			body.ai_target = body.edge_navigation_tilemap
-		queue_free()
 		
-			
-#func _on_Picked_finished() -> void:
-#	queue_free()	
+		queue_free()
