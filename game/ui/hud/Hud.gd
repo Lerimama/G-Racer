@@ -7,7 +7,6 @@ var record_level_time: int = 0
 onready var statboxes: Array = [$StatBox, $StatBox2, $StatBox3, $StatBox4]
 
 onready var record_lap_label: Label = $RecordLap
-onready var game_stats: VBoxContainer = $GameStats
 onready var game_timer: Control = $"%GameTimer"
 onready var start_countdown: Control = $"%StartCountdown"
 onready var level_name: Label = $LevelName
@@ -41,6 +40,7 @@ func set_hud(): # kliče GM
 		for stat in box.get_children():
 			record_lap_label.hide()
 			stat.hide()
+		box.player_line.show()
 		match Ref.current_level.level_type:
 			Ref.current_level.LevelTypes.BATTLE:
 				# pokažem: wins, life, gas, points, rank
@@ -136,7 +136,7 @@ func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
 	spawned_player_statbox.stat_wins.stat_value = spawned_player_stats["wins"]
 	
 	# player line
-	spawned_player_statbox.player_name_label.text = Met.get_random_name(5) # spawned_player_profile["player_name"]
+	spawned_player_statbox.player_name_label.text = spawned_player_profile["player_name"]
 	spawned_player_statbox.player_name_label.modulate = spawned_player_profile["player_color"]
 	spawned_player_statbox.player_avatar.set_texture(spawned_player_profile["player_avatar"])
 	spawned_player_statbox.stat_wins.modulate = Color.red

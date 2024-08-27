@@ -29,6 +29,7 @@ script = ExtResource( 3 )
 
 [node name="TestUI" type="CanvasLayer" parent="."]
 layer = 3
+visible = false
 script = ExtResource( 4 )
 noise = ExtResource( 1 )
 
@@ -41,7 +42,6 @@ theme = ExtResource( 2 )
 text = "test"
 
 [node name="TestHud" type="Node2D" parent="TestUI"]
-visible = false
 
 [node name="AddTraumaBtn" type="Button" parent="TestUI/TestHud"]
 anchor_top = 1.0

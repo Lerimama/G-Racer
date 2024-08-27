@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=2]
+[gd_scene load_steps=51 format=2]
 
 [ext_resource path="res://assets/shaders/home_colors_texture.gdshader" type="Shader" id=1]
 [ext_resource path="res://game/arena/TilemapEdge.gd" type="Script" id=2]
@@ -13,7 +13,9 @@
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_3.wav" type="AudioStream" id=11]
 [ext_resource path="res://assets/sound/music/moose.mp3" type="AudioStream" id=12]
 [ext_resource path="res://assets/sound/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=13]
+[ext_resource path="res://home/SelectPlayers.gd" type="Script" id=14]
 [ext_resource path="res://assets/sound/music/track_upbeat.wav" type="AudioStream" id=15]
+[ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=16]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/btn_focus_change.wav" type="AudioStream" id=18]
 [ext_resource path="res://assets/_insp_nomada.png" type="Texture" id=19]
@@ -25,6 +27,7 @@
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_1.wav" type="AudioStream" id=25]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/key_4.wav" type="AudioStream" id=26]
 [ext_resource path="res://assets/sound/music/POL-the-foyer-short.wav" type="AudioStream" id=27]
+[ext_resource path="res://assets/theme/fonts/body_small_font.tres" type="DynamicFont" id=28]
 [ext_resource path="res://assets/sound/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=29]
 [ext_resource path="res://assets/sound/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=30]
 [ext_resource path="res://assets/sound/sfx/_pa/gui/screen_slide.wav" type="AudioStream" id=31]
@@ -75,9 +78,9 @@ shader_param/change_colors = false
 shader_param/color_1 = Color( 0, 0, 0, 0 )
 shader_param/new_color_1 = Color( 0.996078, 0.976471, 0.545098, 1 )
 shader_param/color_2 = Color( 0, 0, 0, 0 )
-shader_param/new_color_2 = null
+shader_param/new_color_2 = Color( 0, 0, 0, 0 )
 shader_param/color_3 = Color( 0, 0, 0, 0 )
-shader_param/new_color_3 = null
+shader_param/new_color_3 = Color( 0, 0, 0, 0 )
 shader_param/color_to_transparent = Color( 0, 0, 0, 0 )
 shader_param/color_to_noise = Color( 0, 0, 0, 0 )
 shader_param/node_size = Vector2( 320, 320 )
@@ -186,7 +189,7 @@ tracks/5/keys = {
 "values": [ Vector2( 2560, 0 ) ]
 }
 tracks/6/type = "value"
-tracks/6/path = NodePath("Players:rect_position")
+tracks/6/path = NodePath("SelectPlayers:rect_position")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/imported = false
@@ -276,7 +279,7 @@ tracks/0/keys = {
 "values": [ Vector2( -424, 0 ), Vector2( -677.333, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Players:rect_position")
+tracks/1/path = NodePath("SelectPlayers:rect_position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -378,7 +381,7 @@ tracks/1/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 0, -1440 ) ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Players:rect_position")
+tracks/2/path = NodePath("SelectPlayers:rect_position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -1070,14 +1073,15 @@ size_flags_horizontal = 3
 text = "< NAZAJ"
 align = 2
 
-[node name="Players" type="Control" parent="UI"]
+[node name="SelectPlayers" type="Control" parent="UI"]
 margin_left = 5120.0
 margin_right = 7680.0
 margin_bottom = 1440.0
 rect_min_size = Vector2( 2560, 1440 )
 theme = ExtResource( 3 )
+script = ExtResource( 14 )
 
-[node name="Title" type="Label" parent="UI/Players"]
+[node name="Title" type="Label" parent="UI/SelectPlayers"]
 modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1089,7 +1093,7 @@ size_flags_horizontal = 3
 text = "Select players"
 align = 1
 
-[node name="ItemList" type="ItemList" parent="UI/Players"]
+[node name="ItemList" type="ItemList" parent="UI/SelectPlayers"]
 self_modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.5
 anchor_top = 0.5
@@ -1103,7 +1107,7 @@ select_mode = 1
 max_columns = 2
 same_column_width = true
 
-[node name="thumb" type="Panel" parent="UI/Players/ItemList"]
+[node name="thumb" type="Panel" parent="UI/SelectPlayers/ItemList"]
 self_modulate = Color( 0.294118, 0.623529, 1, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1112,7 +1116,7 @@ margin_right = -256.0
 margin_bottom = 415.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="PlayersBtn" type="Button" parent="UI/Players/ItemList/thumb"]
+[node name="PlayersBtn" type="Button" parent="UI/SelectPlayers/ItemList/thumb"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 focus_neighbour_top = NodePath("../../../PlayBtn")
@@ -1120,7 +1124,7 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 toggle_mode = true
 
-[node name="Label" type="Label" parent="UI/Players/ItemList/thumb/PlayersBtn"]
+[node name="Label" type="Label" parent="UI/SelectPlayers/ItemList/thumb/PlayersBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_top = 32.0
@@ -1128,10 +1132,12 @@ margin_bottom = 80.0
 text = "P1"
 align = 1
 
-[node name="Txt" type="Label" parent="UI/Players/ItemList/thumb/PlayersBtn/Label"]
+[node name="Txt" type="Label" parent="UI/SelectPlayers/ItemList/thumb/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 100.5
-margin_bottom = 265.5
+margin_left = 5.0
+margin_top = 90.0
+margin_bottom = 199.0
+custom_fonts/font = ExtResource( 16 )
 text = "Arrows
 dir: Arrows
 shot: shift
@@ -1139,7 +1145,20 @@ CHNG: Ctrl"
 align = 1
 uppercase = true
 
-[node name="thumb2" type="Panel" parent="UI/Players/ItemList"]
+[node name="Txt2" type="Label" parent="UI/SelectPlayers/ItemList/thumb/PlayersBtn/Label"]
+anchor_right = 1.0
+margin_left = 21.0
+margin_top = 234.0
+margin_right = -18.0
+margin_bottom = 359.0
+custom_fonts/font = ExtResource( 28 )
+text = "Dodaj še:
+- select color
+- select avatar
+- write name"
+uppercase = true
+
+[node name="thumb2" type="Panel" parent="UI/SelectPlayers/ItemList"]
 self_modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1149,7 +1168,7 @@ margin_right = -0.25
 margin_bottom = 419.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="PlayersBtn" type="Button" parent="UI/Players/ItemList/thumb2"]
+[node name="PlayersBtn" type="Button" parent="UI/SelectPlayers/ItemList/thumb2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 focus_neighbour_top = NodePath("../../../PlayBtn")
@@ -1157,7 +1176,7 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 toggle_mode = true
 
-[node name="Label" type="Label" parent="UI/Players/ItemList/thumb2/PlayersBtn"]
+[node name="Label" type="Label" parent="UI/SelectPlayers/ItemList/thumb2/PlayersBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_top = 34.0
@@ -1165,10 +1184,11 @@ margin_bottom = 82.0
 text = "P2"
 align = 1
 
-[node name="Txt" type="Label" parent="UI/Players/ItemList/thumb2/PlayersBtn/Label"]
+[node name="Txt" type="Label" parent="UI/SelectPlayers/ItemList/thumb2/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 85.5
-margin_bottom = 250.5
+margin_top = 86.0
+margin_bottom = 191.0
+custom_fonts/font = ExtResource( 16 )
 text = "WASD
 DIR: WASD
 SHOT: G
@@ -1176,7 +1196,7 @@ CHNG: W"
 align = 1
 uppercase = true
 
-[node name="thumb3" type="Panel" parent="UI/Players/ItemList"]
+[node name="thumb3" type="Panel" parent="UI/SelectPlayers/ItemList"]
 self_modulate = Color( 0.996078, 0.976471, 0.545098, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1185,7 +1205,7 @@ margin_right = 249.5
 margin_bottom = 415.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="PlayersBtn" type="Button" parent="UI/Players/ItemList/thumb3"]
+[node name="PlayersBtn" type="Button" parent="UI/SelectPlayers/ItemList/thumb3"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 focus_neighbour_top = NodePath("../../../PlayBtn")
@@ -1193,7 +1213,7 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 toggle_mode = true
 
-[node name="Label" type="Label" parent="UI/Players/ItemList/thumb3/PlayersBtn"]
+[node name="Label" type="Label" parent="UI/SelectPlayers/ItemList/thumb3/PlayersBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_top = 34.0
@@ -1201,10 +1221,13 @@ margin_bottom = 82.0
 text = "P3"
 align = 1
 
-[node name="Txt" type="Label" parent="UI/Players/ItemList/thumb3/PlayersBtn/Label"]
+[node name="Txt" type="Label" parent="UI/SelectPlayers/ItemList/thumb3/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 80.5
-margin_bottom = 245.5
+margin_left = 3.5
+margin_top = 88.0
+margin_right = 3.5
+margin_bottom = 177.0
+custom_fonts/font = ExtResource( 16 )
 text = "Joypad 1
 Dir: Dpad
 SHOot: Y
@@ -1212,7 +1235,7 @@ CHNG: A"
 align = 1
 uppercase = true
 
-[node name="thumb4" type="Panel" parent="UI/Players/ItemList"]
+[node name="thumb4" type="Panel" parent="UI/SelectPlayers/ItemList"]
 self_modulate = Color( 0.368627, 1, 0.662745, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1221,7 +1244,7 @@ margin_right = 500.25
 margin_bottom = 414.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="PlayersBtn" type="Button" parent="UI/Players/ItemList/thumb4"]
+[node name="PlayersBtn" type="Button" parent="UI/SelectPlayers/ItemList/thumb4"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 focus_neighbour_top = NodePath("../../../PlayBtn")
@@ -1229,7 +1252,7 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 toggle_mode = true
 
-[node name="Label" type="Label" parent="UI/Players/ItemList/thumb4/PlayersBtn"]
+[node name="Label" type="Label" parent="UI/SelectPlayers/ItemList/thumb4/PlayersBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_top = 34.0
@@ -1237,10 +1260,11 @@ margin_bottom = 82.0
 text = "P4"
 align = 1
 
-[node name="Txt" type="Label" parent="UI/Players/ItemList/thumb4/PlayersBtn/Label"]
+[node name="Txt" type="Label" parent="UI/SelectPlayers/ItemList/thumb4/PlayersBtn/Label"]
 anchor_right = 1.0
-margin_top = 89.5
-margin_bottom = 254.5
+margin_top = 90.0
+margin_bottom = 193.0
+custom_fonts/font = ExtResource( 16 )
 text = "Joypad 2
 Dir: Dpad
 SHOot: Y
@@ -1248,7 +1272,7 @@ CHNG: A"
 align = 1
 uppercase = true
 
-[node name="thumb5" type="Panel" parent="UI/Players/ItemList"]
+[node name="thumb5" type="Panel" parent="UI/SelectPlayers/ItemList"]
 self_modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1258,14 +1282,14 @@ margin_right = -11.5
 margin_bottom = 528.75
 custom_styles/panel = SubResource( 777 )
 
-[node name="EnemiesBtn" type="Button" parent="UI/Players/ItemList/thumb5"]
+[node name="EnemiesBtn" type="Button" parent="UI/SelectPlayers/ItemList/thumb5"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 toggle_mode = true
 
-[node name="Label" type="Label" parent="UI/Players/ItemList/thumb5/EnemiesBtn"]
+[node name="Label" type="Label" parent="UI/SelectPlayers/ItemList/thumb5/EnemiesBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_top = 21.75
@@ -1273,7 +1297,7 @@ margin_bottom = 69.75
 text = "ADD ENEMIES"
 align = 1
 
-[node name="Txt" type="Label" parent="UI/Players/ItemList/thumb5/EnemiesBtn/Label"]
+[node name="Txt" type="Label" parent="UI/SelectPlayers/ItemList/thumb5/EnemiesBtn/Label"]
 visible = false
 anchor_right = 1.0
 margin_top = 43.0
@@ -1285,7 +1309,7 @@ A"
 align = 1
 uppercase = true
 
-[node name="thumb6" type="Panel" parent="UI/Players/ItemList"]
+[node name="thumb6" type="Panel" parent="UI/SelectPlayers/ItemList"]
 self_modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1295,14 +1319,14 @@ margin_right = 495.0
 margin_bottom = 527.0
 custom_styles/panel = SubResource( 777 )
 
-[node name="EasyBtn" type="Button" parent="UI/Players/ItemList/thumb6"]
+[node name="EasyBtn" type="Button" parent="UI/SelectPlayers/ItemList/thumb6"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 3
 toggle_mode = true
 
-[node name="Label" type="Label" parent="UI/Players/ItemList/thumb6/EasyBtn"]
+[node name="Label" type="Label" parent="UI/SelectPlayers/ItemList/thumb6/EasyBtn"]
 modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
 anchor_right = 1.0
 margin_top = 21.5
@@ -1311,7 +1335,7 @@ text = "Easy mode"
 align = 1
 uppercase = true
 
-[node name="Txt" type="Label" parent="UI/Players/ItemList/thumb6/EasyBtn/Label"]
+[node name="Txt" type="Label" parent="UI/SelectPlayers/ItemList/thumb6/EasyBtn/Label"]
 visible = false
 anchor_right = 1.0
 margin_top = 43.0
@@ -1323,7 +1347,7 @@ A"
 align = 1
 uppercase = true
 
-[node name="BackBtn" type="Button" parent="UI/Players"]
+[node name="BackBtn" type="Button" parent="UI/SelectPlayers"]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -1498.0
@@ -1336,7 +1360,7 @@ size_flags_horizontal = 3
 text = "< NAZAJ"
 align = 2
 
-[node name="PlayBtn" type="Button" parent="UI/Players"]
+[node name="PlayBtn" type="Button" parent="UI/SelectPlayers"]
 margin_left = 1272.0
 margin_top = 864.0
 margin_right = 1527.0
@@ -1577,11 +1601,11 @@ pitch_scale = 1.1
 [connection signal="pressed" from="UI/Play/thumb3/ConfirmBtn" to="." method="_on_ConfirmBtn_3_pressed"]
 [connection signal="pressed" from="UI/Play/thumb6/ConfirmBtn" to="." method="_on_ConfirmBtn_6_pressed"]
 [connection signal="pressed" from="UI/Play/thumb5/ConfirmBtn" to="." method="_on_ConfirmBtn_5_pressed"]
-[connection signal="toggled" from="UI/Players/ItemList/thumb/PlayersBtn" to="." method="_on_PlayersBtn_toggled"]
-[connection signal="toggled" from="UI/Players/ItemList/thumb2/PlayersBtn" to="." method="_on_PlayersBtn_2_toggled"]
-[connection signal="toggled" from="UI/Players/ItemList/thumb3/PlayersBtn" to="." method="_on_PlayersBtn_3_toggled"]
-[connection signal="toggled" from="UI/Players/ItemList/thumb4/PlayersBtn" to="." method="_on_PlayersBtn_4_toggled"]
-[connection signal="toggled" from="UI/Players/ItemList/thumb5/EnemiesBtn" to="." method="_on_EnemiesBtn_5_toggled"]
-[connection signal="toggled" from="UI/Players/ItemList/thumb6/EasyBtn" to="." method="_on_EasyBtn_6_toggled"]
-[connection signal="pressed" from="UI/Players/PlayBtn" to="." method="_on_PlayBtn_pressed"]
+[connection signal="toggled" from="UI/SelectPlayers/ItemList/thumb/PlayersBtn" to="." method="_on_PlayersBtn_toggled"]
+[connection signal="toggled" from="UI/SelectPlayers/ItemList/thumb2/PlayersBtn" to="." method="_on_PlayersBtn_2_toggled"]
+[connection signal="toggled" from="UI/SelectPlayers/ItemList/thumb3/PlayersBtn" to="." method="_on_PlayersBtn_3_toggled"]
+[connection signal="toggled" from="UI/SelectPlayers/ItemList/thumb4/PlayersBtn" to="." method="_on_PlayersBtn_4_toggled"]
+[connection signal="toggled" from="UI/SelectPlayers/ItemList/thumb5/EnemiesBtn" to="." method="_on_EnemiesBtn_5_toggled"]
+[connection signal="toggled" from="UI/SelectPlayers/ItemList/thumb6/EasyBtn" to="." method="_on_EasyBtn_6_toggled"]
+[connection signal="pressed" from="UI/SelectPlayers/PlayBtn" to="." method="_on_PlayBtn_pressed"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

@@ -265,7 +265,6 @@ gdscript/warnings/narrowing_conversion=false
 
 window/size/width=2560
 window/size/height=1440
-window/size/borderless=true
 window/size/always_on_top=true
 window/size/test_width=640
 window/size/test_height=360
@@ -304,7 +303,7 @@ texture={
 "flags/anisotropic": false,
 "flags/filter": false,
 "flags/mipmaps": false,
-"flags/repeat": 0,
+"flags/repeat": 1,
 "flags/srgb": 2,
 "process/HDR_as_SRGB": false,
 "process/fix_alpha_border": true,

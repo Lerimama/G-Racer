@@ -1,14 +1,17 @@
 extends Node2D
 
-#signal level_navigation_finished(navigation)
+
 signal level_is_set(navigation, spawn_positions, other_)
 
 enum LevelTypes {RACE, RACE_LAPS, BATTLE}
 export (LevelTypes) var level_type: int = LevelTypes.RACE
+var is_free: bool = false # debug
 
-var single_tile_offset: Vector2 = Vector2(4,4)
-var double_tile_offset: Vector2 = Vector2(8,8)
-	
+# navigacija
+var navigation_cells: Array
+var navigation_cells_positions: Array
+var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
+
 onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
 onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
 onready var finish_line: Area2D = $RaceFinish/FinishLine
@@ -24,10 +27,8 @@ onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_objects: TileMap = $Objects
 onready var tilemap_edge: TileMap = $Edge
 
-# navigacija
-var navigation_cells: Array
-var navigation_cells_positions: Array
-var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
+# neu
+onready var camera_limits_rect: ColorRect = $CameraLimits
 
 	
 func _ready() -> void:
@@ -75,7 +76,9 @@ func _ready() -> void:
 	
 	
 func set_level_floor():
-		
+	
+	var area_tile_offset: Vector2 = Vector2(4,4)
+	
 	for cell in tilemap_floor.get_used_cells():
 		
 		var cell_index = tilemap_floor.get_cellv(cell)
@@ -95,7 +98,7 @@ func set_level_floor():
 		if area_key > -1: # preskok celic, ki imajo druge id-je
 			var scene_to_spawn: PackedScene = Pro.level_areas_profiles[area_key]["area_scene"]	
 			var new_area_scene = scene_to_spawn.instance()
-			new_area_scene.position = cell_global_position + single_tile_offset
+			new_area_scene.position = cell_global_position + area_tile_offset
 			new_area_scene.level_area_key = area_key
 			add_child(new_area_scene)
 	
@@ -104,8 +107,12 @@ func set_level_objects():
 	
 	if tilemap_objects.get_used_cells().empty():
 		return
-		
+
+	var brick_tile_offset: Vector2 = Vector2(4, 4)
+	var pillar_tile_offset: Vector2 = Vector2(36, 36)
+	
 	for cell in tilemap_objects.get_used_cells():
+		
 		
 		var cell_index = tilemap_objects.get_cellv(cell)
 		var cell_local_position = tilemap_objects.map_to_world(cell)
@@ -116,39 +123,39 @@ func set_level_objects():
 		match cell_index:
 			6: # goal pillar
 				level_object_key = Pro.LevelObjects.GOAL_PILLAR
-				spawn_tile_offset = Vector2(36,36)
+				spawn_tile_offset = pillar_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 			7: # brick ghost
 				level_object_key = Pro.LevelObjects.BRICK_GHOST
-				spawn_tile_offset = single_tile_offset
+				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			8: # brick bouncer
 				level_object_key = Pro.LevelObjects.BRICK_BOUNCER
-				spawn_tile_offset = single_tile_offset
+				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			9: # brick magnet
 				level_object_key = Pro.LevelObjects.BRICK_MAGNET
-				spawn_tile_offset = single_tile_offset
+				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			10: # brick target
 				level_object_key = Pro.LevelObjects.BRICK_TARGET
-				spawn_tile_offset = single_tile_offset
+				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			11: # brick light
 				level_object_key = Pro.LevelObjects.BRICK_LIGHT
-				spawn_tile_offset = single_tile_offset
+				spawn_tile_offset = brick_tile_offset
 
 		if level_object_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)
@@ -248,12 +255,13 @@ func set_level_navigation():
 
 func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
 	
-		var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
-		
-		var new_pickable_scene = scene_to_spawn.instance() #
-		new_pickable_scene.position = spawn_global_position + double_tile_offset
-		new_pickable_scene.pickable_key = pickable_index
-		add_child(new_pickable_scene)
+	var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
+	var pickable_tile_offset: Vector2 = Vector2(8,8)
+	
+	var new_pickable_scene = scene_to_spawn.instance() #
+	new_pickable_scene.position = spawn_global_position + pickable_tile_offset
+	new_pickable_scene.pickable_key = pickable_index
+	add_child(new_pickable_scene)
 			
 
 func resize_to_level_size():
@@ -267,6 +275,7 @@ func resize_to_level_size():
 	# naberem rektangle za risajzat
 	var nodes_to_resize: Array = tilemap_edge.get_children()
 	nodes_to_resize.append_array($Background.get_children())
+	nodes_to_resize.append(camera_limits_rect)
 	
 	# resize and set
 	for node in nodes_to_resize:

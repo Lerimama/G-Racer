@@ -1,6 +1,6 @@
 extends Bolt
 
-enum AiStates {IDLE, RACE, SEARCH, FOLLOW, CHASE}
+enum AiStates {IDLE, RACE, SEEK, FOLLOW, HUNT}
 enum AiAttackingMode {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
 
 var current_ai_state: int = AiStates.IDLE
@@ -30,6 +30,9 @@ var ai_target_max_distance: float = 120
 onready var edge_navigation_tilemap: TileMap = Ref.current_level.tilemap_edge
 var valid_target_group: String = "valid_target_group"	
 var last_follow_target_position: Vector2
+var target_ray_angle_limit: float = 30
+var target_ray_seek_length: float = 320
+var target_ray_rotation_speed: float = 1
 
 
 func _ready() -> void:
@@ -42,7 +45,7 @@ func _ready() -> void:
 	Ref.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
 	ai_navigation_line.default_color = bolt_color
-
+#	ai_navigation_line.hide()
 	randomize()
 	
 
@@ -70,7 +73,7 @@ func _physics_process(delta: float) -> void:
 	
 func manage_ai_states(delta: float):
 	
-	# če node tarče še obstaja, ga pošlje v SEARCH mode
+	# če node tarče še obstaja, ga pošlje v SEEK mode
 	if not get_tree().get_nodes_in_group(valid_target_group).has(ai_target): # preverjam s strani grupe
 		set_ai_target(edge_navigation_tilemap)	
 		return
@@ -88,7 +91,7 @@ func manage_ai_states(delta: float):
 			navigation_agent.set_target_location(get_racing_position(ai_target))
 			engine_power = max_engine_power	
 		
-		AiStates.SEARCH: 
+		AiStates.SEEK: 
 			# išče novo tarčo, dokler je ne najde
 			# target = edge_navigation_tilemap
 			var possible_targets: Array = get_possible_targets()
@@ -96,9 +99,9 @@ func manage_ai_states(delta: float):
 				if "ai_target_rank" in ai_target:
 					var best_target_rank: int = possible_targets[0].ai_target_rank 
 					if best_target_rank > ai_target.ai_target_rank:
-						set_ai_target(possible_targets[0]) # postane CHASE
+						set_ai_target(possible_targets[0]) # postane HUNT
 				else:
-					set_ai_target(possible_targets[0]) # postane CHASE
+					set_ai_target(possible_targets[0]) # postane HUNT
 			engine_power = max_engine_power
 	
 		AiStates.FOLLOW: 
@@ -111,22 +114,22 @@ func manage_ai_states(delta: float):
 				last_follow_target_position = ai_target.global_position
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
-			var target_ray_length: float = global_position.distance_to(ai_target.global_position)
-			target_ray.cast_to.x = target_ray_length
-			if target_ray_length < ai_urgent_stop_distance:
+			var ray_velocity_length: float = global_position.distance_to(ai_target.global_position)
+			target_ray.cast_to.x = ray_velocity_length
+			if ray_velocity_length < ai_urgent_stop_distance:
 				velocity *= ai_brake_factor
 				engine_power = 0.1 # če je čista 0 se noče vrtet 
-			elif target_ray_length < ai_closeup_distance:
-				var ai_brake_factor: float = 0.95
+			elif ray_velocity_length < ai_closeup_distance:
+				var brake_factor: float = 0.95
 				velocity *= ai_brake_factor
 				engine_power = max_engine_power
 			else:
 				engine_power = max_engine_power	
-			# loose target on vision breaker, gre v SEARCH mode
+			# loose target on vision breaker, gre v SEEK mode
 			if target_ray.is_colliding() or ai_target == null:
 				set_ai_target(edge_navigation_tilemap)
 		
-		AiStates.CHASE: 
+		AiStates.HUNT: 
 			# pobere tarčo, ki jo je videl ... ne izgubi pogleda
 			# tarča = level object
 			# apdejt pozicije tarče, če se premika
@@ -134,17 +137,17 @@ func manage_ai_states(delta: float):
 				navigation_agent.set_target_location(ai_target.global_position)			
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
-			var target_ray_length: float = global_position.distance_to(ai_target.global_position)
-			target_ray.cast_to.x = target_ray_length
-			if target_ray_length < ai_urgent_stop_distance:
-				var ai_brake_factor: float = 0.95
+			var ray_velocity_length: float = global_position.distance_to(ai_target.global_position)
+			target_ray.cast_to.x = ray_velocity_length
+			if ray_velocity_length < ai_urgent_stop_distance:
+				var brake_factor: float = 0.95
 				velocity *= ai_brake_factor			
 			engine_power = max_engine_power
 			# gleda za boljšo tarčo
 			#			var possible_targets: Array = get_possible_targets()
 			#			if not possible_targets.empty():
 			#				if possible_targets[0].ai_target_rank > ai_target.ai_target_rank:
-			#					set_ai_target(possible_targets[0]) # postane CHASE ali follow		
+			#					set_ai_target(possible_targets[0]) # postane HUNT ali follow		
 			if ai_target == null:
 				set_ai_target(edge_navigation_tilemap)
 	
@@ -154,7 +157,7 @@ func manage_ai_states(delta: float):
 	if ai_target and not navigation_agent.is_target_reachable(): # sanira tudi bug, ker je lahko izbran kakšen za steno
 		set_ai_target(edge_navigation_tilemap)	
 	
-	
+		
 func set_ai_target(new_ai_target: Node2D):
 	
 	detect_ray.enabled = false
@@ -165,23 +168,24 @@ func set_ai_target(new_ai_target: Node2D):
 		ai_target.remove_from_group(valid_target_group)
 	
 	if new_ai_target is Bolt: # debug
-		printt("start FOLLOW from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
+		# printt("start FOLLOW from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		target_ray.enabled = true
 		current_ai_state = AiStates.FOLLOW
 	
 	elif new_ai_target is Pickable:		
-		printt("start CHASE from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
+		# printt("start HUNT from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		target_ray.enabled = true
 		navigation_agent.set_target_location(new_ai_target.global_position)
-		current_ai_state = AiStates.CHASE
+		current_ai_state = AiStates.HUNT
 	
 	elif new_ai_target is PathFollow2D:
-		printt("start RACE from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
+		# printt("start RACE from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		current_ai_state = AiStates.RACE	
 	
 	elif new_ai_target == edge_navigation_tilemap:
-		printt("start SEARCH from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
+		# printt("start SEEK from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		detect_ray.enabled = true
+		target_ray.enabled = true
 		var target_navigation_cell_position: Vector2 = Vector2.ZERO
 		# če je bil FOLLOW je nova tarča na zadnji vidni lokaciji stare tarče, drugače je random nav cell
 		if current_ai_state == AiStates.FOLLOW:
@@ -189,7 +193,7 @@ func set_ai_target(new_ai_target: Node2D):
 		else:
 			target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
 		navigation_agent.set_target_location(target_navigation_cell_position)
-		current_ai_state = AiStates.SEARCH
+		current_ai_state = AiStates.SEEK
 	
 	elif new_ai_target == null:
 		
@@ -206,34 +210,46 @@ func set_ai_target(new_ai_target: Node2D):
 
 func get_possible_targets():
 	
-	# vsi zaznani objekti (na layerju ai_targets)
+	# detect area nabira
 	var all_possible_targets: Array = detect_area.get_overlapping_bodies()
 	all_possible_targets.append_array(detect_area.get_overlapping_areas())
-	all_possible_targets.erase(self)
 	
+	# izločim sebe in rank = 0
+	all_possible_targets.erase(self)
+	for target in all_possible_targets:
+		if target.ai_target_rank == 0:
+			all_possible_targets.erase(target)
+	
+	# target ray rotira in nabira
+	target_ray.cast_to.x = target_ray_seek_length
+	target_ray.rotation_degrees += target_ray_rotation_speed
+	if target_ray.rotation_degrees > target_ray_angle_limit:
+		target_ray.rotation_degrees = -target_ray_angle_limit	
+	if target_ray.is_colliding() and not target_ray.get_collider() == edge_navigation_tilemap:
+		all_possible_targets.append(target_ray.get_collider())
+	
+	# če ni tarče 
 	if all_possible_targets.empty():
 		return all_possible_targets
 	
-	# rangiraj po ai ranku
+	# rangiram po ranku
 	all_possible_targets.sort_custom(self, "sort_objects_by_ai_rank")
-	
 	# rangiram po potrebi
 	#	if player_stats["bullet_count"] == 0 and player_stats["misile_count"] == 0:
 	#		for target in all_possible_targets:
 	#			if "pickable_key" in target:
 	#				if target.pickable_key == Pro.Weapons.BULLET or target.pickable_key == Pro.Weapons.MISILE:
 	#					all_possible_targets.push_front(target)
-	
 	# rangiram po distanci
 	
-	# naberem tarče, ki niso vidne in jih zbrišem iz možnih tarč
-	var targets_behind_wall: Array
+	# detect ray preveri, če so tarče za steno
+	var targets_behind_wall: Array = []
 	for possible_target in all_possible_targets:
 		detect_ray.force_raycast_update()
 		detect_ray.look_at(possible_target.global_position)
 		var detect_ray_length: float = global_position.distance_to(possible_target.global_position)
 		detect_ray.cast_to.x = detect_ray_length
-		if detect_ray.is_colliding():
+		if detect_ray.is_colliding() and detect_ray.get_collider() == edge_navigation_tilemap:
 			targets_behind_wall.append(possible_target)
 			# printt("walled", Pro.Pickables.keys()[possible_target.pickable_key])
 	for target_behind_wall in targets_behind_wall:
@@ -340,12 +356,13 @@ func _on_NavigationAgent2D_path_changed() -> void: # debug
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
 
-	if current_ai_state == AiStates.SEARCH:
+	if current_ai_state == AiStates.SEEK:
 		set_ai_target(edge_navigation_tilemap)	
 	
 	
 func _on_NavigationAgent2D_target_reached() -> void:
+	
 	print("target reached")
-	#	if current_ai_state == AiStates.CHASE:
+	#	if current_ai_state == AiStates.HUNT:
 	#		set_ai_target(edge_navigation_tilemap)	
 	pass

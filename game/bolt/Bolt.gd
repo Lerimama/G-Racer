@@ -632,9 +632,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		#		fwd_engine_power = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 		var current_drag_div = drag_div
 		drag_div = Pro.level_areas_profiles[Pro.LevelAreas.AREA_NITRO]["drag_div"]
-		#		current_drag = Ref.game_manager.game_settings["area_nitro_drag"]
 		yield(get_tree().create_timer(nitro_time), "timeout")
-		#		current_drag = bolt_drag
 		drag_div = current_drag_div
 	
 	

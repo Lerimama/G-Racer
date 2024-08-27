@@ -40,12 +40,13 @@ shape = SubResource( 2 )
 [node name="DetectRay" type="RayCast2D" parent="." index="9"]
 enabled = true
 cast_to = Vector2( 24, 0 )
-collision_mask = 8
+collision_mask = 12
 collide_with_areas = true
 
 [node name="TargetRay" type="RayCast2D" parent="." index="10"]
 cast_to = Vector2( 128, 0 )
-collision_mask = 8
+collision_mask = 12
+collide_with_areas = true
 
 [node name="VisionRay" type="RayCast2D" parent="." index="11"]
 visible = false

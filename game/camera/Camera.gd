@@ -48,6 +48,7 @@ func set_camera_limits():
 	var corner_BR: float
 	var cell_size_x = Ref.current_level.tilemap_edge.cell_size.x
 	
+	# on edge tilemap
 #	corner_TL = tilemap_edge.position.x * cell_size_x + cell_size_x # k mejam prištejem edge debelino
 #	corner_TR = tilemap_edge.end.x * cell_size_x - cell_size_x
 #	corner_BL = tilemap_edge.position.y * cell_size_x + cell_size_x
@@ -56,6 +57,13 @@ func set_camera_limits():
 	corner_TR = tilemap_edge.end.x * cell_size_x
 	corner_BL = tilemap_edge.position.y * cell_size_x
 	corner_BR = tilemap_edge.end.y * cell_size_x
+
+	# on color square size
+#	var camera_limits_rectangle: Control = Ref.current_level.camera_limits_rect
+#	corner_TL = 0
+#	corner_TR = camera_limits_rectangle.rect_size.x
+#	corner_BL = camera_limits_rectangle.rect_size.y
+#	corner_BR = camera_limits_rectangle.rect_size.y + camera_limits_rectangle.rect_size.x
 	
 	if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
 		return	

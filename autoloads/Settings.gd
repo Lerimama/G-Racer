@@ -18,6 +18,7 @@ enum Levels {
 	DUEL, 
 	DEBUG_RACE, 
 	DEBUG_DUEL, 
+	FREE, 
 	}
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
@@ -25,12 +26,6 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
-		},
-	Levels.RACE_TRAINING: {
-		"level": Levels.RACE_TRAINING,
-		"level_path": "res://game/levels/LevelRaceTraining.tscn",
-		"time_limit": 0,
-		"lap_limit": 2,
 		},
 	Levels.RACE_8: {
 		"level": Levels.RACE_8,
@@ -42,18 +37,6 @@ var level_settings: Dictionary = {
 		"level": Levels.DUEL,
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"time_limit": 0,
-		"lap_limit": 0,
-		},
-	Levels.DEBUG_RACE: {
-		"level": Levels.DEBUG_RACE,
-		"level_path": "res://game/levels/LevelDebugRace.tscn",
-		"time_limit": 0,
-		"lap_limit": 1,
-		},
-	Levels.DEBUG_DUEL: {
-		"level": Levels.DEBUG_DUEL,
-		"level_path": "res://game/levels/LevelDebugDuel.tscn",
-		"time_limit": 10,
 		"lap_limit": 0,
 		},
 	Levels.RACE_DIRECT: {
@@ -85,6 +68,12 @@ var level_settings: Dictionary = {
 		"level_path": "res://game/levels/LevelRaceNitro.tscn",
 		"time_limit": 0,
 		"lap_limit": 1,
+		},
+	Levels.FREE: {
+		"level": Levels.FREE,
+		"level_path": "res://game/levels/LevelFree.tscn",
+		"time_limit": 0,
+		"lap_limit": 5,
 		},
 }
 
@@ -118,7 +107,8 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-var current_game_levels: Array = [Levels.TRAINING]
+var current_game_levels: Array = [Levels.FREE]
+#var current_game_levels: Array = [Levels.TRAINING]
 #var current_game_levels: Array = [Levels.RACE_TRAINING]
 #var current_game_levels: Array = [Levels.RACE_SNAKE]
 #var current_game_levels: Array = [Levels.RACE_8]

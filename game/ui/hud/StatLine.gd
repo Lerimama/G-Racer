@@ -12,7 +12,7 @@ export var show_name_icon: bool = false
 var stat_value: int = 0 setget _on_stat_change
 
 # colors
-var def_stat_color: Color = Ref.color_hud_text
+var def_stat_color: Color = Ref.color_hud_base
 var minus_color: Color = Ref.color_red
 var plus_color: Color = Ref.color_green
 var color_blink_time: float = 0.5

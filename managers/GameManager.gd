@@ -478,6 +478,7 @@ func spawn_level():
 	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	Ref.game_arena.add_child(new_level)	
 	
+	
 func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
 	var NewBoltInstance: PackedScene = Pro.player_profiles[spawned_bolt_id]["bolt_scene"]

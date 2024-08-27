@@ -1,8 +1,6 @@
 extends TileMap
 
 
-#signal navigation_completed # pošljem lokacije floor tiletov
-
 var light_color: Color = Color.white # za barvanje debrisa		
 
 onready var DebrisParticles: PackedScene = preload("res://game/arena/EdgeDebrisParticles.tscn")	
