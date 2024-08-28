@@ -529,13 +529,12 @@ func start_spawning_pickables():
 # PRIVAT ----------------------------------------------------------------------------------------------------
 
 
-func _on_level_is_set(tilemap_navigation_cells: Array, tilemap_navigation_cells_positions: Array):
+func _on_level_is_set(tilemap_navigation_cells_positions: Array):
 	
 	# navigacija za AI
 	navigation_positions = tilemap_navigation_cells_positions
 	
 	# random pickable pozicije 
-#	available_pickable_positions = tilemap_navigation_cells.duplicate()
 	available_pickable_positions = tilemap_navigation_cells_positions.duplicate()
 	
 	# spawn poz

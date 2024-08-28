@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/nitro_game_intro.wav-a8be9ef696e5b96607e101559a483390.sample"
+
+[deps]
+
+source_file="res://assets/sounds/nitro/nitro_game_intro.wav"
+dest_files=[ "res://.import/nitro_game_intro.wav-a8be9ef696e5b96607e101559a483390.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -28,7 +28,7 @@ enum Players {P1, P2, P3, P4}
 var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
 	Players.P1 : {
 		"player_name": "P1",
-		"player_avatar": preload("res://assets/sprites/avatars/avatar_01.png"),
+		"player_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile": Controller.ARROWS,
 		"bolt_type": BoltTypes.BASIC,
@@ -36,7 +36,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	Players.P2 : {
 		"player_name": "P2",
-		"player_avatar": preload("res://assets/sprites/avatars/avatar_02.png"),
+		"player_avatar": preload("res://assets/textures/avatars/avatar_02.png"),
 		"player_color": Ref.color_red,
 		"controller_profile" : Controller.WASD,
 		"bolt_type": BoltTypes.BASIC,
@@ -44,7 +44,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	Players.P3 : {
 		"player_name" : "P3",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_03.png"),
+		"player_avatar" : preload("res://assets/textures/avatars/avatar_03.png"),
 		"player_color" : Ref.color_yellow, # color_yellow, color_green, color_red
 		"controller_profile" : Controller.WASD,
 		#		"controller_profile" : Controller.JP1,
@@ -53,7 +53,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	Players.P4 : {
 		"player_name" : "P4",
-		"player_avatar" : preload("res://assets/sprites/avatars/avatar_04.png"),
+		"player_avatar" : preload("res://assets/textures/avatars/avatar_04.png"),
 		"player_color" : Ref.color_green,
 		"controller_profile" : Controller.WASD,
 		#		"controller_profile" : Controller.JP2,
@@ -84,7 +84,7 @@ var ai_profile: Dictionary = {
 enum BoltTypes {SMALL, BASIC, BIG}
 var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
-		"bolt_texture": preload("res://assets/sprites/bolt/bolt_alt.png"),
+		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"shield_loops_limit": 3,
@@ -264,7 +264,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_weapon,
 		"value": 20,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_bullet.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_bullet.tres"),
 		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_MISILE: {
@@ -272,7 +272,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_weapon,
 		"value": 2,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_misile.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_misile.tres"),
 		"ai_target_rank": 3,
 	}, 
 	Pickables.PICKABLE_MINA: {
@@ -280,7 +280,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_weapon,
 		"value": 3,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_mina.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_mina.tres"),
 		"ai_target_rank": 3,
 	}, 
 	Pickables.PICKABLE_SHIELD: {
@@ -288,7 +288,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_weapon,
 		"value": 1,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_shield.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_shield.tres"),
 		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_ENERGY: {
@@ -296,7 +296,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_stat,
 		"value": 0,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_energy.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_energy.tres"),
 		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_LIFE: {
@@ -304,7 +304,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_stat,
 		"value": 1,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_life.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_life.tres"),
 		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_GAS: {
@@ -312,7 +312,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_stat,
 		"value": 200,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_gas.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_gas.tres"),
 		"ai_target_rank": 3,
 	},
 	Pickables.PICKABLE_POINTS: {
@@ -320,7 +320,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_stat,
 		"value": 100,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_points.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_points.tres"),
 		"ai_target_rank": 2,
 	},
 	Pickables.PICKABLE_NITRO: {
@@ -328,7 +328,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_feature,
 		"value": 700,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_nitro.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_nitro.tres"),
 		"duration": 1.5, # sekunde
 		"ai_target_rank": 10,
 	},
@@ -337,7 +337,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_feature,
 		"value": 0.7,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_tracking.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_tracking.tres"),
 		"duration": 5,
 		"ai_target_rank": 1,
 	},
@@ -346,7 +346,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"altitude": 3,
-		"icon_scene": preload("res://assets/icons/icon_pickable_random.tres"),
+		"icon_scene": preload("res://assets/resources/icons/icon_pickable_random.tres"),
 		"ai_target_rank": 9,
 	},
 }

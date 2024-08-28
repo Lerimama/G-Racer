@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/menu_track_WarmUpShort.wav-4f59d96213e7704dec15548d9baed666.sample"
+
+[deps]
+
+source_file="res://assets/sounds/music/menu_track_WarmUpShort.wav"
+dest_files=[ "res://.import/menu_track_WarmUpShort.wav-4f59d96213e7704dec15548d9baed666.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=2
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

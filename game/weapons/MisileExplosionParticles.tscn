@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=2]
 
-[ext_resource path="res://assets/sprites/weapons/misile_explosion.png" type="Texture" id=1]
+[ext_resource path="res://assets/textures/weapons/misile_explosion.png" type="Texture" id=1]
 
 [sub_resource type="Gradient" id=119]
 offsets = PoolRealArray( 0.306452, 0.322581, 0.475806, 0.508065, 0.783673, 1 )

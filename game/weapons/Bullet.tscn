@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://game/weapons/Bullet.gd" type="Script" id=1]
-[ext_resource path="res://assets/sprites/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://assets/sound/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/textures/weapons/bullet.png" type="Texture" id=2]
+[ext_resource path="res://assets/sounds/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=4]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 0.2, 0.1 )

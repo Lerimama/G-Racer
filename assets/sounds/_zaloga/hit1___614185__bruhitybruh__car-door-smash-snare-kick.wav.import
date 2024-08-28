@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav-00af3123ca88d04169d4d6f09f81c7eb.sample"
+
+[deps]
+
+source_file="res://assets/sounds/_zaloga/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav"
+dest_files=[ "res://.import/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav-00af3123ca88d04169d4d6f09f81c7eb.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

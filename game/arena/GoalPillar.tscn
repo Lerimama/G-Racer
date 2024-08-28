@@ -1,15 +1,15 @@
 [gd_scene load_steps=15 format=2]
 
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=2]
-[ext_resource path="res://assets/sprites/light.png" type="Texture" id=3]
+[ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
+[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/light.png" type="Texture" id=3]
 [ext_resource path="res://game/arena/GoalPillar.gd" type="Script" id=4]
-[ext_resource path="res://assets/sound/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
 [ext_resource path="res://game/bolt/NodeShadow.tscn" type="PackedScene" id=7]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=8]
-[ext_resource path="res://assets/sound/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=9]
-[ext_resource path="res://assets/tilesets/pillar_detect_area.png" type="Texture" id=10]
+[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=8]
+[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/textures/pillar_detect_area.png" type="Texture" id=10]
 
 [sub_resource type="CircleShape2D" id=559]
 radius = 37.054

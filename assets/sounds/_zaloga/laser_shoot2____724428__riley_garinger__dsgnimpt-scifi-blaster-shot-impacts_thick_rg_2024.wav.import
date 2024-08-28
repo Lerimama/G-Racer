@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/laser_shoot2____724428__riley_garinger__dsgnimpt-scifi-blaster-shot-impacts_thick_rg_2024.wav-5d9c2bee81e18d4146395b22bf8d57f6.sample"
+
+[deps]
+
+source_file="res://assets/sounds/_zaloga/laser_shoot2____724428__riley_garinger__dsgnimpt-scifi-blaster-shot-impacts_thick_rg_2024.wav"
+dest_files=[ "res://.import/laser_shoot2____724428__riley_garinger__dsgnimpt-scifi-blaster-shot-impacts_thick_rg_2024.wav-5d9c2bee81e18d4146395b22bf8d57f6.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

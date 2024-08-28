@@ -5,10 +5,8 @@ signal level_is_set(navigation, spawn_positions, other_)
 
 enum LevelTypes {RACE, RACE_LAPS, BATTLE}
 export (LevelTypes) var level_type: int = LevelTypes.RACE
-var is_free: bool = false # debug
 
 # navigacija
-var navigation_cells: Array
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
@@ -72,7 +70,8 @@ func _ready() -> void:
 	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
 	resize_to_level_size()
 	
-	emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
+#	emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
+	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
 	
 	
 func set_level_floor():
@@ -213,6 +212,7 @@ func set_level_navigation():
 	
 	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
 	var range_to_check = 1 # št. celic v vsako stran čekiranja  
+#	var navigation_cells: Array
 	
 	for cell in edge_cells:
 		var cell_index = tilemap_edge.get_cellv(cell)
@@ -223,7 +223,7 @@ func set_level_navigation():
 		if cell_index == -1:
 			if not non_navigation_cell_positions.has(cell_global_position):
 				tilemap_edge.set_cellv(cell, 13)
-				navigation_cells.append(cell) # grid pozicije
+#				navigation_cells.append(cell) # grid pozicije
 				navigation_cells_positions.append(cell_global_position)
 				
 				# če ima za soseda rob, pomeni, da je zunanja in jo odstranim
@@ -235,7 +235,7 @@ func set_level_navigation():
 						if tilemap_edge.get_cellv(cell_in_check) == 0 and empy_cell_in_check_count != 2:
 							tilemap_edge.set_cellv (cell, -1)
 							# zbrišem iz arrayev navigacije
-							navigation_cells.erase(cell)
+#							navigation_cells.erase(cell)
 							navigation_cells_positions.erase(cell_global_position)
 							empy_cell_in_check_count += 1
 						else:

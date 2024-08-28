@@ -5,11 +5,8 @@ signal level_is_set(navigation, spawn_positions, other_)
 
 enum LevelTypes {RACE, RACE_LAPS, BATTLE}
 export (LevelTypes) var level_type: int = LevelTypes.RACE
-var is_free: bool = true # debug
-
 
 # navigacija
-var navigation_cells: Array
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
@@ -67,19 +64,12 @@ func _ready() -> void:
 		
 	set_level_floor() # luknje
 	set_level_objects() # elementi
-	if is_free:
-		pass
-#		set_level_navigation_poly() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
-	else:
-		set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
+
+	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
 		
 	resize_to_level_size()
 	
-#	if is_free:
-##		pass
-#		emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
-#	else:
-	emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
+	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
 	
 	
 func set_level_floor():
@@ -217,44 +207,50 @@ func set_pickables():
 		
 			
 func set_level_navigation(): # samo unfree 
+
+	var navigation_polygon: NavigationPolygon = $NavigationPolygonInstance.navpoly
+	var outer_polygon: PoolVector2Array = navigation_polygon.get_outline(0)
 	
-	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
-	var range_to_check = 1 # št. celic v vsako stran čekiranja  
+	# dimenzija zunanjega polygona, da ne grem po skončnem polju
+	var nav_limits_square: Rect2 = Rect2(Vector2(0, 0), Vector2(0, 0)) 
+	for point in outer_polygon:
+		if point.x > nav_limits_square.size.x:
+			nav_limits_square.size.x = point.x
+		elif point.x < nav_limits_square.position.x or nav_limits_square.position.x == 0:
+			nav_limits_square.position.x = point.x
+		if point.y > nav_limits_square.size.y:
+			nav_limits_square.size.y = point.y
+		elif point.y < nav_limits_square.position.y or nav_limits_square.position.y == 0:
+			nav_limits_square.position.y = point.y
 	
-	for cell in edge_cells:
-		var cell_index = tilemap_edge.get_cellv(cell)
-		var cell_local_position = tilemap_edge.map_to_world(cell)
-		var cell_global_position = tilemap_edge.to_global(cell_local_position)
+	# naberem vse točke znotraj kvadrata zunanjega poligona (glede na gostoto)
+	var nav_point_density: int = 8
+	var outer_square_points: Array
+	var x_count: int = round(nav_limits_square.size.x / nav_point_density)
+	var y_count: int = round(nav_limits_square.size.y / nav_point_density)
+	for x in x_count:
+		for y in y_count:
+			var current_point: Vector2 = Vector2(x * nav_point_density, y * nav_point_density)
+			current_point += nav_limits_square.position # adaptiram za pozicijo nodeta
+			outer_square_points.append(current_point)
+	# naberem vse točke glavnega poligona
+	var navigation_shape_nav_points: Array
+	for nav_point in outer_square_points:
+		if Geometry.is_point_in_polygon(nav_point, outer_polygon):
+			navigation_shape_nav_points.append(nav_point)
+	# odstranim točke notranjih poligonov (luknje znotraj navigacije)
+	for poly in navigation_polygon.get_polygon_count():
+		if poly > 0: # preskočim prvega, ki je zunanji
+			var current_poly = navigation_polygon.get_outline(poly)
+			for nav_point in outer_square_points:
+				if Geometry.is_point_in_polygon(nav_point, current_poly):
+					navigation_shape_nav_points.erase(nav_point)
+	
+	for p in navigation_shape_nav_points: # debug
+		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
 		
-		# če je prazna in ni zasedena z elemenotom, jo zamenjam z navigacijsko celico
-		if cell_index == -1:
-			if not non_navigation_cell_positions.has(cell_global_position):
-				tilemap_edge.set_cellv(cell, 13)
-				navigation_cells.append(cell) # grid pozicije
-				navigation_cells_positions.append(cell_global_position)
-				
-				# če ima za soseda rob, pomeni, da je zunanja in jo odstranim
-				var cell_in_check: Vector2
-				var empy_cell_in_check_count: int = 0
-				for y in (range_to_check * 2 + 1): # pregledam 5 celic v ver in hor smeri, s čekirano v sredini
-					for x in (range_to_check * 2 + 1):
-						cell_in_check = cell + Vector2(x - range_to_check, y - range_to_check) # čekirana celica je v sredini 5 pregledanih celic
-						if tilemap_edge.get_cellv(cell_in_check) == 0 and empy_cell_in_check_count != 2:
-							tilemap_edge.set_cellv (cell, -1)
-							# zbrišem iz arrayev navigacije
-							navigation_cells.erase(cell)
-							navigation_cells_positions.erase(cell_global_position)
-							empy_cell_in_check_count += 1
-						else:
-							empy_cell_in_check_count = 0
+	navigation_cells_positions = navigation_shape_nav_points.duplicate()
 		
-		tilemap_edge.bake_navigation = true
-		
-	# zelene spremenim prazne po navigaciji
-	for cell in edge_cells:
-		var cell_index = tilemap_edge.get_cellv(cell)
-		if cell_index == 5:
-			tilemap_edge.set_cellv(cell, -1)
 
 		
 # UTILITI ---------------------------------------------------------------------------------------------------------------------------------------

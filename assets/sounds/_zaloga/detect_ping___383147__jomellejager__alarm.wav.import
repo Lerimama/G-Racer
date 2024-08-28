@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/detect_ping___383147__jomellejager__alarm.wav-5523deb559656ff7b2296bb323b38f73.sample"
+
+[deps]
+
+source_file="res://assets/sounds/_zaloga/detect_ping___383147__jomellejager__alarm.wav"
+dest_files=[ "res://.import/detect_ping___383147__jomellejager__alarm.wav-5523deb559656ff7b2296bb323b38f73.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/shocker_efekt___PA_skilled_frcer.wav-a339f450a3eb1b3eb6e8099a08515ff6.sample"
+
+[deps]
+
+source_file="res://assets/sounds/sfx/shocker_efekt___PA_skilled_frcer.wav"
+dest_files=[ "res://.import/shocker_efekt___PA_skilled_frcer.wav-a339f450a3eb1b3eb6e8099a08515ff6.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=2
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

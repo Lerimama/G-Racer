@@ -34,6 +34,7 @@ var target_ray_angle_limit: float = 30
 var target_ray_seek_length: float = 320
 var target_ray_rotation_speed: float = 1
 
+onready var freee: bool = true
 
 func _ready() -> void:
 	
@@ -45,6 +46,7 @@ func _ready() -> void:
 	Ref.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
 	ai_navigation_line.default_color = bolt_color
+	ai_navigation_line.z_index = 10
 #	ai_navigation_line.hide()
 	randomize()
 	
@@ -92,16 +94,19 @@ func manage_ai_states(delta: float):
 			engine_power = max_engine_power	
 		
 		AiStates.SEEK: 
-			# išče novo tarčo, dokler je ne najde
-			# target = edge_navigation_tilemap
-			var possible_targets: Array = get_possible_targets()
-			if not possible_targets.empty():
-				if "ai_target_rank" in ai_target:
-					var best_target_rank: int = possible_targets[0].ai_target_rank 
-					if best_target_rank > ai_target.ai_target_rank:
+			if freee:
+				pass
+			else:
+				# išče novo tarčo, dokler je ne najde
+				# target = edge_navigation_tilemap
+				var possible_targets: Array = get_possible_targets()
+				if not possible_targets.empty():
+					if "ai_target_rank" in ai_target:
+						var best_target_rank: int = possible_targets[0].ai_target_rank 
+						if best_target_rank > ai_target.ai_target_rank:
+							set_ai_target(possible_targets[0]) # postane HUNT
+					else:
 						set_ai_target(possible_targets[0]) # postane HUNT
-				else:
-					set_ai_target(possible_targets[0]) # postane HUNT
 			engine_power = max_engine_power
 	
 		AiStates.FOLLOW: 
@@ -188,11 +193,15 @@ func set_ai_target(new_ai_target: Node2D):
 		target_ray.enabled = true
 		var target_navigation_cell_position: Vector2 = Vector2.ZERO
 		# če je bil FOLLOW je nova tarča na zadnji vidni lokaciji stare tarče, drugače je random nav cell
-		if current_ai_state == AiStates.FOLLOW:
-			target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
+		if freee:
+			target_navigation_cell_position = get_nav_cell_on_distance(global_position,150, 1000)
+			navigation_agent.set_target_location(target_navigation_cell_position)
 		else:
-			target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
-		navigation_agent.set_target_location(target_navigation_cell_position)
+			if current_ai_state == AiStates.FOLLOW:
+				target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
+			else:
+				target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
+			navigation_agent.set_target_location(target_navigation_cell_position)
 		current_ai_state = AiStates.SEEK
 	
 	elif new_ai_target == null:
@@ -269,6 +278,77 @@ func sort_objects_by_ai_rank(stuff_1, stuff_2): # ascending ... večji index je 
 
 	
 func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, max_distance: float = 50, in_front: bool = true):
+	
+#	var selected_nav_position: Vector2
+#	if freee:
+#		var all_cells_for_random_selection: Array = []
+#		pass
+#
+#	else:
+		var selected_nav_position: Vector2
+		var all_cells_for_random_selection: Array = []
+		var front_cells_for_random_selection: Array = []
+		var side_cells_for_random_selection: Array = []
+		
+		# random select, če ne iščem do 0
+		var random_select: bool = true
+		if min_distance == 0:
+			in_front = false
+			random_select = false
+			
+		var current_min_cell_distance: float = 0
+		var current_min_cell_angle: float = 0
+		
+		# debug
+		if not Met.all_indikators_spawned.empty():
+			for n in Met.all_indikators_spawned:
+				n.queue_free()
+			Met.all_indikators_spawned.clear()
+		
+		for nav_position in level_navigation_positions:
+			var current_cell_distance: float = nav_position.distance_to(from_position)
+			# najprej izbere vse po razponu
+			if current_cell_distance > min_distance and current_cell_distance < max_distance:
+				if in_front:
+					var vector_to_position: Vector2 = nav_position - global_position
+					var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
+					# če je najbolj spredaj
+					#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
+					if current_angle_to_bolt_deg < 30  and current_angle_to_bolt_deg > - 30 :
+						front_cells_for_random_selection.append(nav_position)
+					# če je na straneh
+					elif current_angle_to_bolt_deg < 90  and current_angle_to_bolt_deg > -90 :
+						side_cells_for_random_selection.append(nav_position)
+					#					indi.modulate = Color.black
+					# če ni v razponu kota
+					else:
+						all_cells_for_random_selection.append(nav_position)
+					#					indi.modulate = Color.green
+				else:
+					# random select, samo nabiram za žrebanje, 
+					if random_select:
+						all_cells_for_random_selection.append(nav_position)
+					# izberem najbližjo
+					else:
+						if current_cell_distance < current_min_cell_distance or current_min_cell_distance == 0:
+							current_min_cell_distance = current_cell_distance
+							selected_nav_position = nav_position
+		
+		# žrebam iz sprednjih ali vseh na voljo
+		if front_cells_for_random_selection.empty() and side_cells_for_random_selection.empty():
+			in_front = false
+		if in_front:
+			if front_cells_for_random_selection.empty():
+				selected_nav_position = Met.get_random_member(side_cells_for_random_selection)
+			else:
+				selected_nav_position = Met.get_random_member(front_cells_for_random_selection)
+		elif random_select:
+			selected_nav_position = Met.get_random_member(all_cells_for_random_selection)
+			
+		return selected_nav_position
+
+	
+func get_navigation_position_on_distance(from_position: Vector2, min_distance: float = 0, max_distance: float = 50, in_front: bool = true):
 	
 	var selected_nav_position: Vector2
 	var all_cells_for_random_selection: Array = []
@@ -355,9 +435,14 @@ func _on_NavigationAgent2D_path_changed() -> void: # debug
 
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
-
+	
+	print("nav reached")
+	
 	if current_ai_state == AiStates.SEEK:
-		set_ai_target(edge_navigation_tilemap)	
+#		if freee:
+#			set_ai_target(edge_navigation_tilemap)	
+#		else:
+			set_ai_target(edge_navigation_tilemap)	
 	
 	
 func _on_NavigationAgent2D_target_reached() -> void:

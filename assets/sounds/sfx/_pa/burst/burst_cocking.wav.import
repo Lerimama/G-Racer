@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/burst_cocking.wav-d609cd10d63b66d2565f80bc63337194.sample"
+
+[deps]
+
+source_file="res://assets/sounds/sfx/_pa/burst/burst_cocking.wav"
+dest_files=[ "res://.import/burst_cocking.wav-d609cd10d63b66d2565f80bc63337194.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://assets/tilesets/tileset_arena_elements.png" type="Texture" id=1]
+[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=1]
 [ext_resource path="res://game/arena/Checkpoint.gd" type="Script" id=2]
-[ext_resource path="res://assets/sound/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sounds/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=3]
 
 [sub_resource type="RectangleShape2D" id=514]
 extents = Vector2( 144, 4 )

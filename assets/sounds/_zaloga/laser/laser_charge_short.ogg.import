@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/laser_charge_short.ogg-4d82b943d19a3272e07f238957be93c3.oggstr"
+
+[deps]
+
+source_file="res://assets/sounds/_zaloga/laser/laser_charge_short.ogg"
+dest_files=[ "res://.import/laser_charge_short.ogg-4d82b943d19a3272e07f238957be93c3.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

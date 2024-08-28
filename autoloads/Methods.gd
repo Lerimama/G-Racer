@@ -97,18 +97,17 @@ func get_random_name(string_length: int):
 onready var indikator: PackedScene = preload("res://common/DebugIndikator.tscn")
 var all_indikators_spawned: Array = []
 
-func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = true):
+func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
 	
 	if clear_spawned_before:
 		for indi in all_indikators_spawned:
 			indi.queue_free()
 		all_indikators_spawned.clear()
-
+		pass # debug
+		
 	var new_indikator = indikator.instance()
 	new_indikator.global_position = pos
 	new_indikator.global_rotation = rot
-#	new_indikator.global_position = bolt_sprite.global_position + pos
-#	new_indikator.global_rotation = bolt_sprite.global_rotation
 	new_indikator.modulate = Color.red
 	new_indikator.z_index = 10
 	parent_node.add_child(new_indikator)
