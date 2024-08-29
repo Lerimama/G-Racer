@@ -2,8 +2,8 @@
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://_materiali/_zaloga_shaderjev/originali_uporabljanega/bolt_shield.material" type="Material" id=3]
-[ext_resource path="res://_materiali/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle.material" type="Material" id=4]
+[ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_shield.material" type="Material" id=3]
+[ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle.material" type="Material" id=4]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=5]
 [ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]

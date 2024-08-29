@@ -197,7 +197,7 @@ var level_areas_profiles: Dictionary = {
 	},
 	LevelAreas.AREA_TRACKING: {
 		"area_tracking_value": 1,
-		"area_scene": preload("res://game/arena/areas/AreaHole.tscn"),
+		"area_scene": preload("res://game/arena/areas/AreaTracking.tscn"),
 	},
 }
 

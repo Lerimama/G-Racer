@@ -14,7 +14,7 @@
 [ext_resource path="res://game/arena/StartLights.tscn" type="PackedScene" id=21]
 [ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=23]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=25]
-[ext_resource path="res://_materiali/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle_texture.gdshader" type="Shader" id=26]
+[ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle_texture.gdshader" type="Shader" id=26]
 [ext_resource path="res://game/levels/RaceTrack.gd" type="Script" id=33]
 [ext_resource path="res://game/levels/BoltTracker.gd" type="Script" id=34]
 

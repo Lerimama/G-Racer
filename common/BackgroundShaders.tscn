@@ -1,10 +1,10 @@
 [gd_scene load_steps=32 format=2]
 
-[ext_resource path="res://common/backgrounds/level_background_nebula_screen.gdshader" type="Shader" id=1]
-[ext_resource path="res://common/backgrounds/level_background_lava_canvas.gdshader" type="Shader" id=2]
+[ext_resource path="res://_rezerva/backgrounds/level_background_nebula_screen.gdshader" type="Shader" id=1]
+[ext_resource path="res://_rezerva/backgrounds/level_background_lava_canvas.gdshader" type="Shader" id=2]
 [ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=3]
-[ext_resource path="res://common/backgrounds/level_background_water_canvas.gdshader" type="Shader" id=4]
-[ext_resource path="res://common/backgrounds/level_background_pixelate_screen.gdshader" type="Shader" id=5]
+[ext_resource path="res://_rezerva/backgrounds/level_background_water_canvas.gdshader" type="Shader" id=4]
+[ext_resource path="res://_rezerva/backgrounds/level_background_pixelate_screen.gdshader" type="Shader" id=5]
 [ext_resource path="res://common/BackgroundShaders.gd" type="Script" id=6]
 [ext_resource path="res://assets/shaders/noise_as_dirt/level_edge_dirt_screen.gdshader" type="Shader" id=7]
 

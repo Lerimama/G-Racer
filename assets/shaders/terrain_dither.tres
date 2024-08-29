@@ -1,7 +1,7 @@
 [gd_resource type="ShaderMaterial" load_steps=4 format=2]
 
 [ext_resource path="res://assets/shaders/dither/bayer16tile2.png" type="Texture" id=1]
-[ext_resource path="res://assets/shaders/dither/marjourn-8x.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/terrain/_obs/lm-8x.png" type="Texture" id=2]
 [ext_resource path="res://assets/shaders/lerimama_dither_LevelFree.gdshader" type="Shader" id=3]
 
 [resource]

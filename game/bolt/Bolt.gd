@@ -53,10 +53,10 @@ var engine_particles_front_left : CPUParticles2D
 var engine_particles_front_right : CPUParticles2D
 
 # level area efekti
-var bolt_on_nitro_count: int = 0
-var bolt_on_hole_count: int = 0
-var bolt_on_gravel_count: int = 0
-var bolt_on_tracking_count: int = 0
+#var bolt_on_nitro_count: int = 0
+#var bolt_on_hole_count: int = 0
+#var bolt_on_gravel_count: int = 0
+#var bolt_on_tracking_count: int = 0
 
 onready var bolt_hud: Node2D = $BoltHud
 onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life

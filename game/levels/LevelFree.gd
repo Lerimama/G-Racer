@@ -23,7 +23,7 @@ onready var finish_out_distance: float = race_finish_node.global_position.distan
 onready var racing_track: Path2D = $RacingTrack
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_objects: TileMap = $Objects
-onready var tilemap_edge: TileMap = $Edge
+onready var tilemap_edge: TileMap = $_obs/Edge
 
 	
 func _ready() -> void:
@@ -91,6 +91,8 @@ func set_level_floor():
 				area_key = Pro.LevelAreas.AREA_GRAVEL
 			3:
 				area_key = Pro.LevelAreas.AREA_HOLE
+			4:
+				area_key = Pro.LevelAreas.AREA_TRACKING
 
 		if area_key > -1: # preskok celic, ki imajo druge id-je
 			var scene_to_spawn: PackedScene = Pro.level_areas_profiles[area_key]["area_scene"]	
@@ -246,8 +248,8 @@ func set_level_navigation(): # samo unfree
 				if Geometry.is_point_in_polygon(nav_point, current_poly):
 					navigation_shape_nav_points.erase(nav_point)
 	
-	for p in navigation_shape_nav_points: # debug
-		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
+	#	for p in navigation_shape_nav_points: # debug
+	#		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
 		
 	navigation_cells_positions = navigation_shape_nav_points.duplicate()
 		

@@ -94,19 +94,16 @@ func manage_ai_states(delta: float):
 			engine_power = max_engine_power	
 		
 		AiStates.SEEK: 
-			if freee:
-				pass
-			else:
-				# išče novo tarčo, dokler je ne najde
-				# target = edge_navigation_tilemap
-				var possible_targets: Array = get_possible_targets()
-				if not possible_targets.empty():
-					if "ai_target_rank" in ai_target:
-						var best_target_rank: int = possible_targets[0].ai_target_rank 
-						if best_target_rank > ai_target.ai_target_rank:
-							set_ai_target(possible_targets[0]) # postane HUNT
-					else:
+			# išče novo tarčo, dokler je ne najde
+			# target = edge_navigation_tilemap
+			var possible_targets: Array = get_possible_targets()
+			if not possible_targets.empty():
+				if "ai_target_rank" in ai_target:
+					var best_target_rank: int = possible_targets[0].ai_target_rank 
+					if best_target_rank > ai_target.ai_target_rank:
 						set_ai_target(possible_targets[0]) # postane HUNT
+				else:
+					set_ai_target(possible_targets[0]) # postane HUNT
 			engine_power = max_engine_power
 	
 		AiStates.FOLLOW: 
@@ -131,7 +128,7 @@ func manage_ai_states(delta: float):
 			else:
 				engine_power = max_engine_power	
 			# loose target on vision breaker, gre v SEEK mode
-			if target_ray.is_colliding() or ai_target == null:
+			if (target_ray.is_colliding() and target_ray.get_collider() == edge_navigation_tilemap) or ai_target == null:
 				set_ai_target(edge_navigation_tilemap)
 		
 		AiStates.HUNT: 
