@@ -21,10 +21,11 @@ onready var start_positions_node: Node2D = $RaceStart/StartPositions
 onready var finish_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_position
 onready var finish_out_distance: float = race_finish_node.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 onready var racing_track: Path2D = $RacingTrack
-onready var tilemap_floor: TileMap = $Floor
+onready var tilemap_floor: TileMap = $_obs/Floor
 onready var tilemap_objects: TileMap = $Objects
 onready var tilemap_edge: TileMap = $_obs/Edge
 
+onready var camera_limits_rect: Panel = $CameraLimits
 	
 func _ready() -> void:
 	printt("LEVEL")
@@ -33,8 +34,6 @@ func _ready() -> void:
 
 	# debug
 	$_ScreenSize.hide()
-	$_Instructions.hide()
-	$_Instructions2.hide()
 
 	match level_type:
 		LevelTypes.BATTLE:
@@ -273,9 +272,13 @@ func resize_to_level_size():
 	
 	# dobim velikost levela (floor tilemapa)
 	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
-	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
-	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
-	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
+	var last_floor_cell: Vector2
+	var floor_rect_position: Vector2
+	var floor_rect_size: Vector2
+	if not tilemap_floor.get_used_cells().empty():
+		last_floor_cell = tilemap_floor.get_used_cells().pop_back()
+		floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
+		floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
 	
 	# naberem rektangle za risajzat
 	var nodes_to_resize: Array = tilemap_edge.get_children()
