@@ -133,7 +133,7 @@ func set_game():
 	human_bolts_qualified = []
 	
 	# get enemies 			
-	game_settings["enemies_mode"] = true # debug
+	game_settings["enemies_mode"] = false # debug
 	
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI bolt_id

@@ -3,8 +3,8 @@
 [ext_resource path="res://assets/textures/terrain/terrain/terrain_dirt_shader.tres" type="Shader" id=1]
 
 [sub_resource type="Gradient" id=2326]
-offsets = PoolRealArray( 0.480769, 0.733516 )
-colors = PoolColorArray( 0.454902, 0.411765, 0.364706, 0, 0.754883, 0.754883, 0.754883, 1 )
+offsets = PoolRealArray( 0.518657, 0.737562 )
+colors = PoolColorArray( 0.617188, 0.617188, 0.617188, 0, 0.752941, 0.752941, 0.752941, 1 )
 
 [sub_resource type="GradientTexture" id=2327]
 gradient = SubResource( 2326 )

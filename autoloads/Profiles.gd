@@ -32,7 +32,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile": Controller.ARROWS,
 		"bolt_type": BoltTypes.BASIC,
-		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"bolt_scene": preload("res://game/bolt/BoltHuBig.tscn"),
 	},
 	Players.P2 : {
 		"player_name": "P2",

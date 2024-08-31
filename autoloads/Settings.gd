@@ -18,7 +18,7 @@ enum Levels {
 	DUEL, 
 	DEBUG_RACE, 
 	DEBUG_DUEL, 
-	FREE, 
+	FREE, TESTDRIVE, 
 	}
 var level_settings: Dictionary = {
 	Levels.TRAINING: {
@@ -75,6 +75,12 @@ var level_settings: Dictionary = {
 		"time_limit": 0,
 		"lap_limit": 5,
 		},
+	Levels.TESTDRIVE: {
+		"level": Levels.TESTDRIVE,
+		"level_path": "res://game/levels/LevelTestDrive.tscn",
+		"time_limit": 0,
+		"lap_limit": 10,
+		},
 }
 
 enum GameModes {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
@@ -107,7 +113,8 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-var current_game_levels: Array = [Levels.FREE]
+var current_game_levels: Array = [Levels.TESTDRIVE]
+#var current_game_levels: Array = [Levels.FREE]
 #var current_game_levels: Array = [Levels.TRAINING]
 #var current_game_levels: Array = [Levels.RACE_TRAINING]
 #var current_game_levels: Array = [Levels.RACE_SNAKE]

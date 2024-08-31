@@ -158,12 +158,12 @@ func _physics_process(delta: float) -> void:
 			current_drag = bolt_drag
 		# printt ("max power", engine_power, current_drag, bolt_drag, velocity.length())
 		# sila upora raste s hitrostjo		
-		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
-		acceleration -= drag_force
+#		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
+#		acceleration -= drag_force
 		# hitrost je pospešek s časom
 		velocity += acceleration * delta
 		rotation_angle = rotation_dir * deg2rad(turn_angle)
-		rotate(delta * rotation_angle)
+#		rotate(delta * rotation_angle)
 		steering(delta)
 
 	collision = move_and_collide(velocity * delta, false)
@@ -215,6 +215,7 @@ func on_collision():
 
 
 func steering(delta: float) -> void:
+	
 	
 	var rear_axis_position = position - transform.x * axis_distance / 2.0 # sredinska pozicija vozila minus polovica medosne razdalje
 	var front_axis_position = position + transform.x * axis_distance / 2.0 # sredinska pozicija vozila plus polovica medosne razdalje
