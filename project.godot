@@ -197,7 +197,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Walker",
 "language": "GDScript",
-"path": "res://game/automation/Walker.gd"
+"path": "res://game/levels/automation/Walker.gd"
 } ]
 _global_script_class_icons={
 "Bolt": "",

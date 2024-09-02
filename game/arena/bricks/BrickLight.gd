@@ -26,7 +26,7 @@ func _ready() -> void:
 	brick_shadow.shadow_distance = brick_altitude
 
 
-func light_reached(bolt: KinematicBody2D):
+func light_reached(bolt: Node2D):
 	
 	if not turned_on:
 		turned_on = true
@@ -39,10 +39,18 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
 		bolts_in_light_area.append(body)
+	elif body.is_in_group(Ref.group_thebolts):
+		bolts_in_light_area.append(body)
+		
+		body.modulate = Color.yellow	
 
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if bolts_in_light_area.has(body):
+		bolts_in_light_area.erase(body)
+		light_reached(body)
+	elif body.is_in_group(Ref.group_thebolts):
+		body.modulate = Color.white	
 		bolts_in_light_area.erase(body)
 		light_reached(body)

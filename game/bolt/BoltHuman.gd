@@ -81,7 +81,7 @@ func _physics_process(delta: float) -> void:
 			manage_gas(rev_gas_usage)
 
 
-func pull_bolt_on_screen(pull_position: Vector2, current_leader: KinematicBody2D):
+func pull_bolt_on_screen(pull_position: Vector2, current_leader: Node2D):
 	
 	if not bolt_active:
 		return

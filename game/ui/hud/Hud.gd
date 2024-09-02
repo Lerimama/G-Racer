@@ -93,7 +93,7 @@ func hide_stats():
 	record_lap_label.hide()
 
 
-func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_lap: bool):
+func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool):
 	
 	var new_floating_tag = FloatingTag.instance()
 	new_floating_tag.z_index = 4 # višje od straysa in playerja
@@ -116,7 +116,7 @@ func spawn_bolt_floating_tag(tag_owner: KinematicBody2D, lap_time: float, best_l
 # PRIVAT ------------------------------------------------------------------------------------------------------------
 
 	
-func _on_bolt_spawned(spawned_bolt: KinematicBody2D):
+func _on_bolt_spawned(spawned_bolt: Node2D):
 	
 	#	if spawned_bolt.is_in_group(Ref.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
 	#		return

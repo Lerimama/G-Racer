@@ -76,6 +76,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
+	bolts_in_game.append_array(get_tree().get_nodes_in_group(Ref.group_thebolts))
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickables)	
 
 	#	if game_on: 
@@ -118,8 +119,9 @@ func set_game():
 	if current_level_index == 0:
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
-			activated_player_ids = [Pro.Players.P1] 	
-#			activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
+			pass
+#			activated_player_ids = [Pro.Players.P1] 	
+			activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
 #			activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.P3, Pro.Players.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start
@@ -376,7 +378,7 @@ func sort_trackers_by_speed(bolt_1, bolt_2): # ascending ... večji index je bol
 	return false
 	
 
-func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
+func get_bolt_pull_position(bolt_to_pull: Node2D):
 	# na koncu izbrana pull pozicija:
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
@@ -423,7 +425,7 @@ func get_bolt_pull_position(bolt_to_pull: KinematicBody2D):
 		return navigation_position_as_pull_position
 
 				
-func on_finish_line_crossed(bolt_across_finish_line: KinematicBody2D): # sproži finish line
+func on_finish_line_crossed(bolt_across_finish_line: Node2D): # sproži finish line
 	
 	if not game_on: # preventam, da gre čez črto ko je konec igre
 		return
@@ -563,7 +565,9 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	
 	
 	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
-			body.call_deferred("set_physics_process", false)
+		body.call_deferred("set_physics_process", false)
+	elif body.is_in_group(Ref.group_thebolts) and not body.bolt_active:
+		body.call_deferred("set_physics_process", false)
 	elif body is Bullet:
 		body.on_out_of_screen() # ta funkcija zakasni učinek
 	# elif body is Misile: ... ima timer in se sama kvefrija ... misila se lahko vrne v ekran (nitro)

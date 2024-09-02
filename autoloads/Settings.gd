@@ -113,8 +113,8 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-var current_game_levels: Array = [Levels.TESTDRIVE]
-#var current_game_levels: Array = [Levels.FREE]
+#var current_game_levels: Array = [Levels.TESTDRIVE]
+var current_game_levels: Array = [Levels.FREE]
 #var current_game_levels: Array = [Levels.TRAINING]
 #var current_game_levels: Array = [Levels.RACE_TRAINING]
 #var current_game_levels: Array = [Levels.RACE_SNAKE]

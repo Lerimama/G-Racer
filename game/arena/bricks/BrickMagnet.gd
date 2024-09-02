@@ -52,6 +52,8 @@ func _physics_process(delta: float) -> void:
 				var gravity_velocity: float = gravity_force / (distance_to_magnet * 1)
 				body.velocity += Vector2(gravity_velocity, 0).rotated(vector_to_magnet.angle())
 				body.update_bolt_points(reward_points)
+			elif body.is_in_group(Ref.group_thebolts):
+				body.modulate = Color.yellow	
 		
 
 func intro():

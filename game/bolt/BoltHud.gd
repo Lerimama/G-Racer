@@ -8,7 +8,7 @@ var active_weapon_icons: Array
 var selected_active_weapon_index: int = 0 setget _on_select_weapon # index znotraj aktivnih orožij
 var selected_weapon_index: int # index znotraj vseh orožij
 
-onready var owner_bolt: KinematicBody2D = get_parent()
+onready var owner_bolt: Node2D = get_parent()
 onready var weapon_selector: Control = $BoltHudLines/WeaponSelector
 onready var weapon_icons: Array = $BoltHudLines/WeaponSelector/Weapons.get_children()
 onready var energy_bar_line: Polygon2D = $BoltHudLines/EnergyBar/Bar

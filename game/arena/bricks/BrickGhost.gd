@@ -29,7 +29,9 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 		body.velocity /= speed_brake_div
 		animation_player.play("outro")
 		body.update_bolt_points(reward_points)
-		
+	elif body.is_in_group(Ref.group_thebolts):
+		body.modulate = Color.yellow	
+		animation_player.play("outro")
 		
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	queue_free()

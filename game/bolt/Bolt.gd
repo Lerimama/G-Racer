@@ -158,12 +158,12 @@ func _physics_process(delta: float) -> void:
 			current_drag = bolt_drag
 		# printt ("max power", engine_power, current_drag, bolt_drag, velocity.length())
 		# sila upora raste s hitrostjo		
-#		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
-#		acceleration -= drag_force
+		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
+		acceleration -= drag_force
 		# hitrost je pospešek s časom
 		velocity += acceleration * delta
 		rotation_angle = rotation_dir * deg2rad(turn_angle)
-#		rotate(delta * rotation_angle)
+		rotate(delta * rotation_angle)
 		steering(delta)
 
 	collision = move_and_collide(velocity * delta, false)
@@ -759,3 +759,4 @@ func update_stat(stat_name: String, change_value: float):
 		player_stats[stat_name] += change_value # change_value je + ali -
 		
 	emit_signal("stats_changed", bolt_id, player_stats)
+
