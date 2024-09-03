@@ -19,7 +19,7 @@ func _ready():
 
 
 func _process(delta: float) -> void:
-	print(follow_target)
+#	printt("cam follow:", follow_target)
 	if follow_target:
 		position = follow_target.global_position
 

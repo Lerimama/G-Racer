@@ -183,7 +183,11 @@ func explode():
 	
 func _on_HommingArea_body_entered(body: Node) -> void:
 	
-	if body.is_in_group("Bolts") and body != spawned_by:
+	if body.is_in_group(Ref.group_bolts) and body != spawned_by:
+		is_homming = true
+		homming_target_position = body.global_position
+		$Sounds/MisileDetect.play()
+	elif body.is_in_group(Ref.group_thebolts) and body != spawned_by:
 		is_homming = true
 		homming_target_position = body.global_position
 		$Sounds/MisileDetect.play()

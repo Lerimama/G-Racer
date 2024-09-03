@@ -90,8 +90,18 @@ func _on_CollisionArea_body_entered(body: Node) -> void:
 		mina_sprite.visible = false
 	
 		body.on_hit(self)
+	elif body.has_method("on_hit") and body.is_class("RigidBody2D") and body != spawned_by:
+		active_timer.stop()
+		explode()
+		animation_player.play("shockwave_mina")
+					
+		# ugasnem kar ne rabim
+		mina_sprite.stop()
+		mina_sprite.visible = false
 	
-	
+		body.on_hit(self)
+		
+			
 func _on_ActiveTimer_timeout() -> void:
 	
 	mina_sprite.play("deactivate")

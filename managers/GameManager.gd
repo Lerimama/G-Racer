@@ -56,7 +56,8 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("no5"):
 		for bolt in bolts_in_game:
 			if bolt.is_in_group(Ref.group_players):
-				bolt.queue_free()
+#				bolt.queue_free()
+				bolt.lose_life()
 				#				bolt.player_stats["gas_count"] = 0
 				#			if bolt.is_in_group(Ref.group_ai):
 				#				bolt.player_stats["gas_count"] = 0			
@@ -120,8 +121,8 @@ func set_game():
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
 			pass
-#			activated_player_ids = [Pro.Players.P1] 	
-			activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
+			activated_player_ids = [Pro.Players.P1] 	
+#			activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
 #			activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.P3, Pro.Players.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start

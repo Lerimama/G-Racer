@@ -31,8 +31,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile": Controller.ARROWS,
-		"bolt_type": BoltTypes.BASIC,
-#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"bolt_type": BoltTypes.RIGID,
 		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"),
 	},
 	Players.P2 : {
@@ -67,7 +66,8 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 var ai_profile: Dictionary = {
 	# za prepis player profila
 	"controller_profile" : Controller.AI,
-	"bolt_scene": preload("res://game/bolt/BoltAI.tscn"),
+#	"bolt_scene": preload("res://game/bolt/BoltAI.tscn"),
+	"bolt_scene": preload("res://game/bolt/rigid/TheBoltAI.tscn"),
 	# race
 	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	# battle
@@ -82,7 +82,8 @@ var ai_profile: Dictionary = {
 	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
 }
 
-enum BoltTypes {SMALL, BASIC, BIG}
+
+enum BoltTypes {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BoltTypes.BASIC: {
 		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
@@ -104,7 +105,25 @@ var bolt_profiles: Dictionary = {
 		"tilt_speed": 150, # trenutno off
 		"ai_target_rank": 5,
 		},
+	BoltTypes.RIGID: {
+		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
+		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
+		"on_hit_disabled_time": 2,
+		# orig
+		"engine_power": 320, # 1 - 500 konjev 
+		"gas_usage": -0.1, # per HSP?
+		"ai_target_rank": 5,
+		# rigid
+		"mass": 30, # 300 kil, front in rear teža se uporablja bolj za razmerje
+		"ang_damp": 8, # ... tudi regulacija driftanja
+		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
+		"lin_damp_idle": 0.5, 
+		"rear_lin_damp": 5, # regulacija driftanja
+		"max_idle_rotation_speed": 500000, # rotacija okrog osi
+		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
+		},
 }
+
 
 enum Weapons {BULLET, MISILE, MINA}
 var weapon_profiles : Dictionary = {
@@ -136,6 +155,7 @@ var weapon_profiles : Dictionary = {
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 }
+
 
 enum Controller {ARROWS, WASD, JP1, JP2, AI}
 var controller_profiles : Dictionary = {
@@ -172,12 +192,12 @@ var controller_profiles : Dictionary = {
 		selector_action = "jp2_selector",
 	},
 	Controller.AI : {
-		fwd_action = "nn",
-		rev_action = "nn",
-		left_action = "nn",
-		right_action = "nn",
-		shoot_action = "nn",
-		selector_action = "nn",
+		fwd_action = "ai_fwd",
+		rev_action = "ai_rev",
+		left_action = "ai_left",
+		right_action = "ai_right",
+		shoot_action = "ai_shoot",
+		selector_action = "ai_selector",
 	},
 }
 

@@ -334,10 +334,15 @@ func _on_FinishLine_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
 		Ref.game_manager.on_finish_line_crossed(body)
+	elif body.is_in_group(Ref.group_thebolts):
+		Ref.game_manager.on_finish_line_crossed(body)
 	
 
 func _on_Checkpoint_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
+		if not Ref.game_manager.bolts_checked.has(body):
+			Ref.game_manager.bolts_checked.append(body)
+	elif body.is_in_group(Ref.group_thebolts):
 		if not Ref.game_manager.bolts_checked.has(body):
 			Ref.game_manager.bolts_checked.append(body)
