@@ -1,0 +1,150 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_shield.material" type="Material" id=1]
+[ext_resource path="res://game/weapons/Shield.gd" type="Script" id=2]
+
+[sub_resource type="CircleShape2D" id=118]
+
+[sub_resource type="OpenSimplexNoise" id=25]
+seed = 4
+period = 5.8
+persistence = 0.857
+lacunarity = 0.39
+
+[sub_resource type="NoiseTexture" id=109]
+width = 32
+height = 32
+seamless = true
+bump_strength = 13.9
+noise = SubResource( 25 )
+
+[sub_resource type="Animation" id=117]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 1, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 1, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0 )
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material:shader_param/noise_intensity")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=112]
+resource_name = "shield_on"
+length = 2.0
+step = 0.02
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 1.05, -0.6, 0, 0.2, 0, 1.05, -0.6, 0, 0.2, 0, 0.9, -0.2, 0, 0.2, 0, 1, -0.2, 0, 0.2, 0 ),
+"times": PoolRealArray( 0, 0.8, 1.4, 2 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 1.05083, -0.6, 0, 0.2, 0, 1.05083, -0.6, 0, 0.2, 0, 0.9, -0.2, 0, 0.2, 0, 1, -0.2, 0, 0.2, 0 ),
+"times": PoolRealArray( 0, 0.8, 1.4, 2 )
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material:shader_param/noise_intensity")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.15, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath(".:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.06 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=110]
+resource_name = "shielding"
+length = 1.2
+loop = true
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 1, 0, 0, 0.2, 0, 0.9, -0.2, 0, 0.2, 0, 1, -0.2, 0, 0.2, 0 ),
+"times": PoolRealArray( 0, 0.6, 1.2 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 1.005, -0.2, 0, 0.2, 0, 0.9, -0.2, 0, 0.2, 0, 1, -0.2, 0, 0.2, 0 ),
+"times": PoolRealArray( 0, 0.6, 1.2 )
+}
+
+[node name="Shield" type="Area2D"]
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 118 )
+
+[node name="Shield" type="Sprite" parent="."]
+material = ExtResource( 1 )
+texture = SubResource( 109 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Shield")
+anims/RESET = SubResource( 117 )
+anims/shield_on = SubResource( 112 )
+anims/shielding = SubResource( 110 )
+
+[node name="ShieldTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+[connection signal="timeout" from="ShieldTimer" to="." method="_on_ShieldTimer_timeout"]

@@ -11,7 +11,7 @@ var engine_z_index = -1
 var trail_z_index = -1
 var explosion_z_index = 1
 
-enum Levels {
+enum LEVEL {
 	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 
 	RACE_TRAINING, 
 	TRAINING, 
@@ -21,69 +21,69 @@ enum Levels {
 	FREE, TESTDRIVE, 
 	}
 var level_settings: Dictionary = {
-	Levels.TRAINING: {
-		"level": Levels.TRAINING,
+	LEVEL.TRAINING: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelTraining.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
-	Levels.RACE_8: {
-		"level": Levels.RACE_8,
+	LEVEL.RACE_8: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelRace8.tscn",
 		"time_limit": 0,
 		"lap_limit": 2,
 		},
-	Levels.DUEL: {
-		"level": Levels.DUEL,
+	LEVEL.DUEL: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
-	Levels.RACE_DIRECT: {
-		"level": Levels.RACE_DIRECT,
+	LEVEL.RACE_DIRECT: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelRaceDirect.tscn",
 		"time_limit": 0,
 		"lap_limit": 1,
 		},
-	Levels.RACE_CIRCO: {
-		"level": Levels.RACE_CIRCO,
+	LEVEL.RACE_CIRCO: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelRaceCirco.tscn",
 		"time_limit": 0,
 		"lap_limit": 1,
 		},
-	Levels.RACE_ROUND: {
-		"level": Levels.RACE_ROUND,
+	LEVEL.RACE_ROUND: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelRaceRound.tscn",
 		"time_limit": 0,
 		"lap_limit": 3,
 		},
-	Levels.RACE_SNAKE: {
-		"level": Levels.RACE_SNAKE,
+	LEVEL.RACE_SNAKE: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelRaceSnake.tscn",
 		"time_limit": 0,
 		"lap_limit": 1,
 		},
-	Levels.RACE_NITRO: {
-		"level": Levels.RACE_NITRO,
+	LEVEL.RACE_NITRO: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelRaceNitro.tscn",
 		"time_limit": 0,
 		"lap_limit": 1,
 		},
-	Levels.FREE: {
-		"level": Levels.FREE,
+	LEVEL.FREE: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelFree.tscn",
 		"time_limit": 0,
 		"lap_limit": 5,
 		},
-	Levels.TESTDRIVE: {
-		"level": Levels.TESTDRIVE,
+	LEVEL.TESTDRIVE: {
+		"level_name": "",
 		"level_path": "res://game/levels/LevelTestDrive.tscn",
 		"time_limit": 0,
 		"lap_limit": 10,
 		},
 }
 
-enum GameModes {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
+enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var default_game_settings: Dictionary = { # setano za dirkanje
 	
 	# time
@@ -113,18 +113,18 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [Levels.TESTDRIVE]
-var current_game_levels: Array = [Levels.FREE]
-#var current_game_levels: Array = [Levels.TRAINING]
-#var current_game_levels: Array = [Levels.RACE_TRAINING]
-#var current_game_levels: Array = [Levels.RACE_SNAKE]
-#var current_game_levels: Array = [Levels.RACE_8]
-#var current_game_levels: Array = [Levels.RACE_ROUND]
-#var current_game_levels: Array = [Levels.RACE_CIRCO]
-#var current_game_levels: Array = [Levels.RACE_DIRECT]
-#var current_game_levels: Array = [Levels.RACE_NITRO]
-#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_SNAKE]
-#var current_game_levels: Array = [Levels.RACE_DIRECT, Levels.RACE_CIRCO, Levels.RACE_ROUND, Levels.RACE_SNAKE, Levels.RACE_NITRO]
+#var current_game_levels: Array = [LEVEL.TESTDRIVE]
+var current_game_levels: Array = [LEVEL.FREE]
+#var current_game_levels: Array = [LEVEL.TRAINING]
+#var current_game_levels: Array = [LEVEL.RACE_TRAINING]
+#var current_game_levels: Array = [LEVEL.RACE_SNAKE]
+#var current_game_levels: Array = [LEVEL.RACE_8]
+#var current_game_levels: Array = [LEVEL.RACE_ROUND]
+#var current_game_levels: Array = [LEVEL.RACE_CIRCO]
+#var current_game_levels: Array = [LEVEL.RACE_DIRECT]
+#var current_game_levels: Array = [LEVEL.RACE_NITRO]
+#var current_game_levels: Array = [LEVEL.RACE_DIRECT, LEVEL.RACE_SNAKE]
+#var current_game_levels: Array = [LEVEL.RACE_DIRECT, LEVEL.RACE_CIRCO, LEVEL.RACE_ROUND, LEVEL.RACE_SNAKE, LEVEL.RACE_NITRO]
 
 	
 func get_level_game_settings(selected_level_index: int):
@@ -139,21 +139,21 @@ func get_level_game_settings(selected_level_index: int):
 	
 	match current_level:
 		# racing
-		Levels.RACE_DIRECT: pass
-		Levels.RACE_CIRCO: pass
-		Levels.RACE_ROUND: pass 
-		Levels.RACE_SNAKE: pass
-		Levels.RACE_NITRO: pass
-		Levels.RACE_8: pass
+		LEVEL.RACE_DIRECT: pass
+		LEVEL.RACE_CIRCO: pass
+		LEVEL.RACE_ROUND: pass 
+		LEVEL.RACE_SNAKE: pass
+		LEVEL.RACE_NITRO: pass
+		LEVEL.RACE_8: pass
 		# duel
-		Levels.DUEL: 
+		LEVEL.DUEL: 
 			current_game_settings["start_countdown"] = false
 			current_game_settings["sudden_death_mode"] = true
 #			current_game_settings["stopwatch_mode"] = false		
 		# trening
-		Levels.TRAINING: pass
-		Levels.DEBUG_RACE: pass
-		Levels.DEBUG_DUEL: 
+		LEVEL.TRAINING: pass
+		LEVEL.DEBUG_RACE: pass
+		LEVEL.DEBUG_DUEL: 
 			current_game_settings["stopwatch_mode"] = false		
 #			current_game_settings["sudden_death_mode"] = true
 			

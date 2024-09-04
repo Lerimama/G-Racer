@@ -29,8 +29,6 @@ func _ready() -> void:
 	decay_timer.wait_time = decay_time
 	decay_timer.start()
 	
-	print(spawned_by_color)
-	
 	
 func _process(delta: float) -> void:
 	

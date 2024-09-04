@@ -16,7 +16,7 @@ absorbent = true
 extents = Vector2( 4, 4 )
 
 [sub_resource type="CircleShape2D" id=21]
-radius = 48.0
+radius = 144.222
 
 [sub_resource type="Gradient" id=12]
 offsets = PoolRealArray( 0, 0.171429, 0.737069, 0.982759, 1 )
@@ -70,30 +70,6 @@ tracks/0/keys = {
 "update": 0,
 "values": [ Color( 1, 1, 1, 0.313726 ) ]
 }
-tracks/1/type = "value"
-tracks/1/path = NodePath("ForceField/FF:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 2.37841 ),
-"update": 0,
-"values": [ Vector2( 15, 15 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("ForceField/FF:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ) ]
-}
 
 [sub_resource type="Animation" id=24]
 tracks/0/type = "value"
@@ -107,30 +83,6 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 0.313726 ), Color( 0, 0, 0, 1 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("ForceField/FF:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0.180392 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("ForceField/FF:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 2.37841, 0.406126 ),
-"update": 0,
-"values": [ Vector2( 15, 15 ), Vector2( 20.2, 20.2 ) ]
 }
 
 [sub_resource type="Animation" id=25]
@@ -147,36 +99,12 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0.313726 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("ForceField/FF:modulate")
+tracks/1/path = NodePath("Sprite:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0.180392 ), Color( 1, 1, 1, 0 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("ForceField/FF:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0, 1 ),
-"transitions": PoolRealArray( 4.43828, 0.233258 ),
-"update": 0,
-"values": [ Vector2( 20.2, 20.2 ), Vector2( 15, 15 ) ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("Sprite:modulate")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
 "times": PoolRealArray( 0, 1 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
@@ -210,15 +138,12 @@ shape = SubResource( 6 )
 [node name="ForceField" type="Area2D" parent="."]
 space_override = 3
 gravity_point = true
-gravity_vec = Vector2( 0, 0 )
-linear_damp = 1.0
+gravity = 300.0
+linear_damp = 5.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ForceField"]
 shape = SubResource( 21 )
-
-[node name="FF" type="Sprite" parent="ForceField"]
-modulate = Color( 1, 1, 1, 0 )
-scale = Vector2( 15, 15 )
+disabled = true
 
 [node name="BlackholeParticles" type="Particles2D" parent="."]
 scale = Vector2( 0.7, 0.7 )
@@ -260,4 +185,8 @@ stream = ExtResource( 6 )
 volume_db = -10.0
 bus = "GameSfx"
 
+[node name="MagnetTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+[connection signal="timeout" from="MagnetTimer" to="." method="_on_MagnetTimer_timeout"]

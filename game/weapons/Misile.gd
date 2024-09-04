@@ -34,7 +34,7 @@ onready var MisileExplosion = preload("res://game/weapons/MisileExplosionParticl
 onready var MisileTrail = preload("res://game/weapons/MisileTrail.tscn")
 onready var DropParticles = preload("res://game/weapons/MisileDropParticles.tscn")
 
-onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.Weapons.MISILE]
+onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.WEAPON.MISILE]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var max_speed: float = weapon_profile["speed"]
@@ -95,9 +95,6 @@ func _physics_process(delta: float) -> void:
 		elif homming_detect.monitoring == true:
 			homming_detect.monitoring = false
 		
-	velocity = direction * speed
-	move_and_slide(velocity) 
-	
 	# preverjam, če se še dotika avtorja
 	if vision_ray.is_colliding():
 		var current_collider = vision_ray.get_collider()
@@ -108,29 +105,19 @@ func _physics_process(delta: float) -> void:
 	else:
 		collision_shape.disabled = false
 			
+					
+	velocity = direction * speed
+
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
-	if get_slide_count() != 0:
-		collision = get_slide_collision(0) # we wan't to take the first collision
+	var collision: KinematicCollision2D = move_and_collide(velocity * delta, false)
+	if collision:
 		if collision.collider != spawned_by: # sam sebe lahko ubiješ
 			explode()
 			if collision.collider.has_method("on_hit"):
 				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+
 		
-		
-#func collide():
-#
-#	modulate = Color.red
-#	var current_collider = vision_ray.get_collider()
-#	explode()
-#	if current_collider.has_method("on_hit"):
-#		if current_collider.is_in_group(Ref.group_ai):
-#			current_collider.on_hit(self)
-#			print (current_collider)
-#	velocity = Vector2.ZERO
-	
-				
 func dissarm():
-	
 			
 	# wigle
 #	var wiggle: Vector2  

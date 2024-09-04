@@ -32,6 +32,9 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	elif body.is_in_group(Ref.group_thebolts):
 		body.modulate = Color.yellow	
 		animation_player.play("outro")
+		body.update_bolt_points(reward_points)
+		body.manipulate_engine_power(0, 0.5)
+		
 		
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	queue_free()

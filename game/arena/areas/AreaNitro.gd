@@ -1,26 +1,26 @@
 extends Area2D
 
 
-var level_area_key: int # poda spawner, uravnava vse ostalo
+var level_area_key: int = Pro.LEVEL_AREA.AREA_NITRO
 
-onready var nitro_drag_div = Pro.level_areas_profiles[level_area_key]["drag_div"]
+onready var engine_power_factor = Pro.level_areas_profiles[level_area_key]["engine_power_factor"]
 
 
-func _on_AreaNitro_body_entered(body: Node) -> void:
-
-	if body.is_in_group(Ref.group_bolts):
-		if body.bolt_active: # če ni aktiven se sam od sebe ustavi
-			if body.bolt_on_nitro_count == 0: # vklopiš samo na prvi
-				body.drag_div = nitro_drag_div
-			body.bolt_on_nitro_count += 1 
-			# printt("in", body.bolt_in_nitro_count)
-			
-			
-func _on_AreaNitro_body_exited(body: Node) -> void:
+func _on_AreaNitro_body_entered(body: Node2D) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
-		# yield(get_tree().create_timer(1), "timeout")
-		body.bolt_on_nitro_count -= 1 
-		if body.bolt_on_nitro_count == 0: # izklopiš, ko bolta ni v nobeni več
-			#			body.modulate = Color.white 
-			body.drag_div = Pro.bolt_profiles[body.bolt_type]["drag_div"]
+		if body.bolt_active: # če ni aktiven se sam od sebe ustavi
+#			body.drag_div = nitro_drag_div
+			pass
+	elif body.is_in_group(Ref.group_thebolts):
+		body.modulate = Color.yellow
+		body.manipulate_engine_power(body.bolt_profile["max_engine_power"] * engine_power_factor)			
+			
+func _on_AreaNitro_body_exited(body: Node2D) -> void:
+	
+	if body.is_in_group(Ref.group_bolts):
+#		body.drag_div = Pro.bolt_profiles[body.bolt_type]["drag_div"]
+		pass
+	elif body.is_in_group(Ref.group_thebolts):
+		body.modulate = Color.white	
+		body.manipulate_engine_power(body.bolt_profile["max_engine_power"])

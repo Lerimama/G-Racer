@@ -3,8 +3,8 @@ extends Node2D
 
 signal level_is_set(navigation, spawn_positions, other_)
 
-enum LevelTypes {RACE, RACE_LAPS, BATTLE}
-export (LevelTypes) var level_type: int = LevelTypes.RACE
+enum LEVEL_TYPE {RACE, RACE_LAPS, BATTLE}
+export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 
 # navigacija
 var navigation_cells_positions: Array
@@ -40,16 +40,16 @@ func _ready() -> void:
 	$_Instructions2.hide()
 
 	match level_type:
-		LevelTypes.BATTLE:
+		LEVEL_TYPE.BATTLE:
 			race_start_node.hide()
 			race_finish_node.hide()
 			checkpoint.hide()
-		LevelTypes.RACE:
+		LEVEL_TYPE.RACE:
 			race_start_node.show()
 			race_finish_node.show()
 			checkpoint.hide()
 			race_start_node.get_node("StartLine").show()	
-		LevelTypes.RACE_LAPS:
+		LEVEL_TYPE.RACE_LAPS:
 			race_start_node.show()
 			race_finish_node.show()
 			checkpoint.show()
@@ -88,11 +88,11 @@ func set_level_floor():
 		var area_key: int = -1
 		match cell_index:
 			1:
-				area_key = Pro.LevelAreas.AREA_NITRO
+				area_key = Pro.LEVEL_AREA.AREA_NITRO
 			2:
-				area_key = Pro.LevelAreas.AREA_GRAVEL
+				area_key = Pro.LEVEL_AREA.AREA_GRAVEL
 			3:
-				area_key = Pro.LevelAreas.AREA_HOLE
+				area_key = Pro.LEVEL_AREA.AREA_HOLE
 
 		if area_key > -1: # preskok celic, ki imajo druge id-je
 			var scene_to_spawn: PackedScene = Pro.level_areas_profiles[area_key]["area_scene"]	
@@ -121,39 +121,39 @@ func set_level_objects():
 		var level_object_key: int = -1
 		match cell_index:
 			6: # goal pillar
-				level_object_key = Pro.LevelObjects.GOAL_PILLAR
+				level_object_key = Pro.LEVEL_OBJECT.GOAL_PILLAR
 				spawn_tile_offset = pillar_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 			7: # brick ghost
-				level_object_key = Pro.LevelObjects.BRICK_GHOST
+				level_object_key = Pro.LEVEL_OBJECT.BRICK_GHOST
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			8: # brick bouncer
-				level_object_key = Pro.LevelObjects.BRICK_BOUNCER
+				level_object_key = Pro.LEVEL_OBJECT.BRICK_BOUNCER
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			9: # brick magnet
-				level_object_key = Pro.LevelObjects.BRICK_MAGNET
+				level_object_key = Pro.LEVEL_OBJECT.BRICK_MAGNET
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			10: # brick target
-				level_object_key = Pro.LevelObjects.BRICK_TARGET
+				level_object_key = Pro.LEVEL_OBJECT.BRICK_TARGET
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			11: # brick light
-				level_object_key = Pro.LevelObjects.BRICK_LIGHT
+				level_object_key = Pro.LEVEL_OBJECT.BRICK_LIGHT
 				spawn_tile_offset = brick_tile_offset
 
 		if level_object_key > -1: # preskok celic, ki imajo druge id-je
@@ -181,27 +181,27 @@ func set_pickables():
 		var pickable_key: int = -1
 		match cell_index:
 			14:
-				pickable_key = Pro.Pickables.PICKABLE_BULLET
+				pickable_key = Pro.PICKABLE.PICKABLE_BULLET
 			15:
-				pickable_key = Pro.Pickables.PICKABLE_MISILE
+				pickable_key = Pro.PICKABLE.PICKABLE_MISILE
 			35:
-				pickable_key = Pro.Pickables.PICKABLE_MINA
+				pickable_key = Pro.PICKABLE.PICKABLE_MINA
 			17:
-				pickable_key = Pro.Pickables.PICKABLE_SHIELD
+				pickable_key = Pro.PICKABLE.PICKABLE_SHIELD
 			18:
-				pickable_key = Pro.Pickables.PICKABLE_ENERGY
+				pickable_key = Pro.PICKABLE.PICKABLE_ENERGY
 			19:
-				pickable_key = Pro.Pickables.PICKABLE_LIFE
+				pickable_key = Pro.PICKABLE.PICKABLE_LIFE
 			20:
-				pickable_key = Pro.Pickables.PICKABLE_NITRO
+				pickable_key = Pro.PICKABLE.PICKABLE_NITRO
 			21:
-				pickable_key = Pro.Pickables.PICKABLE_TRACKING
+				pickable_key = Pro.PICKABLE.PICKABLE_TRACKING
 			27:
-				pickable_key = Pro.Pickables.PICKABLE_GAS
+				pickable_key = Pro.PICKABLE.PICKABLE_GAS
 			30:
-				pickable_key = Pro.Pickables.PICKABLE_POINTS
+				pickable_key = Pro.PICKABLE.PICKABLE_POINTS
 			22:
-				pickable_key = Pro.Pickables.PICKABLE_RANDOM
+				pickable_key = Pro.PICKABLE.PICKABLE_RANDOM
 		
 		if pickable_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)

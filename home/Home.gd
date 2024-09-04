@@ -180,7 +180,7 @@ onready var select_players: Control = $UI/SelectPlayers
 
 
 func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.Players.P1
+	var bolt_to_manage: int = Pro.PLAYER.P1
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb/PlayersBtn/Label
 	if button_pressed:
 		btn_label_node.modulate = Color.white
@@ -194,7 +194,7 @@ func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
 	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
 			
 func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.Players.P2
+	var bolt_to_manage: int = Pro.PLAYER.P2
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb2/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
@@ -208,7 +208,7 @@ func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
 	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
 			
 func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.Players.P3
+	var bolt_to_manage: int = Pro.PLAYER.P3
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb3/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
@@ -222,7 +222,7 @@ func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
 	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
 			
 func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.Players.P4
+	var bolt_to_manage: int = Pro.PLAYER.P4
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb4/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)

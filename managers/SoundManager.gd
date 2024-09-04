@@ -84,11 +84,11 @@ func play_music():
 	# set track
 	var current_track: AudioStreamPlayer
 	
-	if Ref.game_manager.level_settings["level"] == Set.Levels.NITRO:
-		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
-		current_track = game_music.get_node("Nitro")
-	else:
-		current_track = game_music.get_child(currently_playing_track_index - 1)
+#	if Ref.game_manager.level_settings["level"] == Set.Levels.NITRO: # get level name drugače
+#		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
+#		current_track = game_music.get_node("Nitro")
+#	else:
+	current_track = game_music.get_child(currently_playing_track_index - 1)
 	
 	# Met.sound_play_fade_in(game_music, 0, 2)
 	current_track.play()	

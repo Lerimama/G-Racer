@@ -39,21 +39,26 @@ func _input(event: InputEvent) -> void:
 		
 		controller_bolt.rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 		
+		if Input.is_action_pressed("no1"):
+#			controller_bolt.spawn_shield(1)
+			controller_bolt.manipulate_engine_power(150, 1)
+#			controller_bolt.manipulate_tracking(20, 1)
+			
 		if Input.is_action_pressed(selector_action) and not controller_bolt.rotation_dir == 0:
-			controller_bolt.current_engines_on = controller_bolt.EnginesOn.BOTH
+			controller_bolt.current_motion = controller_bolt.MOTION.TILT
 		else:
 			if Input.is_action_pressed(fwd_action):
-				controller_bolt.current_engines_on = controller_bolt.EnginesOn.FRONT
+				controller_bolt.current_motion = controller_bolt.MOTION.FWD
 
 			elif Input.is_action_pressed(rev_action):
-				controller_bolt.current_engines_on = controller_bolt.EnginesOn.BACK
+				controller_bolt.current_motion = controller_bolt.MOTION.REV
 			else:		
-				controller_bolt.current_engines_on = controller_bolt.EnginesOn.NONE
+				controller_bolt.current_motion = controller_bolt.MOTION.IDLE
 
 
 		# select weapon and shoot
 		if Input.is_action_just_pressed(shoot_action):
-			controller_bolt.shoot(1)
+			controller_bolt.shoot(1) # debug
 
 
 	
@@ -72,7 +77,7 @@ func _input(event: InputEvent) -> void:
 #		return
 #
 #	# fast start detection
-#	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 #		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: # če še ni štartal (drugače bi bila slow start power še defoltna)
 #			slow_start_engine_power = 0
 #	else:
@@ -94,7 +99,7 @@ func _input(event: InputEvent) -> void:
 #	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 #
 #	# weapon select
-#	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 #		if Input.is_action_pressed(selector_action):
 #			bolt_hud.selected_active_weapon_index += 1
 #	else:

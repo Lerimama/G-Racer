@@ -27,7 +27,7 @@ func _input(event: InputEvent) -> void:
 		return
 	
 	# fast start detection
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		if Input.is_action_just_pressed(fwd_action) and Ref.game_manager.fast_start_window: # če še ni štartal (drugače bi bila slow start power še defoltna)
 			slow_start_engine_power = 0
 	else:
@@ -49,7 +49,7 @@ func _input(event: InputEvent) -> void:
 	rotation_dir = Input.get_axis(left_action, right_action) # +1, -1 ali 0
 	
 	# weapon select
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		if Input.is_action_pressed(selector_action):
 			bolt_hud.selected_active_weapon_index += 1
 	else:
@@ -72,14 +72,14 @@ func _physics_process(delta: float) -> void:
 
 	acceleration = transform.x * engine_power # pospešek je smer (transform.x) z močjo motorja
 	
-	if current_motion_state == MotionStates.IDLE: # aplikacija free rotacije
+	if current_motion == MotionStates.IDLE: # aplikacija free rotacije
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 	
 	# poraba bencina
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-		if current_motion_state == MotionStates.FWD:
+	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+		if current_motion == MotionStates.FWD:
 			manage_gas(fwd_gas_usage)
-		elif current_motion_state == MotionStates.REV:
+		elif current_motion == MotionStates.REV:
 			manage_gas(rev_gas_usage)
 
 

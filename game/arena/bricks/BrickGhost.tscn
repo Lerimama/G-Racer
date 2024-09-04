@@ -115,7 +115,6 @@ randomness = 1.0
 process_material = SubResource( 12 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 shape = SubResource( 6 )
 disabled = true
 
@@ -124,8 +123,6 @@ visible = false
 occluder = SubResource( 16 )
 
 [node name="DetectArea" type="Area2D" parent="."]
-visible = false
-modulate = Color( 1, 1, 1, 0 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
 shape = SubResource( 13 )

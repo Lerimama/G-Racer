@@ -1,8 +1,8 @@
 extends Node2D
 
-enum TagTypes {TEXT, TIME, ICON}
+enum TAG_TYPE {TEXT, TIME, ICON}
 
-var tag_type: int = TagTypes.TEXT
+var current_tag_type: int = TAG_TYPE.TEXT
 var content_to_show = "any type of content"
 
 var tag_owner: Node
@@ -20,17 +20,17 @@ func _ready() -> void:
 	animation_player.play("float_lap")
 	# KVEFRI je v animaciji
 
-	match tag_type:
-		TagTypes.TEXT: 
+	match current_tag_type:
+		TAG_TYPE.TEXT: 
 			label.show()
 			time_label.hide()
 			label.text = content_to_show
-		TagTypes.TIME:
+		TAG_TYPE.TIME:
 			label.hide()
 			time_label.show()
 			var time_to_write: float = content_to_show
 			Met.write_clock_time(time_to_write, time_label)
-		TagTypes.ICON: pass
+		TAG_TYPE.ICON: pass
 
 
 func _physics_process(delta: float) -> void:

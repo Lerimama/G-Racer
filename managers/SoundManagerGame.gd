@@ -130,11 +130,11 @@ func play_music():
 	
 	# set track
 	var current_track: AudioStreamPlayer
-	if Ref.game_manager.level_settings["level"] == Set.Levels.RACE_NITRO:
-		current_track = game_music.get_node("Nitro")
-	else:
-		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
-		current_track = game_music.get_child(currently_playing_track_index - 1)
+#	if Ref.game_manager.level_settings["level"] == Set.Levels.RACE_NITRO: # get level name drugače
+#		current_track = game_music.get_node("Nitro")
+#	else:
+#		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
+	current_track = game_music.get_child(currently_playing_track_index - 1)
 	
 	#	printt("muza", current_track)
 	if not music_set_to_mute:	

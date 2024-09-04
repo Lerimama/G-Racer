@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
@@ -24,8 +24,7 @@
 [ext_resource path="res://game/bolt/rigid/ThrustFx.tscn" type="PackedScene" id=22]
 [ext_resource path="res://game/bolt/rigid/BoltController.gd" type="Script" id=23]
 
-[sub_resource type="RectangleShape2D" id=5259]
-extents = Vector2( 39.5, 16 )
+[sub_resource type="PhysicsMaterial" id=5260]
 
 [sub_resource type="RectangleShape2D" id=5254]
 extents = Vector2( 6.5, 6 )
@@ -44,9 +43,12 @@ audio_stream = ExtResource( 3 )
 audio_stream = ExtResource( 10 )
 random_pitch = 1.05
 
+[sub_resource type="RectangleShape2D" id=5259]
+extents = Vector2( 39.5, 16 )
+
 [node name="TheBolt" type="RigidBody2D"]
 mass = 30.0
-gravity_scale = 0.0
+physics_material_override = SubResource( 5260 )
 linear_damp = 2.0
 angular_damp = 8.0
 applied_force = Vector2( 10, 0 )
@@ -55,21 +57,8 @@ script = ExtResource( 21 )
 [node name="BoltController" type="Node" parent="."]
 script = ExtResource( 23 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2( 0.5, 0 )
-shape = SubResource( 5259 )
-
-[node name="Polygon2D" type="Polygon2D" parent="CollisionShape2D"]
-visible = false
-show_behind_parent = true
-position = Vector2( 69.0698, 18 )
-scale = Vector2( 2.7907, 1 )
-color = Color( 0.368627, 1, 0.662745, 1 )
-offset = Vector2( -20, -19 )
-polygon = PoolVector2Array( -15.5, 11, -15.5, -9, 6, -9, 6, 11 )
-
 [node name="BoltSprite" type="Sprite" parent="."]
+visible = false
 material = ExtResource( 7 )
 texture = ExtResource( 20 )
 offset = Vector2( 0.381001, 0.499999 )
@@ -141,7 +130,7 @@ node_b = NodePath("Rear")
 [node name="Rear" type="RigidBody2D" parent="RearPin"]
 gravity_scale = 0.0
 can_sleep = false
-linear_damp = 5.0
+linear_damp = 3.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RearPin/Rear"]
 position = Vector2( -0.5, 0 )
@@ -426,7 +415,7 @@ position = Vector2( 0, 0.5 )
 texture = ExtResource( 13 )
 
 [node name="TrailPosition" type="Position2D" parent="."]
-position = Vector2( -24, 0 )
+position = Vector2( -39, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
@@ -445,8 +434,22 @@ position = Vector2( 0.5, 0.5 )
 texture = ExtResource( 13 )
 
 [node name="DirectionLine" type="Line2D" parent="."]
+visible = false
 position = Vector2( 26, 0 )
 points = PoolVector2Array( 0, 0, 100, 0 )
 width = 4.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0.5, 0 )
+shape = SubResource( 5259 )
+
+[node name="Polygon2D" type="Polygon2D" parent="CollisionShape2D"]
+visible = false
+show_behind_parent = true
+position = Vector2( 69.0698, 18 )
+scale = Vector2( 2.7907, 1 )
+color = Color( 0.368627, 1, 0.662745, 1 )
+offset = Vector2( -20, -19 )
+polygon = PoolVector2Array( -15.5, 11, -15.5, -9, 6, -9, 6, 11 )
 
 [connection signal="timeout" from="BoltHud/BoltHudLines/WeaponSelector/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]

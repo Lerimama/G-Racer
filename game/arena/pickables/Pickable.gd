@@ -2,7 +2,7 @@ extends Area2D
 class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 
-var pickable_key: int #= Pro.Pickables[pickable_key_as_name]# poda ga spawner
+var pickable_key: int #= Pro.PICKABLE[pickable_key_as_name]# poda ga spawner
 
 onready var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 onready var pickable_color: Color = Pro.pickable_profiles[pickable_key]["color"]
@@ -36,10 +36,10 @@ func _on_Item_body_entered(body: Node) -> void:
 	#		sound_picked = all_sounds[all_sounds.size() - 1] 
 
 	if body.has_method("on_item_picked"):
-		if pickable_key == Pro.Pickables.PICKABLE_BULLET or pickable_key == Pro.Pickables.PICKABLE_MISILE \
-		or pickable_key == Pro.Pickables.PICKABLE_MINA:
+		if pickable_key == Pro.PICKABLE.PICKABLE_BULLET or pickable_key == Pro.PICKABLE.PICKABLE_MISILE \
+		or pickable_key == Pro.PICKABLE.PICKABLE_MINA:
 			Ref.sound_manager.play_sfx("pickable_weapon")
-		elif pickable_key == Pro.Pickables.PICKABLE_NITRO:
+		elif pickable_key == Pro.PICKABLE.PICKABLE_NITRO:
 			Ref.sound_manager.play_sfx("pickable_nitro")
 		else:
 			Ref.sound_manager.play_sfx("pickable")

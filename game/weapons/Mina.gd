@@ -18,7 +18,7 @@ onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 
-onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.Weapons.MINA]
+onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.WEAPON.MINA]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var speed: float = weapon_profile["speed"]

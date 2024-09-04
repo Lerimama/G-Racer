@@ -107,7 +107,7 @@ func set_game():
 	
 	# playing field
 	Ref.game_arena.playing_field.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		Ref.game_arena.playing_field.screen_edge_collision.disabled = false
 	else:
 		Ref.game_arena.playing_field.screen_edge_collision.disabled = true
@@ -121,25 +121,25 @@ func set_game():
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
 			pass
-			activated_player_ids = [Pro.Players.P1] 	
-#			activated_player_ids = [Pro.Players.P1, Pro.Players.P2] 	
-#			activated_player_ids = [Pro.Players.P1, Pro.Players.P2, Pro.Players.P3, Pro.Players.P4]
+#			activated_player_ids = [Pro.PLAYER.P1] 	
+			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start
-	# če ni prvi level dodam kvalificirane bolt_id
+	# če ni prvi level dodam kvalificirane player_id
 	elif current_level_index > 0:
 		if human_bolts_qualified.empty():
 			print("Error! Ni qvalificiranih boltov, torej igre nebi smelo biti!")
 		else:
 			for bolt in human_bolts_qualified:
-				activated_player_ids.append(bolt.bolt_id)
+				activated_player_ids.append(bolt.player_id)
 	human_bolts_qualified = []
 	
 	# get enemies 			
 	game_settings["enemies_mode"] = false # debug
 	
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
-		# za vsako prazno pozicijo dodam AI bolt_id
+		# za vsako prazno pozicijo dodam AI player_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_player_ids.size()
 		empty_positions_count = 1 # debug
 		for empty_position in empty_positions_count:
@@ -153,12 +153,12 @@ func set_game():
 	printt("IDS", activated_player_ids)	
 		
 	# adaptacija količine orožij
-#	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+#	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		Pro.default_player_stats["bullet_count"] = 0
 		Pro.default_player_stats["misile_count"] = 0
 		Pro.default_player_stats["mina_count"] = 0
-	game_settings["full_equip_mode"] = false # debug
+	game_settings["full_equip_mode"] = true # debug
 	if game_settings["full_equip_mode"]:
 		Pro.default_player_stats["bullet_count"] = 100
 		Pro.default_player_stats["misile_count"] = 100
@@ -166,8 +166,8 @@ func set_game():
 
 	# spawn bolts on positions (po vrsti aktivacije) 
 	var spawned_position_index = 0
-	for bolt_id in activated_player_ids: # so v ranking zaporedju
-		spawn_bolt(bolt_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
+	for player_id in activated_player_ids: # so v ranking zaporedju
+		spawn_bolt(player_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 	
 	game_intro()
@@ -204,7 +204,7 @@ func start_game():
 	for bolt in bolts_in_game:
 		bolt.bolt_active = true
 		if bolt.is_in_group(Ref.group_ai):
-			if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 				pass
 			else:
 				bolt.set_ai_target(bolt.bolt_position_tracker)
@@ -214,7 +214,7 @@ func start_game():
 	Ref.hud.on_game_start()
 	
 	# random pickables spawn
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		start_spawning_pickables() 
 
 	game_on = true
@@ -332,7 +332,7 @@ func set_next_level():
 	
 func update_ranking():
 	
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		bolts_in_game.sort_custom(self, "sort_trackers_by_points")
 	else:
 		# najprej sortirami po poziciji trackerja, 
@@ -487,13 +487,13 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	var NewBoltInstance: PackedScene = Pro.player_profiles[spawned_bolt_id]["bolt_scene"]
 	
 	var new_bolt = NewBoltInstance.instance()
-	new_bolt.bolt_id = spawned_bolt_id
+	new_bolt.player_id = spawned_bolt_id
 	new_bolt.modulate.a = 0 # za intro
 	new_bolt.rotation_degrees = Ref.current_level.race_start_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 	Ref.node_creation_parent.add_child(new_bolt)
 
-	if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		new_bolt.bolt_position_tracker = Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
 	
 	# signali
@@ -557,7 +557,7 @@ func _on_body_exited_playing_field(body: Node) -> void:
 		return
 	# player pull
 	
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		pass
 	else:
 		if body.is_in_group(Ref.group_players) and body.bolt_active:

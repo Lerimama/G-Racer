@@ -63,7 +63,7 @@ func _physics_process(delta: float) -> void:
 
 	manage_ai_states(delta)
 	
-	if current_motion_state == MotionStates.DISARRAY:
+	if current_motion == MotionStates.DISARRAY:
 		# inherited ----------------------------
 		rotation_angle = rotation_dir * deg2rad(turn_angle)
 		# ----------------------------
@@ -75,7 +75,7 @@ func _physics_process(delta: float) -> void:
 #		var min_drag: float = 0.5 # testirano, da je ne odnese
 #		var max_power_drag_loss: float = 0.0023 # da ni prehitro
 #		# max power reached ... drag se konstanto niža, da hitrost raste v neskončnost
-#		if current_motion_state == MotionStates.FWD:
+#		if current_motion == MotionStates.FWD:
 #			if drag_div == Pro.bolt_profiles[bolt_type]["drag_div"]:
 #				current_drag -= max_power_drag_loss
 #				current_drag = clamp(current_drag, min_drag, current_drag)
@@ -120,13 +120,14 @@ func _physics_process(delta: float) -> void:
 	
 var vector_to_target: Vector2
 
-var current_engine_power: float = 100
+var engine_power: float = 100
 var thrust_direction_rotation: float
-var forward_direction: int = 1
+var bolt_direction: int = 1
 onready var direction_line: Line2D = $DirectionLine
-
+var bolt_velocity
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
+	bolt_velocity = get_linear_velocity()
 	bolt_global_position = get_global_position()
 	
 	if not Ref.game_manager.game_on:
@@ -142,13 +143,13 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
 #	printt("AI", AiStates.keys()[current_ai_state], velocity.length(), get_applied_force())
 	
-	var force: Vector2 = vector_to_target * 1 * current_engine_power * forward_direction
-#	var force: Vector2 = Vector2.RIGHT.rotated(thrust_direction_rotation) * 1 * current_engine_power * forward_direction
+	var force: Vector2 = vector_to_target * 1 * engine_power * bolt_direction
+#	var force: Vector2 = Vector2.RIGHT.rotated(thrust_direction_rotation) * 1 * engine_power * bolt_direction
 
 #	set_linear_velocity(force)
 	set_applied_force(force)
 	
-#	if not current_engine_power == 0:
+#	if not engine_power == 0:
 #	else:
 #		set_applied_force(Vector2.ZERO)
 
@@ -200,7 +201,7 @@ func manage_ai_states(delta: float):
 				last_follow_target_position = ai_target.global_position
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
-			var ray_velocity_length: float = global_position.distance_to(ai_target.global_position)
+			var ray_velocity_length: float = bolt_global_position.distance_to(ai_target.global_position)
 			target_ray.cast_to.x = ray_velocity_length
 			if ray_velocity_length < ai_urgent_stop_distance:
 				velocity *= ai_brake_factor
@@ -223,7 +224,7 @@ func manage_ai_states(delta: float):
 				navigation_agent.set_target_location(ai_target.global_position)			
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
-			var ray_velocity_length: float = global_position.distance_to(ai_target.global_position)
+			var ray_velocity_length: float = bolt_global_position.distance_to(ai_target.global_position)
 			target_ray.cast_to.x = ray_velocity_length
 			if ray_velocity_length < ai_urgent_stop_distance:
 				var brake_factor: float = 0.95
@@ -275,13 +276,13 @@ func set_ai_target(new_ai_target: Node2D):
 		var target_navigation_cell_position: Vector2 = Vector2.ZERO
 		# če je bil FOLLOW je nova tarča na zadnji vidni lokaciji stare tarče, drugače je random nav cell
 		if freee:
-			target_navigation_cell_position = get_nav_cell_on_distance(global_position,150, 1000)
+			target_navigation_cell_position = get_nav_cell_on_distance(bolt_global_position, 150, 1000)
 			navigation_agent.set_target_location(target_navigation_cell_position)
 		else:
 			if current_ai_state == AiStates.FOLLOW:
 				target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
 			else:
-				target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
+				target_navigation_cell_position = get_nav_cell_on_distance(bolt_global_position, ai_target_min_distance, ai_target_max_distance)
 			navigation_agent.set_target_location(target_navigation_cell_position)
 		current_ai_state = AiStates.SEEK
 	
@@ -329,7 +330,7 @@ func get_possible_targets():
 	#	if player_stats["bullet_count"] == 0 and player_stats["misile_count"] == 0:
 	#		for target in all_possible_targets:
 	#			if "pickable_key" in target:
-	#				if target.pickable_key == Pro.Weapons.BULLET or target.pickable_key == Pro.Weapons.MISILE:
+	#				if target.pickable_key == Pro.WEAPON.BULLET or target.pickable_key == Pro.WEAPON.MISILE:
 	#					all_possible_targets.push_front(target)
 	# rangiram po distanci
 	
@@ -338,16 +339,16 @@ func get_possible_targets():
 	for possible_target in all_possible_targets:
 		detect_ray.force_raycast_update()
 		detect_ray.look_at(possible_target.global_position)
-		var detect_ray_length: float = global_position.distance_to(possible_target.global_position)
+		var detect_ray_length: float = bolt_global_position.distance_to(possible_target.global_position)
 		detect_ray.cast_to.x = detect_ray_length
 		if detect_ray.is_colliding() and detect_ray.get_collider() == edge_navigation_tilemap:
 			targets_behind_wall.append(possible_target)
-			# printt("walled", Pro.Pickables.keys()[possible_target.pickable_key])
+			# printt("walled", Pro.PICKABLE.keys()[possible_target.pickable_key])
 	for target_behind_wall in targets_behind_wall:
 		all_possible_targets.erase(target_behind_wall)
 	
 	# if not all_possible_targets.empty():
-	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pro.Pickables.keys()[all_possible_targets[0].pickable_key])
+	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pro.PICKABLE.keys()[all_possible_targets[0].pickable_key])
 	
 	return all_possible_targets
 
@@ -392,7 +393,7 @@ func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, m
 			# najprej izbere vse po razponu
 			if current_cell_distance > min_distance and current_cell_distance < max_distance:
 				if in_front:
-					var vector_to_position: Vector2 = nav_position - global_position
+					var vector_to_position: Vector2 = nav_position - bolt_global_position
 					var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
 					# če je najbolj spredaj
 					#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
@@ -457,7 +458,7 @@ func get_navigation_position_on_distance(from_position: Vector2, min_distance: f
 		# najprej izbere vse po razponu
 		if current_cell_distance > min_distance and current_cell_distance < max_distance:
 			if in_front:
-				var vector_to_position: Vector2 = nav_position - global_position
+				var vector_to_position: Vector2 = nav_position - bolt_global_position
 				var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
 				# če je najbolj spredaj
 				#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
@@ -542,10 +543,10 @@ func _on_NavigationAgent2D_target_reached() -> void:
 signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 
 enum MotionStates {IDLE, FWD, REV, DISARRAY} # DIZZY, DYING glede na moč motorja
-var current_motion_state: int = MotionStates.IDLE
+var current_motion: int = MotionStates.IDLE
 
 var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
-var bolt_id: int # ga seta spawner
+var player_id: int # ga seta spawner
 
 var player_name: String # za opredelitev statistike
 var bolt_color: Color = Color.red
@@ -556,7 +557,7 @@ var axis_distance: float # določen glede na širino sprajta
 var rotation_angle: float
 var rotation_dir: float
 
-var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
+var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 var revive_time: float = 2
 var current_drag: float # = bolt_drag
 var race_time_on_previous_lap: float = 0
@@ -584,7 +585,7 @@ var current_active_trail: Line2D
 
 # engine
 var engines_on: bool = false
-var engine_power = 0 # ob štartu je noga z gasa
+#var engine_power = 0 # ob štartu je noga z gasa
 var max_power_reached: bool = false
 var engine_particles_rear: CPUParticles2D
 var engine_particles_front_left: CPUParticles2D
@@ -619,7 +620,7 @@ onready var player_stats: Dictionary = Pro.default_player_stats.duplicate()
 onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
 
 # player profil
-onready var player_profile: Dictionary = Pro.player_profiles[bolt_id].duplicate()
+onready var player_profile: Dictionary = Pro.player_profiles[player_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
 
 # bolt type profil
@@ -674,13 +675,13 @@ onready var drag_div: float = bolt_profile["drag_div"]
 #	# enemi ... acceleration = position.direction_to(navigation_agent.get_next_location()) * engine_power
 #	# animiran bolt .. sprite se ne rotira z zavijanjem ... # bolt_sprite.rotation = - global_rotation
 #
-#	if current_motion_state == MotionStates.DISARRAY:
+#	if current_motion == MotionStates.DISARRAY:
 #		rotation_angle = rotation_dir * deg2rad(turn_angle)
 #	else:
 #		var min_drag: float = 0.5 # testirano, da je ne odnese
 #		var max_power_drag_loss: float = 0.0023 # da ni prehitro
 #		# max power reached ... drag se konstanto niža, da hitrost raste v neskončnost
-#		if current_motion_state == MotionStates.FWD:
+#		if current_motion == MotionStates.FWD:
 #			if drag_div == Pro.bolt_profiles[bolt_type]["drag_div"]:
 #				current_drag -= max_power_drag_loss
 #				current_drag = clamp(current_drag, min_drag, current_drag)
@@ -732,7 +733,7 @@ func on_collision():
 	
 	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 	# odbojni partikli
-	if velocity.length() > stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
+	if velocity.length() > pseudo_stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
 		var new_collision_particles = CollisionParticles.instance()
 		new_collision_particles.position = collision.position
 		new_collision_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
@@ -759,10 +760,10 @@ func steering(delta: float) -> void:
 	var new_heading = (front_axis_position - rear_axis_position).normalized()
 	
 	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction" ... 10 je za adaptacijo inputa	
-	# if current_motion_state == MotionStates.FWD:
+	# if current_motion == MotionStates.FWD:
 	# if fwd_motion:
 	#	velocity = velocity.linear_interpolate(new_heading * velocity.length(), side_traction / 10) # željeno smer gibanja doseže z zamikom "side-traction"	
-	# elif current_motion_state == MotionStates.REV:
+	# elif current_motion == MotionStates.REV:
 	# elif rev_motion:
 	#	velocity = velocity.linear_interpolate(-new_heading * min(velocity.length(), max_speed_reverse), 0.5) # željeno smer gibanja doseže z zamikom "side-traction"	
 	
@@ -772,16 +773,16 @@ func steering(delta: float) -> void:
 func manage_motion_states(delta):
 	
 	# če je dissaray ne more bit nič drugega, če ga nekdo ne izklopi (timer)
-	if current_motion_state == MotionStates.DISARRAY:
+	if current_motion == MotionStates.DISARRAY:
 		rotate(delta * rotation_angle * free_rotation_multiplier)
 		return
 		
 	if engine_power > 0:
-		current_motion_state = MotionStates.FWD
+		current_motion = MotionStates.FWD
 	elif engine_power < 0:
-		current_motion_state = MotionStates.REV
+		current_motion = MotionStates.REV
 	else:
-		current_motion_state = MotionStates.IDLE	
+		current_motion = MotionStates.IDLE	
 	
 
 func manage_motion_fx():
@@ -795,16 +796,16 @@ func manage_motion_fx():
 	engine_particles_front_right.global_rotation = front_engine_position_R.global_rotation - deg2rad(180)
 	
 	var engine_pitch_tween = get_tree().create_tween()
-	if current_motion_state == MotionStates.FWD:
+	if current_motion == MotionStates.FWD:
 		engine_pitch_tween.kill() # more bit
 		$Sounds/Engine.pitch_scale = 1 + velocity.length()/180
 		engine_particles_rear.set_emitting(true)
-	elif current_motion_state == MotionStates.REV:
+	elif current_motion == MotionStates.REV:
 		engine_pitch_tween.kill() # more bit
 		$Sounds/Engine.pitch_scale = 1 + velocity.length()/180
 		engine_particles_front_left.set_emitting(true)
 		engine_particles_front_right.set_emitting(true)
-	elif current_motion_state == MotionStates.IDLE:
+	elif current_motion == MotionStates.IDLE:
 		if $Sounds/Engine.pitch_scale > 1:
 			engine_pitch_tween.tween_property($Sounds/Engine, "pitch_scale", 1, 0.2)
 		else:
@@ -825,10 +826,10 @@ func manage_trail():
 	
 	if velocity.length() > 0:
 		
-		current_active_trail.add_points(global_position)
+		current_active_trail.add_points(bolt_global_position)
 		current_active_trail.gradient.colors[1] = trail_pseudodecay_color
 		
-		if velocity.length() > stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
+		if velocity.length() > pseudo_stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem
 			var trail_grad = get_tree().create_tween()
 			trail_grad.tween_property(current_active_trail, "modulate:a", bolt_trail_alpha, 0.5)
@@ -862,7 +863,7 @@ func on_hit(hit_by: Node):
 	if shields_on:
 		return
 
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		update_stat("energy", - hit_by.hit_damage)
 				
 	if hit_by.is_in_group(Ref.group_bullets):
@@ -881,7 +882,7 @@ func on_hit(hit_by: Node):
 			velocity = hit_by.velocity
 		else:
 			velocity += hit_by.velocity * hit_by.mass / mass
-		if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE: 
+		if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
 			explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 		in_disarray(hit_by.hit_damage)
 		
@@ -896,7 +897,7 @@ func on_hit(hit_by: Node):
 
 func in_disarray(damage_amount: float): # 5 raketa, 1 metk
 	
-	current_motion_state = MotionStates.DISARRAY
+	current_motion = MotionStates.DISARRAY
 	set_process_input(false)		
 	var dissaray_time_factor: float = 0.6 # uravnano, da naredi pol kroga na 1 damage
 	var disarray_rotation_dir: float = damage_amount # vedno je -1, 0, ali +1, samo tukaj jo povečam, da dobim hitro rotacijo
@@ -912,7 +913,7 @@ func in_disarray(damage_amount: float): # 5 raketa, 1 metk
 	dissaray_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek 
 	yield(dissaray_tween, "finished")
 	set_process_input(true)		
-	current_motion_state = MotionStates.IDLE
+	current_motion = MotionStates.IDLE
 
 	
 func explode():
@@ -927,7 +928,7 @@ func explode():
 	# engine_particles_front_right.visible = false
 	# spawn eksplozije
 	var new_exploding_bolt = ExplodingBolt.instance()
-	new_exploding_bolt.global_position = global_position
+	new_exploding_bolt.global_position = bolt_global_position
 	new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
 	new_exploding_bolt.modulate.a = 1
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
@@ -961,7 +962,7 @@ func revive_bolt():
 	# on new life
 	bolt_collision.disabled = false
 	# reset pred prikazom
-	current_motion_state = MotionStates.IDLE
+	current_motion = MotionStates.IDLE
 	if dissaray_tween:
 		dissaray_tween.kill()
 	velocity = Vector2.ZERO
@@ -987,7 +988,7 @@ func drive_in(drive_in_time: float):
 #	global_position -= drive_in_distance * transform.x
 	
 	modulate.a = 1
-#	current_motion_state = MotionStates.FWD # za fx
+#	current_motion = MotionStates.FWD # za fx
 #	start_engines()
 #
 #	var intro_drive_tween = get_tree().create_tween()
@@ -996,17 +997,17 @@ func drive_in(drive_in_time: float):
 	
 func drive_out():
 	
-	var drive_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
-	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.finish_out_position
-	var drive_out_position: Vector2 = global_position - drive_out_vector
-
-	var drive_out_time: float = 2
-	var drive_out_tween = get_tree().create_tween()
-	drive_out_tween.tween_callback(bolt_collision, "set_disabled", [true])
-	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
-	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
-	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
-
+#	var drive_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
+#	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.finish_out_position
+#	var drive_out_position: Vector2 = global_position - drive_out_vector
+#
+#	var drive_out_time: float = 2
+#	var drive_out_tween = get_tree().create_tween()
+#	drive_out_tween.tween_callback(bolt_collision, "set_disabled", [true])
+#	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
+#	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
+#	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
+	pass
 
 func on_lap_finished(level_lap_limit: int):
 	
@@ -1165,7 +1166,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		#		yield(get_tree().create_timer(nitro_time), "timeout")
 		#		fwd_engine_power = Pro.bolt_profiles[bolt_type]["fwd_engine_power"]
 		var current_drag_div = drag_div
-		drag_div = Pro.level_areas_profiles[Pro.LevelAreas.AREA_NITRO]["drag_div"]
+		drag_div = Pro.level_areas_profiles[Pro.LEVEL_AREA.AREA_NITRO]["drag_div"]
 		yield(get_tree().create_timer(nitro_time), "timeout")
 		drag_div = current_drag_div
 	
@@ -1175,40 +1176,40 @@ func on_item_picked(pickable_key: int):
 	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 	
 	match pickable_key:
-		Pro.Pickables.PICKABLE_BULLET:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+		Pro.PICKABLE.PICKABLE_BULLET:
+			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 				player_stats["misile_count"] = 0
 				player_stats["mina_count"] = 0
 			update_stat("bullet_count", pickable_value)
-		Pro.Pickables.PICKABLE_MISILE:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+		Pro.PICKABLE.PICKABLE_MISILE:
+			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 				player_stats["bullet_count"] = 0
 				player_stats["mina_count"] = 0
 			update_stat("misile_count", pickable_value)
-		Pro.Pickables.PICKABLE_MINA:
-			if not Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+		Pro.PICKABLE.PICKABLE_MINA:
+			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 				player_stats["bullet_count"] = 0
 				player_stats["misile_count"] = 0
 			update_stat("mina_count", pickable_value)
-		Pro.Pickables.PICKABLE_SHIELD:
+		Pro.PICKABLE.PICKABLE_SHIELD:
 			shield_loops_limit = pickable_value
 			activate_shield()
-		Pro.Pickables.PICKABLE_ENERGY:
+		Pro.PICKABLE.PICKABLE_ENERGY:
 			player_stats["energy"] = max_energy
-		Pro.Pickables.PICKABLE_GAS:
+		Pro.PICKABLE.PICKABLE_GAS:
 			update_stat("gas_count", pickable_value)
-		Pro.Pickables.PICKABLE_LIFE:
+		Pro.PICKABLE.PICKABLE_LIFE:
 			update_stat("life", pickable_value)
-		Pro.Pickables.PICKABLE_NITRO:
+		Pro.PICKABLE.PICKABLE_NITRO:
 			activate_nitro(pickable_value, Pro.pickable_profiles[pickable_key]["duration"])
-		Pro.Pickables.PICKABLE_TRACKING:
+		Pro.PICKABLE.PICKABLE_TRACKING:
 			var default_traction = side_traction
 			side_traction = pickable_value
 			yield(get_tree().create_timer(Pro.pickable_profiles[pickable_key]["duration"]), "timeout")
 			side_traction = default_traction
-		Pro.Pickables.PICKABLE_POINTS:
+		Pro.PICKABLE.PICKABLE_POINTS:
 			update_bolt_points(pickable_value)
-		Pro.Pickables.PICKABLE_RANDOM:
+		Pro.PICKABLE.PICKABLE_RANDOM:
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
@@ -1291,4 +1292,4 @@ func update_stat(stat_name: String, change_value: float):
 	else:
 		player_stats[stat_name] += change_value # change_value je + ali -
 		
-	emit_signal("stats_changed", bolt_id, player_stats)
+	emit_signal("stats_changed", player_id, player_stats)

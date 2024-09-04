@@ -69,6 +69,7 @@ func start_decay():
 	decay_tween.tween_property(self, "modulate:a", 0, decay_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	decay_tween.tween_callback(self, "queue_free")
 	
+	
 func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta in na začetek arraya
 	
 	# minimalni razmak med pikami ... če je razdalja med trenutno piko in eno piko nazaj (-1) manjša od minimalne željene

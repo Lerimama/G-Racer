@@ -58,7 +58,7 @@ func _physics_process(delta: float) -> void:
 
 	manage_ai_states(delta)
 	
-	if current_motion_state == MotionStates.DISARRAY:
+	if current_motion == MotionStates.DISARRAY:
 		ai_target = null
 	else:
 		if ai_target == null and not current_ai_state == AiStates.IDLE: # setanje tarče za konec dissaraya
@@ -244,7 +244,7 @@ func get_possible_targets():
 	#	if player_stats["bullet_count"] == 0 and player_stats["misile_count"] == 0:
 	#		for target in all_possible_targets:
 	#			if "pickable_key" in target:
-	#				if target.pickable_key == Pro.Weapons.BULLET or target.pickable_key == Pro.Weapons.MISILE:
+	#				if target.pickable_key == Pro.WEAPON.BULLET or target.pickable_key == Pro.WEAPON.MISILE:
 	#					all_possible_targets.push_front(target)
 	# rangiram po distanci
 	
@@ -257,12 +257,12 @@ func get_possible_targets():
 		detect_ray.cast_to.x = detect_ray_length
 		if detect_ray.is_colliding() and detect_ray.get_collider() == edge_navigation_tilemap:
 			targets_behind_wall.append(possible_target)
-			# printt("walled", Pro.Pickables.keys()[possible_target.pickable_key])
+			# printt("walled", Pro.PICKABLE.keys()[possible_target.pickable_key])
 	for target_behind_wall in targets_behind_wall:
 		all_possible_targets.erase(target_behind_wall)
 	
 	# if not all_possible_targets.empty():
-	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pro.Pickables.keys()[all_possible_targets[0].pickable_key])
+	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pro.PICKABLE.keys()[all_possible_targets[0].pickable_key])
 	
 	return all_possible_targets
 

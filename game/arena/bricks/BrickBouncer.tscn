@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=2]
@@ -6,6 +6,9 @@
 [ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=4]
 [ext_resource path="res://game/arena/bricks/BrickBouncer.gd" type="Script" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=6]
+
+[sub_resource type="PhysicsMaterial" id=11]
+bounce = 1.0
 
 [sub_resource type="RectangleShape2D" id=6]
 extents = Vector2( 4, 4 )
@@ -24,6 +27,7 @@ random_pitch = 1.05
 polygon = PoolVector2Array( -3, 3, -3, -3, 3, -3, 3, 3 )
 
 [node name="BouncerBrick" type="StaticBody2D"]
+physics_material_override = SubResource( 11 )
 script = ExtResource( 5 )
 
 [node name="BrickShadow" parent="." instance=ExtResource( 3 )]

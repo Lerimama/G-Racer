@@ -24,40 +24,42 @@ var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"level_time" : 0, # sekunde ... naj bodo stotinke
 }
 
-enum Players {P1, P2, P3, P4}
+enum PLAYER {P1, P2, P3, P4}
 var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
-	Players.P1 : {
+	PLAYER.P1 : {
 		"player_name": "P1",
 		"player_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
-		"controller_profile": Controller.ARROWS,
-		"bolt_type": BoltTypes.RIGID,
-		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"),
+		"controller_profile": CONTROLLER.ARROWS,
+		"bolt_type": BOLT_TYPE.RIGID,
+		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"), # OPT premik v bolt tip
 	},
-	Players.P2 : {
+	PLAYER.P2 : {
 		"player_name": "P2",
 		"player_avatar": preload("res://assets/textures/avatars/avatar_02.png"),
 		"player_color": Ref.color_red,
-		"controller_profile" : Controller.WASD,
-		"bolt_type": BoltTypes.BASIC,
-		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"controller_profile" : CONTROLLER.WASD,
+#		"bolt_type": BOLT_TYPE.BASIC,
+#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"bolt_type": BOLT_TYPE.RIGID,
+		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"),
 	},
-	Players.P3 : {
+	PLAYER.P3 : {
 		"player_name" : "P3",
 		"player_avatar" : preload("res://assets/textures/avatars/avatar_03.png"),
 		"player_color" : Ref.color_yellow, # color_yellow, color_green, color_red
-		"controller_profile" : Controller.WASD,
-		#		"controller_profile" : Controller.JP1,
-		"bolt_type": BoltTypes.BASIC,
+		"controller_profile" : CONTROLLER.WASD,
+		#		"controller_profile" : CONTROLLER.JP1,
+		"bolt_type": BOLT_TYPE.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
-	Players.P4 : {
+	PLAYER.P4 : {
 		"player_name" : "P4",
 		"player_avatar" : preload("res://assets/textures/avatars/avatar_04.png"),
 		"player_color" : Ref.color_green,
-		"controller_profile" : Controller.WASD,
-		#		"controller_profile" : Controller.JP2,
-		"bolt_type": BoltTypes.BASIC,
+		"controller_profile" : CONTROLLER.WASD,
+		#		"controller_profile" : CONTROLLER.JP2,
+		"bolt_type": BOLT_TYPE.BASIC,
 		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
 }
@@ -65,7 +67,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 
 var ai_profile: Dictionary = {
 	# za prepis player profila
-	"controller_profile" : Controller.AI,
+	"controller_profile" : CONTROLLER.AI,
 #	"bolt_scene": preload("res://game/bolt/BoltAI.tscn"),
 	"bolt_scene": preload("res://game/bolt/rigid/TheBoltAI.tscn"),
 	# race
@@ -83,9 +85,9 @@ var ai_profile: Dictionary = {
 }
 
 
-enum BoltTypes {SMALL, BASIC, BIG, RIGID}
+enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
-	BoltTypes.BASIC: {
+	BOLT_TYPE.BASIC: {
 		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
@@ -105,17 +107,18 @@ var bolt_profiles: Dictionary = {
 		"tilt_speed": 150, # trenutno off
 		"ai_target_rank": 5,
 		},
-	BoltTypes.RIGID: {
+	BOLT_TYPE.RIGID: {
 		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		# orig
-		"engine_power": 320, # 1 - 500 konjev 
+		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
+		"max_engine_power": 320, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
 		"ai_target_rank": 5,
 		# rigid
 		"mass": 30, # 300 kil, front in rear teža se uporablja bolj za razmerje
-		"ang_damp": 8, # ... tudi regulacija driftanja
+		"ang_damp": 8, # ... tudi regulacija driftanja # no drift je 20
 		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
 		"lin_damp_idle": 0.5, 
 		"rear_lin_damp": 5, # regulacija driftanja
@@ -125,41 +128,53 @@ var bolt_profiles: Dictionary = {
 }
 
 
-enum Weapons {BULLET, MISILE, MINA}
+enum WEAPON {BULLET, MISILE, MINA, SHIELD}
 var weapon_profiles : Dictionary = {
-	Weapons.BULLET: {
+	WEAPON.BULLET: {
 		"reload_time": 0.1,
 		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
 		"speed": 1000,
 		"lifetime": 1.0, # domet vedno merim s časom
-		"mass": 1.5, # glede na to kakšno inercijo hočem
+		"mass": 0.03, # 300g
 		"direction_start_range": [0, 0] , # natančnost misile
+		"scene": preload("res://game/weapons/Bullet.tscn"),
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
-	Weapons.MISILE: {
+	WEAPON.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 5, # 10 je max energija
 		"speed": 100,
 		"lifetime": 1.0, # domet vedno merim s časom
-		"mass": 5,
+		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
+		"scene": preload("res://game/weapons/Misile.tscn"),
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
-	Weapons.MINA: {
+	WEAPON.MINA: {
 		"reload_time": 0.1, #
 		"hit_damage": 5,
-		"speed": 50,
+		"speed": 50, # prilagojeno za učinek na tarčo
 		"lifetime": 0, # 0 pomeni večno
-		"mass": 3,
+		"mass": 3, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
+		"scene": preload("res://game/weapons/Mina.tscn"),
+		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
+	},
+	WEAPON.SHIELD: {
+#		"reload_time": 0.1, #
+#		"hit_damage": 5,
+#		"speed": 50,
+		"lifetime": 5, # cikli animacije
+		"scene": preload("res://game/weapons/Shield.tscn"),
+#		"mass": 3,
+#		"direction_start_range": [0, 0] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 }
 
-
-enum Controller {ARROWS, WASD, JP1, JP2, AI}
+enum CONTROLLER {ARROWS, WASD, JP1, JP2, AI}
 var controller_profiles : Dictionary = {
-	Controller.ARROWS: {
+	CONTROLLER.ARROWS: {
 		fwd_action = "p1_fwd", 
 		rev_action = "p1_rev",
 		left_action = "p1_left",
@@ -167,7 +182,7 @@ var controller_profiles : Dictionary = {
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
 		},
-	Controller.WASD : {
+	CONTROLLER.WASD : {
 		fwd_action = "p2_fwd", 
 		rev_action = "p2_rev",
 		left_action = "p2_left",
@@ -175,7 +190,7 @@ var controller_profiles : Dictionary = {
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
 	},
-	Controller.JP1 : {
+	CONTROLLER.JP1 : {
 		fwd_action = "jp1_fwd",
 		rev_action = "jp1_rev",
 		left_action = "jp1_left",
@@ -183,7 +198,7 @@ var controller_profiles : Dictionary = {
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
 	},
-	Controller.JP2 : {
+	CONTROLLER.JP2 : {
 		fwd_action = "jp2_fwd",
 		rev_action = "jp2_rev",
 		left_action = "jp2_left",
@@ -191,7 +206,7 @@ var controller_profiles : Dictionary = {
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
 	},
-	Controller.AI : {
+	CONTROLLER.AI : {
 		fwd_action = "ai_fwd",
 		rev_action = "ai_rev",
 		left_action = "ai_left",
@@ -202,31 +217,35 @@ var controller_profiles : Dictionary = {
 }
 
 
-enum LevelAreas {AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING}
+enum LEVEL_AREA {AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING}
 var level_areas_profiles: Dictionary = {
-	LevelAreas.AREA_NITRO: {
+	LEVEL_AREA.AREA_NITRO: {
 		"drag_div": 500,
+		"engine_power_factor": 2, # koliko original powerja
 		"area_scene": preload("res://game/arena/areas/AreaNitro.tscn"),
 	},
-	LevelAreas.AREA_GRAVEL: {
+	LEVEL_AREA.AREA_GRAVEL: {
 		"drag_div": 25.0, 
+		"engine_power_factor": 0.7, 
 		"area_scene": preload("res://game/arena/areas/AreaGravel.tscn"),
 	},
-	LevelAreas.AREA_HOLE: {
+	LEVEL_AREA.AREA_HOLE: {
 		"drag_div": 5.0,
+		"engine_power_factor": 0.3,
 		"area_scene": preload("res://game/arena/areas/AreaHole.tscn"),
 	},
-	LevelAreas.AREA_TRACKING: {
+	LEVEL_AREA.AREA_TRACKING: {
 		"area_tracking_value": 1,
+		"rear_ang_damp": 20, # vrednost, da riti nič ne odnaša
 		"area_scene": preload("res://game/arena/areas/AreaTracking.tscn"),
 	},
 }
 
 
-enum LevelObjects {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, BRICK_LIGHT, GOAL_PILLAR}
+enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, BRICK_LIGHT, GOAL_PILLAR}
 var level_object_profiles: Dictionary = { 
 	# ne rabiš povsod istih vsebin, ker element vleče samo postavke, ki jih rabi
-	LevelObjects.BRICK_GHOST: {
+	LEVEL_OBJECT.BRICK_GHOST: {
 		"color": Ref.color_brick_ghost,
 		"value": 30,
 		"speed_brake_div": 10,
@@ -234,7 +253,7 @@ var level_object_profiles: Dictionary = {
 		"object_scene": preload("res://game/arena/bricks/BrickGhost.tscn"),
 		"ai_target_rank": 0,
 	},
-	LevelObjects.BRICK_BOUNCER: {
+	LEVEL_OBJECT.BRICK_BOUNCER: {
 		"color": Ref.color_brick_bouncer,
 		"value": 10,
 		"bounce_strength": 2,
@@ -242,29 +261,29 @@ var level_object_profiles: Dictionary = {
 		"object_scene": preload("res://game/arena/bricks/BrickBouncer.tscn"),
 		"ai_target_rank": 0,
 	},
-	LevelObjects.BRICK_MAGNET: {
+	LEVEL_OBJECT.BRICK_MAGNET: {
 		"color": Ref.color_brick_magnet_off,
 		"value": 0,
-		"gravity_force": 70.0,
+		"gravity_force": 300.0,
 		"altitude": 5,
 		"object_scene": preload("res://game/arena/bricks/BrickMagnet.tscn"),
 		"ai_target_rank": 0, # 0 pomeni, da se izogneš
 	},	
-	LevelObjects.BRICK_TARGET: {
+	LEVEL_OBJECT.BRICK_TARGET: {
 		"color": Ref.color_brick_target,
 		"value": 100,
 		"altitude": 5,
 		"object_scene": preload("res://game/arena/bricks/BrickTarget.tscn"),
 		"ai_target_rank": 0,
 	},
-	LevelObjects.BRICK_LIGHT: {
+	LEVEL_OBJECT.BRICK_LIGHT: {
 		"color": Ref.color_brick_light_off,
 		"value": 10,
 		"altitude": 0,
 		"object_scene": preload("res://game/arena/bricks/BrickLight.tscn"),
 		"ai_target_rank": 3,
 	},
-	LevelObjects.GOAL_PILLAR: {
+	LEVEL_OBJECT.GOAL_PILLAR: {
 		"value": 1000,
 		"altitude": 5,
 		"object_scene": preload("res://game/arena/GoalPillar.tscn"),
@@ -273,100 +292,109 @@ var level_object_profiles: Dictionary = {
 }
 
 
-enum Pickables{
+enum PICKABLE{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA, PICKABLE_SHIELD, 
 	PICKABLE_ENERGY, PICKABLE_LIFE, PICKABLE_GAS, PICKABLE_POINTS
 	PICKABLE_NITRO, PICKABLE_TRACKING, 
 	PICKABLE_RANDOM
 	}
 var pickable_profiles: Dictionary = {
-	Pickables.PICKABLE_BULLET: {
+	PICKABLE.PICKABLE_BULLET: {
 		"in_random_selection": true, # vključeno v random izbor?
 		"color": Ref.color_pickable_weapon,
 		"value": 20,
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_bullet.tres"),
 		"ai_target_rank": 3,
 	},
-	Pickables.PICKABLE_MISILE: {
+	PICKABLE.PICKABLE_MISILE: {
 		"in_random_selection": true,
 		"color": Ref.color_pickable_weapon,
 		"value": 2,
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_misile.tres"),
 		"ai_target_rank": 3,
 	}, 
-	Pickables.PICKABLE_MINA: {
+	PICKABLE.PICKABLE_MINA: {
 		"in_random_selection": true,
 		"color": Ref.color_pickable_weapon,
 		"value": 3,
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_mina.tres"),
 		"ai_target_rank": 3,
 	}, 
-	Pickables.PICKABLE_SHIELD: {
+	PICKABLE.PICKABLE_SHIELD: {
 		"in_random_selection": true,
 		"color": Ref.color_pickable_weapon,
 		"value": 1,
 		"altitude": 3,
+		"time": 3,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_shield.tres"),
 		"ai_target_rank": 3,
 	},
-	Pickables.PICKABLE_ENERGY: {
+	PICKABLE.PICKABLE_ENERGY: {
 		"in_random_selection": true,
 		"color": Ref.color_pickable_stat,
 		"value": 0,
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_energy.tres"),
 		"ai_target_rank": 3,
 	},
-	Pickables.PICKABLE_LIFE: {
+	PICKABLE.PICKABLE_LIFE: {
 		"in_random_selection": true,
 		"color": Ref.color_pickable_stat,
 		"value": 1,
 		"altitude": 3,
+		"time": 0, # sekunde
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_life.tres"),
 		"ai_target_rank": 3,
 	},
-	Pickables.PICKABLE_GAS: {
+	PICKABLE.PICKABLE_GAS: {
 		"in_random_selection": false,
 		"color": Ref.color_pickable_stat,
 		"value": 200,
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_gas.tres"),
 		"ai_target_rank": 3,
 	},
-	Pickables.PICKABLE_POINTS: {
+	PICKABLE.PICKABLE_POINTS: {
 		"in_random_selection": false,
 		"color": Ref.color_pickable_stat,
 		"value": 100,
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_points.tres"),
 		"ai_target_rank": 2,
 	},
-	Pickables.PICKABLE_NITRO: {
+	PICKABLE.PICKABLE_NITRO: {
 		"in_random_selection": false,
 		"color": Ref.color_pickable_feature,
 		"value": 700,
 		"altitude": 3,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_nitro.tres"),
-		"duration": 1.5, # sekunde
+		"time": 1.5,
 		"ai_target_rank": 10,
 	},
-	Pickables.PICKABLE_TRACKING: {
+	PICKABLE.PICKABLE_TRACKING: {
 		"in_random_selection": false,
 		"color": Ref.color_pickable_feature,
-		"value": 0.7,
+		"value": 20, # ang_damp rite
 		"altitude": 3,
+		"time": 1.5,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_tracking.tres"),
-		"duration": 5,
 		"ai_target_rank": 1,
 	},
-	Pickables.PICKABLE_RANDOM: {
+	PICKABLE.PICKABLE_RANDOM: {
 		"in_random_selection": false,
 		"color": Ref.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"altitude": 3,
+		"time": 0,
 		"icon_scene": preload("res://assets/resources/icons/icon_pickable_random.tres"),
 		"ai_target_rank": 9,
 	},

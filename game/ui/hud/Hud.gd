@@ -29,7 +29,7 @@ func _ready() -> void:
 func set_hud(): # kliče GM
 	
 	# game stats
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		game_timer.hunds_mode = false
 	game_timer.show()
 	record_lap_label.hide()
@@ -42,7 +42,7 @@ func set_hud(): # kliče GM
 			stat.hide()
 		box.player_line.show()
 		match Ref.current_level.level_type:
-			Ref.current_level.LevelTypes.BATTLE:
+			Ref.current_level.LEVEL_TYPE.BATTLE:
 				# pokažem: wins, life, gas, points, rank
 				# skrijem: timer stotinke 
 				box.stat_wins.show()
@@ -50,7 +50,11 @@ func set_hud(): # kliče GM
 				box.stat_gas.show()
 				box.stat_points.show()
 				box.stat_level_rank.show()
-			Ref.current_level.LevelTypes.RACE:
+				# _temp
+				box.stat_bullet.show()
+				box.stat_misile.show()
+				box.stat_mina.show()
+			Ref.current_level.LEVEL_TYPE.RACE:
 				# pokažem: wins, life, gas, points, rank, level time
 				box.stat_wins.show()
 				box.stat_life.show()
@@ -58,7 +62,7 @@ func set_hud(): # kliče GM
 				box.stat_points.show()
 				box.stat_level_rank.show()
 				box.stat_level_time.show()
-			Ref.current_level.LevelTypes.RACE_LAPS:
+			Ref.current_level.LEVEL_TYPE.RACE_LAPS:
 				# pokažem: wins, life, gas, points, rank, lap, best lap, level time
 				box.stat_wins.show()
 				box.stat_life.show()
@@ -122,9 +126,9 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 	#		return
 		
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
-	var spawned_player_statbox: Control = statboxes[spawned_bolt.bolt_id]
+	var spawned_player_statbox: Control = statboxes[spawned_bolt.player_id]
 	var spawned_player_stats: Dictionary = spawned_bolt.player_stats
-	var spawned_player_profile: Dictionary = Pro.player_profiles[spawned_bolt.bolt_id]
+	var spawned_player_profile: Dictionary = Pro.player_profiles[spawned_bolt.player_id]
 	
 	# bolt stats
 	spawned_player_statbox.stat_bullet.stat_value = spawned_player_stats["bullet_count"]
@@ -146,13 +150,13 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 
 func _on_GameTimer_gametime_is_up() -> void:
 	
-	if Ref.current_level.level_type == Ref.current_level.LevelTypes.BATTLE:
+	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		Ref.game_manager.level_finished()
 
 	
-func _on_stats_changed(bolt_id: int, player_stats: Dictionary):
+func _on_stats_changed(player_id: int, player_stats: Dictionary):
 	
-	var statbox_to_change: Control = statboxes[bolt_id] # bolt id kot index je enak indexu statboxa v statboxih
+	var statbox_to_change: Control = statboxes[player_id] # bolt id kot index je enak indexu statboxa v statboxih
 			
 	statbox_to_change.stat_wins.stat_value = player_stats["wins"] # setget
 	statbox_to_change.stat_life.stat_value = player_stats["life"]

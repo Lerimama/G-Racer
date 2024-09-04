@@ -1,49 +1,224 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://game/arena/areas/AreaNitro.gd" type="Script" id=1]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=2]
-[ext_resource path="res://assets/sounds/sfx/_pa/burst/burst_cocking_short.wav" type="AudioStream" id=3]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=4]
-[ext_resource path="res://assets/sounds/sfx/_pa/burst/burst_uncocking.wav" type="AudioStream" id=5]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=2]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=5]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=6]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=8]
+[ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=9]
+[ext_resource path="res://assets/textures/terrain/terrain/mount_edge.png" type="Texture" id=10]
+
+[sub_resource type="Resource" id=1811]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1812]
+script = ExtResource( 7 )
+position = Vector2( 1357.85, 511.358 )
+point_in = Vector2( -37.7976, -8.81946 )
+point_out = Vector2( 37.003, -0.715696 )
+properties = SubResource( 1811 )
+
+[sub_resource type="Resource" id=1813]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1814]
+script = ExtResource( 7 )
+position = Vector2( 1072.13, 583.459 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1813 )
+
+[sub_resource type="Resource" id=1815]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1816]
+script = ExtResource( 7 )
+position = Vector2( 1123.54, 514.064 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1815 )
+
+[sub_resource type="Resource" id=1817]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1818]
+script = ExtResource( 7 )
+position = Vector2( 1081.93, 550.88 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1817 )
+
+[sub_resource type="Resource" id=1819]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1820]
+script = ExtResource( 7 )
+position = Vector2( 1093.05, 532.604 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1819 )
+
+[sub_resource type="Resource" id=1821]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1822]
+script = ExtResource( 7 )
+position = Vector2( 1607.5, 571.284 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1821 )
+
+[sub_resource type="Resource" id=1823]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1824]
+script = ExtResource( 7 )
+position = Vector2( 1607.5, 571.284 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1823 )
+
+[sub_resource type="Resource" id=1825]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1826]
+script = ExtResource( 7 )
+position = Vector2( 1552.26, 527.185 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1825 )
+
+[sub_resource type="Resource" id=1827]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1828]
+script = ExtResource( 7 )
+position = Vector2( 1602.15, 545.894 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1827 )
+
+[sub_resource type="Resource" id=1829]
+script = ExtResource( 3 )
+_points = {
+6: SubResource( 1812 ),
+8: SubResource( 1814 ),
+9: SubResource( 1816 ),
+10: SubResource( 1818 ),
+11: SubResource( 1820 ),
+12: SubResource( 1822 ),
+13: SubResource( 1824 ),
+14: SubResource( 1826 ),
+15: SubResource( 1828 )
+}
+_point_order = [ 12, 8, 10, 11, 9, 6, 14, 15, 13 ]
+_constraints = {
+[ 12, 13 ]: 15
+}
+_next_key = 16
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=1808]
+script = ExtResource( 6 )
+textures = [ ExtResource( 10 ) ]
+texture_normals = [  ]
+textures_corner_outer = [  ]
+textures_corner_inner = [  ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = false
+use_taper_texture = false
+fit_mode = 0
+
+[sub_resource type="Resource" id=1809]
+script = ExtResource( 8 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=1810]
+script = ExtResource( 2 )
+edge_material = SubResource( 1808 )
+normal_range = SubResource( 1809 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 1.0
+
+[sub_resource type="Gradient" id=650]
+offsets = PoolRealArray( 0.465278 )
+colors = PoolColorArray( 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=160]
+gradient = SubResource( 650 )
+
+[sub_resource type="Resource" id=1029]
+script = ExtResource( 4 )
+_edge_meta_materials = [ SubResource( 1810 ) ]
+fill_textures = [ SubResource( 160 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
 
 [node name="AreaNitro" type="Area2D"]
+position = Vector2( -616, -824 )
 script = ExtResource( 1 )
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
-visible = false
-polygon = PoolVector2Array( -4, -4, -4, 4, 4, 4, 4, -4 )
+[node name="SS2D_Shape_Closed" type="Node2D" parent="."]
+script = ExtResource( 9 )
+_points = SubResource( 1829 )
+shape_material = SubResource( 1029 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("../CollisionPolygon2D")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-position = Vector2( -5, -4 )
-polygon = PoolVector2Array( 1, 8, 1, 0, 9, 0, 9, 8 )
-
-[node name="Sounds" type="Node" parent="."]
-
-[node name="Nitro" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 3 )
-volume_db = -15.0
-bus = "GameSfx"
-
-[node name="DeNitro" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 5 )
-volume_db = -15.0
-bus = "GameSfx"
-
-[node name="MagnetIn" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 4 )
-volume_db = -10.0
-bus = "GameSfx"
-
-[node name="MagnetLoop" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 2 )
-volume_db = -10.0
-bus = "GameSfx"
-
-[node name="MagnetOut" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 6 )
-volume_db = -10.0
-bus = "GameSfx"
+visible = false
+modulate = Color( 1, 1, 1, 0.3 )
+polygon = PoolVector2Array( 1607.64, 571.396, 1071.97, 583.584, 1081.93, 550.878, 1093.04, 532.594, 1123.54, 514.048, 1305.29, 508.06, 1336.93, 508.942, 1348.99, 509.935, 1357.85, 511.358, 1552.26, 527.18, 1602.2, 545.854 )
 
 [connection signal="body_entered" from="." to="." method="_on_AreaNitro_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_AreaNitro_body_exited"]

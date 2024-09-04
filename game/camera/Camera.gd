@@ -31,7 +31,7 @@ func _on_follow_target_change(new_follow_target):
 	
 	
 func shake_camera(shake_power: float):
-	print("shake izklopljen")
+#	print("shake izklopljen")
 	# time, power in nivo popuščanja
 	
 	#	test_ui.shake_camera(shake_power) # debug

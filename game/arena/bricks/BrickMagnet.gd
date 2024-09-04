@@ -13,83 +13,69 @@ var on_time: float = 2
 
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
-onready var magnet_color_off: Color = Pro.level_object_profiles[level_object_key]["color"]
 onready var brick_altitude: float = Pro.level_object_profiles[level_object_key]["altitude"]
 onready var reward_points: float = Pro.level_object_profiles[level_object_key]["value"]
-onready var gravity_force: float = Pro.level_object_profiles[level_object_key]["gravity_force"]
-
 onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
+onready var magnet_color_off: Color = Pro.level_object_profiles[level_object_key]["color"]
+onready var magnet_gravity_force: float = Pro.level_object_profiles[level_object_key]["gravity_force"]
 
-onready var force_field: Area2D = $ForceField
+onready var forcefield: Area2D = $ForceField
+onready var forcefield_collision: CollisionShape2D = $ForceField/CollisionShape2D
 onready var sprite: Sprite = $Sprite
 onready var blackhole_particles: Particles2D = $BlackholeParticles
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var brick_shadow: Sprite = $BrickShadow
+onready var magnet_timer: Timer = $MagnetTimer
 
 
 func _ready() -> void:
 	
 	sprite.modulate = magnet_color_off
 	brick_shadow.shadow_distance = brick_altitude
-
-
-func _physics_process(delta: float) -> void:
+	forcefield.gravity = magnet_gravity_force
+	activate_magnet()
 	
-	time += delta 
-	if time > off_time and not magnet_on:
-		intro()
-		time = 0
-	elif time > on_time and magnet_on:
-		time = 0
-		outro()
-
-	if magnet_on:
-		var detected_bodies = force_field.get_overlapping_bodies()
-		for body in detected_bodies:
-			if body.is_in_group(Ref.group_bolts):
-				var vector_to_magnet: Vector2 = body.global_position.direction_to(global_position)
-				var distance_to_magnet: float = body.global_position.distance_to(global_position)
-				var gravity_velocity: float = gravity_force / (distance_to_magnet * 1)
-				body.velocity += Vector2(gravity_velocity, 0).rotated(vector_to_magnet.angle())
-				body.update_bolt_points(reward_points)
-			elif body.is_in_group(Ref.group_thebolts):
-				body.modulate = Color.yellow	
-		
-
-func intro():
+	
+func activate_magnet():
+	
 		#		blackhole_particles.emitting = true
 		#		blackhole_particles.speed_scale = def_particle_speed
 		#		animation_player.play("intro")
-		
 		var tween_time: float = 0.5
 		var magnet_on_tween = get_tree().create_tween()#.set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 		magnet_on_tween.tween_property(self, "modulate", magnet_color_on, tween_time)
 		#		magnet_on_tween.tween_property(self, "modulate:a", 1, intro_time)
 		yield(magnet_on_tween, "finished")
-		magnet_on = true
-
-func outro():
-		#		magnet_on = false
+		forcefield_collision.disabled = false
+		magnet_timer.start(on_time)
+		
+		
+func deactivate_magnet():
+	
 		#		animation_player.play("outro")
 		#		blackhole_particles.speed_scale = 0.7
 		#		blackhole_particles.emitting = false
-		magnet_on = false	
+		forcefield_collision.disabled = true
 		var tween_time: float = 0.5
 		var magnet_off_tween = get_tree().create_tween()#.set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 		magnet_off_tween.tween_property(self, "modulate", magnet_color_off, tween_time)
 		#		magnet_off_tween.tween_property(self, "modulate:a", 0.4, intro_time)
+		yield(magnet_off_tween, "finished")
+		magnet_timer.start(on_time)
 
 
 func pause_me():
+	
+	#	animation_player.stop(false)
 	set_physics_process(false)
 	blackhole_particles.speed_scale = 0
-	#	animation_player.stop(false)
 
 
 func unpause_me():
+	
+	#	animation_player.play()
 	set_physics_process(true)
 	blackhole_particles.speed_scale = def_particle_speed
-	#	animation_player.play()
 
 
 
@@ -97,5 +83,12 @@ func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	
 	match anim_name:
 		"intro":
-			magnet_on = true
+			pass
 			
+
+func _on_MagnetTimer_timeout() -> void:
+	
+	if forcefield_collision.disabled:
+		activate_magnet()
+	else:
+		deactivate_magnet()
