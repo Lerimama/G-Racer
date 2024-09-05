@@ -72,21 +72,12 @@ func _physics_process(delta: float) -> void:
 	
 	if collision:
 		if collision.collider != spawned_by: # sam sebe lahko ubiješ
-			collide()
 			if collision.collider.has_method("on_hit"):
 				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+			var vision_current_collider = vision_ray.get_collider()
+			destroy_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
+			velocity = Vector2.ZERO
 
-				
-func collide():
-	
-	var current_collider = vision_ray.get_collider()
-	destroy_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
-#	if current_collider.has_method("on_hit") and not current_collider == spawned_by: # parenta exkludam v properties
-#		# pošljem kolizijo in node ... tam naredimo isto kot v zgornjem signalu
-#		current_collider.on_hit(self)	
-	velocity = Vector2.ZERO
-	
-	
 			
 func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):	
 	

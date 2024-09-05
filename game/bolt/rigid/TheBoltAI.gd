@@ -40,7 +40,7 @@ onready var freee: bool = true
 
 func _ready() -> void:
 	
-	add_to_group(Ref.group_thebolts)
+	add_to_group(Ref.group_bolts)
 	add_to_group(Ref.group_ai)
 	#	bolt_hud.hide()
 	
@@ -545,7 +545,7 @@ signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 enum MotionStates {IDLE, FWD, REV, DISARRAY} # DIZZY, DYING glede na moč motorja
 var current_motion: int = MotionStates.IDLE
 
-var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
+var bolt_active: bool = false setget _change_bolt_activity # predvsem za pošiljanje signala GMju
 var player_id: int # ga seta spawner
 
 var player_name: String # za opredelitev statistike
@@ -606,11 +606,11 @@ onready var front_engine_position_R: Position2D = $Bolt/FrontEnginePositionR
 onready var trail_position: Position2D = $Bolt/TrailPosition
 onready var gun_position: Position2D = $Bolt/GunPosition
 
-onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
-onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/EngineParticlesRear.tscn") 
-onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/EngineParticlesFront.tscn") 
-onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
-onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
+onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
+onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/fx/EngineParticlesRear.tscn") 
+onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/fx/EngineParticlesFront.tscn") 
+onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
+onready var BoltTrail: PackedScene = preload("res://game/bolt/fx/BoltTrail.tscn")
 onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
@@ -1009,7 +1009,7 @@ func drive_out():
 #	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
 	pass
 
-func on_lap_finished(level_lap_limit: int):
+func lap_finished(level_lap_limit: int):
 	
 	# lap time
 	var current_race_time: float = Ref.hud.game_timer.game_time_hunds
@@ -1171,7 +1171,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_div = current_drag_div
 	
 	
-func on_item_picked(pickable_key: int):
+func item_picked(pickable_key: int):
 	
 	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 	
@@ -1213,13 +1213,13 @@ func on_item_picked(pickable_key: int):
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
-			on_item_picked(random_pickable_key) # pick selected
+			item_picked(random_pickable_key) # pick selected
 		
 			
 # PRIVAT ------------------------------------------------------------------------------------------------
 
 
-func _on_bolt_active_changed(bolt_is_active: bool):
+func _change_bolt_activity(bolt_is_active: bool):
 	
 	bolt_active = bolt_is_active
 	# če je aktiven ga upočasnim v trenutni smeri

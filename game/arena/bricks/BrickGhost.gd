@@ -26,11 +26,6 @@ func _ready() -> void:
 func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Ref.group_bolts):
-		body.velocity /= speed_brake_div
-		animation_player.play("outro")
-		body.update_bolt_points(reward_points)
-	elif body.is_in_group(Ref.group_thebolts):
-		body.modulate = Color.yellow	
 		animation_player.play("outro")
 		body.update_bolt_points(reward_points)
 		body.manipulate_engine_power(0, 0.5)

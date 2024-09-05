@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://game/bolt/BoltTrail.gd" type="Script" id=1]
+[ext_resource path="res://game/bolt/fx/BoltTrail.gd" type="Script" id=1]
 
 [sub_resource type="Curve" id=4]
 _data = [ Vector2( 0, 0.9 ), 0.0, 0.1, 0, 1, Vector2( 1, 1 ), 0.1, 0.0, 1, 0 ]
@@ -20,3 +20,5 @@ texture_mode = 2
 joint_mode = 2
 begin_cap_mode = 2
 script = ExtResource( 1 )
+
+[connection signal="tree_exiting" from="." to="." method="_on_BoltTrail_tree_exiting"]

@@ -9,21 +9,10 @@ onready var engine_power_factor = Pro.level_areas_profiles[level_area_key]["engi
 func _on_AreaHole_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
-		if body.bolt_active: # če ni aktiven se sam od sebe ustavi
-#			body.modulate = Color.green			
-#			body.drag_div = hole_drag_div
-			pass
-	elif body.is_in_group(Ref.group_thebolts):
-		body.modulate = Color.yellow	
 		body.manipulate_engine_power(body.bolt_profile["max_engine_power"] * engine_power_factor)
 
 
 func _on_AreaHole_body_exited(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
-#		body.modulate = Color.white 			
-#		body.drag_div = Pro.bolt_profiles[body.bolt_type]["drag_div"]
-		pass
-	elif body.is_in_group(Ref.group_thebolts):
-		body.modulate = Color.white		
 		body.manipulate_engine_power(body.bolt_profile["max_engine_power"])

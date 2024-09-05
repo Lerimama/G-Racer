@@ -1,6 +1,8 @@
 extends Line2D
 
 
+signal trail_is_exiting (trail_node)
+
 var min_spawn_distance: float = 3
 
 # points aging
@@ -14,12 +16,9 @@ var points_count_before: int
 var points_count_after: int
 var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
 
-#onready var decay_twin = $Decay
-
 
 func _ready() -> void:
 	
-#	set_as_toplevel(true)
 	clear_points() # da ne bo kakšnega errorja
 
 
@@ -54,32 +53,30 @@ func _process(delta: float) -> void:
 			# Exits a function and returns an optional value.
 			# Ends the execution of a function and returns control to the calling function. Optionally, it can return a Variant value.
 
-#	# ko se število točk zmanjšuje in je količina točk manjša od ... in 			
-#	if points_count_after < points_count_before and get_point_count() < points_count_decay_start:
-#		start_decay()
-	pass
-	
-
-func start_decay():
-#	modulate = Color.red
-#	decay_twin.interpolate_property(self ,"modulate:a", null, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT )
-#	decay_twin.start()
-	
-	var decay_tween = get_tree().create_tween()
-	decay_tween.tween_property(self, "modulate:a", 0, decay_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	decay_tween.tween_callback(self, "queue_free")
+	#	# ko se število točk zmanjšuje in je količina točk manjša od ... in 			
+	#	if points_count_after < points_count_before and get_point_count() < points_count_decay_start:
+	#		start_decay()
 	
 	
 func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta in na začetek arraya
 	
 	# minimalni razmak med pikami ... če je razdalja med trenutno piko in eno piko nazaj (-1) manjša od minimalne željene
-	if get_point_count() > 0 and current_position.distance_to(points[get_point_count() - 1]) < min_spawn_distance: 
-		return # vrni se na začetek fuinkcije ... posledično ne pride do add point kode
-		
-	point_age.append(0.0) # ob vsaki dodani piki, dodamo tudi novo starost "0" na konec "points_age"
-	add_point(current_position, at_pos)
+	#	if get_point_count() > 0 and current_position.distance_to(points[get_point_count() - 1]) < min_spawn_distance: 
+	#		return # vrni se na začetek funkcije ... posledično ne pride do add point kode
+	if get_point_count() == 0 or current_position.distance_to(points[get_point_count() - 1]) > min_spawn_distance: 
+		point_age.append(0.0) # ob vsaki dodani piki, dodamo tudi novo starost "0" na konec "points_age"
+		add_point(current_position, at_pos)
 
 
-func _on_Decay_tween_all_completed() -> void:
+func start_decay():
+	
+#	modulate = Color.red
+	var decay_tween = get_tree().create_tween()
+	decay_tween.tween_property(self, "modulate:a", 0, decay_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	yield(decay_tween, "finished")
 	queue_free()
 	
+	
+func _on_BoltTrail_tree_exiting() -> void: # konektan dinamično z Thrustom
+	
+	emit_signal("trail_is_exiting", self) # pošljem boltu, ki jo deaktivira

@@ -73,11 +73,11 @@ onready var front_engine_position_R: Position2D = $Bolt/FrontEnginePositionR
 onready var trail_position: Position2D = $Bolt/TrailPosition
 onready var gun_position: Position2D = $Bolt/GunPosition
 
-onready var CollisionParticles: PackedScene = preload("res://game/bolt/BoltCollisionParticles.tscn")
-onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/EngineParticlesRear.tscn") 
-onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/EngineParticlesFront.tscn") 
-onready var ExplodingBolt: PackedScene = preload("res://game/bolt/ExplodingBolt.tscn")
-onready var BoltTrail: PackedScene = preload("res://game/bolt/BoltTrail.tscn")
+onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
+onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/fx/EngineParticlesRear.tscn") 
+onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/fx/EngineParticlesFront.tscn") 
+onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
+onready var BoltTrail: PackedScene = preload("res://game/bolt/fx/BoltTrail.tscn")
 onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
 onready var MinaScene: PackedScene = preload("res://game/weapons/Mina.tscn")
@@ -325,7 +325,7 @@ func manage_gas(gas_usage: float):
 # LIFE LOOP ----------------------------------------------------------------------------
 
 
-func on_hit(hit_by: Node):
+func on_hit(hit_by: Node2D):
 	
 	if shields_on:
 		return
@@ -476,7 +476,7 @@ func drive_out():
 	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
 
 
-func on_lap_finished(level_lap_limit: int):
+func lap_finished(level_lap_limit: int):
 	
 	# lap time
 	var current_race_time: float = Ref.hud.game_timer.game_time_hunds
@@ -638,7 +638,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_div = current_drag_div
 	
 	
-func on_item_picked(pickable_key: int):
+func item_picked(pickable_key: int):
 	
 	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 	
@@ -680,7 +680,7 @@ func on_item_picked(pickable_key: int):
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
-			on_item_picked(random_pickable_key) # pick selected
+			item_picked(random_pickable_key) # pick selected
 		
 			
 # PRIVAT ------------------------------------------------------------------------------------------------

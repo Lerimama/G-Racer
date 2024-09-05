@@ -77,7 +77,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	
 	bolts_in_game = get_tree().get_nodes_in_group(Ref.group_bolts)
-	bolts_in_game.append_array(get_tree().get_nodes_in_group(Ref.group_thebolts))
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickables)	
 
 	#	if game_on: 
@@ -150,7 +149,7 @@ func set_game():
 			Pro.player_profiles[new_player_id]["bolt_scene"] = Pro.ai_profile["bolt_scene"]
 			activated_player_ids.append(new_player_id) # da prepoznam v spawn funkciji .... trik pač
 	
-	printt("IDS", activated_player_ids)	
+	printt("PLAYERS", activated_player_ids)	
 		
 	# adaptacija količine orožij
 #	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
@@ -384,7 +383,6 @@ func get_bolt_pull_position(bolt_to_pull: Node2D):
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
 	# - se ne pokriva z drugim plejerjem	
-	
 	#	printt ("current_pull_positions",current_pull_positions.size())
 	
 	if game_on:
@@ -393,9 +391,11 @@ func get_bolt_pull_position(bolt_to_pull: Node2D):
 		var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja  
 		var pull_position_distance_from_leader_correction: float = bolt_to_pull.bolt_sprite.get_rect().size.y * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
 	
-		var vector_to_leading_human_player: Vector2 = camera_leader.global_position - bolt_to_pull.global_position
+#		var vector_to_leading_human_player: Vector2 = camera_leader.global_position - bolt_to_pull.global_position
+		var vector_to_leading_human_player: Vector2 = camera_leader.position - bolt_to_pull.position
 		var vector_to_pull_position: Vector2 = vector_to_leading_human_player - vector_to_leading_human_player.normalized() * pull_position_distance_from_leader
-		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
+#		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
+		var bolt_pull_position: Vector2 = bolt_to_pull.position + vector_to_pull_position
 		
 		# implementacija omejitev, da ni na steni ali elementu ali drugemu plejerju
 		var navigation_position_as_pull_position: Vector2
@@ -411,7 +411,8 @@ func get_bolt_pull_position(bolt_to_pull: Node2D):
 				# preverim, če je bližja od trenutno opredeljene ... itak da je 
 				if cell_position.distance_to(bolt_pull_position) < navigation_position_as_pull_position.distance_to(bolt_pull_position):
 					# preverim, da je dovolj stran od vodilnega
-					if cell_position.distance_to(camera_leader.global_position) > pull_position_distance_from_leader:
+#					if cell_position.distance_to(camera_leader.global_position) > pull_position_distance_from_leader:
+					if cell_position.distance_to(camera_leader.position) > pull_position_distance_from_leader:
 						# preverim, da pozicija ni že zasedena
 						# če poza ni zasedena ga dodaj med zasedene
 						if not current_pull_positions.has(cell_position):
@@ -419,27 +420,30 @@ func get_bolt_pull_position(bolt_to_pull: Node2D):
 						else: # če je poza zasedena dobim njen in dex med zasedenimi dodam korekcijo na zahtevani razdalji od vodilnega
 							var pull_pos_index: int = current_pull_positions.find(cell_position)
 							var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index * pull_position_distance_from_leader_correction
-							if cell_position.distance_to(camera_leader.global_position) > corrected_pull_position:
+#							if cell_position.distance_to(camera_leader.global_position) > corrected_pull_position:
+							if cell_position.distance_to(camera_leader.position) > corrected_pull_position:
 								navigation_position_as_pull_position = cell_position
 
-		current_pull_positions.append(navigation_position_as_pull_position)
-		return navigation_position_as_pull_position
+		current_pull_positions.append(navigation_position_as_pull_position) # OBS trenutno ne rabim
+		
+#		return navigation_position_as_pull_position
+		return camera_leader.position - Vector2.ONE * 100 # _temp
 
 				
-func on_finish_line_crossed(bolt_across_finish_line: Node2D): # sproži finish line
+func bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
 	
 	if not game_on: # preventam, da gre čez črto ko je konec igre
 		return
 	
 	# če je čekpoint prižgan in, če ni čekiran ... returnam
-	if not bolts_checked.has(bolt_across_finish_line) and Ref.current_level.checkpoint.monitoring == true:
+	if not bolts_checked.has(bolt_across) and Ref.current_level.checkpoint.monitoring == true:
 		return
 	
 	Ref.sound_manager.play_sfx("finish_horn")
-	bolt_across_finish_line.on_lap_finished(level_settings["lap_limit"])
+	bolt_across.lap_finished(level_settings["lap_limit"])
 	
 	# odčekiram za naslednji krog in grem dalje
-	bolts_checked.erase(bolt_across_finish_line)
+	bolts_checked.erase(bolt_across)
 
 
 func check_for_level_finished(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
@@ -547,6 +551,9 @@ func _on_level_is_set(tilemap_navigation_cells_positions: Array):
 	Ref.current_camera.position = Ref.current_level.start_camera_position_node.global_position
 	Ref.current_camera.set_camera_limits()
 	
+	# debug
+	for pos in navigation_positions:
+		Met.spawn_indikator(pos, 0, Ref.node_creation_parent)
 
 # SIGNALI ----------------------------------------------------------------------------------------------------
 
@@ -555,20 +562,20 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	
 	if not game_on:
 		return
-	# player pull
 	
 	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		pass
+		# wrap_around all bolts
+		if body.is_in_group(Ref.group_bolts) and body.bolt_active:
+			# body.call_deferred("screen_wrap") # IDE
+			pass
 	else:
+		# pull player bolt
 		if body.is_in_group(Ref.group_players) and body.bolt_active:
 			var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
 			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, camera_leader)
-	
-	
+			
 	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
-		body.call_deferred("set_physics_process", false)
-	elif body.is_in_group(Ref.group_thebolts) and not body.bolt_active:
 		body.call_deferred("set_physics_process", false)
 	elif body is Bullet:
 		body.on_out_of_screen() # ta funkcija zakasni učinek
-	# elif body is Misile: ... ima timer in se sama kvefrija ... misila se lahko vrne v ekran (nitro)
+	# elif body is Misile: ... se sama kvefrija in se lahko vrne v ekran (nitro)

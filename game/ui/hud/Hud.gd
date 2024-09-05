@@ -108,7 +108,7 @@ func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool)
 	new_floating_tag.scale = Vector2.ONE * Set.game_camera_zoom_factor
 	
 	new_floating_tag.content_to_show = lap_time
-	new_floating_tag.tag_type = new_floating_tag.TagTypes.TIME
+	new_floating_tag.current_tag_type = new_floating_tag.TAG_TYPE.TIME
 	Ref.node_creation_parent.add_child(new_floating_tag) # OPT ... floating bi raje v hudu
 	if best_lap == true:
 		new_floating_tag.modulate = Ref.color_green

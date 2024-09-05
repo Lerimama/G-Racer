@@ -35,7 +35,7 @@ func _on_Item_body_entered(body: Node) -> void:
 	#	if all_sounds.size() > 1:
 	#		sound_picked = all_sounds[all_sounds.size() - 1] 
 
-	if body.has_method("on_item_picked"):
+	if body.has_method("item_picked"):
 		if pickable_key == Pro.PICKABLE.PICKABLE_BULLET or pickable_key == Pro.PICKABLE.PICKABLE_MISILE \
 		or pickable_key == Pro.PICKABLE.PICKABLE_MINA:
 			Ref.sound_manager.play_sfx("pickable_weapon")
@@ -45,8 +45,8 @@ func _on_Item_body_entered(body: Node) -> void:
 			Ref.sound_manager.play_sfx("pickable")
 			pass
 			
-		body.on_item_picked(pickable_key)
-		#		body.call_deferred("on_item_picked", pickable_key)
+		body.item_picked(pickable_key)
+		#		body.call_deferred("item_picked", pickable_key)
 #		sound_picked.play()
 #		modulate.a = 0
 #		monitorable = false

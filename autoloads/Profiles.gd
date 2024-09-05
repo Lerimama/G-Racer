@@ -32,7 +32,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_profile": CONTROLLER.ARROWS,
 		"bolt_type": BOLT_TYPE.RIGID,
-		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"), # OPT premik v bolt tip
+		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P2 : {
 		"player_name": "P2",
@@ -42,7 +42,8 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 #		"bolt_type": BOLT_TYPE.BASIC,
 #		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 		"bolt_type": BOLT_TYPE.RIGID,
-		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"),
+		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"),
 	},
 	PLAYER.P3 : {
 		"player_name" : "P3",
@@ -51,7 +52,8 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_profile" : CONTROLLER.WASD,
 		#		"controller_profile" : CONTROLLER.JP1,
 		"bolt_type": BOLT_TYPE.BASIC,
-		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
@@ -60,7 +62,8 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_profile" : CONTROLLER.WASD,
 		#		"controller_profile" : CONTROLLER.JP2,
 		"bolt_type": BOLT_TYPE.BASIC,
-		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
 }
 
@@ -111,12 +114,13 @@ var bolt_profiles: Dictionary = {
 		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
-		# orig
 		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
 		"max_engine_power": 320, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
 		"ai_target_rank": 5,
-		# rigid
+		# fizika
+		"bounce": 0.5,
+		"friction": 0.2,
 		"mass": 30, # 300 kil, front in rear teža se uporablja bolj za razmerje
 		"ang_damp": 8, # ... tudi regulacija driftanja # no drift je 20
 		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
@@ -153,9 +157,9 @@ var weapon_profiles : Dictionary = {
 	WEAPON.MINA: {
 		"reload_time": 0.1, #
 		"hit_damage": 5,
-		"speed": 50, # prilagojeno za učinek na tarčo
+		"speed": 50,
 		"lifetime": 0, # 0 pomeni večno
-		"mass": 3, # prilagojeno za učinek na tarčo
+		"mass": 0.5, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
 		"scene": preload("res://game/weapons/Mina.tscn"),
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),

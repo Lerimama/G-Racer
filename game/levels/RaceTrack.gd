@@ -6,7 +6,7 @@ var bolts_to_follow_count: int = 0
 onready var orig_bolt_tracker: PathFollow2D = $BoltTracker
 
 
-func set_new_bolt_tracker(bolt_to_follow: Node2D):
+func set_new_bolt_tracker(bolt_to_follow: RigidBody2D):
 	
 	var tracker_new_color: Color = bolt_to_follow.bolt_color
 	var new_tracker: PathFollow2D

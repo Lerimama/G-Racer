@@ -958,7 +958,7 @@ func drive_out():
 	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
 
 
-func on_lap_finished(level_lap_limit: int):
+func lap_finished(level_lap_limit: int):
 	
 	# lap time
 	var current_race_time: float = Ref.hud.game_timer.game_time_hunds
@@ -1120,7 +1120,7 @@ func activate_nitro(nitro_power: float, nitro_time: float):
 		drag_div = current_drag_div
 	
 	
-func on_item_picked(pickable_key: int):
+func item_picked(pickable_key: int):
 	
 	var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 	
@@ -1162,7 +1162,7 @@ func on_item_picked(pickable_key: int):
 			var random_range: int = Pro.pickable_profiles.keys().size()
 			var random_pickable_index = randi() % random_range
 			var random_pickable_key = Pro.pickable_profiles.keys()[random_pickable_index]
-			on_item_picked(random_pickable_key) # pick selected
+			item_picked(random_pickable_key) # pick selected
 		
 			
 # PRIVAT ------------------------------------------------------------------------------------------------

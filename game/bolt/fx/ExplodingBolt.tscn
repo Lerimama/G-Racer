@@ -1,8 +1,8 @@
 [gd_scene load_steps=14 format=2]
 
-[ext_resource path="res://game/bolt/ExplodingBolt.gd" type="Script" id=1]
-[ext_resource path="res://assets/textures/bolt/explosion_smoke_sprite.png" type="Texture" id=2]
-[ext_resource path="res://assets/textures/bolt/animation_exsplosion_blast.png" type="Texture" id=4]
+[ext_resource path="res://game/bolt/fx/ExplodingBolt.gd" type="Script" id=1]
+[ext_resource path="res://assets/textures/bolt/animation_exsplosion_blast.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/bolt/explosion_smoke_sprite.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0.249071, 0.29368, 0.587361, 0.992565, 1 )
@@ -40,15 +40,15 @@ scale_curve = SubResource( 10 )
 color_ramp = SubResource( 8 )
 
 [sub_resource type="AtlasTexture" id=114]
-atlas = ExtResource( 4 )
+atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 32, 32 )
 
 [sub_resource type="AtlasTexture" id=115]
-atlas = ExtResource( 4 )
+atlas = ExtResource( 2 )
 region = Rect2( 32, 0, 32, 32 )
 
 [sub_resource type="AtlasTexture" id=116]
-atlas = ExtResource( 4 )
+atlas = ExtResource( 2 )
 region = Rect2( 64, 0, 32, 32 )
 
 [sub_resource type="SpriteFrames" id=113]
@@ -93,7 +93,7 @@ explosiveness = 0.85
 randomness = 1.0
 draw_order = 1
 process_material = SubResource( 110 )
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 
 [node name="ExplosionBlast" type="AnimatedSprite" parent="."]
 frames = SubResource( 113 )

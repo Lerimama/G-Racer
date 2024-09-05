@@ -7191,9 +7191,9 @@ polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 2, 1, 6 ), PoolIntA
 outlines = [ PoolVector2Array( 8, 192, 280, 200, 496, 144, 1032, 248, 1192, 160, 1280, 160, 1432, 160, 1552, 280, 1456, 576, 1208, 760, 960, 808, 728, 768, 472, 672, 304, 544, 184, 408, 144, 320, 0, 304 ), PoolVector2Array( 224, 408, 360, 504, 560, 640, 776, 664, 992, 640, 1136, 576, 1248, 504, 1320, 392, 1312, 320, 1232, 280, 1088, 320, 928, 288, 632, 288, 472, 352, 400, 288, 280, 288, 216, 320 ) ]
 
 [sub_resource type="NavigationPolygon" id=6258]
-vertices = PoolVector2Array( 1632, 32, 1632, 920, 24, 936, 16, 32 )
-polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
-outlines = [ PoolVector2Array( 16, 32, 24, 936, 1632, 920, 1632, 32 ) ]
+vertices = PoolVector2Array( 1632, 32, 1632, 920, 1424, 552, 1288, 288, 16, 32, 416, 392, 24, 936, 464, 592 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 0, 3, 5 ), PoolIntArray( 6, 4, 5, 7 ), PoolIntArray( 1, 6, 7, 2 ) ]
+outlines = [ PoolVector2Array( 16, 32, 24, 936, 1632, 920, 1632, 32 ), PoolVector2Array( 416, 392, 464, 592, 1424, 552, 1288, 288 ) ]
 
 [sub_resource type="AtlasTexture" id=128]
 atlas = ExtResource( 24 )
@@ -7761,7 +7761,7 @@ script = ExtResource( 19 )
 __meta__ = {
 "_editor_description_": ""
 }
-level_type = 2
+level_type = 1
 
 [node name="Background" type="Node2D" parent="."]
 visible = false
@@ -8058,7 +8058,6 @@ navpoly = SubResource( 218 )
 enabled = false
 
 [node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="."]
-visible = false
 navpoly = SubResource( 6258 )
 
 [node name="CameraLimits" type="Panel" parent="."]

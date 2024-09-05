@@ -87,7 +87,7 @@ func _on_stat_change(new_stat_value):
 				write_clock_time(stat_value, stat_time_label)
 			else:
 				stat_label.text = "%02d" % new_stat_value
-			yield(get_tree().create_timer(color_blink_time), "timeout")
+			yield(get_tree().create_timer(color_blink_time), "timeout") # OPT ... timer da errorabilen timer
 		# [-]
 		elif new_stat_value < stat_value:
 			stat_value = new_stat_value
@@ -100,7 +100,7 @@ func _on_stat_change(new_stat_value):
 		if show_icons:
 			set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon 
 		
-		yield(get_tree().create_timer(color_blink_time), "timeout")
+		yield(get_tree().create_timer(color_blink_time), "timeout") # OPT ... timer da errorabilen timer
 		modulate = def_stat_color
 	
 

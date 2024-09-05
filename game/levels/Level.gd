@@ -326,7 +326,7 @@ func get_surrounding_cells(surrounded_cell: Vector2, return_global_positions: bo
 func _on_FinishLine_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
-		Ref.game_manager.on_finish_line_crossed(body)
+		Ref.game_manager.bolt_across_finish_line(body)
 	
 
 func _on_Checkpoint_body_entered(body: Node) -> void:

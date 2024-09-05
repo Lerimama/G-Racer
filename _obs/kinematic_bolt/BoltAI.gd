@@ -190,15 +190,11 @@ func set_ai_target(new_ai_target: Node2D):
 		target_ray.enabled = true
 		var target_navigation_cell_position: Vector2 = Vector2.ZERO
 		# če je bil FOLLOW je nova tarča na zadnji vidni lokaciji stare tarče, drugače je random nav cell
-		if freee:
-			target_navigation_cell_position = get_nav_cell_on_distance(global_position,150, 1000)
-			navigation_agent.set_target_location(target_navigation_cell_position)
+		if current_ai_state == AiStates.FOLLOW:
+			target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
 		else:
-			if current_ai_state == AiStates.FOLLOW:
-				target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
-			else:
-				target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
-			navigation_agent.set_target_location(target_navigation_cell_position)
+			target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
+		navigation_agent.set_target_location(target_navigation_cell_position)
 		current_ai_state = AiStates.SEEK
 	
 	elif new_ai_target == null:

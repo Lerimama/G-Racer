@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://game/bolt/rigid/ThrustFx.gd" type="Script" id=1]
+[ext_resource path="res://game/bolt/Thrust.gd" type="Script" id=1]
 
 [sub_resource type="Gradient" id=5261]
 colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
@@ -20,7 +20,7 @@ orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 color_ramp = SubResource( 5262 )
 
-[node name="ThrustFx" type="Node2D"]
+[node name="Thrust" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="ThrustParticles" type="Particles2D" parent="."]
@@ -30,3 +30,7 @@ lifetime = 0.1
 explosiveness = 0.23
 local_coords = false
 process_material = SubResource( 5260 )
+
+[node name="Wheel" type="Polygon2D" parent="."]
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( -5, -2, 5, -2, 5, 2, -5, 2 )

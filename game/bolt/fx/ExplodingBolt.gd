@@ -1,18 +1,16 @@
 extends Node2D
 
 
-var spawned_by_color: Color
-
 export var decay_time: float = 1.0
 
+var spawned_by_color: Color
 var velocity: Vector2
+#var decay_done: bool = false # za preverjanje ali je stvar že končana (usklajeno med partilci in shardi
 
 onready var decay_timer: Timer = $Timer
 onready var debris_particles: CPUParticles2D = $DebrisParticles
 onready var explosion_particles: Particles2D = $ExplosionParticles
 onready var explosion_blast: AnimatedSprite = $ExplosionBlast
-
-var decay_done: bool = false # za preverjanje ali je stvar že končana (usklajeno med partilci in shardi
 
 
 func _ready() -> void:

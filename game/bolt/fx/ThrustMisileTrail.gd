@@ -1,5 +1,6 @@
 extends Line2D
 
+signal trail_is_exiting (trail_node)
 
 export var max_points: int = 50 # kontroliram max dolžino sledi
 
@@ -72,3 +73,8 @@ func _on_Decay_tween_all_completed() -> void: # OPT decay tween ne rab bit heade
 	
 #	print ("KUFRI - Misile trail")
 	queue_free()
+
+
+func _on_BoltTrail_tree_exiting() -> void: # konektan dinamično z Thrustom
+	
+	emit_signal("trail_is_exiting", self) # pošljem boltu, ki jo deaktivira

@@ -23,7 +23,7 @@ func _ready() -> void:
 	pillar_shadow.shadow_distance = pillar_altitude
 	
 
-func goal_reached(bolt: Node2D):
+func goal_reached(bolt: Node):
 	
 	if not turned_on:
 		turned_on = true
@@ -36,8 +36,6 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
 		bolts_in_goal_area.append(body)
-	elif body.is_in_group(Ref.group_thebolts):
-		body.modulate = Color.white
 
 
 func _on_DetectArea_body_exited(body: Node) -> void:
@@ -45,5 +43,3 @@ func _on_DetectArea_body_exited(body: Node) -> void:
 	if bolts_in_goal_area.has(body):
 		bolts_in_goal_area.erase(body)
 		goal_reached(body)
-	elif body.is_in_group(Ref.group_thebolts):
-		body.modulate = Color.yellow

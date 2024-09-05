@@ -3,7 +3,7 @@ extends Node
 enum ControllerType {ARROWS, WASD, JOYPAD, AI}
 export (ControllerType) var current_controller_type: int = ControllerType.ARROWS
 
-onready var controller_bolt: Node2D = get_parent()
+onready var controller_bolt: RigidBody2D = get_parent()
 
 onready var fwd_action: String
 onready var rev_action: String

@@ -39,17 +39,10 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts):
 		bolts_in_light_area.append(body) # OPT zakaj to rabm?
-	elif body.is_in_group(Ref.group_thebolts):
-		bolts_in_light_area.append(body)
-		body.modulate = Color.yellow	
 
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if bolts_in_light_area.has(body):
-		bolts_in_light_area.erase(body)
-		light_reached(body)
-	elif body.is_in_group(Ref.group_thebolts):
-		body.modulate = Color.white	
 		bolts_in_light_area.erase(body)
 		light_reached(body)
