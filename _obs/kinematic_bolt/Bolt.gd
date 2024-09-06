@@ -1,5 +1,5 @@
 extends KinematicBody2D
-class_name Bolt #, "res://assets/class_icons/bolt_icon.png"
+class_name KinematicBolt #, "res://assets/class_icons/bolt_icon.png"
 
 signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 

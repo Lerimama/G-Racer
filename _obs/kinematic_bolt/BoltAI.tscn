@@ -22,7 +22,7 @@ radius = 128.0
 [node name="BoltAI" instance=ExtResource( 3 )]
 script = ExtResource( 2 )
 
-[node name="Shield" parent="." index="6"]
+[node name="Shield" parent="." index="5"]
 material = SubResource( 1 )
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="7"]

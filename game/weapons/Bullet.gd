@@ -59,13 +59,15 @@ func _physics_process(delta: float) -> void:
 		var current_collider = vision_ray.get_collider()
 		# avtor
 		if current_collider == spawned_by:
-			collision_shape.disabled = true # rabim, da ekran sploh registrira bullet
+			collision_shape.set_deferred("disabled", true)
+			#			collision_shape.disabled = true # rabim, da ekran sploh registrira bullet
 		# drugo ...
 		else:
-			collision_shape.disabled = false
-#			collide()
+			collision_shape.set_deferred("disabled", false)
+			#			collision_shape.disabled = false
 	else:
-		collision_shape.disabled = false
+		collision_shape.set_deferred("disabled", false)
+		#		collision_shape.disabled = false
 		
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	var collision: KinematicCollision2D = move_and_collide(velocity * delta, false)

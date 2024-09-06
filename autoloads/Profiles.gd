@@ -30,39 +30,34 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_name": "P1",
 		"player_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
-		"controller_profile": CONTROLLER.ARROWS,
+		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLT_TYPE.RIGID,
-		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P2 : {
 		"player_name": "P2",
 		"player_avatar": preload("res://assets/textures/avatars/avatar_02.png"),
 		"player_color": Ref.color_red,
-		"controller_profile" : CONTROLLER.WASD,
-#		"bolt_type": BOLT_TYPE.BASIC,
-#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"controller_type" : CONTROLLER_TYPE.WASD,
+#		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLT_TYPE.RIGID,
-		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
-#		"bolt_scene": preload("res://game/bolt/rigid/TheBolt.tscn"),
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P3 : {
 		"player_name" : "P3",
 		"player_avatar" : preload("res://assets/textures/avatars/avatar_03.png"),
 		"player_color" : Ref.color_yellow, # color_yellow, color_green, color_red
-		"controller_profile" : CONTROLLER.WASD,
-		#		"controller_profile" : CONTROLLER.JP1,
+		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
-		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
-#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
 		"player_avatar" : preload("res://assets/textures/avatars/avatar_04.png"),
 		"player_color" : Ref.color_green,
-		"controller_profile" : CONTROLLER.WASD,
-		#		"controller_profile" : CONTROLLER.JP2,
+		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
-		"bolt_scene": preload("res://game/bolt/TheBolt.tscn"), # OPT premik v bolt tip
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 #		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
 }
@@ -70,9 +65,9 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 
 var ai_profile: Dictionary = {
 	# za prepis player profila
-	"controller_profile" : CONTROLLER.AI,
+	"controller_type" : CONTROLLER_TYPE.AI,
 #	"bolt_scene": preload("res://game/bolt/BoltAI.tscn"),
-	"bolt_scene": preload("res://game/bolt/rigid/TheBoltAI.tscn"),
+#	"bolt_scene": preload("res://game/bolt/rigid/TheBoltAI.tscn"),
 	# race
 	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	# battle
@@ -176,47 +171,52 @@ var weapon_profiles : Dictionary = {
 	},
 }
 
-enum CONTROLLER {ARROWS, WASD, JP1, JP2, AI}
+enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2, AI}
 var controller_profiles : Dictionary = {
-	CONTROLLER.ARROWS: {
+	CONTROLLER_TYPE.ARROWS: {
 		fwd_action = "p1_fwd", 
 		rev_action = "p1_rev",
 		left_action = "p1_left",
 		right_action = "p1_right",
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
+		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
 		},
-	CONTROLLER.WASD : {
+	CONTROLLER_TYPE.WASD : {
 		fwd_action = "p2_fwd", 
 		rev_action = "p2_rev",
 		left_action = "p2_left",
 		right_action = "p2_right",
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
+		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
 	},
-	CONTROLLER.JP1 : {
+	CONTROLLER_TYPE.JP1 : {
 		fwd_action = "jp1_fwd",
 		rev_action = "jp1_rev",
 		left_action = "jp1_left",
 		right_action = "jp1_right",
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
+		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
 	},
-	CONTROLLER.JP2 : {
+	CONTROLLER_TYPE.JP2 : {
 		fwd_action = "jp2_fwd",
 		rev_action = "jp2_rev",
 		left_action = "jp2_left",
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
+		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
 	},
-	CONTROLLER.AI : {
+	CONTROLLER_TYPE.AI : {
 		fwd_action = "ai_fwd",
 		rev_action = "ai_rev",
 		left_action = "ai_left",
 		right_action = "ai_right",
 		shoot_action = "ai_shoot",
 		selector_action = "ai_selector",
+		"controller_scene": preload("res://game/bolt/ControllerAI.tscn"),
 	},
 }
 

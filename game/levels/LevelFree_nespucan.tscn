@@ -1,4 +1,4 @@
-[gd_scene load_steps=1105 format=2]
+[gd_scene load_steps=1110 format=2]
 
 [ext_resource path="res://assets/textures/weapons/bullet.png" type="Texture" id=1]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=2]
@@ -32,6 +32,10 @@
 [ext_resource path="res://assets/shaders/level_floor_background_dancefloor.gdshader" type="Shader" id=30]
 [ext_resource path="res://game/levels/RaceTrack.gd" type="Script" id=31]
 [ext_resource path="res://assets/resources/tilesets/tileset_arena_elements.tres" type="TileSet" id=32]
+[ext_resource path="res://game/arena/areas/AreaGravel.tscn" type="PackedScene" id=33]
+[ext_resource path="res://game/arena/areas/AreaNitro.tscn" type="PackedScene" id=34]
+[ext_resource path="res://game/arena/areas/AreaTracking.tscn" type="PackedScene" id=35]
+[ext_resource path="res://game/arena/areas/AreaHole.tscn" type="PackedScene" id=36]
 [ext_resource path="res://assets/textures/terrain/terrain/mount_edge.png" type="Texture" id=37]
 [ext_resource path="res://assets/textures/terrain/terrain/TerrainTextureRect.tscn" type="PackedScene" id=38]
 [ext_resource path="res://assets/textures/terrain/terrain/terrain_dirt_material.tres" type="Material" id=39]
@@ -7181,10 +7185,15 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id=2925]
 shader = SubResource( 2924 )
 
+[sub_resource type="NavigationPolygon" id=218]
+vertices = PoolVector2Array( 1552, 280, 1456, 576, 1320, 392, 1312, 320, 1432, 160, 1248, 504, 1208, 760, 1136, 576, 960, 808, 1280, 160, 1232, 280, 1032, 248, 1192, 160, 1088, 320, 992, 640, 776, 664, 728, 768, 560, 640, 472, 672, 360, 504, 304, 544, 224, 408, 184, 408, 928, 288, 496, 144, 632, 288, 472, 352, 400, 288, 280, 200, 280, 288, 216, 320, 144, 320, 8, 192, 0, 304 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 2, 1, 6 ), PoolIntArray( 7, 5, 6, 8 ), PoolIntArray( 9, 4, 3, 10 ), PoolIntArray( 11, 12, 9, 10, 13 ), PoolIntArray( 14, 7, 8 ), PoolIntArray( 15, 14, 8, 16 ), PoolIntArray( 17, 15, 16, 18 ), PoolIntArray( 19, 17, 18, 20 ), PoolIntArray( 21, 19, 20, 22 ), PoolIntArray( 11, 13, 23, 24 ), PoolIntArray( 24, 23, 25 ), PoolIntArray( 24, 25, 26, 27 ), PoolIntArray( 28, 24, 27, 29 ), PoolIntArray( 30, 21, 22, 31 ), PoolIntArray( 32, 28, 29, 30, 31, 33 ) ]
+outlines = [ PoolVector2Array( 8, 192, 280, 200, 496, 144, 1032, 248, 1192, 160, 1280, 160, 1432, 160, 1552, 280, 1456, 576, 1208, 760, 960, 808, 728, 768, 472, 672, 304, 544, 184, 408, 144, 320, 0, 304 ), PoolVector2Array( 224, 408, 360, 504, 560, 640, 776, 664, 992, 640, 1136, 576, 1248, 504, 1320, 392, 1312, 320, 1232, 280, 1088, 320, 928, 288, 632, 288, 472, 352, 400, 288, 280, 288, 216, 320 ) ]
+
 [sub_resource type="NavigationPolygon" id=6258]
-vertices = PoolVector2Array( 1256, 24, 1256, 696, 24, 696, 24, 24 )
-polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
-outlines = [ PoolVector2Array( 24, 24, 24, 696, 1256, 696, 1256, 24 ) ]
+vertices = PoolVector2Array( 1632, 32, 1632, 920, 1424, 552, 1288, 288, 16, 32, 416, 392, 24, 936, 464, 592 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 0, 3, 5 ), PoolIntArray( 6, 4, 5, 7 ), PoolIntArray( 1, 6, 7, 2 ) ]
+outlines = [ PoolVector2Array( 16, 32, 24, 936, 1632, 920, 1632, 32 ), PoolVector2Array( 416, 392, 464, 592, 1424, 552, 1288, 288 ) ]
 
 [sub_resource type="AtlasTexture" id=128]
 atlas = ExtResource( 24 )
@@ -7228,7 +7237,7 @@ region = Rect2( 0, 16, 32, 8 )
 
 [sub_resource type="Curve2D" id=3]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 348.762, 195.957, -171.349, -85.6746, 171.349, 85.6746, 1016, 200, 49.4975, -86.267, -49.4975, 86.267, 1024, 424, 147.511, -38.6688, -147.511, 38.6688, 880, 592, 114.293, 46.0346, -114.293, -46.0346, 331.26, 658.073, -266.112, 88.6898, 266.112, -88.6898, 366.263, 207.229 )
+"points": PoolVector2Array( 0, 0, 0, 0, 240, 288, -171.349, -85.6746, 171.349, 85.6746, 1064, 296, 147.511, -38.6688, -147.511, 38.6688, 1024, 648, 114.293, 46.0346, -114.293, -46.0346, 480, 672, 29.1691, 87.0143, -29.1691, -87.0143, 232, 408, 0, 0, 0, 0, 272, 304 )
 }
 
 [sub_resource type="StyleBoxFlat" id=613]
@@ -7747,7 +7756,7 @@ shader_param/switch_cast_and_receive = false
 shader_param/new_casting_color = Color( 0, 0, 0, 0 )
 shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
 
-[node name="Level00" type="Node2D"]
+[node name="LevelRace" type="Node2D"]
 script = ExtResource( 19 )
 __meta__ = {
 "_editor_description_": ""
@@ -7825,6 +7834,14 @@ __meta__ = {
 [node name="Areas" type="Node2D" parent="."]
 visible = false
 position = Vector2( 64, 576 )
+
+[node name="AreaNitro" parent="Areas" instance=ExtResource( 34 )]
+
+[node name="AreaHole" parent="Areas" instance=ExtResource( 36 )]
+
+[node name="AreaTracking" parent="Areas" instance=ExtResource( 35 )]
+
+[node name="AreaGravel" parent="Areas" instance=ExtResource( 33 )]
 
 [node name="Scenery" type="Node2D" parent="."]
 visible = false
@@ -8035,19 +8052,23 @@ margin_top = 8.0
 margin_right = 1704.0
 margin_bottom = 1040.0
 
+[node name="NavigationPolygonInstance_orig" type="NavigationPolygonInstance" parent="."]
+visible = false
+navpoly = SubResource( 218 )
+enabled = false
+
 [node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="."]
 navpoly = SubResource( 6258 )
+
+[node name="CameraLimits" type="Panel" parent="."]
+margin_right = 1664.0
+margin_bottom = 960.0
+theme = ExtResource( 21 )
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="CameraLimits" type="Panel" parent="."]
-margin_right = 1792.0
-margin_bottom = 1512.0
-theme = ExtResource( 21 )
-
 [node name="RaceStart" type="Node2D" parent="."]
-visible = false
 position = Vector2( 496, 256 )
 rotation = 1.57079
 
@@ -8274,7 +8295,6 @@ margin_bottom = 8.0
 texture = SubResource( 515 )
 
 [node name="RaceFinish" type="Node2D" parent="."]
-visible = false
 position = Vector2( 256, 240 )
 rotation = 1.57079
 __meta__ = {
@@ -8381,20 +8401,23 @@ curve = SubResource( 3 )
 script = ExtResource( 31 )
 
 [node name="BoltTracker" type="PathFollow2D" parent="RacingTrack"]
-position = Vector2( 348.762, 195.957 )
-rotation = -0.158976
+position = Vector2( 240, 288 )
+rotation = -0.115848
 script = ExtResource( 29 )
 
 [node name="CrossIndicator" type="Sprite" parent="RacingTrack/BoltTracker"]
+position = Vector2( 13.9553, -7.82632 )
 scale = Vector2( 2, 2 )
 texture = ExtResource( 1 )
 
 [node name="_ScreenSize" type="Panel" parent="."]
-visible = false
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_right = 1280.0
-margin_bottom = 720.0
+margin_right = 640.0
+margin_bottom = 360.0
 custom_styles/panel = SubResource( 613 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="_obs" type="Node2D" parent="."]
 visible = false
@@ -8474,30 +8497,6 @@ tile_set = ExtResource( 25 )
 cell_size = Vector2( 8, 8 )
 bake_navigation = true
 format = 1
-
-[node name="ColorRect" type="ColorRect" parent="."]
-margin_left = 336.0
-margin_top = 200.0
-margin_right = 376.0
-margin_bottom = 240.0
-
-[node name="ColorRect2" type="ColorRect" parent="."]
-margin_left = 928.0
-margin_top = 200.0
-margin_right = 968.0
-margin_bottom = 240.0
-
-[node name="ColorRect3" type="ColorRect" parent="."]
-margin_left = 920.0
-margin_top = 464.0
-margin_right = 960.0
-margin_bottom = 504.0
-
-[node name="ColorRect4" type="ColorRect" parent="."]
-margin_left = 288.0
-margin_top = 456.0
-margin_right = 328.0
-margin_bottom = 496.0
 
 [connection signal="body_entered" from="Checkpoint" to="." method="_on_Checkpoint_body_entered"]
 [connection signal="body_entered" from="RaceFinish/FinishLine" to="." method="_on_FinishLine_body_entered"]

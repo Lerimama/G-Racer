@@ -46,7 +46,8 @@ func activate_magnet():
 		magnet_on_tween.tween_property(self, "modulate", magnet_color_on, tween_time)
 		#		magnet_on_tween.tween_property(self, "modulate:a", 1, intro_time)
 		yield(magnet_on_tween, "finished")
-		forcefield_collision.disabled = false
+		forcefield_collision.set_deferred("disabled", false)
+		#		forcefield_collision.disabled = false
 		magnet_timer.start(on_time)
 		
 		
@@ -55,7 +56,8 @@ func deactivate_magnet():
 		#		animation_player.play("outro")
 		#		blackhole_particles.speed_scale = 0.7
 		#		blackhole_particles.emitting = false
-		forcefield_collision.disabled = true
+		#		forcefield_collision.disabled = true
+		forcefield_collision.set_deferred("disabled", true)
 		var tween_time: float = 0.5
 		var magnet_off_tween = get_tree().create_tween()#.set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 		magnet_off_tween.tween_property(self, "modulate", magnet_color_off, tween_time)

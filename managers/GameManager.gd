@@ -32,30 +32,30 @@ onready var game_over_ui: Control = $"../UI/GameOver"
 func _input(event: InputEvent) -> void:
 	
 	
-#	if Input.is_action_just_pressed("m"):
-#		var bus_index: int = AudioServer.get_bus_index("GameMusic")
-#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
-#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
-			
-	if Input.is_action_just_pressed("no1"): # idle
-		for bolt in bolts_in_game:
-			if bolt.is_in_group(Ref.group_ai):
-				bolt.set_ai_target(null)
-	if Input.is_action_just_pressed("no2"): # race
-		for bolt in bolts_in_game:
-			if bolt.is_in_group(Ref.group_ai):
-				bolt.set_ai_target( bolt.bolt_position_tracker)
-	if Input.is_action_just_pressed("no3"):
-		for bolt in bolts_in_game: # search
-			if bolt.is_in_group(Ref.group_ai):
-				bolt.set_ai_target(Ref.current_level.tilemap_edge)
-	if Input.is_action_just_pressed("no4"): # follow leader
-		for bolt in bolts_in_game:
-			if bolt.is_in_group(Ref.group_ai):
-				bolt.set_ai_target(camera_leader)
+	#	if Input.is_action_just_pressed("m"):
+	#		var bus_index: int = AudioServer.get_bus_index("GameMusic")
+	#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
+	#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
+				
+	#	if Input.is_action_just_pressed("no1"): # idle
+	#		for bolt in bolts_in_game:
+	#			if bolt.is_in_group(Ref.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(null)
+	#	if Input.is_action_just_pressed("no2"): # race
+	#		for bolt in bolts_in_game:
+	#			if bolt.is_in_group(Ref.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(bolt.bolt_position_tracker)
+	#	if Input.is_action_just_pressed("no3"):
+	#		for bolt in bolts_in_game: # search
+	#			if bolt.is_in_group(Ref.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(Ref.current_level.tilemap_edge)
+	#	if Input.is_action_just_pressed("no4"): # follow leader
+	#		for bolt in bolts_in_game:
+	#			if bolt.is_in_group(Ref.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(camera_leader)
 	if Input.is_action_just_pressed("no5"):
 		for bolt in bolts_in_game:
-			if bolt.is_in_group(Ref.group_players):
+			if bolt.is_in_group(Ref.group_humans):
 #				bolt.queue_free()
 				bolt.lose_life()
 				#				bolt.player_stats["gas_count"] = 0
@@ -85,7 +85,7 @@ func _process(delta: float) -> void:
 			
 	var active_human_bolts: Array = []
 	for bolt in bolts_in_game:
-		if bolt.is_in_group(Ref.group_players) and bolt.bolt_active:
+		if bolt.is_in_group(Ref.group_humans) and bolt.bolt_active:
 			active_human_bolts.append(bolt)
 	if active_human_bolts.empty(): 
 		camera_leader = null
@@ -107,9 +107,11 @@ func set_game():
 	# playing field
 	Ref.game_arena.playing_field.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
 	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		Ref.game_arena.playing_field.screen_edge_collision.disabled = false
+		#		Ref.game_arena.playing_field.screen_edge_collision.disabled = false
+		Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", false)
 	else:
-		Ref.game_arena.playing_field.screen_edge_collision.disabled = true
+		#		Ref.game_arena.playing_field.screen_edge_collision.disabled = true
+		Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", true)
 	
 	Ref.current_camera.follow_target = Ref.current_level.start_camera_position_node
 	
@@ -120,8 +122,8 @@ func set_game():
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
 			pass
-#			activated_player_ids = [Pro.PLAYER.P1] 	
-			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+			activated_player_ids = [Pro.PLAYER.P1] 	
+#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start
@@ -135,18 +137,18 @@ func set_game():
 	human_bolts_qualified = []
 	
 	# get enemies 			
-	game_settings["enemies_mode"] = false # debug
+	game_settings["enemies_mode"] = true # debug
 	
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI player_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_player_ids.size()
 		empty_positions_count = 1 # debug
 		for empty_position in empty_positions_count:
-			# dobim štatni id bolta in 
+			# dobim štartni id bolta in umestim ai data
 			var new_player_index: int = activated_player_ids.size()
 			var new_player_id: int = Pro.player_profiles.keys()[new_player_index]
-			Pro.player_profiles[new_player_id]["controller_profile"] = Pro.ai_profile["controller_profile"]
-			Pro.player_profiles[new_player_id]["bolt_scene"] = Pro.ai_profile["bolt_scene"]
+			Pro.player_profiles[new_player_id]["controller_type"] = Pro.ai_profile["controller_type"]
+#			Pro.player_profiles[new_player_id]["bolt_scene"] = Pro.ai_profile["bolt_scene"]
 			activated_player_ids.append(new_player_id) # da prepoznam v spawn funkciji .... trik pač
 	
 	printt("PLAYERS", activated_player_ids)	
@@ -206,7 +208,7 @@ func start_game():
 			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 				pass
 			else:
-				bolt.set_ai_target(bolt.bolt_position_tracker)
+				bolt.bolt_controller.set_ai_target(bolt.bolt_position_tracker)
 			
 				
 	Ref.sound_manager.play_music()
@@ -242,7 +244,7 @@ func level_finished():
 	else:
 		# SUCCESS če je vsaj en plejer bil čez ciljno črto
 		for bolt in bolts_finished: 
-			if bolt.is_in_group(Ref.group_players):
+			if bolt.is_in_group(Ref.group_humans):
 				human_bolts_qualified.append(bolt)
 		# FAIL, če ni nobenega plejerja v cilju
 	
@@ -264,7 +266,7 @@ func level_finished():
 					var worst_time_among_finished: float = bolts_finished[bolts_finished.size() - 1].player_stats["level_time"]
 					bolt.player_stats["level_time"] = worst_time_among_finished + worst_time_among_finished / 5
 					bolts_finished.append(bolt)
-				elif bolt.is_in_group(Ref.group_players):
+				elif bolt.is_in_group(Ref.group_humans):
 					# plejer se na Easy_mode uvrsti brez časa
 					if game_settings["easy_mode"]:
 						bolts_finished.append(bolt)
@@ -426,8 +428,8 @@ func get_bolt_pull_position(bolt_to_pull: Node2D):
 
 		current_pull_positions.append(navigation_position_as_pull_position) # OBS trenutno ne rabim
 		
-#		return navigation_position_as_pull_position
-		return camera_leader.position - Vector2.ONE * 100 # _temp
+		return navigation_position_as_pull_position
+#		return camera_leader.position - Vector2.ONE * 100 # _temp
 
 				
 func bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
@@ -451,7 +453,7 @@ func check_for_level_finished(): # za preverjanje pogojev za game over (vsakič 
 	var current_active_human_players: Array = []
 	
 	for bolt in bolts_in_game:
-		if bolt.bolt_active and bolt.is_in_group(Ref.group_players):
+		if bolt.bolt_active and bolt.is_in_group(Ref.group_humans):
 			current_active_human_players.append(bolt)
 			
 	# če so vsi neaktivni, preverim kdo je v cilju
@@ -501,12 +503,15 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 		new_bolt.bolt_position_tracker = Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
 	
 	# signali
-	if new_bolt.is_in_group(Ref.group_players):
-		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
-	if new_bolt.is_in_group(Ref.group_ai):
-		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
-		new_bolt.level_navigation_positions = navigation_positions
-		
+	new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
+#	new_bolt.get_node("AIController").level_navigation_positions = navigation_positions # RFK
+
+#	if new_bolt.is_in_group(Ref.group_humans):
+#		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
+#	if new_bolt.is_in_group(Ref.group_ai):
+#		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
+#	if new_bolt.has_node("AIController"):
+#		printt("AI", new_bolt.get_node("AIController"), navigation_positions.size())
 	emit_signal("bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
 	
 
@@ -551,9 +556,9 @@ func _on_level_is_set(tilemap_navigation_cells_positions: Array):
 	Ref.current_camera.position = Ref.current_level.start_camera_position_node.global_position
 	Ref.current_camera.set_camera_limits()
 	
-	# debug
-	for pos in navigation_positions:
-		Met.spawn_indikator(pos, 0, Ref.node_creation_parent)
+	# debug ... indi
+#	for pos in navigation_positions:
+#		Met.spawn_indikator(pos, 0, Ref.node_creation_parent)
 
 # SIGNALI ----------------------------------------------------------------------------------------------------
 
@@ -570,7 +575,7 @@ func _on_body_exited_playing_field(body: Node) -> void:
 			pass
 	else:
 		# pull player bolt
-		if body.is_in_group(Ref.group_players) and body.bolt_active:
+		if body.is_in_group(Ref.group_humans) and body.bolt_active:
 			var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
 			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, camera_leader)
 			

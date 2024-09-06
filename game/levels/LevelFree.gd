@@ -246,12 +246,12 @@ func set_level_navigation(): # samo unfree
 			for nav_point in outer_square_points:
 				if Geometry.is_point_in_polygon(nav_point, current_poly):
 					navigation_shape_nav_points.erase(nav_point)
-	
-	for p in navigation_shape_nav_points: # debug
-		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
+	# debug ... indi
+#	for p in navigation_shape_nav_points:
+#		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
 		
 	navigation_cells_positions = navigation_shape_nav_points.duplicate()
-	printt(navigation_cells_positions.size(),outer_polygon)
+	printt("level nav cells size", navigation_cells_positions.size(), outer_polygon)
 
 		
 # UTILITI ---------------------------------------------------------------------------------------------------------------------------------------

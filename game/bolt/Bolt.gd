@@ -1,5 +1,5 @@
 extends RigidBody2D
-class_name TheBolt
+class_name Bolt
 
 
 signal stats_changed (stats_owner_id, player_stats) # bolt in damage
@@ -16,7 +16,6 @@ var bolt_color: Color = Color.red
 var bolt_sprite_texture: Texture
 onready var player_profile: Dictionary = Pro.player_profiles[player_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
-onready var controller_profile_key: int = player_profile["controller_profile"]
 
 # player stats
 onready var player_stats: Dictionary = Pro.default_player_stats.duplicate()
@@ -31,7 +30,6 @@ onready var gas_usage: float = bolt_profile["gas_usage"]
 
 # nodes
 onready var bolt_sprite: Sprite = $BoltSprite
-onready var bolt_controller: Node = $BoltController
 onready var trail_position: Position2D = $TrailPosition
 onready var gun_position: Position2D = $GunPosition
 	
@@ -44,6 +42,7 @@ onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBo
 # driving
 var rotation_dir = 0
 var bolt_direction = 0 # rikverc ali naprej # VEN
+var bolt_global_rotation: float # _IF računa glede na gibanje telesa
 var bolt_global_position: Vector2 # _IF računa glede na gibanje telesa
 var bolt_velocity: Vector2 = Vector2.ZERO # _IF računa glede na gibanje telesa
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim	
@@ -77,7 +76,7 @@ onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RigidBody2D
 
 # neu
 onready var direction_line: Line2D = $DirectionLine
-onready var bolt_collision: CollisionShape2D = $CollisionShape2D
+onready var collision_shape: CollisionShape2D = $CollisionShape2D
 var is_shielded: bool = false # VEN
 onready var revive_timer: Timer = $ReviveTimer
 var bolt_body_state: Physics2DDirectBodyState
@@ -87,22 +86,37 @@ var trail_pseudodecay_color = Color.white
 var active_trail: Line2D
 var engines_on: bool = false
 
+var BoltController: PackedScene
+#var BoltController: PackedScene = preload("res://game/bolt/ControllerAI.tscn")
+onready var bolt_controller: Node = $BoltController
 
+
+func spawn_bolt_controller():
+
+	 # zbrišem placeholder
+	bolt_controller.queue_free()
+	
+	# opredelim controller sceno
+	var players_controller_profile: Dictionary = Pro.controller_profiles[player_profile["controller_type"]]	
+	var BoltController: PackedScene = players_controller_profile["controller_scene"]
+	
+	# spawn na vrh boltovega drevesa
+	bolt_controller = BoltController.instance()
+	bolt_controller.controller_bolt = self 
+	bolt_controller.controller_type = player_profile["controller_type"]
+	call_deferred("add_child", bolt_controller)
+	call_deferred("move_child", bolt_controller, 0)
+		
+	
 func _ready() -> void:
-	
+
 	add_to_group(Ref.group_bolts)	
-	add_to_group(Ref.group_players)	
-	
 	player_name = player_profile["player_name"]
-	
 	# bolt
 	if bolt_sprite_texture:
 		bolt_sprite.texture = bolt_sprite_texture
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 	
 	bolt_sprite.modulate = bolt_color	
-	
-	#	bolt_shadow.shadow_distance = bolt_max_altitude
-	bolt_controller.set_controller(controller_profile_key)
 	
 	# bolt settings	
 	mass = bolt_profile["mass"]
@@ -111,6 +125,8 @@ func _ready() -> void:
 	physics_material_override.friction = bolt_profile["friction"]
 	physics_material_override.bounce = bolt_profile["bounce"]
 	rear_mass.angular_damp = bolt_profile["rear_lin_damp"]
+
+	spawn_bolt_controller()
 
 
 func _process(delta: float) -> void:
@@ -133,8 +149,8 @@ func _process(delta: float) -> void:
 			current_engines_rotation += rotation_dir * engine_rotation_speed
 			current_engines_rotation = clamp(current_engines_rotation, - deg2rad(max_engine_rotation_deg), deg2rad(max_engine_rotation_deg))
 	
-	# globalna rotacija sile  
-	force_rotation = current_engines_rotation + get_global_rotation()
+	# globalna rotacija sile # RFK prestavljeno v kontrolerja
+	#	force_rotation = current_engines_rotation + get_global_rotation() 
 	
 	# lokalna rotacija pogonov
 	for thrust in get_engines_thrusts():
@@ -149,7 +165,8 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
 	bolt_body_state = state
 	bolt_velocity = get_linear_velocity()
-	bolt_global_position = get_global_position() # a je treba?
+	bolt_global_position = get_global_position()
+	bolt_global_rotation = rotation # a je treba?
 
 	if bolt_active:
 		if current_motion == MOTION.IDLE: # idle rotacija
@@ -199,7 +216,7 @@ func shoot(weapon_index: int) -> void:
 				var BulletScene: PackedScene = Pro.weapon_profiles[Pro.WEAPON.BULLET]["scene"]
 				var new_bullet = BulletScene.instance()
 				new_bullet.global_position = gun_position.global_position
-				new_bullet.global_rotation = rotation
+				new_bullet.global_rotation = bolt_global_rotation
 				new_bullet.spawned_by = self # ime avtorja izstrelka
 				new_bullet.spawned_by_color = bolt_color
 				new_bullet.z_index = z_index + Set.weapons_z_index
@@ -216,7 +233,7 @@ func shoot(weapon_index: int) -> void:
 				var MisileScene: PackedScene = Pro.weapon_profiles[Pro.WEAPON.MISILE]["scene"]
 				var new_misile = MisileScene.instance()
 				new_misile.global_position = gun_position.global_position
-				new_misile.global_rotation = rotation #bolt_sprite.global_rotation
+				new_misile.global_rotation = bolt_global_rotation #bolt_sprite.global_rotation
 				new_misile.spawned_by = self # zato, da lahko dobiva "točke ali kazni nadaljavo
 				new_misile.spawned_by_color = bolt_color
 				new_misile.spawned_by_speed = bolt_velocity.length()
@@ -234,7 +251,7 @@ func shoot(weapon_index: int) -> void:
 				var MinaScene: PackedScene = Pro.weapon_profiles[Pro.WEAPON.MINA]["scene"]
 				var new_mina = MinaScene.instance()
 				new_mina.global_position = gun_position.global_position # _temp pozicija mine
-				new_mina.global_rotation = rotation
+				new_mina.global_rotation = bolt_global_rotation
 				new_mina.spawned_by = self # ime avtorja izstrelka
 				new_mina.spawned_by_color = bolt_color
 				new_mina.z_index = z_index + Set.weapons_z_index
@@ -275,8 +292,7 @@ func on_hit(hit_by: Node):
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT impuls offset ne deluej
 		#		apply_impulse( to_global(Vector2.RIGHT * bolt_sprite.texture.get_size().x/2), hit_by_inertia) # debug
-		print(local_hit_position, global_hit_position, position, hit_by.global_position)
-		Met.spawn_indikator(bolt_body_state.get_contact_collider_position(0), rotation, self, true)
+		Met.spawn_indikator(bolt_body_state.get_contact_collider_position(0), rotation, self, true) # debug ... indi
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		Ref.sound_manager.play_sfx("bolt_explode")
 		if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
@@ -308,7 +324,8 @@ func lose_life():
 func explode():
 	
 	# disable staf
-	bolt_collision.disabled = true
+	collision_shape.set_deferred("disabled", true)
+	#	collision_shape.disabled = true
 	if active_trail: # ugasni tejl
 		active_trail.start_decay() # trail decay tween start
 	visible = false
@@ -334,7 +351,8 @@ func explode():
 func revive_bolt():
 	
 	# reset pred prikazom
-	bolt_collision.disabled = false
+	collision_shape.set_deferred("disabled", false)
+	#	collision_shape.disabled = false
 	set_applied_force(Vector2.ZERO)
 	set_applied_torque(0)
 	rotation_dir = 0
@@ -362,7 +380,7 @@ func get_engines_thrusts(): # VEN ne kompliciraj
 		for child in engine.get_children():
 			if child.name.find("Thrust") > -1:
 				current_thrusts.append(child)	
-	print(current_thrusts)
+	
 	return current_thrusts
 	
 	
@@ -516,11 +534,13 @@ func lap_finished(level_lap_limit: int):
 	
 
 func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
+	
+	#	Met.spawn_indikator(pull_position, rotation, self) # debug ... indi
 
 	# disejblam koližne
 	set_process_input(false)
 	
-	bolt_collision.set_deferred("disabled", true)
+	collision_shape.set_deferred("disabled", true)
 	#	shield_collision.set_deferred("disabled", true)	
 
 	# reštartam trail
@@ -532,7 +552,7 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 	var pull_tween = get_tree().create_tween()
 	pull_tween.tween_property(bolt_body_state, "transform:origin", pull_position, pull_time)#.set_ease(Tween.EASE_OUT)
 	yield(pull_tween, "finished")
-	bolt_collision.set_deferred("disabled", false)
+	collision_shape.set_deferred("disabled", false)
 	set_process_input(true)
 	# print("KJE SI")
 
@@ -767,7 +787,7 @@ func in_disarray(damage_amount: float): # 5 raketa, 1 metk
 
 func drive_in(drive_in_time: float):
 	
-	#	# da ugotovim, kdaj so vsi zapeljani# bolt.bolt_collision.set_disabled(true) # da ga ne moti morebitna stena
+	#	# da ugotovim, kdaj so vsi zapeljani# bolt.collision_shape.set_disabled(true) # da ga ne moti morebitna stena
 	#	var drive_in_finished_position: Vector2 = global_position
 	#	var drive_in_distance: float = 50
 	#	global_position -= drive_in_distance * transform.x
@@ -788,7 +808,7 @@ func drive_out():
 	#
 	#	var drive_out_time: float = 2
 	#	var drive_out_tween = get_tree().create_tween()
-	#	drive_out_tween.tween_callback(bolt_collision, "set_disabled", [true])
+	#	drive_out_tween.tween_callback(collision_shape, "set_disabled", [true])
 	#	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
 	#	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
 	#	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana

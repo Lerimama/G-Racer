@@ -1,4 +1,4 @@
-extends Bolt
+extends KinematicBolt
 
 enum AiStates {IDLE, RACE, SEEK, FOLLOW, HUNT}
 enum AiAttackingMode {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
@@ -169,7 +169,7 @@ func set_ai_target(new_ai_target: Node2D):
 	if get_tree().get_nodes_in_group(valid_target_group).has(ai_target): # preverjam s strani grupe in ne tarče, ki je lahko že ne obstaja več
 		ai_target.remove_from_group(valid_target_group)
 	
-	if new_ai_target is Bolt: # debug
+	if new_ai_target is KinematicBolt: # debug
 		# printt("start FOLLOW from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		target_ray.enabled = true
 		current_ai_state = AiStates.FOLLOW
@@ -271,6 +271,7 @@ func sort_objects_by_ai_rank(stuff_1, stuff_2): # ascending ... večji index je 
 
 	
 func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, max_distance: float = 50, in_front: bool = true):
+		printt("MET", "get_nav_cell_on_distance")
 	
 #	var selected_nav_position: Vector2
 #	if freee:
@@ -292,11 +293,11 @@ func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, m
 		var current_min_cell_distance: float = 0
 		var current_min_cell_angle: float = 0
 		
-		# debug
-		if not Met.all_indikators_spawned.empty():
-			for n in Met.all_indikators_spawned:
-				n.queue_free()
-			Met.all_indikators_spawned.clear()
+		# debug ... indi
+#		if not Met.all_indikators_spawned.empty():
+#			for n in Met.all_indikators_spawned:
+#				n.queue_free()
+#			Met.all_indikators_spawned.clear()
 		
 		for nav_position in level_navigation_positions:
 			var current_cell_distance: float = nav_position.distance_to(from_position)
@@ -342,68 +343,68 @@ func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, m
 
 	
 func get_navigation_position_on_distance(from_position: Vector2, min_distance: float = 0, max_distance: float = 50, in_front: bool = true):
-	
-	var selected_nav_position: Vector2
-	var all_cells_for_random_selection: Array = []
-	var front_cells_for_random_selection: Array = []
-	var side_cells_for_random_selection: Array = []
-	
-	# random select, če ne iščem do 0
-	var random_select: bool = true
-	if min_distance == 0:
-		in_front = false
-		random_select = false
-		
-	var current_min_cell_distance: float = 0
-	var current_min_cell_angle: float = 0
-	
-	# debug
-	if not Met.all_indikators_spawned.empty():
-		for n in Met.all_indikators_spawned:
-			n.queue_free()
-		Met.all_indikators_spawned.clear()
-	
-	for nav_position in level_navigation_positions:
-		var current_cell_distance: float = nav_position.distance_to(from_position)
-		# najprej izbere vse po razponu
-		if current_cell_distance > min_distance and current_cell_distance < max_distance:
-			if in_front:
-				var vector_to_position: Vector2 = nav_position - global_position
-				var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
-				# če je najbolj spredaj
-				#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
-				if current_angle_to_bolt_deg < 30  and current_angle_to_bolt_deg > - 30 :
-					front_cells_for_random_selection.append(nav_position)
-				# če je na straneh
-				elif current_angle_to_bolt_deg < 90  and current_angle_to_bolt_deg > -90 :
-					side_cells_for_random_selection.append(nav_position)
-				#					indi.modulate = Color.black
-				# če ni v razponu kota
-				else:
-					all_cells_for_random_selection.append(nav_position)
-				#					indi.modulate = Color.green
-			else:
-				# random select, samo nabiram za žrebanje, 
-				if random_select:
-					all_cells_for_random_selection.append(nav_position)
-				# izberem najbližjo
-				else:
-					if current_cell_distance < current_min_cell_distance or current_min_cell_distance == 0:
-						current_min_cell_distance = current_cell_distance
-						selected_nav_position = nav_position
-	
-	# žrebam iz sprednjih ali vseh na voljo
-	if front_cells_for_random_selection.empty() and side_cells_for_random_selection.empty():
-		in_front = false
-	if in_front:
-		if front_cells_for_random_selection.empty():
-			selected_nav_position = Met.get_random_member(side_cells_for_random_selection)
-		else:
-			selected_nav_position = Met.get_random_member(front_cells_for_random_selection)
-	elif random_select:
-		selected_nav_position = Met.get_random_member(all_cells_for_random_selection)
-		
-	return selected_nav_position
+	printt("MET", "get_navigation_position_on_distance")
+#	var selected_nav_position: Vector2
+#	var all_cells_for_random_selection: Array = []
+#	var front_cells_for_random_selection: Array = []
+#	var side_cells_for_random_selection: Array = []
+#
+#	# random select, če ne iščem do 0
+#	var random_select: bool = true
+#	if min_distance == 0:
+#		in_front = false
+#		random_select = false
+#
+#	var current_min_cell_distance: float = 0
+#	var current_min_cell_angle: float = 0
+#
+#	# debug ... indi
+#	if not Met.all_indikators_spawned.empty():
+#		for n in Met.all_indikators_spawned:
+#			n.queue_free()
+#		Met.all_indikators_spawned.clear()
+#
+#	for nav_position in level_navigation_positions:
+#		var current_cell_distance: float = nav_position.distance_to(from_position)
+#		# najprej izbere vse po razponu
+#		if current_cell_distance > min_distance and current_cell_distance < max_distance:
+#			if in_front:
+#				var vector_to_position: Vector2 = nav_position - global_position
+#				var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
+#				# če je najbolj spredaj
+#				#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
+#				if current_angle_to_bolt_deg < 30  and current_angle_to_bolt_deg > - 30 :
+#					front_cells_for_random_selection.append(nav_position)
+#				# če je na straneh
+#				elif current_angle_to_bolt_deg < 90  and current_angle_to_bolt_deg > -90 :
+#					side_cells_for_random_selection.append(nav_position)
+#				#					indi.modulate = Color.black
+#				# če ni v razponu kota
+#				else:
+#					all_cells_for_random_selection.append(nav_position)
+#				#					indi.modulate = Color.green
+#			else:
+#				# random select, samo nabiram za žrebanje, 
+#				if random_select:
+#					all_cells_for_random_selection.append(nav_position)
+#				# izberem najbližjo
+#				else:
+#					if current_cell_distance < current_min_cell_distance or current_min_cell_distance == 0:
+#						current_min_cell_distance = current_cell_distance
+#						selected_nav_position = nav_position
+#
+#	# žrebam iz sprednjih ali vseh na voljo
+#	if front_cells_for_random_selection.empty() and side_cells_for_random_selection.empty():
+#		in_front = false
+#	if in_front:
+#		if front_cells_for_random_selection.empty():
+#			selected_nav_position = Met.get_random_member(side_cells_for_random_selection)
+#		else:
+#			selected_nav_position = Met.get_random_member(front_cells_for_random_selection)
+#	elif random_select:
+#		selected_nav_position = Met.get_random_member(all_cells_for_random_selection)
+#
+#	return selected_nav_position
 
 
 func get_racing_position(position_tracker: PathFollow2D):

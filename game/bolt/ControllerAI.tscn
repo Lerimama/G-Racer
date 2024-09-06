@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/bolt/ControllerAI.gd" type="Script" id=1]
+
+[sub_resource type="CircleShape2D" id=5261]
+radius = 128.25
+
+[node name="ControllerAI" type="Node2D"]
+position = Vector2( 26, 0 )
+script = ExtResource( 1 )
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 30.0
+target_desired_distance = 8.0
+path_max_distance = 10.0
+
+[node name="DetectArea" type="Area2D" parent="."]
+position = Vector2( -24, 0 )
+collision_layer = 4
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource( 5261 )
+
+[node name="DetectRay" type="RayCast2D" parent="."]
+position = Vector2( -24, 0 )
+enabled = true
+cast_to = Vector2( 64, 0 )
+collision_mask = 12
+collide_with_areas = true
+
+[node name="TargetRay" type="RayCast2D" parent="."]
+position = Vector2( -24, 0 )
+cast_to = Vector2( 128, 0 )
+collision_mask = 12
+collide_with_areas = true
+
+[node name="VisionRay" type="RayCast2D" parent="."]
+position = Vector2( -23, 0 )
+enabled = true
+cast_to = Vector2( 87, 0 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = -64.0
+margin_top = -16.0
+margin_right = 16.0
+margin_bottom = 16.0
+
+[node name="DirectionLine" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 0, 100, 0 )
+width = 4.0
+default_color = Color( 1, 1, 0, 1 )
+
+[connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_navigation_finished"]
+[connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
+[connection signal="target_reached" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_target_reached"]

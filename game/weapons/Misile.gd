@@ -49,7 +49,8 @@ func _ready() -> void:
 	
 	add_to_group(Ref.group_misiles)
 	$Sprite.modulate = spawned_by_color
-	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
+	collision_shape.set_deferred("disabled", true) # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
+	#	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
 #	Ref.sound_manager.play_sfx("misile_shoot")
 	$Sounds/MisileShoot.play()	
@@ -99,11 +100,14 @@ func _physics_process(delta: float) -> void:
 	if vision_ray.is_colliding():
 		var current_collider = vision_ray.get_collider()
 		if current_collider == spawned_by:
-			collision_shape.disabled = true
+			collision_shape.set_deferred("disabled", true)
+			#			collision_shape.disabled = true
 		else:
-			collision_shape.disabled = false
+			collision_shape.set_deferred("disabled", false)
+			#			collision_shape.disabled = false
 	else:
-		collision_shape.disabled = false
+		collision_shape.set_deferred("disabled", false)
+		#		collision_shape.disabled = false
 			
 					
 	velocity = direction * speed

@@ -14,7 +14,7 @@ var game_over = null
 var level_completed = null
 
 # groups
-var group_players = "Players"
+var group_humans = "Players"
 var group_ai = "Ais"
 var group_bolts = "Bolts"
 var group_misiles = "Misiles"

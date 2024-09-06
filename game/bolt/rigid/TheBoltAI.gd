@@ -15,12 +15,11 @@ onready var detect_area: Area2D = $DetectArea
 
 var ai_target: Node2D = null
 var level_navigation_positions: Array # poda GM ob spawnu
-var ai_navigation_line: Line2D # debug
+var ai_navigation_line: Line2D
 
 onready var max_engine_power = Pro.ai_profile["max_engine_power"] # 80
 onready var searching_engine_power = max_engine_power * 0.8 
 
-# neu
 # ai settings .. v Profile
 var ai_brake_distance_factor: float = 0.5 # delež dolžine vektorja hitrosti ... vision ray je na tej dolžini
 var ai_brake_factor: float = 0.8 # množenje s hitrostjo
@@ -44,7 +43,6 @@ func _ready() -> void:
 	add_to_group(Ref.group_ai)
 	#	bolt_hud.hide()
 	
-	# debug ... spawn navigation line
 	ai_navigation_line = Line2D.new()
 	Ref.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
@@ -254,7 +252,7 @@ func set_ai_target(new_ai_target: Node2D):
 	if get_tree().get_nodes_in_group(valid_target_group).has(ai_target): # preverjam s strani grupe in ne tarče, ki je lahko že ne obstaja več
 		ai_target.remove_from_group(valid_target_group)
 	
-	if new_ai_target is Bolt or new_ai_target is TheBolt: # debug
+	if new_ai_target is Bolt:
 		# printt("start FOLLOW from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		target_ray.enabled = true
 		current_ai_state = AiStates.FOLLOW
@@ -382,7 +380,6 @@ func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, m
 		var current_min_cell_distance: float = 0
 		var current_min_cell_angle: float = 0
 		
-		# debug
 		if not Met.all_indikators_spawned.empty():
 			for n in Met.all_indikators_spawned:
 				n.queue_free()
@@ -447,7 +444,6 @@ func get_navigation_position_on_distance(from_position: Vector2, min_distance: f
 	var current_min_cell_distance: float = 0
 	var current_min_cell_angle: float = 0
 	
-	# debug
 	if not Met.all_indikators_spawned.empty():
 		for n in Met.all_indikators_spawned:
 			n.queue_free()
@@ -510,7 +506,7 @@ func get_racing_position(position_tracker: PathFollow2D):
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
-func _on_NavigationAgent2D_path_changed() -> void: # debug
+func _on_NavigationAgent2D_path_changed() -> void:
 	
 	ai_navigation_line.clear_points()
 	for point in navigation_agent.get_nav_path():
@@ -594,7 +590,7 @@ var engine_particles_front_right: CPUParticles2D
 onready var bolt_hud: Node2D = $BoltHud
 onready var dissaray_tween: SceneTreeTween # za ustavljanje na lose life
 onready var bolt_sprite: Sprite = $Bolt
-onready var bolt_collision: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
+onready var collision_shape: CollisionPolygon2D = $BoltCollision # zaradi shielda ga moram imet
 onready var shield: Sprite = $Shield
 onready var shield_collision: CollisionShape2D = $ShieldCollision
 onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -941,7 +937,8 @@ func lose_life():
 	
 	stop_engines()
 	explode()
-	bolt_collision.disabled = true
+	collision_shape.set_deferred("disabled", true)
+	#	collision_shape.disabled = true
 	visible = false
 	set_process_input(false)		
 	set_physics_process(false)
@@ -960,7 +957,8 @@ func revive_bolt():
 	print("revieve")
 	yield(get_tree().create_timer(revive_time), "timeout")
 	# on new life
-	bolt_collision.disabled = false
+	collision_shape.set_deferred("disabled", false)
+	#	collision_shape.disabled = false
 	# reset pred prikazom
 	current_motion = MotionStates.IDLE
 	if dissaray_tween:
@@ -982,7 +980,7 @@ func revive_bolt():
 
 func drive_in(drive_in_time: float):
 	
-#	# da ugotovim, kdaj so vsi zapeljani# bolt.bolt_collision.set_disabled(true) # da ga ne moti morebitna stena
+#	# da ugotovim, kdaj so vsi zapeljani# bolt.collision_shape.set_disabled(true) # da ga ne moti morebitna stena
 #	var drive_in_finished_position: Vector2 = global_position
 #	var drive_in_distance: float = 50
 #	global_position -= drive_in_distance * transform.x
@@ -1003,7 +1001,7 @@ func drive_out():
 #
 #	var drive_out_time: float = 2
 #	var drive_out_tween = get_tree().create_tween()
-#	drive_out_tween.tween_callback(bolt_collision, "set_disabled", [true])
+#	drive_out_tween.tween_callback(collision_shape, "set_disabled", [true])
 #	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
 #	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
 #	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
@@ -1146,7 +1144,7 @@ func activate_shield():
 		shield.modulate.a = 1
 		animation_player.play("shield_on")
 		shields_on = true
-		bolt_collision.set_deferred("disabled", true)
+		collision_shape.set_deferred("disabled", true)
 		shield_collision.set_deferred("disabled", false)
 	else:
 		animation_player.play_backwards("shield_on")
@@ -1249,7 +1247,7 @@ func _on_shield_animation_finished(anim_name: String) -> void:
 				animation_player.stop(false) # včasih sem rabil, da se ne cikla, zdaj pa je okej, ker ob
 				shield_loops_counter = 0
 				shields_on = false
-				bolt_collision.set_deferred("disabled", false)
+				collision_shape.set_deferred("disabled", false)
 				shield_collision.set_deferred("disabled", true)
 		"shielding":
 			# dokler je loop manjši od limita ... replayamo animacijo

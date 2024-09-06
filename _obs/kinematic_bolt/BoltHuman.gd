@@ -1,8 +1,8 @@
-extends Bolt
+extends KinematicBolt
 
 
 onready var controller_profiles: Dictionary = Pro.controller_profiles
-onready var controller_profile_name: int = player_profile["controller_profile"]
+onready var controller_profile_name: int = player_profile["controller_type"]
 onready var controller_actions: Dictionary = controller_profiles[controller_profile_name]
 
 onready var fwd_action: String = controller_actions["fwd_action"]
@@ -63,7 +63,7 @@ func _input(event: InputEvent) -> void:
 	
 func _ready() -> void:
 	
-	add_to_group(Ref.group_players)
+	add_to_group(Ref.group_humans)
 	
 	
 	
