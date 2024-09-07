@@ -70,8 +70,7 @@ func _physics_process(delta: float) -> void:
 		#		collision_shape.disabled = false
 		
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
-	var collision: KinematicCollision2D = move_and_collide(velocity * delta, false)
-	
+	collision = move_and_collide(velocity * delta, false)
 	if collision:
 		if collision.collider != spawned_by: # sam sebe lahko ubiješ
 			if collision.collider.has_method("on_hit"):

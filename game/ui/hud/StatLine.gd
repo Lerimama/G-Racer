@@ -1,7 +1,7 @@
 extends HBoxContainer
 
-enum StatType {COUNT, TIME, ICONS}
-export (StatType) var stat_type: int = StatType.COUNT
+enum STAT_TYPE {COUNT, TIME, ICONS}
+export (STAT_TYPE) var current_stat_type: int = STAT_TYPE.COUNT
 
 export var icon_texture: AtlasTexture = null
 export var label_name: String = ""
@@ -22,6 +22,7 @@ onready var stat_name: Label = $Name
 onready var stat_label: Label = $Label
 onready var stat_time_label: HBoxContainer = $TimeLabel
 onready var stat_icons: HBoxContainer = $StatIcons
+onready var blink_timer: Timer = $BlinkTimer
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
@@ -43,16 +44,16 @@ func _ready() -> void:
 		stat_icon.hide()
 		stat_name.show()
 	
-	match stat_type:
-		StatType.COUNT:
+	match current_stat_type:
+		STAT_TYPE.COUNT:
 			stat_time_label.hide()			
 			stat_icons.hide()
 			stat_label.show()
-		StatType.TIME:
+		STAT_TYPE.TIME:
 			stat_label.hide()
 			stat_icons.hide()
 			stat_time_label.show()
-		StatType.ICONS:
+		STAT_TYPE.ICONS:
 			stat_name.hide()		
 			stat_time_label.hide()
 			stat_label.hide()
@@ -87,7 +88,6 @@ func _on_stat_change(new_stat_value):
 				write_clock_time(stat_value, stat_time_label)
 			else:
 				stat_label.text = "%02d" % new_stat_value
-			yield(get_tree().create_timer(color_blink_time), "timeout") # OPT ... timer da errorabilen timer
 		# [-]
 		elif new_stat_value < stat_value:
 			stat_value = new_stat_value
@@ -100,8 +100,7 @@ func _on_stat_change(new_stat_value):
 		if show_icons:
 			set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon 
 		
-		yield(get_tree().create_timer(color_blink_time), "timeout") # OPT ... timer da errorabilen timer
-		modulate = def_stat_color
+		blink_timer.start(color_blink_time)
 	
 
 func set_icons_state(on_icons_count: int):
@@ -133,3 +132,8 @@ func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke
 	time_label.get_node("Mins").text = "%02d" % rounded_minutes
 	time_label.get_node("Secs").text = "%02d" % rounded_seconds_leftover
 	time_label.get_node("Hunds").text = "%02d" % rounded_hundreds_leftover	
+
+
+func _on_BlinkTimer_timeout() -> void:
+
+	modulate = def_stat_color

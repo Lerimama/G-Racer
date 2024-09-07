@@ -1,8 +1,8 @@
 extends Control
 
 
-enum AlignOptions {LT_CORNER, RT_CORNER, LB_CORNER, RB_CORNER}
-export (AlignOptions) var statbox_hor_align: int = AlignOptions.LT_CORNER 
+enum BOX_ALIGN {LT_CORNER, RT_CORNER, LB_CORNER, RB_CORNER}
+export (BOX_ALIGN) var statbox_hor_align: int = BOX_ALIGN.LT_CORNER 
 	
 onready var player_line: HBoxContainer = $PlayerLine
 onready var player_avatar: TextureRect = $PlayerLine/Avatar
@@ -27,19 +27,19 @@ func _ready() -> void:
 	
 	# poravnave po vogalih
 	match statbox_hor_align:
-		AlignOptions.LT_CORNER:
+		BOX_ALIGN.LT_CORNER:
 			for node in get_children():
 				node.alignment = BoxContainer.ALIGN_BEGIN
 			self.alignment = BoxContainer.ALIGN_BEGIN
-		AlignOptions.RT_CORNER:
+		BOX_ALIGN.RT_CORNER:
 			for node in get_children():
 				node.alignment = BoxContainer.ALIGN_END 
 			self.alignment = BoxContainer.ALIGN_BEGIN
-		AlignOptions.LB_CORNER:
+		BOX_ALIGN.LB_CORNER:
 			for node in get_children():
 				node.alignment = BoxContainer.ALIGN_BEGIN
 			self.alignment = BoxContainer.ALIGN_END
-		AlignOptions.RB_CORNER:
+		BOX_ALIGN.RB_CORNER:
 			for node in get_children():
 				node.alignment = BoxContainer.ALIGN_END
 			self.alignment = BoxContainer.ALIGN_END

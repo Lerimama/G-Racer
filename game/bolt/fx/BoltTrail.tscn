@@ -21,4 +21,7 @@ joint_mode = 2
 begin_cap_mode = 2
 script = ExtResource( 1 )
 
+[node name="DecayTween" type="Tween" parent="."]
+
 [connection signal="tree_exiting" from="." to="." method="_on_BoltTrail_tree_exiting"]
+[connection signal="tween_all_completed" from="DecayTween" to="." method="_on_DecayTween_tween_all_completed"]

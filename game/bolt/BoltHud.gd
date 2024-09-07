@@ -14,8 +14,6 @@ onready var weapon_icons: Array = $BoltHudLines/WeaponSelector/Weapons.get_child
 onready var energy_bar_line: Polygon2D = $BoltHudLines/EnergyBar/Bar
 onready var energy_bar: Control = $BoltHudLines/EnergyBar
 
-onready var test_hud: ColorRect = $"../BoltHudLayer/TestHud" # _temp ... hud layer
-
 
 func _ready() -> void:
 

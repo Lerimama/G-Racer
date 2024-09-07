@@ -32,7 +32,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLT_TYPE.RIGID,
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P2 : {
 		"player_name": "P2",
@@ -41,7 +41,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLT_TYPE.RIGID,
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P3 : {
 		"player_name" : "P3",
@@ -49,7 +49,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color" : Ref.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
@@ -57,7 +57,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color" : Ref.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
+#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 #		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
 }
@@ -107,9 +107,11 @@ var bolt_profiles: Dictionary = {
 		},
 	BOLT_TYPE.RIGID: {
 		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
+		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
 		"max_engine_power": 320, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
 		"ai_target_rank": 5,

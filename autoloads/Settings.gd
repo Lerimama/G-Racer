@@ -73,7 +73,7 @@ var level_settings: Dictionary = {
 		"level_name": "",
 		"level_path": "res://game/levels/LevelFree.tscn",
 		"time_limit": 0,
-		"lap_limit": 3,
+		"lap_limit": 1,
 		},
 	LEVEL.TESTDRIVE: {
 		"level_name": "",

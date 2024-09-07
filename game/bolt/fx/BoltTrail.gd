@@ -16,6 +16,8 @@ var points_count_before: int
 var points_count_after: int
 var points_count_decay_start: int = 30 # limita kdaj se štarta decay tween
 
+onready var decay_tween: Tween = $DecayTween
+
 
 func _ready() -> void:
 	
@@ -70,13 +72,17 @@ func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta
 
 func start_decay():
 	
-#	modulate = Color.red
-	var decay_tween = get_tree().create_tween()
-	decay_tween.tween_property(self, "modulate:a", 0, decay_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	yield(decay_tween, "finished")
+	decay_tween.interpolate_property(self, "modulate:a", modulate.a, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	decay_tween.start()
+	
+
+func _on_DecayTween_tween_all_completed() -> void:
+	
 	queue_free()
 	
-	
+		
 func _on_BoltTrail_tree_exiting() -> void:
 	
 	emit_signal("trail_is_exiting", self) # pošljem boltu, ki jo deaktivira
+
+

@@ -17,7 +17,7 @@ var tick_lenght: float = 0.02 # za nadzor hitrosti dodajanja lastnosti na pike .
 # decay
 var lifetime: Array = [2.0, 3.0] # vsaka linija bo imela lajfatjm v tem razponu
 var max_width: Array = [130,100]
-onready var decay_tween = $Decay
+onready var decay_tween = $DecayTween
 
 
 func _ready() -> void:

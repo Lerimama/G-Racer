@@ -1,4 +1,5 @@
-extends KinematicBody2D
+extends RigidBody2D
+#extends TheBolt
 
 enum AiStates {IDLE, RACE, SEEK, FOLLOW, HUNT}
 enum AiAttackingMode {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
@@ -38,6 +39,7 @@ onready var freee: bool = true
 
 func _ready() -> void:
 	
+	add_to_group(Ref.group_bolts)
 	add_to_group(Ref.group_ai)
 	#	bolt_hud.hide()
 	
@@ -48,10 +50,10 @@ func _ready() -> void:
 	ai_navigation_line.z_index = 10
 #	ai_navigation_line.hide()
 	randomize()
+
 	
 
 func _physics_process(delta: float) -> void:
-
 
 	
 	if not bolt_active:
@@ -67,44 +69,91 @@ func _physics_process(delta: float) -> void:
 	else:
 		if ai_target == null and not current_ai_state == AiStates.IDLE: # setanje tarče za konec dissaraya
 			set_ai_target(edge_navigation_tilemap)
-		# inherited ----------------------------
-		var min_drag: float = 0.5 # testirano, da je ne odnese
-		var max_power_drag_loss: float = 0.0023 # da ni prehitro
-		# max power reached ... drag se konstanto niža, da hitrost raste v neskončnost
-		if current_motion == MotionStates.FWD:
-			if drag_div == Pro.bolt_profiles[bolt_type]["drag_div"]:
-				current_drag -= max_power_drag_loss
-				current_drag = clamp(current_drag, min_drag, current_drag)
-			else:
-				current_drag = bolt_drag
-		else:
-			current_drag = bolt_drag
-		# sila upora raste s hitrostjo		
-		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
-		# hitrost je pospešek s časom
-		velocity += acceleration * delta
-		rotation_angle = rotation_dir * deg2rad(turn_angle)
-		rotate(delta * rotation_angle)
-		# ----------------------------
-		var next_position: Vector2 = navigation_agent.get_next_location()
-		acceleration = position.direction_to(next_position) * engine_power
-		steering(delta) # more bi pred rotacijo, da se upošteva ... ne vem če kaj vpliva
-		rotation = velocity.angle()
+#		# inherited ----------------------------
+#		var min_drag: float = 0.5 # testirano, da je ne odnese
+#		var max_power_drag_loss: float = 0.0023 # da ni prehitro
+#		# max power reached ... drag se konstanto niža, da hitrost raste v neskončnost
+#		if current_motion == MotionStates.FWD:
+#			if drag_div == Pro.bolt_profiles[bolt_type]["drag_div"]:
+#				current_drag -= max_power_drag_loss
+#				current_drag = clamp(current_drag, min_drag, current_drag)
+#			else:
+#				current_drag = bolt_drag
+#		else:
+#			current_drag = bolt_drag
+#		# sila upora raste s hitrostjo		
+#		var drag_force = current_drag * velocity * velocity.length() / drag_div # množenje z velocity nam da obliko vektorja
+#		# hitrost je pospešek s časom
+##		velocity += acceleration * delta
+#		rotation_angle = rotation_dir * deg2rad(turn_angle)
+#		rotate(delta * rotation_angle)
+#		# ----------------------------
+#		var next_position: Vector2 = navigation_agent.get_next_location()
+
+
+
+#		acceleration = position.direction_to(next_position) * engine_power
+#		steering(delta) # more bi pred rotacijo, da se upošteva ... ne vem če kaj vpliva
+#		rotation = velocity.angle()
+
 		# vision
 		vision_ray.cast_to.x = velocity.length() * ai_brake_distance_factor # zmeraj dolg kot je dolga hitrost
 		if vision_ray.is_colliding():
 			velocity *= ai_brake_factor
 	
+		vector_to_target = get_racing_position(ai_target) - get_global_position()
+		vector_to_target = vector_to_target.rotated(- get_global_rotation())# - get_global_rotation())
+		direction_line.set_point_position(0, Vector2.ZERO)
+		direction_line.set_point_position(1, vector_to_target)
+				
 	# inherited ----------------------------
-	collision = move_and_collide(velocity * delta, false)
-	if collision:
-		on_collision()	
+#	collision = move_and_collide(velocity * delta, false)
+#	if collision:
+#		on_collision()	
 	
 	manage_motion_states(delta)
 #	manage_motion_fx()
+
 	
 	
+var vector_to_target: Vector2
+
+var engine_power: float = 100
+var thrust_direction_rotation: float
+var bolt_direction: int = 1
+onready var direction_line: Line2D = $DirectionLine
+var bolt_velocity
+func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
+	bolt_velocity = get_linear_velocity()
+	bolt_global_position = get_global_position()
+	
+	if not Ref.game_manager.game_on:
+		return	
+	
+#	var vector_to_target: Vector2 = navigation_agent.get_target_location() - get_global_position()
+#	var angle_to_vector: float = get_angle_to(vector_to_target)
+#	direction_line.set_point_position(0, Vector2.ZERO)
+#	direction_line.set_point_position(1, vector_to_target)
+	
+		
+	velocity = get_linear_velocity()
+	
+#	printt("AI", AiStates.keys()[current_ai_state], velocity.length(), get_applied_force())
+	
+	var force: Vector2 = vector_to_target * 1 * engine_power * bolt_direction
+#	var force: Vector2 = Vector2.RIGHT.rotated(thrust_direction_rotation) * 1 * engine_power * bolt_direction
+
+#	set_linear_velocity(force)
+	set_applied_force(force)
+	
+#	if not engine_power == 0:
+#	else:
+#		set_applied_force(Vector2.ZERO)
+
+
+	
+var bolt_global_position: Vector2	
 func manage_ai_states(delta: float):
 	
 	# če node tarče še obstaja, ga pošlje v SEEK mode
@@ -122,9 +171,11 @@ func manage_ai_states(delta: float):
 		AiStates.RACE: 
 			# šiba po najbližji poti do tarče
 			# target = position tracker
-			navigation_agent.set_target_location(get_racing_position(ai_target))
+			var racing_line_point_position: Vector2 = get_racing_position(ai_target)
+			navigation_agent.set_target_location(racing_line_point_position)
 			engine_power = max_engine_power	
 		
+				
 		AiStates.SEEK: 
 			# išče novo tarčo, dokler je ne najde
 			# target = edge_navigation_tilemap
@@ -148,7 +199,7 @@ func manage_ai_states(delta: float):
 				last_follow_target_position = ai_target.global_position
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
-			var ray_velocity_length: float = global_position.distance_to(ai_target.global_position)
+			var ray_velocity_length: float = bolt_global_position.distance_to(ai_target.global_position)
 			target_ray.cast_to.x = ray_velocity_length
 			if ray_velocity_length < ai_urgent_stop_distance:
 				velocity *= ai_brake_factor
@@ -171,7 +222,7 @@ func manage_ai_states(delta: float):
 				navigation_agent.set_target_location(ai_target.global_position)			
 			# regulacija hitrosti
 			target_ray.look_at(ai_target.global_position)
-			var ray_velocity_length: float = global_position.distance_to(ai_target.global_position)
+			var ray_velocity_length: float = bolt_global_position.distance_to(ai_target.global_position)
 			target_ray.cast_to.x = ray_velocity_length
 			if ray_velocity_length < ai_urgent_stop_distance:
 				var brake_factor: float = 0.95
@@ -201,7 +252,7 @@ func set_ai_target(new_ai_target: Node2D):
 	if get_tree().get_nodes_in_group(valid_target_group).has(ai_target): # preverjam s strani grupe in ne tarče, ki je lahko že ne obstaja več
 		ai_target.remove_from_group(valid_target_group)
 	
-	if new_ai_target is KinematicBolt:
+	if new_ai_target is Bolt:
 		# printt("start FOLLOW from %s" % AiStates.keys()[current_ai_state], "new_target: %s" % new_ai_target)
 		target_ray.enabled = true
 		current_ai_state = AiStates.FOLLOW
@@ -223,13 +274,13 @@ func set_ai_target(new_ai_target: Node2D):
 		var target_navigation_cell_position: Vector2 = Vector2.ZERO
 		# če je bil FOLLOW je nova tarča na zadnji vidni lokaciji stare tarče, drugače je random nav cell
 		if freee:
-			target_navigation_cell_position = get_nav_cell_on_distance(global_position,150, 1000)
+			target_navigation_cell_position = get_nav_cell_on_distance(bolt_global_position, 150, 1000)
 			navigation_agent.set_target_location(target_navigation_cell_position)
 		else:
 			if current_ai_state == AiStates.FOLLOW:
 				target_navigation_cell_position = get_nav_cell_on_distance(last_follow_target_position)
 			else:
-				target_navigation_cell_position = get_nav_cell_on_distance(global_position, ai_target_min_distance, ai_target_max_distance)
+				target_navigation_cell_position = get_nav_cell_on_distance(bolt_global_position, ai_target_min_distance, ai_target_max_distance)
 			navigation_agent.set_target_location(target_navigation_cell_position)
 		current_ai_state = AiStates.SEEK
 	
@@ -286,7 +337,7 @@ func get_possible_targets():
 	for possible_target in all_possible_targets:
 		detect_ray.force_raycast_update()
 		detect_ray.look_at(possible_target.global_position)
-		var detect_ray_length: float = global_position.distance_to(possible_target.global_position)
+		var detect_ray_length: float = bolt_global_position.distance_to(possible_target.global_position)
 		detect_ray.cast_to.x = detect_ray_length
 		if detect_ray.is_colliding() and detect_ray.get_collider() == edge_navigation_tilemap:
 			targets_behind_wall.append(possible_target)
@@ -339,7 +390,7 @@ func get_nav_cell_on_distance(from_position: Vector2, min_distance: float = 0, m
 			# najprej izbere vse po razponu
 			if current_cell_distance > min_distance and current_cell_distance < max_distance:
 				if in_front:
-					var vector_to_position: Vector2 = nav_position - global_position
+					var vector_to_position: Vector2 = nav_position - bolt_global_position
 					var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
 					# če je najbolj spredaj
 					#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
@@ -403,7 +454,7 @@ func get_navigation_position_on_distance(from_position: Vector2, min_distance: f
 		# najprej izbere vse po razponu
 		if current_cell_distance > min_distance and current_cell_distance < max_distance:
 			if in_front:
-				var vector_to_position: Vector2 = nav_position - global_position
+				var vector_to_position: Vector2 = nav_position - bolt_global_position
 				var current_angle_to_bolt_deg: float = rad2deg(get_angle_to(nav_position))
 				# če je najbolj spredaj
 				#				var indi = Met.spawn_indikator(nav_position, global_rotation, Ref.node_creation_parent, false)
@@ -461,7 +512,7 @@ func _on_NavigationAgent2D_path_changed() -> void:
 	for point in navigation_agent.get_nav_path():
 		ai_navigation_line.add_point(point)
 
-
+			
 func _on_NavigationAgent2D_navigation_finished() -> void:
 	
 	print("nav reached")
@@ -490,7 +541,7 @@ signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 enum MotionStates {IDLE, FWD, REV, DISARRAY} # DIZZY, DYING glede na moč motorja
 var current_motion: int = MotionStates.IDLE
 
-var bolt_active: bool = false setget _on_bolt_active_changed # predvsem za pošiljanje signala GMju
+var bolt_active: bool = false setget _change_bolt_activity # predvsem za pošiljanje signala GMju
 var player_id: int # ga seta spawner
 
 var player_name: String # za opredelitev statistike
@@ -502,7 +553,7 @@ var axis_distance: float # določen glede na širino sprajta
 var rotation_angle: float
 var rotation_dir: float
 
-var stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
+var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 var revive_time: float = 2
 var current_drag: float # = bolt_drag
 var race_time_on_previous_lap: float = 0
@@ -530,7 +581,7 @@ var current_active_trail: Line2D
 
 # engine
 var engines_on: bool = false
-var engine_power = 0 # ob štartu je noga z gasa
+#var engine_power = 0 # ob štartu je noga z gasa
 var max_power_reached: bool = false
 var engine_particles_rear: CPUParticles2D
 var engine_particles_front_left: CPUParticles2D
@@ -553,8 +604,8 @@ onready var gun_position: Position2D = $Bolt/GunPosition
 
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
 onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/fx/EngineParticlesRear.tscn") 
-onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
 onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/fx/EngineParticlesFront.tscn") 
+onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
 onready var BoltTrail: PackedScene = preload("res://game/bolt/fx/BoltTrail.tscn")
 onready var BulletScene: PackedScene = preload("res://game/weapons/Bullet.tscn")
 onready var MisileScene: PackedScene = preload("res://game/weapons/Misile.tscn")
@@ -579,7 +630,7 @@ onready var free_rotation_multiplier: int = bolt_profile["free_rotation_multipli
 onready var bolt_drag: float = bolt_profile["drag"] # raste kvadratno s hitrostjo
 onready var side_traction: float = bolt_profile["side_traction"]
 onready var bounce_size: float = bolt_profile["bounce_size"]
-onready var mass: float = bolt_profile["mass"]
+#onready var mass: float = bolt_profile["mass"]
 onready var reload_ability: float = bolt_profile["reload_ability"]  # reload def gre v weapons
 onready var fwd_gas_usage: float = bolt_profile["fwd_gas_usage"] 
 onready var rev_gas_usage: float = bolt_profile["rev_gas_usage"] 
@@ -678,7 +729,7 @@ func on_collision():
 	
 	velocity = velocity.bounce(collision.normal) * bounce_size # gibanje pomnožimo z bounce vektorjem normale od objekta kolizije
 	# odbojni partikli
-	if velocity.length() > stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
+	if velocity.length() > pseudo_stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
 		var new_collision_particles = CollisionParticles.instance()
 		new_collision_particles.position = collision.position
 		new_collision_particles.rotation = collision.normal.angle() # rotacija partiklov glede na normalo površine 
@@ -771,10 +822,10 @@ func manage_trail():
 	
 	if velocity.length() > 0:
 		
-		current_active_trail.add_points(global_position)
+		current_active_trail.add_points(bolt_global_position)
 		current_active_trail.gradient.colors[1] = trail_pseudodecay_color
 		
-		if velocity.length() > stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
+		if velocity.length() > pseudo_stop_speed and current_active_trail.modulate.a < bolt_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem
 			var trail_grad = get_tree().create_tween()
 			trail_grad.tween_property(current_active_trail, "modulate:a", bolt_trail_alpha, 0.5)
@@ -873,7 +924,7 @@ func explode():
 	# engine_particles_front_right.visible = false
 	# spawn eksplozije
 	var new_exploding_bolt = ExplodingBolt.instance()
-	new_exploding_bolt.global_position = global_position
+	new_exploding_bolt.global_position = bolt_global_position
 	new_exploding_bolt.global_rotation = bolt_sprite.global_rotation
 	new_exploding_bolt.modulate.a = 1
 	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
@@ -929,32 +980,32 @@ func revive_bolt():
 
 func drive_in(drive_in_time: float):
 	
-	# da ugotovim, kdaj so vsi zapeljani# bolt.collision_shape.set_disabled(true) # da ga ne moti morebitna stena
-	var drive_in_finished_position: Vector2 = global_position
-	var drive_in_distance: float = 50
-	global_position -= drive_in_distance * transform.x
+#	# da ugotovim, kdaj so vsi zapeljani# bolt.collision_shape.set_disabled(true) # da ga ne moti morebitna stena
+#	var drive_in_finished_position: Vector2 = global_position
+#	var drive_in_distance: float = 50
+#	global_position -= drive_in_distance * transform.x
 	
 	modulate.a = 1
-	current_motion = MotionStates.FWD # za fx
-	start_engines()
-	
-	var intro_drive_tween = get_tree().create_tween()
-	intro_drive_tween.tween_property(self, "global_position", drive_in_finished_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+#	current_motion = MotionStates.FWD # za fx
+#	start_engines()
+#
+#	var intro_drive_tween = get_tree().create_tween()
+#	intro_drive_tween.tween_property(self, "global_position", drive_in_finished_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	
 	
 func drive_out():
 	
-	var drive_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
-	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.finish_out_position
-	var drive_out_position: Vector2 = global_position - drive_out_vector
-
-	var drive_out_time: float = 2
-	var drive_out_tween = get_tree().create_tween()
-	drive_out_tween.tween_callback(collision_shape, "set_disabled", [true])
-	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
-	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
-	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
-
+#	var drive_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
+#	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.drive_out_position
+#	var drive_out_position: Vector2 = global_position - drive_out_vector
+#
+#	var drive_out_time: float = 2
+#	var drive_out_tween = get_tree().create_tween()
+#	drive_out_tween.tween_callback(collision_shape, "set_disabled", [true])
+#	drive_out_tween.tween_property(self, "rotation_degrees", drive_out_rotation, drive_out_time/5)
+#	drive_out_tween.parallel().tween_property(self, "global_position", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
+#	drive_out_tween.tween_property(self, "modulate:a", 0, drive_out_time) # če je krožna dirka in ne gre iz ekrana
+	pass
 
 func lap_finished(level_lap_limit: int):
 	
@@ -1166,7 +1217,7 @@ func item_picked(pickable_key: int):
 # PRIVAT ------------------------------------------------------------------------------------------------
 
 
-func _on_bolt_active_changed(bolt_is_active: bool):
+func _change_bolt_activity(bolt_is_active: bool):
 	
 	bolt_active = bolt_is_active
 	# če je aktiven ga upočasnim v trenutni smeri

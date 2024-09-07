@@ -14,7 +14,6 @@ var detect_expand_size: float = 3.5 # doseg šoka
 
 onready var detect: Area2D = $DetectArea
 onready var mina_sprite: AnimatedSprite = $Sprite
-onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 

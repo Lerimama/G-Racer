@@ -8047,9 +8047,8 @@ margin_bottom = 1512.0
 theme = ExtResource( 21 )
 
 [node name="RaceStart" type="Node2D" parent="."]
-visible = false
-position = Vector2( 496, 256 )
-rotation = 1.57079
+position = Vector2( 240, 240 )
+rotation = 1.5708
 
 [node name="StartLights" parent="RaceStart" instance=ExtResource( 27 )]
 position = Vector2( -7.62939e-06, -16 )
@@ -8134,7 +8133,6 @@ material = SubResource( 621 )
 texture = SubResource( 128 )
 
 [node name="StartLine" type="Area2D" parent="RaceStart"]
-visible = false
 monitoring = false
 monitorable = false
 
@@ -8152,9 +8150,20 @@ margin_bottom = 8.0
 [node name="CameraPosition" type="Position2D" parent="RaceStart"]
 position = Vector2( 0, 48 )
 
+[node name="DriveInPosition" type="Position2D" parent="RaceStart"]
+position = Vector2( 0, 256 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Line2d" type="Line2D" parent="RaceStart/DriveInPosition"]
+position = Vector2( -72, 0 )
+points = PoolVector2Array( 0, 0, 144, 0 )
+width = 2.0
+default_color = Color( 1, 0, 1, 1 )
+
 [node name="Checkpoint" type="Area2D" parent="."]
-visible = false
-position = Vector2( 1336, 448 )
+position = Vector2( 1032, 448 )
 monitoring = false
 monitorable = false
 __meta__ = {
@@ -8274,7 +8283,6 @@ margin_bottom = 8.0
 texture = SubResource( 515 )
 
 [node name="RaceFinish" type="Node2D" parent="."]
-visible = false
 position = Vector2( 256, 240 )
 rotation = 1.57079
 __meta__ = {
@@ -8364,17 +8372,17 @@ texture = SubResource( 623 )
 [node name="CameraPosition" type="Position2D" parent="RaceFinish"]
 position = Vector2( 0, -16 )
 
-[node name="FinishOutPosition" type="Position2D" parent="RaceFinish"]
+[node name="DriveOutPosition" type="Position2D" parent="RaceFinish"]
 position = Vector2( 0, -256 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Line2d" type="Line2D" parent="RaceFinish/FinishOutPosition"]
+[node name="Line2d" type="Line2D" parent="RaceFinish/DriveOutPosition"]
 position = Vector2( -72, 0 )
 points = PoolVector2Array( 0, 0, 144, 0 )
 width = 2.0
-default_color = Color( 1, 1, 1, 1 )
+default_color = Color( 1, 0, 1, 1 )
 
 [node name="RacingTrack" type="Path2D" parent="."]
 curve = SubResource( 3 )

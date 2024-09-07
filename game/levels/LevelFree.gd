@@ -10,17 +10,23 @@ export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
-onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
-onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
-onready var finish_line: Area2D = $RaceFinish/FinishLine
-onready var race_start_node: Node2D = $RaceStart
-onready var start_lights: Node2D = $RaceStart/StartLights
-onready var race_finish_node: Node2D = $RaceFinish
 onready	var checkpoint: Area2D = $Checkpoint 
-onready var start_positions_node: Node2D = $RaceStart/StartPositions
-onready var finish_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_position
-onready var finish_out_distance: float = race_finish_node.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 onready var racing_track: Path2D = $RacingTrack
+
+# start
+onready var race_start: Node2D = $RaceStart
+onready var start_lights: Node2D = $RaceStart/StartLights
+onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
+onready var start_positions_node: Node2D = $RaceStart/StartPositions
+onready var drive_in_position: Vector2 = $RaceStart/DriveInPosition.position
+
+# finish
+onready var race_finish: Node2D = $RaceFinish
+onready var finish_line: Area2D = $RaceFinish/FinishLine
+onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
+onready var drive_out_position: Vector2 = $RaceFinish/DriveOutPosition.position
+
+# VEN tilemaps
 onready var tilemap_floor: TileMap = $_obs/Floor
 onready var tilemap_objects: TileMap = $Objects
 onready var tilemap_edge: TileMap = $_obs/Edge
@@ -37,26 +43,26 @@ func _ready() -> void:
 
 	match level_type:
 		LEVEL_TYPE.BATTLE:
-			race_start_node.hide()
-			race_finish_node.hide()
+			race_start.hide()
+			race_finish.hide()
 			checkpoint.hide()
 		LEVEL_TYPE.RACE:
-			race_start_node.show()
-			race_finish_node.show()
+			race_start.show()
+			race_finish.show()
 			checkpoint.hide()
-			race_start_node.get_node("StartLine").show()	
+			race_start.get_node("StartLine").show()	
 		LEVEL_TYPE.RACE_LAPS:
-			race_start_node.show()
-			race_finish_node.show()
+			race_start.show()
+			race_finish.show()
 			checkpoint.show()
-			race_start_node.get_node("StartLine").hide()	
+			race_start.get_node("StartLine").hide()	
 			
 	# kar je skrito, ne deluje
 	if checkpoint.visible:
 		checkpoint.monitoring = true
 	else: 
 		checkpoint.monitoring = false
-	if race_finish_node.visible:
+	if race_finish.visible:
 		finish_line.monitoring = true
 	else:
 		finish_line.monitoring = false
@@ -226,7 +232,7 @@ func set_level_navigation(): # samo unfree
 	
 	# naberem vse točke znotraj kvadrata zunanjega poligona (glede na gostoto)
 	var nav_point_density: int = 8
-	var outer_square_points: Array
+	var outer_square_points: Array = []
 	var x_count: int = round(nav_limits_square.size.x / nav_point_density)
 	var y_count: int = round(nav_limits_square.size.y / nav_point_density)
 	for x in x_count:
@@ -235,7 +241,7 @@ func set_level_navigation(): # samo unfree
 			current_point += nav_limits_square.position # adaptiram za pozicijo nodeta
 			outer_square_points.append(current_point)
 	# naberem vse točke glavnega poligona
-	var navigation_shape_nav_points: Array
+	var navigation_shape_nav_points: Array = []
 	for nav_point in outer_square_points:
 		if Geometry.is_point_in_polygon(nav_point, outer_polygon):
 			navigation_shape_nav_points.append(nav_point)

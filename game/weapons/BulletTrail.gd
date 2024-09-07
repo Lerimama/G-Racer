@@ -6,7 +6,7 @@ var max_points: int = 70
 var remove_point_interval: float = 0.005 # faktor izginjanja ... manjši pomeni, da bo hitreje ... uravnoteže s številom pik
 var max_width: float
 
-onready var decay_tween = $Decay
+onready var decay_tween = $DecayTween
 
 
 func _ready() -> void:

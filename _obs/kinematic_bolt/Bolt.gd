@@ -465,7 +465,7 @@ func drive_in(drive_in_time: float):
 func drive_out():
 	
 	var drive_out_rotation = Ref.current_level.race_start_node.get_rotation_degrees() - 90
-	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.finish_out_position
+	var drive_out_vector: Vector2 = Ref.current_level.race_start_node.global_position - Ref.current_level.drive_out_position
 	var drive_out_position: Vector2 = global_position - drive_out_vector
 
 	var drive_out_time: float = 2

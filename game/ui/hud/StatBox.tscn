@@ -80,7 +80,6 @@ margin_top = 7.0
 margin_right = 906.0
 margin_bottom = 64.0
 size_flags_vertical = 8
-stat_type = 2
 icon_texture = ExtResource( 4 )
 show_icons = true
 
@@ -89,7 +88,6 @@ margin_top = 63.0
 margin_right = 906.0
 margin_bottom = 120.0
 alignment = 2
-stat_type = 2
 icon_texture = ExtResource( 4 )
 show_icons = true
 
@@ -118,7 +116,6 @@ margin_top = 119.0
 margin_right = 906.0
 margin_bottom = 176.0
 alignment = 2
-stat_type = 2
 icon_texture = ExtResource( 3 )
 show_icons = true
 
@@ -179,7 +176,6 @@ margin_top = 567.0
 margin_right = 906.0
 margin_bottom = 624.0
 alignment = 2
-stat_type = 1
 label_name = "BEST LAP TIME"
 show_time = true
 
@@ -188,7 +184,6 @@ margin_top = 623.0
 margin_right = 906.0
 margin_bottom = 680.0
 alignment = 2
-stat_type = 1
 label_name = "RACE TIME"
 show_time = true
 

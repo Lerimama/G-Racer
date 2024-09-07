@@ -186,9 +186,8 @@ func game_intro():
 #	yield(get_tree().create_timer(Set.get_it_time),"timeout")
 	
 	# bolts drive-in
-	var drive_in_time: float = 2
 	for bolt in bolts_in_game:
-		bolt.drive_in(drive_in_time)
+		bolt.drive_in()
 		
 #	yield(get_tree().create_timer(Set.get_it_time),"timeout")
 
@@ -203,7 +202,7 @@ func start_game():
 	
 	# start
 	for bolt in bolts_in_game:
-		bolt.bolt_active = true
+		#		bolt.bolt_active = true
 		if bolt.is_in_group(Ref.group_ai):
 			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 				pass
@@ -490,12 +489,13 @@ func spawn_level():
 	
 func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	
-	var NewBoltInstance: PackedScene = Pro.player_profiles[spawned_bolt_id]["bolt_scene"]
+	var bolt_type: int = Pro.player_profiles[spawned_bolt_id]["bolt_type"]
+	var NewBoltInstance: PackedScene = Pro.bolt_profiles[bolt_type]["bolt_scene"]
 	
 	var new_bolt = NewBoltInstance.instance()
 	new_bolt.player_id = spawned_bolt_id
 	new_bolt.modulate.a = 0 # za intro
-	new_bolt.rotation_degrees = Ref.current_level.race_start_node.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_bolt.rotation_degrees = Ref.current_level.race_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 	Ref.node_creation_parent.add_child(new_bolt)
 

@@ -4,8 +4,8 @@ extends Control
 signal sudden_death_activated # pošlje se v hud, ki javi game managerju
 signal gametime_is_up # pošlje se v hud, ki javi game managerju
 
-enum TimerStates {COUNTING, STOPPED, PAUSED}
-var current_timer_state: int = TimerStates.STOPPED
+enum TIMER_STATE {COUNTING, STOPPED, PAUSED}
+var current_timer_state: int = TIMER_STATE.STOPPED
 
 var game_time: float # čas igre v sekundah z decimalkami
 var game_time_hunds: int # čas igre v zaokroženih stotinkah
@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	
-	if current_timer_state == TimerStates.COUNTING:
+	if current_timer_state == TIMER_STATE.COUNTING:
 		game_time += delta
 		game_time_hunds = round(game_time * 100)
 		
@@ -100,20 +100,20 @@ func start_timer():
 		stopwatch_mode = true
 		
 	reset_timer()
-	current_timer_state = TimerStates.COUNTING
+	current_timer_state = TIMER_STATE.COUNTING
 
 
 func pause_timer():
 	
-	current_timer_state = TimerStates.PAUSED
+	current_timer_state = TIMER_STATE.PAUSED
 	
 
 func unpause_timer():
 	
-	current_timer_state = TimerStates.COUNTING
+	current_timer_state = TIMER_STATE.COUNTING
 	
 		
 func stop_timer():
 	
-	current_timer_state = TimerStates.STOPPED
+	current_timer_state = TIMER_STATE.STOPPED
 	modulate = Ref.color_red

@@ -18,7 +18,7 @@ var tick_lenght: float = 0.02 # za nadzor hitrosti dodajanja lastnosti na pike .
 # decay
 var lifetime: Array = [2.0, 3.0] # vsaka linija bo imela lajfatjm v tem razponu
 var max_width: Array = [130,100]
-onready var decay_tween = $Decay
+onready var decay_tween = $DecayTween
 
 
 func _ready() -> void:
@@ -71,7 +71,6 @@ func add_points(current_misile_position, at_pos: =  -1): # same arguments kot v 
 
 func _on_Decay_tween_all_completed() -> void: # OPT decay tween ne rab bit header variabla s signalom ... odstrani povsod
 	
-#	print ("KUFRI - Misile trail")
 	queue_free()
 
 

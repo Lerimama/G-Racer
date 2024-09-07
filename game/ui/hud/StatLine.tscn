@@ -169,3 +169,8 @@ texture = SubResource( 148 )
 expand = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="BlinkTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="BlinkTimer" to="." method="_on_BlinkTimer_timeout"]
