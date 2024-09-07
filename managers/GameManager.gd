@@ -428,7 +428,6 @@ func get_bolt_pull_position(bolt_to_pull: Node2D):
 		current_pull_positions.append(navigation_position_as_pull_position) # OBS trenutno ne rabim
 		
 		return navigation_position_as_pull_position
-#		return camera_leader.position - Vector2.ONE * 100 # _temp
 
 				
 func bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
@@ -498,23 +497,15 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	new_bolt.rotation_degrees = Ref.current_level.race_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 	Ref.node_creation_parent.add_child(new_bolt)
-
+	
+	# setup
+	if Pro.player_profiles[spawned_bolt_id]["controller_type"] == Pro.CONTROLLER_TYPE.AI:
+		new_bolt.bolt_controller.level_navigation_positions = navigation_positions.duplicate()
 	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 		new_bolt.bolt_position_tracker = Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
-	
-	# signali
 	new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
-#	new_bolt.get_node("AIController").level_navigation_positions = navigation_positions # RFK
-
-#	if new_bolt.is_in_group(Ref.group_humans):
-#		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
-#	if new_bolt.is_in_group(Ref.group_ai):
-#		new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
-#	if new_bolt.has_node("AIController"):
-#		printt("AI", new_bolt.get_node("AIController"), navigation_positions.size())
 	emit_signal("bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
 	
-
 
 func start_spawning_pickables():
 	
@@ -556,12 +547,6 @@ func _on_level_is_set(tilemap_navigation_cells_positions: Array):
 	Ref.current_camera.position = Ref.current_level.start_camera_position_node.global_position
 	Ref.current_camera.set_camera_limits()
 	
-	# debug ... indi
-#	for pos in navigation_positions:
-#		Met.spawn_indikator(pos, 0, Ref.node_creation_parent)
-
-# SIGNALI ----------------------------------------------------------------------------------------------------
-
 
 func _on_body_exited_playing_field(body: Node) -> void:
 	

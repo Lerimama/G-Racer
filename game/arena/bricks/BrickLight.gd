@@ -35,14 +35,17 @@ func light_reached(bolt: Node2D):
 		modulate = light_on_color
 		bolt.update_bolt_points(reward_points)
 
+
 func _on_DetectArea_body_entered(body: Node) -> void:
 	
-	if body.is_in_group(Ref.group_bolts):
-		bolts_in_light_area.append(body) # OPT zakaj to rabm?
-
+	light_reached(body)
+#	if body.is_in_group(Ref.group_bolts):
+#		bolts_in_light_area.append(body)
+	
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
-	if bolts_in_light_area.has(body):
-		bolts_in_light_area.erase(body)
-		light_reached(body)
+#	if bolts_in_light_area.has(body):
+#		bolts_in_light_area.erase(body)
+#		light_reached(body)
+	pass

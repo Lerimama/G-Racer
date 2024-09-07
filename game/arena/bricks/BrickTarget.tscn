@@ -9,7 +9,7 @@
 [sub_resource type="PhysicsMaterial" id=14]
 
 [sub_resource type="RectangleShape2D" id=26]
-extents = Vector2( 4, 4 )
+extents = Vector2( 8, 8 )
 
 [sub_resource type="Animation" id=24]
 length = 0.001
@@ -99,7 +99,7 @@ gradient = SubResource( 8 )
 [sub_resource type="ParticlesMaterial" id=23]
 lifetime_randomness = 1.0
 emission_shape = 2
-emission_box_extents = Vector3( 3, 3, 0 )
+emission_box_extents = Vector3( 14, 14, 0 )
 flag_disable_z = true
 gravity = Vector3( 0, 0, 0 )
 orbit_velocity = 0.0
@@ -120,9 +120,11 @@ __meta__ = {
 }
 
 [node name="BrickShadow" parent="." instance=ExtResource( 2 )]
+scale = Vector2( 2, 2 )
 casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
 texture = ExtResource( 3 )
 region_enabled = true
 region_rect = Rect2( 32, 8, 8, 8 )
@@ -137,7 +139,7 @@ anims/outro = SubResource( 19 )
 [node name="ExplodeParticles" type="Particles2D" parent="."]
 modulate = Color( 1, 1, 1, 0.916667 )
 emitting = false
-amount = 32
+amount = 40
 one_shot = true
 speed_scale = 4.0
 explosiveness = 0.6

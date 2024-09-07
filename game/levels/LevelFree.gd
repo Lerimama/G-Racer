@@ -12,6 +12,10 @@ var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme pote
 
 onready	var checkpoint: Area2D = $Checkpoint 
 onready var racing_track: Path2D = $RacingTrack
+onready var navigation_instance: NavigationPolygonInstance = $NavigationPolygonInstance
+onready var tilemap_objects: TileMap = $Objects
+onready var tilemap_edge: TileMap = $Edge
+onready var level_limits_rect: Panel = $LevelLimits
 
 # start
 onready var race_start: Node2D = $RaceStart
@@ -26,13 +30,7 @@ onready var finish_line: Area2D = $RaceFinish/FinishLine
 onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
 onready var drive_out_position: Vector2 = $RaceFinish/DriveOutPosition.position
 
-# VEN tilemaps
-onready var tilemap_floor: TileMap = $_obs/Floor
-onready var tilemap_objects: TileMap = $Objects
-onready var tilemap_edge: TileMap = $_obs/Edge
-onready var camera_limits_rect: Panel = $CameraLimits
-	
-	
+
 func _ready() -> void:
 	printt("LEVEL")
 	
@@ -67,44 +65,11 @@ func _ready() -> void:
 	else:
 		finish_line.monitoring = false
 		
-	set_level_floor() # luknje
-	set_level_objects() # elementi
-
+	set_level_objects()
 	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
-		
 	resize_to_level_size()
 	
 	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
-	
-	
-func set_level_floor():
-	
-	var area_tile_offset: Vector2 = Vector2(4,4)
-	
-	for cell in tilemap_floor.get_used_cells():
-		
-		var cell_index = tilemap_floor.get_cellv(cell)
-		
-		var cell_local_position = tilemap_floor.map_to_world(cell)
-		var cell_global_position = tilemap_floor.to_global(cell_local_position)	
-		
-		var area_key: int = -1
-		match cell_index:
-			1:
-				area_key = Pro.LEVEL_AREA.AREA_NITRO
-			2:
-				area_key = Pro.LEVEL_AREA.AREA_GRAVEL
-			3:
-				area_key = Pro.LEVEL_AREA.AREA_HOLE
-			4:
-				area_key = Pro.LEVEL_AREA.AREA_TRACKING
-
-		if area_key > -1: # preskok celic, ki imajo druge id-je
-			var scene_to_spawn: PackedScene = Pro.level_areas_profiles[area_key]["area_scene"]	
-			var new_area_scene = scene_to_spawn.instance()
-			new_area_scene.position = cell_global_position + area_tile_offset
-			new_area_scene.level_area_key = area_key
-			add_child(new_area_scene)
 	
 
 func set_level_objects():
@@ -213,7 +178,7 @@ func set_pickables():
 			spawn_pickable(cell_global_position, "pickable_name_as_key", pickable_key)
 		
 			
-func set_level_navigation(): # samo unfree 
+func set_level_navigation():
 
 	var navigation_polygon: NavigationPolygon = $NavigationPolygonInstance.navpoly
 	var outer_polygon: PoolVector2Array = navigation_polygon.get_outline(0)
@@ -252,12 +217,12 @@ func set_level_navigation(): # samo unfree
 			for nav_point in outer_square_points:
 				if Geometry.is_point_in_polygon(nav_point, current_poly):
 					navigation_shape_nav_points.erase(nav_point)
-	# debug ... indi
+#	# debug ... indi
 #	for p in navigation_shape_nav_points:
 #		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
-		
+#
 	navigation_cells_positions = navigation_shape_nav_points.duplicate()
-	printt("level nav cells size", navigation_cells_positions.size(), outer_polygon)
+	#	printt("level nav cells size", navigation_cells_positions.size(), outer_polygon)
 
 		
 # UTILITI ---------------------------------------------------------------------------------------------------------------------------------------
@@ -276,26 +241,16 @@ func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, picka
 
 func resize_to_level_size():
 	
-	# dobim velikost levela (floor tilemapa)
-	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
-	var last_floor_cell: Vector2
-	var floor_rect_position: Vector2
-	var floor_rect_size: Vector2
-	if not tilemap_floor.get_used_cells().empty():
-		last_floor_cell = tilemap_floor.get_used_cells().pop_back()
-		floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
-		floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
-	
 	# naberem rektangle za risajzat
 	var nodes_to_resize: Array = tilemap_edge.get_children()
 	nodes_to_resize.append_array($Background.get_children())
 	
 	# resize and set
 	for node in nodes_to_resize:
-		node.rect_position = floor_rect_position
-		node.rect_size = floor_rect_size
+		node.rect_position = level_limits_rect.rect_position
+		node.rect_size = level_limits_rect.rect_size
 		if node.material:
-			node.material.set_shader_param("node_size", floor_rect_size)
+			node.material.set_shader_param("node_size", level_limits_rect.rect_size)
 
 	
 func get_tilemap_cells(tilemap: TileMap):

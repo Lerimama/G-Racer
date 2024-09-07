@@ -48,12 +48,12 @@ func set_camera_limits():
 	var corner_BR: float
 	var cell_size_x = Ref.current_level.tilemap_edge.cell_size.x
 	
-	var camera_limits_rectangle: Control = Ref.current_level.camera_limits_rect
-	var camera_limits_rectangle_position: Vector2 = camera_limits_rectangle.rect_position
-	corner_TL = camera_limits_rectangle.rect_position.x
-	corner_TR = camera_limits_rectangle.rect_size.x
-	corner_BL = camera_limits_rectangle.rect_position.y
-	corner_BR = camera_limits_rectangle.rect_size.y
+	var limits_rectangle: Control = Ref.current_level.level_limits_rect
+	var limits_rectangle_position: Vector2 = limits_rectangle.rect_position
+	corner_TL = limits_rectangle.rect_position.x
+	corner_TR = limits_rectangle.rect_size.x
+	corner_BL = limits_rectangle.rect_position.y
+	corner_BR = limits_rectangle.rect_size.y
 	
 	if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
 		return	

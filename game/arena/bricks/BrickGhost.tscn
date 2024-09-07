@@ -8,6 +8,9 @@
 
 [sub_resource type="PhysicsMaterial" id=7]
 
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 8, 8 )
+
 [sub_resource type="Gradient" id=8]
 offsets = PoolRealArray( 0, 0.714932, 1 )
 colors = PoolColorArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
@@ -18,22 +21,32 @@ gradient = SubResource( 8 )
 [sub_resource type="ParticlesMaterial" id=12]
 lifetime_randomness = 1.0
 emission_shape = 2
-emission_box_extents = Vector3( 3, 3, 0 )
+emission_box_extents = Vector3( 6, 6, 0 )
 flag_disable_z = true
 gravity = Vector3( 0, 0, 0 )
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 radial_accel = -30.14
+scale = 2.0
 color_ramp = SubResource( 9 )
 
-[sub_resource type="RectangleShape2D" id=6]
-extents = Vector2( 4, 4 )
-
-[sub_resource type="OccluderPolygon2D" id=16]
-polygon = PoolVector2Array( -3, 3, -3, -3, 3, -3, 3, 3 )
-
 [sub_resource type="RectangleShape2D" id=13]
-extents = Vector2( 5, 5 )
+extents = Vector2( 8, 8 )
+
+[sub_resource type="Animation" id=16]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 2, 2 ) ]
+}
 
 [sub_resource type="Animation" id=14]
 tracks/0/type = "value"
@@ -70,7 +83,7 @@ tracks/2/keys = {
 "times": PoolRealArray( 0, 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 1, 1 ), Vector2( 1, 1 ), Vector2( 0.7, 0.7 ) ]
+"values": [ Vector2( 2, 2 ), Vector2( 1, 1 ), Vector2( 0.7, 0.7 ) ]
 }
 tracks/3/type = "value"
 tracks/3/path = NodePath("../part_Points:emitting")
@@ -98,29 +111,28 @@ __meta__ = {
 }
 
 [node name="BrickShadow" parent="." instance=ExtResource( 1 )]
+scale = Vector2( 2, 2 )
 casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+scale = Vector2( 2, 2 )
 texture = ExtResource( 4 )
 region_enabled = true
 region_rect = Rect2( 40, 8, 8, 8 )
-
-[node name="part_Points" type="Particles2D" parent="."]
-emitting = false
-amount = 200
-lifetime = 2.0
-one_shot = true
-explosiveness = 0.82
-randomness = 1.0
-process_material = SubResource( 12 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 6 )
 disabled = true
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
-visible = false
-occluder = SubResource( 16 )
+[node name="part_Points" type="Particles2D" parent="."]
+emitting = false
+amount = 100
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.82
+randomness = 1.0
+process_material = SubResource( 12 )
 
 [node name="DetectArea" type="Area2D" parent="."]
 
@@ -129,6 +141,7 @@ shape = SubResource( 13 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../DetectArea")
+anims/RESET = SubResource( 16 )
 anims/outro = SubResource( 14 )
 
 [node name="Sounds" type="Node" parent="."]

@@ -23,18 +23,24 @@ curve = SubResource( 18 )
 
 [sub_resource type="ParticlesMaterial" id=110]
 lifetime_randomness = 0.9
+emission_shape = 5
+emission_ring_radius = 6.0
+emission_ring_inner_radius = 0.0
+emission_ring_height = 1.0
+emission_ring_axis = Vector3( 0, 0, 1 )
 flag_align_y = true
 flag_rotate_y = true
 flag_disable_z = true
 direction = Vector3( 1, 1, 0 )
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
-initial_velocity = 70.0
-initial_velocity_random = 0.46
+initial_velocity = 100.0
+initial_velocity_random = 0.32
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 damping = 30.83
 damping_random = 0.61
+scale = 2.0
 scale_random = 1.0
 scale_curve = SubResource( 10 )
 color_ramp = SubResource( 8 )
@@ -74,14 +80,14 @@ one_shot = true
 explosiveness = 0.63
 randomness = 1.0
 emission_shape = 2
-emission_rect_extents = Vector2( 7, 7 )
+emission_rect_extents = Vector2( 14, 14 )
 direction = Vector2( 0, 0 )
 spread = 180.0
 gravity = Vector2( 0, 0 )
-initial_velocity = 67.13
+initial_velocity = 80.0
 initial_velocity_random = 0.53
 damping = 44.79
-scale_amount = 1.3
+scale_amount = 2.0
 color_ramp = SubResource( 1 )
 
 [node name="ExplosionParticles" type="Particles2D" parent="."]
@@ -96,6 +102,8 @@ process_material = SubResource( 110 )
 texture = ExtResource( 3 )
 
 [node name="ExplosionBlast" type="AnimatedSprite" parent="."]
+scale = Vector2( 2, 2 )
 frames = SubResource( 113 )
+frame = 3
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

@@ -9,7 +9,7 @@ var current_motion: int = MOTION.IDLE setget _on_motion_change
 
 var bolt_active: bool = false setget _on_bolt_activity_change # predvsem za pošiljanje signala GMju	
 
-# player profil
+# player
 var player_id: int # ga seta spawner
 var player_name: String # za opredelitev statistike
 var bolt_color: Color = Color.red
@@ -17,11 +17,11 @@ var bolt_sprite_texture: Texture
 onready var player_profile: Dictionary = Pro.player_profiles[player_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
 
-# player stats
+# stats
 onready var player_stats: Dictionary = Pro.default_player_stats.duplicate()
 onready var max_energy: float = player_stats["energy"] # zato, da se lahko resetira
 
-# bolt settings
+# bolt
 onready var bolt_profile: Dictionary = Pro.bolt_profiles[bolt_type].duplicate()
 onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
@@ -32,6 +32,9 @@ onready var gas_usage: float = bolt_profile["gas_usage"]
 onready var bolt_sprite: Sprite = $BoltSprite
 onready var trail_position: Position2D = $TrailPosition
 onready var gun_position: Position2D = $GunPosition
+onready var collision_shape: CollisionShape2D = $CollisionShape2D
+onready var revive_timer: Timer = $ReviveTimer
+onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/HUMAN
 	
 # scene
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
@@ -41,7 +44,7 @@ onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBo
 
 # driving
 var rotation_dir = 0
-var bolt_direction = 0 # rikverc ali naprej # VEN
+var bolt_fwd_direction: int = 0 # -1 = rikverc, +1 = naprej
 var bolt_global_rotation: float # _IF računa glede na gibanje telesa
 var bolt_global_position: Vector2 # _IF računa glede na gibanje telesa
 var bolt_velocity: Vector2 = Vector2.ZERO # _IF računa glede na gibanje telesa
@@ -58,10 +61,11 @@ var revive_time: float = 2
 var bullet_reloaded: bool = true
 var misile_reloaded: bool = true
 var mina_reloaded: bool = true
-var mina_released: bool # če je že odvržen v trenutni ožini
+var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 onready var reload_ability: float = bolt_profile["reload_ability"] # reload def gre v weapons
 
 # engines
+var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
 var engine_power = 0
 var engine_rotation_speed: float = 0.03
 onready var max_engine_power: float = bolt_profile["max_engine_power"]
@@ -74,19 +78,16 @@ onready var front_engine: Node2D = $DriveTrain/FrontEngine
 onready var front_mass: RigidBody2D = $DriveTrain/FrontEngine/RigidBody2D
 onready var rear_engine: Node2D = $DriveTrain/RearEngine
 onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RigidBody2D
-
-# neu
-onready var direction_line: Line2D = $DirectionLine
-onready var collision_shape: CollisionShape2D = $CollisionShape2D
-var is_shielded: bool = false # VEN
-onready var revive_timer: Timer = $ReviveTimer
 var bolt_body_state: Physics2DDirectBodyState
-# fx
+
+# trail
 var bolt_trail_alpha = 0.05
 var trail_pseudodecay_color = Color.white
 var active_trail: Line2D
-var engines_on: bool = false
-onready var bolt_controller: Node = $BoltController
+
+# debug linija
+onready var direction_line: Line2D = $DirectionLine
+
 
 	
 func _ready() -> void:
@@ -137,7 +138,7 @@ func _process(delta: float) -> void:
 			else:
 				current_engines_rotation += rotation_dir * engine_rotation_speed
 				current_engines_rotation = clamp(current_engines_rotation, - deg2rad(max_engine_rotation_deg), deg2rad(max_engine_rotation_deg))
-		for thrust in get_engines_thrusts():
+		for thrust in get_engines_thrusts(current_engines):
 			thrust.rotation = current_engines_rotation
 		# globalna rotacija sile
 		#	force_rotation = current_engines_rotation + get_global_rotation() # RFK da ne striže prestavljeno v kontrolerja
@@ -172,7 +173,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 				idle_rotation_speed = 0	
 		else:
 			linear_damp = bolt_profile["lin_damp_driving"]
-			var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * 100 * engine_power * bolt_direction
+			var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * 100 * engine_power * bolt_fwd_direction
 			if current_motion == MOTION.TILT:
 				set_applied_force(force)
 			else:
@@ -193,9 +194,9 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 func shoot(weapon_index: int) -> void:
 
-	weapon_index = 2 # debug
+	weapon_index = 1 # debug
 	
-	match weapon_index: # enum zaporedje # OPT z enum keys
+	match weapon_index: # enum zaporedje # OPT wepapons z enums
 		0: # "bullet":
 			if bullet_reloaded:
 				if player_stats["bullet_count"] <= 0:
@@ -238,7 +239,7 @@ func shoot(weapon_index: int) -> void:
 						
 				var MinaScene: PackedScene = Pro.weapon_profiles[Pro.WEAPON.MINA]["scene"]
 				var new_mina = MinaScene.instance()
-				new_mina.global_position = gun_position.global_position # _temp pozicija mine
+				new_mina.global_position = gun_position.global_position # OPT pozicija mine
 				new_mina.global_rotation = bolt_global_rotation
 				new_mina.spawned_by = self # ime avtorja izstrelka
 				new_mina.spawned_by_color = bolt_color
@@ -278,7 +279,7 @@ func on_hit(hit_by: Node):
 		#		var global_hit_position: Vector2 = to_global(hit_position)
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
-		apply_impulse(local_hit_position, hit_by_inertia) # OPT impuls offset ne deluej
+		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse offset ne deluje?
 		#		apply_impulse( to_global(Vector2.RIGHT * bolt_sprite.texture.get_size().x/2), hit_by_inertia) # debug
 		Met.spawn_indikator(bolt_body_state.get_contact_collider_position(0), rotation, self, true) # debug ... indi
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
@@ -320,8 +321,6 @@ func explode():
 	bolt_controller.set_process_input(false)		
 	set_physics_process(false)
 	# resetira na revive
-	#	set_applied_force(Vector2.ZERO)	
-	#	set_applied_torque(0)	
 	
 	# spawn eksplozije
 	var new_exploding_bolt = ExplodingBolt.instance()
@@ -341,10 +340,8 @@ func revive_bolt():
 	# reset pred prikazom
 	collision_shape.set_deferred("disabled", false)
 	#	collision_shape.disabled = false
-	set_applied_force(Vector2.ZERO)
-	set_applied_torque(0)
-	rotation_dir = 0
-	engine_power = 0
+	
+	reset_bolt()
 	
 	# set idle
 	bolt_controller.set_process_input(true)		
@@ -361,10 +358,10 @@ func revive_bolt():
 # UTILITY ----------------------------------------------------------------------------
 	
 	
-func get_engines_thrusts(): # VEN ne kompliciraj
+func get_engines_thrusts(engines: Array):
 
-	var current_thrusts: Array = []# temp
-	for engine in current_engines:
+	var current_thrusts: Array = [] # temp
+	for engine in engines:
 		for child in engine.get_children():
 			if child.name.find("Thrust") > -1:
 				current_thrusts.append(child)	
@@ -579,16 +576,16 @@ func drive_out():
 	var angle_to_vector: float = get_angle_to(drive_out_position)
 	var drive_out_tween = get_tree().create_tween()
 	# obrnem ga proti cilju in zapeljem do linije
-	#	drive_out_tween.tween_property(bolt_body_state, "transform:rotated", angle_to_vector, drive_out_time/5) # OPT a finish line rotacija dela?
+	#	drive_out_tween.tween_property(bolt_body_state, "transform:rotated", angle_to_vector, drive_out_time/5) # OPT a finish line rotacija dela
 	drive_out_tween.tween_property(bolt_body_state, "transform:origin", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
 	yield(drive_out_tween, "finished")
 
 	stop_engines()
 	modulate.a = 0
+	reset_bolt()
 	#	set_sleeping(true)
 	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
 	#	set_applied_force(Vector2.ZERO)
-	#	set_applied_torque(0)
 	#	set_physics_process(false)
 	#	current_motion = MOTION.IDLE
 	
@@ -635,7 +632,7 @@ func item_picked(pickable_key: int):
 			item_picked(random_pickable_key) # pick selected
 
 		
-func spawn_new_trail(): # OPT trail kodo v engine kodo
+func spawn_new_trail():
 	
 	var BoltTrail: PackedScene = preload("res://game/bolt/fx/BoltTrail.tscn")
 	var new_bolt_trail: Line2D = BoltTrail.instance()
@@ -680,6 +677,22 @@ func spawn_bolt_controller():
 	call_deferred("move_child", bolt_controller, 0)
 	
 	
+func reset_bolt():
+	
+	current_motion = MOTION.IDLE
+	set_applied_force(Vector2.ZERO)
+	set_applied_torque(0)
+	front_mass.set_applied_force(Vector2.ZERO)
+	front_mass.set_applied_torque(0)
+	rear_mass.set_applied_force(Vector2.ZERO)
+	rear_mass.set_applied_torque(0)
+	rotation_dir = 0
+	engine_power = 0
+	for thrust in get_engines_thrusts([front_engine, rear_engine]):
+		thrust.rotation = 0
+		thrust.stop_fx()	
+		
+			
 # PRIVAT ------------------------------------------------------------------------------------------------
 
 
@@ -708,40 +721,39 @@ func _on_motion_change(new_motion: int):
 		return
 	
 	# resetiram trenutni engine
-	if current_mass:
-		current_mass.set_applied_force(Vector2.ZERO)
-	idle_rotation_speed = 0 # OPT al tukej al _IF?
-	set_applied_torque(0)  # OPT al tukej al _IF
-	# thrust
-	
-	for thrust in get_engines_thrusts():
-		thrust.rotation = 0
-		thrust.stop_fx()	
+	reset_bolt() # OPT al tukej al _IF?
+	#	if current_mass:
+	#		current_mass.set_applied_force(Vector2.ZERO)
+	#	idle_rotation_speed = 0
+	#	set_applied_torque(0)
+	#	for thrust in get_engines_thrusts(current_engines):
+	#		thrust.rotation = 0
+	#		thrust.stop_fx()	
 		
 	# nastavim nov engine		
 	current_motion = new_motion
 	match current_motion:
 		MOTION.FWD:
 			current_mass = front_mass
-			bolt_direction = 1
+			bolt_fwd_direction = 1
 			current_engines = [front_engine]
 #			for child in current_engines[0].get_children():
 #				if child.name.find("Thrust") > -1:
 #					current_thrusts.append(child)
-			for thrust in get_engines_thrusts():
+			for thrust in get_engines_thrusts(current_engines):
 				thrust.start_fx()
 		MOTION.REV:
 			current_engines = [rear_engine]
 			current_mass = rear_mass
-			bolt_direction = -1
+			bolt_fwd_direction = -1
 #			current_engines = [$DriveTrain/RearEngine/ThrustL, $DriveTrain/RearEngine/ThrustR]
 #			for child in current_engines[0].get_children():
 #				if child.name.find("Thrust") > -1:
 #					current_thrusts.append(child)
-			for thrust in get_engines_thrusts():
+			for thrust in get_engines_thrusts(current_engines):
 				thrust.start_fx(true)
 		MOTION.TILT:
-			bolt_direction = 1
+			bolt_fwd_direction = 1
 			current_engines = [front_engine, rear_engine]
 #			for thrust in get_engines_thrusts([rear_engine]):
 #			for engine in current_engines:
@@ -750,7 +762,7 @@ func _on_motion_change(new_motion: int):
 #						current_thrusts.append(child)
 ##			current_engines = [$DriveTrain/FrontEngine/ThrustL, $DriveTrain/FrontEngine/ThrustR, $DriveTrain/RearEngine/ThrustL, $DriveTrain/RearEngine/ThrustR]
 		MOTION.IDLE:
-			bolt_direction = 0
+			bolt_fwd_direction = 0
 			current_mass = null
 
 

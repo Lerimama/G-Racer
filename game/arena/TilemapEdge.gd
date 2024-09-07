@@ -6,10 +6,6 @@ var light_color: Color = Color.white # za barvanje debrisa
 onready var DebrisParticles: PackedScene = preload("res://game/arena/EdgeDebrisParticles.tscn")	
 onready var ExplodingEdge: PackedScene = preload("res://game/arena/ExplodingEdge.tscn")	
 
-func _ready() -> void:
-	#	add_to_group(Ref.group_arena)
-	pass
-
 
 func on_hit (collision_object):
 	# tilemap prevede pozicijo na najbližjo pozicijo tileta v tilempu  

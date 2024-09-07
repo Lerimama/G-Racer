@@ -7,44 +7,46 @@
 [ext_resource path="res://assets/sounds/_zaloga/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 2.5, 0.5 )
+extents = Vector2( 6, 3 )
 
 [sub_resource type="CircleShape2D" id=5]
-radius = 60.5331
+radius = 144.0
 
 [node name="Misile" type="KinematicBody2D"]
 script = ExtResource( 1 )
 
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( -6, -3 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 2 )
+centered = false
+
 [node name="MisileCollision" type="CollisionShape2D" parent="."]
-position = Vector2( -1.5, 0 )
 shape = SubResource( 1 )
 disabled = true
 
 [node name="HommingArea" type="Area2D" parent="."]
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HommingArea"]
-position = Vector2( -0.5, 0 )
 shape = SubResource( 5 )
 
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -3, -1.5 )
-texture = ExtResource( 2 )
-centered = false
-
 [node name="TrailPosition" type="Position2D" parent="."]
-position = Vector2( -3, 0 )
+position = Vector2( -4, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="DropPosition" type="Position2D" parent="."]
-position = Vector2( 2, 0 )
+position = Vector2( 6, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
-position = Vector2( -11, 0 )
+position = Vector2( -9, 0 )
 enabled = true
 cast_to = Vector2( 20, 0 )
 

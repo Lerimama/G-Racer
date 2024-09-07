@@ -50,7 +50,7 @@ func set_hud(): # kliče GM
 				box.stat_gas.show()
 				box.stat_points.show()
 				box.stat_level_rank.show()
-				# _temp
+				# debug .... statistika orožja
 				box.stat_bullet.show()
 				box.stat_misile.show()
 				box.stat_mina.show()

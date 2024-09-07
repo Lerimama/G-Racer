@@ -29,11 +29,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/color-palette/utilities/FlexGridContainer.gd"
 }, {
-"base": "KinematicBody2D",
-"class": "KinematicBolt",
-"language": "GDScript",
-"path": "res://_obs/kinematic_bolt/Bolt.gd"
-}, {
 "base": "Node2D",
 "class": "Mina",
 "language": "GDScript",
@@ -209,7 +204,6 @@ _global_script_class_icons={
 "Bullet": "",
 "ColorTile": "",
 "FlexGridContainer": "res://addons/color-palette/utilities/FlexGridContainerIcon.png",
-"KinematicBolt": "",
 "Mina": "",
 "Misile": "",
 "Palette": "",

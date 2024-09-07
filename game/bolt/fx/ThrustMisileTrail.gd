@@ -69,7 +69,7 @@ func add_points(current_misile_position, at_pos: =  -1): # same arguments kot v 
 	add_point(current_misile_position, at_pos)
 
 
-func _on_Decay_tween_all_completed() -> void: # OPT decay tween ne rab bit header variabla s signalom ... odstrani povsod
+func _on_Decay_tween_all_completed() -> void:
 	
 	queue_free()
 

@@ -19,13 +19,11 @@ onready var race_finish: Node2D = $RaceFinish
 onready	var checkpoint: Area2D = $Checkpoint 
 onready var start_positions_node: Node2D = $RaceStart/StartPositions
 onready var drive_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_position
-onready var finish_out_distance: float = race_finish_node.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
+onready var finish_out_distance: float = race_finish.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 onready var racing_track: Path2D = $RacingTrack
 onready var tilemap_floor: TileMap = $Floor
 onready var tilemap_objects: TileMap = $Objects
 onready var tilemap_edge: TileMap = $Edge
-
-# neu
 onready var camera_limits_rect: ColorRect = $CameraLimits
 
 	
@@ -42,16 +40,16 @@ func _ready() -> void:
 	match level_type:
 		LEVEL_TYPE.BATTLE:
 			race_start_node.hide()
-			race_finish_node.hide()
+			race_finish.hide()
 			checkpoint.hide()
 		LEVEL_TYPE.RACE:
 			race_start_node.show()
-			race_finish_node.show()
+			race_finish.show()
 			checkpoint.hide()
 			race_start_node.get_node("StartLine").show()	
 		LEVEL_TYPE.RACE_LAPS:
 			race_start_node.show()
-			race_finish_node.show()
+			race_finish.show()
 			checkpoint.show()
 			race_start_node.get_node("StartLine").hide()	
 			
@@ -60,7 +58,7 @@ func _ready() -> void:
 		checkpoint.monitoring = true
 	else: 
 		checkpoint.monitoring = false
-	if race_finish_node.visible:
+	if race_finish.visible:
 		finish_line.monitoring = true
 	else:
 		finish_line.monitoring = false

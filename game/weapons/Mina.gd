@@ -29,7 +29,7 @@ onready var MisileExplosion = preload("res://game/weapons/MisileExplosionParticl
 
 
 func _ready() -> void:
-	print("Mina")
+	
 	add_to_group(Ref.group_mine)
 	modulate = spawned_by_color
 	

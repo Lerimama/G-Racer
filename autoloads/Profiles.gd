@@ -32,7 +32,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLT_TYPE.RIGID,
-#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P2 : {
 		"player_name": "P2",
@@ -41,7 +40,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLT_TYPE.RIGID,
-#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P3 : {
 		"player_name" : "P3",
@@ -49,7 +47,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color" : Ref.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
-#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
@@ -57,8 +54,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"player_color" : Ref.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
-#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
-#		"bolt_scene": preload("res://game/bolt/BoltHuman.tscn"),
 	},
 }
 
@@ -66,8 +61,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 var ai_profile: Dictionary = {
 	# za prepis player profila
 	"controller_type" : CONTROLLER_TYPE.AI,
-#	"bolt_scene": preload("res://game/bolt/BoltAI.tscn"),
-#	"bolt_scene": preload("res://game/bolt/rigid/TheBoltAI.tscn"),
 	# race
 	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	# battle
@@ -107,7 +100,7 @@ var bolt_profiles: Dictionary = {
 		},
 	BOLT_TYPE.RIGID: {
 		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"), # OPT premik v bolt tip
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
@@ -145,7 +138,7 @@ var weapon_profiles : Dictionary = {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 5, # 10 je max energija
 		"speed": 100,
-		"lifetime": 1.0, # domet vedno merim s časom
+		"lifetime": 3.2, # domet vedno merim s časom
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 		"scene": preload("res://game/weapons/Misile.tscn"),

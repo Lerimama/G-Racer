@@ -40,7 +40,8 @@ func _input(event: InputEvent) -> void:
 				else:		
 					controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
 			# shoot
-			#			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: # OPT kontorole selector weapon vs drift
+			#			# OPT kontorole selector weapon vs drift
+			#			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
 			#				if Input.is_action_pressed(selector_action):
 			#					controlled_bolt.bolt_hud.selected_active_weapon_index += 1
 			#			else:
@@ -48,7 +49,7 @@ func _input(event: InputEvent) -> void:
 			#					controlled_bolt.bolt_hud.selected_active_weapon_index += 1
 			if Input.is_action_just_pressed(shoot_action):
 				#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_weapon_index)
-				controlled_bolt.shoot(1) # debug
+				controlled_bolt.shoot(2) # debug ... shoot
 
 
 func _ready() -> void:

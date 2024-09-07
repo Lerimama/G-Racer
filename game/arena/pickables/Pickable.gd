@@ -13,7 +13,6 @@ onready var ai_target_rank: int = Pro.pickable_profiles[pickable_key]["ai_target
 
 onready var icon: Sprite = $Icon
 onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
-onready var animated_sprite: AnimatedSprite = $AnimatedSprite
 onready var pickable_shadow: Sprite = $PickableShadow
 
 #onready var sounds: Node = $Sounds

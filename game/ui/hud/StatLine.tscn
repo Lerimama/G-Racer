@@ -4,7 +4,7 @@
 [ext_resource path="res://common/TimeLabel.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://game/ui/hud/StatLine.gd" type="Script" id=4]
-[ext_resource path="res://_obs/StatIcons.gd" type="Script" id=5]
+[ext_resource path="res://game/ui/hud/StatIcons.gd" type="Script" id=5]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 1 )
