@@ -137,7 +137,7 @@ func set_game():
 	human_bolts_qualified = []
 	
 	# get enemies 			
-	game_settings["enemies_mode"] = true # debug
+#	game_settings["enemies_mode"] = true # debug
 	
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI player_id
@@ -525,7 +525,7 @@ func start_spawning_pickables():
 
 	# random timer reštart
 	var random_pickable_spawn_time: int = Met.get_random_member([1,2,3])
-	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout")
+	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # OPT ... uvedi node timer
 	start_spawning_pickables()
 
 	

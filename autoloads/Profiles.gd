@@ -107,6 +107,7 @@ var bolt_profiles: Dictionary = {
 		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
 		"max_engine_power": 320, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
+		"free_rotation_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
 		# fizika
 		"bounce": 0.5,
@@ -115,9 +116,10 @@ var bolt_profiles: Dictionary = {
 		"ang_damp": 8, # ... tudi regulacija driftanja # no drift je 20
 		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
 		"lin_damp_idle": 0.5, 
-		"rear_lin_damp": 5, # regulacija driftanja
+		"rear_lin_damp": 3, # regulacija driftanja
 		"max_idle_rotation_speed": 500000, # rotacija okrog osi
 		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
+		"drift_power": 20000,
 		},
 }
 

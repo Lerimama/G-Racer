@@ -102,6 +102,7 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"enemies_mode": false,
 	"easy_mode": false,
 	"full_equip_mode": true,
+	"drifting_mode": true, # drift ali tilt?
 }
 
 

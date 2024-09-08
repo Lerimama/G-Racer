@@ -60,7 +60,6 @@ script = ExtResource( 8 )
 [node name="BoltController" type="Node" parent="."]
 
 [node name="BoltSprite" type="Sprite" parent="."]
-visible = false
 material = ExtResource( 4 )
 texture = ExtResource( 3 )
 offset = Vector2( 0.381001, 0.499999 )

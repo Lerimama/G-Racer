@@ -16,6 +16,7 @@ onready var selector_action: String = controller_actions["selector_action"]
 func _input(event: InputEvent) -> void:
 	
 	if controlled_bolt.bolt_active:
+		
 		# ko ni igre ima v leru
 		if not Ref.game_manager.game_on: 
 			if Input.is_action_just_pressed(fwd_action):
@@ -25,21 +26,24 @@ func _input(event: InputEvent) -> void:
 		else:
 			# rotacija
 			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
-			# tilt
-			if Input.is_action_pressed(selector_action) and not controlled_bolt.rotation_dir == 0:
-				controlled_bolt.current_motion = controlled_bolt.MOTION.TILT
-			# pogon
-			else:	
-				# naprej
-				if Input.is_action_pressed(fwd_action):
-					controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
-				# nazaj
-				elif Input.is_action_pressed(rev_action):
-					controlled_bolt.current_motion = controlled_bolt.MOTION.REV
-				# v leru
-				else:		
-					controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
-			# shoot
+			
+			# naprej
+			if Input.is_action_pressed(fwd_action):
+				controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
+				if Input.is_action_pressed(selector_action):
+					controlled_bolt.is_drifting = true
+				else:
+					controlled_bolt.is_drifting = false
+			
+			# nazaj
+			elif Input.is_action_pressed(rev_action):
+				controlled_bolt.current_motion = controlled_bolt.MOTION.REV
+			
+			# v leru
+			else:		
+				controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
+					
+			# shooting
 			#			# OPT kontorole selector weapon vs drift
 			#			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
 			#				if Input.is_action_pressed(selector_action):
@@ -47,6 +51,7 @@ func _input(event: InputEvent) -> void:
 			#			else:
 			#				if Input.is_action_just_pressed(selector_action):
 			#					controlled_bolt.bolt_hud.selected_active_weapon_index += 1
+			
 			if Input.is_action_just_pressed(shoot_action):
 				#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_weapon_index)
 				controlled_bolt.shoot(2) # debug ... shoot

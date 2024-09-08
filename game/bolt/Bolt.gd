@@ -27,6 +27,7 @@ onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
 onready var max_idle_rotation_power: float = bolt_profile["max_idle_rotation_speed"]
 onready var gas_usage: float = bolt_profile["gas_usage"]
+onready var free_rotation_gas_usage: float = bolt_profile["free_rotation_gas_usage"]
 
 # nodes
 onready var bolt_sprite: Sprite = $BoltSprite
@@ -48,13 +49,21 @@ var bolt_fwd_direction: int = 0 # -1 = rikverc, +1 = naprej
 var bolt_global_rotation: float # _IF računa glede na gibanje telesa
 var bolt_global_position: Vector2 # _IF računa glede na gibanje telesa
 var bolt_velocity: Vector2 = Vector2.ZERO # _IF računa glede na gibanje telesa
-var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim	
-var idle_rotation_speed: float = 0
-var force_rotation: float = 0 # rotacija v smeri skupne sile motorjev ... določam v _FP (input), apliciram v _IF
 
-# racing
-var bolt_position_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju  
-var race_time_on_previous_lap: float = 0
+# engines
+var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
+var engine_power = 0
+var engine_rotation_speed: float = 0.3
+onready var max_engine_power: float = bolt_profile["max_engine_power"]
+onready var engine_hsp: float = bolt_profile["engine_hsp"] # reload def gre v weapons
+onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"] # reload def gre v weapons
+onready var front_engine: Node2D = $DriveTrain/FrontEngine
+onready var front_mass: RigidBody2D = $DriveTrain/FrontEngine/RigidBody2D
+onready var rear_engine: Node2D = $DriveTrain/RearEngine
+onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RigidBody2D
+onready var current_engine: Node2D = front_engine # sprednja ali zadnja
+var current_engines_rotation: float = 0 # wheels 
+var bolt_body_state: Physics2DDirectBodyState
 
 # battle
 var revive_time: float = 2
@@ -64,21 +73,9 @@ var mina_reloaded: bool = true
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 onready var reload_ability: float = bolt_profile["reload_ability"] # reload def gre v weapons
 
-# engines
-var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
-var engine_power = 0
-var engine_rotation_speed: float = 0.03
-onready var max_engine_power: float = bolt_profile["max_engine_power"]
-onready var engine_hsp: float = bolt_profile["engine_hsp"] # reload def gre v weapons
-onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"] # reload def gre v weapons
-var current_mass: RigidBody2D # OPT naj bo znotraj kode glede na uporabljen motor ... premik engine.gd kodo
-var current_engines_rotation: float = 0 # wheels 
-var current_engines: Array # sprednja ali zadnja
-onready var front_engine: Node2D = $DriveTrain/FrontEngine
-onready var front_mass: RigidBody2D = $DriveTrain/FrontEngine/RigidBody2D
-onready var rear_engine: Node2D = $DriveTrain/RearEngine
-onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RigidBody2D
-var bolt_body_state: Physics2DDirectBodyState
+# racing
+var bolt_position_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju  
+var race_time_on_previous_lap: float = 0
 
 # trail
 var bolt_trail_alpha = 0.05
@@ -88,6 +85,12 @@ var active_trail: Line2D
 # debug linija
 onready var direction_line: Line2D = $DirectionLine
 
+# neu
+var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim	
+var force_rotation: float = 0 # rotacija v smeri skupne sile motorjev ... določam v _FP (input), apliciram v _IF
+var is_drifting: bool = false
+onready var drift_power: float = bolt_profile["drift_power"]
+var idle_rotation_speed: float = 10000
 
 	
 func _ready() -> void:
@@ -106,7 +109,7 @@ func _ready() -> void:
 	angular_damp = bolt_profile["ang_damp"]
 	physics_material_override.friction = bolt_profile["friction"]
 	physics_material_override.bounce = bolt_profile["bounce"]
-	rear_mass.angular_damp = bolt_profile["rear_lin_damp"]
+	rear_mass.linear_damp = bolt_profile["rear_lin_damp"]
 
 	spawn_bolt_controller()
 
@@ -118,29 +121,49 @@ func _process(delta: float) -> void:
 		engine_power = 0
 		rotation_dir = 0		
 	else:		
-		# v leru
+		
+		# engine power
 		if current_motion == MOTION.IDLE:
 			engine_power = 0
-		# vozi
+			# free rotate pogon
+#			if rotation_dir == 0:
+#				for thrust in get_engines_thrusts([front_engine, rear_engine]):
+#					thrust.rotation = 0
+#					thrust.stop_fx()
+#			else:
+#				for thrust in get_engines_thrusts([front_engine]):
+#					thrust.rotation = deg2rad(90) * rotation_dir
+#					thrust.start_fx()
+#				for thrust in get_engines_thrusts([rear_engine]):
+#					thrust.rotation = deg2rad(90) * - rotation_dir
+#					thrust.start_fx()
+#				update_gas(free_rotation_gas_usage)
 		else:
 			engine_power += engine_hsp
-			# fast start
 			if Ref.game_manager.fast_start_window: 
 				engine_power += power_burst_hsp
 			engine_power = clamp(engine_power, 0, max_engine_power)
 			update_gas(gas_usage)
-		# lokalna rotacija motorja
-		if rotation_dir == 0:
-			current_engines_rotation = lerp(current_engines_rotation, 0, engine_rotation_speed * 10) # podobno hitro kot obračanje
-		else:
-			if current_motion == MOTION.TILT: # tiltam v vse smeri
-				current_engines_rotation = deg2rad(90) * rotation_dir
+		
+			# engine rotation
+			if rotation_dir == 0:
+				current_engines_rotation = lerp(current_engines_rotation, 0, engine_rotation_speed)
 			else:
-				current_engines_rotation += rotation_dir * engine_rotation_speed
-				current_engines_rotation = clamp(current_engines_rotation, - deg2rad(max_engine_rotation_deg), deg2rad(max_engine_rotation_deg))
-		for thrust in get_engines_thrusts(current_engines):
-			thrust.rotation = current_engines_rotation
-		# globalna rotacija sile
+				current_engines_rotation = lerp(current_engines_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+				# drift pogon
+				for thrust in get_engines_thrusts([rear_engine]):
+					if is_drifting:
+						thrust.rotation = deg2rad(90) * rotation_dir
+						thrust.start_fx()
+					else:
+						thrust.rotation = 0
+						thrust.stop_fx()
+			
+			if current_engine:
+				for thrust in get_engines_thrusts([current_engine]):
+					thrust.rotation = current_engines_rotation
+			
+		# force global rotation ... premaknjena na kotrolerje
 		#	force_rotation = current_engines_rotation + get_global_rotation() # RFK da ne striže prestavljeno v kontrolerja
 	
 	update_trail()
@@ -155,38 +178,59 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 	if not bolt_active:
 		# če ni aktiven resetiram vse sile, ki delujejo
-		set_applied_force(Vector2.ZERO)
-		set_applied_torque(0)
+#		set_applied_torque(0)
+		pass
 	else:	
-		if current_motion == MOTION.IDLE: # idle rotacija
-			set_applied_force(Vector2.ZERO)
-			front_mass.set_applied_force(Vector2.ZERO)
-			rear_mass.set_applied_force(Vector2.ZERO)
-			linear_damp = bolt_profile["lin_damp_idle"]
-			if not rotation_dir == 0:
-				var rotation_acceleration: float = 15000
-				idle_rotation_speed += rotation_acceleration
-				idle_rotation_speed = clamp(idle_rotation_speed, 0, max_idle_rotation_power)
-				set_applied_torque(idle_rotation_speed * rotation_dir)	
-			else:
-				set_applied_torque(0)
-				idle_rotation_speed = 0	
-		else:
-			linear_damp = bolt_profile["lin_damp_driving"]
-			var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * 100 * engine_power * bolt_fwd_direction
-			if current_motion == MOTION.TILT:
-				set_applied_force(force)
-			else:
-				set_applied_force(Vector2.ZERO) # tilt main body reset
-				if current_mass: # sila na trenutni motor
-					current_mass.set_applied_force(force)
+		var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * 100 * engine_power * bolt_fwd_direction
+		match current_motion:	
+			MOTION.IDLE:
+				# free rotate če je na mestu
+				if rotation_dir == 0:
+					front_mass.set_applied_force(Vector2.ZERO)
+					rear_mass.set_applied_force(Vector2.ZERO)
+				else:	
+					# OPT ... free drift ali tilt?
+					# drift rotate ko vozi
+					if bolt_velocity.length() > pseudo_stop_speed:
+						rear_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * rotation_dir)
+						front_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * -rotation_dir)
+					# rotate ko stoji
+					else:
+						print("driftam")
+#						front_mass.set_applied_force(Vector2.ZERO)
+						rear_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * 50000000 * rotation_dir)
+#					front_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * -rotation_dir)
+					#				linear_damp = bolt_profile["lin_damp_idle"]
+					#					# free rotate ko vozi
+					#					if bolt_velocity.length() > pseudo_stop_speed:
+					#						rear_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * rotation_dir)
+					#						front_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * -rotation_dir)
+					#					# tilt ko stoji
+					#					else:
+					#						rear_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * - rotation_dir * 100)
+					#						front_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * idle_rotation_speed * - rotation_dir * 70)
+					
+						
+			MOTION.FWD:
+				linear_damp = bolt_profile["lin_damp_driving"]
+				front_mass.set_applied_force(force)
+				if is_drifting:
+					rear_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * drift_power * rotation_dir)
 				else:
-					current_mass.set_applied_force(Vector2.ZERO)
-			
-			# debug
-			var vector_to_target = force.normalized() * 100
-			vector_to_target = vector_to_target.rotated(- get_global_rotation())# - get_global_rotation())
-			direction_line.set_point_position(1, vector_to_target)	
+					rear_mass.set_applied_force(Vector2.ZERO)
+			MOTION.REV:
+				linear_damp = bolt_profile["lin_damp_driving"]
+				rear_mass.set_applied_force(force)
+				front_mass.set_applied_force(Vector2.ZERO)
+			MOTION.DISARRAY:
+				linear_damp = bolt_profile["lin_damp_idle"]
+				front_mass.set_applied_force(Vector2.ZERO)
+				rear_mass.set_applied_force(Vector2.ZERO)
+		
+		# debug
+		var vector_to_target = force.normalized() * 100
+		vector_to_target = vector_to_target.rotated(- get_global_rotation())# - get_global_rotation())
+		direction_line.set_point_position(1, vector_to_target)	
 
 
 # BATTLE ----------------------------------------------------------------------------
@@ -361,10 +405,11 @@ func revive_bolt():
 func get_engines_thrusts(engines: Array):
 
 	var current_thrusts: Array = [] # temp
-	for engine in engines:
-		for child in engine.get_children():
-			if child.name.find("Thrust") > -1:
-				current_thrusts.append(child)	
+	if not engines.empty():
+		for engine in engines:
+			for child in engine.get_children():
+				if child.name.find("Thrust") > -1:
+					current_thrusts.append(child)	
 	
 	return current_thrusts
 	
@@ -583,9 +628,8 @@ func drive_out():
 	stop_engines()
 	modulate.a = 0
 	reset_bolt()
-	#	set_sleeping(true)
+	#	set_sleeping(true) # OPT ustavi ga ko ni aktiven
 	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
-	#	set_applied_force(Vector2.ZERO)
 	#	set_physics_process(false)
 	#	current_motion = MOTION.IDLE
 	
@@ -680,8 +724,7 @@ func spawn_bolt_controller():
 func reset_bolt():
 	
 	current_motion = MOTION.IDLE
-	set_applied_force(Vector2.ZERO)
-	set_applied_torque(0)
+#	set_applied_torque(0)
 	front_mass.set_applied_force(Vector2.ZERO)
 	front_mass.set_applied_torque(0)
 	rear_mass.set_applied_force(Vector2.ZERO)
@@ -711,6 +754,7 @@ func _on_bolt_activity_change(bolt_is_active: bool):
 			bolt_controller.set_process_input(false)
 			stop_engines() # nočeš ga skos slišat, če je multiplejer
 			Ref.game_manager.check_for_level_finished()
+			reset_bolt()
 		true:	
 			bolt_controller.set_process_input(true)
 			
@@ -721,49 +765,24 @@ func _on_motion_change(new_motion: int):
 		return
 	
 	# resetiram trenutni engine
-	reset_bolt() # OPT al tukej al _IF?
-	#	if current_mass:
-	#		current_mass.set_applied_force(Vector2.ZERO)
-	#	idle_rotation_speed = 0
-	#	set_applied_torque(0)
-	#	for thrust in get_engines_thrusts(current_engines):
-	#		thrust.rotation = 0
-	#		thrust.stop_fx()	
+#	reset_bolt() # OPT al tukej al _IF?
 		
 	# nastavim nov engine		
 	current_motion = new_motion
 	match current_motion:
 		MOTION.FWD:
-			current_mass = front_mass
 			bolt_fwd_direction = 1
-			current_engines = [front_engine]
-#			for child in current_engines[0].get_children():
-#				if child.name.find("Thrust") > -1:
-#					current_thrusts.append(child)
-			for thrust in get_engines_thrusts(current_engines):
+			current_engine = front_engine
+			for thrust in get_engines_thrusts([current_engine]):
 				thrust.start_fx()
 		MOTION.REV:
-			current_engines = [rear_engine]
-			current_mass = rear_mass
+			current_engine = rear_engine
 			bolt_fwd_direction = -1
-#			current_engines = [$DriveTrain/RearEngine/ThrustL, $DriveTrain/RearEngine/ThrustR]
-#			for child in current_engines[0].get_children():
-#				if child.name.find("Thrust") > -1:
-#					current_thrusts.append(child)
-			for thrust in get_engines_thrusts(current_engines):
+			for thrust in get_engines_thrusts([current_engine]):
 				thrust.start_fx(true)
-		MOTION.TILT:
-			bolt_fwd_direction = 1
-			current_engines = [front_engine, rear_engine]
-#			for thrust in get_engines_thrusts([rear_engine]):
-#			for engine in current_engines:
-#				for child in engine.get_children():
-#					if child.name.find("Thrust") > -1:
-#						current_thrusts.append(child)
-##			current_engines = [$DriveTrain/FrontEngine/ThrustL, $DriveTrain/FrontEngine/ThrustR, $DriveTrain/RearEngine/ThrustL, $DriveTrain/RearEngine/ThrustR]
 		MOTION.IDLE:
-			bolt_fwd_direction = 0
-			current_mass = null
+			current_engine = front_engine
+			bolt_fwd_direction = 1
 
 
 func _on_trail_exiting(exiting_trail: Line2D):
