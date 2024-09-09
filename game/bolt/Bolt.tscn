@@ -53,7 +53,6 @@ mass = 30.0
 physics_material_override = SubResource( 5260 )
 contacts_reported = 1
 contact_monitor = true
-linear_damp = 2.0
 angular_damp = 8.0
 script = ExtResource( 8 )
 

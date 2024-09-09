@@ -1,14 +1,12 @@
 extends Node2D
 
-	
+
+var thrust_active: bool = false
 var bolt_trail_alpha = 0.05
 var trail_pseudodecay_color = Color.white
-var active_trail: Line2D
-
-onready var thrust_particles: Particles2D = $ThrustParticles
 var pseudo_stop_speed: = 15.0
-#var bolt_velocity: Vector2
-
+var active_trail: Line2D
+onready var thrust_particles: Particles2D = $ThrustParticles
 
 
 func _ready() -> void:
@@ -23,17 +21,20 @@ func _process(delta: float) -> void:
 	
 func start_fx(reverse_direction: bool = false):
 	
-	thrust_particles.emitting = true
-	
-	if reverse_direction:
-		thrust_particles.get_process_material().direction.x = 1
-	else:
-		thrust_particles.get_process_material().direction.x = -1
+	if not thrust_active:
+		thrust_active = true
+		thrust_particles.emitting = true
+		if reverse_direction:
+			thrust_particles.get_process_material().direction.x = 1
+		else:
+			thrust_particles.get_process_material().direction.x = -1
 
 
 func stop_fx():
-	
-	thrust_particles.emitting = false
+
+	if thrust_active:
+		thrust_active = false
+		thrust_particles.emitting = false
 
 		
 func spawn_new_trail():

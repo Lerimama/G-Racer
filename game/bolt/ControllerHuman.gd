@@ -26,23 +26,30 @@ func _input(event: InputEvent) -> void:
 		else:
 			# rotacija
 			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
-			
+
 			# naprej
 			if Input.is_action_pressed(fwd_action):
-				controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
-				if Input.is_action_pressed(selector_action):
-					controlled_bolt.is_drifting = true
-				else:
-					controlled_bolt.is_drifting = false
+				if not controlled_bolt.current_motion == controlled_bolt.MOTION.FWD:
+					controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
 			
 			# nazaj
 			elif Input.is_action_pressed(rev_action):
-				controlled_bolt.current_motion = controlled_bolt.MOTION.REV
+				if not controlled_bolt.current_motion == controlled_bolt.MOTION.REV:
+					controlled_bolt.current_motion = controlled_bolt.MOTION.REV
 			
 			# v leru
 			else:		
-				controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
-					
+				if not controlled_bolt.current_motion == controlled_bolt.MOTION.IDLE:
+					controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
+			
+			# idle_motion
+			if not controlled_bolt.rotation_dir == 0 and controlled_bolt.current_motion == controlled_bolt.MOTION.IDLE:		
+				if controlled_bolt.idle_motion_on == false:
+					controlled_bolt.idle_motion_on = true
+			else:
+				if controlled_bolt.idle_motion_on == true:
+					controlled_bolt.idle_motion_on = false
+									
 			# shooting
 			#			# OPT kontorole selector weapon vs drift
 			#			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
@@ -66,4 +73,4 @@ func _physics_process(delta: float) -> void:
 
 	# dokler ni igre fizika ne dela
 	if Ref.game_manager.game_on and controlled_bolt.bolt_active:
-		controlled_bolt.force_rotation = controlled_bolt.current_engines_rotation + controlled_bolt.get_global_rotation()
+		controlled_bolt.force_rotation = controlled_bolt.thrust_rotation + controlled_bolt.get_global_rotation()
