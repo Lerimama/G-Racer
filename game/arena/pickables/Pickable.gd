@@ -3,6 +3,8 @@ class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 
 var pickable_key: int #= Pro.PICKABLE[pickable_key_as_name]# poda ga spawner
+var elevation: float = 20
+var height: float = 5
 
 onready var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 onready var pickable_color: Color = Pro.pickable_profiles[pickable_key]["color"]
@@ -22,9 +24,9 @@ func _ready() -> void:
 	
 	add_to_group(Ref.group_pickables)
 	
-	icon.texture = icon_texture
+#	icon.texture = icon_texture
 	modulate = pickable_color
-	pickable_shadow.shadow_distance = pickable_altitude
+#	pickable_shadow.shadow_distance = pickable_altitude
 
 	
 func _on_Item_body_entered(body: Node) -> void:

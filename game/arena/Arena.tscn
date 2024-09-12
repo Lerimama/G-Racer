@@ -21,16 +21,15 @@ __meta__ = {
 z_index = 1
 
 [node name="PlayingField" type="Node2D" parent="."]
-position = Vector2( 320, 180 )
-z_index = 5
+z_index = 11
 script = ExtResource( 3 )
 
 [node name="_screen_size" type="ColorRect" parent="PlayingField"]
 visible = false
-margin_left = -320.0
-margin_top = -180.0
-margin_right = 960.0
-margin_bottom = 540.0
+margin_left = -640.0
+margin_top = -360.0
+margin_right = 640.0
+margin_bottom = 360.0
 color = Color( 1, 1, 0, 1 )
 
 [node name="ScreenArea" type="Area2D" parent="PlayingField"]
@@ -40,18 +39,17 @@ __meta__ = {
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayingField/ScreenArea"]
-position = Vector2( 320, 180 )
 shape = SubResource( 1 )
 
 [node name="ScreenEdge" type="StaticBody2D" parent="PlayingField"]
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayingField/ScreenEdge"]
-polygon = PoolVector2Array( -448, -244, -448, -180, 960, -180, 960, 540, -320, 540, -320, -180, -384, -180, -384, 588, 1024, 588, 1024, -244 )
+polygon = PoolVector2Array( -704, -432, -760, -360, 640, -360, 640, 360, -640, 360, -640, -360, -704, -360, -704, 416, 704, 416, 704, -432 )
 
 [node name="ArenaEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 2 )

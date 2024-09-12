@@ -14,8 +14,8 @@ shader_type canvas_item;
 // - automatske mere ekrana
 // - usklajevanje št. korakov s svetlostjo teksture
 
-uniform vec2 node_size = vec2(320.0, 320.0);
-uniform vec2 screen_size = vec2(640.0, 360.0);
+uniform vec2 node_size = vec2(320.0, 320.0); // setaj od zunaj
+uniform vec2 screen_size = vec2(640.0, 360.0); // setaj od zunaj
 
 uniform vec4 casting_color_1: hint_color = vec4(1.0, 1.0, 1.0, 1.0); // senčena barva
 uniform vec4 casting_color_2: hint_color = vec4(1.0, 0.0, 0.0, 0.0); // senčena barva

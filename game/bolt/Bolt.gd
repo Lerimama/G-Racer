@@ -7,7 +7,7 @@ signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 enum MOTION {IDLE, FWD, REV, TILT, DISARRAY} # DIZZY, DYING glede na moč motorja
 var current_motion: int = MOTION.IDLE setget _on_motion_change
 
-enum IDLE_MOTION {ROTATE, DRIFT, TILT}
+enum IDLE_MOTION {ROTATE, DRIFT, GLIDE}
 var current_idle_motion: int = IDLE_MOTION.ROTATE
 var idle_motion_on: bool = false setget _on_idle_motion_change
 
@@ -28,6 +28,7 @@ var bolt_active: bool = false setget _on_bolt_activity_change # predvsem za poš
 var bolt_body_state: Physics2DDirectBodyState
 onready var bolt_profile: Dictionary = Pro.bolt_profiles[bolt_type].duplicate()
 onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
+onready var bolt_: int = bolt_profile["ai_target_rank"]
 
 # nodes
 onready var bolt_sprite: Sprite = $BoltSprite
@@ -53,7 +54,8 @@ var bolt_velocity: Vector2 = Vector2.ZERO # _IF računa glede na gibanje telesa
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim	
 onready var drift_power: float = 17000
 onready var rotation_power: float = 10000
-onready var tilt_power: float = 10000 # aplicira se na oba v razmerju njune teže
+onready var glide_power: float = 10000 # aplicira se na oba v razmerju njune teže
+var anti_drift_on: bool = true
 onready var gas_usage: float = bolt_profile["gas_usage"]
 onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
 
@@ -69,7 +71,6 @@ onready var front_engine: Node2D = $DriveTrain/FrontEngine
 onready var front_mass: RigidBody2D = $DriveTrain/FrontEngine/RigidBody2D
 onready var rear_engine: Node2D = $DriveTrain/RearEngine
 onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RigidBody2D
-#onready var current_engine: Node2D = front_engine # sprednja ali zadnja
 var thrust_rotation: float = 0 # wheels 
 
 # battle
@@ -92,6 +93,9 @@ var active_trail: Line2D
 # debug linija
 onready var direction_line: Line2D = $DirectionLine
 
+# neu
+var elevation: float = 20
+var height: float = 5
 	
 func _ready() -> void:
 
@@ -174,10 +178,10 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 #							engine_power = max_engine_power # poskrbi za bolj "tight" obrat
 							front_mass.set_applied_force(force)
 							rear_mass.set_applied_force(Vector2.UP.rotated(bolt_global_rotation) * drift_power * rotation_dir)
-						IDLE_MOTION.TILT:
-							var front_tilt_power_adapt: float = tilt_power - tilt_power * (rear_mass.linear_damp / 10) # odštejem odstotke (3 = 30%)
-							rear_mass.set_applied_force(Vector2.DOWN.rotated(bolt_global_rotation) * rotation_dir * tilt_power)
-							front_mass.set_applied_force(Vector2.DOWN.rotated(bolt_global_rotation) * rotation_dir * front_tilt_power_adapt)
+						IDLE_MOTION.GLIDE:
+							var front_glide_power_adapt: float = glide_power - glide_power * (rear_mass.linear_damp / 10) # odštejem odstotke (3 = 30%)
+							rear_mass.set_applied_force(Vector2.DOWN.rotated(bolt_global_rotation) * rotation_dir * glide_power)
+							front_mass.set_applied_force(Vector2.DOWN.rotated(bolt_global_rotation) * rotation_dir * front_glide_power_adapt)
 				else:	
 					engine_power = 0
 					front_mass.set_applied_force(Vector2.ZERO)
@@ -203,7 +207,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 func shoot(weapon_index: int) -> void:
 
-	weapon_index = 1 # debug
+	weapon_index = 0 # debug
 	
 	match weapon_index: # enum zaporedje # OPT wepapons z enums
 		0: # "bullet":
@@ -730,10 +734,14 @@ func _on_idle_motion_change(is_in_idle_motion: bool):
 	rear_mass.set_applied_force(Vector2.ZERO)
 	front_mass.set_applied_force(Vector2.ZERO)
 	printt ("menjam", is_in_idle_motion)
+	
 	if idle_motion_on:
 		match current_idle_motion:
 			IDLE_MOTION.ROTATE:
-				linear_damp = bolt_profile["lin_damp_idle"]
+				if anti_drift_on: 
+					linear_damp = bolt_profile["lin_damp_antidrift"]
+				else:
+					linear_damp = bolt_profile["lin_damp_idle"]
 				for thrust in get_engines_thrusts([front_engine]):
 					thrust.rotation = deg2rad(90) * rotation_dir
 					thrust.start_fx()
@@ -749,13 +757,17 @@ func _on_idle_motion_change(is_in_idle_motion: bool):
 				for thrust in get_engines_thrusts([front_engine]):
 					thrust.rotation = 0
 					thrust.stop_fx()
-			IDLE_MOTION.TILT:
-				linear_damp = bolt_profile["lin_damp_idle"]
+			IDLE_MOTION.GLIDE:
+				if anti_drift_on: 
+					linear_damp = bolt_profile["lin_damp_antidrift"]
+				else:
+					linear_damp = bolt_profile["lin_damp_idle"]
 				for thrust in get_engines_thrusts([front_engine, rear_engine]):
 					thrust.rotation = deg2rad(90) * rotation_dir
 					thrust.start_fx()
 	elif current_motion == MOTION.IDLE:
-		linear_damp = bolt_profile["lin_damp_idle"]
+		linear_damp = 3# bolt_profile["lin_damp_antidrift"]
+#		linear_damp = bolt_profile["lin_damp_idle"]
 		for thrust in get_engines_thrusts([front_engine, rear_engine]):
 			thrust.stop_fx()
 			thrust.rotation = 0

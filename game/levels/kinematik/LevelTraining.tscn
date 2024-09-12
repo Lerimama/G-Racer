@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/levels/kinematik/Level.tscn" type="PackedScene" id=1]
 
 [node name="LevelTraining" instance=ExtResource( 1 )]
 level_type = 2

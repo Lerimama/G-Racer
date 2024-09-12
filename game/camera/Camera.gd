@@ -19,7 +19,7 @@ func _ready():
 
 
 func _process(delta: float) -> void:
-#	printt("cam follow:", follow_target)
+	
 	if follow_target:
 		position = follow_target.global_position
 
@@ -39,7 +39,8 @@ func shake_camera(shake_power: float):
 	
 
 func set_camera_limits():
-	
+
+#	return
 	var tilemap_edge: Rect2 = Ref.current_level.tilemap_edge.get_used_rect()
 	
 	var corner_TL: float

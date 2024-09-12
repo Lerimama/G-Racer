@@ -1,0 +1,297 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://game/3d_svet/3d_svet.gd" type="Script" id=1]
+[ext_resource path="res://assets/textures/3dtext.png" type="Texture" id=2]
+[ext_resource path="res://InterpolatedCamera.gd" type="Script" id=3]
+
+[sub_resource type="PhysicsMaterial" id=2]
+
+[sub_resource type="BoxShape" id=10]
+
+[sub_resource type="CubeMesh" id=4]
+size = Vector3( 1, 1, 1 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 1, 1, 1, 0.317647 )
+albedo_texture = ExtResource( 2 )
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="CubeMesh" id=11]
+size = Vector3( 0.05, 0.05, 0.05 )
+
+[sub_resource type="SpatialMaterial" id=12]
+albedo_color = Color( 0.952941, 0.356863, 0.498039, 1 )
+
+[sub_resource type="SpatialMaterial" id=5]
+vertex_color_is_srgb = true
+albedo_color = Color( 0.294118, 0.623529, 1, 1 )
+
+[sub_resource type="CubeMesh" id=6]
+material = SubResource( 5 )
+
+[sub_resource type="PrismMesh" id=7]
+
+[node name="svet" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="StaticBody10" type="StaticBody" parent="."]
+transform = Transform( 20.4962, 0, 0, 0, 1, 0, 0, 0, 30.5721, -0.640594, 0, 0.357784 )
+visible = false
+physics_material_override = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody10"]
+shape = SubResource( 10 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody10"]
+mesh = SubResource( 4 )
+material/0 = SubResource( 3 )
+
+[node name="podn" type="StaticBody" parent="."]
+transform = Transform( 1280, 0, 0, 0, 20, 0, 0, 0, 720, 0, 0, 0 )
+visible = false
+physics_material_override = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="podn"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="podn"]
+mesh = SubResource( 11 )
+material/0 = SubResource( 12 )
+
+[node name="bodiz" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.60466, -1.80868, 3.04182 )
+
+[node name="StaticBody2" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 0 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody2"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody2"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody3" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 3.60023 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody3"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody3"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody4" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 7.33051 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody4"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody4"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody5" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 10.892 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody5"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody5"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody6" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -3.63549 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody6"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody6"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody7" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -7.74575 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody7"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody7"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody8" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -11.944 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody8"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody8"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody9" type="StaticBody" parent="bodiz"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -17.1639 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz/StaticBody9"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz/StaticBody9"]
+mesh = SubResource( 6 )
+
+[node name="bodiz2" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.84558, -1.80868, 3.04182 )
+
+[node name="StaticBody2" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 0 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody2"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody2"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody3" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 3.60023 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody3"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody3"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody4" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 7.33051 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody4"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody4"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody5" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, 10.892 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody5"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody5"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody6" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -3.63549 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody6"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody6"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody7" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -7.74575 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody7"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody7"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody8" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -11.944 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody8"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody8"]
+mesh = SubResource( 6 )
+
+[node name="StaticBody9" type="StaticBody" parent="bodiz2"]
+transform = Transform( 1.56914, 0, 0, 0, 1, 0, 0, 0, 1.15553, -2.28802, 3.13481, -17.1639 )
+physics_material_override = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="bodiz2/StaticBody9"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="bodiz2/StaticBody9"]
+mesh = SubResource( 6 )
+
+[node name="InterpolatedCamera" type="InterpolatedCamera" parent="."]
+transform = Transform( -4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 10, 0 )
+current = true
+target = NodePath("../TargetFollow")
+speed = 100.0
+enabled = true
+script = ExtResource( 3 )
+
+[node name="TargetFollow" type="Spatial" parent="."]
+transform = Transform( -4.37114e-08, -1, 0, -4.37114e-08, 1.91069e-15, 1, -1, 4.37114e-08, -4.37114e-08, 0, 9, 0 )
+visible = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="MeshInstance" type="MeshInstance" parent="TargetFollow"]
+transform = Transform( 1.91069e-15, -4.37114e-08, 1, -1, -4.37114e-08, 0, 4.37114e-08, -1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 7 )
+
+[node name="OmniLight" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.73779, 0 )
+omni_range = 69.3064

@@ -37,10 +37,8 @@ func _input(event: InputEvent) -> void:
 	#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
 	#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
 				
-	#	if Input.is_action_just_pressed("no1"): # idle
-	#		for bolt in bolts_in_game:
-	#			if bolt.is_in_group(Ref.group_ai):
-	#				bolt.get_node("AIController").set_ai_target(null)
+	if Input.is_action_just_pressed("no1"): # idle
+		Ref.current_3Dworld.change_follow_target(bolts_in_game[0])
 	#	if Input.is_action_just_pressed("no2"): # race
 	#		for bolt in bolts_in_game:
 	#			if bolt.is_in_group(Ref.group_ai):
@@ -122,8 +120,8 @@ func set_game():
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
 			pass
-			activated_player_ids = [Pro.PLAYER.P1] 	
-#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+#			activated_player_ids = [Pro.PLAYER.P1] 	
+			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start

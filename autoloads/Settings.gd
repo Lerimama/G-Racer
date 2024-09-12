@@ -12,74 +12,38 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 enum LEVEL {
+	OO, ROUND, DUEL, NITRO
 	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 
 	RACE_TRAINING, 
 	TRAINING, 
-	DUEL, 
 	DEBUG_RACE, 
 	DEBUG_DUEL, 
 	FREE, TESTDRIVE, 
 	}
 var level_settings: Dictionary = {
-	LEVEL.TRAINING: {
+	LEVEL.OO: {
 		"level_name": "",
-		"level_path": "res://game/levels/LevelTraining.tscn",
+		"level_path": "res://game/levels/LevelRound.tscn",
 		"time_limit": 0,
-		"lap_limit": 0,
+		"lap_limit": 5,
 		},
-	LEVEL.RACE_8: {
+	LEVEL.ROUND: {
 		"level_name": "",
-		"level_path": "res://game/levels/LevelRace8.tscn",
+		"level_path": "res://game/levels/LevelRound.tscn",
 		"time_limit": 0,
-		"lap_limit": 2,
+		"lap_limit": 5,
 		},
 	LEVEL.DUEL: {
 		"level_name": "",
 		"level_path": "res://game/levels/LevelDuel.tscn",
 		"time_limit": 0,
-		"lap_limit": 0,
-		},
-	LEVEL.RACE_DIRECT: {
-		"level_name": "",
-		"level_path": "res://game/levels/LevelRaceDirect.tscn",
-		"time_limit": 0,
-		"lap_limit": 1,
-		},
-	LEVEL.RACE_CIRCO: {
-		"level_name": "",
-		"level_path": "res://game/levels/LevelRaceCirco.tscn",
-		"time_limit": 0,
-		"lap_limit": 1,
-		},
-	LEVEL.RACE_ROUND: {
-		"level_name": "",
-		"level_path": "res://game/levels/LevelRaceRound.tscn",
-		"time_limit": 0,
-		"lap_limit": 3,
-		},
-	LEVEL.RACE_SNAKE: {
-		"level_name": "",
-		"level_path": "res://game/levels/LevelRaceSnake.tscn",
-		"time_limit": 0,
-		"lap_limit": 1,
-		},
-	LEVEL.RACE_NITRO: {
-		"level_name": "",
-		"level_path": "res://game/levels/LevelRaceNitro.tscn",
-		"time_limit": 0,
-		"lap_limit": 1,
-		},
-	LEVEL.FREE: {
-		"level_name": "",
-		"level_path": "res://game/levels/LevelFree.tscn",
-		"time_limit": 0,
 		"lap_limit": 5,
 		},
-	LEVEL.TESTDRIVE: {
+	LEVEL.NITRO: {
 		"level_name": "",
-		"level_path": "res://game/levels/LevelTestDrive.tscn",
+		"level_path": "res://game/levels/LevelNitro.tscn",
 		"time_limit": 0,
-		"lap_limit": 10,
+		"lap_limit": 0,
 		},
 }
 
@@ -103,6 +67,7 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"easy_mode": false,
 	"full_equip_mode": true,
 	"drifting_mode": true, # drift ali tilt?
+	"shadows_direction": Vector2.DOWN, # drift ali tilt?
 }
 
 
@@ -114,18 +79,10 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [LEVEL.TESTDRIVE]
-var current_game_levels: Array = [LEVEL.FREE]
-#var current_game_levels: Array = [LEVEL.TRAINING]
-#var current_game_levels: Array = [LEVEL.RACE_TRAINING]
-#var current_game_levels: Array = [LEVEL.RACE_SNAKE]
-#var current_game_levels: Array = [LEVEL.RACE_8]
-#var current_game_levels: Array = [LEVEL.RACE_ROUND]
-#var current_game_levels: Array = [LEVEL.RACE_CIRCO]
-#var current_game_levels: Array = [LEVEL.RACE_DIRECT]
-#var current_game_levels: Array = [LEVEL.RACE_NITRO]
-#var current_game_levels: Array = [LEVEL.RACE_DIRECT, LEVEL.RACE_SNAKE]
-#var current_game_levels: Array = [LEVEL.RACE_DIRECT, LEVEL.RACE_CIRCO, LEVEL.RACE_ROUND, LEVEL.RACE_SNAKE, LEVEL.RACE_NITRO]
+#var current_game_levels: Array = [LEVEL.ROUND]
+#var current_game_levels: Array = [LEVEL.DUEL]
+var current_game_levels: Array = [LEVEL.OO]
+#var current_game_levels: Array = [LEVEL.NITRO]
 
 	
 func get_level_game_settings(selected_level_index: int):
@@ -140,22 +97,10 @@ func get_level_game_settings(selected_level_index: int):
 	
 	match current_level:
 		# racing
-		LEVEL.RACE_DIRECT: pass
-		LEVEL.RACE_CIRCO: pass
-		LEVEL.RACE_ROUND: pass 
-		LEVEL.RACE_SNAKE: pass
-		LEVEL.RACE_NITRO: pass
-		LEVEL.RACE_8: pass
 		# duel
 		LEVEL.DUEL: 
 			current_game_settings["start_countdown"] = false
 			current_game_settings["sudden_death_mode"] = true
 #			current_game_settings["stopwatch_mode"] = false		
-		# trening
-		LEVEL.TRAINING: pass
-		LEVEL.DEBUG_RACE: pass
-		LEVEL.DEBUG_DUEL: 
-			current_game_settings["stopwatch_mode"] = false		
-#			current_game_settings["sudden_death_mode"] = true
 			
 	return current_game_settings # pobere GM ob setanju igre

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=1]
-[ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/levels/kinematik/Level.tscn" type="PackedScene" id=2]
 
 [sub_resource type="Curve2D" id=1]
 _data = {

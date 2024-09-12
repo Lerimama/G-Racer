@@ -7,7 +7,7 @@ var spawned_by_color: Color
 var spawned_by_speed: float
 
 # gibanje
-export var speed: float = 20.0
+export var speed: float = 50.0
 
 var misile_active: bool = true
 var velocity: Vector2

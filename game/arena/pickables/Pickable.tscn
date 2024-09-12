@@ -19,7 +19,7 @@ __meta__ = {
 
 [node name="PickableShadow" parent="." instance=ExtResource( 2 )]
 scale = Vector2( 2, 2 )
-casting_node_name = "Icon"
+shadow_casting_node_path = NodePath("../Icon")
 
 [node name="Icon" type="Sprite" parent="."]
 scale = Vector2( 2, 2 )

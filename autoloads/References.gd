@@ -13,6 +13,9 @@ var main_node = null
 var game_over = null
 var level_completed = null
 
+var current_3Dcamera = null
+var current_3Dworld = null
+
 # groups
 var group_humans = "Players"
 var group_ai = "Ais"

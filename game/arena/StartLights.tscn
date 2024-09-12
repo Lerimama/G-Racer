@@ -20,14 +20,17 @@ script = ExtResource( 2 )
 [node name="OffLights" type="Node2D" parent="."]
 
 [node name="Light" type="Sprite" parent="OffLights"]
-position = Vector2( -24, 0 )
+position = Vector2( -48, 0 )
+scale = Vector2( 2, 2 )
 texture = SubResource( 1 )
 
 [node name="Light2" type="Sprite" parent="OffLights"]
+scale = Vector2( 2, 2 )
 texture = SubResource( 1 )
 
 [node name="Light3" type="Sprite" parent="OffLights"]
-position = Vector2( 24, 0 )
+position = Vector2( 48, 0 )
+scale = Vector2( 2, 2 )
 texture = SubResource( 1 )
 
 [node name="OnLights" type="Node2D" parent="."]
@@ -35,15 +38,18 @@ texture = SubResource( 1 )
 [node name="Light" type="Sprite" parent="OnLights"]
 visible = false
 position = Vector2( -24, 0 )
+scale = Vector2( 2, 2 )
 texture = SubResource( 2 )
 
 [node name="Light2" type="Sprite" parent="OnLights"]
 visible = false
+scale = Vector2( 2, 2 )
 texture = SubResource( 2 )
 
 [node name="Light3" type="Sprite" parent="OnLights"]
 visible = false
 position = Vector2( 24, 0 )
+scale = Vector2( 2, 2 )
 texture = SubResource( 2 )
 
 [node name="Timer" type="Timer" parent="."]

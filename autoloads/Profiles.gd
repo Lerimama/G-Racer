@@ -105,7 +105,7 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
 		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
-		"max_engine_power": 320, # 1 - 500 konjev 
+		"max_engine_power": 400, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
@@ -120,6 +120,7 @@ var bolt_profiles: Dictionary = {
 		"max_idle_rotation_speed": 500000, # rotacija okrog osi
 		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
 		"drift_power": 20000,
+		"lin_damp_antidrift": 3,
 		},
 }
 
@@ -129,7 +130,7 @@ var weapon_profiles : Dictionary = {
 	WEAPON.BULLET: {
 		"reload_time": 0.1,
 		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
-		"speed": 1000,
+		"speed": 1500,
 		"lifetime": 1.0, # domet vedno merim s časom
 		"mass": 0.03, # 300g
 		"direction_start_range": [0, 0] , # natančnost misile
@@ -139,7 +140,7 @@ var weapon_profiles : Dictionary = {
 	WEAPON.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 5, # 10 je max energija
-		"speed": 100,
+		"speed": 500,
 		"lifetime": 3.2, # domet vedno merim s časom
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile

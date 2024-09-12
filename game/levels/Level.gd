@@ -1,3 +1,4 @@
+tool
 extends Node2D
 
 
@@ -10,23 +11,27 @@ export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
-onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
-onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
-onready var finish_line: Area2D = $RaceFinish/FinishLine
-onready var race_start_node: Node2D = $RaceStart
-onready var start_lights: Node2D = $RaceStart/StartLights
-onready var race_finish: Node2D = $RaceFinish
 onready	var checkpoint: Area2D = $Checkpoint 
-onready var start_positions_node: Node2D = $RaceStart/StartPositions
-onready var drive_out_position: Vector2 = $RaceFinish/FinishOutPosition.global_position
-onready var finish_out_distance: float = race_finish.global_position.distance_to($RaceFinish/FinishOutPosition.global_position)
 onready var racing_track: Path2D = $RacingTrack
-onready var tilemap_floor: TileMap = $Floor
+onready var navigation_instance: NavigationPolygonInstance = $NavigationPolygonInstance
 onready var tilemap_objects: TileMap = $Objects
 onready var tilemap_edge: TileMap = $Edge
-onready var camera_limits_rect: ColorRect = $CameraLimits
+onready var level_limits_rect: Panel = $LevelLimits
 
-	
+# start
+onready var race_start: Node2D = $RaceStart
+onready var start_lights: Node2D = $RaceStart/StartLights
+onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
+onready var start_positions_node: Node2D = $RaceStart/StartPositions
+onready var drive_in_position: Vector2 = $RaceStart/DriveInPosition.position
+
+# finish
+onready var race_finish: Node2D = $RaceFinish
+onready var finish_line: Area2D = $RaceFinish/FinishLine
+onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
+onready var drive_out_position: Vector2 = $RaceFinish/DriveOutPosition.position
+
+
 func _ready() -> void:
 	printt("LEVEL")
 	
@@ -34,24 +39,22 @@ func _ready() -> void:
 
 	# debug
 	$_ScreenSize.hide()
-	$_Instructions.hide()
-	$_Instructions2.hide()
 
 	match level_type:
 		LEVEL_TYPE.BATTLE:
-			race_start_node.hide()
+			race_start.hide()
 			race_finish.hide()
 			checkpoint.hide()
 		LEVEL_TYPE.RACE:
-			race_start_node.show()
+			race_start.show()
 			race_finish.show()
 			checkpoint.hide()
-			race_start_node.get_node("StartLine").show()	
+			race_start.get_node("StartLine").show()	
 		LEVEL_TYPE.RACE_LAPS:
-			race_start_node.show()
+			race_start.show()
 			race_finish.show()
 			checkpoint.show()
-			race_start_node.get_node("StartLine").hide()	
+			race_start.get_node("StartLine").hide()	
 			
 	# kar je skrito, ne deluje
 	if checkpoint.visible:
@@ -63,43 +66,13 @@ func _ready() -> void:
 	else:
 		finish_line.monitoring = false
 		
-	set_level_floor() # luknje
-	set_level_objects() # elementi
+	set_level_objects()
 	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 
 	resize_to_level_size()
 	
-#	emit_signal("level_is_set", navigation_cells, navigation_cells_positions) # pošljem v GM
 	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
 	
 	
-func set_level_floor():
-	
-	var area_tile_offset: Vector2 = Vector2(4,4)
-	
-	for cell in tilemap_floor.get_used_cells():
-		
-		var cell_index = tilemap_floor.get_cellv(cell)
-		
-		var cell_local_position = tilemap_floor.map_to_world(cell)
-		var cell_global_position = tilemap_floor.to_global(cell_local_position)	
-		
-		var area_key: int = -1
-		match cell_index:
-			1:
-				area_key = Pro.LEVEL_AREA.AREA_NITRO
-			2:
-				area_key = Pro.LEVEL_AREA.AREA_GRAVEL
-			3:
-				area_key = Pro.LEVEL_AREA.AREA_HOLE
-
-		if area_key > -1: # preskok celic, ki imajo druge id-je
-			var scene_to_spawn: PackedScene = Pro.level_areas_profiles[area_key]["area_scene"]	
-			var new_area_scene = scene_to_spawn.instance()
-			new_area_scene.position = cell_global_position + area_tile_offset
-			new_area_scene.level_area_key = area_key
-			add_child(new_area_scene)
-	
-
 func set_level_objects():
 	
 	if tilemap_objects.get_used_cells().empty():
@@ -207,45 +180,50 @@ func set_pickables():
 		
 			
 func set_level_navigation():
+
+	var navigation_polygon: NavigationPolygon = $NavigationPolygonInstance.navpoly
+	var outer_polygon: PoolVector2Array = navigation_polygon.get_outline(0)
 	
-	var edge_cells = get_tilemap_cells(tilemap_edge) # celice v obliki grid koordinat
-	var range_to_check = 1 # št. celic v vsako stran čekiranja  
-#	var navigation_cells: Array
+	# dimenzija zunanjega polygona, da ne grem po skončnem polju
+	var nav_limits_square: Rect2 = Rect2(Vector2(0, 0), Vector2(0, 0)) 
+	for point in outer_polygon:
+		if point.x > nav_limits_square.size.x:
+			nav_limits_square.size.x = point.x
+		elif point.x < nav_limits_square.position.x or nav_limits_square.position.x == 0:
+			nav_limits_square.position.x = point.x
+		if point.y > nav_limits_square.size.y:
+			nav_limits_square.size.y = point.y
+		elif point.y < nav_limits_square.position.y or nav_limits_square.position.y == 0:
+			nav_limits_square.position.y = point.y
 	
-	for cell in edge_cells:
-		var cell_index = tilemap_edge.get_cellv(cell)
-		var cell_local_position = tilemap_edge.map_to_world(cell)
-		var cell_global_position = tilemap_edge.to_global(cell_local_position)
-		
-		# če je prazna in ni zasedena z elemenotom, jo zamenjam z navigacijsko celico
-		if cell_index == -1:
-			if not non_navigation_cell_positions.has(cell_global_position):
-				tilemap_edge.set_cellv(cell, 13)
-#				navigation_cells.append(cell) # grid pozicije
-				navigation_cells_positions.append(cell_global_position)
-				
-				# če ima za soseda rob, pomeni, da je zunanja in jo odstranim
-				var cell_in_check: Vector2
-				var empy_cell_in_check_count: int = 0
-				for y in (range_to_check * 2 + 1): # pregledam 5 celic v ver in hor smeri, s čekirano v sredini
-					for x in (range_to_check * 2 + 1):
-						cell_in_check = cell + Vector2(x - range_to_check, y - range_to_check) # čekirana celica je v sredini 5 pregledanih celic
-						if tilemap_edge.get_cellv(cell_in_check) == 0 and empy_cell_in_check_count != 2:
-							tilemap_edge.set_cellv (cell, -1)
-							# zbrišem iz arrayev navigacije
-#							navigation_cells.erase(cell)
-							navigation_cells_positions.erase(cell_global_position)
-							empy_cell_in_check_count += 1
-						else:
-							empy_cell_in_check_count = 0
-		
-		tilemap_edge.bake_navigation = true
-		
-	# zelene spremenim prazne po navigaciji
-	for cell in edge_cells:
-		var cell_index = tilemap_edge.get_cellv(cell)
-		if cell_index == 5:
-			tilemap_edge.set_cellv(cell, -1)
+	# naberem vse točke znotraj kvadrata zunanjega poligona (glede na gostoto)
+	var nav_point_density: int = 8
+	var outer_square_points: Array = []
+	var x_count: int = round(nav_limits_square.size.x / nav_point_density)
+	var y_count: int = round(nav_limits_square.size.y / nav_point_density)
+	for x in x_count:
+		for y in y_count:
+			var current_point: Vector2 = Vector2(x * nav_point_density, y * nav_point_density)
+			current_point += nav_limits_square.position # adaptiram za pozicijo nodeta
+			outer_square_points.append(current_point)
+	# naberem vse točke glavnega poligona
+	var navigation_shape_nav_points: Array = []
+	for nav_point in outer_square_points:
+		if Geometry.is_point_in_polygon(nav_point, outer_polygon):
+			navigation_shape_nav_points.append(nav_point)
+	# odstranim točke notranjih poligonov (luknje znotraj navigacije)
+	for poly in navigation_polygon.get_polygon_count():
+		if poly > 0: # preskočim prvega, ki je zunanji
+			var current_poly = navigation_polygon.get_outline(poly)
+			for nav_point in outer_square_points:
+				if Geometry.is_point_in_polygon(nav_point, current_poly):
+					navigation_shape_nav_points.erase(nav_point)
+#	# debug ... indi
+#	for p in navigation_shape_nav_points:
+#		Met.spawn_indikator(p, global_rotation, Ref.node_creation_parent, false)
+#
+	navigation_cells_positions = navigation_shape_nav_points.duplicate()
+	#	printt("level nav cells size", navigation_cells_positions.size(), outer_polygon)
 
 		
 # UTILITI ---------------------------------------------------------------------------------------------------------------------------------------
@@ -264,23 +242,17 @@ func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, picka
 
 func resize_to_level_size():
 	
-	# dobim velikost levela (floor tilemapa)
-	var first_floor_cell = tilemap_floor.get_used_cells().pop_front()
-	var last_floor_cell = tilemap_floor.get_used_cells().pop_back()
-	var floor_rect_position = tilemap_floor.map_to_world(first_floor_cell)
-	var floor_rect_size = tilemap_floor.map_to_world(last_floor_cell) - tilemap_floor.map_to_world(first_floor_cell)
-	
 	# naberem rektangle za risajzat
-	var nodes_to_resize: Array = tilemap_edge.get_children()
+	var nodes_to_resize: Array = []
+	nodes_to_resize.append_array(tilemap_edge.get_children()) # edge shaders
 	nodes_to_resize.append_array($Background.get_children())
-	nodes_to_resize.append(camera_limits_rect)
 	
 	# resize and set
 	for node in nodes_to_resize:
-		node.rect_position = floor_rect_position
-		node.rect_size = floor_rect_size
+		node.rect_position = level_limits_rect.rect_position
+		node.rect_size = level_limits_rect.rect_size
 		if node.material:
-			node.material.set_shader_param("node_size", floor_rect_size)
+			node.material.set_shader_param("node_size", level_limits_rect.rect_size)
 
 	
 func get_tilemap_cells(tilemap: TileMap):
