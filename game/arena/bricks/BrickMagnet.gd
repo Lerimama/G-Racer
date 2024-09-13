@@ -1,16 +1,15 @@
 extends StaticBody2D
 
 
-#var magnet_color_off: Color = Ref.color_brick_magnet_off
-var magnet_color_on: Color = Ref.color_brick_magnet_on # opredeli se v animaciji
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
 
+var magnet_color_on: Color = Ref.color_brick_magnet_on # opredeli se v animaciji
 var magnet_on: bool
 var def_particle_speed: float = 0.5
-
 var time: float = 0
 var off_time: float = 2
 var on_time: float = 2
-
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var brick_altitude: float = Pro.level_object_profiles[level_object_key]["altitude"]
@@ -18,7 +17,6 @@ onready var reward_points: float = Pro.level_object_profiles[level_object_key]["
 onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
 onready var magnet_color_off: Color = Pro.level_object_profiles[level_object_key]["color"]
 onready var magnet_gravity_force: float = Pro.level_object_profiles[level_object_key]["gravity_force"]
-
 onready var forcefield: Area2D = $ForceField
 onready var forcefield_collision: CollisionShape2D = $ForceField/CollisionShape2D
 onready var sprite: Sprite = $Sprite

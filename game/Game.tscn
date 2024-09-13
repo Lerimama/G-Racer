@@ -67,6 +67,7 @@ random_pitch = 1.05
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource( 10 )
+shadows_direction = Vector2( 1, 1 )
 
 [node name="GameViewGrid" type="GridContainer" parent="."]
 anchor_right = 1.0

@@ -3,6 +3,7 @@ extends Node
 
 signal bolt_spawned (name, other)
 
+
 var game_on: bool
 
 var bolts_in_game: Array # tekom igre so v ranked zaporedju (glede na distanco)
@@ -17,6 +18,7 @@ var activated_player_ids: Array # naslednji leveli se tole adaptira, glede na to
 var fast_start_window: bool = false # bolt ga čekira in reagira
 var start_bolt_position_nodes: Array # dobi od tilemapa
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
+export var shadows_direction: Vector2 # = game_settings["shadows_direction"]
 
 # level 
 var level_settings: Dictionary
@@ -59,6 +61,7 @@ func _input(event: InputEvent) -> void:
 				#				bolt.player_stats["gas_count"] = 0
 				#			if bolt.is_in_group(Ref.group_ai):
 				#				bolt.player_stats["gas_count"] = 0			
+
 
 func _ready() -> void:
 	printt("GM")

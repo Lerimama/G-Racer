@@ -1,8 +1,10 @@
 extends StaticBody2D
 
 
-var def_particle_speed: float = 6
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
 
+var def_particle_speed: float = 6
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var brick_color: Color = Pro.level_object_profiles[level_object_key]["color"]

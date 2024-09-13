@@ -112,7 +112,6 @@ __meta__ = {
 
 [node name="BrickShadow" parent="." instance=ExtResource( 1 )]
 scale = Vector2( 2, 2 )
-casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0 )

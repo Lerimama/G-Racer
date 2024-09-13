@@ -94,8 +94,8 @@ var active_trail: Line2D
 onready var direction_line: Line2D = $DirectionLine
 
 # neu
-var elevation: float = 20
-var height: float = 5
+var height: float = 0 # PRO
+var elevation: float = 14 # PRO
 	
 func _ready() -> void:
 
@@ -733,7 +733,6 @@ func _on_idle_motion_change(is_in_idle_motion: bool):
 	idle_motion_on = is_in_idle_motion
 	rear_mass.set_applied_force(Vector2.ZERO)
 	front_mass.set_applied_force(Vector2.ZERO)
-	printt ("menjam", is_in_idle_motion)
 	
 	if idle_motion_on:
 		match current_idle_motion:

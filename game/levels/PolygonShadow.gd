@@ -2,68 +2,53 @@ extends Polygon2D
 
 
 export (NodePath) var shadow_casting_polygon_path: String
-export var node_height: float = 0 # debelina pomeni debelino sence
-export var node_elevation: float = 30 # dvignjenost pomeni zamik sence
+export var node_height: float = 30 # pravo dobi iz parenta ... debelina pomeni debelino sence
+export var node_elevation: float = 100 # pravo dobi iz parenta ... dvignjenost pomeni zamik sence
 
 var shadow_color: Color = Color.black
-var shadow_transparency: float = 0.5 
+var shadow_transparency: float = 0.2
 
-#export var shadow_direction = Vector2.ONE# setget _update_shadow
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_polygon_path)
-onready var shadow_direction: Vector2 = Ref.game_manager.game_settings["shadows_direction"] # odvisno od igre
+onready var shadow_direction: Vector2 = Ref.game_manager.shadows_direction # odvisno od igre
 
 
 func _ready() -> void:
-#	shadow_direction = Ref.game_manager.game_settings["shadows_direction"] 
-	if shadow_casting_node:
-#		node_height = shadow_casting_node.get_parent().height
-#		node_elevation = shadow_casting_node.get_parent().elevation
-		
-		
-		# naberem skrajne štiritočke iz katerih podem manipuliram senco
-		var shadow_polygon: Array = inject_new_corners(shadow_casting_node.polygon)
-		polygon = shadow_polygon
-		
-	else:
-		printerr ("No shadow casting node on: ", self)
-		
-func inject_new_corners(polygon_to_upgrade: Array):
-#		shadow_direction = Vector2 (-1,1)
-		# če je poligon kvadrat (naredi še iskanje skrajnih točke, če ni 
-		# štimam jo v smeri in na distanci
-		position = shadow_direction * node_elevation
-		
-		# opredelim osnovno smer sence
-		# DOWN RIGHT
-		if shadow_direction.x >= 0 and shadow_direction.y >= 0:
-			# apliciram nove pike v array pik in ga prenesem v polygon sence
-			polygon_to_upgrade.insert(1, polygon_to_upgrade[1] - shadow_direction * node_elevation)
-			polygon_to_upgrade.insert(5, polygon_to_upgrade[4] - shadow_direction * node_elevation) # pri indexu upoštevam že dodanega
-		# DOWN LEFT
-		elif shadow_direction.x < 0 and shadow_direction.y >= 0:
-			polygon_to_upgrade.insert(1, polygon_to_upgrade[0] - shadow_direction * node_elevation)
-			polygon_to_upgrade.insert(3, polygon_to_upgrade[3] - shadow_direction * node_elevation)
-		# UP RIGHT
-		elif shadow_direction.x >= 0 and shadow_direction.y < 0:
-			polygon_to_upgrade.insert(3, polygon_to_upgrade[2] - shadow_direction * node_elevation)
-			polygon_to_upgrade.insert(5, polygon_to_upgrade[0] - shadow_direction * node_elevation)
-		# UP LEFT
-		elif shadow_direction.x < 0 and shadow_direction.y < 0:
-			polygon_to_upgrade.insert(2, polygon_to_upgrade[1] - shadow_direction * node_elevation)
-			polygon_to_upgrade.insert(4, polygon_to_upgrade[4] - shadow_direction * node_elevation)
-		
-		
-		return polygon_to_upgrade
-
 	
-#
-#func _process(delta: float) -> void:
-#
-#	if shadow_casting_node:
-#		var shadow_polygon: Array = inject_new_corners(shadow_casting_node.polygon)
-#		polygon = shadow_polygon
-#
-#
+	if shadow_casting_node:
+		# apliciram višino in debelino
+		node_height = get_parent().height
+		node_elevation = get_parent().elevation
+		if node_height == 0 and node_elevation == 0:
+			hide()
+		else:
+			# popravim rotacijo sence glede na globalno rotacijo poligona
+			shadow_direction = shadow_direction.rotated(- global_rotation)
+			# oblikujem senco
+			var shadow_polygon: Array = inject_corners(shadow_casting_node.polygon)
+			polygon = shadow_polygon
+			# premaknem še za elevation
+			position += shadow_direction * node_elevation
+			# LNF
+			color = shadow_color
+			modulate.a = shadow_transparency
+			show()
+			
+	else:
+		printerr ("No shadow casting node for: ", self)
+		hide()
+
+
+func _process(delta: float) -> void:
+
+	if shadow_casting_node and visible:
+		node_height = get_parent().height
+		node_elevation = get_parent().elevation
+		shadow_direction = Ref.game_manager.shadows_direction
+		var shadow_polygon: Array = inject_corners(shadow_casting_node.polygon)
+		polygon = shadow_polygon
+		position += shadow_direction * node_elevation
+
+
 #func _update_shadow(new_direction: Vector2):
 #	if shadow_casting_node:
 #
@@ -71,3 +56,33 @@ func inject_new_corners(polygon_to_upgrade: Array):
 #
 #		var shadow_polygon: Array = inject_new_corners(shadow_casting_node.polygon)
 #		polygon = shadow_polygon
+
+		
+func inject_corners(polygon_to_upgrade: Array):
+		# deluje če je poligon 4-kotnik (naredi še iskanje skrajnih točke, če ni)
+		
+		# premaknem poligon
+		position = shadow_direction * node_height
+		
+		# opredelim osnovno smer sence in glede na to dodam pike
+		if shadow_direction.x >= 0 and shadow_direction.y >= 0: # DOWN RIGHT
+			# apliciram nove pike v array pik in ga prenesem v polygon sence
+			polygon_to_upgrade.insert(1, polygon_to_upgrade[1] - shadow_direction * node_height)
+			polygon_to_upgrade.insert(5, polygon_to_upgrade[4] - shadow_direction * node_height) # pri indexu upoštevam že dodanega
+			# premaknem še nevidno (bazno točko)
+			polygon_to_upgrade[0] -= shadow_direction * node_height
+		elif shadow_direction.x < 0 and shadow_direction.y >= 0: # DOWN LEFT
+			polygon_to_upgrade.insert(1, polygon_to_upgrade[0] - shadow_direction * node_height)
+			polygon_to_upgrade.insert(3, polygon_to_upgrade[3] - shadow_direction * node_height)
+			polygon_to_upgrade[2] -= shadow_direction * node_height
+		elif shadow_direction.x >= 0 and shadow_direction.y < 0: # UP RIGHT
+			polygon_to_upgrade.insert(3, polygon_to_upgrade[2] - shadow_direction * node_height)
+			polygon_to_upgrade.insert(5, polygon_to_upgrade[0] - shadow_direction * node_height)
+			polygon_to_upgrade[4] -= shadow_direction * node_height
+		elif shadow_direction.x < 0 and shadow_direction.y < 0: # UP LEFT
+			polygon_to_upgrade.insert(2, polygon_to_upgrade[1] - shadow_direction * node_height)
+			polygon_to_upgrade.insert(4, polygon_to_upgrade[4] - shadow_direction * node_height)
+			polygon_to_upgrade[3] -= shadow_direction * node_height
+		
+		
+		return polygon_to_upgrade

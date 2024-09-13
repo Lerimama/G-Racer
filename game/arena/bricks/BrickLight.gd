@@ -1,18 +1,18 @@
 extends StaticBody2D
 
-var turned_on: bool = false
 
+export var height: float = 0 # PRO
+export var elevation: float = 0 # PRO
+
+var turned_on: bool = false
 var bolts_in_light_area: Array = []
 var light_on_color: Color = Ref.color_brick_light_on
-
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var light_off_color: Color = Pro.level_object_profiles[level_object_key]["color"]
 onready var brick_altitude: float = Pro.level_object_profiles[level_object_key]["altitude"]
 onready var reward_points: float = Pro.level_object_profiles[level_object_key]["value"]
-
 onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
-
 onready var brick_shadow: Sprite = $BrickShadow
 onready var light_poly: Polygon2D = $LightPoly
 onready var light_2d: Light2D = $Light2D

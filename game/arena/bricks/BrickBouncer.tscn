@@ -31,7 +31,6 @@ physics_material_override = SubResource( 11 )
 script = ExtResource( 5 )
 
 [node name="BrickShadow" parent="." instance=ExtResource( 3 )]
-casting_node_name = "Sprite"
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 4 )

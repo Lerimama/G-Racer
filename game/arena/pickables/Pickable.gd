@@ -1,24 +1,22 @@
 extends Area2D
 class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
 
 var pickable_key: int #= Pro.PICKABLE[pickable_key_as_name]# poda ga spawner
-var elevation: float = 20
-var height: float = 5
 
 onready var pickable_value: float = Pro.pickable_profiles[pickable_key]["value"]
 onready var pickable_color: Color = Pro.pickable_profiles[pickable_key]["color"]
 onready var icon_texture: Texture = Pro.pickable_profiles[pickable_key]["icon_scene"]
 onready var pickable_altitude: float = Pro.pickable_profiles[pickable_key]["altitude"]
-
 onready var ai_target_rank: int = Pro.pickable_profiles[pickable_key]["ai_target_rank"]
-
 onready var icon: Sprite = $Icon
 onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
 onready var pickable_shadow: Sprite = $PickableShadow
-
 #onready var sounds: Node = $Sounds
 #onready var sound_picked: AudioStreamPlayer = $Sounds/PickedDefault
+
 
 func _ready() -> void:
 	

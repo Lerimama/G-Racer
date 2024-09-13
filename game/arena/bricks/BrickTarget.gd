@@ -1,16 +1,17 @@
 extends StaticBody2D
 
 
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
+
 var hit_count: int = 0
 var def_particle_speed = 5
-
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var brick_color: Color = Pro.level_object_profiles[level_object_key]["color"]
 onready var brick_altitude: float = Pro.level_object_profiles[level_object_key]["altitude"]
 onready var reward_points: float = Pro.level_object_profiles[level_object_key]["value"]
 onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
-
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
