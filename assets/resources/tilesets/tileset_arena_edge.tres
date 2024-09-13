@@ -4,7 +4,7 @@
 [ext_resource path="res://assets/textures/tiles/tile_arena_navigation.png" type="Texture" id=2]
 [ext_resource path="res://assets/textures/tiles/tileset_arena_edge_broken.png" type="Texture" id=3]
 [ext_resource path="res://assets/textures/tiles/tile_arena_colored.png" type="Texture" id=4]
-[ext_resource path="res://assets/shaders/level_texture_shader.tres" type="Material" id=5]
+[ext_resource path="res://game/levels/sha/level_texture_shader.tres" type="Material" id=5]
 
 [sub_resource type="OccluderPolygon2D" id=680]
 polygon = PoolVector2Array( 8, 8, 0, 8, 0, 0, 8, 0 )

@@ -1,0 +1,31 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://game/levels/sha/level_color_and_noise_texture.tres" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/change_colors = true
+shader_param/color_floor = Color( 0, 1, 0, 1 )
+shader_param/new_color_floor = Color( 0.505882, 0.505882, 0.505882, 1 )
+shader_param/color_grass = Color( 0, 0, 1, 1 )
+shader_param/new_color_grass = Color( 0.184314, 0.184314, 0.184314, 1 )
+shader_param/color_gravel = Color( 1, 0.627451, 0, 1 )
+shader_param/new_color_gravel = Color( 0.556863, 0.556863, 0.556863, 1 )
+shader_param/color_nitro = Color( 1, 0, 0, 1 )
+shader_param/new_color_nitro = Color( 1, 1, 0, 1 )
+shader_param/color_edge = Color( 0, 1, 1, 1 )
+shader_param/new_color_edge = Color( 1, 1, 0.0117647, 1 )
+shader_param/color_outline = Color( 1, 0, 1, 1 )
+shader_param/new_color_outline = Color( 0.729412, 0.729412, 0.435294, 1 )
+shader_param/color_to_transparent = Color( 0, 0, 0, 0 )
+shader_param/color_to_noise = Color( 0, 0, 0, 0 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/ad_noise = null
+shader_param/shade_noise = null
+shader_param/pixelate_noise = null
+shader_param/pixel_size_multiplier = 1.0
+shader_param/pixel_offset = Vector2( 0, 0 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.0
+shader_param/speed_scale = 0.1
+shader_param/shade_all_colors = null

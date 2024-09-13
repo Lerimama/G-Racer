@@ -5,4 +5,3 @@
 [node name="NodeShadow" type="Sprite"]
 modulate = Color( 0, 0, 0, 0.27451 )
 script = ExtResource( 1 )
-casting_node_name = "Bolt"

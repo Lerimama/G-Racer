@@ -12,7 +12,7 @@ var trail_z_index = -1
 var explosion_z_index = 1
 
 enum LEVEL {
-	OO, ROUND, DUEL, NITRO
+	OO, ROUND, DUEL, NITRO, CITY,
 	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 
 	RACE_TRAINING, 
 	TRAINING, 
@@ -45,8 +45,14 @@ var level_settings: Dictionary = {
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
+	LEVEL.CITY: {
+		"level_name": "",
+		"level_path": "res://game/levels/city/LevelCity.tscn",
+		"time_limit": 0,
+		"lap_limit": 0,
+		},
 }
-
+"res://game/levels/city/LevelCity.tscn"
 enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var default_game_settings: Dictionary = { # setano za dirkanje
 	
@@ -67,7 +73,7 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"easy_mode": false,
 	"full_equip_mode": true,
 	"drifting_mode": true, # drift ali tilt?
-	"shadows_direction": Vector2.DOWN, # drift ali tilt?
+	"shadows_direction": Vector2.ONE, # drift ali tilt?
 }
 
 
@@ -81,8 +87,9 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 #var current_game_levels: Array = []
 #var current_game_levels: Array = [LEVEL.ROUND]
 #var current_game_levels: Array = [LEVEL.DUEL]
-var current_game_levels: Array = [LEVEL.OO]
+#var current_game_levels: Array = [LEVEL.OO]
 #var current_game_levels: Array = [LEVEL.NITRO]
+var current_game_levels: Array = [LEVEL.CITY]
 
 	
 func get_level_game_settings(selected_level_index: int):
