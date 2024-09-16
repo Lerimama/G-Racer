@@ -1,6 +1,5 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://game/bolt/Thrust.gd" type="Script" id=1]
 [ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=2]
 
 [sub_resource type="RectangleShape2D" id=5254]
@@ -31,13 +30,11 @@ position = Vector2( 14, 19 )
 offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
-[node name="ThrustL" type="Node2D" parent="FrontEngine" instance=ExtResource( 2 )]
+[node name="ThrustL" parent="FrontEngine" instance=ExtResource( 2 )]
 position = Vector2( 18, -12 )
-script = ExtResource( 1 )
 
-[node name="ThrustR" type="Node2D" parent="FrontEngine" instance=ExtResource( 2 )]
+[node name="ThrustR" parent="FrontEngine" instance=ExtResource( 2 )]
 position = Vector2( 18, 12 )
-script = ExtResource( 1 )
 position_on_bolt = 1
 
 [node name="RearEngine" type="Node2D" parent="."]
@@ -64,11 +61,9 @@ position = Vector2( 14, 19 )
 offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
-[node name="ThrustL" type="Node2D" parent="RearEngine" instance=ExtResource( 2 )]
+[node name="ThrustL" parent="RearEngine" instance=ExtResource( 2 )]
 position = Vector2( -17, -12 )
-script = ExtResource( 1 )
 
-[node name="ThrustR" type="Node2D" parent="RearEngine" instance=ExtResource( 2 )]
+[node name="ThrustR" parent="RearEngine" instance=ExtResource( 2 )]
 position = Vector2( -17, 12 )
-script = ExtResource( 1 )
 position_on_bolt = 1

@@ -21,6 +21,7 @@ __meta__ = {
 z_index = 1
 
 [node name="PlayingField" type="Node2D" parent="."]
+visible = false
 z_index = 11
 script = ExtResource( 3 )
 

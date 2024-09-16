@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "KinematicBody2D",
 "class": "Bullet",
 "language": "GDScript",
-"path": "res://game/weapons/Bullet.gd"
+"path": "res://game/projectiles/bullet/Bullet.gd"
 }, {
 "base": "ColorRect",
 "class": "ColorTile",
@@ -32,12 +32,12 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Mina",
 "language": "GDScript",
-"path": "res://game/weapons/Mina.gd"
+"path": "res://game/projectiles/Mina.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "Misile",
 "language": "GDScript",
-"path": "res://game/weapons/Misile.gd"
+"path": "res://game/projectiles/Misile.gd"
 }, {
 "base": "Reference",
 "class": "Palette",
@@ -192,7 +192,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Shocker",
 "language": "GDScript",
-"path": "res://game/weapons/Shocker.gd"
+"path": "res://game/projectiles/Shocker.gd"
 }, {
 "base": "Node",
 "class": "Walker",
@@ -265,8 +265,7 @@ gdscript/warnings/narrowing_conversion=false
 
 window/size/width=2560
 window/size/height=1440
-window/size/borderless=true
-window/size/fullscreen=true
+window/size/always_on_top=true
 window/size/test_width=640
 window/size/test_height=360
 window/stretch/mode="2d"

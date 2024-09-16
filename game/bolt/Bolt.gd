@@ -120,6 +120,10 @@ func _ready() -> void:
 	physics_material_override.bounce = bolt_profile["bounce"]
 	rear_mass.linear_damp = bolt_profile["rear_lin_damp"]
 
+	# weapon settings
+	sprite_turret.projectile_count = player_stats["bullet_count"]
+
+	
 	spawn_bolt_controller()
 
 
@@ -207,7 +211,10 @@ func _process(delta: float) -> void:
 #						thrust.rotation = thrust_rotation + deg2rad(180)
 
 		update_trail()
-	
+
+		if is_shooting:
+			shoot(0)
+				
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
@@ -258,8 +265,10 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 # BATTLE ----------------------------------------------------------------------------
 
+var is_shooting: bool = false # način, ki je boljši za efekte 
 onready var gun_particles: Particles2D = $SpriteTurret/GunParticles
-onready var sprite_turret: Sprite = $SpriteTurret
+#onready var sprite_turret: Sprite = $SpriteTurret
+onready var sprite_turret: Node2D = $Weapon
 
 func shoot(weapon_index: int) -> void:
 
@@ -269,7 +278,8 @@ func shoot(weapon_index: int) -> void:
 		0: # "bullet":
 #			if bullet_reloaded:
 			if player_stats["bullet_count"] > 0:
-				var has_shot: bool = sprite_turret.shoot()
+				pass
+#				var has_shot: bool = sprite_turret.shoot()
 #				var BulletScene: PackedScene = Pro.weapon_profiles[Pro.WEAPON.BULLET]["scene"]
 #				var new_bullet = BulletScene.instance()
 #				new_bullet.global_position = gun_position.global_position
@@ -278,8 +288,8 @@ func shoot(weapon_index: int) -> void:
 #				new_bullet.spawned_by_color = bolt_color
 #				new_bullet.z_index = gun_position.z_index
 #				Ref.node_creation_parent.add_child(new_bullet)
-				if has_shot:
-					update_stat("bullet_count", - 1)
+#				if has_shot:
+#					update_stat("bullet_count", - 1)
 #				bullet_reloaded = false
 #				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
 #				bullet_reloaded= true

@@ -122,8 +122,8 @@ func set_game():
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
 			pass
-			activated_player_ids = [Pro.PLAYER.P1] 	
-#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+#			activated_player_ids = [Pro.PLAYER.P1] 	
+			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start

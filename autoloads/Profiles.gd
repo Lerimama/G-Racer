@@ -129,13 +129,15 @@ var bolt_profiles: Dictionary = {
 enum WEAPON {BULLET, MISILE, MINA, SHIELD}
 var weapon_profiles : Dictionary = {
 	WEAPON.BULLET: {
-		"reload_time": 0.1,
+		"reload_time": 0.2,
 		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
 		"speed": 1500,
 		"lifetime": 1.0, # domet vedno merim s časom
 		"mass": 0.03, # 300g
 		"direction_start_range": [0, 0] , # natančnost misile
-		"scene": preload("res://game/weapons/Bullet.tscn"),
+#		"scene": preload("res://game/projectiles/bullet/Bullet.tscn"),
+		"scene": preload("res://game/projectiles/bullet/BulletRigid.tscn"),
+		"counter_name": "bullet_count", # player stats name
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
 	WEAPON.MISILE: {
@@ -145,7 +147,8 @@ var weapon_profiles : Dictionary = {
 		"lifetime": 3.2, # domet vedno merim s časom
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
-		"scene": preload("res://game/weapons/Misile.tscn"),
+		"scene": preload("res://game/projectiles/Misile.tscn"),
+		"counter_name": "misile_count",
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
 	WEAPON.MINA: {
@@ -155,7 +158,8 @@ var weapon_profiles : Dictionary = {
 		"lifetime": 0, # 0 pomeni večno
 		"mass": 0.5, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
-		"scene": preload("res://game/weapons/Mina.tscn"),
+		"scene": preload("res://game/projectiles/Mina.tscn"),
+		"counter_name": "mina_count",
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 	WEAPON.SHIELD: {
@@ -163,7 +167,7 @@ var weapon_profiles : Dictionary = {
 #		"hit_damage": 5,
 #		"speed": 50,
 		"lifetime": 5, # cikli animacije
-		"scene": preload("res://game/weapons/Shield.tscn"),
+		"scene": preload("res://game/projectiles/Shield.tscn"),
 #		"mass": 3,
 #		"direction_start_range": [0, 0] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),

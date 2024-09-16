@@ -2,12 +2,12 @@
 
 [ext_resource path="res://game/bolt/Thrust.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/light_hiter_prehod.png" type="Texture" id=2]
-[ext_resource path="res://game/bolt/sprite_thrust_light.png" type="Texture" id=3]
-[ext_resource path="res://game/bolt/sprite_thrust_smoke.png" type="Texture" id=4]
-[ext_resource path="res://game/bolt/sprite_thrust.png" type="Texture" id=5]
-[ext_resource path="res://game/bolt/thrust_smoke_particles_material.tres" type="Material" id=6]
-[ext_resource path="res://game/bolt/thrust_particles_material_fire.tres" type="Material" id=7]
+[ext_resource path="res://common/tex/gradball_8_bulky.png" type="Texture" id=3]
+[ext_resource path="res://game/bolt/tex/bolt_thrust.png" type="Texture" id=5]
+[ext_resource path="res://game/bolt/fx/thrust_smoke_particles_material.tres" type="Material" id=6]
+[ext_resource path="res://game/bolt/fx/thrust_fire_particles_material.tres" type="Material" id=7]
 [ext_resource path="res://assets/textures/3dtext.png" type="Texture" id=8]
+[ext_resource path="res://common/tex/gradball_16.png" type="Texture" id=9]
 
 [sub_resource type="CanvasItemMaterial" id=5271]
 blend_mode = 1
@@ -47,71 +47,72 @@ texture = ExtResource( 2 )
 
 [node name="ThrustParticles" type="Particles2D" parent="SideLeft"]
 material = SubResource( 5271 )
-position = Vector2( -3, -2 )
+position = Vector2( -3, 0 )
 amount = 20
 lifetime = 0.2
 randomness = 1.0
 process_material = ExtResource( 7 )
-texture = ExtResource( 3 )
+texture = ExtResource( 9 )
 
 [node name="SmokeParticles" type="Particles2D" parent="SideLeft"]
 material = SubResource( 5269 )
-position = Vector2( -8, -2 )
+position = Vector2( -8, -1 )
 amount = 100
 randomness = 1.0
 local_coords = false
 process_material = ExtResource( 6 )
-texture = ExtResource( 4 )
+texture = ExtResource( 3 )
 
 [node name="SpriteThrust" type="Sprite" parent="SideLeft"]
 position = Vector2( -2, 2 )
-scale = Vector2( 0.3, 0.3 )
+scale = Vector2( 1, -1 )
 texture = ExtResource( 5 )
 
 [node name="ThrustOverParticles" type="Particles2D" parent="SideLeft"]
 modulate = Color( 1, 1, 1, 0.270588 )
 material = SubResource( 5263 )
-position = Vector2( -3, -3 )
+position = Vector2( -3, -1 )
 scale = Vector2( 0.5, 0.5 )
 amount = 20
 lifetime = 0.2
 randomness = 1.0
 process_material = ExtResource( 7 )
-texture = ExtResource( 3 )
+texture = ExtResource( 9 )
 
 [node name="SideRight" type="Node2D" parent="."]
 visible = false
 
 [node name="ThrustParticles" type="Particles2D" parent="SideRight"]
 material = SubResource( 5271 )
-position = Vector2( -3, 2 )
+position = Vector2( -3, 1 )
 amount = 20
 lifetime = 0.2
 randomness = 1.0
 process_material = ExtResource( 7 )
-texture = ExtResource( 3 )
+texture = ExtResource( 9 )
 
 [node name="SmokeParticles" type="Particles2D" parent="SideRight"]
 material = SubResource( 5269 )
-position = Vector2( -8, 2 )
+position = Vector2( -8, 1 )
 amount = 100
+speed_scale = 2.0
 randomness = 1.0
 local_coords = false
 process_material = ExtResource( 6 )
-texture = ExtResource( 4 )
+texture = ExtResource( 3 )
 
 [node name="SpriteThrust" type="Sprite" parent="SideRight"]
 position = Vector2( -2, -2 )
-scale = Vector2( 0.3, -0.3 )
+scale = Vector2( 1, -1 )
 texture = ExtResource( 5 )
 
 [node name="ThrustOverParticles" type="Particles2D" parent="SideRight"]
 modulate = Color( 1, 1, 1, 0.270588 )
 material = SubResource( 5263 )
-position = Vector2( -3, 3 )
+position = Vector2( -3, 2 )
 scale = Vector2( 0.5, 0.5 )
 amount = 20
 lifetime = 0.2
 randomness = 1.0
 process_material = ExtResource( 7 )
-texture = ExtResource( 3 )
+texture = ExtResource( 9 )

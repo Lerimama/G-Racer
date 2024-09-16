@@ -1,8 +1,8 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=46 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/glow_light.png" type="Texture" id=2]
-[ext_resource path="res://game/bolt/sprite_edge_light_thin.png" type="Texture" id=3]
+[ext_resource path="res://game/bolt/tex/bolt_edge_light_thin.png" type="Texture" id=3]
 [ext_resource path="res://assets/textures/burst_light.png" type="Texture" id=4]
 [ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=6]
@@ -19,17 +19,19 @@
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
-[ext_resource path="res://game/bolt/sprite_bolt.png" type="Texture" id=20]
-[ext_resource path="res://game/bolt/sprite_turret.png" type="Texture" id=21]
-[ext_resource path="res://game/bolt/sprite_edge_thin.png" type="Texture" id=22]
+[ext_resource path="res://game/bolt/tex/bolt.png" type="Texture" id=20]
+[ext_resource path="res://game/bolt/tex/sprite_turret.png" type="Texture" id=21]
+[ext_resource path="res://game/bolt/tex/bolt_edge_thin.png" type="Texture" id=22]
 [ext_resource path="res://assets/resources/icons/icon_mina.tres" type="Texture" id=23]
 [ext_resource path="res://assets/resources/icons/icon_misile.tres" type="Texture" id=24]
 [ext_resource path="res://assets/resources/icons/icon_shocker.tres" type="Texture" id=25]
 [ext_resource path="res://assets/resources/icons/icon_bullet.tres" type="Texture" id=26]
-[ext_resource path="res://game/bolt/sprite_scars.png" type="Texture" id=27]
-[ext_resource path="res://game/bolt/gun_smoke_particles_material.tres" type="Material" id=28]
-[ext_resource path="res://game/bolt/sprite_thrust_light.png" type="Texture" id=29]
-[ext_resource path="res://game/bolt/Gun.gd" type="Script" id=30]
+[ext_resource path="res://game/bolt/tex/bolt_scars.png" type="Texture" id=27]
+[ext_resource path="res://game/bolt/weapons/gun_smoke_particles_material.tres" type="Material" id=28]
+[ext_resource path="res://common/tex/gradball_8.png" type="Texture" id=29]
+[ext_resource path="res://game/bolt/weapons/Gun.gd" type="Script" id=30]
+[ext_resource path="res://common/tex/gradball_8_bulky.png" type="Texture" id=31]
+[ext_resource path="res://game/bolt/weapons/gun_fire_particles_material.tres" type="Material" id=32]
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
@@ -59,6 +61,44 @@ random_pitch = 1.05
 
 [sub_resource type="CanvasItemMaterial" id=5262]
 blend_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=5267]
+blend_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=5277]
+
+[sub_resource type="Animation" id=5276]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("SpriteTurret:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 4, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5275]
+resource_name = "shooting"
+length = 0.15
+loop = true
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("SpriteTurret:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ Vector2( 4, 0 ), Vector2( 4, -0.5 ) ]
+}
 
 [node name="TheBolt" type="RigidBody2D"]
 z_index = 1
@@ -91,7 +131,7 @@ range_z_min = 0
 range_z_max = 0
 
 [node name="ShadowViewport" type="Viewport" parent="."]
-size = Vector2( 320, 320 )
+size = Vector2( 128, 128 )
 own_world = true
 transparent_bg = true
 handle_input_locally = false
@@ -104,8 +144,7 @@ render_target_update_mode = 3
 
 [node name="DriveTrain" type="Node2D" parent="ShadowViewport"]
 show_behind_parent = true
-position = Vector2( 160, 160 )
-scale = Vector2( 3.333, 3.333 )
+position = Vector2( 64, 64 )
 
 [node name="FrontEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
 
@@ -126,12 +165,11 @@ position = Vector2( -17, 12 )
 position_on_bolt = 1
 
 [node name="BoltSprite" type="Sprite" parent="ShadowViewport"]
-position = Vector2( 160, 160 )
+position = Vector2( 64, 64 )
 texture = ExtResource( 20 )
 
 [node name="Shadow" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.243137 )
-scale = Vector2( 0.3, 0.3 )
 texture = SubResource( 5264 )
 script = ExtResource( 12 )
 shadow_casting_node_path = NodePath("../BoltSprite")
@@ -200,7 +238,6 @@ position = Vector2( -17, 12 )
 position_on_bolt = 1
 
 [node name="BoltSprite" type="Sprite" parent="."]
-scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 20 )
 offset = Vector2( 0.381001, 0.499999 )
 
@@ -512,33 +549,63 @@ material = SubResource( 5262 )
 scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 27 )
 
-[node name="SpriteTurret" type="Sprite" parent="."]
+[node name="Weapon" type="Node2D" parent="."]
 position = Vector2( -16, 0 )
-scale = Vector2( 0.3, 0.3 )
-texture = ExtResource( 21 )
 script = ExtResource( 30 )
 
-[node name="GunParticles" type="Particles2D" parent="SpriteTurret"]
-show_behind_parent = true
-position = Vector2( 32, -1 )
-rotation = 3.14159
-lifetime = 0.2
-explosiveness = 0.5
-randomness = 1.0
-process_material = ExtResource( 28 )
-texture = ExtResource( 29 )
-
-[node name="GunPosition" type="Position2D" parent="SpriteTurret"]
-position = Vector2( 30, -1.90735e-05 )
-scale = Vector2( 10, 10 )
+[node name="GunPosition" type="Position2D" parent="Weapon"]
+position = Vector2( 12, -5.72205e-06 )
+scale = Vector2( 3, 3 )
 __meta__ = {
 "_edit_group_": true,
 "_gizmo_extents_": 2.0
 }
 
-[node name="ReloadTimer" type="Timer" parent="SpriteTurret"]
+[node name="SpriteTurret" type="Sprite" parent="Weapon"]
+position = Vector2( 4, 0 )
+texture = ExtResource( 21 )
+
+[node name="GunParticles" type="Particles2D" parent="Weapon/SpriteTurret"]
+show_behind_parent = true
+material = SubResource( 5267 )
+position = Vector2( 8, 0 )
+rotation = -3.14159
+scale = Vector2( 0.3, 0.3 )
+emitting = false
+amount = 10
+lifetime = 0.1
+randomness = 1.0
+process_material = ExtResource( 32 )
+texture = ExtResource( 29 )
+
+[node name="GunCoverParticles" type="Particles2D" parent="Weapon/SpriteTurret"]
+modulate = Color( 1, 1, 1, 0.427451 )
+material = SubResource( 5267 )
+position = Vector2( 7.5, 0 )
+rotation = -3.14159
+scale = Vector2( 0.3, 0.3 )
+amount = 20
+lifetime = 0.1
+randomness = 1.0
+process_material = ExtResource( 32 )
+texture = ExtResource( 29 )
+
+[node name="SmokeParticles" type="Particles2D" parent="Weapon"]
+material = SubResource( 5277 )
+position = Vector2( 12, 0 )
+amount = 20
+lifetime = 0.5
+randomness = 1.0
+process_material = ExtResource( 28 )
+texture = ExtResource( 31 )
+
+[node name="ReloadTimer" type="Timer" parent="Weapon"]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
+anims/RESET = SubResource( 5276 )
+anims/shooting = SubResource( 5275 )
 
 [connection signal="body_entered" from="." to="." method="_on_Bolt_body_entered"]
 [connection signal="timeout" from="BoltHud/BoltHudLines/WeaponSelector/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]
 [connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
-[connection signal="timeout" from="SpriteTurret/ReloadTimer" to="SpriteTurret" method="_on_ReloadTimer_timeout"]
+[connection signal="timeout" from="Weapon/ReloadTimer" to="Weapon" method="_on_ReloadTimer_timeout"]
