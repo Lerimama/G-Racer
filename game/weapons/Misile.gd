@@ -2,6 +2,9 @@ extends KinematicBody2D
 class_name Misile
 
 
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
+
 var spawned_by: Node
 var spawned_by_color: Color
 var spawned_by_speed: float
@@ -64,7 +67,7 @@ func _ready() -> void:
 	# spawn trail
 	new_misile_trail = MisileTrail.instance()
 	new_misile_trail.gradient.colors[2] = spawned_by_color
-	new_misile_trail.z_index = z_index + Set.trail_z_index
+	new_misile_trail.z_index = trail_position.z_index
 	Ref.node_creation_parent.add_child(new_misile_trail)
 		
 
@@ -136,7 +139,7 @@ func dissarm():
 	var new_drop_particles: CPUParticles2D = DropParticles.instance()
 	new_drop_particles.global_position = drop_position.global_position
 	new_drop_particles.color = spawned_by_color
-	new_drop_particles.z_index = z_index + Set.explosion_z_index
+	new_drop_particles.z_index = drop_position.z_index
 	new_drop_particles.set_one_shot(true)
 	new_drop_particles.set_emitting(true)
 	Ref.node_creation_parent.add_child(new_drop_particles)
@@ -164,7 +167,6 @@ func explode():
 	new_misile_explosion.set_one_shot(true)
 	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawned_by_color
 	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawned_by_color
-	new_misile_explosion.z_index = z_index + Set.explosion_z_index
 	new_misile_explosion.set_emitting(true)
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Ref.node_creation_parent.add_child(new_misile_explosion)

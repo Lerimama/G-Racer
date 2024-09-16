@@ -100,7 +100,6 @@ func hide_stats():
 func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool):
 	
 	var new_floating_tag = FloatingTag.instance()
-	new_floating_tag.z_index = 4 # višje od straysa in playerja
 	
 	# če je zadnji krog njegov čas ostane na liniji
 	new_floating_tag.global_position = tag_owner.global_position

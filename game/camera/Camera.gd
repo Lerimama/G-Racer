@@ -40,14 +40,10 @@ func shake_camera(shake_power: float):
 
 func set_camera_limits():
 
-#	return
-	var tilemap_edge: Rect2 = Ref.current_level.tilemap_edge.get_used_rect()
-	
 	var corner_TL: float
 	var corner_TR: float
 	var corner_BL: float
 	var corner_BR: float
-	var cell_size_x = Ref.current_level.tilemap_edge.cell_size.x
 	
 	var limits_rectangle: Control = Ref.current_level.level_limits_rect
 	var limits_rectangle_position: Vector2 = limits_rectangle.rect_position

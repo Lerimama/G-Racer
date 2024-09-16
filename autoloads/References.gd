@@ -47,7 +47,7 @@ var color_yellow = Color("#fef98b")
 var color_hud_base = Color("#ffffff")
 
 var color_brick_ghost = Color.goldenrod
-var color_brick_magnet_off = Color.crimson
+var color_brick_magnet_off = Color(1.1,0,1.1,1)
 var color_brick_magnet_on = Color.magenta
 var color_brick_target = Color.aquamarine
 var color_brick_target_hit_1 = Color.red

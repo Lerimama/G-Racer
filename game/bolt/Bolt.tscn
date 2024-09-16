@@ -1,9 +1,9 @@
-[gd_scene load_steps=32 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
-[ext_resource path="res://assets/textures/weapons/bullet.png" type="Texture" id=2]
-[ext_resource path="res://assets/textures/bolt/bolt_car.png" type="Texture" id=3]
-[ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle.material" type="Material" id=4]
+[ext_resource path="res://assets/textures/glow_light.png" type="Texture" id=2]
+[ext_resource path="res://game/bolt/sprite_edge_light_thin.png" type="Texture" id=3]
+[ext_resource path="res://assets/textures/burst_light.png" type="Texture" id=4]
 [ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
@@ -11,7 +11,7 @@
 [ext_resource path="res://assets/sounds/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=10]
 [ext_resource path="res://assets/sounds/_zaloga/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav" type="AudioStream" id=11]
-[ext_resource path="res://common/SpriteShadow.tscn" type="PackedScene" id=12]
+[ext_resource path="res://game/bolt/BoltShadow.gd" type="Script" id=12]
 [ext_resource path="res://assets/sounds/sfx/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=13]
 [ext_resource path="res://assets/sounds/sfx/engine___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sounds/sfx/engine_revup___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=15]
@@ -19,21 +19,27 @@
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
+[ext_resource path="res://game/bolt/sprite_bolt.png" type="Texture" id=20]
+[ext_resource path="res://game/bolt/sprite_turret.png" type="Texture" id=21]
+[ext_resource path="res://game/bolt/sprite_edge_thin.png" type="Texture" id=22]
 [ext_resource path="res://assets/resources/icons/icon_mina.tres" type="Texture" id=23]
 [ext_resource path="res://assets/resources/icons/icon_misile.tres" type="Texture" id=24]
 [ext_resource path="res://assets/resources/icons/icon_shocker.tres" type="Texture" id=25]
 [ext_resource path="res://assets/resources/icons/icon_bullet.tres" type="Texture" id=26]
+[ext_resource path="res://game/bolt/sprite_scars.png" type="Texture" id=27]
+[ext_resource path="res://game/bolt/gun_smoke_particles_material.tres" type="Material" id=28]
+[ext_resource path="res://game/bolt/sprite_thrust_light.png" type="Texture" id=29]
+[ext_resource path="res://game/bolt/Gun.gd" type="Script" id=30]
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
 bounce = 0.2
 
+[sub_resource type="ViewportTexture" id=5264]
+viewport_path = NodePath("ShadowViewport")
+
 [sub_resource type="RectangleShape2D" id=5254]
 extents = Vector2( 6.5, 6 )
-
-[sub_resource type="OccluderPolygon2D" id=5261]
-cull_mode = 1
-polygon = PoolVector2Array( -40, -16, -40, 16, 40, 16, 40, -16 )
 
 [sub_resource type="AtlasTexture" id=5255]
 atlas = ExtResource( 6 )
@@ -49,10 +55,13 @@ audio_stream = ExtResource( 11 )
 audio_stream = ExtResource( 16 )
 random_pitch = 1.05
 
-[sub_resource type="RectangleShape2D" id=5259]
-extents = Vector2( 39.5, 16 )
+[sub_resource type="CanvasItemMaterial" id=5261]
+
+[sub_resource type="CanvasItemMaterial" id=5262]
+blend_mode = 1
 
 [node name="TheBolt" type="RigidBody2D"]
+z_index = 1
 collision_layer = 7
 mass = 30.0
 physics_material_override = SubResource( 5260 )
@@ -60,24 +69,84 @@ contacts_reported = 1
 contact_monitor = true
 angular_damp = 8.0
 script = ExtResource( 8 )
+__meta__ = {
+"_edit_vertical_guides_": [ 12.0 ]
+}
 
 [node name="BoltController" type="Node" parent="."]
 
-[node name="Shadow" parent="." instance=ExtResource( 12 )]
+[node name="TrailPosition" type="Position2D" parent="."]
+position = Vector2( -33, 0 )
+__meta__ = {
+"_gizmo_extents_": 2.0
+}
+
+[node name="Light2D2" type="Light2D" parent="."]
+visible = false
+position = Vector2( -1.90735e-06, -9.53674e-07 )
+texture = ExtResource( 2 )
+color = Color( 1, 0.627451, 0, 0.290196 )
+energy = 1.28
+range_z_min = 0
+range_z_max = 0
+
+[node name="ShadowViewport" type="Viewport" parent="."]
+size = Vector2( 320, 320 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+msaa = 4
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+render_target_update_mode = 3
+
+[node name="DriveTrain" type="Node2D" parent="ShadowViewport"]
+show_behind_parent = true
+position = Vector2( 160, 160 )
+scale = Vector2( 3.333, 3.333 )
+
+[node name="FrontEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
+
+[node name="ThrustL" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
+position = Vector2( 18, -12 )
+
+[node name="ThrustR" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
+position = Vector2( 18, 12 )
+position_on_bolt = 1
+
+[node name="RearEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
+
+[node name="ThrustL" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
+position = Vector2( -17, -12 )
+
+[node name="ThrustR" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
+position = Vector2( -17, 12 )
+position_on_bolt = 1
+
+[node name="BoltSprite" type="Sprite" parent="ShadowViewport"]
+position = Vector2( 160, 160 )
+texture = ExtResource( 20 )
+
+[node name="Shadow" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.243137 )
+scale = Vector2( 0.3, 0.3 )
+texture = SubResource( 5264 )
+script = ExtResource( 12 )
 shadow_casting_node_path = NodePath("../BoltSprite")
 
 [node name="DriveTrain" type="Node2D" parent="."]
-show_behind_parent = true
 
 [node name="FrontEngine" type="Node2D" parent="DriveTrain"]
 
 [node name="FrontPin" type="PinJoint2D" parent="DriveTrain/FrontEngine"]
-position = Vector2( 26, 0 )
+position = Vector2( 18, 0 )
 node_a = NodePath("../../..")
 node_b = NodePath("../RigidBody2D")
 
 [node name="RigidBody2D" type="RigidBody2D" parent="DriveTrain/FrontEngine"]
-position = Vector2( 26, 0 )
+position = Vector2( 18, 0 )
 gravity_scale = 0.0
 can_sleep = false
 
@@ -93,26 +162,26 @@ offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="ThrustL" parent="DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 28, -16 )
+position = Vector2( 18, -12 )
 
 [node name="ThrustR" parent="DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 28, 16 )
+position = Vector2( 18, 12 )
+position_on_bolt = 1
 
 [node name="RearEngine" type="Node2D" parent="DriveTrain"]
 
 [node name="RearPin" type="PinJoint2D" parent="DriveTrain/RearEngine"]
-position = Vector2( -21, 0 )
+position = Vector2( -24, 0 )
 node_a = NodePath("../../..")
 node_b = NodePath("../RigidBody2D")
 
 [node name="RigidBody2D" type="RigidBody2D" parent="DriveTrain/RearEngine"]
-position = Vector2( -21, 0 )
+position = Vector2( -24, 0 )
 gravity_scale = 0.0
 can_sleep = false
 linear_damp = 3.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DriveTrain/RearEngine/RigidBody2D"]
-position = Vector2( -0.5, 0 )
 shape = SubResource( 5254 )
 disabled = true
 
@@ -124,18 +193,16 @@ offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="ThrustL" parent="DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( -21, -16 )
+position = Vector2( -17, -12 )
 
 [node name="ThrustR" parent="DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( -21, 16 )
+position = Vector2( -17, 12 )
+position_on_bolt = 1
 
 [node name="BoltSprite" type="Sprite" parent="."]
-material = ExtResource( 4 )
-texture = ExtResource( 3 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 20 )
 offset = Vector2( 0.381001, 0.499999 )
-
-[node name="LightOccluder2D" type="LightOccluder2D" parent="BoltSprite"]
-occluder = SubResource( 5261 )
 
 [node name="BoltHud" type="Node2D" parent="."]
 visible = false
@@ -379,11 +446,6 @@ __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
-[node name="indikator3" type="Sprite" parent="FrontEnginePositionL"]
-visible = false
-position = Vector2( 0, 1 )
-texture = ExtResource( 2 )
-
 [node name="FrontEnginePositionR" type="Position2D" parent="."]
 position = Vector2( 24, 8 )
 __meta__ = {
@@ -391,25 +453,10 @@ __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
-[node name="indikator2" type="Sprite" parent="FrontEnginePositionR"]
-visible = false
-texture = ExtResource( 2 )
-
 [node name="RearEnginePosition" type="Position2D" parent="."]
 position = Vector2( -24, -8 )
 __meta__ = {
 "_edit_group_": true,
-"_gizmo_extents_": 2.0
-}
-
-[node name="indikator" type="Sprite" parent="RearEnginePosition"]
-visible = false
-position = Vector2( 0, 0.5 )
-texture = ExtResource( 2 )
-
-[node name="TrailPosition" type="Position2D" parent="."]
-position = Vector2( -39, 0 )
-__meta__ = {
 "_gizmo_extents_": 2.0
 }
 
@@ -420,24 +467,9 @@ __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
-[node name="indikator" type="Sprite" parent="GunPosition"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
-modulate = Color( 1, 0, 0, 1 )
-position = Vector2( 0.5, 0.5 )
-texture = ExtResource( 2 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0.5, 0 )
-shape = SubResource( 5259 )
-
-[node name="Polygon2D" type="Polygon2D" parent="CollisionShape2D"]
-visible = false
-show_behind_parent = true
-position = Vector2( 69.0698, 18 )
-scale = Vector2( 2.7907, 1 )
-color = Color( 0.368627, 1, 0.662745, 1 )
-offset = Vector2( -20, -19 )
-polygon = PoolVector2Array( -15.5, 11, -15.5, -9, 6, -9, 6, 11 )
+polygon = PoolVector2Array( -34, -12, -30, -15, -14, -17, 22, -17, 30, -15, 32, -12, 32, 12, 30, 15, 22, 17, -14, 17, -30, 15, -34, 12 )
 
 [node name="ReviveTimer" type="Timer" parent="."]
 
@@ -447,6 +479,66 @@ position = Vector2( 26, 0 )
 points = PoolVector2Array( 0, 0, 100, 0 )
 width = 4.0
 
+[node name="SpriteEdgeLight" type="Sprite" parent="."]
+visible = false
+modulate = Color( 1, 0.541176, 0.262745, 1 )
+material = SubResource( 5261 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 22 )
+
+[node name="Light2D" type="Light2D" parent="."]
+visible = false
+position = Vector2( -1.90735e-06, -9.53674e-07 )
+scale = Vector2( 2.26562, 1.13281 )
+texture = ExtResource( 4 )
+texture_scale = 0.2
+color = Color( 1, 0.47451, 0.215686, 0.498039 )
+energy = 0.94
+range_z_min = 0
+range_z_max = 2
+
+[node name="SpriteEdgeLight2" type="Light2D" parent="."]
+visible = false
+material = SubResource( 5261 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 3 )
+color = Color( 1, 0.576471, 0.0823529, 1 )
+energy = 1.3
+
+[node name="SpriteScars" type="Sprite" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.458824 )
+material = SubResource( 5262 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 27 )
+
+[node name="SpriteTurret" type="Sprite" parent="."]
+position = Vector2( -16, 0 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 21 )
+script = ExtResource( 30 )
+
+[node name="GunParticles" type="Particles2D" parent="SpriteTurret"]
+show_behind_parent = true
+position = Vector2( 32, -1 )
+rotation = 3.14159
+lifetime = 0.2
+explosiveness = 0.5
+randomness = 1.0
+process_material = ExtResource( 28 )
+texture = ExtResource( 29 )
+
+[node name="GunPosition" type="Position2D" parent="SpriteTurret"]
+position = Vector2( 30, -1.90735e-05 )
+scale = Vector2( 10, 10 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="ReloadTimer" type="Timer" parent="SpriteTurret"]
+
 [connection signal="body_entered" from="." to="." method="_on_Bolt_body_entered"]
 [connection signal="timeout" from="BoltHud/BoltHudLines/WeaponSelector/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]
 [connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
+[connection signal="timeout" from="SpriteTurret/ReloadTimer" to="SpriteTurret" method="_on_ReloadTimer_timeout"]

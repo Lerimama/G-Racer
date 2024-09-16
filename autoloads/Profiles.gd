@@ -29,7 +29,8 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	PLAYER.P1 : {
 		"player_name": "P1",
 		"player_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
-		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+		"player_color": Color.white,
+#		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLT_TYPE.RIGID,
 	},
@@ -105,7 +106,7 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
 		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
-		"max_engine_power": 400, # 1 - 500 konjev 
+		"max_engine_power": 320, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
@@ -252,7 +253,7 @@ var level_object_profiles: Dictionary = {
 		"value": 30,
 		"speed_brake_div": 10,
 		"altitude": 5,
-		"object_scene": preload("res://game/arena/bricks/BrickGhost.tscn"),
+		"object_scene": preload("res://game/levels/objects/BrickGhost.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
@@ -260,7 +261,7 @@ var level_object_profiles: Dictionary = {
 		"value": 10,
 		"bounce_strength": 2,
 		"altitude": 5,
-		"object_scene": preload("res://game/arena/bricks/BrickBouncer.tscn"),
+		"object_scene": preload("res://game/levels/objects/BrickBouncer.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
@@ -268,27 +269,27 @@ var level_object_profiles: Dictionary = {
 		"value": 0,
 		"gravity_force": 300.0,
 		"altitude": 5,
-		"object_scene": preload("res://game/arena/bricks/BrickMagnet.tscn"),
+		"object_scene": preload("res://game/levels/objects/BrickMagnet.tscn"),
 		"ai_target_rank": 0, # 0 pomeni, da se izogneš
 	},	
 	LEVEL_OBJECT.BRICK_TARGET: {
 		"color": Ref.color_brick_target,
 		"value": 100,
 		"altitude": 5,
-		"object_scene": preload("res://game/arena/bricks/BrickTarget.tscn"),
+		"object_scene": preload("res://game/levels/objects/BrickTarget.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_LIGHT: {
 		"color": Ref.color_brick_light_off,
 		"value": 10,
 		"altitude": 0,
-		"object_scene": preload("res://game/arena/bricks/BrickLight.tscn"),
+		"object_scene": preload("res://game/levels/objects/BrickLight.tscn"),
 		"ai_target_rank": 3,
 	},
 	LEVEL_OBJECT.GOAL_PILLAR: {
 		"value": 1000,
 		"altitude": 5,
-		"object_scene": preload("res://game/arena/GoalPillar.tscn"),
+		"object_scene": preload("res://game/levels/objects/GoalPillar.tscn"),
 		"ai_target_rank": 5,
 	},
 }

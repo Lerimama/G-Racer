@@ -12,7 +12,7 @@
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=10]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=11]
 [ext_resource path="res://game/levels/city/tex/tile_roof_edge.png" type="Texture" id=12]
-[ext_resource path="res://game/levels/PolygonShadow.gd" type="Script" id=13]
+[ext_resource path="res://common/ShadowPolygon.tscn" type="PackedScene" id=13]
 [ext_resource path="res://game/levels/city/Building.gd" type="Script" id=14]
 
 [sub_resource type="Resource" id=8148]
@@ -126,7 +126,7 @@ edge_material = SubResource( 8133 )
 normal_range = SubResource( 8134 )
 weld = true
 render = true
-z_index = 3
+z_index = 0
 z_as_relative = true
 offset = -0.7
 
@@ -136,7 +136,7 @@ _edge_meta_materials = [ SubResource( 8135 ) ]
 fill_textures = [ ExtResource( 6 ) ]
 fill_texture_normals = [  ]
 fill_texture_z_index = 0
-fill_texture_show_behind_parent = false
+fill_texture_show_behind_parent = true
 fill_mesh_offset = 0.0
 render_offset = 0.0
 
@@ -150,9 +150,11 @@ __meta__ = {
 "_edit_group_": true
 }
 
+[node name="PolygonShadow" parent="." instance=ExtResource( 13 )]
+visible = true
+
 [node name="SS2D_Shape_Closed" type="Node2D" parent="."]
 position = Vector2( 256, 192 )
-z_index = 1
 script = ExtResource( 10 )
 _points = SubResource( 8158 )
 shape_material = SubResource( 8132 )
@@ -169,15 +171,7 @@ visible = false
 modulate = Color( 1, 1, 1, 0.3 )
 polygon = PoolVector2Array( -0.543579, -0.282318, 254.945, 0.336945, 255.193, 255.83, 0.704102, 256.615 )
 
-[node name="PolygonShadow" type="Polygon2D" parent="."]
-modulate = Color( 1, 1, 1, 0.207843 )
-color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 0, 256, 64, 320, 320, 320, 320, 64, 256, 0, 0, 0 )
-script = ExtResource( 13 )
-shadow_casting_polygon_path = NodePath("../CollisionPolygon2D")
-node_height = 70.0
-node_elevation = 0.0
-
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+visible = false
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 occluder = SubResource( 8147 )

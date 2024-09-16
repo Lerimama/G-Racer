@@ -13,15 +13,15 @@ var bolts_checked: Array
 var camera_leader: Node2D # trenutno vodilni igralec (rabim za camera target in pull target)
 
 # game
-var game_settings: Dictionary # = Set.default_game_settings # ga med igro ne spreminjaš
+var game_settings: Dictionary # set_game seta iz profilov
 var activated_player_ids: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
 var fast_start_window: bool = false # bolt ga čekira in reagira
 var start_bolt_position_nodes: Array # dobi od tilemapa
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
-export var shadows_direction: Vector2 # = game_settings["shadows_direction"]
+export var shadows_direction: Vector2 = Vector2(1, 1) # set_game seta iz profilov
 
 # level 
-var level_settings: Dictionary
+var level_settings: Dictionary # set_level seta iz profilov
 var current_level_index = 0
 var available_pickable_positions: Array # za random spawn
 var navigation_positions: Array # pozicije vseh navigation tiletov
@@ -81,7 +81,6 @@ func _process(delta: float) -> void:
 	pickables_in_game = get_tree().get_nodes_in_group(Ref.group_pickables)	
 
 	#	if game_on: 
-		
 	update_ranking()
 			
 	var active_human_bolts: Array = []
@@ -123,8 +122,8 @@ func set_game():
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
 			pass
-#			activated_player_ids = [Pro.PLAYER.P1] 	
-			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+			activated_player_ids = [Pro.PLAYER.P1] 	
+#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start

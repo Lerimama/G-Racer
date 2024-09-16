@@ -1,3 +1,11 @@
 [gd_resource type="Environment" format=2]
 
 [resource]
+tonemap_mode = 4
+auto_exposure_enabled = true
+auto_exposure_scale = 0.28
+glow_intensity = 0.85
+glow_bloom = 0.02
+glow_hdr_threshold = 0.61
+adjustment_brightness = 0.95
+adjustment_saturation = 0.74

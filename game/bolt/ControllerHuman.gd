@@ -59,9 +59,7 @@ func _input(event: InputEvent) -> void:
 			#				if Input.is_action_just_pressed(selector_action):
 			#					controlled_bolt.bolt_hud.selected_active_weapon_index += 1
 			
-			if Input.is_action_just_pressed(shoot_action):
-				#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_weapon_index)
-				controlled_bolt.shoot(2) # debug ... shoot
+
 
 
 func _ready() -> void:
@@ -70,7 +68,11 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
-
+	if Input.is_action_pressed(shoot_action):
+#			if Input.is_action_just_pressed(shoot_action):
+			#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_weapon_index)
+			controlled_bolt.shoot(0) # debug ... shoot
 	# dokler ni igre fizika ne dela
 	if Ref.game_manager.game_on and controlled_bolt.bolt_active:
+#		return
 		controlled_bolt.force_rotation = controlled_bolt.thrust_rotation + controlled_bolt.get_global_rotation()

@@ -15,7 +15,7 @@ onready	var checkpoint: Area2D = $Checkpoint
 onready var racing_track: Path2D = $RacingTrack
 onready var navigation_instance: NavigationPolygonInstance = $NavigationPolygonInstance
 onready var tilemap_objects: TileMap = $Objects/Objects
-onready var tilemap_edge: TileMap = $Edge
+#onready var tilemap_edge: TileMap = $Edge
 onready var level_limits_rect: Panel = $LevelLimits
 
 # start
@@ -231,7 +231,7 @@ func set_level_navigation():
 
 func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
 	
-	var scene_to_spawn: PackedScene = preload("res://game/arena/pickables/Pickable.tscn")
+	var scene_to_spawn: PackedScene = preload("res://game/levels/objects/Pickable.tscn")
 	var pickable_tile_offset: Vector2 = Vector2(8,8)
 	
 	var new_pickable_scene = scene_to_spawn.instance() #
@@ -244,7 +244,6 @@ func resize_to_level_size():
 	
 	# naberem rektangle za risajzat
 	var nodes_to_resize: Array = []
-	nodes_to_resize.append_array(tilemap_edge.get_children()) # edge shaders
 	nodes_to_resize.append_array($Background.get_children())
 	
 	# resize and set

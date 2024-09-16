@@ -5,12 +5,6 @@ var game_camera_zoom_factor: float = 0.25 # resolucija igre je 4 krat manjša 25
 var camera_shake_on: bool =  true
 var get_it_time: float = 2
 
-# Z-index spawnanih elementov ... relativno glede na tistega, ki jih spawna
-var weapons_z_index = -1 # bolt je 0
-var engine_z_index = -1
-var trail_z_index = -1
-var explosion_z_index = 1
-
 enum LEVEL {
 	OO, ROUND, DUEL, NITRO, CITY,
 	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 

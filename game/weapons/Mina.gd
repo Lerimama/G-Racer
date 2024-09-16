@@ -2,6 +2,9 @@ extends Node2D
 class_name Mina
 
 
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
+
 var spawned_by: Node
 var spawned_by_color: Color
 
@@ -13,7 +16,7 @@ var is_expanded: bool = false
 var detect_expand_size: float = 3.5 # doseg šoka
 
 onready var detect: Area2D = $DetectArea
-onready var mina_sprite: AnimatedSprite = $Sprite
+onready var mina_sprite: AnimatedSprite = $AnimSprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 
@@ -65,7 +68,6 @@ func explode():
 	new_misile_explosion.set_one_shot(true)
 	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawned_by_color
 	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawned_by_color
-	new_misile_explosion.z_index = z_index + Set.explosion_z_index
 	new_misile_explosion.set_emitting(true)
 	new_misile_explosion.get_node("ExplosionBlast").play()
 	Ref.node_creation_parent.add_child(new_misile_explosion)

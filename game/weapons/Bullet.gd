@@ -2,9 +2,14 @@ extends KinematicBody2D
 class_name Bullet
 
 
+export var height: float = 0 # PRO
+export var elevation: float = 10 # PRO
+
 var spawned_by: Node
 var spawned_by_color: Color
 var spawned_by_speed: float
+var in_spawned_by_area: bool = true # vision zaznava kdaj ga zapusti
+
 
 var bullet_active: bool = true
 var direction: Vector2
@@ -19,7 +24,7 @@ onready var BulletTrail: PackedScene = preload("res://game/weapons/BulletTrail.t
 onready var HitParticles: PackedScene = preload("res://game/weapons/BulletHitParticles.tscn")
 
 onready var weapon_profile: Dictionary = Pro.weapon_profiles[Pro.WEAPON.BULLET]
-onready var reload_time: float = weapon_profile["reload_time"]
+#onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
@@ -39,7 +44,7 @@ func _ready() -> void:
 	# spawn trail
 	new_bullet_trail = BulletTrail.instance()
 	new_bullet_trail.gradient.colors[1] = spawned_by_color
-	new_bullet_trail.z_index = z_index + Set.trail_z_index
+	new_bullet_trail.z_index = trail_position.z_index
 	Ref.node_creation_parent.add_child(new_bullet_trail)
 	
 	velocity = direction * speed # velocity is the velocity vector in pixels per second?
@@ -52,22 +57,17 @@ func _physics_process(delta: float) -> void:
 	
 	new_bullet_trail.add_points(trail_position.global_position) # premaknjeno iz process
 		
-#	move_and_slide(velocity) # ma delto že vgrajeno
-	
 	# preverjam, če se še dotika avtorja
 	if vision_ray.is_colliding():
 		var current_collider = vision_ray.get_collider()
-		# avtor
 		if current_collider == spawned_by:
-			collision_shape.set_deferred("disabled", true)
-			#			collision_shape.disabled = true # rabim, da ekran sploh registrira bullet
-		# drugo ...
+			in_spawned_by_area = true
 		else:
-			collision_shape.set_deferred("disabled", false)
-			#			collision_shape.disabled = false
+			in_spawned_by_area = false
+	if in_spawned_by_area:
+		collision_shape.set_deferred("disabled", true)
 	else:
 		collision_shape.set_deferred("disabled", false)
-		#		collision_shape.disabled = false
 		
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
 	collision = move_and_collide(velocity * delta, false)
@@ -96,7 +96,6 @@ func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):
 	new_hit_particles.position = collision_position
 	new_hit_particles.rotation = collision_normal.angle() # rotacija partiklov glede na normalo površine 
 	new_hit_particles.color = spawned_by_color
-	new_hit_particles.z_index = z_index + Set.explosion_z_index
 	new_hit_particles.set_emitting(true)
 	Ref.node_creation_parent.add_child(new_hit_particles)
 	new_bullet_trail.start_decay(collision_position) # zadnja pika se pripne na mesto kolizije
