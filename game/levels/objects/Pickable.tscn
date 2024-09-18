@@ -4,7 +4,7 @@
 [ext_resource path="res://common/ShadowSprite.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=3]
 [ext_resource path="res://_materiali/light_2.png" type="Texture" id=4]
-[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=5]
+[ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=5]
 
 [sub_resource type="AtlasTexture" id=563]
 atlas = ExtResource( 5 )

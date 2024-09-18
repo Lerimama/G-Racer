@@ -3,9 +3,9 @@
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=1]
 [ext_resource path="res://game/levels/objects/BrickLight.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/levels/city/street_curve.tres" type="Resource" id=4]
-[ext_resource path="res://assets/textures/bolt/bolt_car.png" type="Texture" id=5]
-[ext_resource path="res://assets/textures/weapons/bullet.png" type="Texture" id=6]
-[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=7]
+[ext_resource path="res://game/bolt/tex/bolt_car.png" type="Texture" id=5]
+[ext_resource path="res://game/ammo/tex/bullet.png" type="Texture" id=6]
+[ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=7]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=8]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=9]
 [ext_resource path="res://game/levels/city/res/terrain_dirt_rect.tres" type="Material" id=10]
@@ -14,17 +14,17 @@
 [ext_resource path="res://game/levels/sha/level_floor_background_dancefloor.gdshader" type="Shader" id=18]
 [ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle_texture.gdshader" type="Shader" id=19]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_open.gd" type="Script" id=20]
-[ext_resource path="res://game/arena/areas/AreaNitro.tscn" type="PackedScene" id=22]
+[ext_resource path="res://game/levels/areas/AreaNitro.tscn" type="PackedScene" id=22]
 [ext_resource path="res://game/levels/RaceTrack.gd" type="Script" id=28]
 [ext_resource path="res://game/levels/city/tex/tilemap_streets.png" type="Texture" id=29]
 [ext_resource path="res://game/levels/city/LevelCity.gd" type="Script" id=32]
 [ext_resource path="res://game/levels/BoltTracker.gd" type="Script" id=33]
-[ext_resource path="res://game/arena/areas/AreaGravel.tscn" type="PackedScene" id=35]
-[ext_resource path="res://assets/resources/tilesets/tileset_arena_elements.tres" type="TileSet" id=37]
+[ext_resource path="res://game/levels/areas/AreaGravel.tscn" type="PackedScene" id=35]
+[ext_resource path="res://game/levels/tilesets/tileset_arena_elements.tres" type="TileSet" id=37]
 [ext_resource path="res://game/levels/city/res/street_dirt_curve.tres" type="Material" id=39]
-[ext_resource path="res://game/arena/areas/AreaHole.tscn" type="PackedScene" id=41]
+[ext_resource path="res://game/levels/areas/AreaHole.tscn" type="PackedScene" id=41]
 [ext_resource path="res://game/levels/sha/shader_texture/TerrainTextureRect.tscn" type="PackedScene" id=47]
-[ext_resource path="res://assets/resources/tilesets/tileset_streets.tres" type="TileSet" id=48]
+[ext_resource path="res://game/levels/tilesets/tileset_streets.tres" type="TileSet" id=48]
 [ext_resource path="res://game/levels/Building.tscn" type="PackedScene" id=52]
 [ext_resource path="res://game/arena/StartLights.tscn" type="PackedScene" id=53]
 
@@ -78,9 +78,6 @@ shader_param/shade_all_colors = true
 shader_param/noise = SubResource( 614 )
 shader_param/noise_color_ramp = SubResource( 615 )
 shader_param/shades_color_ramp = SubResource( 616 )
-
-[sub_resource type="RectangleShape2D" id=10078]
-extents = Vector2( 40, 40 )
 
 [sub_resource type="Shader" id=10074]
 code = "shader_type canvas_item;
@@ -977,6 +974,9 @@ _next_key = 33
 _material_overrides = {
 }
 
+[sub_resource type="RectangleShape2D" id=10078]
+extents = Vector2( 64, 24 )
+
 [sub_resource type="Resource" id=10166]
 script = ExtResource( 15 )
 texture_idx = 3
@@ -1858,23 +1858,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = 3000.0
 margin_bottom = 2024.0
-color = Color( 0, 0, 0, 1 )
-
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-visible = false
-position = Vector2( 544, 920 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2( 2, -2 )
-shape = SubResource( 10078 )
-disabled = true
-
-[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D"]
-position = Vector2( 0, -10 )
-color = Color( 0.976471, 0, 0, 1 )
-polygon = PoolVector2Array( -24, -24, -40, 48, 40, 48, 24, -24 )
+color = Color( 0.286275, 0.286275, 0.286275, 1 )
 
 [node name="Ground" type="Node2D" parent="."]
+visible = false
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
@@ -1963,6 +1950,22 @@ _points = SubResource( 10165 )
 
 [node name="CollisionPolygon2D" parent="Ground/Areas/AreaNitro" index="1"]
 polygon = PoolVector2Array( -435.647, 378.854, -435.136, 366.637, -433.742, 354.572, -431.239, 342.513, -427.526, 330.462, -422.502, 318.423, -416.065, 306.399, -408.113, 294.392, -398.545, 282.405, -387.258, 270.442, -374.153, 258.505, -342.078, 234.723, -301.505, 211.081, -251.624, 187.604, -199.62, 167.947, -153.449, 154.926, -113.449, 147.303, -79.9604, 143.841, -53.3228, 143.303, -33.8752, 144.45, -17.9275, 146.802, -5.80225, 134.477, 8.01074, 123.22, 16.4712, 117.553, 25.8206, 112.328, 35.949, 107.897, 46.7458, 104.61, 52.3606, 103.506, 58.1013, 102.82, 63.9539, 102.595, 69.9048, 102.876, 75.9402, 103.706, 82.0461, 105.13, 88.2092, 107.19, 94.4155, 109.932, 100.651, 113.4, 106.902, 117.636, 113.155, 122.684, 119.561, 128.594, 52.1965, 186.186, -18.0085, 233.892, -90.025, 272.893, -162.66, 304.371, -305.013, 349.487 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( 480, 984 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource( 10078 )
+
+[node name="ColorRect" type="ColorRect" parent="StaticBody2D"]
+margin_left = -72.0
+margin_top = -24.0
+margin_right = 64.0
+margin_bottom = 24.0
+color = Color( 0.976471, 0.380392, 0.380392, 1 )
 
 [node name="Lights" type="Node2D" parent="."]
 

@@ -63,8 +63,6 @@ func start_fx(reverse_direction: bool = false):
 
 func stop_fx():
 	
-#	return # debug
-	
 	if thrust_active:
 		thrust_active = false
 		current_side_node.get_node(thrust_particles_name).emitting = false

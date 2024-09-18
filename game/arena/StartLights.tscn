@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=1]
+[ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=1]
 [ext_resource path="res://game/arena/StartLights.gd" type="Script" id=2]
 [ext_resource path="res://assets/sounds/sfx/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=3]
 

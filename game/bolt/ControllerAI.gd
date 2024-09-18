@@ -285,7 +285,7 @@ func get_possible_targets(): # SEARCH
 	#	if player_stats["bullet_count"] == 0 and player_stats["misile_count"] == 0:
 	#		for target in all_possible_targets:
 	#			if "pickable_key" in target:
-	#				if target.pickable_key == Pro.WEAPON.BULLET or target.pickable_key == Pro.WEAPON.MISILE:
+	#				if target.pickable_key == Pro.AMMO.BULLET or target.pickable_key == Pro.AMMO.MISILE:
 	#					all_possible_targets.push_front(target)
 	# rangiram po distanci
 	

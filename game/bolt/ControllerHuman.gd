@@ -51,13 +51,13 @@ func _input(event: InputEvent) -> void:
 					controlled_bolt.idle_motion_on = false
 									
 			# shooting
-			#			# OPT kontorole selector weapon vs drift
+			#			# OPT kontorole selector ammo vs drift
 			#			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
 			#				if Input.is_action_pressed(selector_action):
-			#					controlled_bolt.bolt_hud.selected_active_weapon_index += 1
+			#					controlled_bolt.bolt_hud.selected_active_ammo_index += 1
 			#			else:
 			#				if Input.is_action_just_pressed(selector_action):
-			#					controlled_bolt.bolt_hud.selected_active_weapon_index += 1
+			#					controlled_bolt.bolt_hud.selected_active_ammo_index += 1
 			
 
 
@@ -72,10 +72,9 @@ func _physics_process(delta: float) -> void:
 		controlled_bolt.is_shooting = true
 	else:
 		controlled_bolt.is_shooting = false
-#			if Input.is_action_just_pressed(shoot_action):
-#			#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_weapon_index)
-
-#			controlled_bolt.shoot(0) # debug ... shoot
+		#			if Input.is_action_just_pressed(shoot_action):
+		#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_ammo_index)
+		#			controlled_bolt.shoot(0)
 	# dokler ni igre fizika ne dela
 	if Ref.game_manager.game_on and controlled_bolt.bolt_active:
 #		return

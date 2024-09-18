@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://assets/textures/tiles/tile_arena_edge.png" type="Texture" id=1]
+[ext_resource path="res://game/levels/areas/tex/tile_arena_edge.png" type="Texture" id=1]
 [ext_resource path="res://_rezerva/ExplodingEdge.gd" type="Script" id=2]
 
 [node name="ExplodingEdge" type="Polygon2D"]

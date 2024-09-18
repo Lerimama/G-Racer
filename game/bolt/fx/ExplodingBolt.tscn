@@ -1,8 +1,8 @@
 [gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://game/bolt/fx/ExplodingBolt.gd" type="Script" id=1]
-[ext_resource path="res://assets/textures/bolt/animation_exsplosion_blast.png" type="Texture" id=2]
-[ext_resource path="res://assets/textures/bolt/explosion_smoke_sprite.png" type="Texture" id=3]
+[ext_resource path="res://game/bolt/fx/animation_exsplosion_blast.png" type="Texture" id=2]
+[ext_resource path="res://game/bolt/fx/explosion_smoke_sprite.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0.249071, 0.29368, 0.587361, 0.992565, 1 )

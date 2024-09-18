@@ -80,7 +80,7 @@ var ai_profile: Dictionary = {
 enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
-		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
+#		"bolt_texture": preload("res:///bolt/bolt_alt.png"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"shield_loops_limit": 3,
@@ -100,7 +100,7 @@ var bolt_profiles: Dictionary = {
 		"ai_target_rank": 5,
 		},
 	BOLT_TYPE.RIGID: {
-		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
+#		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
@@ -114,7 +114,7 @@ var bolt_profiles: Dictionary = {
 		"bounce": 0.5,
 		"friction": 0.2,
 		"mass": 30, # 300 kil, front in rear teža se uporablja bolj za razmerje
-		"ang_damp": 8, # ... tudi regulacija driftanja # no drift je 20
+		"ang_damp": 32, # ... tudi regulacija driftanja # no drift je 20
 		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
 		"lin_damp_idle": 0.0, 
 		"rear_lin_damp": 3, # regulacija driftanja
@@ -126,48 +126,48 @@ var bolt_profiles: Dictionary = {
 }
 
 
-enum WEAPON {BULLET, MISILE, MINA, SHIELD}
-var weapon_profiles : Dictionary = {
-	WEAPON.BULLET: {
+enum AMMO {BULLET, MISILE, MINA, SHIELD}
+var ammo_profiles : Dictionary = {
+	AMMO.BULLET: {
 		"reload_time": 0.2,
 		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
 		"speed": 1500,
 		"lifetime": 1.0, # domet vedno merim s časom
 		"mass": 0.03, # 300g
 		"direction_start_range": [0, 0] , # natančnost misile
-#		"scene": preload("res://game/projectiles/bullet/Bullet.tscn"),
-		"scene": preload("res://game/projectiles/bullet/BulletRigid.tscn"),
+#		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
+		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
 		"counter_name": "bullet_count", # player stats name
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
-	WEAPON.MISILE: {
+	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 5, # 10 je max energija
 		"speed": 500,
 		"lifetime": 3.2, # domet vedno merim s časom
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
-		"scene": preload("res://game/projectiles/Misile.tscn"),
+		"scene": preload("res://game/ammo/misile/Misile.tscn"),
 		"counter_name": "misile_count",
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
-	WEAPON.MINA: {
+	AMMO.MINA: {
 		"reload_time": 0.1, #
 		"hit_damage": 5,
 		"speed": 50,
 		"lifetime": 0, # 0 pomeni večno
 		"mass": 0.5, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
-		"scene": preload("res://game/projectiles/Mina.tscn"),
+		"scene": preload("res://game/ammo/Mina.tscn"),
 		"counter_name": "mina_count",
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
-	WEAPON.SHIELD: {
+	AMMO.SHIELD: {
 #		"reload_time": 0.1, #
 #		"hit_damage": 5,
 #		"speed": 50,
 		"lifetime": 5, # cikli animacije
-		"scene": preload("res://game/projectiles/Shield.tscn"),
+		"scene": preload("res://game/ammo/Shield.tscn"),
 #		"mass": 3,
 #		"direction_start_range": [0, 0] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
@@ -229,22 +229,22 @@ var level_areas_profiles: Dictionary = {
 	LEVEL_AREA.AREA_NITRO: {
 		"drag_div": 500,
 		"engine_power_factor": 2, # koliko original powerja
-		"area_scene": preload("res://game/arena/areas/AreaNitro.tscn"),
+		"area_scene": preload("res://game/levels/areas/AreaNitro.tscn"),
 	},
 	LEVEL_AREA.AREA_GRAVEL: {
 		"drag_div": 25.0, 
 		"engine_power_factor": 0.7, 
-		"area_scene": preload("res://game/arena/areas/AreaGravel.tscn"),
+		"area_scene": preload("res://game/levels/areas/AreaGravel.tscn"),
 	},
 	LEVEL_AREA.AREA_HOLE: {
 		"drag_div": 5.0,
 		"engine_power_factor": 0.3,
-		"area_scene": preload("res://game/arena/areas/AreaHole.tscn"),
+		"area_scene": preload("res://game/levels/areas/AreaHole.tscn"),
 	},
 	LEVEL_AREA.AREA_TRACKING: {
 		"area_tracking_value": 1,
 		"rear_ang_damp": 20, # vrednost, da riti nič ne odnaša
-		"area_scene": preload("res://game/arena/areas/AreaTracking.tscn"),
+		"area_scene": preload("res://game/levels/areas/AreaTracking.tscn"),
 	},
 }
 
@@ -308,38 +308,38 @@ enum PICKABLE{
 var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_BULLET: {
 		"in_random_selection": true, # vključeno v random izbor?
-		"color": Ref.color_pickable_weapon,
+		"color": Ref.color_pickable_ammo,
 		"value": 20,
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_bullet.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_bullet.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_MISILE: {
 		"in_random_selection": true,
-		"color": Ref.color_pickable_weapon,
+		"color": Ref.color_pickable_ammo,
 		"value": 2,
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_misile.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_misile.tres"),
 		"ai_target_rank": 3,
 	}, 
 	PICKABLE.PICKABLE_MINA: {
 		"in_random_selection": true,
-		"color": Ref.color_pickable_weapon,
+		"color": Ref.color_pickable_ammo,
 		"value": 3,
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_mina.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_mina.tres"),
 		"ai_target_rank": 3,
 	}, 
 	PICKABLE.PICKABLE_SHIELD: {
 		"in_random_selection": true,
-		"color": Ref.color_pickable_weapon,
+		"color": Ref.color_pickable_ammo,
 		"value": 1,
 		"altitude": 3,
 		"time": 3,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_shield.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_shield.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_ENERGY: {
@@ -348,7 +348,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0,
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_energy.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_energy.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_LIFE: {
@@ -357,7 +357,7 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"altitude": 3,
 		"time": 0, # sekunde
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_life.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_life.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_GAS: {
@@ -366,7 +366,7 @@ var pickable_profiles: Dictionary = {
 		"value": 200,
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_gas.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_gas.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_POINTS: {
@@ -375,7 +375,7 @@ var pickable_profiles: Dictionary = {
 		"value": 100,
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_points.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_points.tres"),
 		"ai_target_rank": 2,
 	},
 	PICKABLE.PICKABLE_NITRO: {
@@ -383,7 +383,7 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_feature,
 		"value": 700,
 		"altitude": 3,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_nitro.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_nitro.tres"),
 		"time": 1.5,
 		"ai_target_rank": 10,
 	},
@@ -393,7 +393,7 @@ var pickable_profiles: Dictionary = {
 		"value": 20, # ang_damp rite
 		"altitude": 3,
 		"time": 1.5,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_tracking.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_tracking.tres"),
 		"ai_target_rank": 1,
 	},
 	PICKABLE.PICKABLE_RANDOM: {
@@ -402,7 +402,7 @@ var pickable_profiles: Dictionary = {
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"altitude": 3,
 		"time": 0,
-		"icon_scene": preload("res://assets/resources/icons/icon_pickable_random.tres"),
+		"icon_scene": preload("res://assets/icons/icon_pickable_random.tres"),
 		"ai_target_rank": 9,
 	},
 }

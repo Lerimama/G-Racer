@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
 [ext_resource path="res://common/ShadowSprite.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=3]
+[ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=3]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=4]
 [ext_resource path="res://game/levels/objects/BrickTarget.gd" type="Script" id=5]
 

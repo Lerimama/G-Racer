@@ -35,11 +35,11 @@ func on_hit(hit_by: Node):
 			3:
 				animation_player.play("outro")
 				modulate = Ref.color_brick_target_hit_3
-				hit_by.spawned_by.update_bolt_points(reward_points)
+				hit_by.spawner.update_bolt_points(reward_points)
 	elif hit_by is Misile:
 		modulate = Ref.color_red
 		animation_player.play("outro")
-		hit_by.spawned_by.update_bolt_points(reward_points)
+		hit_by.spawner.update_bolt_points(reward_points)
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
@@ -54,4 +54,3 @@ func pause_me():
 func unpause_me():
 	explode_particles.speed_scale = def_particle_speed
 	animation_player.play()
-

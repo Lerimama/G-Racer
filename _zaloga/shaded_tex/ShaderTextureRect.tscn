@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://_zaloga/shaded_tex/ShaderTextureRect.gd" type="Script" id=1]
+[ext_resource path="res://_zaloga/shaded_tex/texture_material.tres" type="Material" id=2]
+
+[sub_resource type="Gradient" id=2321]
+
+[sub_resource type="GradientTexture" id=2322]
+gradient = SubResource( 2321 )
+
+[node name="ShadedTextureRect" type="TextureRect"]
+material = ExtResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 976.0
+margin_bottom = 632.0
+texture = SubResource( 2322 )
+expand = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="BackgroundColor" type="ColorRect" parent="."]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.435294, 0.380392, 0.329412, 1 )
+
+[node name="_inst" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Predno zbrišeš ta tekst, resetiraj shaderj in teksture na junik "
+align = 1
+valign = 1
+autowrap = true
+
+[connection signal="item_rect_changed" from="." to="." method="_on_TerrainTextureRect_item_rect_changed"]

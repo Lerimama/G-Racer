@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://assets/resources/camera_shake_noise.tres" type="OpenSimplexNoise" id=1]
+[ext_resource path="res://game/camera/camera_shake_noise.tres" type="OpenSimplexNoise" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/camera/Camera.gd" type="Script" id=3]
 [ext_resource path="res://game/camera/CameraTestUI.gd" type="Script" id=4]
+[ext_resource path="res://common/SetupPanel.tscn" type="PackedScene" id=5]
 
 [sub_resource type="NoiseTexture" id=779]
 width = 80
@@ -26,40 +27,47 @@ drag_margin_bottom = 0.0
 editor_draw_limits = true
 editor_draw_drag_margin = true
 script = ExtResource( 3 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 1440.0 ],
+"_edit_vertical_guides_": [ 2560.0 ]
+}
 
 [node name="TestUI" type="CanvasLayer" parent="."]
 layer = 3
-visible = false
 script = ExtResource( 4 )
 noise = ExtResource( 1 )
 
-[node name="TestToggle" type="CheckBox" parent="TestUI"]
-margin_left = 6.0
-margin_top = 24.0
-margin_right = 59.0
-margin_bottom = 48.0
-theme = ExtResource( 2 )
-text = "test"
+[node name="TestHud" type="Control" parent="TestUI"]
+margin_right = 2560.0
+margin_bottom = 1440.0
 
-[node name="TestHud" type="Node2D" parent="TestUI"]
+[node name="SetupPanel" parent="TestUI/TestHud" instance=ExtResource( 5 )]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -664.0
+margin_top = 40.0
+margin_right = -248.0
+margin_bottom = 352.0
 
 [node name="AddTraumaBtn" type="Button" parent="TestUI/TestHud"]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = 164.0
-margin_right = 37.0
-margin_bottom = 177.0
+margin_left = 80.0
+margin_top = -624.0
+margin_right = 171.0
+margin_bottom = -576.0
 theme = ExtResource( 2 )
 text = "tresi"
 
 [node name="ResetViewBtn" type="Button" parent="TestUI/TestHud"]
+anchor_left = 1.0
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 64.0
-margin_top = 26.0
-margin_right = 176.0
-margin_bottom = 46.0
+margin_left = -557.0
+margin_top = -184.0
+margin_right = -240.0
+margin_bottom = -136.0
 theme = ExtResource( 2 )
 text = "resetiraj pogled"
 
@@ -68,10 +76,10 @@ modulate = Color( 1, 0, 0, 1 )
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 96.0
-margin_top = 338.0
-margin_right = 610.0
-margin_bottom = 352.0
+margin_left = 80.0
+margin_top = -68.0
+margin_right = -244.0
+margin_bottom = -39.0
 theme = ExtResource( 2 )
 max_value = 1.0
 
@@ -80,46 +88,54 @@ modulate = Color( 0.12549, 1, 0, 1 )
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 96.0
-margin_top = 322.0
-margin_right = 611.0
-margin_bottom = 336.0
+margin_left = 80.0
+margin_top = -108.0
+margin_right = -244.0
+margin_bottom = -79.0
 theme = ExtResource( 2 )
 max_value = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ZoomSlider" type="VSlider" parent="TestUI/TestHud"]
-visible = false
+anchor_left = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 3.0
-margin_top = 57.0
-margin_right = 19.0
-margin_bottom = 312.0
+margin_left = -160.0
+margin_top = 56.0
+margin_right = -144.0
+margin_bottom = -56.0
 theme = ExtResource( 2 )
-max_value = 1.0
-step = 0.1
+min_value = 0.1
+max_value = 2.0
+step = 0.01
 value = 1.0
 
 [node name="TimeSlider" type="VSlider" parent="TestUI/TestHud"]
+anchor_left = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 635.0
-margin_top = 6.0
-margin_right = 651.0
-margin_bottom = 352.0
+margin_left = -80.0
+margin_top = 56.0
+margin_right = -63.0
+margin_bottom = -56.0
 rect_scale = Vector2( -1, 1 )
 theme = ExtResource( 2 )
+min_value = 0.01
 max_value = 2.0
 step = 0.1
-value = 1.0
+value = 1.01
 
 [node name="NoiseControl" type="Control" parent="TestUI/TestHud"]
-margin_left = 1.0
-margin_top = 172.0
-margin_right = 95.0
-margin_bottom = 356.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 56.0
+margin_top = -544.0
+margin_right = 150.0
+margin_bottom = -360.0
+rect_scale = Vector2( 2, 2 )
 theme = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="NoiseVisual" type="TextureRect" parent="TestUI/TestHud/NoiseControl"]
 margin_left = 7.0
@@ -185,16 +201,24 @@ step = 0.01
 value = 2.0
 
 [node name="ShakeToggle" type="CheckBox" parent="TestUI/TestHud"]
-margin_left = 4.0
-margin_top = 128.0
-margin_right = 57.0
-margin_bottom = 152.0
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 88.0
+margin_top = -680.0
+margin_right = 252.0
+margin_bottom = -651.0
 theme = ExtResource( 2 )
-text = "in gejm"
+text = "in gejm setup"
 
-[connection signal="mouse_entered" from="TestUI/TestToggle" to="TestUI" method="_on_CheckBox_mouse_entered"]
-[connection signal="mouse_exited" from="TestUI/TestToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
-[connection signal="toggled" from="TestUI/TestToggle" to="TestUI" method="_on_CheckBox_toggled"]
+[node name="TestToggle" type="CheckBox" parent="TestUI"]
+margin_left = 582.0
+margin_top = 16.0
+margin_right = 643.0
+margin_bottom = 45.0
+rect_scale = Vector2( 2, 2 )
+theme = ExtResource( 2 )
+text = "test"
+
 [connection signal="mouse_entered" from="TestUI/TestHud/AddTraumaBtn" to="TestUI" method="_on_AddTraumaBtn_mouse_entered"]
 [connection signal="mouse_exited" from="TestUI/TestHud/AddTraumaBtn" to="TestUI" method="_on_AddTraumaBtn_mouse_exited"]
 [connection signal="pressed" from="TestUI/TestHud/AddTraumaBtn" to="TestUI" method="_on_AddTraumaBtn_pressed"]
@@ -227,3 +251,6 @@ text = "in gejm"
 [connection signal="mouse_entered" from="TestUI/TestHud/ShakeToggle" to="TestUI" method="_on_CheckBox_mouse_entered"]
 [connection signal="mouse_exited" from="TestUI/TestHud/ShakeToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
 [connection signal="toggled" from="TestUI/TestHud/ShakeToggle" to="TestUI" method="_on_ShakeToggle_toggled"]
+[connection signal="mouse_entered" from="TestUI/TestToggle" to="TestUI" method="_on_CheckBox_mouse_entered"]
+[connection signal="mouse_exited" from="TestUI/TestToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
+[connection signal="toggled" from="TestUI/TestToggle" to="TestUI" method="_on_CheckBox_toggled"]

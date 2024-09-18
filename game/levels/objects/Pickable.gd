@@ -2,7 +2,7 @@ extends Area2D
 class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 export var height: float = 0 # PRO
-export var elevation: float = 10 # PRO
+export var elevation: float = 10 # PRO fili
 
 var pickable_key: int #= Pro.PICKABLE[pickable_key_as_name]# poda ga spawner
 
@@ -37,7 +37,7 @@ func _on_Item_body_entered(body: Node) -> void:
 	if body.has_method("item_picked"):
 		if pickable_key == Pro.PICKABLE.PICKABLE_BULLET or pickable_key == Pro.PICKABLE.PICKABLE_MISILE \
 		or pickable_key == Pro.PICKABLE.PICKABLE_MINA:
-			Ref.sound_manager.play_sfx("pickable_weapon")
+			Ref.sound_manager.play_sfx("pickable_ammo")
 		elif pickable_key == Pro.PICKABLE.PICKABLE_NITRO:
 			Ref.sound_manager.play_sfx("pickable_nitro")
 		else:

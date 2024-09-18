@@ -71,7 +71,7 @@ func play_sfx(effect_for: String):
 #			$Sfx/MisileFlight.stop()
 #			$Sfx/MisileShoot.stop()
 		"pickable": $Sfx/Pickable.play()
-		"pickable_weapon": $Sfx/PickableWeapon.play()
+		"pickable_ammo": $Sfx/PickableAmmo.play()
 		"pickable_nitro": $Sfx/PickableNitro.play()
 		# events
 		"finish_horn": $Sfx/FinishHorn.play()

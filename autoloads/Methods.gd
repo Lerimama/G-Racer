@@ -103,7 +103,6 @@ func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawne
 		for indi in all_indikators_spawned:
 			indi.queue_free()
 		all_indikators_spawned.clear()
-		pass # debug
 		
 	var new_indikator = indikator.instance()
 	new_indikator.global_position = pos

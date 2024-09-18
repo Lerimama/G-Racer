@@ -7,7 +7,7 @@ export var elevation: float = 10 # PRO
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var brick_color: Color = Pro.level_object_profiles[level_object_key]["color"]
-#onready var elevation: float = Pro.level_object_profiles[level_object_key]["altitude"] # RFK elevation profiles
+#onready var elevation: float = Pro.level_object_profiles[level_object_key]["altitude"] # PRO elevation profiles
 onready var reward_points: float = Pro.level_object_profiles[level_object_key]["value"]
 onready var ai_target_rank: int = Pro.level_object_profiles[level_object_key]["ai_target_rank"]
 onready var bounce_strength: float = Pro.level_object_profiles[level_object_key]["bounce_strength"]

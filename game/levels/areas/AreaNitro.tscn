@@ -1,0 +1,127 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://game/levels/areas/AreaNitro.gd" type="Script" id=1]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=5]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
+[ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=9]
+[ext_resource path="res://game/levels/areas/tex/tile_area_nitro.png" type="Texture" id=11]
+
+[sub_resource type="Resource" id=1830]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1831]
+script = ExtResource( 7 )
+position = Vector2( 1.84502, 1.92186 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1830 )
+
+[sub_resource type="Resource" id=1832]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1833]
+script = ExtResource( 7 )
+position = Vector2( 315.847, 7.31561 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1832 )
+
+[sub_resource type="Resource" id=1834]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1835]
+script = ExtResource( 7 )
+position = Vector2( 316.078, 130.453 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1834 )
+
+[sub_resource type="Resource" id=1836]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1837]
+script = ExtResource( 7 )
+position = Vector2( 0.689171, 127.939 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1836 )
+
+[sub_resource type="Resource" id=1838]
+script = ExtResource( 5 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1839]
+script = ExtResource( 7 )
+position = Vector2( 0.689171, 127.939 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1838 )
+
+[sub_resource type="Resource" id=1829]
+script = ExtResource( 3 )
+_points = {
+16: SubResource( 1831 ),
+18: SubResource( 1833 ),
+19: SubResource( 1835 ),
+20: SubResource( 1837 ),
+21: SubResource( 1839 )
+}
+_point_order = [ 20, 16, 18, 19, 21 ]
+_constraints = {
+[ 20, 21 ]: 15
+}
+_next_key = 27
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=1029]
+script = ExtResource( 4 )
+_edge_meta_materials = [  ]
+fill_textures = [ ExtResource( 11 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
+
+[node name="AreaNitro" type="Area2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="SS2D_Shape_Closed" type="Node2D" parent="."]
+script = ExtResource( 9 )
+_points = SubResource( 1829 )
+shape_material = SubResource( 1029 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("../CollisionPolygon2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.3 )
+polygon = PoolVector2Array( 0.584587, 128.041, 1.74185, 1.81594, 315.949, 7.21521, 316.182, 130.558 )
+
+[connection signal="body_entered" from="." to="." method="_on_AreaNitro_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_AreaNitro_body_exited"]

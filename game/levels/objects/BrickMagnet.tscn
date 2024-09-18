@@ -7,7 +7,7 @@
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=7]
-[ext_resource path="res://assets/textures/atlas_arena_objects.png" type="Texture" id=8]
+[ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=8]
 
 [sub_resource type="PhysicsMaterial" id=20]
 absorbent = true

@@ -47,8 +47,11 @@ onready var shake_toggle: CheckBox = $TestHud/ShakeToggle
 
 onready var testhud_node = $TestHud
 onready var test_toggle_btn = $TestToggle
-
 onready var parent_camera = get_parent()
+
+var testing_start_camera_zoom: Vector2
+var testing_start_camera_position: Vector2
+var reset_camera_target: Node2D # ne dela
 
 
 func _ready():
@@ -68,7 +71,7 @@ func _ready():
 	persistence_slider.set_focus_mode(0)
 	lacunarity_slider.set_focus_mode(0)
 
-	zoom_slider.hide()
+	zoom_slider.value = parent_camera.zoom.x
 
 	# noise setup
 	noise.seed = 2
@@ -86,26 +89,31 @@ func _ready():
 	
 func _input(event: InputEvent) -> void:
 	
-	if Input.is_action_just_pressed("click") and test_view_on and not mouse_used:
-		drag_on = true
-		mouse_position_on_drag_start = parent_camera.get_global_mouse_position() # definiraj zamik pozicije miške napram centru
-		
-	if Input.is_action_just_released("click"):
-		drag_on = false
+	if test_view_on:
+		if Input.is_action_just_pressed("click") and not mouse_used:
+			drag_on = true
+			mouse_position_on_drag_start = parent_camera.get_global_mouse_position() # definiraj zamik pozicije miške napram centru
 
-	if Input.is_mouse_button_pressed(BUTTON_WHEEL_UP) and test_view_on:
-		parent_camera.zoom -= Vector2(0.1, 0.1)
+		if Input.is_action_just_released("click"):
+			drag_on = false
+
+		if Input.is_mouse_button_pressed(BUTTON_WHEEL_UP) and test_view_on:
+			parent_camera.zoom -= Vector2(0.1, 0.1)
+			
+		if Input.is_mouse_button_pressed(BUTTON_WHEEL_DOWN) and test_view_on:
+			parent_camera.zoom += Vector2(0.1, 0.1)
+			drag_on = false
+	else:
+			drag_on = false
 		
-	if Input.is_mouse_button_pressed(BUTTON_WHEEL_DOWN) and test_view_on:
-		parent_camera.zoom += Vector2(0.1, 0.1)
-		drag_on = false
-	
 	
 func _process(delta):
-	time += delta
 	
+	
+	time += delta
+	#	if test_view_on: 
 	# start decay
-#	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo 
+	#	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo 
 	var shake = trauma
 	parent_camera.offset.x = noise.get_noise_3d(time * time_scale, 0, 0) * max_horizontal * shake
 	parent_camera.offset.y = noise.get_noise_3d(0, time * time_scale, 0) * max_vertical * shake
@@ -134,17 +142,30 @@ func shake_camera(added_trauma):
 	trauma = clamp(trauma + added_trauma, 0, 1)
 
 
-# SHAKE NOISE ------------------------------------------------------------
-
-
 func _on_CheckBox_toggled(button_pressed: bool) -> void:
 	
 	if test_view_on:
 		test_view_on = false
 		testhud_node.hide()
+		
+		# ne dela
+		parent_camera.follow_target = reset_camera_target
+		reset_camera_target = null
+		
 	else:
 		testhud_node.show()
 		test_view_on = true
+		
+		# ne dela
+		reset_camera_target = parent_camera.follow_target
+		parent_camera.follow_target = null
+		
+		testing_start_camera_zoom = parent_camera.zoom
+		testing_start_camera_position = parent_camera.position
+		
+
+# SHAKE NOISE ------------------------------------------------------------
+
 
 func _on_ShakeToggle_toggled(button_pressed: bool) -> void:
 	
@@ -170,8 +191,8 @@ func _on_ZoomSlider_value_changed(value: float) -> void:
 	parent_camera.zoom = Vector2(value, value)
 
 func _on_ResetView_pressed() -> void:
-	parent_camera.position = Vector2.ZERO + camera_center 
-	parent_camera.zoom = Vector2.ONE
+	parent_camera.position = testing_start_camera_position 
+	parent_camera.zoom = testing_start_camera_zoom
 
 func _on_Seed_value_changed(value: float) -> void:
 	noise.seed = value

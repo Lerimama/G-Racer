@@ -1,6 +1,7 @@
 extends Node
 
 # global nodes
+var setup_layer = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var node_creation_parent = null # NCP ... ven?
 var game_arena = null
@@ -60,7 +61,7 @@ var color_brick_light_on = Color.greenyellow
 var color_pickable_random = Color.pink 
 var color_pickable_stat = Color.black
 var color_pickable_feature = Color.white
-var color_pickable_weapon = Color.yellow
+var color_pickable_ammo = Color.yellow
 
 # gui colors
 var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi

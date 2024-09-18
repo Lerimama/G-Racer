@@ -287,7 +287,7 @@ stream = ExtResource( 27 )
 volume_db = -15.0
 bus = "GameSfx"
 
-[node name="PickableWeapon" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
+[node name="PickableAmmo" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
 stream = ExtResource( 25 )
 volume_db = -15.0
 pitch_scale = 1.2

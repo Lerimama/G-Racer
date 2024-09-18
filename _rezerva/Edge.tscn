@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/levels/sha/level_dropshadows_screen.gdshader" type="Shader" id=1]
 [ext_resource path="res://_rezerva/TilemapEdge.gd" type="Script" id=2]
-[ext_resource path="res://assets/resources/tilesets/tileset_arena_edge.tres" type="TileSet" id=3]
+[ext_resource path="res://game/levels/tilesets/tileset_arena_edge.tres" type="TileSet" id=3]
 
 [sub_resource type="ShaderMaterial" id=619]
 shader = ExtResource( 1 )

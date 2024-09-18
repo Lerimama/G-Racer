@@ -20,6 +20,7 @@ func _ready():
 
 func _process(delta: float) -> void:
 	
+#	if follow_target and not test_ui.test_view_on:
 	if follow_target:
 		position = follow_target.global_position
 
