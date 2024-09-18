@@ -11,7 +11,7 @@ var spawner_speed: float
 var in_spawner_area: bool =  true
 # gibanje
 export var start_speed: float = 10.0
-var speed: float
+var speed: float = 0
 
 var misile_active: bool = true
 var velocity: Vector2
@@ -29,12 +29,14 @@ var new_misile_trail: Object
 
 onready var trail_position: Position2D = $TrailPosition
 onready var drop_position: Position2D = $DropPosition
+onready var hit_position: Position2D = $HitPosition
 
 onready var homming_detect: Area2D = $HommingArea
 onready var collision_shape: CollisionShape2D = $MisileCollision
 onready var vision_ray: RayCast2D = $VisionRay
 
 onready var MisileExplosion = preload("res://game/ammo/misile/MisileExplosionParticles.tscn")
+onready var MisileHit = preload("res://game/ammo/misile/MisileHit.tscn")
 onready var MisileTrail = preload("res://game/ammo/misile/MisileTrail.tscn")
 onready var DropParticles = preload("res://game/ammo/misile/MisileDropParticles.tscn")
 
@@ -46,6 +48,8 @@ onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
+var is_dissarmed: bool = false
+
 
 func _ready() -> void:
 	
@@ -54,10 +58,9 @@ func _ready() -> void:
 	add_to_group(Ref.group_misiles)
 	$Sprite.modulate = spawner_color
 	collision_shape.set_deferred("disabled", true) # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
-	#	collision_shape.disabled = true # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
-#	Ref.sound_manager.play_sfx("misile_shoot")
 	$Sounds/MisileShoot.play()	
+	$Sounds/MisileFlight.play()
 	
 	# set movement
 	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
@@ -75,7 +78,7 @@ func _ready() -> void:
 					
 func _physics_process(delta: float) -> void:
 	
-#	max_speed = 30	
+#	max_speed = 20	
 	misile_time += delta
 
 	# pospeševanje
@@ -107,10 +110,6 @@ func _physics_process(delta: float) -> void:
 			in_spawner_area = true
 		else:
 			in_spawner_area = false
-#			if vision_ray.get_collider().has_method("on_hit"):
-#				vision_ray.get_collider().on_hit(self) # pošljem node z vsemi podatki in kolizijo
-#			explode_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
-#			print(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
 	else:
 		in_spawner_area = true
 	
@@ -120,19 +119,6 @@ func _physics_process(delta: float) -> void:
 	else:
 		collision_shape.set_deferred("disabled", false)	
 		
-#	if vision_ray.is_colliding():
-#		var current_collider = vision_ray.get_collider()
-#		if current_collider == spawner:
-#			collision_shape.set_deferred("disabled", true)
-			#			collision_shape.disabled = true
-#		else:
-#			collision_shape.set_deferred("disabled", false)
-#			#			collision_shape.disabled = false
-#	else:
-#		collision_shape.set_deferred("disabled", false)
-#		#		collision_shape.disabled = false
-			
-					
 	velocity = direction * speed
 
 	# preverjamo obstoj kolizije ... prvi kontakt, da odstranimo morebitne erorje v debuggerju
@@ -145,52 +131,59 @@ func _physics_process(delta: float) -> void:
 
 		
 func dissarm():
-			
-	# wigle
-#	var wiggle: Vector2  
-#	wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
-#	transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq)
-##	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
-#	velocity = transform.x * speed
-#	position += velocity * delta
-#	misile_active = false
-
-	# drop particles
-	var new_drop_particles: CPUParticles2D = DropParticles.instance()
-	new_drop_particles.global_position = drop_position.global_position
-	new_drop_particles.color = spawner_color
-	new_drop_particles.z_index = drop_position.z_index
-	new_drop_particles.set_one_shot(true)
-	new_drop_particles.set_emitting(true)
-	Ref.node_creation_parent.add_child(new_drop_particles)
-	queue_free()
 	
-	if $Sounds/MisileFlight.is_playing():
+	if not is_dissarmed:
+		is_dissarmed = true
+		$Sounds/MisileDissarm.volume_db = -30
+		# wigle
+		#	var wiggle: Vector2  
+		#	wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
+		#	transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq)
+		##	transform.x = direction # random smer je določena ob štartu in ob deaktivaciji
+		#	velocity = transform.x * speed
+		#	position += velocity * delta
+		#	misile_active = false
+		
+
+		# misile drop
+		var new_drop_tween = get_tree().create_tween()
+		new_drop_tween.tween_property(self, "scale", scale * 0.5, 0.7).set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_CIRC)
+		yield(new_drop_tween, "finished")
+		
+		$Sounds/MisileDissarm.play()			
+		$Sounds/MisileDetect.stop()
 		$Sounds/MisileFlight.stop()
-	elif $Sounds/MisileShoot.is_playing():
 		$Sounds/MisileShoot.stop()
-	Ref.sound_manager.play_sfx("misile_dissarm")
-	new_misile_trail.start_decay()
+		
+		# drop particles
+		var new_drop_particles: CPUParticles2D = DropParticles.instance()
+		new_drop_particles.global_position = drop_position.global_position
+		new_drop_particles.color = spawner_color
+		new_drop_particles.z_index = drop_position.z_index
+		new_drop_particles.set_emitting(true)
+		Ref.node_creation_parent.add_child(new_drop_particles)
+		
+		yield(get_tree().create_timer(0.15), "timeout")
+		queue_free()
+		
+		new_misile_trail.start_decay()
 		
 		
 func explode():
 
-	if $Sounds/MisileFlight.is_playing():
-		$Sounds/MisileFlight.stop()
-	elif $Sounds/MisileShoot.is_playing():
-		$Sounds/MisileShoot.stop()
+	$Sounds/MisileFlight.stop()
+	$Sounds/MisileShoot.stop()
 	
-	Ref.sound_manager.play_sfx("misile_explode")
 	new_misile_trail.start_decay()
 
-	var new_misile_explosion = MisileExplosion.instance()
-	new_misile_explosion.global_position = global_position
-	new_misile_explosion.set_one_shot(true)
-	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawner_color
-	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawner_color
-	new_misile_explosion.set_emitting(true)
-	new_misile_explosion.get_node("ExplosionBlast").play()
-	Ref.node_creation_parent.add_child(new_misile_explosion)
+	var new_hit_fx = MisileHit.instance()
+	new_hit_fx.global_position = hit_position.global_position
+	new_hit_fx.get_node("ExplosionParticles").process_material.color_ramp.gradient.colors[1] = spawner_color
+	new_hit_fx.get_node("ExplosionParticles").process_material.color_ramp.gradient.colors[2] = spawner_color
+	new_hit_fx.get_node("ExplosionParticles").set_emitting(true)
+	new_hit_fx.get_node("SmokeParticles").set_emitting(true)
+	new_hit_fx.get_node("BlastAnimated").play()
+	Ref.node_creation_parent.add_child(new_hit_fx)
 	
 	queue_free()
 	
@@ -198,17 +191,13 @@ func explode():
 func _on_HommingArea_body_entered(body: Node) -> void:
 	
 	if body.is_in_group(Ref.group_bolts) and body != spawner:
+		if not is_homming:
+			$Sounds/MisileDetect.play()
 		is_homming = true
 		homming_target_position = body.global_position
-		$Sounds/MisileDetect.play()
 
 
-func _on_MisileShoot_finished() -> void:
-	
-	$Sounds/MisileFlight.play()
-
-
-func _exit_tree() -> void:
+func _exit_tree() -> void: # OPT v vse traile
 	
 	speed = 0
 	if new_misile_trail:

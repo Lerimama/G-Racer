@@ -47,22 +47,6 @@ onready var music: Node = $Music
 func play_sfx(effect_for: String):
 	
 	match effect_for:
-		"bolt_explode": $Sfx/BoltExplode.play()
-		"bullet_shoot": $Sfx/BulletShoot.play()
-		"bullet_hit": $Sfx/BulletHit.play()
-		"misile_explode": 
-			$Sfx/MisileExplode.play()
-			# ustavim, če se pleja ...
-#			$Sfx/MisileFlight.set_volume_db(-80)
-#			$Sfx/MisileShoot.set_volume_db(-80)
-#			$Sfx/MisileFlight.stop()
-#			$Sfx/MisileShoot.stop()
-		"misile_dissarm": 
-			$Sfx/MisileDissarm.play()
-#			$Sfx/MisileFlight.set_volume_db(-80)
-#			$Sfx/MisileShoot.set_volume_db(-80)
-#			$Sfx/MisileFlight.stop()
-#			$Sfx/MisileShoot.stop()
 		"mina_explode": 
 			$Sfx/MisileExplode.play()
 			# ustavim, če se pleja ...
@@ -145,8 +129,8 @@ func stop_music():
 	
 	for music_track in game_music.get_children():
 		if music_track.is_playing():
-			Met.sound_stop_fade_out(music, 2)
-			
+			Met.sound_fade_out_and_reset(music, 2)
+
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov
 	
@@ -163,9 +147,11 @@ func skip_track():
 	
 	for music_track in game_music.get_children():
 		if music_track.is_playing():
-			var current_music_volume = music_track.volume_db
-			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)	
-			fade_out.tween_property(music_track, "volume_db", -80, 0.5)
-			fade_out.tween_callback(music_track, "stop")
-			fade_out.tween_callback(music_track, "set_volume_db", [current_music_volume]) # reset glasnosti
-			fade_out.tween_callback(self, "play_music", ["game_music"])
+			#			var current_music_volume = music_track.volume_db
+			#			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)	
+			#			fade_out.tween_property(music_track, "volume_db", -80, 0.5)
+			#			fade_out.tween_callback(music_track, "stop")
+			#			fade_out.tween_callback(music_track, "set_volume_db", [current_music_volume]) # reset glasnosti
+			#			fade_out.tween_callback(self, "play_music", ["game_music"])
+			yield(Met.sound_fade_out_and_reset(music, 2), "fadeout_finished")
+			play_music()

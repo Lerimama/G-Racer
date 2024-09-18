@@ -37,7 +37,7 @@ func set_weapon(new_ammo_key: int):
 
 func _process(delta: float) -> void:
 	
-	var current_active_weapon_key: int = owner.active_weapon
+	var current_active_weapon_key: int = owner.bolt_hud.selected_active_weapon_index
 	
 	if owner.is_shooting and ammo_count > 0 and is_set and current_active_weapon_key == ammo_key:
 		shoot()
@@ -66,7 +66,10 @@ func shoot():
 		new_ammo.global_rotation = shooting_position.global_rotation
 		new_ammo.spawner = owner
 		new_ammo.spawner_color = owner.bolt_color
-		new_ammo.z_index = shooting_position.z_index + 1
+		if ammo_key == Pro.AMMO.BULLET:
+			new_ammo.z_index = shooting_position.z_index + 1
+		elif ammo_key == Pro.AMMO.MISILE:
+			new_ammo.z_index = shooting_position.z_index - 1
 		Ref.node_creation_parent.add_child(new_ammo)
 		
 		# stats

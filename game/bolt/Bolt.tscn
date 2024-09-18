@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=38 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/glow_light.png" type="Texture" id=2]
@@ -24,7 +24,6 @@
 [ext_resource path="res://game/bolt/tex/bolt_edge.png" type="Texture" id=22]
 [ext_resource path="res://assets/icons/icon_mina.tres" type="Texture" id=23]
 [ext_resource path="res://assets/icons/icon_misile.tres" type="Texture" id=24]
-[ext_resource path="res://assets/icons/icon_shocker.tres" type="Texture" id=25]
 [ext_resource path="res://assets/icons/icon_bullet.tres" type="Texture" id=26]
 [ext_resource path="res://game/bolt/tex/bolt_scars.png" type="Texture" id=27]
 [ext_resource path="res://game/bolt/weapons/Turret.tscn" type="PackedScene" id=33]
@@ -71,7 +70,7 @@ contact_monitor = true
 angular_damp = 8.0
 script = ExtResource( 8 )
 __meta__ = {
-"_edit_vertical_guides_": [ 12.0 ]
+"_edit_vertical_guides_": [ -13.0, 13.0 ]
 }
 
 [node name="BoltController" type="Node" parent="."]
@@ -85,6 +84,7 @@ __meta__ = {
 [node name="Light2D2" type="Light2D" parent="."]
 visible = false
 position = Vector2( -1.90735e-06, -9.53674e-07 )
+enabled = false
 texture = ExtResource( 2 )
 color = Color( 1, 0.627451, 0, 0.290196 )
 energy = 1.28
@@ -225,6 +225,7 @@ polygon = PoolVector2Array( -28, -10, -18, -14, -12, -13, 15, -12, 18, -14, 24, 
 visible = false
 position = Vector2( -1.90735e-06, -9.53674e-07 )
 scale = Vector2( 2.26562, 1.13281 )
+enabled = false
 texture = ExtResource( 4 )
 texture_scale = 0.2
 color = Color( 1, 0.47451, 0.215686, 0.498039 )
@@ -239,186 +240,177 @@ position = Vector2( -18, 0 )
 position = Vector2( -12, -13 )
 
 [node name="BoltHud" type="Node2D" parent="."]
-visible = false
+position = Vector2( 0, 40 )
 script = ExtResource( 19 )
 
 [node name="BoltHudLines" type="VBoxContainer" parent="BoltHud"]
-margin_left = -3.0
-margin_right = 3.0
-margin_bottom = 3.0
+margin_left = -13.0
+margin_right = 13.0
+margin_bottom = 13.0
 grow_horizontal = 2
 rect_min_size = Vector2( 6, 0 )
+custom_constants/separation = 8
 
 [node name="EnergyBar" type="Control" parent="BoltHud/BoltHudLines"]
-margin_left = 1.0
-margin_right = 7.0
-margin_bottom = 1.0
+margin_right = 54.0
+margin_bottom = 2.0
 grow_horizontal = 2
-rect_min_size = Vector2( 6, 1 )
-size_flags_horizontal = 4
+rect_min_size = Vector2( 0, 2 )
 
-[node name="Undi" type="Polygon2D" parent="BoltHud/BoltHudLines/EnergyBar"]
-position = Vector2( -0.5, 0 )
-color = Color( 0.32549, 0.356863, 0.407843, 0.54902 )
-polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
-
-[node name="Bar" type="Polygon2D" parent="BoltHud/BoltHudLines/EnergyBar"]
-position = Vector2( -0.5, 0 )
-color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
-polygon = PoolVector2Array( 0.5, 0, 0.5, 1, 6.5, 1, 6.5, 0 )
-
-[node name="WeaponSelector" type="Control" parent="BoltHud/BoltHudLines"]
-margin_top = 5.0
-margin_right = 8.0
-margin_bottom = 13.0
-rect_min_size = Vector2( 8, 8 )
-size_flags_horizontal = 4
-
-[node name="Weapons" type="HBoxContainer" parent="BoltHud/BoltHudLines/WeaponSelector"]
+[node name="Undi" type="ColorRect" parent="BoltHud/BoltHudLines/EnergyBar"]
+show_behind_parent = true
 anchor_left = 0.5
+anchor_top = 0.5
 anchor_right = 0.5
-margin_left = -4.0
-margin_right = 4.0
-margin_bottom = 8.0
+anchor_bottom = 0.5
+margin_left = -13.0
+margin_top = -1.0
+margin_right = 13.0
+margin_bottom = 1.0
+color = Color( 0.243137, 0.243137, 0.243137, 1 )
+
+[node name="Bar" type="ColorRect" parent="BoltHud/BoltHudLines/EnergyBar"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -13.0
+margin_top = -1.0
+margin_right = 13.0
+margin_bottom = 1.0
+color = Color( 0.847059, 0.0235294, 0.0235294, 1 )
+
+[node name="WeaponSelector" type="HBoxContainer" parent="BoltHud/BoltHudLines"]
+margin_top = 10.0
+margin_right = 54.0
+margin_bottom = 22.0
 grow_horizontal = 2
 theme = ExtResource( 10 )
-custom_constants/separation = 2
+custom_constants/separation = 9
 
-[node name="IconBullet" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons"]
+[node name="IconBullet" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector"]
+margin_right = 12.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 12, 12 )
+texture = ExtResource( 26 )
+expand = true
+
+[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/IconBullet"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -8.0
+margin_top = -8.0
 margin_right = 8.0
 margin_bottom = 8.0
-texture = ExtResource( 26 )
-
-[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconBullet"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -4.0
-margin_top = -4.0
-margin_right = 4.0
-margin_bottom = 4.0
+rect_min_size = Vector2( 12, 12 )
 size_flags_horizontal = 4
 texture = SubResource( 5255 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
-[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconBullet"]
+[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/IconBullet"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -6.0
-margin_right = 42.0
-margin_bottom = 20.0
+margin_left = -8.5
+margin_top = 4.0
+margin_right = 62.5
+margin_bottom = 34.0
 grow_horizontal = 2
 rect_min_size = Vector2( 48, 0 )
 rect_scale = Vector2( 0.25, 0.25 )
 custom_fonts/font = ExtResource( 1 )
-text = "0000"
+text = "000"
 align = 1
 
-[node name="IconMisile" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons"]
-margin_left = 10.0
-margin_right = 18.0
-margin_bottom = 8.0
+[node name="IconMisile" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector"]
+margin_left = 21.0
+margin_right = 33.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 12, 12 )
 texture = ExtResource( 24 )
+expand = true
 
-[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconMisile"]
+[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/IconMisile"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -4.0
-margin_top = -4.0
-margin_right = 4.0
-margin_bottom = 4.0
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 8.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 12, 12 )
 size_flags_horizontal = 4
 texture = SubResource( 5255 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
-[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconMisile"]
+[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/IconMisile"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -6.0
-margin_right = 42.0
-margin_bottom = 20.0
+margin_left = -8.5
+margin_top = 4.0
+margin_right = 62.5
+margin_bottom = 34.0
 grow_horizontal = 2
 rect_min_size = Vector2( 48, 0 )
 rect_scale = Vector2( 0.25, 0.25 )
 custom_fonts/font = ExtResource( 1 )
-text = "0000"
+text = "000"
 align = 1
 __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="IconMina" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons"]
-margin_left = 20.0
-margin_right = 28.0
-margin_bottom = 8.0
+[node name="IconMina" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector"]
+margin_left = 42.0
+margin_right = 54.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 12, 12 )
 texture = ExtResource( 23 )
+expand = true
 
-[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconMina"]
+[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/IconMina"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -4.0
-margin_top = -4.0
-margin_right = 4.0
-margin_bottom = 4.0
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 8.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 12, 12 )
 size_flags_horizontal = 4
 texture = SubResource( 5255 )
-
-[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconMina"]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -6.0
-margin_right = 42.0
-margin_bottom = 20.0
-grow_horizontal = 2
-rect_min_size = Vector2( 48, 0 )
-rect_scale = Vector2( 0.25, 0.25 )
-custom_fonts/font = ExtResource( 1 )
-text = "0000"
-align = 1
+expand = true
 __meta__ = {
-"_editor_description_": ""
+"_edit_use_anchors_": true
 }
 
-[node name="IconShocker" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons"]
-margin_left = 30.0
-margin_right = 38.0
-margin_bottom = 8.0
-texture = ExtResource( 25 )
-
-[node name="IconEdge" type="TextureRect" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconShocker"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -4.0
-margin_top = -4.0
-margin_right = 4.0
-margin_bottom = 4.0
-size_flags_horizontal = 4
-texture = SubResource( 5255 )
-
-[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/Weapons/IconShocker"]
+[node name="Label" type="Label" parent="BoltHud/BoltHudLines/WeaponSelector/IconMina"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -6.0
-margin_right = 42.0
-margin_bottom = 20.0
+margin_left = -8.5
+margin_top = 4.0
+margin_right = 62.5
+margin_bottom = 34.0
 grow_horizontal = 2
 rect_min_size = Vector2( 48, 0 )
 rect_scale = Vector2( 0.25, 0.25 )
 custom_fonts/font = ExtResource( 1 )
-text = "0000"
+text = "000"
 align = 1
 __meta__ = {
 "_editor_description_": ""
@@ -426,9 +418,6 @@ __meta__ = {
 
 [node name="SelectorTimer" type="Timer" parent="BoltHud/BoltHudLines/WeaponSelector"]
 one_shot = true
-
-[node name="Weapon" parent="BoltHud" instance=ExtResource( 21 )]
-position = Vector2( -9, 25 )
 
 [node name="------" type="Node" parent="."]
 

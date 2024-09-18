@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=2]
+[gd_scene load_steps=53 format=2]
 
 [ext_resource path="res://game/arena/Arena.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
@@ -27,7 +27,6 @@
 [ext_resource path="res://assets/sounds/sfx/pickup___39026__wildweasel__keypickup.wav" type="AudioStream" id=27]
 [ext_resource path="res://assets/sounds/sfx/nitro_short___491407__samsterbirdies__jet-engine-startup.wav" type="AudioStream" id=28]
 [ext_resource path="res://assets/sounds/sfx/_pa/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
-[ext_resource path="res://assets/sounds/sfx/weapon_reload_short___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=30]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=31]
 [ext_resource path="res://assets/sounds/sfx/hit_wall.wav" type="AudioStream" id=32]
 [ext_resource path="res://assets/sounds/sfx/hit_explosion2___677934__logicogonist__explosion-4.wav" type="AudioStream" id=33]
@@ -263,18 +262,9 @@ volume_db = -15.0
 pitch_scale = 0.7
 bus = "GameSfx"
 
-[node name="MisileExplode" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
-stream = ExtResource( 18 )
-bus = "GameSfx"
-
 [node name="BoltExplode" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
 stream = ExtResource( 33 )
 volume_db = -10.0
-bus = "GameSfx"
-
-[node name="MisileDissarm" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
-stream = ExtResource( 30 )
-volume_db = -15.0
 bus = "GameSfx"
 
 [node name="ShockerEffect" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
@@ -349,18 +339,24 @@ bus = "GameSfx"
 
 [node name="Music" type="Node" parent="SoundManager"]
 
-[node name="BulletShoot2" type="AudioStreamPlayer" parent="SoundManager"]
-stream = ExtResource( 23 )
-bus = "GameSfx"
+[node name="_ni vec tuki" type="Node2D" parent="SoundManager"]
 
-[node name="MisileShoot" type="AudioStreamPlayer" parent="SoundManager"]
+[node name="MisileShoot" type="AudioStreamPlayer" parent="SoundManager/_ni vec tuki"]
 stream = ExtResource( 17 )
 bus = "GameSfx"
 
-[node name="MisileFlight" type="AudioStreamPlayer" parent="SoundManager"]
+[node name="MisileFlight" type="AudioStreamPlayer" parent="SoundManager/_ni vec tuki"]
 stream = ExtResource( 14 )
 bus = "GameSfx"
 
-[node name="MisileDetect" type="AudioStreamPlayer" parent="SoundManager"]
+[node name="MisileDetect" type="AudioStreamPlayer" parent="SoundManager/_ni vec tuki"]
 stream = ExtResource( 19 )
+bus = "GameSfx"
+
+[node name="BulletShoot2" type="AudioStreamPlayer" parent="SoundManager/_ni vec tuki"]
+stream = ExtResource( 23 )
+bus = "GameSfx"
+
+[node name="MisileExplode" type="AudioStreamPlayer" parent="SoundManager/_ni vec tuki"]
+stream = ExtResource( 18 )
 bus = "GameSfx"

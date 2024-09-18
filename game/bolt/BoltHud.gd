@@ -4,19 +4,22 @@ extends Node2D
 var always_visible_mode: bool = true 
 var selector_visibily_time: float = 1
 
-var active_weapon_icons: Array
+var available_weapons_icons: Array
 var selected_active_weapon_index: int = 0 setget _on_select_weapon # index znotraj aktivnih orožij
-var selected_weapon_index: int # index znotraj vseh orožij
+#var selected_weapon_index: int # RFK zrdeuciraj ... index znotraj vseh orožij
 
-onready var owner_bolt: Node2D = get_parent()
+#onready var owner_bolt: Node2D = get_parent()
 onready var weapon_selector: Control = $BoltHudLines/WeaponSelector
-onready var weapon_icons: Array = $BoltHudLines/WeaponSelector/Weapons.get_children()
-onready var energy_bar_line: Polygon2D = $BoltHudLines/EnergyBar/Bar
+onready var weapon_icons: Array = $BoltHudLines/WeaponSelector.get_children()
+#onready var energy_bar_line: Polygon2D = $BoltHudLines/EnergyBar/Bar
 onready var energy_bar: Control = $BoltHudLines/EnergyBar
+onready var selector_timer: Timer = $BoltHudLines/WeaponSelector/SelectorTimer
+onready var energy_bar_line: ColorRect = $BoltHudLines/EnergyBar/Bar
 
 
 func _ready() -> void:
-
+	
+	weapon_icons.erase(selector_timer) # timer ni ikona
 	call_deferred("set_active_icons")
 	self.set_deferred("selected_active_weapon_index", 0) # zaporedje je pomembno
 
@@ -25,14 +28,14 @@ func _process(delta: float) -> void:
 
 	# manage positions and rotation
 	if visible: # določi bolt
-		rotation = -owner_bolt.rotation # negiramo rotacijo bolta, da je pri miru
-		global_position = owner_bolt.global_position + Vector2(0, 8)
-	#	test_hud.rect_global_position = (owner_bolt.global_position + Vector2(0, 8))*4 + Vector2(640, 360)# + Vector2(2560, 1440)*0.5
+		rotation = -owner.rotation # negiramo rotacijo bolta, da je pri miru
+		global_position = Vector2(0, 40)
+	#	test_hud.rect_global_position = (owner.global_position + Vector2(0, 8))*4 + Vector2(640, 360)# + Vector2(2560, 1440)*0.5
 	
 	# manage energy bar
 	if energy_bar.visible:
-		energy_bar_line.scale.x = owner_bolt.player_stats["energy"] / owner_bolt.max_energy
-		if energy_bar_line.scale.x <= 0.5:
+		energy_bar_line.rect_scale.x = owner.player_stats["energy"] / owner.max_energy
+		if energy_bar_line.rect_scale.x <= 0.5:
 			energy_bar_line.color = Ref.color_red
 		else:
 			energy_bar_line.color = Ref.color_blue
@@ -40,7 +43,7 @@ func _process(delta: float) -> void:
 	# manage selector
 	if weapon_selector.visible:
 		set_active_icons()
-		for active_icon in active_weapon_icons:
+		for active_icon in available_weapons_icons:
 			active_icon.get_node("Label").text = "%02d" % get_weapon_stat_value(active_icon)
 	
 
@@ -59,10 +62,10 @@ func set_active_icons():
 				icon.show() 
 				self.set_deferred("selected_active_weapon_index", selected_active_weapon_index)
 	
-	active_weapon_icons = []
+	available_weapons_icons = []
 	for icon in weapon_icons:
 		if icon.visible:
-			active_weapon_icons.append(icon)
+			available_weapons_icons.append(icon)
 
 
 func get_weapon_stat_value(weapon_icon: Control):
@@ -72,17 +75,17 @@ func get_weapon_stat_value(weapon_icon: Control):
 	
 	match weapon_icon_index:
 		0:
-			weapon_stat = owner_bolt.player_stats["bullet_count"]
+			weapon_stat = owner.player_stats["bullet_count"]
 		1:
-			weapon_stat = owner_bolt.player_stats["misile_count"]
+			weapon_stat = owner.player_stats["misile_count"]
 		2:
-			weapon_stat = owner_bolt.player_stats["mina_count"]
+			weapon_stat = owner.player_stats["mina_count"]
 	return weapon_stat		
 
 
 func _on_select_weapon(new_selected_index: int):
 	
-	if not active_weapon_icons.empty():
+	if not available_weapons_icons.empty():
 		
 		# če še ni prižgan se samo pokaže, izbrana ostane stara ikona
 		if not weapon_selector.visible:
@@ -92,16 +95,16 @@ func _on_select_weapon(new_selected_index: int):
 		# če je že prižgan, preskočim na naslednjo ikon
 		else:
 			# loopanje izbire
-			if new_selected_index > active_weapon_icons.size() - 1:
+			if new_selected_index > available_weapons_icons.size() - 1:
 				new_selected_index = 0
 			elif new_selected_index < 0:
-				new_selected_index = active_weapon_icons.size() - 1
+				new_selected_index = available_weapons_icons.size() - 1
 #			set_deferred("selected_active_weapon_index", new_selected_index)
 			selected_active_weapon_index = new_selected_index
 		
 		# setam ikone glede na weapon index
-		for icon in active_weapon_icons:
-			if selected_active_weapon_index == active_weapon_icons.find(icon):
+		for icon in available_weapons_icons:
+			if selected_active_weapon_index == available_weapons_icons.find(icon):
 				icon.modulate.a = 1
 				icon.get_node("IconEdge").show()
 				#				icon.get_node("Label").show()
@@ -111,11 +114,11 @@ func _on_select_weapon(new_selected_index: int):
 				#				icon.get_node("Label").hide()
 		
 		# konvertam index med aktivnimi orožji v index med vsemi orožji
-		var current_selected_weapon_icon: Control = active_weapon_icons[selected_active_weapon_index]
-		selected_weapon_index = weapon_icons.find(current_selected_weapon_icon)
+		var current_selected_weapon_icon: Control = available_weapons_icons[selected_active_weapon_index]
+		var selected_weapon_index: int = weapon_icons.find(current_selected_weapon_icon)
 			
 		# sprožim timer za ugasnit selector			
-		$BoltHudLines/WeaponSelector/SelectorTimer.start(selector_visibily_time)
+		selector_timer.start(selector_visibily_time)
 
 
 func _on_SelectorTimer_timeout() -> void:

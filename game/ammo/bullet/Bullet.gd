@@ -87,7 +87,7 @@ func explode_bullet(collision_position: Vector2, collision_normal: Vector2):
 	new_hit_fx.global_position = collision_position
 	new_hit_fx.global_rotation = deg2rad(180) + collision_normal.angle() # 180 dodatek omogča, da ni na vertikalah naroben kot
 	new_hit_fx.get_node("DebryParticles").set_emitting(true) # morem klicat, ker je one šot
-	new_hit_fx.get_node("FireParticles").set_emitting(true) # morem klicat, ker je one šot
+	new_hit_fx.get_node("FireParticles").set_emitting(true)
 	Ref.node_creation_parent.add_child(new_hit_fx)
 	new_bullet_trail.start_decay(collision_position) # zadnja pika se pripne na mesto kolizije
 	queue_free()

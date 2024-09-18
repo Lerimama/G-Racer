@@ -99,7 +99,7 @@ func stop_music():
 	
 	for music in game_music.get_children():
 		if music.is_playing():
-			Met.sound_stop_fade_out(music, 2)
+			Met.sound_fade_out_and_reset(music, 2)
 			
 #	match stop_reason:
 #		"game_music":

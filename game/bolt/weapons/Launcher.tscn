@@ -9,10 +9,9 @@
 position = Vector2( 0, 0 )
 
 [node name="ShootingPosition" parent="." index="0"]
-position = Vector2( 9, -1.5 )
+position = Vector2( 7, -1.5 )
 
 [node name="Misile" type="Sprite" parent="ShootingPosition" index="0"]
-visible = false
 show_behind_parent = true
 position = Vector2( 0, 0.5 )
 texture = ExtResource( 3 )

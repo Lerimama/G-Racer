@@ -56,10 +56,8 @@ func _input(event: InputEvent) -> void:
 			#				if Input.is_action_pressed(selector_action):
 			#					controlled_bolt.bolt_hud.selected_active_ammo_index += 1
 			#			else:
-			#				if Input.is_action_just_pressed(selector_action):
-			#					controlled_bolt.bolt_hud.selected_active_ammo_index += 1
-			
-
+			if Input.is_action_just_pressed(selector_action):
+				controlled_bolt.bolt_hud.selected_active_weapon_index += 1
 
 
 func _ready() -> void:

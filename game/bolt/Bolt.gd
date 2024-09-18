@@ -99,10 +99,16 @@ var is_shooting: bool = false # način, ki je boljši za efekte
 onready var front_engine_shadow: Node2D = $ShadowViewport/DriveTrain/FrontEngine
 onready var rear_engine_shadow: Node2D = $ShadowViewport/DriveTrain/RearEngine
 onready var turret: Node2D = $Turret
-var active_weapon: int = 1
+#var active_weapon: int = 1  setget _on_weapon_change
 onready var launcher: Node2D = $Launcher
+onready var bolt_hud: Node2D = $BoltHud
 
 
+
+func _on_weapon_change(new_active_weapon: int):
+	pass
+	
+	
 func _ready() -> void:
 
 	add_to_group(Ref.group_bolts)	
@@ -149,7 +155,7 @@ func _ready() -> void:
 	
 func _process(delta: float) -> void:
 	# engine power in rotacija pogona
-	active_weapon = 1
+#	active_weapon = 1
 	if not bolt_active:
 		# če ni aktiven resetiram
 		engine_power = 0
