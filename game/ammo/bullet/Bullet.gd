@@ -2,7 +2,7 @@ extends RigidBody2D
 class_name Bullet
 
 export var height: float = 0 # PRO
-export var elevation: float = 10 # PRO
+#export var elevation: float = 10 # PRO
 
 var spawner: Node
 var spawner_color: Color
@@ -29,6 +29,9 @@ onready var speed: float = 150 #ammo_profile["speed"] # PRO
 onready var vision_ray: RayCast2D = $VisionRay
 onready var collision_shape: CollisionShape2D = $BulletCollision
 
+# neu
+onready var elevation: float = spawner.elevation + 4 # PRO rabi jo senčka
+
 
 func _ready() -> void:
 	
@@ -43,7 +46,7 @@ func _ready() -> void:
 	
 	# spawn trail
 	new_bullet_trail = BulletTrail.instance()
-	new_bullet_trail.z_index = trail_position.z_index
+	new_bullet_trail.z_index = trail_position.z_index + 1
 	Ref.node_creation_parent.add_child(new_bullet_trail)
 	
 			
@@ -78,9 +81,9 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 					
 func explode_bullet(collision_position: Vector2, collision_normal: Vector2):
 	
-	speed = 0
+	$Sounds/BulletHit.play() # _temp ... nov hit sound rabim
 	
-	Ref.sound_manager.play_sfx("bullet_hit")
+	speed = 0
 	
 	# hit partikli
 	var new_hit_fx = BulletHit.instance()
@@ -93,10 +96,10 @@ func explode_bullet(collision_position: Vector2, collision_normal: Vector2):
 	queue_free()
 
 
-func on_out_of_screen():
+func on_out_of_playing_field():
 	
 	var bullet_off_screen_time: float = 2 
-	yield(get_tree().create_timer(bullet_off_screen_time), "timeout")
+#	yield(get_tree().create_timer(bullet_off_screen_time), "timeout")
 	new_bullet_trail.start_decay(global_position) # zadnja pika se pripne na mesto kolizije
 	queue_free()
 

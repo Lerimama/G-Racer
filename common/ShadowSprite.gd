@@ -17,7 +17,7 @@ func _ready() -> void:
 		if shadow_casting_node.region_enabled: # za atlas teksture
 			region_enabled = true
 			region_rect = shadow_casting_node.region_rect
-		update_shadows()
+#		update_shadows()
 	else:
 		printerr ("No shadow casting node on: ", get_parent())
 		hide()

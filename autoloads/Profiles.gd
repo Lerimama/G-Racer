@@ -137,7 +137,7 @@ var ammo_profiles : Dictionary = {
 		"direction_start_range": [0, 0] , # natančnost misile
 #		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
 		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
-		"counter_name": "bullet_count", # player stats name
+		"ammo_count_key": "bullet_count", # player stats name
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
 	AMMO.MISILE: {
@@ -148,7 +148,7 @@ var ammo_profiles : Dictionary = {
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 		"scene": preload("res://game/ammo/misile/Misile.tscn"),
-		"counter_name": "misile_count",
+		"ammo_count_key": "misile_count",
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
 	AMMO.MINA: {
@@ -158,8 +158,8 @@ var ammo_profiles : Dictionary = {
 		"lifetime": 0, # 0 pomeni večno
 		"mass": 0.5, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
-		"scene": preload("res://game/ammo/Mina.tscn"),
-		"counter_name": "mina_count",
+		"scene": preload("res://game/ammo/mina/Mina.tscn"),
+		"ammo_count_key": "mina_count",
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 	AMMO.SHIELD: {

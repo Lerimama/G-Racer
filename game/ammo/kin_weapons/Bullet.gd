@@ -103,7 +103,7 @@ func destroy_bullet(collision_position: Vector2, collision_normal: Vector2):
 	queue_free()
 
 
-func on_out_of_screen():
+func on_out_of_playing_field():
 	var bullet_off_screen_time: float = 2 
 	yield(get_tree().create_timer(bullet_off_screen_time), "timeout")
 	new_bullet_trail.start_decay(global_position) # zadnja pika se pripne na mesto kolizije

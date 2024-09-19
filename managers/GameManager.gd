@@ -121,7 +121,6 @@ func set_game():
 	if current_level_index == 0:
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
-			pass
 #			activated_player_ids = [Pro.PLAYER.P1] 	
 			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
@@ -567,5 +566,5 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
 		body.call_deferred("set_physics_process", false)
 	elif body is Bullet:
-		body.on_out_of_screen() # ta funkcija zakasni učinek
+		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 	# elif body is Misile: ... se sama kvefrija in se lahko vrne v ekran (nitro)

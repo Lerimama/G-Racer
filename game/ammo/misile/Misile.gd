@@ -3,7 +3,6 @@ class_name Misile
 
 
 export var height: float = 0 # PRO
-export var elevation: float = 10 # PRO
 
 var spawner: Node
 var spawner_color: Color
@@ -48,7 +47,9 @@ onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 
+# neu
 var is_dissarmed: bool = false
+onready var elevation: float = spawner.elevation + 3 # PRO rabi jo senčka
 
 
 func _ready() -> void:
@@ -171,8 +172,9 @@ func dissarm():
 		
 func explode():
 
-	$Sounds/MisileFlight.stop()
-	$Sounds/MisileShoot.stop()
+	# ene rabm
+	#	$Sounds/MisileFlight.stop()
+	#	$Sounds/MisileShoot.stop()
 	
 	new_misile_trail.start_decay()
 

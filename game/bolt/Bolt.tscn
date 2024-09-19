@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/glow_light.png" type="Texture" id=2]
@@ -24,6 +24,7 @@
 [ext_resource path="res://game/bolt/tex/bolt_edge.png" type="Texture" id=22]
 [ext_resource path="res://assets/icons/icon_mina.tres" type="Texture" id=23]
 [ext_resource path="res://assets/icons/icon_misile.tres" type="Texture" id=24]
+[ext_resource path="res://game/bolt/weapons/Dropper.tscn" type="PackedScene" id=25]
 [ext_resource path="res://assets/icons/icon_bullet.tres" type="Texture" id=26]
 [ext_resource path="res://game/bolt/tex/bolt_scars.png" type="Texture" id=27]
 [ext_resource path="res://game/bolt/weapons/Turret.tscn" type="PackedScene" id=33]
@@ -129,6 +130,12 @@ position_on_bolt = 1
 position = Vector2( 64, 64 )
 texture = ExtResource( 20 )
 
+[node name="_size" type="Panel" parent="ShadowViewport"]
+visible = false
+margin_right = 128.0
+margin_bottom = 128.0
+theme = ExtResource( 10 )
+
 [node name="Shadow" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.243137 )
 texture = SubResource( 5264 )
@@ -207,6 +214,7 @@ material = SubResource( 5262 )
 texture = ExtResource( 27 )
 
 [node name="EdgeLight" type="Sprite" parent="BoltSprite"]
+visible = false
 modulate = Color( 1, 0.541176, 0.262745, 1 )
 material = SubResource( 5278 )
 texture = ExtResource( 22 )
@@ -214,11 +222,13 @@ texture = ExtResource( 22 )
 [node name="SpriteEdgeLight2" type="Light2D" parent="BoltSprite"]
 visible = false
 material = SubResource( 5261 )
+enabled = false
 texture = ExtResource( 3 )
 color = Color( 1, 0.576471, 0.0823529, 1 )
 energy = 1.3
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
 polygon = PoolVector2Array( -28, -10, -18, -14, -12, -13, 15, -12, 18, -14, 24, -12, 26, -9, 27, 0, 26, 9, 24, 12, 19, 14, 15, 12, -12, 13, -18, 14, -28, 9 )
 
 [node name="Light2D" type="Light2D" parent="."]
@@ -236,8 +246,13 @@ range_z_max = 2
 [node name="Turret" parent="." instance=ExtResource( 33 )]
 position = Vector2( -18, 0 )
 
+[node name="Dropper" parent="." instance=ExtResource( 25 )]
+position = Vector2( -25, 0 )
+ammo_key = 2
+
 [node name="Launcher" parent="." instance=ExtResource( 21 )]
 position = Vector2( -12, -13 )
+ammo_key = 1
 
 [node name="BoltHud" type="Node2D" parent="."]
 position = Vector2( 0, 40 )

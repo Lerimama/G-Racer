@@ -11,7 +11,6 @@ _data = [ Vector2( 0, 1.70909 ), 0.0, 0.0, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0
 colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.235294 )
 
 [node name="BulletTrail" type="Line2D"]
-show_behind_parent = true
 points = PoolVector2Array( -2, 0, -32, 0 )
 width = 2.0
 width_curve = SubResource( 2 )

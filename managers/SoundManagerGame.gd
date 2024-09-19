@@ -47,13 +47,13 @@ onready var music: Node = $Music
 func play_sfx(effect_for: String):
 	
 	match effect_for:
-		"mina_explode": 
-			$Sfx/MisileExplode.play()
-			# ustavim, če se pleja ...
-#			$Sfx/MisileFlight.set_volume_db(-80)
-#			$Sfx/MisileShoot.set_volume_db(-80)
-#			$Sfx/MisileFlight.stop()
-#			$Sfx/MisileShoot.stop()
+#		"mina_explode": 
+#			$Sfx/MisileExplode.play()
+#			# ustavim, če se pleja ...
+##			$Sfx/MisileFlight.set_volume_db(-80)
+##			$Sfx/MisileShoot.set_volume_db(-80)
+##			$Sfx/MisileFlight.stop()
+##			$Sfx/MisileShoot.stop()
 		"pickable": $Sfx/Pickable.play()
 		"pickable_ammo": $Sfx/PickableAmmo.play()
 		"pickable_nitro": $Sfx/PickableNitro.play()

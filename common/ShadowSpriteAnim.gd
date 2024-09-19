@@ -3,7 +3,7 @@ extends AnimatedSprite
 
 export (NodePath) var shadow_casting_node_path: String
 export var node_height: float = 0 # pravo dobi iz parenta ... debelina pomeni debelino sence
-export var node_elevation: float = 7 # pravo dobi iz parenta ... dvignjenost pomeni zamik sence
+export var node_elevation: float = 1 # pravo dobi iz parenta ... dvignjenost pomeni zamik sence
 
 var shadow_color: Color = Color.black
 var shadow_transparency: float = 0.2
@@ -26,6 +26,7 @@ func _ready() -> void:
 	
 func _process(delta: float) -> void:
 	
+	frame = 2 # debug
 	if shadow_casting_node and visible:
 		update_shadows()
 
@@ -40,7 +41,7 @@ func update_shadows():
 		playing = shadow_casting_node.playing
 		
 		node_height = owner.height
-		node_elevation = owner.elevation
+		node_elevation = owner.elevation + 6
 		shadow_direction = Ref.game_manager.shadows_direction
 		global_position = shadow_casting_node.global_position - 10 * shadow_direction.rotated(deg2rad(180)) 
 		if not visible:

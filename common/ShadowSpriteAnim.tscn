@@ -12,7 +12,6 @@ animations = [ {
 
 [node name="SpriteShadowAnim" type="AnimatedSprite"]
 modulate = Color( 0, 0, 0, 0.27451 )
-scale = Vector2( 2, 2 )
 frames = SubResource( 534 )
 script = ExtResource( 1 )
 shadow_casting_node_path = NodePath("../AnimSprite")

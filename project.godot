@@ -32,7 +32,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Mina",
 "language": "GDScript",
-"path": "res://game/ammo/Mina.gd"
+"path": "res://game/ammo/mina/Mina.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "Misile",

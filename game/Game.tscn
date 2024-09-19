@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=2]
+[gd_scene load_steps=52 format=2]
 
 [ext_resource path="res://game/arena/Arena.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/camera/Camera.tscn" type="PackedScene" id=2]
@@ -54,9 +54,6 @@ audio_stream = ExtResource( 32 )
 
 [sub_resource type="AudioStreamRandomPitch" id=15]
 audio_stream = ExtResource( 31 )
-
-[sub_resource type="AudioStreamRandomPitch" id=16]
-audio_stream = ExtResource( 32 )
 
 [sub_resource type="AudioStreamRandomPitch" id=17]
 audio_stream = ExtResource( 5 )
@@ -296,15 +293,9 @@ volume_db = -10.0
 pitch_scale = 0.9
 bus = "GameSfx"
 
-[node name="HitBulletWall" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
-stream = SubResource( 16 )
-volume_db = -7.0
-pitch_scale = 0.9
-bus = "GameSfx"
-
 [node name="HitBulletBrick" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]
 stream = ExtResource( 41 )
-volume_db = -7.0
+volume_db = 11.513
 bus = "GameSfx"
 
 [node name="HitMisile" type="AudioStreamPlayer" parent="SoundManager/LevelSounds"]

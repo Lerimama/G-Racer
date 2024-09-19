@@ -98,17 +98,9 @@ var elevation: float = 14 # PRO
 var is_shooting: bool = false # način, ki je boljši za efekte 
 onready var front_engine_shadow: Node2D = $ShadowViewport/DriveTrain/FrontEngine
 onready var rear_engine_shadow: Node2D = $ShadowViewport/DriveTrain/RearEngine
-onready var turret: Node2D = $Turret
-#var active_weapon: int = 1  setget _on_weapon_change
-onready var launcher: Node2D = $Launcher
 onready var bolt_hud: Node2D = $BoltHud
+onready var available_weapons: Array = [$Turret, $Dropper, $Launcher]
 
-
-
-func _on_weapon_change(new_active_weapon: int):
-	pass
-	
-	
 func _ready() -> void:
 
 	add_to_group(Ref.group_bolts)	
@@ -128,11 +120,9 @@ func _ready() -> void:
 	rear_mass.linear_damp = bolt_profile["rear_lin_damp"]
 
 	# weapon settings
-	turret.set_weapon(Pro.AMMO.BULLET)
-	launcher.set_weapon(Pro.AMMO.MISILE)
-#	turret.ammo_count = player_stats["bullet_count"]
-
-	
+	for weapon in available_weapons:
+		weapon.set_weapon()
+		
 	spawn_bolt_controller()
 	
 	# setup panel
@@ -151,13 +141,11 @@ func _ready() -> void:
 	if player_id == Pro.PLAYER.P1:
 		Ref.setup_layer.add_new_line_to_setup_layer("back_linear_dump", "linear_damp", rear_mass.linear_damp, rear_mass)
 		
-		
 	
 func _process(delta: float) -> void:
 	# engine power in rotacija pogona
-#	active_weapon = 1
-	if not bolt_active:
-		# če ni aktiven resetiram
+	
+	if not bolt_active: # resetiram, če ni aktiven
 		engine_power = 0
 		rotation_dir = 0		
 	else:	
@@ -369,7 +357,6 @@ func on_hit(hit_by: Node):
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse offset ne deluje?
 		#		apply_impulse( to_global(Vector2.RIGHT * bolt_sprite.texture.get_size().x/2), hit_by_inertia) # debug
-		Met.spawn_indikator(bolt_body_state.get_contact_collider_position(0), rotation, self, true) # debug ... indi
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		Ref.sound_manager.play_sfx("bolt_explode")
 		if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
