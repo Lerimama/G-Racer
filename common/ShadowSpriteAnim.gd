@@ -17,16 +17,13 @@ func _ready() -> void:
 	if shadow_casting_node:
 		frames = shadow_casting_node.frames
 		playing = shadow_casting_node.playing
-		
-		update_shadows()
 	else:
-		printerr ("No shadow casting node on: ", get_parent())
 		hide()
 	
 	
 func _process(delta: float) -> void:
 	
-	frame = 2 # debug
+	frame = 1 # debug
 	if shadow_casting_node and visible:
 		update_shadows()
 
@@ -41,8 +38,8 @@ func update_shadows():
 		playing = shadow_casting_node.playing
 		
 		node_height = owner.height
-		node_elevation = owner.elevation + 6
+		node_elevation = owner.elevation
 		shadow_direction = Ref.game_manager.shadows_direction
-		global_position = shadow_casting_node.global_position - 10 * shadow_direction.rotated(deg2rad(180)) 
+		global_position = shadow_casting_node.global_position - node_elevation * shadow_direction.rotated(deg2rad(180)) 
 		if not visible:
 			show()

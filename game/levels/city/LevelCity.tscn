@@ -1,4 +1,4 @@
-[gd_scene load_steps=249 format=2]
+[gd_scene load_steps=250 format=2]
 
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=1]
 [ext_resource path="res://game/levels/objects/BrickLight.tscn" type="PackedScene" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=8]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=9]
 [ext_resource path="res://game/levels/city/res/terrain_dirt_rect.tres" type="Material" id=10]
+[ext_resource path="res://game/levels/city/svg/new.svg" type="Texture" id=11]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=15]
 [ext_resource path="res://game/levels/city/tex/tile_sidewalk_small.png" type="Texture" id=16]
 [ext_resource path="res://game/levels/sha/level_floor_background_dancefloor.gdshader" type="Shader" id=18]
@@ -2600,6 +2601,17 @@ custom_styles/panel = SubResource( 613 )
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="New" type="Sprite" parent="."]
+position = Vector2( 592, 1648 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 11 )
+
+[node name="New2" type="Sprite" parent="."]
+position = Vector2( 592, 936 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 11 )
+flip_v = true
 
 [connection signal="body_entered" from="Checkpoint" to="." method="_on_Checkpoint_body_entered"]
 [connection signal="body_entered" from="RaceFinish/FinishLine" to="." method="_on_FinishLine_body_entered"]

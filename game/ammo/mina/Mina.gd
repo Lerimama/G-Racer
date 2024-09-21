@@ -3,7 +3,6 @@ class_name Mina
 
 
 export var height: float = 0 # PRO
-export var elevation: float = 10 # PRO
 
 var spawner: Node
 var spawner_color: Color
@@ -28,6 +27,7 @@ onready var lifetime: float = 0 #weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 onready var MisileHit = preload("res://game/ammo/misile/MisileHit.tscn")
+onready var elevation: float = 1 # PRO rabi jo senčka
 
 
 func _ready() -> void:

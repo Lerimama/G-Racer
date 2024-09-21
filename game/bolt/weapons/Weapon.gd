@@ -82,7 +82,7 @@ func shoot():
 		# reload
 		if reload_time > 0:
 			weapon_reloaded = false
-			reload_timer.start(reload_time / owner.reload_ability)
+			reload_timer.start(reload_time)
 
 		
 func _update_weapon_stats(ammo_count_delta: int):

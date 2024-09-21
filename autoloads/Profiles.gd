@@ -81,7 +81,6 @@ enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
 #		"bolt_texture": preload("res:///bolt/bolt_alt.png"),
-		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"shield_loops_limit": 3,
 		# orig
@@ -102,7 +101,6 @@ var bolt_profiles: Dictionary = {
 	BOLT_TYPE.RIGID: {
 #		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-		"reload_ability": 1,# 1 - 10 ... to je deljitelj reload timeta od orožja
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
 		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)

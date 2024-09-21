@@ -60,25 +60,22 @@ onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
 
 # engines
 var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
+var thrust_rotation: float = 0 # rotacija delujočega pogona
 var engine_power = 0
 var engine_rotation_speed: float = 0.1
 onready var max_engine_power: float = bolt_profile["max_engine_power"]
-onready var engine_hsp: float = bolt_profile["engine_hsp"] # reload def gre v ammos
-onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"] # reload def gre v ammos
+onready var engine_hsp: float = bolt_profile["engine_hsp"]
+onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"]
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
 onready var front_engine: Node2D = $DriveTrain/FrontEngine
 onready var front_mass: RigidBody2D = $DriveTrain/FrontEngine/FrontMass
 onready var rear_engine: Node2D = $DriveTrain/RearEngine
 onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RearMass
-var thrust_rotation: float = 0 # wheels 
 
 # battle
 var revive_time: float = 2
-#var bullet_reloaded: bool = true
-var misile_reloaded: bool = true
-var mina_reloaded: bool = true
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
-onready var reload_ability: float = bolt_profile["reload_ability"] # reload def gre v ammos
+var is_shooting: bool = false # način, ki je boljši za efekte 
 
 # racing
 var bolt_position_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju  
@@ -95,8 +92,7 @@ onready var direction_line: Line2D = $DirectionLine
 # neu
 var height: float = 0 # PRO
 var elevation: float = 14 # PRO
-var is_shooting: bool = false # način, ki je boljši za efekte 
-onready var front_engine_shadow: Node2D = $ShadowViewport/DriveTrain/FrontEngine
+onready var front_engine_shadow: Node2D = $ShadowViewport/DriveTrain/FrontEngine # tudi ta dva delujeta 
 onready var rear_engine_shadow: Node2D = $ShadowViewport/DriveTrain/RearEngine
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $Launcher]
@@ -267,65 +263,6 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 
 # BATTLE ----------------------------------------------------------------------------
-
-
-func shoot(ammo_index: int) -> void:
-
-	ammo_index = 0 # debug
-#
-	match ammo_index: # enum zaporedje # OPT ammos z enums
-#		0: # "bullet":
-#			if bullet_reloaded:
-#			if player_stats["bullet_count"] > 0:
-#				pass
-#				var has_shot: bool = sprite_turret.shoot()
-#				var BulletScene: PackedScene = Pro.ammo_profiles[Pro.AMMO.BULLET]["scene"]
-#				var new_bullet = BulletScene.instance()
-#				new_bullet.global_position = gun_position.global_position
-#				new_bullet.global_rotation = bolt_global_rotation
-#				new_bullet.spawner = self # ime avtorja izstrelka
-#				new_bullet.spawner_color = bolt_color
-#				new_bullet.z_index = gun_position.z_index
-#				Ref.node_creation_parent.add_child(new_bullet)
-#				if has_shot:
-#					update_stat("bullet_count", - 1)
-#				bullet_reloaded = false
-#				yield(get_tree().create_timer(new_bullet.reload_time / reload_ability), "timeout")
-#				bullet_reloaded= true
-		1: # "misile":
-			if misile_reloaded and player_stats["misile_count"] > 0:
-
-				var MisileScene: PackedScene = Pro.ammo_profiles[Pro.AMMO.MISILE]["scene"]
-#				var new_misile = MisileScene.instance()
-#				new_misile.global_position = gun_position.global_position
-#				new_misile.global_rotation = bolt_global_rotation #bolt_sprite.global_rotation
-#				new_misile.spawner = self # zato, da lahko dobiva "točke ali kazni nadaljavo
-#				new_misile.spawner_color = bolt_color
-#				new_misile.spawner_speed = bolt_velocity.length()
-#				new_misile.z_index = gun_position.z_index
-#				Ref.node_creation_parent.add_child(new_misile)
-#
-#				update_stat("misile_count", - 1)
-#				misile_reloaded = false
-#				yield(get_tree().create_timer(new_misile.reload_time / reload_ability), "timeout")
-				misile_reloaded= true
-
-		2: # "mina":
-			if mina_reloaded and player_stats["mina_count"] > 0:	
-
-				var MinaScene: PackedScene = Pro.ammo_profiles[Pro.AMMO.MINA]["scene"]
-#				var new_mina = MinaScene.instance()
-#				new_mina.global_position = trail_position.global_position # OPT pozicija mine
-#				new_mina.global_rotation = bolt_global_rotation
-#				new_mina.spawner = self # ime avtorja izstrelka
-#				new_mina.spawner_color = bolt_color
-#				new_mina.z_index = trail_position.z_index
-#				Ref.node_creation_parent.add_child(new_mina)
-#
-#				update_stat("mina_count", - 1)
-#				mina_reloaded = false
-#				yield(get_tree().create_timer(new_mina.reload_time / reload_ability), "timeout")
-				mina_reloaded = true
 
 
 func on_hit(hit_by: Node):
@@ -759,8 +696,8 @@ func reset_bolt():
 	front_mass.set_applied_torque(0)
 	rear_mass.set_applied_force(Vector2.ZERO)
 	rear_mass.set_applied_torque(0)
-#	rotation_dir = 0
-#	engine_power = 0
+	#	rotation_dir = 0
+	#	engine_power = 0
 	for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
 		thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
 		thrust.stop_fx()	
@@ -805,7 +742,6 @@ func _on_idle_motion_change(is_in_idle_motion: bool):
 				else:
 					linear_damp = bolt_profile["lin_damp_idle"]
 				for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
-#				for thrust in get_engines_thrusts([front_engine,rear_engine]):
 					thrust.start_fx()
 			IDLE_MOTION.DRIFT:
 				linear_damp = bolt_profile["lin_damp_driving"]
@@ -820,7 +756,6 @@ func _on_idle_motion_change(is_in_idle_motion: bool):
 				else:
 					linear_damp = bolt_profile["lin_damp_idle"]
 				for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
-#				for thrust in get_engines_thrusts([front_engine, rear_engine]):
 					thrust.start_fx()
 	# če ga ne in je hkrati idle
 	elif current_motion == MOTION.IDLE:
@@ -843,9 +778,7 @@ func _on_motion_change(new_motion: int):
 		
 		MOTION.IDLE:
 			linear_damp = bolt_profile["lin_damp_idle"]
-#			current_engine = front_engine
 			bolt_fwd_direction = 1
-			# IDLE setup je v glavnem  so v idle_motion
 			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
 #			for thrust in get_engines_thrusts([front_engine, rear_engine]):
 				thrust.stop_fx()
@@ -853,15 +786,11 @@ func _on_motion_change(new_motion: int):
 			linear_damp = bolt_profile["lin_damp_driving"]
 			bolt_fwd_direction = 1
 			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
-			
-#			for thrust in get_engines_thrusts([front_engine, rear_engine]):
 				thrust.start_fx()
 		MOTION.REV:
 			linear_damp = bolt_profile["lin_damp_driving"]
 			bolt_fwd_direction = -1
 			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
-			
-#			for thrust in get_engines_thrusts([front_engine, rear_engine]):
 				thrust.start_fx()
 		MOTION.DISARRAY:
 			linear_damp = bolt_profile["lin_damp_idle"]

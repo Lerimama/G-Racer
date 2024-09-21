@@ -122,7 +122,7 @@ script = ExtResource( 1 )
 modulate = Color( 0.121569, 0.121569, 0.121569, 1 )
 frames = SubResource( 135 )
 animation = "deactivate"
-frame = 2
+frame = 1
 
 [node name="SmokeParticles" type="Particles2D" parent="."]
 visible = false
