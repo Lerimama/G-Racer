@@ -6,7 +6,7 @@
 [ext_resource path="res://assets/sounds/music/nitro_music.mp3" type="AudioStream" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 640, 360 )
+extents = Vector2( 1280, 720.5 )
 
 [node name="Arena" type="Node2D"]
 script = ExtResource( 1 )
@@ -21,16 +21,15 @@ __meta__ = {
 z_index = 1
 
 [node name="PlayingField" type="Node2D" parent="."]
-visible = false
 z_index = 11
 script = ExtResource( 3 )
 
 [node name="_screen_size" type="ColorRect" parent="PlayingField"]
 visible = false
-margin_left = -640.0
-margin_top = -360.0
-margin_right = 640.0
-margin_bottom = 360.0
+margin_left = -1280.0
+margin_top = -720.0
+margin_right = 1280.0
+margin_bottom = 720.0
 color = Color( 1, 1, 0, 1 )
 
 [node name="ScreenArea" type="Area2D" parent="PlayingField"]
@@ -50,7 +49,7 @@ __meta__ = {
 }
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayingField/ScreenEdge"]
-polygon = PoolVector2Array( -704, -432, -760, -360, 640, -360, 640, 360, -640, 360, -640, -360, -704, -360, -704, 416, 704, 416, 704, -432 )
+polygon = PoolVector2Array( -1352, -832, -1336, -720, 1280, -720, 1280, 720, -1280, 720, -1280, -720, -1520, -632, -1344, 832, 1528, 936, 1440, -824 )
 
 [node name="Sounds" type="Node" parent="."]
 

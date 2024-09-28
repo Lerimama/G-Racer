@@ -1,7 +1,7 @@
 [gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://game/levels/areas/AreaGravel.gd" type="Script" id=1]
-[ext_resource path="res://game/levels/areas/tex/tile_area_gravel.png" type="Texture" id=2]
+[ext_resource path="res://game/levels/_pixel_style_obs/areas/tile_area_gravel.png" type="Texture" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=5]

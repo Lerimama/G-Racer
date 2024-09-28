@@ -1,8 +1,8 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=33 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/glow_light.png" type="Texture" id=2]
-[ext_resource path="res://game/bolt/tex/bolt_edge_light.png" type="Texture" id=3]
+[ext_resource path="res://game/bolt/tex/bolt.png" type="Texture" id=3]
 [ext_resource path="res://assets/textures/burst_light.png" type="Texture" id=4]
 [ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=6]
@@ -19,15 +19,11 @@
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
-[ext_resource path="res://game/bolt/tex/bolt.png" type="Texture" id=20]
 [ext_resource path="res://game/bolt/weapons/Launcher.tscn" type="PackedScene" id=21]
-[ext_resource path="res://game/bolt/tex/bolt_edge.png" type="Texture" id=22]
 [ext_resource path="res://assets/icons/icon_mina.tres" type="Texture" id=23]
 [ext_resource path="res://assets/icons/icon_misile.tres" type="Texture" id=24]
 [ext_resource path="res://game/bolt/weapons/Dropper.tscn" type="PackedScene" id=25]
 [ext_resource path="res://assets/icons/icon_bullet.tres" type="Texture" id=26]
-[ext_resource path="res://game/bolt/tex/bolt_scars.png" type="Texture" id=27]
-[ext_resource path="res://game/levels/city/svg/bolt.png" type="Texture" id=28]
 [ext_resource path="res://game/bolt/weapons/Turret.tscn" type="PackedScene" id=33]
 
 [sub_resource type="PhysicsMaterial" id=5260]
@@ -39,14 +35,6 @@ viewport_path = NodePath("ShadowViewport")
 
 [sub_resource type="RectangleShape2D" id=5254]
 extents = Vector2( 6.5, 6 )
-
-[sub_resource type="CanvasItemMaterial" id=5262]
-blend_mode = 1
-
-[sub_resource type="CanvasItemMaterial" id=5278]
-blend_mode = 1
-
-[sub_resource type="CanvasItemMaterial" id=5261]
 
 [sub_resource type="AtlasTexture" id=5255]
 atlas = ExtResource( 6 )
@@ -65,7 +53,7 @@ random_pitch = 1.05
 [node name="Bolt" type="RigidBody2D"]
 z_index = 1
 collision_layer = 7
-mass = 30.0
+mass = 80.0
 physics_material_override = SubResource( 5260 )
 contacts_reported = 1
 contact_monitor = true
@@ -94,7 +82,7 @@ range_z_min = 0
 range_z_max = 0
 
 [node name="ShadowViewport" type="Viewport" parent="."]
-size = Vector2( 128, 128 )
+size = Vector2( 360, 280 )
 own_world = true
 transparent_bg = true
 handle_input_locally = false
@@ -105,44 +93,44 @@ usage = 0
 render_target_v_flip = true
 render_target_update_mode = 3
 
-[node name="DriveTrain" type="Node2D" parent="ShadowViewport"]
-show_behind_parent = true
-position = Vector2( 64, 64 )
-
-[node name="FrontEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
-
-[node name="ThrustL" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 18, -12 )
-
-[node name="ThrustR" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 18, 12 )
-position_on_bolt = 1
-
-[node name="RearEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
-
-[node name="ThrustL" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( -17, -12 )
-
-[node name="ThrustR" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( -17, 12 )
-position_on_bolt = 1
-
-[node name="BoltSprite" type="Sprite" parent="ShadowViewport"]
-position = Vector2( 64, 64 )
-texture = ExtResource( 20 )
-
 [node name="_size" type="Panel" parent="ShadowViewport"]
 visible = false
 margin_right = 128.0
 margin_bottom = 128.0
 theme = ExtResource( 10 )
 
-[node name="BoltSprite2" type="Sprite" parent="ShadowViewport"]
-position = Vector2( 64, 64 )
+[node name="BoltSprite" type="Sprite" parent="ShadowViewport"]
+position = Vector2( 180, 140 )
 rotation = 1.5708
-scale = Vector2( 0.292792, 0.292792 )
-texture = ExtResource( 28 )
+texture = ExtResource( 3 )
 offset = Vector2( 0.381001, 0.499999 )
+
+[node name="DriveTrain" type="Node2D" parent="ShadowViewport"]
+position = Vector2( 180, 140 )
+
+[node name="FrontEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
+position = Vector2( 73, 0 )
+
+[node name="ThrustL" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
+position = Vector2( 1, -53 )
+scale = Vector2( 2, 2 )
+
+[node name="ThrustR" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
+position = Vector2( 1, 51 )
+scale = Vector2( 2, 2 )
+position_on_bolt = 1
+
+[node name="RearEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
+position = Vector2( -68, 0 )
+
+[node name="ThrustL" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
+position = Vector2( 4, -55 )
+scale = Vector2( 2, 2 )
+
+[node name="ThrustR" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
+position = Vector2( 4, 53 )
+scale = Vector2( 2, 2 )
+position_on_bolt = 1
 
 [node name="Shadow" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.243137 )
@@ -153,7 +141,7 @@ shadow_casting_node_path = NodePath("../BoltSprite")
 [node name="DriveTrain" type="Node2D" parent="."]
 
 [node name="FrontEngine" type="Node2D" parent="DriveTrain"]
-position = Vector2( 17, 0 )
+position = Vector2( 73, 0 )
 
 [node name="FrontPin" type="PinJoint2D" parent="DriveTrain/FrontEngine"]
 node_a = NodePath("../../..")
@@ -175,14 +163,16 @@ offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="ThrustL" parent="DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 1, -12 )
+position = Vector2( 1, -53 )
+scale = Vector2( 2, 2 )
 
 [node name="ThrustR" parent="DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 1, 12 )
+position = Vector2( 1, 51 )
+scale = Vector2( 2, 2 )
 position_on_bolt = 1
 
 [node name="RearEngine" type="Node2D" parent="DriveTrain"]
-position = Vector2( -21, 0 )
+position = Vector2( -68, 0 )
 
 [node name="RearPin" type="PinJoint2D" parent="DriveTrain/RearEngine"]
 node_a = NodePath("../../..")
@@ -205,66 +195,22 @@ offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="ThrustL" parent="DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( 4, -12 )
+position = Vector2( 4, -55 )
+scale = Vector2( 2, 2 )
 
 [node name="ThrustR" parent="DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( 4, 12 )
+position = Vector2( 4, 53 )
+scale = Vector2( 2, 2 )
 position_on_bolt = 1
 
 [node name="BoltSprite" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.231373 )
 rotation = 1.5708
-scale = Vector2( 0.292792, 0.292792 )
-texture = ExtResource( 28 )
-offset = Vector2( 0.381001, 0.499999 )
-
-[node name="Scars" type="Sprite" parent="BoltSprite"]
-visible = false
-modulate = Color( 1, 1, 1, 0.458824 )
-material = SubResource( 5262 )
-texture = ExtResource( 27 )
-
-[node name="EdgeLight" type="Sprite" parent="BoltSprite"]
-visible = false
-modulate = Color( 1, 0.541176, 0.262745, 1 )
-material = SubResource( 5278 )
-texture = ExtResource( 22 )
-
-[node name="SpriteEdgeLight2" type="Light2D" parent="BoltSprite"]
-visible = false
-material = SubResource( 5261 )
-enabled = false
 texture = ExtResource( 3 )
-color = Color( 1, 0.576471, 0.0823529, 1 )
-energy = 1.3
-
-[node name="BoltSprite_orig" type="Sprite" parent="."]
-visible = false
-texture = ExtResource( 20 )
 offset = Vector2( 0.381001, 0.499999 )
-
-[node name="Scars" type="Sprite" parent="BoltSprite_orig"]
-visible = false
-modulate = Color( 1, 1, 1, 0.458824 )
-material = SubResource( 5262 )
-texture = ExtResource( 27 )
-
-[node name="EdgeLight" type="Sprite" parent="BoltSprite_orig"]
-visible = false
-modulate = Color( 1, 0.541176, 0.262745, 1 )
-material = SubResource( 5278 )
-texture = ExtResource( 22 )
-
-[node name="SpriteEdgeLight2" type="Light2D" parent="BoltSprite_orig"]
-visible = false
-material = SubResource( 5261 )
-enabled = false
-texture = ExtResource( 3 )
-color = Color( 1, 0.576471, 0.0823529, 1 )
-energy = 1.3
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-visible = false
-polygon = PoolVector2Array( -28, -10, -18, -14, -12, -13, 15, -12, 18, -14, 24, -12, 26, -9, 27, 0, 26, 9, 24, 12, 19, 14, 15, 12, -12, 13, -18, 14, -28, 9 )
+polygon = PoolVector2Array( -106, -55, 112, -52, 112, 51, -104, 55 )
 
 [node name="Light2D" type="Light2D" parent="."]
 visible = false

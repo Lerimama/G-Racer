@@ -1,0 +1,1456 @@
+[gd_scene load_steps=134 format=2]
+
+[ext_resource path="res://game/ammo/tex/bullet.png" type="Texture" id=1]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=2]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=4]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=5]
+[ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=6]
+[ext_resource path="res://game/levels/terrain/tex/pixel_style/mount_edge_shade_small.png" type="Texture" id=7]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=8]
+[ext_resource path="res://_obs/mountain_edge_corner_2.png" type="Texture" id=9]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=10]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=11]
+[ext_resource path="res://game/bolt/Bolt.tscn" type="PackedScene" id=12]
+[ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=14]
+[ext_resource path="res://game/levels/sha/level_texture_shader.tres" type="Material" id=16]
+[ext_resource path="res://game/levels/sha/terrain_dither.tres" type="Material" id=18]
+[ext_resource path="res://game/levels/_pixel_style_obs/Level.gd" type="Script" id=19]
+[ext_resource path="res://game/levels/terrain/tex/pixel_style/_obs/mountain_edge_corner_inside.png" type="Texture" id=20]
+[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=21]
+[ext_resource path="res://game/levels/tilesets/tileset_arena_edge.tres" type="TileSet" id=22]
+[ext_resource path="res://_rezerva/TilemapEdge.gd" type="Script" id=23]
+[ext_resource path="res://_obs/bolt_vars_atlas.png" type="Texture" id=24]
+[ext_resource path="res://game/levels/tilesets/tileset_arena_floor.tres" type="TileSet" id=25]
+[ext_resource path="res://game/levels/sha/level_dropshadows_screen.gdshader" type="Shader" id=26]
+[ext_resource path="res://game/levels/StartLights.tscn" type="PackedScene" id=27]
+[ext_resource path="res://_rezerva/_zaloga_shaderjev/originali_uporabljanega/bolt_wiggle_texture.gdshader" type="Shader" id=28]
+[ext_resource path="res://game/levels/racing/BoltTracker.gd" type="Script" id=29]
+[ext_resource path="res://game/levels/sha/level_floor_background_dancefloor.gdshader" type="Shader" id=30]
+[ext_resource path="res://game/levels/racing/RaceTrack.gd" type="Script" id=31]
+[ext_resource path="res://game/levels/tilesets/tileset_arena_elements.tres" type="TileSet" id=32]
+[ext_resource path="res://game/levels/sha/shader_texture/TerrainTextureRect.tscn" type="PackedScene" id=38]
+[ext_resource path="res://game/levels/sha/shader_texture/terrain_shader.tres" type="Material" id=39]
+[ext_resource path="res://_rezerva/_zaloga_shaderjev/backgrounds/level_background_pixelate_screen.gdshader" type="Shader" id=40]
+[ext_resource path="res://game/levels/terrain/tex/pixel_style/desert_edge.png" type="Texture" id=41]
+[ext_resource path="res://game/levels/terrain/tex/pixel_style/desert_top.png" type="Texture" id=42]
+[ext_resource path="res://assets/shaders/dither/pallete_bw_wide.png" type="Texture" id=45]
+[ext_resource path="res://assets/shaders/dither/bayer2tile16.png" type="Texture" id=46]
+
+[sub_resource type="OpenSimplexNoise" id=542]
+seed = 17
+octaves = 5
+period = 0.1
+persistence = 0.0
+lacunarity = 4.0
+
+[sub_resource type="NoiseTexture" id=614]
+seamless = true
+noise = SubResource( 542 )
+
+[sub_resource type="Gradient" id=524]
+interpolation_mode = 1
+offsets = PoolRealArray( 0, 0.171598, 0.420824, 0.509761, 0.590022, 0.698482 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.111714, 0.111714, 0.111714, 1, 0.223427, 0.223427, 0.223427, 1, 0.472885, 0.472885, 0.472885, 1, 0.698482, 0.698482, 0.698482, 1, 0.881836, 0.881836, 0.881836, 1 )
+
+[sub_resource type="GradientTexture" id=615]
+gradient = SubResource( 524 )
+
+[sub_resource type="Gradient" id=601]
+offsets = PoolRealArray( 0, 0.650735 )
+colors = PoolColorArray( 0.168945, 0.168945, 0.168945, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=616]
+gradient = SubResource( 601 )
+
+[sub_resource type="ShaderMaterial" id=603]
+shader = ExtResource( 30 )
+shader_param/change_colors = false
+shader_param/color_1 = Color( 0, 0, 0, 0 )
+shader_param/new_color_1 = Color( 0, 0, 0, 0 )
+shader_param/color_2 = Color( 0, 0, 0, 0 )
+shader_param/new_color_2 = Color( 0, 0, 0, 0 )
+shader_param/color_3 = Color( 0, 0, 0, 0 )
+shader_param/new_color_3 = Color( 0, 0, 0, 0 )
+shader_param/color_to_transparent = Color( 0, 0, 0, 0 )
+shader_param/color_to_noise = Color( 0, 0, 0, 0 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/ad_noise = true
+shader_param/shade_noise = true
+shader_param/pixelate_noise = true
+shader_param/pixel_size_multiplier = 2.0
+shader_param/pixel_offset = Vector2( 0.5, 0.5 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.05
+shader_param/speed_scale = 0.05
+shader_param/shade_all_colors = true
+shader_param/noise = SubResource( 614 )
+shader_param/noise_color_ramp = SubResource( 615 )
+shader_param/shades_color_ramp = SubResource( 616 )
+
+[sub_resource type="ShaderMaterial" id=1126]
+shader = ExtResource( 40 )
+shader_param/node_size = Vector2( 1648, 1032 )
+shader_param/pixelate = false
+shader_param/pixel_size_multiplier = 8.0
+shader_param/pixel_offset = Vector2( 0, 0 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.0
+shader_param/speed_scale = 0.0
+
+[sub_resource type="Shader" id=5158]
+code = "shader_type canvas_item;
+
+uniform float pixelFactor : hint_range(0, 10) = 0.5;
+
+void fragment() {
+	// pixel number naj bo proporcionalna to sprite resolution ... multiply pixel texture width sprite size
+	vec2 pixelNumber = vec2(textureSize(SCREEN_TEXTURE, 0)) / pixelFactor; // število pixlov
+//	vec2 pixelatedUV = round(UV * pixelFactor) / pixelFactor; // snaping (round) to pixelsize and dividing to ge back to 0 - 1 interval
+//	vec2 pixelatedUV = round(UV * pixelNumber) / pixelNumber; // snaping (round) to pixelsize and dividing to ge back to 0 - 1 interval
+	vec2 pixelatedUV = (floor(SCREEN_UV * pixelNumber) + 0.5) / pixelNumber; // These pixelizations are aligned to the top left. If you do a bit of trickery with offsets, you can centre them. 
+//	COLOR = vec4(pixelatedUV.x, pixelatedUV.y, 0, 1);
+	COLOR = texture(SCREEN_TEXTURE, pixelatedUV);
+}
+
+
+"
+
+[sub_resource type="ShaderMaterial" id=5159]
+shader = SubResource( 5158 )
+shader_param/pixelFactor = 6.129
+
+[sub_resource type="Shader" id=5160]
+code = "/* 
+This shader is under MIT license. Feel free to use, improve and 
+change this shader according to your needs and consider sharing 
+the modified result to godotshaders.com.
+*/
+
+shader_type canvas_item;
+
+uniform bool exclude_colors = false;
+uniform vec4 exclude_color_1: hint_color = vec4(0);
+uniform vec4 change_color_1: hint_color = vec4(0);
+uniform vec4 exclude_color_2: hint_color = vec4(0);
+uniform vec4 change_color_2: hint_color = vec4(0);
+uniform vec4 exclude_color_3: hint_color = vec4(0);
+uniform vec4 change_color_3: hint_color = vec4(0);
+uniform vec2 screen_size = vec2(640.0, 360.0);
+
+
+uniform sampler2D u_dither_tex;
+uniform sampler2D u_color_tex;
+
+uniform int u_bit_depth;
+uniform float u_contrast;
+uniform float u_offset;
+uniform int u_dither_size;
+
+
+uniform float pixelFactor : hint_range(0, 10) = 0.5;
+
+void fragment() {
+
+
+//void fragment() 
+//{
+	// sample the screen texture at the desired output resolution (according to u_dither_size)
+	// this will effectively pixelate the resulting output
+//	vec2 pixel_size = SCREEN_PIXEL_SIZE;
+	vec2 screen_pixel_size = screen_size / float(u_dither_size);
+//	vec2 screen_size = vec2(textureSize(SCREEN_TEXTURE, 0)) / float(u_dither_size);
+	vec2 screen_sample_uv = floor(SCREEN_UV * screen_size) / screen_size;
+	vec3 screen_col = texture(SCREEN_TEXTURE, screen_sample_uv).rgb;
+	
+	// calculate pixel luminosity (https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color)
+	float lum = (screen_col.r * 0.299) + (screen_col.g * 0.587) + (screen_col.b * 0.114);
+	
+	// adjust with contrast and offset parameters
+	float contrast = u_contrast;
+	lum = (lum - 0.5 + u_offset) * contrast + 0.5;
+	lum = clamp(lum, 0.0, 1.0);
+	
+	// reduce luminosity bit depth to give a more banded visual if desired	
+	float bits = float(u_bit_depth);
+	lum = floor(lum * bits) / bits;
+	
+	// to support multicolour palettes, we want to dither between the two colours on the palette
+	// which are adjacent to the current pixel luminosity.
+	// to do this, we need to determine which 'band' lum falls into, calculate the upper and lower
+	// bound of that band, then later we will use the dither texture to pick either the upper or 
+	// lower colour.
+	
+	// get the palette texture size mapped so it is 1px high (so the x value however many colour bands there are)
+	ivec2 col_size = textureSize(u_color_tex, 0);
+	col_size /= col_size.y;
+	
+	float col_x = float(col_size.x) - 1.0; // colour boundaries is 1 less than the number of colour bands
+	float col_texel_size = 1.0 / col_x; // the size of one colour boundary
+	
+	lum = max(lum - 0.00001, 0.0); // makes sure our floor calculation below behaves when lum == 1.0
+	float lum_lower = floor(lum * col_x) * col_texel_size;
+	float lum_upper = (floor(lum * col_x) + 1.0) * col_texel_size;
+	float lum_scaled = lum * col_x - floor(lum * col_x); // calculates where lum lies between the upper and lower bound
+	
+	// map the dither texture onto the screen. there are better ways of doing this that makes the dither pattern 'stick'
+	// with objects in the 3D world, instead of being mapped onto the screen. see lucas pope's details posts on how he 
+	// achieved this in Obra Dinn: https://forums.tigsource.com/index.php?topic=40832.msg1363742#msg1363742
+	ivec2 noise_size = textureSize(u_dither_tex, 0);
+	vec2 inv_noise_size = vec2(1.0 / float(noise_size.x), 1.0 / float(noise_size.y));
+	
+	
+//	vec2 noise_uv = pixelatedUV * inv_noise_size * vec2(float(screen_pixel_size.x), float(screen_pixel_size.y));
+	vec2 noise_uv = UV * inv_noise_size * vec2(float(screen_pixel_size.x), float(screen_pixel_size.y));
+	
+	
+//	vec2 noise_uv = UV * inv_noise_size * vec2(float(screen_size.x), float(screen_size.y));
+	float threshold = texture(u_dither_tex, noise_uv).r;
+	
+	// adjust the dither slightly so min and max aren't quite at 0.0 and 1.0
+	// otherwise we wouldn't get fullly dark and fully light dither patterns at lum 0.0 and 1.0
+	threshold = threshold * 0.99 + 0.005;
+	
+	// the lower lum_scaled is, the fewer pixels will be below the dither threshold, and thus will use the lower bound colour,
+	// and vice-versa
+	float ramp_val = lum_scaled < threshold ? 0.0f : 1.0f;
+	// sample at the lower bound colour if ramp_val is 0.0, upper bound colour if 1.0
+	float col_sample = mix(lum_lower, lum_upper, ramp_val);
+	
+	
+//	if (length(screen_col - exclude_color_1.rgb) < 0.01){final_col = exclude_color_1.rgb;}	
+//	if (length(screen_col - exclude_color_2.rgb) < 0.01){final_col = exclude_color_2.rgb;}
+//	if (length(screen_col - exclude_color_3.rgb) < 0.01){final_col = exclude_color_3.rgb;}	
+	vec3 final_col;
+//	if (exclude_colors == true){
+//		// exclude colors
+//		if (length(screen_col - exclude_color_1.rgb) < 0.01){final_col = screen_col;}	
+//		if (length(screen_col - exclude_color_2.rgb) < 0.01){final_col = screen_col;}
+//		if (length(screen_col - exclude_color_3.rgb) < 0.01){final_col = screen_col;}	
+//	} else {
+//		// return the final colour!
+//		final_col = texture(u_color_tex, vec2(col_sample, 0.5)).rgb;
+//	}
+	
+	if (exclude_colors == true){
+		// exclude colors
+		if (length(screen_col - exclude_color_1.rgb) < 0.01){COLOR.a = 0.0;}	
+		if (length(screen_col - exclude_color_2.rgb) < 0.01){COLOR.a = 0.0;}
+		if (length(screen_col - exclude_color_3.rgb) < 0.01){COLOR.a = 0.0;}	
+//		if (length(screen_col - exclude_color_1.rgb) < 0.01){COLOR = change_color_1;}	
+//		if (length(screen_col - exclude_color_2.rgb) < 0.01){COLOR = change_color_2;}
+//		if (length(screen_col - exclude_color_3.rgb) < 0.01){COLOR = change_color_1;}
+//		if (length(screen_col) < 0.01){COLOR.rgb = texture(u_color_tex, vec2(col_sample, 0.5)).rgb;}
+//	} else {
+//		final_col = texture(u_color_tex, vec2(col_sample, 0.5)).rgb;
+//		COLOR.rgb = final_col;
+	}
+	final_col = texture(u_color_tex, vec2(col_sample, 0.5)).rgb;
+	COLOR.rgb = final_col;
+	COLOR.rgb = final_col;
+}"
+
+[sub_resource type="ShaderMaterial" id=5161]
+shader = SubResource( 5160 )
+shader_param/exclude_colors = false
+shader_param/exclude_color_1 = Color( 1, 1, 0, 1 )
+shader_param/change_color_1 = Color( 0, 0, 0, 0 )
+shader_param/exclude_color_2 = Color( 0.368627, 1, 0.662745, 1 )
+shader_param/change_color_2 = Color( 0, 0, 0, 0 )
+shader_param/exclude_color_3 = Color( 0.505882, 0.505882, 0.505882, 1 )
+shader_param/change_color_3 = Color( 1, 0, 1, 1 )
+shader_param/screen_size = Vector2( 1648, 1032 )
+shader_param/u_bit_depth = 128
+shader_param/u_contrast = 1.0
+shader_param/u_offset = 0.0
+shader_param/u_dither_size = 2
+shader_param/pixelFactor = 3.25
+shader_param/u_dither_tex = ExtResource( 46 )
+shader_param/u_color_tex = ExtResource( 45 )
+
+[sub_resource type="Shader" id=2924]
+code = "shader_type canvas_item;
+/**
+ * This shader fixes normal textures looking wrong when used with SmartShape2D.
+ * See: https://github.com/SirRamEsq/SmartShape2D/blob/master/addons/rmsmartshape/documentation/Normals.md
+ */
+
+varying mat2 NORMAL_MATRIX;
+
+void vertex() {
+	NORMAL_MATRIX = mat2(COLOR.rg, COLOR.ba) * 2.0 - mat2(vec2(1.0), vec2(1.0));
+}
+
+void fragment() {
+	NORMAL.xy = NORMAL_MATRIX * NORMAL.xy;
+	COLOR = texture(TEXTURE, UV);
+}"
+
+[sub_resource type="ShaderMaterial" id=2925]
+shader = SubResource( 2924 )
+
+[sub_resource type="NavigationPolygon" id=218]
+vertices = PoolVector2Array( 1552, 280, 1456, 576, 1320, 392, 1312, 320, 1432, 160, 1248, 504, 1208, 760, 1136, 576, 960, 808, 1280, 160, 1232, 280, 1032, 248, 1192, 160, 1088, 320, 992, 640, 776, 664, 728, 768, 560, 640, 472, 672, 360, 504, 304, 544, 224, 408, 184, 408, 928, 288, 496, 144, 632, 288, 472, 352, 400, 288, 280, 200, 280, 288, 216, 320, 144, 320, 8, 192, 0, 304 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 2, 1, 6 ), PoolIntArray( 7, 5, 6, 8 ), PoolIntArray( 9, 4, 3, 10 ), PoolIntArray( 11, 12, 9, 10, 13 ), PoolIntArray( 14, 7, 8 ), PoolIntArray( 15, 14, 8, 16 ), PoolIntArray( 17, 15, 16, 18 ), PoolIntArray( 19, 17, 18, 20 ), PoolIntArray( 21, 19, 20, 22 ), PoolIntArray( 11, 13, 23, 24 ), PoolIntArray( 24, 23, 25 ), PoolIntArray( 24, 25, 26, 27 ), PoolIntArray( 28, 24, 27, 29 ), PoolIntArray( 30, 21, 22, 31 ), PoolIntArray( 32, 28, 29, 30, 31, 33 ) ]
+outlines = [ PoolVector2Array( 8, 192, 280, 200, 496, 144, 1032, 248, 1192, 160, 1280, 160, 1432, 160, 1552, 280, 1456, 576, 1208, 760, 960, 808, 728, 768, 472, 672, 304, 544, 184, 408, 144, 320, 0, 304 ), PoolVector2Array( 224, 408, 360, 504, 560, 640, 776, 664, 992, 640, 1136, 576, 1248, 504, 1320, 392, 1312, 320, 1232, 280, 1088, 320, 928, 288, 632, 288, 472, 352, 400, 288, 280, 288, 216, 320 ) ]
+
+[sub_resource type="AtlasTexture" id=128]
+atlas = ExtResource( 24 )
+region = Rect2( 3, 83, 9, 10 )
+
+[sub_resource type="OpenSimplexNoise" id=620]
+seed = 1
+octaves = 4
+period = 90.5
+persistence = 0.354
+lacunarity = 3.58
+
+[sub_resource type="NoiseTexture" id=116]
+width = 9
+height = 9
+seamless = true
+noise = SubResource( 620 )
+
+[sub_resource type="ShaderMaterial" id=621]
+shader = ExtResource( 28 )
+shader_param/noise_factor = 0.0
+shader_param/speed = 0.0
+shader_param/noise_texture = SubResource( 116 )
+
+[sub_resource type="RectangleShape2D" id=622]
+extents = Vector2( 144, 4 )
+
+[sub_resource type="RectangleShape2D" id=514]
+extents = Vector2( 272, 4 )
+
+[sub_resource type="AtlasTexture" id=515]
+atlas = ExtResource( 14 )
+region = Rect2( 32, 16, 32, 8 )
+
+[sub_resource type="RectangleShape2D" id=2923]
+extents = Vector2( 134.5, 4 )
+
+[sub_resource type="AtlasTexture" id=623]
+atlas = ExtResource( 14 )
+region = Rect2( 0, 16, 32, 8 )
+
+[sub_resource type="Curve2D" id=3]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 240, 288, -171.349, -85.6746, 171.349, 85.6746, 1064, 296, 147.511, -38.6688, -147.511, 38.6688, 1024, 648, 114.293, 46.0346, -114.293, -46.0346, 480, 672, 29.1691, 87.0143, -29.1691, -87.0143, 232, 408, 0, 0, 0, 0, 272, 304 )
+}
+
+[sub_resource type="StyleBoxFlat" id=613]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+
+[sub_resource type="Resource" id=5162]
+script = ExtResource( 2 )
+texture_idx = -4
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5163]
+script = ExtResource( 4 )
+position = Vector2( 1024.76, 329.35 )
+point_in = Vector2( -85.4034, -28.4678 )
+point_out = Vector2( 133.108, 60.458 )
+properties = SubResource( 5162 )
+
+[sub_resource type="Resource" id=5164]
+script = ExtResource( 2 )
+texture_idx = 1
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5165]
+script = ExtResource( 4 )
+position = Vector2( 1052.96, 588.401 )
+point_in = Vector2( 177.459, -77.6828 )
+point_out = Vector2( -229.739, 97.9574 )
+properties = SubResource( 5164 )
+
+[sub_resource type="Resource" id=5166]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5167]
+script = ExtResource( 4 )
+position = Vector2( 234.214, 340.303 )
+point_in = Vector2( -20.934, 63.326 )
+point_out = Vector2( 20.934, -63.326 )
+properties = SubResource( 5166 )
+
+[sub_resource type="Resource" id=5168]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5169]
+script = ExtResource( 4 )
+position = Vector2( 1287.51, 337.337 )
+point_in = Vector2( -58.0219, -63.9081 )
+point_out = Vector2( 58.0219, 63.9081 )
+properties = SubResource( 5168 )
+
+[sub_resource type="Resource" id=5170]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5171]
+script = ExtResource( 4 )
+position = Vector2( 430.67, 534.533 )
+point_in = Vector2( 131.889, 103.828 )
+point_out = Vector2( -131.889, -103.828 )
+properties = SubResource( 5170 )
+
+[sub_resource type="Resource" id=5172]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5173]
+script = ExtResource( 4 )
+position = Vector2( 695.01, 315.092 )
+point_in = Vector2( -167.247, 19.0818 )
+point_out = Vector2( 167.247, -19.0818 )
+properties = SubResource( 5172 )
+
+[sub_resource type="Resource" id=5174]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5175]
+script = ExtResource( 4 )
+position = Vector2( 413.272, 306.674 )
+point_in = Vector2( -51.072, -12.3471 )
+point_out = Vector2( 29.7452, 9.54092 )
+properties = SubResource( 5174 )
+
+[sub_resource type="Resource" id=5176]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5177]
+script = ExtResource( 4 )
+position = Vector2( 695.01, 315.092 )
+point_in = Vector2( -167.247, 19.0818 )
+point_out = Vector2( 167.247, -19.0818 )
+properties = SubResource( 5176 )
+
+[sub_resource type="Resource" id=5178]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5179]
+script = ExtResource( 4 )
+position = Vector2( 458.17, 384.123 )
+point_in = Vector2( -39.2862, -6.73477 )
+point_out = Vector2( 46.5822, 5.6123 )
+properties = SubResource( 5178 )
+
+[sub_resource type="Resource" id=5180]
+script = ExtResource( 3 )
+_points = {
+4: SubResource( 5163 ),
+5: SubResource( 5165 ),
+7: SubResource( 5167 ),
+8: SubResource( 5169 ),
+9: SubResource( 5171 ),
+13: SubResource( 5173 ),
+14: SubResource( 5175 ),
+16: SubResource( 5177 ),
+17: SubResource( 5179 )
+}
+_point_order = [ 13, 4, 8, 5, 9, 7, 14, 17, 16 ]
+_constraints = {
+[ 13, 16 ]: 15
+}
+_next_key = 18
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=27]
+script = ExtResource( 8 )
+textures = [ ExtResource( 7 ) ]
+texture_normals = [  ]
+textures_corner_outer = [  ]
+textures_corner_inner = [  ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = false
+use_taper_texture = true
+fit_mode = 0
+
+[sub_resource type="Resource" id=28]
+script = ExtResource( 11 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=29]
+script = ExtResource( 10 )
+edge_material = SubResource( 27 )
+normal_range = SubResource( 28 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 0.7
+
+[sub_resource type="Resource" id=15]
+script = ExtResource( 5 )
+_edge_meta_materials = [ SubResource( 29 ) ]
+fill_textures = [  ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
+
+[sub_resource type="Resource" id=5181]
+script = ExtResource( 2 )
+texture_idx = -6
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5182]
+script = ExtResource( 4 )
+position = Vector2( 527.367, 348.72 )
+point_in = Vector2( -99.6374, 60.6815 )
+point_out = Vector2( 99.6374, -60.6815 )
+properties = SubResource( 5181 )
+
+[sub_resource type="Resource" id=5183]
+script = ExtResource( 2 )
+texture_idx = -6
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5184]
+script = ExtResource( 4 )
+position = Vector2( 527.367, 348.72 )
+point_in = Vector2( -99.6374, 60.6815 )
+point_out = Vector2( 99.6374, -60.6815 )
+properties = SubResource( 5183 )
+
+[sub_resource type="Resource" id=5185]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5186]
+script = ExtResource( 4 )
+position = Vector2( 1055.85, 334.451 )
+point_in = Vector2( -85.4034, -28.4678 )
+point_out = Vector2( 85.4034, 28.4678 )
+properties = SubResource( 5185 )
+
+[sub_resource type="Resource" id=5187]
+script = ExtResource( 2 )
+texture_idx = 1
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5188]
+script = ExtResource( 4 )
+position = Vector2( 1057.42, 590.324 )
+point_in = Vector2( 177.459, -77.6828 )
+point_out = Vector2( -177.459, 77.6828 )
+properties = SubResource( 5187 )
+
+[sub_resource type="Resource" id=5189]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5190]
+script = ExtResource( 4 )
+position = Vector2( 473.394, 563.858 )
+point_in = Vector2( 44.9492, 75.6645 )
+point_out = Vector2( -44.9492, -75.6645 )
+properties = SubResource( 5189 )
+
+[sub_resource type="Resource" id=5191]
+script = ExtResource( 2 )
+texture_idx = -3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5192]
+script = ExtResource( 4 )
+position = Vector2( 229.83, 364.947 )
+point_in = Vector2( -2.3811, 69.0519 )
+point_out = Vector2( 2.3811, -69.0519 )
+properties = SubResource( 5191 )
+
+[sub_resource type="Resource" id=5193]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5194]
+script = ExtResource( 4 )
+position = Vector2( 1279.8, 329.858 )
+point_in = Vector2( -58.0219, -63.9081 )
+point_out = Vector2( 58.0219, 63.9081 )
+properties = SubResource( 5193 )
+
+[sub_resource type="Resource" id=5195]
+script = ExtResource( 2 )
+texture_idx = 3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5196]
+script = ExtResource( 4 )
+position = Vector2( 390.158, 304.625 )
+point_in = Vector2( -54.7653, -15.874 )
+point_out = Vector2( 54.7653, 15.874 )
+properties = SubResource( 5195 )
+
+[sub_resource type="Resource" id=5197]
+script = ExtResource( 3 )
+_points = {
+0: SubResource( 5182 ),
+3: SubResource( 5184 ),
+4: SubResource( 5186 ),
+5: SubResource( 5188 ),
+6: SubResource( 5190 ),
+7: SubResource( 5192 ),
+8: SubResource( 5194 ),
+9: SubResource( 5196 )
+}
+_point_order = [ 0, 4, 8, 5, 6, 7, 9, 3 ]
+_constraints = {
+[ 0, 3 ]: 15
+}
+_next_key = 9
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=1601]
+script = ExtResource( 8 )
+textures = [ ExtResource( 41 ) ]
+texture_normals = [  ]
+textures_corner_outer = [ ExtResource( 9 ) ]
+textures_corner_inner = [ ExtResource( 20 ) ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = true
+use_taper_texture = true
+fit_mode = 0
+
+[sub_resource type="Resource" id=1602]
+script = ExtResource( 10 )
+edge_material = SubResource( 1601 )
+normal_range = SubResource( 28 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 0.5
+
+[sub_resource type="Resource" id=1603]
+script = ExtResource( 5 )
+_edge_meta_materials = [ SubResource( 1602 ) ]
+fill_textures = [ ExtResource( 42 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
+
+[sub_resource type="Resource" id=5198]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5199]
+script = ExtResource( 4 )
+position = Vector2( -37.0283, -22.2015 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5198 )
+
+[sub_resource type="Resource" id=5200]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5201]
+script = ExtResource( 4 )
+position = Vector2( 1718.96, -22.0075 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5200 )
+
+[sub_resource type="Resource" id=5202]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5203]
+script = ExtResource( 4 )
+position = Vector2( 1725.93, 1069.89 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5202 )
+
+[sub_resource type="Resource" id=5204]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5205]
+script = ExtResource( 4 )
+position = Vector2( -25.1356, 1067.75 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5204 )
+
+[sub_resource type="Resource" id=5206]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5207]
+script = ExtResource( 4 )
+position = Vector2( 1335.7, 763.629 )
+point_in = Vector2( -271.724, 172.834 )
+point_out = Vector2( 271.724, -172.834 )
+properties = SubResource( 5206 )
+
+[sub_resource type="Resource" id=5208]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5209]
+script = ExtResource( 4 )
+position = Vector2( 1396.57, 105.95 )
+point_in = Vector2( 288.651, 40.9813 )
+point_out = Vector2( -288.651, -40.9813 )
+properties = SubResource( 5208 )
+
+[sub_resource type="Resource" id=5210]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5211]
+script = ExtResource( 4 )
+position = Vector2( 449.593, 719.517 )
+point_in = Vector2( -261.033, -137.198 )
+point_out = Vector2( 261.033, 137.198 )
+properties = SubResource( 5210 )
+
+[sub_resource type="Resource" id=5212]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5213]
+script = ExtResource( 4 )
+position = Vector2( 68.601, 335.395 )
+point_in = Vector2( -47.3762, -5.65686 )
+point_out = Vector2( 47.3762, 5.65686 )
+properties = SubResource( 5212 )
+
+[sub_resource type="Resource" id=5214]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5215]
+script = ExtResource( 4 )
+position = Vector2( -9.29379, 339.061 )
+point_in = Vector2( -20.5061, 13.4351 )
+point_out = Vector2( 20.5061, -13.4351 )
+properties = SubResource( 5214 )
+
+[sub_resource type="Resource" id=5216]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5217]
+script = ExtResource( 4 )
+position = Vector2( -37.0283, -22.2015 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5216 )
+
+[sub_resource type="Resource" id=5218]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5219]
+script = ExtResource( 4 )
+position = Vector2( 0.864029, 204.122 )
+point_in = Vector2( 79.6769, 49.9467 )
+point_out = Vector2( -79.6769, -49.9467 )
+properties = SubResource( 5218 )
+
+[sub_resource type="Resource" id=5220]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5221]
+script = ExtResource( 4 )
+position = Vector2( 830.582, 161.618 )
+point_in = Vector2( 282.415, 121.162 )
+point_out = Vector2( -282.415, -121.162 )
+properties = SubResource( 5220 )
+
+[sub_resource type="Resource" id=5222]
+script = ExtResource( 2 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=5223]
+script = ExtResource( 4 )
+position = Vector2( 356, 132 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5222 )
+
+[sub_resource type="Resource" id=5224]
+script = ExtResource( 3 )
+_points = {
+12: SubResource( 5199 ),
+21: SubResource( 5201 ),
+24: SubResource( 5203 ),
+25: SubResource( 5205 ),
+26: SubResource( 5207 ),
+27: SubResource( 5209 ),
+28: SubResource( 5211 ),
+29: SubResource( 5213 ),
+30: SubResource( 5215 ),
+31: SubResource( 5217 ),
+32: SubResource( 5219 ),
+33: SubResource( 5221 ),
+34: SubResource( 5223 )
+}
+_point_order = [ 12, 21, 24, 25, 30, 29, 28, 26, 27, 33, 34, 32, 31 ]
+_constraints = {
+[ 12, 31 ]: 15
+}
+_next_key = 40
+_material_overrides = {
+}
+
+[sub_resource type="ShaderMaterial" id=619]
+shader = ExtResource( 26 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/screen_size = Vector2( 640, 360 )
+shader_param/casting_color_1 = Color( 1, 1, 0.0117647, 1 )
+shader_param/casting_color_2 = Color( 0.729412, 0.729412, 0.435294, 1 )
+shader_param/casting_color_3 = Color( 0, 1, 0, 0 )
+shader_param/casting_object_on_floor = true
+shader_param/shadow_color = Color( 0, 0, 0, 0.54902 )
+shader_param/shadow_distance = 10
+shader_param/shadow_rotation_deg = 180.0
+shader_param/pixel_scale = 10.0
+shader_param/switch_cast_and_receive = false
+shader_param/new_casting_color = Color( 0, 0, 0, 0 )
+shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
+
+[node name="LevelRace" type="Node2D"]
+script = ExtResource( 19 )
+__meta__ = {
+"_editor_description_": ""
+}
+level_type = 2
+
+[node name="Background" type="Node2D" parent="."]
+z_index = -4
+
+[node name="BackgroundColor" type="ColorRect" parent="Background"]
+modulate = Color( 0.647059, 0.647059, 0.639216, 1 )
+show_behind_parent = true
+margin_right = 280.0
+margin_bottom = 256.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="BackgroundNoise" type="ColorRect" parent="Background"]
+modulate = Color( 1, 1, 1, 0.12549 )
+show_behind_parent = true
+material = SubResource( 603 )
+margin_right = 280.0
+margin_bottom = 256.0
+color = Color( 1, 1, 1, 0 )
+
+[node name="BackgroundColor" type="ColorRect" parent="."]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 1664.0
+margin_bottom = 960.0
+color = Color( 0.427451, 0.427451, 0.427451, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Terrain" type="Node2D" parent="."]
+modulate = Color( 0.984314, 0.929412, 0.854902, 1 )
+
+[node name="BackgroundColor" type="ColorRect" parent="Terrain"]
+visible = false
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 1664.0
+margin_bottom = 960.0
+color = Color( 0.717647, 0.694118, 0.678431, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TerrainTextureRect" parent="Terrain" instance=ExtResource( 38 )]
+material = ExtResource( 39 )
+margin_right = 1664.0
+margin_bottom = 960.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="Objects" type="TileMap" parent="."]
+tile_set = ExtResource( 32 )
+cell_size = Vector2( 8, 8 )
+bake_navigation = true
+format = 1
+tile_data = PoolIntArray( 196635, 7, 0, 262170, 7, 0, 262171, 7, 0, 327706, 7, 0, 327707, 7, 0, 327708, 7, 0, 327709, 7, 0, 327710, 7, 0, 393243, 7, 0, 393244, 7, 0, 393245, 7, 0, 458779, 7, 0, 458780, 7, 0, 458781, 7, 0, 524332, 11, 0, 524333, 11, 0, 589866, 11, 0, 589868, 11, 0, 589869, 11, 0, 655401, 11, 0, 655402, 11, 0, 655404, 11, 0, 655405, 11, 0, 720937, 11, 0, 720938, 11, 0, 720940, 11, 0, 720941, 11, 0, 786473, 11, 0, 786474, 11, 0, 786475, 11, 0, 786476, 11, 0, 786477, 11, 0, 786478, 11, 0, 852009, 11, 0, 852010, 11, 0, 852011, 11, 0, 852012, 11, 0, 852013, 11, 0, 852014, 11, 0, 917545, 11, 0, 917546, 11, 0, 917547, 11, 0, 917548, 11, 0, 917549, 11, 0, 917550, 11, 0, 983068, 15, 0, 983085, 11, 0, 983086, 11, 0, 1048622, 11, 0, 1245238, 35, 0, 1835052, 19, 0 )
+
+[node name="Pixelate" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 1126 )
+margin_left = 56.0
+margin_top = 8.0
+margin_right = 1704.0
+margin_bottom = 1040.0
+
+[node name="Dither" type="ColorRect" parent="."]
+visible = false
+material = ExtResource( 18 )
+margin_left = 56.0
+margin_top = 8.0
+margin_right = 1704.0
+margin_bottom = 1040.0
+
+[node name="PixelateAlt" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 5159 )
+margin_left = 56.0
+margin_top = 8.0
+margin_right = 1704.0
+margin_bottom = 1040.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PixelateAlt2" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 5161 )
+margin_left = 56.0
+margin_top = 8.0
+margin_right = 1704.0
+margin_bottom = 1040.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Normals_SSD_shader" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 2925 )
+margin_left = 56.0
+margin_top = 8.0
+margin_right = 1704.0
+margin_bottom = 1040.0
+
+[node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="."]
+visible = false
+navpoly = SubResource( 218 )
+
+[node name="CameraLimits" type="Panel" parent="."]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 640.0
+margin_bottom = 360.0
+theme = ExtResource( 21 )
+
+[node name="RaceStart" type="Node2D" parent="."]
+visible = false
+position = Vector2( 248, 256 )
+rotation = 1.57079
+
+[node name="StartLights" parent="RaceStart" instance=ExtResource( 27 )]
+position = Vector2( -7.62939e-06, -16 )
+
+[node name="StartPositions" type="Node2D" parent="RaceStart"]
+modulate = Color( 1, 1, 1, 0.470588 )
+position = Vector2( 16, 56 )
+
+[node name="StartPosition1" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( -40, -24 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition1"]
+margin_left = 4.99988
+margin_top = 8.00003
+margin_right = 38.9999
+margin_bottom = 47.0
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 21 )
+text = "P1"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition1"]
+texture = SubResource( 128 )
+
+[node name="StartPosition2" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( 8, -24 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition2"]
+margin_left = 5.0
+margin_top = 8.00003
+margin_right = 45.0
+margin_bottom = 47.0
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 21 )
+text = "P2"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition2"]
+material = SubResource( 621 )
+texture = SubResource( 128 )
+
+[node name="StartPosition3" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( -40, 8 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition3"]
+margin_left = 6.00006
+margin_top = 8.00006
+margin_right = 46.0001
+margin_bottom = 47.0001
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 21 )
+text = "P3"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition3"]
+material = SubResource( 621 )
+texture = SubResource( 128 )
+
+[node name="StartPosition4" type="Position2D" parent="RaceStart/StartPositions"]
+position = Vector2( 8, 8 )
+rotation = -1.5708
+
+[node name="Label" type="Label" parent="RaceStart/StartPositions/StartPosition4"]
+margin_left = 5.0
+margin_top = 8.00006
+margin_right = 47.0
+margin_bottom = 47.0001
+rect_rotation = 90.0
+rect_scale = Vector2( 0.25, 0.25 )
+theme = ExtResource( 21 )
+text = "P4"
+align = 1
+
+[node name="Bolt" type="Sprite" parent="RaceStart/StartPositions/StartPosition4"]
+material = SubResource( 621 )
+texture = SubResource( 128 )
+
+[node name="StartLine" type="Area2D" parent="RaceStart"]
+visible = false
+monitoring = false
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceStart/StartLine"]
+visible = false
+position = Vector2( 0, 4 )
+shape = SubResource( 622 )
+disabled = true
+
+[node name="ColorRect" type="ColorRect" parent="RaceStart/StartLine"]
+margin_left = -144.0
+margin_right = 144.0
+margin_bottom = 8.0
+
+[node name="CameraPosition" type="Position2D" parent="RaceStart"]
+position = Vector2( 0, 48 )
+
+[node name="Checkpoint" type="Area2D" parent="."]
+visible = false
+position = Vector2( 1336, 448 )
+monitoring = false
+monitorable = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Checkpoint"]
+position = Vector2( 0, 4 )
+shape = SubResource( 514 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Checkpoint"]
+margin_left = -144.0
+margin_right = 144.0
+margin_bottom = 8.0
+grow_horizontal = 2
+custom_constants/separation = 0
+
+[node name="Sprite2" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_right = 32.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite3" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 32.0
+margin_right = 64.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite4" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 64.0
+margin_right = 96.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite5" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 96.0
+margin_right = 128.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite6" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 128.0
+margin_right = 160.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite7" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 160.0
+margin_right = 192.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite8" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 192.0
+margin_right = 224.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite9" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 224.0
+margin_right = 256.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite10" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 256.0
+margin_right = 288.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite11" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 288.0
+margin_right = 320.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite12" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 320.0
+margin_right = 352.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite13" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 352.0
+margin_right = 384.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite14" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 384.0
+margin_right = 416.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite15" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 416.0
+margin_right = 448.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite16" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 448.0
+margin_right = 480.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite17" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 480.0
+margin_right = 512.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="Sprite18" type="TextureRect" parent="Checkpoint/HBoxContainer"]
+margin_left = 512.0
+margin_right = 544.0
+margin_bottom = 8.0
+texture = SubResource( 515 )
+
+[node name="RaceFinish" type="Node2D" parent="."]
+visible = false
+position = Vector2( 256, 240 )
+rotation = 1.57079
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="FinishLine" type="Area2D" parent="RaceFinish"]
+position = Vector2( 0, 16 )
+monitoring = false
+monitorable = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="RaceFinish/FinishLine"]
+position = Vector2( -25.5002, 3.99998 )
+shape = SubResource( 2923 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RaceFinish/FinishLine"]
+margin_left = -168.0
+margin_right = 168.0
+margin_bottom = 8.0
+grow_horizontal = 2
+custom_constants/separation = 0
+alignment = 1
+
+[node name="Sprite" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 8.0
+margin_right = 40.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite2" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 40.0
+margin_right = 72.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite3" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 72.0
+margin_right = 104.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite4" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 104.0
+margin_right = 136.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite5" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 136.0
+margin_right = 168.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite6" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 168.0
+margin_right = 200.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite7" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 200.0
+margin_right = 232.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite8" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 232.0
+margin_right = 264.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite9" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 264.0
+margin_right = 296.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="Sprite10" type="TextureRect" parent="RaceFinish/FinishLine/HBoxContainer"]
+margin_left = 296.0
+margin_right = 328.0
+margin_bottom = 8.0
+texture = SubResource( 623 )
+
+[node name="CameraPosition" type="Position2D" parent="RaceFinish"]
+position = Vector2( 0, -16 )
+
+[node name="FinishOutPosition" type="Position2D" parent="RaceFinish"]
+position = Vector2( 0, -256 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Line2d" type="Line2D" parent="RaceFinish/FinishOutPosition"]
+position = Vector2( -72, 0 )
+points = PoolVector2Array( 0, 0, 144, 0 )
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+
+[node name="RacingTrack" type="Path2D" parent="."]
+visible = false
+curve = SubResource( 3 )
+script = ExtResource( 31 )
+
+[node name="BoltTracker" type="PathFollow2D" parent="RacingTrack"]
+position = Vector2( 240, 288 )
+rotation = -0.115848
+script = ExtResource( 29 )
+
+[node name="CrossIndicator" type="Sprite" parent="RacingTrack/BoltTracker"]
+position = Vector2( 13.9553, -7.82632 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 1 )
+
+[node name="_ScreenSize" type="Panel" parent="."]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+margin_right = 640.0
+margin_bottom = 360.0
+custom_styles/panel = SubResource( 613 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="_obs" type="Node2D" parent="."]
+
+[node name="MountsTexture" type="Node2D" parent="_obs"]
+visible = false
+
+[node name="MountMidleShade" type="Node2D" parent="_obs/MountsTexture"]
+script = ExtResource( 6 )
+_points = SubResource( 5180 )
+shape_material = SubResource( 15 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("")
+
+[node name="MountMidle" type="Node2D" parent="_obs/MountsTexture"]
+script = ExtResource( 6 )
+_points = SubResource( 5197 )
+shape_material = SubResource( 1603 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("")
+
+[node name="MountAround" type="Node2D" parent="_obs/MountsTexture"]
+script = ExtResource( 6 )
+_points = SubResource( 5224 )
+shape_material = SubResource( 1603 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("")
+
+[node name="Edge" type="TileMap" parent="_obs"]
+z_index = 2
+tile_set = ExtResource( 22 )
+cell_size = Vector2( 8, 8 )
+collision_layer = 9
+format = 1
+tile_data = PoolIntArray( 0, 0, 327691, 1, 0, 589839, 2, 0, 65549, 3, 0, 65549, 4, 0, 65549, 5, 0, 65549, 6, 0, 65549, 7, 0, 65549, 8, 0, 65549, 9, 0, 65549, 10, 0, 65549, 11, 0, 65549, 12, 0, 65549, 13, 0, 65549, 14, 0, 65549, 15, 0, 65549, 16, 0, 65549, 17, 0, 65549, 18, 0, 65549, 19, 0, 65549, 20, 0, 65549, 21, 0, 65549, 22, 0, 65549, 23, 0, 65549, 24, 0, 65549, 25, 0, 65549, 26, 0, 65549, 27, 0, 65549, 28, 0, 65549, 29, 0, 65549, 30, 0, 65549, 31, 0, 65549, 32, 0, 65549, 33, 0, 65549, 34, 0, 65549, 35, 0, 65549, 36, 0, 65549, 37, 0, 65549, 38, 0, 65549, 39, 0, 65549, 40, 0, 65549, 41, 0, 65549, 42, 0, 65549, 43, 0, 65549, 44, 0, 65549, 45, 0, 65549, 46, 0, 65549, 47, 0, 65549, 48, 0, 65549, 49, 0, 65549, 50, 0, 65549, 51, 0, 65549, 52, 0, 65549, 53, 0, 65549, 54, 0, 65549, 55, 0, 65549, 56, 0, 65549, 57, 0, 65549, 58, 0, 65549, 59, 0, 65549, 60, 0, 65549, 61, 0, 65549, 62, 0, 65549, 63, 0, 65549, 64, 0, 65549, 65, 0, 65549, 66, 0, 65549, 67, 0, 65549, 68, 0, 65549, 69, 0, 65549, 70, 0, 65549, 71, 0, 65549, 72, 0, 65549, 73, 0, 65549, 74, 0, 65549, 75, 0, 65549, 76, 0, 65549, 77, 0, 65549, 78, 0, 65549, 79, 0, 720911, 80, 0, 327692, 65536, 0, 720912, 65616, 0, 655376, 131072, 0, 131078, 131152, 0, 131078, 196608, 0, 131078, 196688, 0, 131078, 262144, 0, 131078, 262224, 0, 131078, 327680, 0, 131078, 327760, 0, 131078, 393216, 0, 131078, 393296, 0, 131078, 458752, 0, 131078, 458832, 0, 131078, 524288, 0, 131078, 524368, 0, 131078, 589824, 0, 131078, 589904, 0, 131078, 655360, 0, 131078, 655440, 0, 131078, 720896, 0, 131078, 720976, 0, 131078, 786432, 0, 131078, 786512, 0, 131078, 851968, 0, 131078, 852048, 0, 131078, 917504, 0, 131078, 917584, 0, 131078, 983040, 0, 131078, 983120, 0, 131078, 1048576, 0, 131078, 1048656, 0, 131078, 1114112, 0, 131078, 1114192, 0, 131078, 1179648, 0, 131078, 1179728, 0, 131078, 1245184, 0, 131078, 1245264, 0, 131078, 1310720, 0, 131078, 1310800, 0, 131078, 1376256, 0, 131078, 1376336, 0, 131078, 1441792, 0, 131078, 1441872, 0, 131078, 1507328, 0, 131078, 1507408, 0, 131078, 1572864, 0, 131078, 1572944, 0, 131078, 1638400, 0, 131078, 1638480, 0, 131078, 1703936, 0, 131078, 1704016, 0, 131078, 1769472, 0, 131078, 1769552, 0, 131078, 1835008, 0, 131078, 1835088, 0, 131078, 1900544, 0, 131078, 1900624, 0, 131078, 1966080, 0, 131078, 1966160, 0, 131078, 2031616, 0, 131078, 2031696, 0, 131078, 2097152, 0, 131078, 2097232, 0, 131078, 2162688, 0, 131078, 2162768, 0, 131078, 2228224, 0, 131078, 2228304, 0, 131078, 2293760, 0, 131078, 2293840, 0, 131078, 2359296, 0, 131078, 2359376, 0, 131078, 2424832, 0, 131078, 2424912, 0, 131078, 2490368, 0, 131078, 2490448, 0, 131078, 2555904, 0, 131078, 2555984, 0, 131078, 2621440, 0, 131078, 2621520, 0, 131078, 2686976, 0, 131078, 2687056, 0, 131078, 2752512, 0, 131078, 2752592, 0, 131078, 2818048, 0, 131078, 2818128, 0, 131078, 2883584, 0, 589840, 2883664, 0, 524304, 2949120, 0, 393227, 2949121, 0, 524303, 2949122, 0, 65549, 2949123, 0, 65549, 2949124, 0, 65549, 2949125, 0, 65549, 2949126, 0, 65549, 2949127, 0, 65549, 2949128, 0, 65549, 2949129, 0, 65549, 2949130, 0, 65549, 2949131, 0, 65549, 2949132, 0, 65549, 2949133, 0, 65549, 2949134, 0, 65549, 2949135, 0, 65549, 2949136, 0, 65549, 2949137, 0, 65549, 2949138, 0, 65549, 2949139, 0, 65549, 2949140, 0, 65549, 2949141, 0, 65549, 2949142, 0, 65549, 2949143, 0, 65549, 2949144, 0, 65549, 2949145, 0, 65549, 2949146, 0, 65549, 2949147, 0, 65549, 2949148, 0, 65549, 2949149, 0, 65549, 2949150, 0, 65549, 2949151, 0, 65549, 2949152, 0, 65549, 2949153, 0, 65549, 2949154, 0, 65549, 2949155, 0, 65549, 2949156, 0, 65549, 2949157, 0, 65549, 2949158, 0, 65549, 2949159, 0, 65549, 2949160, 0, 65549, 2949161, 0, 65549, 2949162, 0, 65549, 2949163, 0, 65549, 2949164, 0, 65549, 2949165, 0, 65549, 2949166, 0, 65549, 2949167, 0, 65549, 2949168, 0, 65549, 2949169, 0, 65549, 2949170, 0, 65549, 2949171, 0, 65549, 2949172, 0, 65549, 2949173, 0, 65549, 2949174, 0, 65549, 2949175, 0, 65549, 2949176, 0, 65549, 2949177, 0, 65549, 2949178, 0, 65549, 2949179, 0, 65549, 2949180, 0, 65549, 2949181, 0, 65549, 2949182, 0, 65549, 2949183, 0, 65549, 2949184, 0, 65549, 2949185, 0, 65549, 2949186, 0, 65549, 2949187, 0, 65549, 2949188, 0, 65549, 2949189, 0, 65549, 2949190, 0, 65549, 2949191, 0, 65549, 2949192, 0, 65549, 2949193, 0, 65549, 2949194, 0, 65549, 2949195, 0, 65549, 2949196, 0, 65549, 2949197, 0, 65549, 2949198, 0, 65549, 2949199, 0, 655375, 2949200, 0, 393228 )
+script = ExtResource( 23 )
+
+[node name="ScreenShadows" type="ColorRect" parent="_obs/Edge"]
+material = SubResource( 619 )
+margin_left = -24.0
+margin_top = -72.0
+margin_right = 679.0
+margin_bottom = 367.0
+
+[node name="_level_tiles_shader" type="ColorRect" parent="_obs"]
+visible = false
+material = ExtResource( 16 )
+margin_left = -23.0
+margin_top = -41.0
+margin_right = 680.0
+margin_bottom = 398.0
+
+[node name="Floor" type="TileMap" parent="_obs"]
+visible = false
+z_index = -3
+tile_set = ExtResource( 25 )
+cell_size = Vector2( 8, 8 )
+bake_navigation = true
+format = 1
+
+[node name="BoltTripple" parent="." instance=ExtResource( 12 )]
+position = Vector2( 128, 224 )
+
+[connection signal="body_entered" from="Checkpoint" to="." method="_on_Checkpoint_body_entered"]
+[connection signal="body_entered" from="RaceFinish/FinishLine" to="." method="_on_FinishLine_body_entered"]

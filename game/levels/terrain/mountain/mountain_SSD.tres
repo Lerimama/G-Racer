@@ -1,0 +1,57 @@
+[gd_resource type="Resource" load_steps=11 format=2]
+
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=1]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=2]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=3]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
+[ext_resource path="res://game/levels/terrain/tex/pixel_style/mount_edge.png" type="Texture" id=5]
+
+[sub_resource type="Resource" id=1808]
+script = ExtResource( 1 )
+textures = [ ExtResource( 5 ) ]
+texture_normals = [  ]
+textures_corner_outer = [  ]
+textures_corner_inner = [  ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = false
+use_taper_texture = false
+fit_mode = 0
+
+[sub_resource type="Resource" id=1809]
+script = ExtResource( 3 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=1810]
+script = ExtResource( 2 )
+edge_material = SubResource( 1808 )
+normal_range = SubResource( 1809 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 1.0
+
+[sub_resource type="Gradient" id=650]
+offsets = PoolRealArray( 0.465278 )
+colors = PoolColorArray( 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=160]
+gradient = SubResource( 650 )
+
+[resource]
+script = ExtResource( 4 )
+_edge_meta_materials = [ SubResource( 1810 ), null ]
+fill_textures = [ SubResource( 160 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0

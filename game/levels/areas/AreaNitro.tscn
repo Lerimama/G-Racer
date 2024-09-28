@@ -6,7 +6,7 @@
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=9]
-[ext_resource path="res://game/levels/areas/tex/tile_area_nitro.png" type="Texture" id=11]
+[ext_resource path="res://game/levels/_pixel_style_obs/areas/tile_area_nitro.png" type="Texture" id=11]
 
 [sub_resource type="Resource" id=1830]
 script = ExtResource( 5 )

@@ -4,7 +4,7 @@ extends Sprite
 export (NodePath) var shadow_casting_node_path: String
 var node_height: float = 0 # pravo dobi iz parenta ... debelina pomeni debelino sence
 var node_elevation: float = 7 # pravo dobi iz parenta ... dvignjenost pomeni zamik sence
-export var shadow_color: Color = Color(Color.black, 0.3)
+export var shadow_color: Color = Color(Color.black, 1)
 
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_node_path)
 onready var shadow_direction: Vector2 = Ref.game_manager.game_settings["shadows_direction"] # odvisno od igre

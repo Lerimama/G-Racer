@@ -121,8 +121,8 @@ func set_game():
 	if current_level_index == 0:
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
-#			activated_player_ids = [Pro.PLAYER.P1] 	
-			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+			activated_player_ids = [Pro.PLAYER.P1] 	
+#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start
@@ -544,7 +544,7 @@ func _on_level_is_set(tilemap_navigation_cells_positions: Array):
 	
 	# kamera
 	Ref.current_camera.position = Ref.current_level.start_camera_position_node.global_position
-	Ref.current_camera.set_camera_limits()
+	#	Ref.current_camera.set_camera_limits() # debug
 	
 
 func _on_body_exited_playing_field(body: Node) -> void:

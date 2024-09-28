@@ -9,7 +9,7 @@
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
 [ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=8]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=9]
-[ext_resource path="res://game/levels/rockys/tex/mount_edge.png" type="Texture" id=10]
+[ext_resource path="res://game/levels/terrain/tex/pixel_style/mount_edge.png" type="Texture" id=10]
 
 [sub_resource type="Resource" id=1811]
 script = ExtResource( 5 )

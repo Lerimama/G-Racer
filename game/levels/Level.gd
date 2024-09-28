@@ -11,25 +11,25 @@ export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
-onready	var checkpoint: Area2D = $Checkpoint 
-onready var racing_track: Path2D = $RacingTrack
+onready	var checkpoint: Area2D = $Racing/Checkpoint 
+onready var racing_track: Path2D = $Racing/RacingTrack
 onready var navigation_instance: NavigationPolygonInstance = $NavigationPolygonInstance
-onready var tilemap_objects: TileMap = $Objects
-onready var tilemap_edge: TileMap = $Edge
+onready var tilemap_objects: TileMap = $Objects/Objects
+#onready var tilemap_edge: TileMap = $Edge
 onready var level_limits_rect: Panel = $LevelLimits
 
 # start
-onready var race_start: Node2D = $RaceStart
-onready var start_lights: Node2D = $RaceStart/StartLights
-onready var start_camera_position_node: Position2D = $RaceStart/CameraPosition
-onready var start_positions_node: Node2D = $RaceStart/StartPositions
-onready var drive_in_position: Vector2 = $RaceStart/DriveInPosition.position
+onready var race_start: Node2D = $Racing/RaceStart
+onready var start_lights: Node2D = $Racing/RaceStart/StartLights
+onready var start_camera_position_node: Position2D = $Racing/RaceStart/CameraPosition
+onready var start_positions_node: Node2D = $Racing/RaceStart/StartPositions
+onready var drive_in_position: Vector2 = $Racing/RaceStart/DriveInPosition.position
 
 # finish
-onready var race_finish: Node2D = $RaceFinish
-onready var finish_line: Area2D = $RaceFinish/FinishLine
-onready var finish_camera_position_node: Position2D = $RaceFinish/CameraPosition
-onready var drive_out_position: Vector2 = $RaceFinish/DriveOutPosition.position
+onready var race_finish: Node2D = $Racing/RaceFinish
+onready var finish_line: Area2D = $Racing/RaceFinish/FinishLine
+onready var finish_camera_position_node: Position2D = $Racing/RaceFinish/CameraPosition
+onready var drive_out_position: Vector2 = $Racing/RaceFinish/DriveOutPosition.position
 
 
 func _ready() -> void:
@@ -38,8 +38,9 @@ func _ready() -> void:
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 
 	# debug
-	$_ScreenSize.hide()
-
+	for child in $_dummy.get_children():
+		child.hide()
+		
 	match level_type:
 		LEVEL_TYPE.BATTLE:
 			race_start.hide()
@@ -244,7 +245,6 @@ func resize_to_level_size():
 	
 	# naberem rektangle za risajzat
 	var nodes_to_resize: Array = []
-	nodes_to_resize.append_array(tilemap_edge.get_children()) # edge shaders
 	nodes_to_resize.append_array($Background.get_children())
 	
 	# resize and set

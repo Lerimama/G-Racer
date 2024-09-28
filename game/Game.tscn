@@ -93,7 +93,6 @@ render_target_update_mode = 3
 [node name="GameCamera" parent="GameViewGrid/GameView/Viewport" instance=ExtResource( 2 )]
 z_index = 0
 current = true
-zoom = Vector2( 0.3, 0.3 )
 smoothing_enabled = false
 smoothing_speed = 20.0
 

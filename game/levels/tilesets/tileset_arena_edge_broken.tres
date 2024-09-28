@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" load_steps=287 format=2]
 
-[ext_resource path="res://game/levels/areas/tex/tileset_arena_edge.png" type="Texture" id=1]
+[ext_resource path="res://game/levels/_pixel_style_obs/areas/tileset_arena_edge.png" type="Texture" id=1]
 
 [sub_resource type="ConvexPolygonShape2D" id=127]
 points = PoolVector2Array( 8, 8, 0, 8, 0, 0, 8, 0 )

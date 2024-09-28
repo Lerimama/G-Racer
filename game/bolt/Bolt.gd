@@ -91,7 +91,7 @@ onready var direction_line: Line2D = $DirectionLine
 
 # neu
 var height: float = 0 # PRO
-var elevation: float = 14 # PRO
+var elevation: float = 7 # PRO
 onready var front_engine_shadow: Node2D = $ShadowViewport/DriveTrain/FrontEngine # tudi ta dva delujeta 
 onready var rear_engine_shadow: Node2D = $ShadowViewport/DriveTrain/RearEngine
 onready var bolt_hud: Node2D = $BoltHud
@@ -145,8 +145,8 @@ func _process(delta: float) -> void:
 		engine_power = 0
 		rotation_dir = 0		
 	else:	
-			
-		
+		engine_hsp  = 50
+		max_engine_power = 1600
 		# engine power
 		if current_motion == MOTION.IDLE and idle_motion_on: # lahko bi uporabil smer rotacijo, ampak ne morem vezat setget na njo
 			update_gas(idle_motion_gas_usage)
