@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+[gd_resource type="ShaderMaterial" load_steps=6 format=2]
 
-[sub_resource type="Shader" id=10306]
+[sub_resource type="Shader" id=10311]
 code = "shader_type canvas_item;
 //render_mode blend_add;
 
@@ -97,14 +97,31 @@ void fragment() {
 	}
 }"
 
+[sub_resource type="Gradient" id=10309]
+offsets = PoolRealArray( 0.753653 )
+colors = PoolColorArray( 0.827451, 0.827451, 0.827451, 0.133333 )
+
+[sub_resource type="GradientTexture" id=10310]
+gradient = SubResource( 10309 )
+
+[sub_resource type="Gradient" id=10307]
+interpolation_mode = 1
+offsets = PoolRealArray( 0.17119, 0.377871, 0.517745, 0.559499, 0.661795, 0.665971 )
+colors = PoolColorArray( 0, 0, 0, 0, 0, 0, 0, 0.0470588, 0.0627451, 0.0627451, 0.0627451, 0.0156863, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture" id=10312]
+gradient = SubResource( 10307 )
+
 [resource]
-shader = SubResource( 10306 )
-shader_param/node_size = Vector2( 2736, 1904 )
-shader_param/pixelate = true
-shader_param/pixel_size_multiplier = 2.0
+shader = SubResource( 10311 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/pixelate = false
+shader_param/pixel_size_multiplier = 10.0
 shader_param/pixel_offset = Vector2( -0.05, -0.1 )
 shader_param/speed_x = 0.0
-shader_param/speed_y = 2.268
-shader_param/speed_scale = 0.0
-shader_param/shade_texture = null
+shader_param/speed_y = 0.0
+shader_param/speed_scale = 0.1
+shader_param/shade_texture = true
 shader_param/shade_all_colors = false
+shader_param/shade_texture_ramp = SubResource( 10312 )
+shader_param/shade_color_ramp = SubResource( 10310 )

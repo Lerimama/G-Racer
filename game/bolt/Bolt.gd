@@ -15,7 +15,6 @@ var idle_motion_on: bool = false setget _on_idle_motion_change
 var player_id: int # ga seta spawner
 var player_name: String # za opredelitev statistike
 var bolt_color: Color = Color.red
-var bolt_sprite_texture: Texture
 onready var player_profile: Dictionary = Pro.player_profiles[player_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
 
@@ -30,9 +29,9 @@ onready var bolt_profile: Dictionary = Pro.bolt_profiles[bolt_type].duplicate()
 onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
 
 # nodes
-onready var bolt_sprite: Sprite = $BoltSprite
+onready var bolt_sprite: Sprite = $Chassis/BoltSprite
+onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
 onready var trail_position: Position2D = $TrailPosition
-#onready var gun_position: Position2D = $GunPosition
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var revive_timer: Timer = $ReviveTimer
 onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/HUMAN
@@ -57,6 +56,8 @@ onready var idle_glide_power: float = 10000 # aplicira se na oba v razmerju njun
 var anti_drift_on: bool = true
 onready var gas_usage: float = bolt_profile["gas_usage"]
 onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
+onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
+onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
 
 # engines
 var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
@@ -67,10 +68,19 @@ onready var max_engine_power: float = bolt_profile["max_engine_power"]
 onready var engine_hsp: float = bolt_profile["engine_hsp"]
 onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"]
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
-onready var front_engine: Node2D = $DriveTrain/FrontEngine
-onready var front_mass: RigidBody2D = $DriveTrain/FrontEngine/FrontMass
-onready var rear_engine: Node2D = $DriveTrain/RearEngine
-onready var rear_mass: RigidBody2D = $DriveTrain/RearEngine/RearMass
+var all_thrusts: Array
+onready var front_thrusts: Array = [
+	$Chassis/DriveTrain/FrontEngine/ThrustL, 
+	$Chassis/DriveTrain/FrontEngine/ThrustR, 
+	$ShadowViewport/Chassis/DriveTrain/FrontEngine/ThrustL, 
+	$ShadowViewport/Chassis/DriveTrain/FrontEngine/ThrustR
+	]
+onready var rear_thrusts: Array = [ 
+	$Chassis/DriveTrain/RearEngine/ThrustL, 
+	$Chassis/DriveTrain/RearEngine/ThrustR,
+	$ShadowViewport/Chassis/DriveTrain/RearEngine/ThrustL, 
+	$ShadowViewport/Chassis/DriveTrain/RearEngine/ThrustR
+	]
 
 # battle
 var revive_time: float = 2
@@ -92,20 +102,21 @@ onready var direction_line: Line2D = $DirectionLine
 # neu
 var height: float = 0 # PRO
 var elevation: float = 7 # PRO
-onready var front_engine_shadow: Node2D = $ShadowViewport/DriveTrain/FrontEngine # tudi ta dva delujeta 
-onready var rear_engine_shadow: Node2D = $ShadowViewport/DriveTrain/RearEngine
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $Launcher]
 
-func _ready() -> void:
 
+func _ready() -> void:
+	
+	all_thrusts = front_thrusts
+	all_thrusts.append_array(rear_thrusts)
+	
 	add_to_group(Ref.group_bolts)	
 	player_name = player_profile["player_name"]
 	# bolt
-	if bolt_sprite_texture:
-		bolt_sprite.texture = bolt_sprite_texture
 	bolt_color = player_profile["player_color"] # bolt se obarva ... 	
 	bolt_sprite.modulate = bolt_color	
+	bolt_poly.modulate = bolt_color	
 	
 	# bolt settings	
 	mass = bolt_profile["mass"]
@@ -156,23 +167,23 @@ func _process(delta: float) -> void:
 					pass
 				IDLE_MOTION.ROTATE: # kot FWD zavijanje
 					engine_power = 0
-					for thrust in get_engines_thrusts([front_engine, front_engine_shadow]):
+					for thrust in front_thrusts:
 						thrust.rotation = lerp(thrust.rotation, rotate_to_angle, engine_rotation_speed)
-					for thrust in get_engines_thrusts([rear_engine, rear_engine_shadow]):
+					for thrust in rear_thrusts:
 						thrust.rotation = lerp(thrust.rotation, - rotate_to_angle, engine_rotation_speed)
 				IDLE_MOTION.DRIFT: # zadnji pogon v smeri zavoja
 					engine_power = max_engine_power # poskrbi za bolj "tight" obrat
-					for thrust in get_engines_thrusts([front_engine, front_engine_shadow]):
+					for thrust in front_thrusts:
 						thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
-					for thrust in get_engines_thrusts([rear_engine, rear_engine_shadow]):
+					for thrust in rear_thrusts:
 						thrust.rotation = lerp(thrust.rotation, - rotate_to_angle, engine_rotation_speed)
 				IDLE_MOTION.GLIDE: # oba pogona  v smeri premika
 					engine_power = 0
-					for thrust in get_engines_thrusts([front_engine, rear_engine, front_engine_shadow, rear_engine_shadow]):
+					for thrust in all_thrusts:
 						thrust.rotation = lerp(thrust.rotation, rotate_to_angle, engine_rotation_speed)
 		elif current_motion == MOTION.IDLE:
 			engine_power = 0
-			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
+			for thrust in all_thrusts:
 				thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
 		else:
 			engine_power += engine_hsp
@@ -193,22 +204,22 @@ func _process(delta: float) -> void:
 			# thrust nodes
 			match current_motion:
 				MOTION.FWD: # premc je naprej
-					for thrust in get_engines_thrusts([front_engine, front_engine_shadow]):
+					for thrust in front_thrusts:
 						thrust.rotation = lerp(thrust.rotation, thrust_rotation, engine_rotation_speed)
-					for thrust in get_engines_thrusts([rear_engine, rear_engine_shadow]):
+					for thrust in rear_thrusts:
 						thrust.rotation = lerp(thrust.rotation, thrust_rotation, engine_rotation_speed)
 						thrust.rotation *= 1
 				MOTION.REV: # premc je nazaj
-					for thrust in get_engines_thrusts([front_engine]):
+					for thrust in front_thrusts:
 						# vpliv na smer rotacije za 180 ... 
 						# če je index pogona = 0 -> ni adaptacije -> smer = 1
 						var adapt_rotation_factor: int = 2
-						var thrust_index = get_engines_thrusts([front_engine]).find(thrust)
+						var thrust_index = front_thrusts.find(thrust)
 						var adapt_rotation_dir = 1 - thrust_index * adapt_rotation_factor
 						thrust.rotation = lerp(thrust.rotation, (- thrust_rotation + deg2rad(180) * adapt_rotation_dir), engine_rotation_speed)#					thrust.rotation = lerp(thrust.rotation, - thrust_rotation, engine_rotation_speed)
-					for thrust in get_engines_thrusts([rear_engine]):
+					for thrust in rear_thrusts:
 						var adapt_rotation_factor: int = 2
-						var thrust_index = get_engines_thrusts([rear_engine]).find(thrust)
+						var thrust_index = rear_thrusts.find(thrust)
 						var adapt_rotation_dir = 1 - thrust_index * adapt_rotation_factor
 						thrust.rotation = lerp(thrust.rotation, (thrust_rotation + deg2rad(180)) * adapt_rotation_dir, engine_rotation_speed)
 
@@ -368,18 +379,6 @@ func revive_bolt():
 
 
 # UTILITY ----------------------------------------------------------------------------
-	
-	
-func get_engines_thrusts(engines: Array):
-
-	var current_thrusts: Array = [] # temp
-	if not engines.empty():
-		for engine in engines:
-			for child in engine.get_children():
-				if child.name.find("Thrust") > -1:
-					current_thrusts.append(child)	
-	
-	return current_thrusts
 	
 	
 func stop_engines():
@@ -698,7 +697,7 @@ func reset_bolt():
 	rear_mass.set_applied_torque(0)
 	#	rotation_dir = 0
 	#	engine_power = 0
-	for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
+	for thrust in all_thrusts:
 		thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
 		thrust.stop_fx()	
 		
@@ -741,28 +740,27 @@ func _on_idle_motion_change(is_in_idle_motion: bool):
 					linear_damp = bolt_profile["lin_damp_antidrift"]
 				else:
 					linear_damp = bolt_profile["lin_damp_idle"]
-				for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
+				for thrust in all_thrusts:
 					thrust.start_fx()
 			IDLE_MOTION.DRIFT:
 				linear_damp = bolt_profile["lin_damp_driving"]
 				engine_power = max_engine_power # poskrbi za bolj "tight" obrat
-				for thrust in get_engines_thrusts([front_engine, front_engine_shadow]):
+				for thrust in front_thrusts:
 					thrust.stop_fx()
-				for thrust in get_engines_thrusts([rear_engine, rear_engine_shadow]):
+				for thrust in rear_thrusts:
 					thrust.start_fx()
 			IDLE_MOTION.GLIDE:
 				if anti_drift_on: 
 					linear_damp = bolt_profile["lin_damp_antidrift"]
 				else:
 					linear_damp = bolt_profile["lin_damp_idle"]
-				for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
+				for thrust in all_thrusts:
 					thrust.start_fx()
 	# če ga ne in je hkrati idle
 	elif current_motion == MOTION.IDLE:
 		linear_damp = 3# bolt_profile["lin_damp_antidrift"] # debug
 #		linear_damp = bolt_profile["lin_damp_idle"]
-		for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
-#		for thrust in get_engines_thrusts([front_engine, rear_engine]):
+		for thrust in all_thrusts:
 			thrust.stop_fx()
 	
 	
@@ -779,18 +777,17 @@ func _on_motion_change(new_motion: int):
 		MOTION.IDLE:
 			linear_damp = bolt_profile["lin_damp_idle"]
 			bolt_fwd_direction = 1
-			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
-#			for thrust in get_engines_thrusts([front_engine, rear_engine]):
+			for thrust in all_thrusts:
 				thrust.stop_fx()
 		MOTION.FWD:
 			linear_damp = bolt_profile["lin_damp_driving"]
 			bolt_fwd_direction = 1
-			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
+			for thrust in all_thrusts:
 				thrust.start_fx()
 		MOTION.REV:
 			linear_damp = bolt_profile["lin_damp_driving"]
 			bolt_fwd_direction = -1
-			for thrust in get_engines_thrusts([front_engine, front_engine_shadow, rear_engine, rear_engine_shadow]):
+			for thrust in all_thrusts:
 				thrust.start_fx()
 		MOTION.DISARRAY:
 			linear_damp = bolt_profile["lin_damp_idle"]

@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/bolt/tex/bolt.png" type="Texture" id=1]
+[ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=2]
+
+[node name="Chassis" type="Node2D"]
+
+[node name="BoltSprite" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.231373 )
+rotation = 1.5708
+texture = ExtResource( 1 )
+offset = Vector2( 0.381001, 0.499999 )
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( -104, -48, -96, -56, 96, -56, 112, -40, 104, -32, 112, -24, 104, -16, 112, -8, 104, 0, 112, 8, 104, 16, 112, 24, 104, 32, 112, 40, 96, 56, -96, 56, -104, 48, -104, 0 )
+
+[node name="Polygon2D2" type="Polygon2D" parent="Polygon2D"]
+position = Vector2( 32, 0 )
+polygon = PoolVector2Array( -24, -32, 8, -24, 8, 24, -24, 32 )
+
+[node name="Polygon2D" type="Polygon2D" parent="Polygon2D"]
+visible = false
+position = Vector2( 32, 0 )
+color = Color( 1, 1, 1, 0.298039 )
+polygon = PoolVector2Array( 24, -48, 40, -32, 32, -16, 40, 0, 32, 16, 40, 32, 24, 48, 40, 48, 56, 32, 48, 16, 56, 0, 48, -16, 56, -32, 40, -48 )
+
+[node name="Polygon2D4" type="Polygon2D" parent="Polygon2D"]
+position = Vector2( 112, 73 )
+scale = Vector2( -1, 1 )
+color = Color( 1, 1, 1, 0.298039 )
+polygon = PoolVector2Array( 16, -17, 32, -41, 40, -25, 56, -41, 56, -25, 72, -33, 72, -17 )
+
+[node name="Polygon2D5" type="Polygon2D" parent="Polygon2D"]
+position = Vector2( 112, -72 )
+scale = Vector2( -1, -1 )
+color = Color( 1, 1, 1, 0.298039 )
+polygon = PoolVector2Array( 16, -16, 32, -40, 40, -24, 56, -40, 56, -24, 72, -32, 72, -16 )
+
+[node name="DriveTrain" type="Node2D" parent="."]
+
+[node name="FrontEngine" type="Node2D" parent="DriveTrain"]
+position = Vector2( 73, 0 )
+
+[node name="ThrustL" parent="DriveTrain/FrontEngine" instance=ExtResource( 2 )]
+position = Vector2( 1, -53 )
+scale = Vector2( 2, 2 )
+
+[node name="ThrustR" parent="DriveTrain/FrontEngine" instance=ExtResource( 2 )]
+position = Vector2( 1, 51 )
+scale = Vector2( 2, 2 )
+position_on_bolt = 1
+
+[node name="RearEngine" type="Node2D" parent="DriveTrain"]
+position = Vector2( -68, 0 )
+
+[node name="ThrustL" parent="DriveTrain/RearEngine" instance=ExtResource( 2 )]
+position = Vector2( 4, -55 )
+scale = Vector2( 2, 2 )
+
+[node name="ThrustR" parent="DriveTrain/RearEngine" instance=ExtResource( 2 )]
+position = Vector2( 4, 53 )
+scale = Vector2( 2, 2 )
+position_on_bolt = 1

@@ -1,14 +1,13 @@
-[gd_resource type="Resource" load_steps=11 format=2]
+[gd_resource type="Resource" load_steps=10 format=2]
 
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=1]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
-[ext_resource path="res://game/levels/terrain/tex/pixel_style/mount_edge.png" type="Texture" id=5]
 
 [sub_resource type="Resource" id=1808]
 script = ExtResource( 1 )
-textures = [ ExtResource( 5 ) ]
+textures = [ null ]
 texture_normals = [  ]
 textures_corner_outer = [  ]
 textures_corner_inner = [  ]
@@ -41,7 +40,7 @@ offset = 1.0
 
 [sub_resource type="Gradient" id=650]
 offsets = PoolRealArray( 0.465278 )
-colors = PoolColorArray( 1, 1, 1, 1 )
+colors = PoolColorArray( 0, 0, 0, 1 )
 
 [sub_resource type="GradientTexture" id=160]
 gradient = SubResource( 650 )

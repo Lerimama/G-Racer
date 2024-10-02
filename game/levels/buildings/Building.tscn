@@ -151,7 +151,6 @@ __meta__ = {
 }
 
 [node name="PolygonShadow" parent="." instance=ExtResource( 13 )]
-visible = true
 
 [node name="SS2D_Shape_Closed" type="Node2D" parent="."]
 position = Vector2( 256, 192 )

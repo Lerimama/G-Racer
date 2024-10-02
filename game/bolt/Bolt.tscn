@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/textures/glow_light.png" type="Texture" id=2]
-[ext_resource path="res://game/bolt/tex/bolt.png" type="Texture" id=3]
+[ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/textures/burst_light.png" type="Texture" id=4]
 [ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/levels/objects/tex/atlas_arena_objects.png" type="Texture" id=6]
@@ -82,7 +82,7 @@ range_z_min = 0
 range_z_max = 0
 
 [node name="ShadowViewport" type="Viewport" parent="."]
-size = Vector2( 360, 280 )
+size = Vector2( 384, 256 )
 own_world = true
 transparent_bg = true
 handle_input_locally = false
@@ -99,14 +99,8 @@ margin_right = 128.0
 margin_bottom = 128.0
 theme = ExtResource( 10 )
 
-[node name="BoltSprite" type="Sprite" parent="ShadowViewport"]
-position = Vector2( 180, 140 )
-rotation = 1.5708
-texture = ExtResource( 3 )
-offset = Vector2( 0.381001, 0.499999 )
-
 [node name="DriveTrain" type="Node2D" parent="ShadowViewport"]
-position = Vector2( 180, 140 )
+position = Vector2( 192, 128 )
 
 [node name="FrontEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
 position = Vector2( 73, 0 )
@@ -132,85 +126,68 @@ position = Vector2( 4, 53 )
 scale = Vector2( 2, 2 )
 position_on_bolt = 1
 
+[node name="Chassis" parent="ShadowViewport" instance=ExtResource( 3 )]
+position = Vector2( 192, 128 )
+
 [node name="Shadow" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.243137 )
 texture = SubResource( 5264 )
 script = ExtResource( 12 )
-shadow_casting_node_path = NodePath("../BoltSprite")
+shadow_casting_node_path = NodePath("../Chassis/BoltSprite")
 
-[node name="DriveTrain" type="Node2D" parent="."]
+[node name="Mass" type="Node2D" parent="."]
 
-[node name="FrontEngine" type="Node2D" parent="DriveTrain"]
+[node name="Front" type="Node2D" parent="Mass"]
 position = Vector2( 73, 0 )
 
-[node name="FrontPin" type="PinJoint2D" parent="DriveTrain/FrontEngine"]
+[node name="FrontPin" type="PinJoint2D" parent="Mass/Front"]
 node_a = NodePath("../../..")
 node_b = NodePath("../FrontMass")
 
-[node name="FrontMass" type="RigidBody2D" parent="DriveTrain/FrontEngine"]
+[node name="FrontMass" type="RigidBody2D" parent="Mass/Front"]
 gravity_scale = 0.0
 can_sleep = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DriveTrain/FrontEngine/FrontMass"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mass/Front/FrontMass"]
 shape = SubResource( 5254 )
 disabled = true
 
-[node name="Polygon2D" type="Polygon2D" parent="DriveTrain/FrontEngine/FrontMass/CollisionShape2D"]
+[node name="Polygon2D" type="Polygon2D" parent="Mass/Front/FrontMass/CollisionShape2D"]
 visible = false
 show_behind_parent = true
 position = Vector2( 14, 19 )
 offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
-[node name="ThrustL" parent="DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 1, -53 )
-scale = Vector2( 2, 2 )
-
-[node name="ThrustR" parent="DriveTrain/FrontEngine" instance=ExtResource( 5 )]
-position = Vector2( 1, 51 )
-scale = Vector2( 2, 2 )
-position_on_bolt = 1
-
-[node name="RearEngine" type="Node2D" parent="DriveTrain"]
+[node name="Rear" type="Node2D" parent="Mass"]
 position = Vector2( -68, 0 )
 
-[node name="RearPin" type="PinJoint2D" parent="DriveTrain/RearEngine"]
+[node name="RearPin" type="PinJoint2D" parent="Mass/Rear"]
 node_a = NodePath("../../..")
 node_b = NodePath("../RearMass")
 
-[node name="RearMass" type="RigidBody2D" parent="DriveTrain/RearEngine"]
+[node name="RearMass" type="RigidBody2D" parent="Mass/Rear"]
 gravity_scale = 0.0
 can_sleep = false
 linear_damp = 3.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DriveTrain/RearEngine/RearMass"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mass/Rear/RearMass"]
 shape = SubResource( 5254 )
 disabled = true
 
-[node name="Polygon2D" type="Polygon2D" parent="DriveTrain/RearEngine/RearMass/CollisionShape2D"]
+[node name="Polygon2D" type="Polygon2D" parent="Mass/Rear/RearMass/CollisionShape2D"]
 visible = false
 show_behind_parent = true
 position = Vector2( 14, 19 )
 offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
-[node name="ThrustL" parent="DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( 4, -55 )
-scale = Vector2( 2, 2 )
-
-[node name="ThrustR" parent="DriveTrain/RearEngine" instance=ExtResource( 5 )]
-position = Vector2( 4, 53 )
-scale = Vector2( 2, 2 )
-position_on_bolt = 1
-
-[node name="BoltSprite" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0.231373 )
-rotation = 1.5708
-texture = ExtResource( 3 )
-offset = Vector2( 0.381001, 0.499999 )
+[node name="Chassis" parent="." instance=ExtResource( 3 )]
+visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PoolVector2Array( -106, -55, 112, -52, 112, 51, -104, 55 )
+visible = false
+polygon = PoolVector2Array( -96, -56, 96, -56, 112, -40, 112, 40, 96, 56, -95.9049, 56, -104, 48, -104, -48 )
 
 [node name="Light2D" type="Light2D" parent="."]
 visible = false
@@ -477,3 +454,6 @@ bus = "GameSfx"
 [connection signal="body_entered" from="." to="." method="_on_Bolt_body_entered"]
 [connection signal="timeout" from="BoltHud/BoltHudLines/WeaponSelector/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]
 [connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
+
+[editable path="ShadowViewport/Chassis"]
+[editable path="Chassis"]
