@@ -9,12 +9,12 @@ var is_set: bool =  false
 var weapon_reloaded: bool = true
 var ammo_count: int = 0 setget _update_weapon_stats # napolnems strani bolta ali igre
 
-onready var shooting_position: Position2D = $ShootingPosition
+onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var fire_particles: Particles2D = $WeaponSprite/FireParticles
 onready var fire_cover_particles: Particles2D = $WeaponSprite/FireCoverParticles
-onready var smoke_particles: Particles2D = $SmokeParticles
+onready var smoke_particles: Particles2D = $WeaponSprite/SmokeParticles
 
 # per weapon
 var ammo_count_key: String#  = ammo_profile["ammo_count_key"] # na prvi load

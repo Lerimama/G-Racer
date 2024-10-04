@@ -29,8 +29,8 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	PLAYER.P1 : {
 		"player_name": "P1",
 		"player_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
-		"player_color": Color.white,
-#		"player_color": Ref.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+#		"player_color": Color.white,
+		"player_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLT_TYPE.RIGID,
 	},

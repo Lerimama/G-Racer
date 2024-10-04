@@ -1,42 +1,31 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/bolt/weapons/Weapon.tscn" type="PackedScene" id=1]
-[ext_resource path="res://game/bolt/weapons/launcher.png" type="Texture" id=2]
-[ext_resource path="res://game/ammo/misile/misile.png" type="Texture" id=3]
 [ext_resource path="res://game/bolt/weapons/misile_fire_particles_material.tres" type="Material" id=4]
 
 [node name="Launcher" instance=ExtResource( 1 )]
-position = Vector2( 0, 0 )
-
-[node name="ShootingPosition" parent="." index="0"]
-position = Vector2( 7, -1.5 )
-
-[node name="Misile" type="Sprite" parent="ShootingPosition" index="0"]
-show_behind_parent = true
-position = Vector2( 0, 0.5 )
-texture = ExtResource( 3 )
-
-[node name="WeaponSprite" parent="." index="1"]
-texture = ExtResource( 2 )
 
 [node name="FireParticles" parent="WeaponSprite" index="0"]
-position = Vector2( 8, -1.5 )
-emitting = true
-amount = 150
-lifetime = 1.5
+position = Vector2( 8, -4 )
+amount = 100
+lifetime = 0.5
 explosiveness = 0.32
 process_material = ExtResource( 4 )
 
-[node name="FireCoverParticles" parent="WeaponSprite" index="1"]
-position = Vector2( 7.5, -1.5 )
+[node name="Polygon2D" parent="WeaponSprite" index="1"]
+show_behind_parent = true
+polygon = PoolVector2Array( 8, 0, 8, -8, 0, -8, 0, -10, -10, -10, -10, -8, -32, -8, -40, 8, 0, 8, 0, 0 )
+
+[node name="FireCoverParticles" parent="WeaponSprite" index="2"]
+position = Vector2( 9, -4 )
 amount = 100
 lifetime = 1.5
 explosiveness = 0.32
 process_material = ExtResource( 4 )
 
-[node name="SmokeParticles" parent="." index="2"]
-position = Vector2( 12, -1.5 )
-emitting = false
-amount = 150
-lifetime = 1.5
-one_shot = true
+[node name="SmokeParticles" parent="WeaponSprite" index="3"]
+position = Vector2( 9, -4 )
+scale = Vector2( 1.2, 1.2 )
+
+[node name="ShootingPosition" parent="WeaponSprite" index="4"]
+position = Vector2( 0, -4.00001 )

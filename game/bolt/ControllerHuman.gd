@@ -20,9 +20,7 @@ func _input(event: InputEvent) -> void:
 		# ko ni igre ima v leru
 		if not Ref.game_manager.game_on: 
 			if Input.is_action_just_pressed(fwd_action):
-				$Sounds/EngineRevup.play()
-			elif Ref.game_manager.fast_start_window:
-					$Sounds/EngineRevup.play()
+				controlled_bolt.revup()
 		else:
 			# rotacija
 			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
@@ -31,6 +29,8 @@ func _input(event: InputEvent) -> void:
 			if Input.is_action_pressed(fwd_action):
 				if not controlled_bolt.current_motion == controlled_bolt.MOTION.FWD:
 					controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
+				if Ref.game_manager.fast_start_window:
+					controlled_bolt.revup()
 			
 			# nazaj
 			elif Input.is_action_pressed(rev_action):

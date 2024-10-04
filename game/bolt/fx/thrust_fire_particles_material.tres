@@ -1,6 +1,11 @@
-[gd_resource type="ParticlesMaterial" load_steps=4 format=2]
+[gd_resource type="ParticlesMaterial" load_steps=5 format=2]
 
-[ext_resource path="res://game/bolt/fx/thrust_fire_orange_color_ramp.tres" type="Texture" id=1]
+[sub_resource type="Gradient" id=5272]
+offsets = PoolRealArray( 0, 0.0461133, 0.118577, 0.445323, 0.649842, 1 )
+colors = PoolColorArray( 1, 0, 0, 1, 1, 0.955065, 0.138771, 1, 1, 0.638672, 0, 1, 0.986486, 0.57484, 0.0084638, 1, 0.924316, 0.281188, 0.0474008, 1, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture" id=5273]
+gradient = SubResource( 5272 )
 
 [sub_resource type="Curve" id=5270]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.86677 ), 0.0, 0.0, 0, 0 ]
@@ -16,10 +21,10 @@ flag_disable_z = true
 direction = Vector3( -1, 0, 0 )
 spread = 0.0
 gravity = Vector3( 0, 0, 0 )
-initial_velocity = 60.0
+initial_velocity = 100.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 radial_accel = -86.92
-scale = 0.6
+scale = 0.5
 scale_curve = SubResource( 5271 )
-color_ramp = ExtResource( 1 )
+color_ramp = SubResource( 5273 )

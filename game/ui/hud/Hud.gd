@@ -29,8 +29,9 @@ func _ready() -> void:
 func set_hud(): # kliče GM
 	
 	# game stats
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		game_timer.hunds_mode = false
+	match Ref.current_level.level_type:
+		Ref.current_level.LEVEL_TYPE.RACE, Ref.current_level.LEVEL_TYPE.RACE_LAPS:
+			game_timer.hunds_mode = true
 	game_timer.show()
 	record_lap_label.hide()
 		
@@ -72,7 +73,14 @@ func set_hud(): # kliče GM
 				box.stat_laps_count.show()
 				box.stat_best_lap.show()
 				box.stat_level_time.show()
-	
+			Ref.current_level.LEVEL_TYPE.CHASE:
+				box.stat_points.show()
+				box.stat_level_rank.show()
+				box.stat_gas.show()
+				box.stat_bullet.show()
+				box.stat_misile.show()
+				box.stat_mina.show()
+				pass
 							
 func on_game_start():
 	
@@ -149,8 +157,8 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 
 func _on_GameTimer_gametime_is_up() -> void:
 	
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		Ref.game_manager.level_finished()
+	#	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+	Ref.game_manager.level_finished()
 
 	
 func _on_stats_changed(player_id: int, player_stats: Dictionary):

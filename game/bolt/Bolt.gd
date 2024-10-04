@@ -29,8 +29,6 @@ onready var bolt_profile: Dictionary = Pro.bolt_profiles[bolt_type].duplicate()
 onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
 
 # nodes
-onready var bolt_sprite: Sprite = $Chassis/BoltSprite
-onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
 onready var trail_position: Position2D = $TrailPosition
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var revive_timer: Timer = $ReviveTimer
@@ -68,6 +66,7 @@ onready var max_engine_power: float = bolt_profile["max_engine_power"]
 onready var engine_hsp: float = bolt_profile["engine_hsp"]
 onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"]
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
+var max_thrust_rotation_deg: float = 15
 var all_thrusts: Array
 onready var front_thrusts: Array = [
 	$Chassis/DriveTrain/FrontEngine/ThrustL, 
@@ -104,10 +103,14 @@ var height: float = 0 # PRO
 var elevation: float = 7 # PRO
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $Launcher]
+onready var bolt_sprite: Sprite = $Chassis/BoltSprite
+onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
 
 
 func _ready() -> void:
+#	onready var chassis: Node2D = $Chassis
 	
+	printt("BOLT",$Chassis)
 	all_thrusts = front_thrusts
 	all_thrusts.append_array(rear_thrusts)
 	
@@ -204,25 +207,32 @@ func _process(delta: float) -> void:
 			# thrust nodes
 			match current_motion:
 				MOTION.FWD: # premc je naprej
-					for thrust in front_thrusts:
+					for thrust in all_thrusts:
 						thrust.rotation = lerp(thrust.rotation, thrust_rotation, engine_rotation_speed)
-					for thrust in rear_thrusts:
-						thrust.rotation = lerp(thrust.rotation, thrust_rotation, engine_rotation_speed)
-						thrust.rotation *= 1
+#						thrust.rotation = clamp(thrust.rotation, - deg2rad(max_thrust_rotation_deg), deg2rad(max_thrust_rotation_deg))
 				MOTION.REV: # premc je nazaj
-					for thrust in front_thrusts:
+#					for thrust in all_thrusts:
+#					for thrust in front_thrusts:
+					for thrust in front_thrusts: # ločeno zaradi indexa s katerim ločujem levega in desnega
 						# vpliv na smer rotacije za 180 ... 
 						# če je index pogona = 0 -> ni adaptacije -> smer = 1
 						var adapt_rotation_factor: int = 2
-						var thrust_index = front_thrusts.find(thrust)
-						var adapt_rotation_dir = 1 - thrust_index * adapt_rotation_factor
-						thrust.rotation = lerp(thrust.rotation, (- thrust_rotation + deg2rad(180) * adapt_rotation_dir), engine_rotation_speed)#					thrust.rotation = lerp(thrust.rotation, - thrust_rotation, engine_rotation_speed)
+						var thrust_index: int = front_thrusts.find(thrust)
+						var adapt_rotation_dir: float = 1 - thrust_index * adapt_rotation_factor
+						var rotate_to: float = - thrust_rotation + deg2rad(180) * adapt_rotation_dir
+						thrust.rotation = lerp(thrust.rotation, rotate_to, engine_rotation_speed)
 					for thrust in rear_thrusts:
 						var adapt_rotation_factor: int = 2
 						var thrust_index = rear_thrusts.find(thrust)
 						var adapt_rotation_dir = 1 - thrust_index * adapt_rotation_factor
-						thrust.rotation = lerp(thrust.rotation, (thrust_rotation + deg2rad(180)) * adapt_rotation_dir, engine_rotation_speed)
-
+						var rotate_to: float = - thrust_rotation + deg2rad(180) * adapt_rotation_dir
+						thrust.rotation = lerp(thrust.rotation, rotate_to, engine_rotation_speed)
+#					for thrust in all_thrusts:
+#						thrust.rotation = clamp(thrust.rotation, - deg2rad(max_thrust_rotation_deg+180), deg2rad(max_thrust_rotation_deg-180))
+		
+		# ALL STATES
+#		for thrust in all_thrusts:
+#			thrust.rotation = clamp(thrust.rotation, - deg2rad(max_thrust_rotation_deg), deg2rad(max_thrust_rotation_deg))
 		update_trail()
 				
 
@@ -281,8 +291,8 @@ func on_hit(hit_by: Node):
 	if is_shielded:
 		return
 
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		update_stat("energy", - hit_by.hit_damage)
+	#	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+	update_stat("energy", - hit_by.hit_damage)
 			
 	if hit_by.is_in_group(Ref.group_bullets):
 		var inertia_factor: float = 100
@@ -307,8 +317,8 @@ func on_hit(hit_by: Node):
 		#		apply_impulse( to_global(Vector2.RIGHT * bolt_sprite.texture.get_size().x/2), hit_by_inertia) # debug
 		Ref.current_camera.shake_camera(Ref.current_camera.misile_hit_shake)
 		Ref.sound_manager.play_sfx("bolt_explode")
-		if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
-			explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
+		#		if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE: 
+		explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 		
 	elif hit_by.is_in_group(Ref.group_mine):
 		var inertia_factor: float = 400000
@@ -557,13 +567,13 @@ func screen_wrap():
 	bolt_body_state.set_transform(xform)	
 	
 
-func drive_in():
+func drive_in(drive_in_time: float = 2):
 	
 	collision_shape.set_deferred("disabled", true)
 	modulate.a = 1
 	start_engines()
 	
-	var drive_in_time: float = 2	
+	#	var drive_in_time: float = 2	
 	var drive_in_finished_position: Vector2 = bolt_global_position
 	var drive_in_vector: Vector2 = Ref.current_level.drive_in_position.rotated(Ref.current_level.race_start.global_rotation)
 	var drive_in_start_position: Vector2 = bolt_global_position + drive_in_vector
@@ -599,7 +609,15 @@ func drive_out():
 	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
 	#	set_physics_process(false)
 	#	current_motion = MOTION.IDLE
+
+
+func revup():
 	
+	$Sounds/EngineRevup.play()	
+	for thrust in all_thrusts:
+		thrust.start_fx(true)
+	
+
 			
 func item_picked(pickable_key: int):
 	
@@ -608,19 +626,19 @@ func item_picked(pickable_key: int):
 	
 	match pickable_key:
 		Pro.PICKABLE.PICKABLE_BULLET:
-			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-				player_stats["misile_count"] = 0
-				player_stats["mina_count"] = 0
+			#			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+			#				player_stats["misile_count"] = 0
+			#				player_stats["mina_count"] = 0
 			update_stat("bullet_count", pickable_value)
 		Pro.PICKABLE.PICKABLE_MISILE:
-			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-				player_stats["bullet_count"] = 0
-				player_stats["mina_count"] = 0
+			#			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+			#				player_stats["bullet_count"] = 0
+			#				player_stats["mina_count"] = 0
 			update_stat("misile_count", pickable_value)
 		Pro.PICKABLE.PICKABLE_MINA:
-			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-				player_stats["bullet_count"] = 0
-				player_stats["misile_count"] = 0
+			#			if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
+			#				player_stats["bullet_count"] = 0
+			#				player_stats["misile_count"] = 0
 			update_stat("mina_count", pickable_value)
 		Pro.PICKABLE.PICKABLE_SHIELD:
 			spawn_shield(pickable_value, pickable_time)

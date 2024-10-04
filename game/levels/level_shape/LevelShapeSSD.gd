@@ -21,7 +21,8 @@ onready var shadow_shader_rect: ColorRect = $ShadowShader
 func _ready() -> void:
 
 	# dodam glavni material
-	object_shape.shape_material = shape_SSD_material
+	if shape_SSD_material:
+		object_shape.shape_material = shape_SSD_material
 	
 	# dodam senco
 	if use_shader_shadow:
@@ -55,12 +56,13 @@ func _ready() -> void:
 		shadow_shape.modulate.a = 0.2
 		
 	# dodam bottom shade
-	var shade_shape: Node2D = object_shape.duplicate()
-	shade_shape.name = "Shade" 
-	shade_shape.shape_material = shade_SSD_material
-	shade_shape.collision_polygon_node_path = ""
-	add_child(shade_shape)
-	move_child(shade_shape, 0)
+	if shade_SSD_material:
+		var shade_shape: Node2D = object_shape.duplicate()
+		shade_shape.name = "Shade" 
+		shade_shape.shape_material = shade_SSD_material
+		shade_shape.collision_polygon_node_path = ""
+		add_child(shade_shape)
+		move_child(shade_shape, 0)
 
 
 	

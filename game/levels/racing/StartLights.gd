@@ -3,15 +3,16 @@ extends Node2D
 
 signal countdown_finished
 
-
 var light_index: int = 0
+
 onready var on_lights: Array = $OnLights.get_children()
 onready var off_lights: Array = $OffLights.get_children()
-onready var timer: Timer = $Timer
+onready var light_timer: Timer = $LightTimer
 
 
 func _ready() -> void:
 	
+	hide()
 	for light in off_lights:
 		light.show()
 	for light in on_lights:
@@ -20,13 +21,9 @@ func _ready() -> void:
 	
 func start_countdown():
 	
-	if Ref.game_manager.game_settings["start_countdown"]:
-		visible = true
-		$Timer.start()
-		turn_on_light()
-	else:
-		visible = false
-		call_deferred("emit_signal", "countdown_finished") # GM yielda za ta signal
+	show()
+	light_timer.start()
+	turn_on_light()
 
 
 func turn_on_light():
@@ -36,7 +33,7 @@ func turn_on_light():
 		on_lights[light_index].show()
 		off_lights[light_index].hide()
 		light_index += 1
-		$Timer.start()
+		light_timer.start()
 	else:
 		turn_off_all_lights()
 	

@@ -15,68 +15,48 @@ var active_trail: Line2D
 var thrust_particles_name: String = "ThrustParticles"
 var thrust_over_particles_name: String = "ThrustOverParticles"
 var smoke_particles_name: String = "SmokeParticles"
-onready var side_left: Node2D = $SideLeft
-onready var side_right: Node2D = $SideRight
-var current_side_node: Node2D
-
+#onready var side_left: Node2D = $SideLeft
+#onready var side_right: Node2D = $SideRight
+#var current_ide_node: Node2D
+#onready var disp: Node2D = $Disp
+onready var disp: Node2D = self
 
 func _ready() -> void:
 	
-#	print ("P", owner)
-##	var owner_node_path
-#	if owner_node_path:
-#		owner_node = get_node(owner_node_path)
-#	print ("N", owner)
-	
 	match position_on_bolt:
 		POSITIONS.LEFT:
-			current_side_node = side_left
-			side_right.queue_free()
-			
+			scale.y = 1
 		POSITIONS.RIGHT:
-			current_side_node = side_right
-			side_left.queue_free()
-
-	# vse na off, potem prižgem
-	for side in [side_left, side_right]:
-		side.get_node(thrust_particles_name).emitting = false
-		side.get_node(thrust_over_particles_name).emitting = false
-		side.get_node(smoke_particles_name).emitting = false
-#		side_left.hide()
-#		side_right.hide()
-	current_side_node.show()
-
+			scale.y = -1
+			
 
 func _process(delta: float) -> void:
 	
 	if owner_node:
+		$Polygon2D.color = owner_node.bolt_color # _temp
 		update_trail()
-	pass
 	
 # particles
 	
-func start_fx(reverse_direction: bool = false):
+func start_fx(only_one_shot: bool = false, reverse_direction: bool = false):
 	
 	if not thrust_active:
 		thrust_active = true
-		current_side_node.get_node(thrust_particles_name).emitting = true
-		current_side_node.get_node(thrust_over_particles_name).emitting = true
-		current_side_node.get_node(smoke_particles_name).emitting = true
-#		if reverse_direction:
-#			smoke_particles.get_process_material().direction.x = 1
-#			thrust_particles.get_process_material().direction.x = 1
-#		else:
-#			smoke_particles.get_process_material().direction.x = -1
-#			thrust_particles.get_process_material().direction.x = -1
+		#		disp.get_node(thrust_particles_name).one_shot = only_one_shot
+		#		disp.get_node(thrust_over_particles_name).emitting = only_one_shot
+		#		disp.get_node(smoke_particles_name).emitting = only_one_shot
+		disp.get_node(thrust_particles_name).emitting = true
+		disp.get_node(thrust_over_particles_name).emitting = true
+		disp.get_node(smoke_particles_name).emitting = true
 
 
 func stop_fx():
 	
 	if thrust_active:
 		thrust_active = false
-		current_side_node.get_node(thrust_particles_name).emitting = false
-		current_side_node.get_node(thrust_over_particles_name).emitting = false
-		current_side_node.get_node(smoke_particles_name).emitting = false
+		disp.get_node(thrust_particles_name).emitting = false
+		disp.get_node(thrust_over_particles_name).emitting = false
+		disp.get_node(smoke_particles_name).emitting = false
 		
 
 # trail	
@@ -86,7 +66,7 @@ func spawn_new_trail():
 	var BoltTrail: PackedScene = preload("res://game/bolt/fx/ThrustTrail.tscn")
 	var new_trail: Line2D = BoltTrail.instance()
 	# na poziciji partiklov na trenutno izbrani strani
-	new_trail.global_position = current_side_node.get_node(thrust_particles_name).global_position
+	new_trail.global_position = disp.get_node(thrust_particles_name).global_position
 	new_trail.modulate.a = bolt_trail_alpha
 	new_trail.width = 5
 	Ref.node_creation_parent.add_child(new_trail)

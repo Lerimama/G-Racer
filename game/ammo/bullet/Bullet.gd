@@ -25,7 +25,7 @@ onready var ammo_profile: Dictionary = Pro.ammo_profiles[Pro.AMMO.BULLET]
 onready var hit_damage: float = ammo_profile["hit_damage"]
 onready var lifetime: float = ammo_profile["lifetime"]
 onready var bullet_mass: float = ammo_profile["mass"]
-onready var speed: float = 150 #ammo_profile["speed"] # PRO
+onready var speed: float = 3200 #ammo_profile["speed"] # PRO
 onready var vision_ray: RayCast2D = $VisionRay
 onready var collision_shape: CollisionShape2D = $BulletCollision
 
@@ -36,7 +36,7 @@ onready var elevation: float = spawner.elevation + 4 # PRO rabi jo senčka
 func _ready() -> void:
 	
 	add_to_group(Ref.group_bullets)
-	modulate = spawner_color
+#	modulate = spawner_color
 	$Sounds/BulletShoot.play()
 	
 	mass = bullet_mass
@@ -71,12 +71,12 @@ func _physics_process(delta: float) -> void:
 		collision_shape.set_deferred("disabled", true)
 	else:
 		collision_shape.set_deferred("disabled", false)
-			
+	
+
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
 	set_applied_force(direction * speed)
-		
 
 					
 func explode_bullet(collision_position: Vector2, collision_normal: Vector2):

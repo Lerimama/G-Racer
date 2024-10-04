@@ -28,39 +28,48 @@ var max_target_zoom_speed: float = 1500
 
 func _process(delta: float) -> void:
 	
-	if follow_target and not test_ui.test_view_on:
-#	if follow_target:
-		position = follow_target.global_position
-		
-		# zoom
-		if follow_target.is_in_group(Ref.group_bolts) and not follow_target.bolt_velocity == null:
-			var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
-			# če je nad min limit
-			if follow_target_speed > min_target_zoom_speed:
-				var max_zoom_velocity_span: float = abs(max_target_zoom_speed - min_target_zoom_speed)
-				 # vel, čez min span limit, nam da procent zasedenosti zoom spanao 
-				var target_speed_part_in_span: float = (follow_target_speed - min_target_zoom_speed) / max_zoom_velocity_span # %
-				var camera_zoom_span: float = abs(camera_max_zoom - camera_min_zoom)
-				# dobljen procent zasedenosti vel span, apliciram na procenz zoom spana 
-				var camera_zoom_adon_in_span: float = camera_zoom_span * target_speed_part_in_span
-				zoom.x = lerp(zoom.x, camera_min_zoom + camera_zoom_adon_in_span, camera_zoom_speed_factor)
-			# če je zunaj zoom območja lerpam do minimum zooma
+	if not test_ui.test_view_on:
+		if follow_target:
+	#	if follow_target:
+			position = follow_target.global_position
+			
+			# zoom
+			if follow_target.is_in_group(Ref.group_bolts) and not follow_target.bolt_velocity == null:
+				var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
+				# če je nad min limit
+				if follow_target_speed > min_target_zoom_speed:
+					var max_zoom_velocity_span: float = abs(max_target_zoom_speed - min_target_zoom_speed)
+					 # vel, čez min span limit, nam da procent zasedenosti zoom spanao 
+					var target_speed_part_in_span: float = (follow_target_speed - min_target_zoom_speed) / max_zoom_velocity_span # %
+					var camera_zoom_span: float = abs(camera_max_zoom - camera_min_zoom)
+					# dobljen procent zasedenosti vel span, apliciram na procenz zoom spana 
+					var camera_zoom_adon_in_span: float = camera_zoom_span * target_speed_part_in_span
+					zoom.x = lerp(zoom.x, camera_min_zoom + camera_zoom_adon_in_span, camera_zoom_speed_factor)
+				# če je zunaj zoom območja lerpam do minimum zooma
+				else:
+					zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
 			else:
-				zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
-		else:
-			zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor) # RFK ... podvajanje
+				zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor) # RFK ... podvajanje
 
-	# default zoom ... lerp za mehkobo prehodov
-	zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
-	zoom.x = clamp(zoom.x, camera_min_zoom, camera_max_zoom)
-	zoom.y = zoom.x
+		# default zoom ... lerp za mehkobo prehodov
+		zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
+		zoom.x = clamp(zoom.x, camera_min_zoom, camera_max_zoom)
+		zoom.y = zoom.x
 
 
 func _on_follow_target_change(new_follow_target):
 	
-	set_follow_smoothing(3)
-	follow_target = new_follow_target
+	if not new_follow_target == null:
+		if new_follow_target.is_in_group(Ref.group_bolts) or Ref.game_manager.game_on: # OPT ... kamera - hitrost setanja poizicije 
+			var transition_time: float = 2 
+			var transition_tween = get_tree().create_tween()
+			transition_tween.tween_property(self, "position", new_follow_target.position, transition_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+			yield(transition_tween, "finished")
+			follow_target = new_follow_target
+	else:
+		follow_target = new_follow_target
 	
+
 	
 func shake_camera(shake_power: float):
 #	print("shake izklopljen")

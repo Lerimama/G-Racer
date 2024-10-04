@@ -1,7 +1,6 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=18 format=2]
 
-[ext_resource path="res://common/tex/gradball_8_bulky.png" type="Texture" id=1]
-[ext_resource path="res://common/tex/gradball_16.png" type="Texture" id=2]
+[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=2]
 [ext_resource path="res://common/ShadowSprite.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/ammo/bullet/bullet.png" type="Texture" id=4]
 [ext_resource path="res://assets/sounds/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=5]
@@ -11,19 +10,19 @@
 
 [sub_resource type="CanvasItemMaterial" id=4]
 
-[sub_resource type="Gradient" id=5267]
-offsets = PoolRealArray( 0, 0.0779221, 0.17094, 0.350649, 0.649842, 1 )
-colors = PoolColorArray( 0, 0, 0, 0, 0, 0, 0, 0.231373, 0.396078, 0.396078, 0.396078, 0.627451, 0.658824, 0.658824, 0.658824, 0.627451, 0.763184, 0.763184, 0.763184, 0.470588, 0.675293, 0.675293, 0.675293, 0 )
+[sub_resource type="Gradient" id=5283]
+offsets = PoolRealArray( 0, 0.348485, 0.731061 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.886719, 0.886719, 0.886719, 1, 0.914062, 0.914062, 0.914062, 1 )
 
-[sub_resource type="GradientTexture" id=5279]
-gradient = SubResource( 5267 )
+[sub_resource type="GradientTexture" id=5284]
+gradient = SubResource( 5283 )
 
-[sub_resource type="Curve" id=5271]
+[sub_resource type="Curve" id=5285]
 max_value = 2.0
-_data = [ Vector2( 0, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 0.697885, 2 ), 4.62937, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 0.418251, 1.9 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.309091 ), -0.878293, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=5280]
-curve = SubResource( 5271 )
+[sub_resource type="CurveTexture" id=5286]
+curve = SubResource( 5285 )
 
 [sub_resource type="ParticlesMaterial" id=5272]
 lifetime_randomness = 0.43
@@ -32,20 +31,19 @@ direction = Vector3( -1, 0, 0 )
 spread = 0.0
 gravity = Vector3( 0, 0, 0 )
 initial_velocity = 10.0
-angular_velocity = -289.45
+angular_velocity = 10.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 radial_accel = 6.03
-scale = 0.5
-scale_curve = SubResource( 5280 )
-color = Color( 1, 1, 1, 0.345098 )
-color_ramp = SubResource( 5279 )
+scale = 0.3
+scale_curve = SubResource( 5286 )
+color_ramp = SubResource( 5284 )
 
 [sub_resource type="CanvasItemMaterial" id=3]
 blend_mode = 1
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 0.5, 0.2 )
+extents = Vector2( 1, 0.3 )
 
 [sub_resource type="AudioStreamRandomPitch" id=5275]
 audio_stream = ExtResource( 5 )
@@ -58,6 +56,7 @@ audio_stream = ExtResource( 8 )
 script = ExtResource( 7 )
 
 [node name="Shadow" parent="." instance=ExtResource( 3 )]
+visible = false
 position = Vector2( 2, 0 )
 shadow_casting_node_path = NodePath("../Sprite")
 
@@ -67,15 +66,15 @@ position = Vector2( -2, 0 )
 [node name="SmokeParticles" type="Particles2D" parent="."]
 material = SubResource( 4 )
 position = Vector2( -2, 0 )
-emitting = false
-amount = 50
+amount = 100
 randomness = 1.0
 local_coords = false
 process_material = SubResource( 5272 )
-texture = ExtResource( 1 )
+texture = ExtResource( 2 )
 
 [node name="ThrustParticles" type="Particles2D" parent="."]
 material = SubResource( 3 )
+position = Vector2( -4, 0 )
 amount = 3
 lifetime = 0.05
 randomness = 1.0
@@ -83,11 +82,12 @@ process_material = ExtResource( 6 )
 texture = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 1, 0.5 )
+position = Vector2( 0, 2 )
+scale = Vector2( 4, 4 )
 texture = ExtResource( 4 )
 
 [node name="BulletCollision" type="CollisionShape2D" parent="."]
-position = Vector2( 0.5, -5.96046e-08 )
+position = Vector2( -5.96046e-08, -5.96046e-08 )
 scale = Vector2( 5, 10 )
 shape = SubResource( 2 )
 disabled = true

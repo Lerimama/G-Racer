@@ -1,85 +1,89 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=1]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=4]
-[ext_resource path="res://game/levels/LevelShapeSSD.gd" type="Script" id=5]
-[ext_resource path="res://game/levels/terrain/mountain/mountain_SSD.tres" type="Resource" id=6]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=5]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=6]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=7]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=8]
+[ext_resource path="res://game/levels/level_shape/LevelShapeSSD.gd" type="Script" id=9]
+[ext_resource path="res://game/levels/level_shape/edge.png" type="Texture" id=10]
 
-[sub_resource type="Resource" id=1]
+[sub_resource type="Resource" id=1824]
 script = ExtResource( 4 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=2]
+[sub_resource type="Resource" id=1825]
 script = ExtResource( 2 )
 position = Vector2( 8.0867, 488.734 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 1 )
+properties = SubResource( 1824 )
 
-[sub_resource type="Resource" id=3]
+[sub_resource type="Resource" id=1826]
 script = ExtResource( 4 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=4]
+[sub_resource type="Resource" id=1827]
 script = ExtResource( 2 )
 position = Vector2( 662.493, 4.45773 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 3 )
+properties = SubResource( 1826 )
 
-[sub_resource type="Resource" id=5]
+[sub_resource type="Resource" id=1828]
 script = ExtResource( 4 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=6]
+[sub_resource type="Resource" id=1829]
 script = ExtResource( 2 )
 position = Vector2( 3.41457, 2.68796 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 5 )
+properties = SubResource( 1828 )
 
-[sub_resource type="Resource" id=7]
+[sub_resource type="Resource" id=1830]
 script = ExtResource( 4 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=8]
+[sub_resource type="Resource" id=1831]
 script = ExtResource( 2 )
 position = Vector2( 8.0867, 488.734 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 7 )
+properties = SubResource( 1830 )
 
-[sub_resource type="Resource" id=9]
+[sub_resource type="Resource" id=1832]
 script = ExtResource( 4 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=10]
+[sub_resource type="Resource" id=1833]
 script = ExtResource( 2 )
 position = Vector2( 654.739, 478.33 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 9 )
+properties = SubResource( 1832 )
 
-[sub_resource type="Resource" id=11]
+[sub_resource type="Resource" id=1834]
 script = ExtResource( 1 )
 _points = {
-0: SubResource( 2 ),
-1: SubResource( 4 ),
-2: SubResource( 6 ),
-3: SubResource( 8 ),
-4: SubResource( 10 )
+0: SubResource( 1825 ),
+1: SubResource( 1827 ),
+2: SubResource( 1829 ),
+3: SubResource( 1831 ),
+4: SubResource( 1833 )
 }
 _point_order = [ 3, 2, 1, 4, 0 ]
 _constraints = {
@@ -88,6 +92,56 @@ _constraints = {
 _next_key = 31
 _material_overrides = {
 }
+
+[sub_resource type="Resource" id=1821]
+script = ExtResource( 7 )
+textures = [ ExtResource( 10 ) ]
+texture_normals = [  ]
+textures_corner_outer = [  ]
+textures_corner_inner = [  ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = false
+use_taper_texture = false
+fit_mode = 0
+
+[sub_resource type="Resource" id=1809]
+script = ExtResource( 8 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=1822]
+script = ExtResource( 6 )
+edge_material = SubResource( 1821 )
+normal_range = SubResource( 1809 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 1.0
+
+[sub_resource type="Gradient" id=650]
+offsets = PoolRealArray( 0.465278 )
+colors = PoolColorArray( 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=160]
+gradient = SubResource( 650 )
+
+[sub_resource type="Resource" id=1823]
+script = ExtResource( 5 )
+_edge_meta_materials = [ SubResource( 1822 ) ]
+fill_textures = [ SubResource( 160 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
 
 [sub_resource type="Shader" id=12]
 code = "shader_type canvas_item;
@@ -236,7 +290,7 @@ shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
 
 [node name="LevelShapeSSD" type="StaticBody2D"]
 modulate = Color( 0, 0, 0, 1 )
-script = ExtResource( 5 )
+script = ExtResource( 9 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -244,8 +298,8 @@ use_shader_shadow = false
 
 [node name="ObjectShapeSSD" type="Node2D" parent="."]
 script = ExtResource( 3 )
-_points = SubResource( 11 )
-shape_material = ExtResource( 6 )
+_points = SubResource( 1834 )
+shape_material = SubResource( 1823 )
 tessellation_stages = 5
 tessellation_tolerence = 4.0
 flip_edges = false
@@ -256,7 +310,7 @@ collision_polygon_node_path = NodePath("../CollisionPolygon2D")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
-polygon = PoolVector2Array( 7.98367, 488.84, 3.30911, 2.58323, 662.599, 4.35349, 654.838, 478.43 )
+polygon = PoolVector2Array( 7.98367, 488.84, 3.30911, 2.58323, 662.599, 4.35345, 654.839, 478.43 )
 
 [node name="ShadowShader" type="ColorRect" parent="."]
 material = SubResource( 13 )

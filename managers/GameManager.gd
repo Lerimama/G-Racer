@@ -106,12 +106,16 @@ func set_game():
 	
 	# playing field
 	Ref.game_arena.playing_field.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		#		Ref.game_arena.playing_field.screen_edge_collision.disabled = false
-		Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", false)
-	else:
-		#		Ref.game_arena.playing_field.screen_edge_collision.disabled = true
-		Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", true)
+	match Ref.current_level.level_type:
+		Ref.current_level.LEVEL_TYPE.BATTLE:
+			Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", false)
+			Ref.game_arena.playing_field.screen_area.set_deferred("monitoring", false)
+		Ref.current_level.LEVEL_TYPE.CHASE:
+			Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", true)
+			Ref.game_arena.playing_field.screen_area.set_deferred("monitoring", false)
+		_:
+			Ref.game_arena.playing_field.screen_area.set_deferred("monitoring", true)
+			Ref.game_arena.playing_field.screen_edge_collision.set_deferred("disabled", true)
 	
 	Ref.current_camera.follow_target = Ref.current_level.start_camera_position_node
 	
@@ -149,15 +153,13 @@ func set_game():
 			Pro.player_profiles[new_player_id]["controller_type"] = Pro.ai_profile["controller_type"]
 #			Pro.player_profiles[new_player_id]["bolt_scene"] = Pro.ai_profile["bolt_scene"]
 			activated_player_ids.append(new_player_id) # da prepoznam v spawn funkciji .... trik pač
-	
 	printt("PLAYERS", activated_player_ids)	
+	
 		
 	# adaptacija količine orožij
-#	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		Pro.default_player_stats["bullet_count"] = 0
-		Pro.default_player_stats["misile_count"] = 0
-		Pro.default_player_stats["mina_count"] = 0
+	Pro.default_player_stats["bullet_count"] = 0
+	Pro.default_player_stats["misile_count"] = 0
+	Pro.default_player_stats["mina_count"] = 0
 	game_settings["full_equip_mode"] = true # debug
 	if game_settings["full_equip_mode"]:
 		Pro.default_player_stats["bullet_count"] = 100
@@ -177,38 +179,35 @@ func game_intro():
 	
 	# pokažem sceno
 	var fade_time: float = 1
-	var setup_delay: float = 1 # delay, da se kamera naštima
+	var setup_delay: float = 0 # delay, da se kamera naštima
 	var fade_tween = get_tree().create_tween()
 	fade_tween.tween_property(get_parent(), "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
 	yield(fade_tween, "finished")
 	
-#	yield(get_tree().create_timer(Set.get_it_time),"timeout")
-	
 	# bolts drive-in
+	var drive_in_time: float = 2
 	for bolt in bolts_in_game:
-		bolt.drive_in()
+		bolt.drive_in(drive_in_time)
+	yield(get_tree().create_timer(drive_in_time),"timeout")
 		
-#	yield(get_tree().create_timer(Set.get_it_time),"timeout")
-
-	# start countdown	
-	Ref.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
-	yield(Ref.current_level.start_lights, "countdown_finished")		
-	
 	start_game()
 
 
 func start_game():
 	
+	# start countdown	
+	if Ref.game_manager.game_settings["start_countdown"]:
+		Ref.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
+		yield(Ref.current_level.start_lights, "countdown_finished")		
+
 	# start
 	for bolt in bolts_in_game:
-		#		bolt.bolt_active = true
 		if bolt.is_in_group(Ref.group_ai):
-			if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-				pass
-			else:
-				bolt.bolt_controller.set_ai_target(bolt.bolt_position_tracker)
-			
-				
+			match Ref.current_level.level_type:
+				Ref.current_level.LEVEL_TYPE.RACE, Ref.current_level.LEVEL_TYPE.RACE_LAPS:
+					bolt.bolt_controller.set_ai_target(bolt.bolt_position_tracker)
+				_:
+					pass
 	Ref.sound_manager.play_music()
 	Ref.hud.on_game_start()
 	
@@ -330,20 +329,21 @@ func set_next_level():
 
 	
 func update_ranking():
-	
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		bolts_in_game.sort_custom(self, "sort_trackers_by_points")
-	else:
-		# najprej sortirami po poziciji trackerja, 
-		# potem naredim array boltov v istem zaporedju
-		# potem razporedim array boltov glede na kroge
-		var bolts_ranked: Array = []
-		var all_bolt_trackers: Array = Ref.current_level.racing_track.get_children()
-		all_bolt_trackers.sort_custom(self, "sort_trackers_by_offset")
-		for bolt_tracker in all_bolt_trackers:
-			bolts_ranked.append(bolt_tracker.tracking_target)
-		bolts_ranked.sort_custom(self, "sort_bolts_by_laps")
-		bolts_in_game = bolts_ranked
+		
+	match Ref.current_level.level_type:
+		Ref.current_level.LEVEL_TYPE.BATTLE, Ref.current_level.LEVEL_TYPE.CHASE:
+			bolts_in_game.sort_custom(self, "sort_trackers_by_points")
+		_:
+			# najprej sortirami po poziciji trackerja, 
+			# potem naredim array boltov v istem zaporedju
+			# potem razporedim array boltov glede na kroge
+			var bolts_ranked: Array = []
+			var all_bolt_trackers: Array = Ref.current_level.racing_track.get_children()
+			all_bolt_trackers.sort_custom(self, "sort_trackers_by_offset")
+			for bolt_tracker in all_bolt_trackers:
+				bolts_ranked.append(bolt_tracker.tracking_target)
+			bolts_ranked.sort_custom(self, "sort_bolts_by_laps")
+			bolts_in_game = bolts_ranked
 
 	for bolt in bolts_in_game:
 		var current_bolt_rank: int = bolts_in_game.find(bolt) + 1
@@ -500,8 +500,12 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 	# setup
 	if Pro.player_profiles[spawned_bolt_id]["controller_type"] == Pro.CONTROLLER_TYPE.AI:
 		new_bolt.bolt_controller.level_navigation_positions = navigation_positions.duplicate()
-	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		new_bolt.bolt_position_tracker = Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
+
+	match Ref.current_level.level_type:
+		Ref.current_level.LEVEL_TYPE.RACE, Ref.current_level.LEVEL_TYPE.RACE_LAPS:
+			new_bolt.bolt_position_tracker = Ref.current_level.racing_track.set_new_bolt_tracker(new_bolt)
+	
+#	if not Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
 	new_bolt.connect("stats_changed", Ref.hud, "_on_stats_changed") # statistika med boltom in hudom
 	emit_signal("bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
 	
@@ -552,16 +556,16 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	if not game_on:
 		return
 	
-	if Ref.current_level.level_type == Ref.current_level.LEVEL_TYPE.BATTLE:
-		# wrap_around all bolts
-		if body.is_in_group(Ref.group_bolts) and body.bolt_active:
-			# body.call_deferred("screen_wrap") # IDE
-			pass
-	else:
+	match Ref.current_level.level_type:
 		# pull player bolt
-		if body.is_in_group(Ref.group_humans) and body.bolt_active:
-			var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
-			body.call_deferred("pull_bolt_on_screen", bolt_pull_position, camera_leader)
+		Ref.current_level.LEVEL_TYPE.RACE, Ref.current_level.LEVEL_TYPE.RACE_LAPS:
+			if body.is_in_group(Ref.group_humans) and body.bolt_active:
+				var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
+				body.call_deferred("pull_bolt_on_screen", bolt_pull_position, camera_leader)
+		# wrap_around all bolts
+		#		_:
+		#			if body.is_in_group(Ref.group_bolts) and body.bolt_active:
+		#				body.call_deferred("screen_wrap") # IDE
 			
 	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
 		body.call_deferred("set_physics_process", false)

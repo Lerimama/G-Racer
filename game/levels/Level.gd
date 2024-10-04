@@ -4,7 +4,7 @@ extends Node2D
 
 signal level_is_set(navigation, spawn_positions, other_)
 
-enum LEVEL_TYPE {RACE, RACE_LAPS, BATTLE}
+enum LEVEL_TYPE {RACE, RACE_LAPS, BATTLE, CHASE}
 export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 
 # navigacija
@@ -22,7 +22,7 @@ onready var level_limits_rect: Panel = $LevelLimits
 onready var race_start: Node2D = $Racing/RaceStart
 onready var start_lights: Node2D = $Racing/RaceStart/StartLights
 onready var start_camera_position_node: Position2D = $Racing/RaceStart/CameraPosition
-onready var start_positions_node: Node2D = $Racing/RaceStart/StartPositions
+onready var start_positions_node: Node2D = $Racing/StartPositions
 onready var drive_in_position: Vector2 = $Racing/RaceStart/DriveInPosition.position
 
 # finish
@@ -38,34 +38,39 @@ func _ready() -> void:
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 
 	# debug
-	for child in $_dummy.get_children():
+	for dummy in $_dummy.get_children():
+		dummy.hide()
+	
+	for child in start_positions_node.get_children():
 		child.hide()
 		
 	match level_type:
 		LEVEL_TYPE.BATTLE:
 			race_start.hide()
-			race_finish.hide()
 			checkpoint.hide()
+			race_finish.hide()
+			finish_line.monitoring = false
 		LEVEL_TYPE.RACE:
 			race_start.show()
-			race_finish.show()
 			checkpoint.hide()
-			race_start.get_node("StartLine").show()	
+			race_finish.show()
+			finish_line.monitoring = true
 		LEVEL_TYPE.RACE_LAPS:
 			race_start.show()
-			race_finish.show()
 			checkpoint.show()
-			race_start.get_node("StartLine").hide()	
+			race_finish.show()
+			finish_line.monitoring = true
+		LEVEL_TYPE.CHASE:
+#			race_start.hide()
+			checkpoint.show()
+#			race_finish.hide()
+			finish_line.monitoring = true
 			
 	# kar je skrito, ne deluje
 	if checkpoint.visible:
 		checkpoint.monitoring = true
 	else: 
 		checkpoint.monitoring = false
-	if race_finish.visible:
-		finish_line.monitoring = true
-	else:
-		finish_line.monitoring = false
 		
 	set_level_objects()
 	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ... 

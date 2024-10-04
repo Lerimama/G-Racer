@@ -72,7 +72,7 @@ func get_level_game_settings(selected_level_index: int):
 	var current_level: int = current_game_levels[selected_level_index]
 	
 	# debug
-	current_game_settings["start_countdown"] = false
+#	current_game_settings["start_countdown"] = false
 	
 	match current_level:
 		# racing
