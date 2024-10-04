@@ -45,7 +45,7 @@ process_material = ExtResource( 7 )
 texture = ExtResource( 4 )
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-polygon = PoolVector2Array( -16, -8, 8, -8, 16, 0, 16, 8, -16, 8 )
+polygon = PoolVector2Array( -16, -8, 8, -8, 8, 8, -16, 8 )
 
 [node name="ThrustOverParticles" type="Particles2D" parent="."]
 modulate = Color( 1, 1, 1, 0.270588 )

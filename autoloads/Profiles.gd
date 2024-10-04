@@ -6,6 +6,7 @@ extends Node
 # AI je komp kontroler
 # HUMAN je človeški kontroller (ARROWS, WASD, JP1, JP2, AI)
 
+func players_and_ai(): pass
 
 var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# bolt stats
@@ -58,7 +59,6 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 }
 
-
 var ai_profile: Dictionary = {
 	# za prepis player profila
 	"controller_type" : CONTROLLER_TYPE.AI,
@@ -74,102 +74,6 @@ var ai_profile: Dictionary = {
 	# ni še implementiran!!!!!!
 	"ai_brake_distance": 0.8, # množenje s hitrostjo
 	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
-}
-
-
-enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
-var bolt_profiles: Dictionary = {
-	BOLT_TYPE.BASIC: {
-#		"bolt_texture": preload("res:///bolt/bolt_alt.png"),
-		"on_hit_disabled_time": 2,
-		"shield_loops_limit": 3,
-		# orig
-		"fwd_engine_power": 320, # 1 - 500 konjev 
-		"rev_engine_power": 150, # 1 - 500 konjev 
-		"turn_angle": 10, # deg per frame
-		"free_rotation_multiplier": 15, # rotacija kadar miruje
-		"side_traction": 0.2, # 0 - 1
-		"bounce_size": 0.5, # 0 - 1 	
-		"mass": 100, # kg
-		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
-		"drag_div": 100.0, # večji pomeni nižjo drag force
-		"fwd_gas_usage": -0.1, # per fram
-		"rev_gas_usage": -0.05, # per fram
-		"tilt_speed": 150, # trenutno off
-		"ai_target_rank": 5,
-		},
-	BOLT_TYPE.RIGID: {
-#		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-		"on_hit_disabled_time": 2,
-		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
-		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
-		"max_engine_power": 320, # 1 - 500 konjev 
-		"gas_usage": -0.1, # per HSP?
-		"idle_motion_gas_usage": -0.05, # per HSP?
-		"ai_target_rank": 5,
-		# fizika
-		"bounce": 0.5,
-		"friction": 0.2,
-		"mass": 30, # 300 kil, front in rear teža se uporablja bolj za razmerje
-		"ang_damp": 32, # ... tudi regulacija driftanja # no drift je 20
-		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
-		"lin_damp_idle": 0.0, 
-		"rear_lin_damp": 3, # regulacija driftanja
-		"max_idle_rotation_speed": 500000, # rotacija okrog osi
-		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
-		"drift_power": 20000,
-		"lin_damp_antidrift": 3,
-		},
-}
-
-
-enum AMMO {BULLET, MISILE, MINA, SHIELD}
-var ammo_profiles : Dictionary = {
-	AMMO.BULLET: {
-		"reload_time": 0.2,
-		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
-		"speed": 1500,
-		"lifetime": 1.0, # domet vedno merim s časom
-		"mass": 0.03, # 300g
-		"direction_start_range": [0, 0] , # natančnost misile
-#		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
-		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
-		"ammo_count_key": "bullet_count", # player stats name
-		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
-	},
-	AMMO.MISILE: {
-		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"hit_damage": 5, # 10 je max energija
-		"speed": 500,
-		"lifetime": 3.2, # domet vedno merim s časom
-		"mass": 1, # 10kg
-		"direction_start_range": [-0.1, 0.1] , # natančnost misile
-		"scene": preload("res://game/ammo/misile/Misile.tscn"),
-		"ammo_count_key": "misile_count",
-		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
-	},
-	AMMO.MINA: {
-		"reload_time": 0.1, #
-		"hit_damage": 5,
-		"speed": 50,
-		"lifetime": 0, # 0 pomeni večno
-		"mass": 0.5, # prilagojeno za učinek na tarčo
-		"direction_start_range": [0, 0] , # natančnost misile
-		"scene": preload("res://game/ammo/mina/Mina.tscn"),
-		"ammo_count_key": "mina_count",
-		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
-	},
-	AMMO.SHIELD: {
-#		"reload_time": 0.1, #
-#		"hit_damage": 5,
-#		"speed": 50,
-		"lifetime": 5, # cikli animacije
-		"scene": preload("res://game/ammo/Shield.tscn"),
-#		"mass": 3,
-#		"direction_start_range": [0, 0] , # natančnost misile
-		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
-	},
 }
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2, AI}
@@ -221,6 +125,105 @@ var controller_profiles : Dictionary = {
 	},
 }
 
+enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
+var bolt_profiles: Dictionary = {
+	BOLT_TYPE.BASIC: {
+#		"bolt_texture": preload("res:///bolt/bolt_alt.png"),
+		"on_hit_disabled_time": 2,
+		"shield_loops_limit": 3,
+		# orig
+		"fwd_engine_power": 320, # 1 - 500 konjev 
+		"rev_engine_power": 150, # 1 - 500 konjev 
+		"turn_angle": 10, # deg per frame
+		"free_rotation_multiplier": 15, # rotacija kadar miruje
+		"side_traction": 0.2, # 0 - 1
+		"bounce_size": 0.5, # 0 - 1 	
+		"mass": 100, # kg
+		"drag": 1.5, # 1 - 10 # raste kvadratno s hitrostjo
+		"drag_div": 100.0, # večji pomeni nižjo drag force
+		"fwd_gas_usage": -0.1, # per fram
+		"rev_gas_usage": -0.05, # per fram
+		"tilt_speed": 150, # trenutno off
+		"ai_target_rank": 5,
+		},
+	BOLT_TYPE.RIGID: {
+#		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
+		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
+		"on_hit_disabled_time": 2,
+		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
+		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
+		"max_engine_power": 320, # 1 - 500 konjev 
+		"gas_usage": -0.1, # per HSP?
+		"idle_motion_gas_usage": -0.05, # per HSP?
+		"ai_target_rank": 5,
+		# fizika
+		"bounce": 0.5,
+		"friction": 0.2,
+		"mass": 30, # 300 kil, front in rear teža se uporablja bolj za razmerje
+		"ang_damp": 32, # ... tudi regulacija driftanja # no drift je 20
+		"lin_damp_driving": 2, # imam ga za omejitev slajdanja prvega kolesa
+		"lin_damp_idle": 0.0, 
+		"rear_lin_damp": 3, # regulacija driftanja
+		"max_idle_rotation_speed": 500000, # rotacija okrog osi
+		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
+		"drift_power": 20000,
+		"lin_damp_antidrift": 3,
+		},
+}
+
+
+func ammo(): pass
+
+enum AMMO {BULLET, MISILE, MINA, SHIELD}
+var ammo_profiles : Dictionary = {
+	AMMO.BULLET: {
+		"reload_time": 0.2,
+		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
+		"speed": 1500,
+		"lifetime": 1.0, # domet vedno merim s časom
+		"mass": 0.03, # 300g
+		"direction_start_range": [0, 0] , # natančnost misile
+#		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
+		"scene": preload("res://game/ammo/bullet/Bullet.tscn"),
+		"ammo_count_key": "bullet_count", # player stats name
+		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
+	},
+	AMMO.MISILE: {
+		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
+		"hit_damage": 5, # 10 je max energija
+		"speed": 500,
+		"lifetime": 3.2, # domet vedno merim s časom
+		"mass": 1, # 10kg
+		"direction_start_range": [-0.1, 0.1] , # natančnost misile
+		"scene": preload("res://game/ammo/misile/Misile.tscn"),
+		"ammo_count_key": "misile_count",
+		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
+	},
+	AMMO.MINA: {
+		"reload_time": 0.1, #
+		"hit_damage": 5,
+		"speed": 50,
+		"lifetime": 0, # 0 pomeni večno
+		"mass": 0.5, # prilagojeno za učinek na tarčo
+		"direction_start_range": [0, 0] , # natančnost misile
+		"scene": preload("res://game/ammo/mina/Mina.tscn"),
+		"ammo_count_key": "mina_count",
+		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
+	},
+	AMMO.SHIELD: {
+#		"reload_time": 0.1, #
+#		"hit_damage": 5,
+#		"speed": 50,
+		"lifetime": 5, # cikli animacije
+		"scene": preload("res://game/ammo/Shield.tscn"),
+#		"mass": 3,
+#		"direction_start_range": [0, 0] , # natančnost misile
+		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
+	},
+}
+
+
+func levels(): pass
 
 enum LEVEL_AREA {AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING}
 var level_areas_profiles: Dictionary = {
@@ -245,7 +248,6 @@ var level_areas_profiles: Dictionary = {
 		"area_scene": preload("res://game/levels/areas/AreaTracking.tscn"),
 	},
 }
-
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, BRICK_LIGHT, GOAL_PILLAR}
 var level_object_profiles: Dictionary = { 
@@ -297,12 +299,15 @@ var level_object_profiles: Dictionary = {
 }
 
 
+func pickables(): pass
+
 enum PICKABLE{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA, PICKABLE_SHIELD, 
 	PICKABLE_ENERGY, PICKABLE_LIFE, PICKABLE_GAS, PICKABLE_POINTS
 	PICKABLE_NITRO, PICKABLE_TRACKING, 
 	PICKABLE_RANDOM
 	}
+	
 var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_BULLET: {
 		"in_random_selection": true, # vključeno v random izbor?

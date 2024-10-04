@@ -3,6 +3,7 @@ class_name Mina
 
 
 export var height: float = 0 # PRO
+export var elevation: float = 2 # PRO rabi jo senčka
 
 var spawner: Node
 var spawner_color: Color
@@ -15,7 +16,6 @@ var is_expanded: bool = false
 var detect_expand_size: float = 3.5 # doseg šoka
 
 onready var detect_area: Area2D = $DetectArea
-onready var mina_sprite: AnimatedSprite = $AnimSprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 
@@ -27,13 +27,12 @@ onready var lifetime: float = 0 #weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 onready var MisileHit = preload("res://game/ammo/misile/MisileHit.tscn")
-onready var elevation: float = 1 # PRO rabi jo senčka
 
 
 func _ready() -> void:
 	
 	add_to_group(Ref.group_mine)
-	modulate = spawner_color
+#	modulate = spawner_color
 	
 	drop_direction = -transform.x # rikverc na osi x
 	
@@ -53,7 +52,6 @@ func _physics_process(delta: float) -> void:
 func activate():
 	
 	detect_area.monitoring = true
-	#	mina_sprite.play("loop")
 	if lifetime > 0:
 		active_timer.start(lifetime)
 
@@ -87,11 +85,6 @@ func _on_ActiveTimer_timeout() -> void:
 		if body.has_method("on_hit") and body != spawner:
 			body.on_hit(self)
 			
-	#	mina_sprite.play("deactivate")
-	#	var deactivate_tween = get_tree().create_tween() # tween dam zato, da se animacija lahko odvije
-	#	deactivate_tween.tween_property(detect_area, "scale", Vector2.ZERO, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	#	deactivate_tween.tween_callback(self, "queue_free")
-
 
 # kvefri
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
@@ -112,6 +105,4 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 			explode()
 			# animacije
 			#		animation_player.play("shockwave_mina")
-			#		mina_sprite.stop()
-			#		mina_sprite.visible = false
 			body.on_hit(self)

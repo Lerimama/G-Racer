@@ -1,8 +1,9 @@
 extends RigidBody2D
 class_name Bullet
 
+
 export var height: float = 0 # PRO
-#export var elevation: float = 10 # PRO
+onready var elevation: float = spawner.elevation + 4 # PRO rabi jo senčka
 
 var spawner: Node
 var spawner_color: Color
@@ -28,9 +29,6 @@ onready var bullet_mass: float = ammo_profile["mass"]
 onready var speed: float = 3200 #ammo_profile["speed"] # PRO
 onready var vision_ray: RayCast2D = $VisionRay
 onready var collision_shape: CollisionShape2D = $BulletCollision
-
-# neu
-onready var elevation: float = spawner.elevation + 4 # PRO rabi jo senčka
 
 
 func _ready() -> void:

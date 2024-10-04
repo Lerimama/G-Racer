@@ -12,10 +12,12 @@ onready var icon_texture: Texture = Pro.pickable_profiles[pickable_key]["icon_sc
 onready var pickable_altitude: float = Pro.pickable_profiles[pickable_key]["altitude"]
 onready var ai_target_rank: int = Pro.pickable_profiles[pickable_key]["ai_target_rank"]
 onready var icon: Sprite = $Icon
-onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
+onready var detect_area: CollisionShape2D = $CollisionShape2D
 onready var pickable_shadow: Sprite = $PickableShadow
+#onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
 #onready var sounds: Node = $Sounds
 #onready var sound_picked: AudioStreamPlayer = $Sounds/PickedDefault
+onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 
 func _ready() -> void:
@@ -25,6 +27,7 @@ func _ready() -> void:
 #	icon.texture = icon_texture
 	modulate = pickable_color
 #	pickable_shadow.shadow_distance = pickable_altitude
+	animation_player.play("edge_rotate")
 
 	
 func _on_Item_body_entered(body: Node) -> void:

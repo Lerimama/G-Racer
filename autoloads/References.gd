@@ -58,10 +58,10 @@ var color_brick_bouncer = Color.purple
 var color_brick_light_off = Color.violet
 var color_brick_light_on = Color.greenyellow
 
-var color_pickable_random = Color.pink 
-var color_pickable_stat = Color.black
-var color_pickable_feature = Color.white
-var color_pickable_ammo = Color.yellow
+var color_pickable_random = Color.red 
+var color_pickable_stat = Color.red
+var color_pickable_feature = Color.yellow
+var color_pickable_ammo = Color.black
 
 # gui colors
 var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi

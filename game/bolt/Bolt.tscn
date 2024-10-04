@@ -204,8 +204,18 @@ visible = false
 position = Vector2( -25, 0 )
 ammo_key = 2
 
-[node name="Launcher" parent="." instance=ExtResource( 21 )]
-position = Vector2( 16, -56 )
+[node name="LauncherL" parent="." instance=ExtResource( 21 )]
+position = Vector2( 8, -56 )
+ammo_key = 1
+
+[node name="FireCoverParticles" parent="LauncherL/WeaponSprite" index="2"]
+position = Vector2( 8, -4 )
+
+[node name="SmokeParticles" parent="LauncherL/WeaponSprite" index="3"]
+position = Vector2( 8, -4 )
+
+[node name="LauncherR" parent="." instance=ExtResource( 21 )]
+position = Vector2( 8, 64 )
 ammo_key = 1
 
 [node name="BoltHud" type="Node2D" parent="."]
@@ -450,3 +460,4 @@ bus = "GameSfx"
 [connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
 
 [editable path="ShadowViewport/Chassis"]
+[editable path="LauncherL"]

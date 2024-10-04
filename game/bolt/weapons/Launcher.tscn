@@ -1,7 +1,23 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/bolt/weapons/Weapon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/bolt/weapons/misile_fire_particles_material.tres" type="Material" id=4]
+
+[sub_resource type="Animation" id=5278]
+resource_name = "knockback"
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("WeaponSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.05, 1 ),
+"transitions": PoolRealArray( 1, 0.307786, 2.46229 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -8, 0 ), Vector2( 0, 0 ) ]
+}
 
 [node name="Launcher" instance=ExtResource( 1 )]
 
@@ -14,7 +30,7 @@ process_material = ExtResource( 4 )
 
 [node name="Polygon2D" parent="WeaponSprite" index="1"]
 show_behind_parent = true
-polygon = PoolVector2Array( 8, 0, 8, -8, 0, -8, 0, -10, -10, -10, -10, -8, -32, -8, -40, 8, 0, 8, 0, 0 )
+polygon = PoolVector2Array( 8, 0, 8, -8, -32, -8, -32, 0 )
 
 [node name="FireCoverParticles" parent="WeaponSprite" index="2"]
 position = Vector2( 9, -4 )
@@ -29,3 +45,6 @@ scale = Vector2( 1.2, 1.2 )
 
 [node name="ShootingPosition" parent="WeaponSprite" index="4"]
 position = Vector2( 0, -4.00001 )
+
+[node name="AnimationPlayer" parent="." index="2"]
+anims/knockback = SubResource( 5278 )

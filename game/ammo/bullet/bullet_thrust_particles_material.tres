@@ -12,5 +12,5 @@ initial_velocity = 60.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 radial_accel = -86.92
-scale = 0.5
+scale = 0.3
 color_ramp = ExtResource( 1 )

@@ -8,11 +8,13 @@ var spawner_color: Color
 var spawner_speed: float
 var in_spawner_area: bool =  true
 
+export var height: float = 0
+onready var elevation: float = spawner.elevation + 3 # PRO rabi jo senčka
+
 # gibanje
-export var height: float = 0 # PRO
+#export var height: float = 0 # PRO
 export var start_speed: float = 10.0
 var speed: float = 0
-
 var is_dissarmed: bool = false
 var velocity: Vector2
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
@@ -47,7 +49,6 @@ onready var max_speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
-onready var elevation: float = spawner.elevation + 3 # PRO rabi jo senčka
 
 
 func _ready() -> void:
@@ -55,7 +56,7 @@ func _ready() -> void:
 	randomize()
 	
 	add_to_group(Ref.group_misiles)
-	$Sprite.modulate = spawner_color
+#	$Sprite.modulate = spawner_color
 	collision_shape.set_deferred("disabled", true) # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 		
 	$Sounds/MisileShoot.play()	

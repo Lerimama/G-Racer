@@ -15,7 +15,7 @@ offset = Vector2( 0.381001, 0.499999 )
 [node name="DriveTrain" type="Node2D" parent="."]
 
 [node name="FrontEngine" type="Node2D" parent="DriveTrain"]
-position = Vector2( 72, 0 )
+position = Vector2( 64, 0 )
 
 [node name="ThrustL" parent="DriveTrain/FrontEngine" instance=ExtResource( 2 )]
 position = Vector2( 0, -56 )
@@ -56,5 +56,4 @@ polygon = PoolVector2Array( 16, -16, 32, -40, 40, -24, 56, -40, 56, -24, 72, -32
 
 [node name="Šipa" type="Polygon2D" parent="."]
 position = Vector2( 27, 0 )
-color = Color( 1, 1, 1, 0.439216 )
 polygon = PoolVector2Array( -16, -32, 0, -32, 0, 32, -16, 32 )

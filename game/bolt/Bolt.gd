@@ -102,7 +102,7 @@ onready var direction_line: Line2D = $DirectionLine
 var height: float = 0 # PRO
 var elevation: float = 7 # PRO
 onready var bolt_hud: Node2D = $BoltHud
-onready var available_weapons: Array = [$Turret, $Dropper, $Launcher]
+onready var available_weapons: Array = [$Turret, $Dropper, $LauncherL, $LauncherR]
 onready var bolt_sprite: Sprite = $Chassis/BoltSprite
 onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
 

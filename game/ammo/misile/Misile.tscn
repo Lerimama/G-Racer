@@ -1,53 +1,81 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://game/ammo/misile/Misile.gd" type="Script" id=1]
-[ext_resource path="res://game/ammo/misile/misile.png" type="Texture" id=2]
+[ext_resource path="res://game/ammo/tex/ammo_atlas.png" type="Texture" id=2]
 [ext_resource path="res://assets/sounds/sfx/misile_shoot.wav" type="AudioStream" id=3]
 [ext_resource path="res://assets/sounds/sfx/misile_flight.wav" type="AudioStream" id=4]
 [ext_resource path="res://assets/sounds/_zaloga/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=5]
 [ext_resource path="res://common/ShadowSprite.tscn" type="PackedScene" id=6]
-[ext_resource path="res://common/tex/gradball_8_bulky.png" type="Texture" id=7]
-[ext_resource path="res://common/tex/gradball_16.png" type="Texture" id=8]
+[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=7]
 [ext_resource path="res://game/ammo/bullet/bullet_thrust_particles_material.tres" type="Material" id=9]
 [ext_resource path="res://assets/sounds/sfx/weapon_reload_short___432141__maximbomba__rifle-or-shotgun-reload.wav" type="AudioStream" id=10]
 [ext_resource path="res://assets/sounds/sfx/misile_hit.wav" type="AudioStream" id=11]
+[ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=12]
 
-[sub_resource type="CanvasItemMaterial" id=5275]
+[sub_resource type="Image" id=5294]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 ),
+"format": "RGBA8",
+"height": 24,
+"mipmaps": false,
+"width": 9
+}
 
-[sub_resource type="Gradient" id=5276]
-offsets = PoolRealArray( 0, 0.0779221, 0.17094, 0.350649, 0.649842, 1 )
-colors = PoolColorArray( 0, 0, 0, 0, 0, 0, 0, 0.231373, 0.396078, 0.396078, 0.396078, 0.627451, 0.658824, 0.658824, 0.658824, 0.627451, 0.763184, 0.763184, 0.763184, 0.470588, 0.675293, 0.675293, 0.675293, 0 )
+[sub_resource type="ImageTexture" id=5285]
+flags = 1
+flags = 1
+image = SubResource( 5294 )
+size = Vector2( 9, 24 )
+script = ExtResource( 12 )
+atlas = ExtResource( 2 )
+region = Rect2( 16, 0, 9, 24 )
+margin = Rect2( 0, 0, 0, 0 )
+margin_color = Color( 1, 1, 1, 0 )
+repeat = false
 
-[sub_resource type="GradientTexture" id=5282]
-gradient = SubResource( 5276 )
+[sub_resource type="Gradient" id=5283]
+offsets = PoolRealArray( 0, 0.348485, 0.731061 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.886719, 0.886719, 0.886719, 1, 0.914062, 0.914062, 0.914062, 1 )
 
-[sub_resource type="Curve" id=5281]
+[sub_resource type="GradientTexture" id=5284]
+gradient = SubResource( 5283 )
+
+[sub_resource type="Curve" id=5292]
+min_value = -200.0
+max_value = 200.0
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.5, 200 ), 0.0, 0.0, 0, 0, Vector2( 1, 56.3636 ), 585.455, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5293]
+curve = SubResource( 5292 )
+
+[sub_resource type="Curve" id=5288]
 max_value = 2.0
-_data = [ Vector2( 0, 0.963636 ), 0.0, 0.0, 0, 0, Vector2( 0.734062, 2 ), 4.62937, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 0.418251, 1.9 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.309091 ), -0.878293, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=5283]
-curve = SubResource( 5281 )
+[sub_resource type="CurveTexture" id=5286]
+curve = SubResource( 5288 )
 
-[sub_resource type="ParticlesMaterial" id=5280]
+[sub_resource type="ParticlesMaterial" id=5290]
 lifetime_randomness = 0.43
 flag_disable_z = true
 direction = Vector3( -1, 0, 0 )
 spread = 0.0
 gravity = Vector3( 0, 0, 0 )
-initial_velocity = 10.0
-angular_velocity = -289.45
+initial_velocity = 200.0
+initial_velocity_random = 1.0
+angular_velocity = 10.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
+linear_accel_curve = SubResource( 5293 )
 radial_accel = 6.03
-scale_curve = SubResource( 5283 )
-color = Color( 1, 1, 1, 0.345098 )
-color_ramp = SubResource( 5282 )
+scale = 0.5
+scale_curve = SubResource( 5286 )
+color_ramp = SubResource( 5284 )
 
 [sub_resource type="CanvasItemMaterial" id=5279]
-blend_mode = 1
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 4.5, 1.5 )
+extents = Vector2( 11.5, 5 )
 
 [sub_resource type="CircleShape2D" id=5]
 radius = 144.0
@@ -72,43 +100,46 @@ position = Vector2( -8, -1.5 )
 shadow_casting_node_path = NodePath("../Sprite")
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -8, -1.5 )
-texture = ExtResource( 2 )
+position = Vector2( 6, -4.5 )
+rotation = 1.5708
+texture = SubResource( 5285 )
 centered = false
 
 [node name="SmokeParticles" type="Particles2D" parent="."]
-material = SubResource( 5275 )
-position = Vector2( -9, 0 )
-amount = 100
+position = Vector2( -27, 0 )
+amount = 200
+lifetime = 1.5
 speed_scale = 2.0
 randomness = 1.0
 local_coords = false
-process_material = SubResource( 5280 )
+process_material = SubResource( 5290 )
 texture = ExtResource( 7 )
 
 [node name="ThrustParticles" type="Particles2D" parent="."]
 material = SubResource( 5279 )
-position = Vector2( -7, 0 )
+position = Vector2( -20, 0 )
 scale = Vector2( 3, 3 )
 amount = 3
 lifetime = 0.05
 randomness = 1.0
 process_material = ExtResource( 9 )
-texture = ExtResource( 8 )
+texture = ExtResource( 7 )
 
 [node name="HitPosition" type="Position2D" parent="."]
-position = Vector2( 1, 0 )
+position = Vector2( 3, 0 )
 __meta__ = {
 "_gizmo_extents_": 2.0
 }
 
 [node name="MisileCollision" type="CollisionShape2D" parent="."]
-position = Vector2( -3.5, 0 )
+position = Vector2( -7.5, 0 )
 shape = SubResource( 1 )
 disabled = true
 
 [node name="HommingArea" type="Area2D" parent="."]
+visible = false
 __meta__ = {
+"_edit_group_": true,
 "_edit_lock_": true
 }
 

@@ -88,7 +88,7 @@ func _on_activate_weapon(selected_weapon_key: int):
 			weapon_selector.show()
 			actived_weapon_key = actived_weapon_key
 			
-		# če je že prižgan, preskočim na naslednjo ikon
+		# če je že prižgan, preskočim na naslednjo ikono
 		else:
 			# loopanje izbire
 			if selected_weapon_key > available_weapons_icons.size() - 1:

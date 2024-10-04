@@ -52,8 +52,8 @@ func _process(delta: float) -> void:
 		smoke_particles.emitting = false
 		fire_particles.emitting = false
 		fire_cover_particles.emitting = false
-		animation_player.stop()
-		
+#		animation_player.stop()
+#
 		
 func shoot():
 	
@@ -62,7 +62,9 @@ func shoot():
 			smoke_particles.emitting = true
 			fire_particles.emitting = true
 			fire_cover_particles.emitting = true
-			animation_player.play("shooting_shake")
+			var current_weapon_animation: String = animation_player.get_animation_list()[1] # 0 je RESET
+			animation_player.play(current_weapon_animation)
+#			animation_player.play("shooting_motion")
 
 		# spawn
 		var new_ammo = AmmoScene.instance()
