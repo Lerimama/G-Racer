@@ -4,7 +4,9 @@ extends Node2D
 var always_visible_mode: bool = true 
 var selector_visibily_time: float = 1
 var available_weapons_icons: Array
-var actived_weapon_key: int = 0 setget _on_activate_weapon # index znotraj aktivnih orožij
+var actived_weapon_key: int = 0 setget _on_activate_selected_weapon # index znotraj aktivnih orožij
+var unselected_weapon_alpha: float = 0.32
+var y_position_offset: float # določi se na glede na pozicijo huda ob ready
 
 onready var weapon_selector: Control = $BoltHudLines/WeaponSelector
 onready var weapon_icons: Array = $BoltHudLines/WeaponSelector.get_children()
@@ -15,6 +17,7 @@ onready var energy_bar_line: ColorRect = $BoltHudLines/EnergyBar/Bar
 
 func _ready() -> void:
 	
+	y_position_offset = position.y
 	weapon_icons.erase(selector_timer) # timer ni ikona
 	call_deferred("set_active_icons")
 	self.set_deferred("actived_weapon_key", 0) # zaporedje je pomembno
@@ -25,7 +28,7 @@ func _process(delta: float) -> void:
 	# manage positions and rotation
 	if visible: # določi bolt
 		rotation = -owner.rotation # negiramo rotacijo bolta, da je pri miru
-		global_position = owner.global_position + Vector2(0, 40)
+		global_position = owner.global_position + Vector2(0, y_position_offset)
 	#	test_hud.rect_global_position = (owner.global_position + Vector2(0, 8))*4 + Vector2(640, 360)# + Vector2(2560, 1440)*0.5
 	
 	# manage energy bar
@@ -40,7 +43,7 @@ func _process(delta: float) -> void:
 	if weapon_selector.visible:
 		set_active_icons()
 		for active_icon in available_weapons_icons:
-			active_icon.get_node("Label").text = "%02d" % get_weapon_stat_value(active_icon)
+			active_icon.get_node("CountLabel").text = "%02d" % get_weapon_stat_value(active_icon)
 	
 
 func set_active_icons():
@@ -79,7 +82,7 @@ func get_weapon_stat_value(weapon_icon: Control):
 	return weapon_stat		
 
 
-func _on_activate_weapon(selected_weapon_key: int):
+func _on_activate_selected_weapon(selected_weapon_key: int):
 	
 	if not available_weapons_icons.empty():
 		
@@ -103,11 +106,9 @@ func _on_activate_weapon(selected_weapon_key: int):
 			if actived_weapon_key == available_weapons_icons.find(icon):
 				icon.modulate.a = 1
 				icon.get_node("IconEdge").show()
-				#				icon.get_node("Label").show()
 			else:
-				icon.modulate.a = 0.5
+				icon.modulate.a = unselected_weapon_alpha
 				icon.get_node("IconEdge").hide()
-				#				icon.get_node("Label").hide()
 		
 		# konvertam index med aktivnimi orožji v index med vsemi orožji
 		var current_selected_weapon_icon: Control = available_weapons_icons[actived_weapon_key]

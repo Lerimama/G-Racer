@@ -1,0 +1,131 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=2]
+[ext_resource path="res://assets/sounds/sfx/misile_hit.wav" type="AudioStream" id=3]
+
+[sub_resource type="CanvasItemMaterial" id=126]
+
+[sub_resource type="Gradient" id=5278]
+interpolation_mode = 1
+offsets = PoolRealArray( 0, 0.0779221, 0.17094, 0.350649, 0.649842, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 0.695312, 0.695312, 0.695312, 1, 0.449219, 0.449219, 0.449219, 1, 0.242188, 0.242188, 0.242188, 1, 0.47451, 0.47451, 0.47451, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=5268]
+gradient = SubResource( 5278 )
+
+[sub_resource type="Curve" id=5282]
+max_value = 2.0
+_data = [ Vector2( 0, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 0.728, 1.94091 ), 0.0, 0.0, 0, 0, Vector2( 0.989333, 0 ), -1.9697, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5283]
+curve = SubResource( 5282 )
+
+[sub_resource type="ParticlesMaterial" id=5280]
+lifetime_randomness = 0.43
+emission_shape = 2
+emission_box_extents = Vector3( 2, 4, 0 )
+flag_disable_z = true
+direction = Vector3( 1, 1, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 30.0
+initial_velocity_random = 1.0
+angular_velocity = -289.45
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = -10.0
+linear_accel_random = 0.63
+radial_accel = 6.03
+scale_random = 1.0
+scale_curve = SubResource( 5283 )
+color_ramp = SubResource( 5268 )
+
+[sub_resource type="StreamTexture" id=117]
+load_path = "res://.import/animation_exsplosion_blast.png-db75f06ccfde49581cab61edf20379cd.stex"
+
+[sub_resource type="AtlasTexture" id=114]
+atlas = SubResource( 117 )
+region = Rect2( 0, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=115]
+atlas = SubResource( 117 )
+region = Rect2( 32, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=116]
+atlas = SubResource( 117 )
+region = Rect2( 64, 0, 32, 32 )
+
+[sub_resource type="SpriteFrames" id=118]
+animations = [ {
+"frames": [ SubResource( 114 ), SubResource( 115 ), SubResource( 116 ), null ],
+"loop": false,
+"name": "default",
+"speed": 25.0
+} ]
+
+[sub_resource type="CanvasItemMaterial" id=5281]
+blend_mode = 1
+
+[sub_resource type="Gradient" id=124]
+offsets = PoolRealArray( 0, 0.086758, 0.239726, 0.349315, 0.497717, 0.600457, 0.691781, 0.792237, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 1, 0.999223, 0.996133, 1, 1, 0.994899, 0.974621, 1, 1, 0.843137, 0.219608, 1, 1, 0.795241, 0.203637, 1, 1, 0.18457, 0, 1, 0.331879, 0.061255, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture" id=125]
+gradient = SubResource( 124 )
+
+[sub_resource type="Curve" id=121]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.44403, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=122]
+curve = SubResource( 121 )
+
+[sub_resource type="ParticlesMaterial" id=123]
+lifetime_randomness = 0.9
+flag_align_y = true
+flag_rotate_y = true
+flag_disable_z = true
+direction = Vector3( 1, 1, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 120.0
+initial_velocity_random = 0.39
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = -43.8
+damping = 81.57
+damping_random = 0.21
+scale_random = 1.0
+scale_curve = SubResource( 122 )
+color_ramp = SubResource( 125 )
+
+[node name="MisileHit" type="Node2D"]
+
+[node name="SmokeParticles" type="Particles2D" parent="."]
+material = SubResource( 126 )
+emitting = false
+amount = 180
+lifetime = 1.5
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource( 5280 )
+texture = ExtResource( 2 )
+
+[node name="BlastAnimated" type="AnimatedSprite" parent="."]
+frames = SubResource( 118 )
+
+[node name="ExplosionParticles" type="Particles2D" parent="."]
+material = SubResource( 5281 )
+emitting = false
+amount = 60
+lifetime = 0.7
+one_shot = true
+explosiveness = 1.0
+randomness = 0.37
+process_material = SubResource( 123 )
+texture = ExtResource( 2 )
+
+[node name="MisileExplode" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+autoplay = true
+bus = "GameSfx"

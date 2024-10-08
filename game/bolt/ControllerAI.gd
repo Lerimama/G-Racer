@@ -41,8 +41,7 @@ onready var level_navigation_target: NavigationPolygonInstance = Ref.current_lev
 # debug
 onready var direction_line: Line2D = $DirectionLine
 
-# neu
-# hitrosti
+# hitrosti ... še ni v uporabi
 var closeup_engine_power
 var search_engine_power
 var hold_engine_power
@@ -84,7 +83,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	
 	# ko je aktiven dela state_mašina (IDLE), ne pa tudi pogon
-	if controlled_bolt.bolt_active:
+	if controlled_bolt.is_active:
 		
 		ai_state_machine(delta)
 		

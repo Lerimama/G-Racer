@@ -1,0 +1,998 @@
+[gd_scene load_steps=32 format=2]
+
+[ext_resource path="res://_zaloga ... ni v uporabi/shaders/shader_lab/BackgroundShaders.gd" type="Script" id=1]
+
+[sub_resource type="Shader" id=629]
+code = "shader_type canvas_item;
+//render_mode blend_premul_alpha;
+
+// za popravit
+// dodaj kaj dela?
+// dodaj pixelizacijo
+// speed in threshold naj imata slider
+
+
+uniform sampler2D noise_texture;
+uniform float speed1 = 0.02;
+uniform float speed2 = 0.05;
+uniform float threshold_min = 0.5;
+uniform float threshold_max = 0.58;
+
+//uniform float noise_resolution_x = 64.0;
+//uniform float noise_resolution_y = 360.0;
+uniform vec2 node_size = vec2(320, 320);
+
+float random (vec2 st) {
+    return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+void fragment() {
+	
+	vec4 col0 = texture(noise_texture, mod(UV + TIME * speed1, vec2(1, 1)));
+	vec4 col1 = texture(noise_texture, mod(UV + TIME * speed2, vec2(1, 1)));
+	
+	//we apply red channel as alpha
+	col0.a = col0.r;
+	col1.a = col1.r;
+	
+	//step function return 0 if last parameter is < threshold and 1 otherwise
+	//here we want 1 if value between threshold_min and threshold_max
+	//same result as following code:
+//	/*
+	float col = (col0. r + col1.r) / 2.0;
+	if(col > threshold_min && col < threshold_max){
+		COLOR = vec4(1.0, 1.0, 1.0, 1.0);
+	} else {
+		COLOR = vec4(1.0, 1.0, 1.0, 0.0);
+	}
+//	*/
+	vec4 water_color;
+	vec4 pixelated_color;
+	
+	//here we normalize col0 + col1 (/ 2.0) to have result between [0,1]
+	water_color = step(threshold_min, (col0 + col1) / 2.0) * (1.0 - step(threshold_max, (col0 + col1) / 2.0));
+	
+	//as UV is between [0;1] we multiply with noise_resolution factor to have noise_resolution differents values
+	float val = random(floor(UV * node_size.x));
+	pixelated_color = vec4(val,val,val,1.0);
+	COLOR =  mix(pixelated_color, water_color, 0.5);
+	
+	COLOR = water_color;
+}"
+
+[sub_resource type="OpenSimplexNoise" id=604]
+seed = 14
+octaves = 9
+period = 5.7
+persistence = 0.646
+lacunarity = 0.73
+
+[sub_resource type="NoiseTexture" id=605]
+seamless = true
+noise = SubResource( 604 )
+
+[sub_resource type="ShaderMaterial" id=552]
+shader = SubResource( 629 )
+shader_param/speed1 = 0.02
+shader_param/speed2 = 0.04
+shader_param/threshold_min = 0.514
+shader_param/threshold_max = 0.572
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/noise_texture = SubResource( 605 )
+
+[sub_resource type="Shader" id=628]
+code = "shader_type canvas_item;
+
+uniform vec2 node_size = vec2(320, 320); // more bit točen, da so pixli pravih dimenzij
+uniform float timeScaleFactor = 0.04;
+
+// Make sure to use a seamless noise texture
+uniform sampler2D noise_texture;//: repeat_enable, filter_linear;
+
+float localTime() {
+	return TIME * timeScaleFactor;
+}
+
+mat2 makem2(float theta) {
+	float c = cos(theta);
+	float s = sin(theta);
+	return mat2(vec2(c, -s), vec2(s, c));
+}
+
+float noise(vec2 x) {
+	return texture(noise_texture, x * .01).x;
+}
+
+vec2 gradn(vec2 p) {
+	float ep = .09;
+	float gradx = noise(vec2(p.x + ep, p.y)) - noise(vec2(p.x - ep, p.y));
+	float grady = noise(vec2(p.x, p.y + ep)) - noise(vec2(p.x, p.y - ep));
+	return vec2(gradx, grady);
+}
+
+float flow(vec2 p) {
+	float z = 2.;
+	float rz = 0.;
+	vec2 bp = p;
+	
+	for(float i = 1.; i < 7.; ++i) {
+		p += localTime() * .6;
+		bp += localTime() * 1.9;
+		vec2 gr = gradn(i * p * .34 + localTime() * 1.);
+		gr *= makem2(localTime() * 6. - (.05 * p.x + 0.03 * p.y) * 40.);
+		p += gr * .5;
+		rz += (sin(noise(p) * 7.) *.5 + .5) / z;
+		p = mix(bp, p, .77);
+		z *= 1.4;
+		p *= 2.;
+		bp *= 1.9;
+	}
+	return rz;
+}
+
+void fragment() {
+	vec2 resolution = node_size;
+//	vec2 resolution = 1. / SCREEN_PIXEL_SIZE;
+	vec2 fragCoord = FRAGCOORD.xy;
+	fragCoord = vec2(fragCoord.x, resolution.y - fragCoord.y);
+	vec2 p = fragCoord / resolution - 0.5;
+	
+	p.x *= resolution.x / resolution.y;
+	p *= 3.;
+	
+	float rz = flow(p);
+	vec3 col = vec3(.2, .07, .01) / rz;
+	col = pow(col, vec3(1.4));
+	
+	COLOR = vec4(col, 1.0);
+}"
+
+[sub_resource type="OpenSimplexNoise" id=522]
+period = 10.7
+persistence = 0.107
+lacunarity = 1.62
+
+[sub_resource type="NoiseTexture" id=523]
+seamless = true
+noise = SubResource( 522 )
+
+[sub_resource type="ShaderMaterial" id=521]
+shader = SubResource( 628 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/timeScaleFactor = 0.5
+shader_param/noise_texture = SubResource( 523 )
+
+[sub_resource type="Shader" id=627]
+code = "shader_type canvas_item;
+
+uniform vec2 mouse;
+uniform float time;
+
+uniform int iterations = 12;
+uniform float formuparam2 = 0.79;
+uniform float volsteps = 7.0;
+uniform float stepsize = 0.290;
+uniform float zoom = 1.0;
+uniform float tile = 0.850;
+uniform float speed2 = 0.2;
+ 
+uniform float brightness = 0.0015;
+uniform float darkmatter = 0.100;
+uniform float distfading = 0.560;
+uniform float saturation = 0.90;
+
+
+uniform float transverseSpeed = 1.0; //zoom;
+uniform float cloud = 0.17;
+
+ 
+float triangle(float x, float a) { 
+	float output2 = 2.0*abs(  3.0*  ( (x/a) - floor( (x/a) + 0.5) ) ) - 1.0;
+	return output2;
+}
+ 
+float field(in vec3 p) {	
+	float strength = 7. + .03 * log(1.e-6 + fract(sin(time) * 373.11));
+	float accum = 0.;
+	float prev = 0.;
+	float tw = 0.;	
+
+	for (int i = 0; i < 6; ++i) {
+		float mag = dot(p, p);
+		p = abs(p) / mag + vec3(-.5, -.8 + 0.1*sin(-time*0.1 + 2.0), -1.1+0.3*cos(time*0.3));
+		float w = exp(-float(i) / 7.);
+		accum += w * exp(-strength * pow(abs(mag - prev), 2.3));
+		tw += w;
+		prev = mag;
+	}
+	return max(0., 5. * accum / tw - .7);
+}
+
+void fragment() {
+    vec2 uv2 = 2. * FRAGCOORD.xy / vec2(512) - 1.;
+	vec2 uvs = uv2 * vec2(512)  / 512.;
+	
+	//float time = TIME;
+	float time2 = time;               
+    float speed = -speed2;
+    speed = .005 * cos(time2*0.02 + 3.1415926/4.0);          
+	//speed = 0.0;	
+    float formuparam = formuparam2;
+	
+    	//get coords and direction	
+	vec2 uv = uvs;		       
+	//mouse rotation
+	float a_xz = 0.9;
+	float a_yz = -.6;
+	float a_xy = 0.9 + time*0.08;	
+	
+	mat2 rot_xz = mat2(vec2(cos(a_xz),sin(a_xz)),vec2(-sin(a_xz),cos(a_xz)));	
+	mat2 rot_yz = mat2(vec2(cos(a_yz),sin(a_yz)),vec2(-sin(a_yz),cos(a_yz)));		
+	mat2 rot_xy = mat2(vec2(cos(a_xy),sin(a_xy)),vec2(-sin(a_xy),cos(a_xy)));
+	
+	float v2 =1.0;	
+	vec3 dir=vec3(uv*zoom,1.); 
+	vec3 from=vec3(0.0, 0.0,0.0);                               
+        from.x -= 2.0*(mouse.x-0.5);
+        from.y -= 2.0*(mouse.y-0.5);
+
+	vec3 forward = vec3(0.,0.,1.);   
+	from.x += transverseSpeed*(1.0)*cos(0.01*time) + 0.001*time;
+	from.y += transverseSpeed*(1.0)*sin(0.01*time) +0.001*time;
+	from.z += 0.003*time;	
+	
+	dir.xy*=rot_xy;
+	forward.xy *= rot_xy;
+	dir.xz*=rot_xz;
+	forward.xz *= rot_xz;	
+	dir.yz*= rot_yz;
+	forward.yz *= rot_yz;
+	
+	from.xy*=-1.0*rot_xy;
+	from.xz*=rot_xz;
+	from.yz*= rot_yz;
+	 
+	//zoom
+	float zooom = (time2-3311.)*speed;
+	from += forward* zooom;
+	float sampleShift = mod( zooom, stepsize );
+	 
+	float zoffset = -sampleShift;
+	sampleShift /= stepsize; // make from 0 to 1
+	
+	//volumetric rendering
+	float s=0.24;
+	float s3 = s + stepsize/2.0;
+	vec3 v=vec3(0.);
+	float t3 = 0.0;	
+	
+	vec3 backCol2 = vec3(0.);
+	for (float r=0.0; r<volsteps; r++) {
+		vec3 p2=from+(s+zoffset)*dir;// + vec3(0.,0.,zoffset);
+		vec3 p3=from+(s3+zoffset)*dir;// + vec3(0.,0.,zoffset);
+		
+		p2 = abs(vec3(tile)-mod(p2,vec3(tile*2.))); // tiling fold
+		p3 = abs(vec3(tile)-mod(p3,vec3(tile*2.))); // tiling fold		
+		// #ifdef cloud
+		t3 = field(p3);
+		
+		float pa,a=pa=0.;
+		for (int i=0; i<iterations; i++) {
+			p2=abs(p2)/dot(p2,p2)-formuparam; // the magic formula
+			//p=abs(p)/max(dot(p,p),0.005)-formuparam; // another interesting way to reduce noise
+			float D = abs(length(p2)-pa); // absolute sum of average change
+			a += i > 7 ? min( 12., D) : D;
+			pa=length(p2);
+		}
+		
+		
+		//float dm=max(0.,darkmatter-a*a*.001); //dark matter
+		a*=a*a; // add contrast
+		//if (r>3) fade*=1.-dm; // dark matter, don't render near
+		// brightens stuff up a bit
+		float s1 = s+zoffset;
+		// need closed form expression for this, now that we shift samples
+		float fade = pow(distfading,max(0.,float(r)-sampleShift));		
+		//t3 += fade;		
+		v+=fade;
+	       	//backCol2 -= fade;
+
+		// fade out samples as they approach the camera
+		if( r == 0.0 )
+			fade *= (1. - (sampleShift));
+		// fade in samples as they approach from the distance
+		if( r == volsteps-1.0 )
+			fade *= sampleShift;
+		v+=vec3(s1,s1*s1,s1*s1*s1*s1)*a*brightness*fade; // coloring based on distance
+		
+		backCol2 += mix(.4, 1., v2) * vec3(1.8 * t3 * t3 * t3, 1.4 * t3 * t3, t3) * fade;
+
+		
+		s+=stepsize;
+		s3 += stepsize;		
+	}
+		       
+	v = mix(vec3(length(v)),v,saturation); //color adjust	
+
+	vec4 forCol2 = vec4(v*.01,1.);	
+	backCol2 *= cloud;	
+	backCol2.b *= 1.8;
+	backCol2.r *= 0.05;	
+	
+	backCol2.b = 0.5*mix(backCol2.g, backCol2.b, 0.8);
+	backCol2.g = 0.0;
+	backCol2.bg = mix(backCol2.gb, backCol2.bg, 0.5*(cos(time*0.01) + 1.0));	
+	COLOR = forCol2 + vec4(backCol2, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=554]
+shader = SubResource( 627 )
+shader_param/mouse = null
+shader_param/time = null
+shader_param/iterations = 12
+shader_param/formuparam2 = 0.79
+shader_param/volsteps = 7.0
+shader_param/stepsize = 0.29
+shader_param/zoom = 1.0
+shader_param/tile = 0.85
+shader_param/speed2 = 0.2
+shader_param/brightness = 0.0015
+shader_param/darkmatter = 0.1
+shader_param/distfading = 0.56
+shader_param/saturation = 0.9
+shader_param/transverseSpeed = 1.0
+shader_param/cloud = 0.17
+
+[sub_resource type="Shader" id=626]
+code = "shader_type canvas_item;
+
+// KAJ DELA?
+// menja do 3 barve (nima transparentne barve, ker je nikoli ne zazna)
+// ---
+// pixelizira screen na barvi
+// animira screen
+uniform vec2 node_size = vec2(320, 320); // more bit točen, da so pixli pravih dimenzij
+
+// pixelate
+uniform bool pixelate;
+//uniform vec2 node_size = vec2(640, 360);
+uniform	float pixel_size_multiplier = 1.0;
+uniform	vec2 pixel_offset = vec2(0.0, 0.0);
+// animate
+uniform float speed_x : hint_range (-10, 10) = 0;
+uniform float speed_y : hint_range (-10, 10) = 0;
+uniform float speed_scale : hint_range (0, 1, 0.01)= 0.1; // da ni prehitro
+
+
+void fragment() {
+
+	// pixelate
+	vec2 pixelated_uvs = SCREEN_UV;
+	if (pixelate == true) {
+		float xFactor = float(textureSize(SCREEN_TEXTURE, 0).x) / pixel_size_multiplier; // * SCREEN_PIXEL_SIZE.x;
+		float yFactor = float(textureSize(SCREEN_TEXTURE, 0).y) / pixel_size_multiplier;// * SCREEN_PIXEL_SIZE.y;
+		float grid_uv_x = round(SCREEN_UV.x * xFactor + pixel_offset.x) / xFactor;
+		float grid_uv_y = round(SCREEN_UV.y * yFactor + pixel_offset.y) / yFactor;
+		pixelated_uvs = vec2(grid_uv_x, grid_uv_y);
+	}
+	
+	// animate
+	pixelated_uvs.x += TIME * speed_x * speed_scale;
+	pixelated_uvs.y += TIME * speed_y * speed_scale;		
+		
+	COLOR = texture(SCREEN_TEXTURE, pixelated_uvs);
+	
+}"
+
+[sub_resource type="ShaderMaterial" id=553]
+shader = SubResource( 626 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/pixelate = true
+shader_param/pixel_size_multiplier = 16.0
+shader_param/pixel_offset = Vector2( 0, 0 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.0
+shader_param/speed_scale = 0.1
+
+[sub_resource type="Shader" id=571]
+code = "shader_type canvas_item;
+
+// KAJ DELA?
+// menja do 3 barve (nima transparentne barve, ker je nikoli ne zazna)
+// ---
+// all texture color value hue shift (ramp)
+
+// colors
+uniform bool change_colors;
+uniform vec4 color_1: hint_color = vec4(0);
+uniform vec4 new_color_1: hint_color;
+uniform vec4 color_2: hint_color = vec4(0);
+uniform vec4 new_color_2: hint_color;
+uniform vec4 color_3: hint_color = vec4(0);
+uniform vec4 new_color_3: hint_color;
+uniform vec4 color_to_noise: hint_color = vec4(0);
+
+// shading all
+uniform bool shift_colors;
+uniform sampler2D shades_color_ramp : hint_albedo;
+
+
+void fragment() {
+
+
+//	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV);
+	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0); // textura pred editiranjem
+	
+	// COLORS change
+	if (change_colors == true){
+		if (length(COLOR - color_1) < 0.01 ){COLOR = new_color_1;}
+		if (length(COLOR - color_2) < 0.01 ){COLOR = new_color_2;}
+		if (length(COLOR - color_3) < 0.01 ){COLOR = new_color_3;}
+	}
+	
+	// post all color shading
+	if (shift_colors == true){
+		vec3 color_in;
+		float alpha_in;
+		{
+			vec4 TEXTURE_tex_read = COLOR;
+			color_in = TEXTURE_tex_read.rgb;
+			alpha_in = TEXTURE_tex_read.a;
+		}
+		// get the greyscale value through the highest of r, g, and b
+		float color_grey_value; 
+		{
+			vec3 c = color_in.rgb;
+			float max1 = max(c.r, c.g);
+			float max2 = max(max1, c.b);
+			color_grey_value = max2;
+		}
+		// Read the colormap and use the greyscale value to map in the new color.
+		vec3 color_out;
+		float alpha_out;
+		{
+			vec4 n_tex_read = texture(shades_color_ramp, vec2(color_grey_value, 0.0));
+			color_out = n_tex_read.rgb;
+			alpha_out = n_tex_read.a;
+		}
+		// apliciraj barvo
+		COLOR.rgb = color_out;
+		COLOR.a = alpha_out;
+	}
+	
+}"
+
+[sub_resource type="Gradient" id=572]
+colors = PoolColorArray( 0.184314, 0.211765, 0.286275, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=573]
+gradient = SubResource( 572 )
+
+[sub_resource type="ShaderMaterial" id=574]
+shader = SubResource( 571 )
+shader_param/change_colors = null
+shader_param/color_1 = Color( 0, 0, 0, 0 )
+shader_param/new_color_1 = null
+shader_param/color_2 = Color( 0, 0, 0, 0 )
+shader_param/new_color_2 = null
+shader_param/color_3 = Color( 0, 0, 0, 0 )
+shader_param/new_color_3 = null
+shader_param/color_to_noise = Color( 0, 0, 0, 0 )
+shader_param/shift_colors = true
+shader_param/shades_color_ramp = SubResource( 573 )
+
+[sub_resource type="Shader" id=625]
+code = "shader_type canvas_item;
+
+// KAJ DELA?
+// menja do 3 barve
+// menja barvo za prosojnost
+// ---
+// doda noise na texturo
+// pixelizira noise texturo (različne velikosti pixla)
+// animira noise texturo
+// noise samo na določeni barvi (če je menjava barv vključena)
+// noise texture color value hue shift (ramp)
+// ---
+// all texture color value hue shift (ramp)
+// pixelizacija je pravilna, če je vnešena točna dimenzija node texture
+
+
+// colors
+uniform bool change_colors;
+uniform vec4 color_1: hint_color = vec4(0);
+uniform vec4 new_color_1: hint_color = vec4(0);
+uniform vec4 color_2: hint_color = vec4(0);
+uniform vec4 new_color_2: hint_color = vec4(0);
+uniform vec4 color_3: hint_color = vec4(0);
+uniform vec4 new_color_3: hint_color = vec4(0);
+uniform vec4 color_to_transparent: hint_color = vec4(0);
+uniform vec4 color_to_noise: hint_color = vec4(0);
+
+uniform vec2 node_size = vec2(320, 320); // more bit točen, da so pixli pravih dimenzij
+
+// noise
+uniform bool ad_noise; // če je change colors je zbirčen glede barve
+uniform bool shade_noise;
+uniform sampler2D noise;
+uniform sampler2D noise_color_ramp : hint_albedo;
+// pixelate
+uniform bool pixelate_noise;
+uniform	float pixel_size_multiplier = 1.0;
+uniform	vec2 pixel_offset = vec2(0.0, 0.0);
+// animate
+uniform float speed_x : hint_range (-10, 10) = 0;
+uniform float speed_y : hint_range (-10, 10) = 0;
+uniform float speed_scale : hint_range (0, 1, 0.01)= 0.1; // da ni prehitro
+
+// shading all
+uniform bool shade_all_colors;
+uniform sampler2D shades_color_ramp : hint_albedo;
+
+
+void fragment() {
+
+	COLOR = texture(TEXTURE, UV);
+	
+	// COLORS change
+	if (change_colors == true){
+		if (length(COLOR - color_1) < 0.01){COLOR = new_color_1;}
+		if (length(COLOR - color_2) < 0.01){COLOR = new_color_2;}
+		if (length(COLOR - color_3) < 0.01){COLOR = new_color_3;}
+		if (length(COLOR - color_to_transparent) < 0.01){COLOR.a = 0.0;}
+	}
+			
+	// NOISE
+	if (ad_noise == true){
+		
+		// pixelate and animate
+		vec2 noise_uvs;
+		if (pixelate_noise == true) {
+			float xFactor = node_size.x / pixel_size_multiplier;
+			float yFactor = node_size.y / pixel_size_multiplier;
+			float grid_uv_x = round(UV.x * xFactor + pixel_offset.x) / xFactor + TIME * speed_x * speed_scale;
+			float grid_uv_y = round(UV.y * yFactor + pixel_offset.y) / yFactor + TIME * speed_y * speed_scale;
+			noise_uvs = vec2(grid_uv_x, grid_uv_y);
+		} else {
+		// animate
+			noise_uvs.x = UV.x + TIME * speed_x * speed_scale;
+			noise_uvs.y = UV.y + TIME * speed_y * speed_scale;			
+		}
+		
+		vec4 noise_texture = texture(noise, noise_uvs);			
+		vec3 noise_color = noise_texture.rgb;
+		float noise_alpha = noise_texture.a; 
+		
+		// shade noise 
+		if (shade_noise == true){
+			
+			float color_value;
+			// get the greyscale value through the highest of r, g, and b
+			{
+				vec3 c = noise_color.rgb;
+				float max1 = max(c.r, c.g);
+				float max2 = max(max1, c.b);
+				color_value = max2;
+			}
+			
+			vec3 noise_color_out; 
+			float noise_alpha_out;
+			// Read the colormap and use the greyscale value to map in the new color.
+			{
+				vec4 n_tex_read = texture(noise_color_ramp, vec2(color_value, 0.0));
+				noise_color_out = n_tex_read.rgb;
+				noise_alpha_out = n_tex_read.a;
+			}
+	
+			
+			// noise samo na noise barvo ali povsod
+			if (change_colors == true){
+				if (length(COLOR - color_to_noise) < 0.01){
+					COLOR.rgb = noise_color_out;
+					COLOR.a = noise_alpha_out;
+				}
+			} else {
+			// noise je povsod
+				COLOR.rgb = noise_color_out;
+				COLOR.a = noise_alpha_out; //alphaIn;
+			}
+		} else {
+		// noise brez shadinga
+			// noise samo na noise barvo ali povsod
+			if (change_colors == true){
+				if (length(COLOR - color_to_noise) < 0.01){
+					COLOR.rgb = noise_color;
+					COLOR.a = noise_alpha;
+				}
+			} else {
+				COLOR.rgb = noise_color;
+				COLOR.a = noise_alpha; //alphaIn;
+			}
+		}
+	}
+	
+	// post all color shading
+	if (shade_all_colors == true){
+		vec3 color_in;
+		float alpha_in;
+		{
+			vec4 TEXTURE_tex_read = COLOR;
+			color_in = TEXTURE_tex_read.rgb;
+			alpha_in = TEXTURE_tex_read.a;
+		}
+		// get the greyscale value through the highest of r, g, and b
+		float color_grey_value; 
+		{
+			vec3 c = color_in.rgb;
+			float max1 = max(c.r, c.g);
+			float max2 = max(max1, c.b);
+			color_grey_value = max2;
+		}
+		// Read the colormap and use the greyscale value to map in the new color.
+		vec3 color_out;
+		float alpha_out;
+		{
+			vec4 n_tex_read = texture(shades_color_ramp, vec2(color_grey_value, 0.0));
+			color_out = n_tex_read.rgb;
+			alpha_out = n_tex_read.a;
+		}
+		// apliciraj barvo
+		COLOR.rgb = color_out;
+		COLOR.a = alpha_out;
+	}
+	
+}"
+
+[sub_resource type="OpenSimplexNoise" id=617]
+seed = 17
+octaves = 5
+period = 3.2
+persistence = 0.0
+lacunarity = 4.0
+
+[sub_resource type="NoiseTexture" id=614]
+seamless = true
+noise = SubResource( 617 )
+
+[sub_resource type="Gradient" id=618]
+interpolation_mode = 1
+offsets = PoolRealArray( 0, 0.21692, 0.420824, 0.509761, 0.590022, 0.698482 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.111714, 0.111714, 0.111714, 1, 0.223427, 0.223427, 0.223427, 1, 0.472885, 0.472885, 0.472885, 1, 0.698482, 0.698482, 0.698482, 1, 0.881836, 0.881836, 0.881836, 1 )
+
+[sub_resource type="GradientTexture" id=615]
+gradient = SubResource( 618 )
+
+[sub_resource type="Gradient" id=619]
+offsets = PoolRealArray( 0, 0.650735 )
+colors = PoolColorArray( 0.168945, 0.168945, 0.168945, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=616]
+gradient = SubResource( 619 )
+
+[sub_resource type="ShaderMaterial" id=620]
+shader = SubResource( 625 )
+shader_param/change_colors = false
+shader_param/color_1 = Color( 0, 0, 0, 0 )
+shader_param/new_color_1 = Color( 0.996078, 0.976471, 0.545098, 1 )
+shader_param/color_2 = Color( 0, 0, 0, 0 )
+shader_param/new_color_2 = Color( 0, 0, 0, 0 )
+shader_param/color_3 = Color( 0, 0, 0, 0 )
+shader_param/new_color_3 = Color( 0, 0, 0, 0 )
+shader_param/color_to_transparent = Color( 0, 0, 0, 0 )
+shader_param/color_to_noise = Color( 0, 0, 0, 0 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/ad_noise = true
+shader_param/shade_noise = true
+shader_param/pixelate_noise = true
+shader_param/pixel_size_multiplier = 4.0
+shader_param/pixel_offset = Vector2( 0.5, 0.5 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.05
+shader_param/speed_scale = 0.1
+shader_param/shade_all_colors = true
+shader_param/noise = SubResource( 614 )
+shader_param/noise_color_ramp = SubResource( 615 )
+shader_param/shades_color_ramp = SubResource( 616 )
+
+[sub_resource type="Shader" id=624]
+code = "shader_type canvas_item;
+
+// KAJ DELA?
+// menja do 3 barve (nima transparentne barve, ker je nikoli ne zazna)
+// ---
+// doda noise na texturo
+// pixelizira noise texturo (različne velikosti pixla)
+// animira noise texturo
+// noise samo na določeni barvi (če je menjava barv vključena)
+// noise texture color value hue shift (ramp)
+// ---
+// zadnji shading gre na vse barve oz. na je na menjanih izključen (change colors = on)
+// prirejen za tilemap ... greba ekran, manipulira pa teksturo
+
+// colors
+uniform bool change_colors;
+uniform vec4 color_1: hint_color = vec4(0);
+uniform vec4 new_color_1: hint_color;
+uniform vec4 color_2: hint_color = vec4(0);
+uniform vec4 new_color_2: hint_color;
+uniform vec4 color_3: hint_color = vec4(0);
+uniform vec4 new_color_3: hint_color;
+uniform vec4 color_to_noise: hint_color = vec4(0);
+//uniform vec4 color_to_transparent: hint_color = vec4(0);
+
+uniform vec2 node_size =vec2(640,360);
+
+// noise
+uniform bool ad_noise; // če je change colors je zbirčen glede barve
+uniform bool shade_noise;
+uniform sampler2D noise;
+uniform sampler2D noise_color_ramp : hint_albedo;
+// pixelate
+uniform bool pixelate_noise;
+//uniform vec2 node_size = vec2(640, 360);
+uniform	float pixel_size_multiplier = 1.0;
+uniform	vec2 pixel_offset = vec2(0.0, 0.0);
+// animate
+uniform float speed_x : hint_range (-10, 10) = 0;
+uniform float speed_y : hint_range (-10, 10) = 0;
+uniform float speed_scale : hint_range (0, 1, 0.01)= 0.1; // da ni prehitro
+
+// shading all
+uniform bool shade_all_colors;
+uniform sampler2D shades_color_ramp : hint_albedo;
+
+
+void fragment() {
+
+
+//	COLOR = texture(SCREEN_TEXTURE, SCREEN_UV);
+	COLOR = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0); // textura pred editiranjem
+	
+	// COLORS change
+	if (change_colors == true){
+		if (length(COLOR - color_1) < 0.01 ){COLOR = new_color_1;}
+		if (length(COLOR - color_2) < 0.01 ){COLOR = new_color_2;}
+		if (length(COLOR - color_3) < 0.01 ){COLOR = new_color_3;}
+	}
+	
+	// NOISE
+	if (ad_noise == true){
+		
+		// pixelate and animate
+		vec2 noise_uvs;
+		if (pixelate_noise == true) {
+//			float xFactor = node_size.x / pixel_size_multiplier;
+//			float yFactor = node_size.y / pixel_size_multiplier;
+			// varianta, ko se pixel ne resiza z oknom igre
+			float xFactor = float(node_size.x) / pixel_size_multiplier; // * SCREEN_PIXEL_SIZE.x;
+			float yFactor = float(node_size.y) / pixel_size_multiplier;// * SCREEN_PIXEL_SIZE.y;
+//			float xFactor = float(textureSize(SCREEN_TEXTURE, 0).x) / pixel_size_multiplier; // * SCREEN_PIXEL_SIZE.x;
+//			float yFactor = float(textureSize(SCREEN_TEXTURE, 0).y) / pixel_size_multiplier;// * SCREEN_PIXEL_SIZE.y;
+			float grid_uv_x = round(UV.x * xFactor + pixel_offset.x) / xFactor + TIME * speed_x * speed_scale;
+			float grid_uv_y = round(UV.y * yFactor + pixel_offset.y) / yFactor + TIME * speed_y * speed_scale;
+			noise_uvs = vec2(grid_uv_x, grid_uv_y);
+		} else {
+		// animate
+			noise_uvs.x = UV.x + TIME * speed_x * speed_scale;
+			noise_uvs.y = UV.y + TIME * speed_y * speed_scale;			
+		}
+		
+		vec4 noise_texture = texture(noise, noise_uvs);			
+		vec3 noise_color = noise_texture.rgb;
+		float noise_alpha = noise_texture.a; 
+		
+		// shade noise 
+		if (shade_noise == true){
+			
+			float color_value;
+			// get the greyscale value through the highest of r, g, and b
+			{
+				vec3 c = noise_color.rgb;
+				float max1 = max(c.r, c.g);
+				float max2 = max(max1, c.b);
+				color_value = max2;
+			}
+			
+			vec3 noise_color_out; 
+			float noise_alpha_out;
+			// Read the colormap and use the greyscale value to map in the new color.
+			{
+				vec4 n_tex_read = texture(noise_color_ramp, vec2(color_value, 0.0));
+				noise_color_out = n_tex_read.rgb;
+				noise_alpha_out = n_tex_read.a;
+			}
+	
+			
+			// noise samo na noise barvo ali povsod
+			if (change_colors == true){
+				if (length(COLOR - color_to_noise) < 0.01){
+//				if (COLOR == color_to_noise){
+					COLOR.rgb = noise_color_out;
+					COLOR.a = noise_alpha_out;
+				}
+			} else {
+			// noise je povsod
+				COLOR.rgb = noise_color_out;
+				COLOR.a = noise_alpha_out; //alphaIn;
+			}
+		} else {
+		// noise brez shadinga
+			// noise samo na noise barvo ali povsod
+			if (change_colors == true){
+				if (length(COLOR - color_to_noise) < 0.01){
+//				if (COLOR == color_to_noise){
+					COLOR.rgb = noise_color;
+					COLOR.a = noise_alpha;
+				}
+			} else {
+				COLOR.rgb = noise_color;
+				COLOR.a = noise_alpha; //alphaIn;
+			}
+		}
+	}
+	
+	// post all color shading
+	if (shade_all_colors == true){
+		vec3 color_in;
+		float alpha_in;
+		{
+			vec4 TEXTURE_tex_read = COLOR;
+			color_in = TEXTURE_tex_read.rgb;
+			alpha_in = TEXTURE_tex_read.a;
+		}
+		// get the greyscale value through the highest of r, g, and b
+		float color_grey_value; 
+		{
+			vec3 c = color_in.rgb;
+			float max1 = max(c.r, c.g);
+			float max2 = max(max1, c.b);
+			color_grey_value = max2;
+		}
+		// Read the colormap and use the greyscale value to map in the new color.
+		vec3 color_out;
+		float alpha_out;
+		{
+			vec4 n_tex_read = texture(shades_color_ramp, vec2(color_grey_value, 0.0));
+			color_out = n_tex_read.rgb;
+			alpha_out = n_tex_read.a;
+		}
+		
+		if (change_colors == true){
+		// zadnji shading off za barve 
+//			if ((length(COLOR - color_1) < 0.01) || (length(COLOR - color_2) < 0.01) || (length(COLOR - color_3) < 0.01)){
+//				vec4 krneki = COLOR;
+			if ((length(COLOR - new_color_1) > 0.01) 
+			&& (length(COLOR - new_color_2) > 0.01) 
+			&& (length(COLOR - new_color_3) > 0.01) 
+			&& (length(COLOR - color_to_noise) > 0.01)){
+				COLOR.rgb = color_out;
+				COLOR.a = alpha_out;
+			}
+//			} else {
+//				COLOR.rgb = color_out;
+//				COLOR.a = alpha_out;				
+//			}
+		} else {
+			// zadnji shading na vse barve
+			COLOR.rgb = color_out;
+			COLOR.a = alpha_out;
+		}
+	}
+	
+}"
+
+[sub_resource type="OpenSimplexNoise" id=621]
+octaves = 5
+period = 0.1
+persistence = 0.128
+lacunarity = 1.67
+
+[sub_resource type="NoiseTexture" id=609]
+seamless = true
+noise = SubResource( 621 )
+
+[sub_resource type="Gradient" id=622]
+interpolation_mode = 1
+offsets = PoolRealArray( 0, 0.135714, 0.316667, 0.388095, 0.466667, 0.595238, 0.657143, 0.745238, 0.933333 )
+colors = PoolColorArray( 0.168457, 0.168457, 0.168457, 1, 0.714718, 0.714718, 0.714718, 1, 0.797852, 0.797852, 0.797852, 1, 0.843487, 0.843487, 0.843487, 1, 0.876953, 0.876953, 0.876953, 1, 0.842773, 0.842773, 0.842773, 1, 0.869776, 0.869776, 0.869776, 1, 0.908203, 0.908203, 0.908203, 1, 0.975978, 0.975978, 0.975978, 1 )
+
+[sub_resource type="GradientTexture" id=611]
+gradient = SubResource( 622 )
+
+[sub_resource type="ShaderMaterial" id=623]
+shader = SubResource( 624 )
+shader_param/change_colors = true
+shader_param/color_1 = Color( 0, 0, 0, 0 )
+shader_param/new_color_1 = Color( 0, 0, 0, 0.866667 )
+shader_param/color_2 = Color( 0, 0, 0, 0 )
+shader_param/new_color_2 = Color( 0, 0, 0, 1 )
+shader_param/color_3 = Color( 0, 0, 0, 0 )
+shader_param/new_color_3 = null
+shader_param/color_to_noise = Color( 0, 1, 1, 1 )
+shader_param/node_size = Vector2( 640, 360 )
+shader_param/ad_noise = true
+shader_param/shade_noise = true
+shader_param/pixelate_noise = true
+shader_param/pixel_size_multiplier = 1.0
+shader_param/pixel_offset = Vector2( 0, 0 )
+shader_param/speed_x = 0.0
+shader_param/speed_y = 0.0
+shader_param/speed_scale = 0.1
+shader_param/shade_all_colors = false
+shader_param/noise = SubResource( 609 )
+shader_param/noise_color_ramp = SubResource( 611 )
+
+[node name="BackgroundShaders" type="Node2D"]
+z_index = -5
+script = ExtResource( 1 )
+
+[node name="GridContainer" type="GridContainer" parent="."]
+margin_right = 2256.0
+margin_bottom = 1992.0
+columns = 4
+
+[node name="Darkness" type="ColorRect" parent="GridContainer"]
+margin_right = 512.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 512, 512 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="WaterCanvas" type="ColorRect" parent="GridContainer"]
+material = SubResource( 552 )
+margin_left = 516.0
+margin_right = 1028.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 512, 512 )
+color = Color( 1, 1, 1, 0 )
+
+[node name="LavaCanvas" type="ColorRect" parent="GridContainer"]
+material = SubResource( 521 )
+margin_left = 1032.0
+margin_right = 1544.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 512, 512 )
+
+[node name="NebulaScreen" type="ColorRect" parent="GridContainer"]
+material = SubResource( 554 )
+margin_left = 1548.0
+margin_right = 2060.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 512, 512 )
+color = Color( 1, 1, 1, 0 )
+
+[node name="PixelateScreen" type="ColorRect" parent="GridContainer"]
+material = SubResource( 553 )
+margin_top = 516.0
+margin_right = 512.0
+margin_bottom = 1028.0
+rect_min_size = Vector2( 512, 512 )
+
+[node name="ColorScreen" type="ColorRect" parent="GridContainer"]
+material = SubResource( 574 )
+margin_left = 516.0
+margin_top = 516.0
+margin_right = 1028.0
+margin_bottom = 1028.0
+rect_min_size = Vector2( 512, 512 )
+color = Color( 1, 1, 1, 0 )
+
+[node name="Dancefloor_NoiseScreen" type="ColorRect" parent="GridContainer"]
+modulate = Color( 0.647059, 0.647059, 0.639216, 1 )
+show_behind_parent = true
+material = SubResource( 620 )
+margin_left = 1032.0
+margin_top = 516.0
+margin_right = 1544.0
+margin_bottom = 1028.0
+rect_min_size = Vector2( 512, 512 )
+color = Color( 1, 1, 1, 0 )
+
+[node name="Dirt_NoiseScreen" type="ColorRect" parent="GridContainer"]
+material = SubResource( 623 )
+margin_left = 1548.0
+margin_top = 516.0
+margin_right = 2060.0
+margin_bottom = 1028.0
+rect_min_size = Vector2( 512, 512 )

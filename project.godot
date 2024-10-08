@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "RigidBody2D",
 "class": "Bullet",
 "language": "GDScript",
-"path": "res://game/ammo/bullet/Bullet.gd"
+"path": "res://game/weapons/ammo/bullet/Bullet.gd"
 }, {
 "base": "ColorRect",
 "class": "ColorTile",
@@ -32,12 +32,12 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Mina",
 "language": "GDScript",
-"path": "res://game/ammo/mina/Mina.gd"
+"path": "res://game/weapons/ammo/mina/Mina.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "Misile",
 "language": "GDScript",
-"path": "res://game/ammo/misile/Misile.gd"
+"path": "res://game/weapons/ammo/misile/Misile.gd"
 }, {
 "base": "Reference",
 "class": "Palette",
@@ -52,7 +52,7 @@ _global_script_classes=[ {
 "base": "Area2D",
 "class": "Pickable",
 "language": "GDScript",
-"path": "res://game/levels/objects/Pickable.gd"
+"path": "res://game/pickables/Pickable.gd"
 }, {
 "base": "Resource",
 "class": "RMS2D_Material",
@@ -192,7 +192,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Shocker",
 "language": "GDScript",
-"path": "res://game/ammo/Shocker.gd"
+"path": "res://_zaloga ... ni v uporabi/Shocker.gd"
 }, {
 "base": "ImageTexture",
 "class": "VersatileAtlasTexture",
@@ -202,7 +202,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Walker",
 "language": "GDScript",
-"path": "res://game/levels/_automation/Walker.gd"
+"path": "res://_zaloga ... ni v uporabi/Walker.gd"
 } ]
 _global_script_class_icons={
 "Bolt": "",
@@ -250,7 +250,7 @@ _global_script_class_icons={
 
 config/name="G Racer"
 run/main_scene="res://Main.tscn"
-config/icon="res://_materiali/icon.png"
+config/icon="res://assets/icon.png"
 <<<<<<<HEADconfig/name="G-Racer"
 
 [autoload]

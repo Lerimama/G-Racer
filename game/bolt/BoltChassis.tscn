@@ -18,20 +18,20 @@ offset = Vector2( 0.381001, 0.499999 )
 position = Vector2( 64, 0 )
 
 [node name="ThrustL" parent="DriveTrain/FrontEngine" instance=ExtResource( 2 )]
-position = Vector2( 0, -56 )
+position = Vector2( 0, -52 )
 
 [node name="ThrustR" parent="DriveTrain/FrontEngine" instance=ExtResource( 2 )]
-position = Vector2( 0, 56 )
+position = Vector2( 0, 52 )
 position_on_bolt = 1
 
 [node name="RearEngine" type="Node2D" parent="DriveTrain"]
 position = Vector2( -48, 0 )
 
 [node name="ThrustL" parent="DriveTrain/RearEngine" instance=ExtResource( 2 )]
-position = Vector2( 0, -56 )
+position = Vector2( 0, -52 )
 
 [node name="ThrustR" parent="DriveTrain/RearEngine" instance=ExtResource( 2 )]
-position = Vector2( 0, 56 )
+position = Vector2( 0, 52 )
 position_on_bolt = 1
 
 [node name="Polygon2D" type="Polygon2D" parent="."]

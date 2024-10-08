@@ -47,16 +47,16 @@ var color_yellow = Color("#fef98b")
 # --- specs
 var color_hud_base = Color("#ffffff")
 
-var color_brick_ghost = Color.goldenrod
-var color_brick_magnet_off = Color(1.1,0,1.1,1)
-var color_brick_magnet_on = Color.magenta
-var color_brick_target = Color.aquamarine
+var color_brick_ghost = Color.white
+var color_brick_magnet_off = Color.white
+var color_brick_magnet_on = Color.red
+var color_brick_target = Color.white
 var color_brick_target_hit_1 = Color.red
-var color_brick_target_hit_2 = Color.blue
-var color_brick_target_hit_3 = Color.yellow
-var color_brick_bouncer = Color.purple
-var color_brick_light_off = Color.violet
-var color_brick_light_on = Color.greenyellow
+var color_brick_target_hit_2 = Color.gray
+var color_brick_target_hit_3 = Color.black
+var color_brick_bouncer = Color.red
+var color_brick_light_off = Color.white
+var color_brick_light_on = Color.red
 
 var color_pickable_random = Color.red 
 var color_pickable_stat = Color.red

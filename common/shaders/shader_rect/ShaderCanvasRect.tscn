@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://common/shaders/shader_rect/ShaderRect.gd" type="Script" id=1]
+[ext_resource path="res://common/shaders/shader_rect/canvas_rect_material.tres" type="Material" id=2]
+
+[sub_resource type="Gradient" id=2321]
+
+[sub_resource type="GradientTexture" id=2322]
+gradient = SubResource( 2321 )
+width = 512
+
+[node name="ShaderTextureRect" type="TextureRect"]
+material = ExtResource( 2 )
+margin_right = 512.0
+margin_bottom = 512.0
+texture = SubResource( 2322 )
+expand = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="BackColor" type="ColorRect" parent="."]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="-opis" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "- Shejder na Rectangle javi se resiza na Dupliciraj v drevesu in resetiraj shajder in teksture.
+- Kadar se spremeni velikost, to upošteva tudi šejder.
+"
+align = 1
+valign = 1
+autowrap = true
+
+[connection signal="item_rect_changed" from="." to="." method="_on_TerrainTextureRect_item_rect_changed"]

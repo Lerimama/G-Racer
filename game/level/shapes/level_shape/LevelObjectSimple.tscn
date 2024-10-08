@@ -1,0 +1,93 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=1]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=2]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=3]
+[ext_resource path="res://game/level/shapes/level_shape/LevelShapeSSD.tscn" type="PackedScene" id=4]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 2 )
+position = Vector2( 8.0867, 488.734 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1 )
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 2 )
+position = Vector2( 662.493, 4.45773 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 3 )
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 2 )
+position = Vector2( 3.41457, 2.68796 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5 )
+
+[sub_resource type="Resource" id=7]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8]
+script = ExtResource( 2 )
+position = Vector2( 8.0867, 488.734 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 7 )
+
+[sub_resource type="Resource" id=9]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=10]
+script = ExtResource( 2 )
+position = Vector2( 654.739, 478.33 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 9 )
+
+[sub_resource type="Resource" id=11]
+script = ExtResource( 1 )
+_points = {
+0: SubResource( 2 ),
+1: SubResource( 4 ),
+2: SubResource( 6 ),
+3: SubResource( 8 ),
+4: SubResource( 10 )
+}
+_point_order = [ 3, 2, 1, 4, 0 ]
+_constraints = {
+[ 0, 3 ]: 15
+}
+_next_key = 31
+_material_overrides = {
+}
+
+[node name="LevelShapeSSD" instance=ExtResource( 4 )]
+
+[node name="ObjectShapeSSD" parent="." index="0"]
+_points = SubResource( 11 )

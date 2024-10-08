@@ -18,7 +18,7 @@ enum LEVEL {
 var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
 		"level_name": "",
-		"level_path": "res://game/levels/Level.tscn",
+		"level_path": "res://game/level/Level.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},

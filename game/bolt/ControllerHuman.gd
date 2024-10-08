@@ -15,7 +15,7 @@ onready var selector_action: String = controller_actions["selector_action"]
 	
 func _input(event: InputEvent) -> void:
 	
-	if controlled_bolt.bolt_active:
+	if controlled_bolt.is_active:
 		
 		# ko ni igre ima v leru
 		if not Ref.game_manager.game_on: 
@@ -24,32 +24,27 @@ func _input(event: InputEvent) -> void:
 		else:
 			# rotacija
 			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
-
-			# naprej
 			if Input.is_action_pressed(fwd_action):
+				if not controlled_bolt.bolt_fwd_direction == 1:
+					controlled_bolt.bolt_fwd_direction = 1
 				if not controlled_bolt.current_motion == controlled_bolt.MOTION.FWD:
 					controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
 				if Ref.game_manager.fast_start_window:
 					controlled_bolt.revup()
-			
-			# nazaj
 			elif Input.is_action_pressed(rev_action):
+				if not controlled_bolt.bolt_fwd_direction == -1:
+					controlled_bolt.bolt_fwd_direction = -1
 				if not controlled_bolt.current_motion == controlled_bolt.MOTION.REV:
 					controlled_bolt.current_motion = controlled_bolt.MOTION.REV
-			
-			# v leru
-			else:		
+			elif controlled_bolt.rotation_dir == 0:
 				if not controlled_bolt.current_motion == controlled_bolt.MOTION.IDLE:
+#					print("IDLE", Input.get_axis(left_action, right_action))
 					controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
+			elif controlled_bolt.rotation_dir == 1 or controlled_bolt.rotation_dir == -1:
+				if not controlled_bolt.current_motion == controlled_bolt.free_ability:
+#					print("SPEC", Input.get_axis(left_action, right_action))
+					controlled_bolt.current_motion = controlled_bolt.free_ability
 			
-			# idle_motion
-			if not controlled_bolt.rotation_dir == 0 and controlled_bolt.current_motion == controlled_bolt.MOTION.IDLE:		
-				if controlled_bolt.idle_motion_on == false:
-					controlled_bolt.idle_motion_on = true
-			else:
-				if controlled_bolt.idle_motion_on == true:
-					controlled_bolt.idle_motion_on = false
-									
 			# select weapon
 			if Input.is_action_just_pressed(selector_action):
 				controlled_bolt.bolt_hud.actived_weapon_key += 1
@@ -69,6 +64,6 @@ func _physics_process(delta: float) -> void:
 		#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_ammo_index)
 		#			controlled_bolt.shoot(0)
 	# dokler ni igre fizika ne dela
-	if Ref.game_manager.game_on and controlled_bolt.bolt_active:
+	if Ref.game_manager.game_on and controlled_bolt.is_active:
 #		return
 		controlled_bolt.force_rotation = controlled_bolt.thrust_rotation + controlled_bolt.get_global_rotation()

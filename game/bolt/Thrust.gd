@@ -15,10 +15,7 @@ var active_trail: Line2D
 var thrust_particles_name: String = "ThrustParticles"
 var thrust_over_particles_name: String = "ThrustOverParticles"
 var smoke_particles_name: String = "SmokeParticles"
-#onready var side_left: Node2D = $SideLeft
-#onready var side_right: Node2D = $SideRight
-#var current_ide_node: Node2D
-#onready var disp: Node2D = $Disp
+
 onready var disp: Node2D = self
 
 func _ready() -> void:
@@ -104,3 +101,9 @@ func _on_trail_exiting(exiting_trail: Line2D):
 	
 	if exiting_trail == active_trail:
 		active_trail = null
+
+
+func _exit_tree() -> void: # OPT v vse traile
+	
+	if active_trail and not active_trail.in_decay:
+		active_trail.start_decay()

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" load_steps=4 format=2]
+
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=5]
+
+[sub_resource type="Gradient" id=650]
+offsets = PoolRealArray( 0.465278 )
+colors = PoolColorArray( 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=160]
+gradient = SubResource( 650 )
+
+[resource]
+script = ExtResource( 5 )
+_edge_meta_materials = [  ]
+fill_textures = [ SubResource( 160 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0

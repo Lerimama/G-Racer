@@ -72,7 +72,7 @@ func update_image():
 		push_warning("VersatileAtlasTexture does not work with AnimatedTexture")
 	
 	var p_flags = flags
-	print(has_meta("done_set"))
+#	printt("has_meta", has_meta("done_set"))
 #
 #	if not atlas.get_data():
 #		print(atlas)

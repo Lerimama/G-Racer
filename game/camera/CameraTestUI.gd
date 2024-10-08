@@ -55,8 +55,6 @@ var reset_camera_target: Node2D # ne dela
 
 
 func _ready():
-#	print("KAMERA")
-#	Ref.current_camera = self
 	
 	testhud_node.hide()
 	test_toggle_btn.set_focus_mode(0)

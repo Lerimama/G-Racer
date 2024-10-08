@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=11 format=2]
 
-[ext_resource path="res://game/ammo/tex/animation_shocker.png" type="Texture" id=1]
+[ext_resource path="res://_zaloga ... ni v uporabi/animation_shocker.png" type="Texture" id=1]
 
 [sub_resource type="AtlasTexture" id=71]
 atlas = ExtResource( 1 )

@@ -4,6 +4,7 @@ extends Line2D
 signal trail_is_exiting (trail_node)
 
 var min_spawn_distance: float = 3
+var in_decay: bool = false
 
 # points aging
 var point_age: Array = [0.0] # array v katerega spravljamo starosti ob kreaciji
@@ -72,8 +73,10 @@ func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo bolta
 
 func start_decay():
 	
-	decay_tween.interpolate_property(self, "modulate:a", modulate.a, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT)
-	decay_tween.start()
+	if not in_decay:
+		in_decay = true	
+		decay_tween.interpolate_property(self, "modulate:a", modulate.a, 0, decay_time, Tween.TRANS_EXPO, Tween.EASE_OUT)
+		decay_tween.start()
 	
 
 func _on_DecayTween_tween_all_completed() -> void:

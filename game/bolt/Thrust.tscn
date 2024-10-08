@@ -26,7 +26,7 @@ polygon = PoolVector2Array( 8, 4, 8, 8, 6, 4 )
 
 [node name="SmokeParticles" type="Particles2D" parent="."]
 material = SubResource( 5269 )
-position = Vector2( -24, 0 )
+position = Vector2( -12, 0 )
 emitting = false
 amount = 100
 randomness = 1.0
@@ -36,7 +36,6 @@ texture = ExtResource( 4 )
 
 [node name="ThrustParticles" type="Particles2D" parent="."]
 material = SubResource( 5271 )
-position = Vector2( -12, 0 )
 emitting = false
 amount = 20
 lifetime = 0.2
@@ -45,12 +44,13 @@ process_material = ExtResource( 7 )
 texture = ExtResource( 4 )
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
 polygon = PoolVector2Array( -16, -8, 8, -8, 8, 8, -16, 8 )
 
 [node name="ThrustOverParticles" type="Particles2D" parent="."]
+visible = false
 modulate = Color( 1, 1, 1, 0.270588 )
 material = SubResource( 5263 )
-position = Vector2( -16, 0 )
 emitting = false
 amount = 20
 lifetime = 0.2

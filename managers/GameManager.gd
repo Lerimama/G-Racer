@@ -85,7 +85,7 @@ func _process(delta: float) -> void:
 			
 	var active_human_bolts: Array = []
 	for bolt in bolts_in_game:
-		if bolt.is_in_group(Ref.group_humans) and bolt.bolt_active:
+		if bolt.is_in_group(Ref.group_humans) and bolt.is_active:
 			active_human_bolts.append(bolt)
 	if active_human_bolts.empty(): 
 		camera_leader = null
@@ -125,8 +125,8 @@ func set_game():
 	if current_level_index == 0:
 		# debug ... kadar ne štartam igre iz home menija
 		if Set.players_on_game_start.empty():
-			activated_player_ids = [Pro.PLAYER.P1] 	
-#			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
+#			activated_player_ids = [Pro.PLAYER.P1] 	
+			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2] 	
 #			activated_player_ids = [Pro.PLAYER.P1, Pro.PLAYER.P2, Pro.PLAYER.P3, Pro.PLAYER.P4]
 		else:
 			activated_player_ids = Set.players_on_game_start
@@ -287,8 +287,8 @@ func level_finished():
 	for bolt in bolts_in_game: # zazih
 		# player se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
 		# AI se deaktivira, ko gre čez cilj
-		if bolt.bolt_active: # zazih
-			bolt.bolt_active = false
+		if bolt.is_active: # zazih
+			bolt.is_active = false
 		bolt.set_physics_process(false)
 			
 	# music stop
@@ -450,7 +450,7 @@ func check_for_level_finished(): # za preverjanje pogojev za game over (vsakič 
 	var current_active_human_players: Array = []
 	
 	for bolt in bolts_in_game:
-		if bolt.bolt_active and bolt.is_in_group(Ref.group_humans):
+		if bolt.is_active and bolt.is_in_group(Ref.group_humans):
 			current_active_human_players.append(bolt)
 			
 	# če so vsi neaktivni, preverim kdo je v cilju
@@ -559,15 +559,15 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	match Ref.current_level.level_type:
 		# pull player bolt
 		Ref.current_level.LEVEL_TYPE.RACE, Ref.current_level.LEVEL_TYPE.RACE_LAPS:
-			if body.is_in_group(Ref.group_humans) and body.bolt_active:
+			if body.is_in_group(Ref.group_humans) and body.is_active:
 				var bolt_pull_position: Vector2 = get_bolt_pull_position(body)
 				body.call_deferred("pull_bolt_on_screen", bolt_pull_position, camera_leader)
 		# wrap_around all bolts
 		#		_:
-		#			if body.is_in_group(Ref.group_bolts) and body.bolt_active:
+		#			if body.is_in_group(Ref.group_bolts) and body.is_active:
 		#				body.call_deferred("screen_wrap") # IDE
 			
-	if body.is_in_group(Ref.group_bolts) and not body.bolt_active:
+	if body.is_in_group(Ref.group_bolts) and not body.is_active:
 		body.call_deferred("set_physics_process", false)
 	elif body is Bullet:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek

@@ -100,7 +100,7 @@ func get_random_name(string_length: int):
 	return random_generated_name
 	
 	
-onready var indikator: PackedScene = preload("res://common/DebugIndikator.tscn")
+onready var indikator: PackedScene = preload("res://common/debug/DebugIndikator.tscn")
 var all_indikators_spawned: Array = []
 
 func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
