@@ -23,7 +23,7 @@ func setup_line(line_name: String, var_name: String, line_value: float, line_nod
 	node_to_update = line_node
 	reset_value = line_value
 	
-	label.text = line_name
+	label.text = line_name + ": "
 	value_label.text = str(reset_value)
 	if reset_value > (h_slider.max_value - 10):
 		h_slider.max_value = reset_value * 3

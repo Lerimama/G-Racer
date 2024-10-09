@@ -291,7 +291,7 @@ grow_horizontal = 2
 rect_min_size = Vector2( 6, 0 )
 custom_constants/separation = 16
 
-[node name="EnergyBar" type="Control" parent="BoltHud/BoltHudLines"]
+[node name="HealthBar" type="Control" parent="BoltHud/BoltHudLines"]
 margin_left = 48.0
 margin_right = 176.0
 margin_bottom = 8.0
@@ -299,14 +299,14 @@ grow_horizontal = 2
 rect_min_size = Vector2( 128, 8 )
 size_flags_horizontal = 4
 
-[node name="Undi" type="ColorRect" parent="BoltHud/BoltHudLines/EnergyBar"]
+[node name="Undi" type="ColorRect" parent="BoltHud/BoltHudLines/HealthBar"]
 show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_min_size = Vector2( 0, 8 )
 color = Color( 0.243137, 0.243137, 0.243137, 1 )
 
-[node name="Bar" type="ColorRect" parent="BoltHud/BoltHudLines/EnergyBar"]
+[node name="Bar" type="ColorRect" parent="BoltHud/BoltHudLines/HealthBar"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_min_size = Vector2( 0, 8 )
@@ -513,4 +513,5 @@ bus = "GameSfx"
 [connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
 
 [editable path="ShadowViewport/Chassis"]
+[editable path="Chassis"]
 [editable path="LauncherL"]

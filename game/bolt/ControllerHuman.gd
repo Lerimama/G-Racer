@@ -25,15 +25,15 @@ func _input(event: InputEvent) -> void:
 			# rotacija
 			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
 			if Input.is_action_pressed(fwd_action):
-				if not controlled_bolt.bolt_fwd_direction == 1:
-					controlled_bolt.bolt_fwd_direction = 1
+				if not controlled_bolt.bolt_shift == 1:
+					controlled_bolt.bolt_shift = 1
 				if not controlled_bolt.current_motion == controlled_bolt.MOTION.FWD:
 					controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
 				if Ref.game_manager.fast_start_window:
 					controlled_bolt.revup()
 			elif Input.is_action_pressed(rev_action):
-				if not controlled_bolt.bolt_fwd_direction == -1:
-					controlled_bolt.bolt_fwd_direction = -1
+				if not controlled_bolt.bolt_shift == -1:
+					controlled_bolt.bolt_shift = -1
 				if not controlled_bolt.current_motion == controlled_bolt.MOTION.REV:
 					controlled_bolt.current_motion = controlled_bolt.MOTION.REV
 			elif controlled_bolt.rotation_dir == 0:
@@ -66,4 +66,4 @@ func _physics_process(delta: float) -> void:
 	# dokler ni igre fizika ne dela
 	if Ref.game_manager.game_on and controlled_bolt.is_active:
 #		return
-		controlled_bolt.force_rotation = controlled_bolt.thrust_rotation + controlled_bolt.get_global_rotation()
+		controlled_bolt.force_rotation = controlled_bolt.heading_rotation + controlled_bolt.get_global_rotation()

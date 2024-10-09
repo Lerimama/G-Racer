@@ -10,9 +10,9 @@ var y_position_offset: float # določi se na glede na pozicijo huda ob ready
 
 onready var weapon_selector: Control = $BoltHudLines/WeaponSelector
 onready var weapon_icons: Array = $BoltHudLines/WeaponSelector.get_children()
-onready var energy_bar: Control = $BoltHudLines/EnergyBar
+onready var health_bar: Control = $BoltHudLines/HealthBar
 onready var selector_timer: Timer = $BoltHudLines/WeaponSelector/SelectorTimer
-onready var energy_bar_line: ColorRect = $BoltHudLines/EnergyBar/Bar
+onready var health_bar_line: ColorRect = $BoltHudLines/HealthBar/Bar
 
 
 func _ready() -> void:
@@ -31,13 +31,13 @@ func _process(delta: float) -> void:
 		global_position = owner.global_position + Vector2(0, y_position_offset)
 	#	test_hud.rect_global_position = (owner.global_position + Vector2(0, 8))*4 + Vector2(640, 360)# + Vector2(2560, 1440)*0.5
 	
-	# manage energy bar
-	if energy_bar.visible:
-		energy_bar_line.rect_scale.x = owner.player_stats["energy"] / owner.max_energy
-		if energy_bar_line.rect_scale.x <= 0.5:
-			energy_bar_line.color = Ref.color_red
+	# manage health bar
+	if health_bar.visible:
+		health_bar_line.rect_scale.x = owner.player_stats["health"] / owner.max_health
+		if health_bar_line.rect_scale.x <= 0.5:
+			health_bar_line.color = Ref.color_red
 		else:
-			energy_bar_line.color = Ref.color_blue
+			health_bar_line.color = Ref.color_blue
 
 	# manage selector
 	if weapon_selector.visible:

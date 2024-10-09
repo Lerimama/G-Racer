@@ -37,10 +37,6 @@ func _ready() -> void:
 	
 	Ref.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 
-	# debug
-	for dummy in $_dummy.get_children():
-		dummy.hide()
-	
 	for child in start_positions_node.get_children():
 		child.hide()
 		

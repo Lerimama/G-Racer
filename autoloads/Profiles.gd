@@ -13,7 +13,7 @@ var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"wins" : 2,
 	"life" : 5,
 	"cash_count": 0,
-	"energy" : 10,
+	"health" : 10,
 	"bullet_count" : 100,
 	"misile_count" : 5,
 	"mina_count" : 3,
@@ -132,26 +132,27 @@ var bolt_profiles: Dictionary = {
 #		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"on_hit_disabled_time": 2,
-		"engine_hsp": 3, # pospešek motorja do največje moči (horsepower?)
-		"power_burst_hsp": 30, # pospešek motorja do največje moči (horsepower?)
-		"max_engine_power": 3200, # 1 - 500 konjev 
+		"engine_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
+		"power_burst_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
+		"max_engine_power": 500000, # 1 - 500 konjev 
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
 		# fizika
 		"mass": 80, # 800 kil, front in rear teža se uporablja bolj za razmerje
 		# driving
-		"drive_ang_damp": 12, # ... tudi regulacija driftanja
-		"drive_lin_damp": 3, # imam ga za omejitev slajdanja prvega kolesa
-		"drive_lin_damp_rear": 0, # regulacija driftanja
+		"drive_ang_damp": 16, # regulacija ostrine zavijanja ... tudi driftanja
+		"drive_lin_damp": 2, # imam ga za omejitev slajdanja prvega kolesa
+		"drive_lin_damp_rear": 20, # regulacija driftanja
 		# idle motion
-		"idle_lin_damp": 0.5, # main
-		"idle_ang_damp": 0.5, # main
-		"idle_rotation_power": 10000, # na oba
-		"idle_drift_power": 20000, # na rear
-		"idle_glide_power": 20000,  # na oba v razmerju
-		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
+		"idle_lin_damp": 0.5,
+		"idle_ang_damp": 0.5,
+		"free_rotation_power": 14000, # na oba
+		"drift_power": 17000, # na rear
+		"glide_power_F": 46500,
+		"glide_power_R": 50000,
 		"glide_ang_damp": 5, # da se ha rotirat
+		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
 		# material
 		"bounce": 0.5,
 		"friction": 0.2,

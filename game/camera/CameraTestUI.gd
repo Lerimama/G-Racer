@@ -30,7 +30,7 @@ var camera_center = Vector2(320, 180)
 var mouse_position_on_drag_start: Vector2 # zamik pozicije miške ob kliku
 var drag_on: bool = false
 
-onready var test_toggle: CheckBox = $TestToggle
+onready var parent_camera = get_parent()
 
 onready var trauma_bar = $TestHud/TraumaBar
 onready var shake_bar = $TestHud/ShakeBar
@@ -45,10 +45,6 @@ onready var persistence_slider = $TestHud/NoiseControl/Persistence
 onready var lacunarity_slider = $TestHud/NoiseControl/Lacunarity
 onready var shake_toggle: CheckBox = $TestHud/ShakeToggle
 
-onready var testhud_node = $TestHud
-onready var test_toggle_btn = $TestToggle
-onready var parent_camera = get_parent()
-
 var testing_start_camera_zoom: Vector2
 var testing_start_camera_position: Vector2
 var reset_camera_target: Node2D # ne dela
@@ -56,9 +52,11 @@ var reset_camera_target: Node2D # ne dela
 
 func _ready():
 	
-	testhud_node.hide()
-	test_toggle_btn.set_focus_mode(0)
-
+	$TestHud.hide()
+	$SetupPanel.hide()
+	$CameraSetupToggle.set_focus_mode(0)
+	$NodeSetupToggle.set_focus_mode(0)
+	
 	trauma_btn.set_focus_mode(0)
 	reset_view_btn.set_focus_mode(0)
 	zoom_slider.set_focus_mode(0)
@@ -142,25 +140,14 @@ func shake_camera(added_trauma):
 
 func _on_CheckBox_toggled(button_pressed: bool) -> void:
 	
-	if test_view_on:
-		test_view_on = false
-		testhud_node.hide()
-		
-		# ne dela
-		parent_camera.follow_target = reset_camera_target
-		reset_camera_target = null
-		
-	else:
-		testhud_node.show()
-		test_view_on = true
-		
-		# ne dela
-		reset_camera_target = parent_camera.follow_target
-		parent_camera.follow_target = null
-		
-		testing_start_camera_zoom = parent_camera.zoom
-		testing_start_camera_position = parent_camera.position
-		
+	$TestHud.visible = button_pressed
+	test_view_on = button_pressed
+
+
+func _on_NodeCheckBox_toggled(button_pressed: bool) -> void:
+	
+	$SetupPanel.visible = button_pressed
+
 
 # SHAKE NOISE ------------------------------------------------------------
 
@@ -264,4 +251,5 @@ func _on_CheckBox_mouse_entered() -> void:
 	mouse_used = true
 func _on_CheckBox_mouse_exited() -> void:
 	mouse_used = false
+
 
