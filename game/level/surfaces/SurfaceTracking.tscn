@@ -1,6 +1,6 @@
 [gd_scene load_steps=28 format=2]
 
-[ext_resource path="res://game/level/areas/AreaTracking.gd" type="Script" id=1]
+[ext_resource path="res://game/level/surfaces/SurfaceTracking.gd" type="Script" id=1]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
@@ -143,7 +143,7 @@ fill_texture_show_behind_parent = false
 fill_mesh_offset = 0.0
 render_offset = 0.0
 
-[node name="AreaTracking" type="Area2D"]
+[node name="SurfaceTracking" type="Area2D"]
 position = Vector2( -144, -504 )
 script = ExtResource( 1 )
 
@@ -163,6 +163,3 @@ collision_polygon_node_path = NodePath("../CollisionPolygon2D")
 visible = false
 modulate = Color( 1, 1, 1, 0.3 )
 polygon = PoolVector2Array( 1222.78, 282.927, 1230.38, 289.556, 1237.47, 297.114, 1244.03, 305.531, 1250.05, 314.737, 1260.43, 335.24, 1268.51, 358.07, 1274.17, 382.669, 1277.33, 408.484, 1277.89, 434.958, 1275.74, 461.538, 1270.79, 487.667, 1262.93, 512.791, 1252.06, 536.354, 1245.47, 547.376, 1238.09, 557.801, 1229.91, 567.558, 1220.91, 576.577, 1211.09, 584.79, 1200.43, 592.127, 1188.92, 598.519, 1176.55, 603.896, 1163.3, 608.189, 1149.16, 611.329, 1095.08, 618.125, 1049.31, 619.19, 1011.52, 616.01, 981.354, 610.073, 958.486, 602.867, 942.572, 595.878, 933.273, 590.593, 930.126, 588.531, 1113.28, 247.265, 1113.59, 246.948, 1114.55, 246.113, 1116.21, 244.944, 1118.61, 243.626, 1121.8, 242.342, 1125.83, 241.275, 1130.76, 240.609, 1136.61, 240.528, 1143.45, 241.215, 1151.31, 242.853, 1160.26, 245.625, 1170.32, 249.715, 1194.02, 262.584 )
-
-[connection signal="body_entered" from="." to="." method="_on_AreaTracking_body_entered"]
-[connection signal="body_exited" from="." to="." method="_on_AreaTracking_body_exited"]

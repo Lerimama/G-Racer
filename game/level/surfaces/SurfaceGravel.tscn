@@ -1,7 +1,7 @@
 [gd_scene load_steps=18 format=2]
 
-[ext_resource path="res://game/level/areas/AreaGravel.gd" type="Script" id=1]
-[ext_resource path="res://game/level/areas/AreaGravelSSD.tres" type="Resource" id=2]
+[ext_resource path="res://game/level/surfaces/SurfaceGravel.gd" type="Script" id=1]
+[ext_resource path="res://game/level/surfaces/SurfaceGravelSSD.tres" type="Resource" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
@@ -89,7 +89,7 @@ _next_key = 10
 _material_overrides = {
 }
 
-[node name="AreaGravel" type="Area2D"]
+[node name="SurfaceGravel" type="Area2D"]
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
@@ -111,6 +111,3 @@ collision_polygon_node_path = NodePath("../CollisionPolygon2D")
 visible = false
 modulate = Color( 1, 1, 1, 0.3 )
 polygon = PoolVector2Array( 453.212, 4.55972, 454.551, 262.094, -2.79721, 267.992, -1.29577, 5.57914 )
-
-[connection signal="body_entered" from="." to="." method="_on_AreaGravel_body_entered"]
-[connection signal="body_exited" from="." to="." method="_on_AreaGravel_body_exited"]

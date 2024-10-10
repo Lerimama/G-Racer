@@ -739,8 +739,11 @@ func should_flip_edges() -> bool:
 
 
 func generate_collision_points() -> PoolVector2Array:
+	
 	var points: PoolVector2Array = PoolVector2Array()
 	var collision_width = 1.0
+#	print ("generate coll points: ", points.size())
+	
 	var collision_extends = 0.0
 	var verts = get_vertices()
 	var t_points = get_tessellated_points()

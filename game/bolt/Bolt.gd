@@ -4,8 +4,9 @@ class_name Bolt
 
 signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 
-enum MOTION {IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY, SLOWDOWN} # DIZZY, DYING glede na moč motorja
+enum MOTION {IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
 var current_motion: int = MOTION.IDLE setget _on_motion_change
+var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
 
 # player and stats
 var player_id: int # ga seta spawner
@@ -93,11 +94,14 @@ onready var direction_line: Line2D = $DirectionLine
 # neu
 var height: float = 0 # PRO
 var elevation: float = 7 # PRO
-var free_ability: int = MOTION.FREE_ROTATE # presetan motion, ko imaš samo smerne tipke
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $LauncherL, $LauncherR]
 onready var bolt_sprite: Sprite = $Chassis/BoltSprite
 onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
+onready var terrain_detect: Area2D = $TerrainDetect
+#var current_top_suface: Area2D = null # preverjam spremembo, da ne setam na vsak frejm
+var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
+onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 
 func _ready() -> void:
@@ -146,15 +150,16 @@ func _ready() -> void:
 	
 func _process(delta: float) -> void:
 	
+	get_surfaces()
 	update_trail()
 	
 	if not is_active: # resetiram, če ni aktiven
 		engine_power = 0
 		rotation_dir = 0		
 	else:	
-		
-		heading_rotation = lerp(heading_rotation, rotation_dir * deg2rad(max_engine_rotation_deg) * bolt_shift, engine_rotation_speed)
-		var max_free_thrust_rotation_deg: float = 60 # PRO 
+		heading_rotation = lerp_angle(heading_rotation, rotation_dir * deg2rad(max_engine_rotation_deg) * bolt_shift, engine_rotation_speed)
+		# printt("heading", rad2deg(heading_rotation))
+		var max_free_thrust_rotation_deg: float = 90 # PRO 
 		var rotate_to_angle: float = rotation_dir * deg2rad(max_free_thrust_rotation_deg) # 60 je poseben deg2rad(max_engine_rotation_deg)
 		
 		# force global rotation ... premaknjena na kotrolerje
@@ -163,47 +168,41 @@ func _process(delta: float) -> void:
 		match current_motion:
 			MOTION.IDLE:
 				engine_power = 0
-#				engine_power = lerp(engine_power, 0, 0.5)
 				for thrust in all_thrusts:
-					thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
+					thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 			MOTION.FWD:
 				engine_power += engine_hsp
 				if Ref.game_manager.fast_start_window: 
 					engine_power += power_burst_hsp
-				for thrust in all_thrusts:
-					thrust.rotation = lerp(thrust.rotation, heading_rotation, engine_rotation_speed)
+				for thrust in front_thrusts:
+					thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+				for thrust in rear_thrusts:
+					thrust.rotation = - heading_rotation
 			MOTION.REV:
 				engine_power += engine_hsp
-				for thrust in front_thrusts: # ločeno zaradi indexa s katerim ločujem levega in desnega
-					# vpliv na smer rotacije za 180 ... če je index pogona = 0 -> ni adaptacije -> smer = 1
-					var adapt_rotation_dir: float = 1 - front_thrusts.find(thrust) * 2
-					var rotate_to: float = - heading_rotation + deg2rad(180) * adapt_rotation_dir
-					thrust.rotation = lerp(thrust.rotation, rotate_to, engine_rotation_speed)
+				for thrust in front_thrusts:
+					thrust.rotation = - heading_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
 				for thrust in rear_thrusts:
-					var adapt_rotation_dir = 1 - rear_thrusts.find(thrust) * 2
-					var rotate_to: float = - heading_rotation + deg2rad(180) * adapt_rotation_dir
-					thrust.rotation = lerp(thrust.rotation, rotate_to, engine_rotation_speed)
-			MOTION.FREE_ROTATE: # kot FWD zavijanje
-#				pass
+					thrust.rotation = heading_rotation + deg2rad(180)
+				# OPT obrat pogona v rikverc ... smooth rotacija ... dela ok dokler ne vozim naokoli, potem se smeri vrtenja podrejo
+				#				for thrust in all_thrusts:
+				#					var rotation_direction: int = 1
+				#					if thrust.position_on_bolt == thrust.POSITION.LEFT:
+				#						rotation_direction = -1 
+				#					var rotate_to: float = (heading_rotation + deg2rad(180)) * rotation_direction
+				#					thrust.rotation = lerp_angle(thrust.rotation, rotate_to, engine_rotation_speed)
+			MOTION.FREE_ROTATE:
 				engine_power = 0
 				for thrust in front_thrusts:
-					thrust.rotation = lerp(thrust.rotation, rotate_to_angle, engine_rotation_speed)
+					thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan
 				for thrust in rear_thrusts:
-					thrust.rotation = lerp(thrust.rotation, -rotate_to_angle, engine_rotation_speed)
+					thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle + deg2rad(180), engine_rotation_speed)
 			MOTION.DRIFT: # zadnji pogon v smeri zavoja
 				engine_power = lerp(engine_power, 0, 0.01)
-				#				for thrust in front_thrusts:
-				#					thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
-				#				for thrust in rear_thrusts:
-				#					thrust.rotation = lerp(thrust.rotation, - rotate_to_angle, engine_rotation_speed)
 			MOTION.GLIDE: # oba pogona  v smeri premika
-#				engine_power = lerp(engine_power, 0, 0.01)
 				engine_power = 0
 				for thrust in all_thrusts:
-					thrust.rotation = lerp(thrust.rotation, rotate_to_angle, engine_rotation_speed)
-			MOTION.SLOWDOWN: # premc je naprej
-#				engine_power = lerp(engine_power, 0, 0.01)
-				engine_power = 0
+					thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed)
 		
 		engine_power = clamp(engine_power, 0, max_engine_power) # zazih
 		update_gas(gas_usage)
@@ -221,13 +220,13 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	else:	
 		# sile na neuporabljeno masso se resetirajo ob menjavi motion stanja
 		var debug_force: Vector2 # dbueg
-#		engine_power =
 		match current_motion:	
 			MOTION.IDLE:
-				pass
-			MOTION.SLOWDOWN:
-				var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * engine_power * bolt_shift
-				front_mass.set_applied_force(force)
+				var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * bolt_shift
+				if bolt_shift > 0:
+					front_mass.set_applied_force(force)
+				else:
+					rear_mass.set_applied_force(force)
 				debug_force = force
 			MOTION.FWD:
 				var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * engine_power * bolt_shift
@@ -260,9 +259,10 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 				debug_force = force
 		
 		# debug
-		var vector_to_target = debug_force.normalized() * 100
-		vector_to_target = vector_to_target.rotated(- get_global_rotation())# - get_global_rotation())
-		direction_line.set_point_position(1, vector_to_target)	
+		if not debug_force == Vector2.ZERO:
+			var vector_to_target = debug_force.normalized() * 100
+			vector_to_target = vector_to_target.rotated(- get_global_rotation())# - get_global_rotation())
+			direction_line.set_point_position(1, vector_to_target)	
 
 		# printt("rot power", front_mass.get_applied_force().length(), rear_mass.get_applied_force().length())
 		# print("power %s / " % engine_power, "force %s" % force)
@@ -395,22 +395,6 @@ func start_engines():
 	$Sounds/EngineStart.play()
 
 
-func manipulate_tracking(tracking_damp: float, tracking_time: float = 0):
-	
-	rear_mass.linear_damp = tracking_damp
-	if not tracking_time == 0: # pomeni, da se samo seta, in se bo od zunaj resetala
-		yield(get_tree().create_timer(tracking_time), "timeout")
-		rear_mass.linear_damp = bolt_profile["drive_lin_damp_rear"]
-
-
-func manipulate_engine_power(new_engine_power: float, power_time: float = 0):
-	
-	max_engine_power = new_engine_power
-	engine_power = new_engine_power # OPT tweenaj
-	if not power_time == 0: # pomeni, da se samo seta, in se bo od zunaj resetala
-		yield(get_tree().create_timer(power_time), "timeout")
-		max_engine_power = bolt_profile["max_engine_power"]
-	
 		
 func update_gas(used_amount: float):
 		
@@ -627,9 +611,14 @@ func item_picked(pickable_key: int):
 		Pro.PICKABLE.PICKABLE_LIFE:
 			update_stat("life", pickable_value)
 		Pro.PICKABLE.PICKABLE_NITRO:
-			manipulate_engine_power(pickable_value, pickable_time)
+			max_engine_power = max_engine_power * pickable_value
+			yield(get_tree().create_timer(pickable_time), "timeout")
+			max_engine_power = bolt_profile["max_engine_power"]
 		Pro.PICKABLE.PICKABLE_TRACKING:
-			manipulate_engine_power(pickable_value, pickable_time)
+			#			rear_mass.linear_damp = pickable_value
+			#			yield(get_tree().create_timer(pickable_time), "timeout")
+			#			rear_mass.linear_damp = bolt_profile["drive_lin_damp_rear"]
+			pass
 		Pro.PICKABLE.PICKABLE_POINTS:
 			update_bolt_points(pickable_value)
 		Pro.PICKABLE.PICKABLE_CASH:
@@ -696,8 +685,38 @@ func reset_bolt():
 	rotation_dir = 0
 	engine_power = 0
 	for thrust in all_thrusts:
-		thrust.rotation = lerp(thrust.rotation, 0, engine_rotation_speed)
+		thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 		thrust.stop_fx()
+
+	
+func get_surfaces():
+	
+	# naberem vse areje pod boltom in opredelim tiste, ki štejejo za podlago
+	var all_areas_under_bolt: Array = terrain_detect.get_overlapping_areas()
+	var surfaces_under_bolt: Array = []
+	for area in all_areas_under_bolt:
+		if "surface_type" in area: 
+			surfaces_under_bolt.append(area) 
+	
+	# če ni arej, ki so podlaga, določim gravel tip
+	if surfaces_under_bolt.empty():
+		current_top_suface_type = Pro.SURFACE_TYPE.GRAVEL
+	# če so, preverim istost nove podlage
+	else:
+		var new_top_surface: Area2D = surfaces_under_bolt[surfaces_under_bolt.size() - 1]
+		if not current_top_suface_type == new_top_surface.surface_type:
+			current_top_suface_type = new_top_surface.surface_type
+	
+	# gravelšejk		
+	#	match current_top_suface_type:
+	#		Pro.SURFACE_TYPE.GRAVEL:
+	#			animation_player.play("gravel_shake")
+	#		_:
+	#			animation_player.stop()
+	
+	var new_engine_power_factor: float = Pro.surface_type_profiles[current_top_suface_type]["engine_power_factor"]
+	max_engine_power = bolt_profile["max_engine_power"] * new_engine_power_factor
+			
 		
 			
 # PRIVAT ------------------------------------------------------------------------------------------------
@@ -722,56 +741,52 @@ func _on_bolt_activity_change(bolt_is_active: bool):
 			
 func _on_motion_change(new_motion: int):
 
-	# nastavim nov engine		
-	current_motion = new_motion
-	
-	match current_motion:
-		MOTION.IDLE:
-			front_mass.set_applied_force(Vector2.ZERO)
-			rear_mass.set_applied_force(Vector2.ZERO)
-			linear_damp = bolt_profile["idle_lin_damp"]
-			angular_damp = bolt_profile["idle_ang_damp"]
-			for thrust in all_thrusts:
-				thrust.stop_fx()
-		MOTION.SLOWDOWN: # _temp ... SLOWDOWN v IDLE
-			rear_mass.set_applied_force(Vector2.ZERO)
-			linear_damp = bolt_profile["drive_lin_damp"]
-			angular_damp = bolt_profile["drive_ang_damp"]
-			for thrust in all_thrusts:
-				thrust.stop_fx()
-		MOTION.FWD:
-			rear_mass.set_applied_force(Vector2.ZERO)
-			linear_damp = bolt_profile["drive_lin_damp"]
-			angular_damp = bolt_profile["drive_ang_damp"]
-			for thrust in all_thrusts:
-				thrust.start_fx()
-		MOTION.REV:
-			front_mass.set_applied_force(Vector2.ZERO)
-			linear_damp = bolt_profile["drive_lin_damp"]
-			angular_damp = bolt_profile["drive_ang_damp"]
-			for thrust in all_thrusts:
-				thrust.start_fx()
-		MOTION.FREE_ROTATE:
-			linear_damp = bolt_profile["idle_lin_damp"]
-			angular_damp = bolt_profile["idle_ang_damp"] # če tega ni moraš prekinit tipko, da se preklopi preko IDLE stanja
-			for thrust in all_thrusts:
-				thrust.start_fx()
-		MOTION.DRIFT: # ni zrihtano
-			linear_damp = bolt_profile["idle_lin_damp"]
-			#			linear_damp = bolt_profile["drive_lin_damp"]
-			#			angular_damp = bolt_profile["idle_ang_damp"]
-			engine_power = max_engine_power # poskrbi za bolj "tight" obrat
-			for thrust in front_thrusts:
-				thrust.stop_fx()
-			for thrust in rear_thrusts:
-				thrust.start_fx()
-		MOTION.GLIDE:
-			linear_damp = bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
-			angular_damp = bolt_profile["glide_ang_damp"] # da se ne vrti, če zavija
-			for thrust in all_thrusts:
-				thrust.start_fx()
-		MOTION.DISARRAY:
-			pass
+	# nastavim nov engine	
+	if not new_motion == current_motion:
+		current_motion = new_motion
+		match current_motion:
+			MOTION.IDLE:
+				if bolt_shift > 0:
+					rear_mass.set_applied_force(Vector2.ZERO)
+				else:
+					front_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["idle_lin_damp"]
+				angular_damp = bolt_profile["idle_ang_damp"]
+				for thrust in all_thrusts:
+					thrust.stop_fx()
+			MOTION.FWD:
+				rear_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["drive_lin_damp"]
+				angular_damp = bolt_profile["drive_ang_damp"]
+				for thrust in all_thrusts:
+					thrust.start_fx()
+			MOTION.REV:
+				front_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["drive_lin_damp"]
+				angular_damp = bolt_profile["drive_ang_damp"]
+				for thrust in all_thrusts:
+					thrust.start_fx()
+			MOTION.FREE_ROTATE:
+				linear_damp = bolt_profile["idle_lin_damp"]
+				angular_damp = bolt_profile["idle_ang_damp"] # če tega ni moraš prekinit tipko, da se preklopi preko IDLE stanja
+				for thrust in all_thrusts:
+					thrust.start_fx()
+			MOTION.DRIFT: # ni zrihtano
+				linear_damp = bolt_profile["idle_lin_damp"]
+				#			linear_damp = bolt_profile["drive_lin_damp"]
+				#			angular_damp = bolt_profile["idle_ang_damp"]
+				engine_power = max_engine_power # poskrbi za bolj "tight" obrat
+				for thrust in front_thrusts:
+					thrust.stop_fx()
+				for thrust in rear_thrusts:
+					thrust.start_fx()
+			MOTION.GLIDE:
+				linear_damp = bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
+				angular_damp = bolt_profile["glide_ang_damp"] # da se ne vrti, če zavija
+				for thrust in all_thrusts:
+					thrust.start_fx()
+			MOTION.DISARRAY:
+				pass
 
 
 func _on_trail_exiting(exiting_trail: Line2D):

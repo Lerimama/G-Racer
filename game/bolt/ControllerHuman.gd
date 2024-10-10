@@ -25,25 +25,17 @@ func _input(event: InputEvent) -> void:
 			# rotacija
 			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
 			if Input.is_action_pressed(fwd_action):
-				if not controlled_bolt.bolt_shift == 1:
-					controlled_bolt.bolt_shift = 1
-				if not controlled_bolt.current_motion == controlled_bolt.MOTION.FWD:
-					controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
+				controlled_bolt.bolt_shift = 1
+				controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
 				if Ref.game_manager.fast_start_window:
 					controlled_bolt.revup()
 			elif Input.is_action_pressed(rev_action):
-				if not controlled_bolt.bolt_shift == -1:
-					controlled_bolt.bolt_shift = -1
-				if not controlled_bolt.current_motion == controlled_bolt.MOTION.REV:
-					controlled_bolt.current_motion = controlled_bolt.MOTION.REV
+				controlled_bolt.bolt_shift = -1
+				controlled_bolt.current_motion = controlled_bolt.MOTION.REV
 			elif controlled_bolt.rotation_dir == 0:
-				if not controlled_bolt.current_motion == controlled_bolt.MOTION.IDLE:
-#					print("IDLE", Input.get_axis(left_action, right_action))
-					controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
+				controlled_bolt.current_motion = controlled_bolt.MOTION.IDLE
 			elif controlled_bolt.rotation_dir == 1 or controlled_bolt.rotation_dir == -1:
-				if not controlled_bolt.current_motion == controlled_bolt.free_ability:
-#					print("SPEC", Input.get_axis(left_action, right_action))
-					controlled_bolt.current_motion = controlled_bolt.free_ability
+				controlled_bolt.current_motion = controlled_bolt.free_motion_type
 			
 			# select weapon
 			if Input.is_action_just_pressed(selector_action):

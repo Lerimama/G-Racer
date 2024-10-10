@@ -1,7 +1,7 @@
 extends Node2D
 
-enum POSITIONS {LEFT, RIGHT, FRONT, REAR}
-export (POSITIONS) var position_on_bolt: int = 0
+enum POSITION {LEFT, RIGHT, FRONT, REAR}
+export (POSITION) var position_on_bolt: int = 0
 #export var owner_node_path: String = 
 onready var owner_node: Node2D = owner.owner
 
@@ -21,16 +21,16 @@ onready var disp: Node2D = self
 func _ready() -> void:
 	
 	match position_on_bolt:
-		POSITIONS.LEFT:
+		POSITION.LEFT:
 			scale.y = 1
-		POSITIONS.RIGHT:
+		POSITION.RIGHT:
 			scale.y = -1
 			
 
 func _process(delta: float) -> void:
 	
 	if owner_node:
-		$Polygon2D.color = owner_node.bolt_color # _temp
+		$Polygon2D.color = owner_node.bolt_color
 		update_trail()
 	
 # particles

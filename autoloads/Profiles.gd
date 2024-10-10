@@ -213,27 +213,22 @@ var ammo_profiles : Dictionary = {
 
 func levels(): pass
 
-enum LEVEL_AREA {AREA_NITRO, AREA_GRAVEL, AREA_HOLE, AREA_TRACKING}
-var level_areas_profiles: Dictionary = {
-	LEVEL_AREA.AREA_NITRO: {
-		"drag_div": 500,
+enum SURFACE_TYPE {PLAIN, NITRO, GRAVEL, HOLE, TRACKING}
+var surface_type_profiles: Dictionary = {
+	SURFACE_TYPE.PLAIN: {
+		"engine_power_factor": 1, # koliko original powerja
+	},
+	SURFACE_TYPE.NITRO: {
 		"engine_power_factor": 2, # koliko original powerja
-		"area_scene": preload("res://game/level/areas/AreaNitro.tscn"),
 	},
-	LEVEL_AREA.AREA_GRAVEL: {
-		"drag_div": 25.0, 
-		"engine_power_factor": 0.7, 
-		"area_scene": preload("res://game/level/areas/AreaGravel.tscn"),
+	SURFACE_TYPE.GRAVEL: {
+		"engine_power_factor": 0.3, 
+		"rear_lin_damp": 20, # vrednost, da riti nič ne odnaša
 	},
-	LEVEL_AREA.AREA_HOLE: {
-		"drag_div": 5.0,
-		"engine_power_factor": 0.3,
-		"area_scene": preload("res://game/level/areas/AreaHole.tscn"),
+	SURFACE_TYPE.HOLE: {
+		"engine_power_factor": 0.1,
 	},
-	LEVEL_AREA.AREA_TRACKING: {
-		"area_tracking_value": 1,
-		"rear_ang_damp": 20, # vrednost, da riti nič ne odnaša
-		"area_scene": preload("res://game/level/areas/AreaTracking.tscn"),
+	SURFACE_TYPE.TRACKING: {
 	},
 }
 
@@ -386,7 +381,7 @@ var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_NITRO: {
 		"in_random_selection": false,
 		"color": Ref.color_pickable_feature,
-		"value": 700,
+		"value": 2, # factor
 		"elevation": 3,
 #		"icon_scene": preload("res://game/pickables/icons/icon_pickable_nitro.tres"),
 		"time": 1.5,

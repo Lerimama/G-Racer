@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tile_area_nitro.png-f5c451fb01456b37f609f0a88921f6e7.stex"
+path="res://.import/surface_nitro_tile.png-a991530293954dbe4eee24d60edbc7a0.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/level/areas/tile_area_nitro.png"
-dest_files=[ "res://.import/tile_area_nitro.png-f5c451fb01456b37f609f0a88921f6e7.stex" ]
+source_file="res://game/level/surfaces/surface_nitro_tile.png"
+dest_files=[ "res://.import/surface_nitro_tile.png-a991530293954dbe4eee24d60edbc7a0.stex" ]
 
 [params]
 

@@ -15,7 +15,6 @@ onready	var checkpoint: Area2D = $Racing/Checkpoint
 onready var racing_track: Path2D = $Racing/RacingTrack
 onready var navigation_instance: NavigationPolygonInstance = $NavigationPolygonInstance
 onready var tilemap_objects: TileMap = $Objects/Objects
-#onready var tilemap_edge: TileMap = $Edge
 onready var level_limits_rect: Panel = $LevelLimits
 
 # start

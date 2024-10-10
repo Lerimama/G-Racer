@@ -1,4 +1,4 @@
-[gd_scene load_steps=217 format=2]
+[gd_scene load_steps=231 format=2]
 
 [ext_resource path="res://common/tex/cross.png" type="Texture" id=1]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=2]
@@ -7,13 +7,14 @@
 [ext_resource path="res://game/level/streets/road/road_SSD.tres" type="Resource" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=6]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
-[ext_resource path="res://game/level/areas/AreaGravel.tscn" type="PackedScene" id=8]
+[ext_resource path="res://game/level/surfaces/SurfaceGravel.tscn" type="PackedScene" id=8]
 [ext_resource path="res://game/level/shapes/level_shape/LevelObjectSimple.tscn" type="PackedScene" id=9]
 [ext_resource path="res://game/objects/GoalPillar.tscn" type="PackedScene" id=10]
-[ext_resource path="res://game/level/areas/AreaNitro.tscn" type="PackedScene" id=12]
+[ext_resource path="res://game/level/streets/StreetSSD.tscn" type="PackedScene" id=11]
+[ext_resource path="res://game/level/surfaces/SurfaceNitro.tscn" type="PackedScene" id=12]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=13]
 [ext_resource path="res://common/tex/noise/7547.jpg" type="Texture" id=14]
-[ext_resource path="res://game/level/areas/AreaHole.tscn" type="PackedScene" id=15]
+[ext_resource path="res://game/level/surfaces/SurfaceHole.tscn" type="PackedScene" id=15]
 [ext_resource path="res://common/shaders/shader_rect/ShaderCanvasRect.tscn" type="PackedScene" id=16]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_open.gd" type="Script" id=17]
 [ext_resource path="res://game/level/streets/street/street_SSD.tres" type="Resource" id=18]
@@ -23,8 +24,13 @@
 [ext_resource path="res://game/level/racing/StartLights.tscn" type="PackedScene" id=22]
 [ext_resource path="res://common/shaders/shader_rect/ShaderTextureRect.tscn" type="PackedScene" id=23]
 [ext_resource path="res://game/level/racing/RaceTrack.gd" type="Script" id=24]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=25]
 [ext_resource path="res://game/level/tileset_level_objects.tres" type="TileSet" id=26]
 [ext_resource path="res://game/level/Level.gd" type="Script" id=27]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=28]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=29]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=30]
+[ext_resource path="res://game/level/shapes/level_shape/edge.png" type="Texture" id=31]
 
 [sub_resource type="Shader" id=10311]
 code = "shader_type canvas_item;
@@ -1535,6 +1541,201 @@ _next_key = 35
 _material_overrides = {
 }
 
+[sub_resource type="Resource" id=1821]
+script = ExtResource( 30 )
+textures = [ ExtResource( 31 ) ]
+texture_normals = [  ]
+textures_corner_outer = [  ]
+textures_corner_inner = [  ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = false
+use_taper_texture = false
+fit_mode = 0
+
+[sub_resource type="Resource" id=1809]
+script = ExtResource( 29 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=1822]
+script = ExtResource( 28 )
+edge_material = SubResource( 1821 )
+normal_range = SubResource( 1809 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 1.0
+
+[sub_resource type="Gradient" id=650]
+offsets = PoolRealArray( 0.465278 )
+colors = PoolColorArray( 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=160]
+gradient = SubResource( 650 )
+
+[sub_resource type="Resource" id=1823]
+script = ExtResource( 25 )
+_edge_meta_materials = [ SubResource( 1822 ) ]
+fill_textures = [ SubResource( 160 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
+
+[sub_resource type="Shader" id=12]
+code = "shader_type canvas_item;
+//render_mode blend_;
+
+// KAJ ŠEJDER DELA?
+// v prvem koraku naredi senco, jo zamakne ... potem jo izreže, da ne prekriva original barve 
+// n-krat se kopira prvi korak, z vsako kopijo se poveča foktor zamika
+// senca je tako zmeraj večja (barve se prekrivajo in na čuden način mešajo transparenco)
+// po vseh kopiranjih na celotno nastalo senco ponovno apliciramo željeno barvo sence
+// končno barvo senčenega objekta ali ozadja lahko poljubno nastavimo
+// zaenkrat primeren predvsem za dvobarvno teksturo
+
+// UPGRADE
+// - multi barve
+// - automatske mere ekrana
+// - usklajevanje št. korakov s svetlostjo teksture
+
+uniform vec2 node_size = vec2(320.0, 320.0); // setaj od zunaj
+uniform vec2 screen_size = vec2(640.0, 360.0); // setaj od zunaj
+
+uniform vec4 casting_color_1: hint_color = vec4(1.0, 1.0, 1.0, 1.0); // senčena barva
+uniform vec4 casting_color_2: hint_color = vec4(1.0, 0.0, 0.0, 0.0); // senčena barva
+uniform vec4 casting_color_3: hint_color = vec4(0.0, 1.0, 0.0, 0.0); // senčena barva
+
+uniform bool casting_object_on_floor = true; // če je element dvignjen je njegova senca drugačna, kot če je do tal
+uniform vec4 shadow_color: hint_color = vec4(1.0, 0.0, 0.0, 1.0);
+uniform int shadow_distance = 3; // število pixlov ... imitira dolžino sence
+//uniform float shadow_rotation_deg: hint_range(0.0, 360.0) = 90; // rotacija v stopinjah (dol)
+uniform vec2 shadow_direction = vec2(1,1);
+uniform float pixel_scale = 1.0; // 3.0 je fajn adaptacija, da je vsak korak en pixel
+
+uniform bool switch_cast_and_receive = false;
+uniform vec4 new_casting_color: hint_color = vec4(0.0, 0.0, 0.0, 0.0);
+uniform vec4 new_receiving_color: hint_color = vec4(0.0, 0.0, 0.0, 0.0);
+
+
+
+void fragment(){
+	
+	vec4 original_color = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0);
+	vec4 step_offset_color; // zamik teksture na korak
+	vec4 offset_color; // barva vsek korakov skupaj
+	
+//	float shadow_rotation_rad = radians(shadow_rotation_deg);
+//	float step_pixel_offset_y = cos(shadow_rotation_rad) ;//* pixel_scale;
+//	float step_pixel_offset_x = sin(shadow_rotation_rad);// * pixel_scale;
+	float step_pixel_offset_x = shadow_direction.x;// * pixel_scale;
+	float step_pixel_offset_y = -shadow_direction.y;//* pixel_scale;
+	
+	float step_count = 0.0;
+	
+	// multiplikacija sence
+	for (int i = 0; i < shadow_distance; i++) {
+		
+		step_count += 1.0; // štejemo korake ... pusti na ena
+		
+		// zamik texture v smeri (preračun texlov v pixle) ... z vsakim korakom se prišteje zamik-na-korak
+		vec2 uvs;
+		if (casting_object_on_floor == true){
+			// če je metalec sence debel je senčka brez odmika
+//			uvs = SCREEN_UV + vec2(step_pixel_offset_x / node_size.x, step_pixel_offset_y / node_size.y) * -1.0 * step_count; 
+			uvs = SCREEN_UV + vec2(step_pixel_offset_x / screen_size.x, step_pixel_offset_y / screen_size.y) * -1.0 * step_count; 
+		} else {
+			// če je metalec sence ploščat ma senčka odmik
+//			uvs = SCREEN_UV + vec2(step_pixel_offset_x * float(shadow_distance) / node_size.x, step_pixel_offset_y * float(shadow_distance) / node_size.y) * -1.0
+			uvs = SCREEN_UV + vec2(step_pixel_offset_x * float(shadow_distance) / screen_size.x, step_pixel_offset_y * float(shadow_distance) / screen_size.y) * -1.0
+		}
+		step_offset_color = texture(SCREEN_TEXTURE, uvs); 
+		
+		// ne switchamo
+		if (switch_cast_and_receive != true){
+			// kjer je zamaknjena senčena barva, damo barvo sence
+			if (length(step_offset_color - casting_color_1) < 0.01 || length(step_offset_color - casting_color_2) < 0.01 || length(step_offset_color - casting_color_3) < 0.01){
+				step_offset_color = vec4(0.0, 0.0, 0.0, 1.0);
+			}
+			else {
+				step_offset_color.a = 0.0;
+			}
+		}
+		// switchamo ... samo obrnemo pogoj
+		else if (switch_cast_and_receive == true){
+			if (length(step_offset_color - casting_color_1) > 0.01){
+				step_offset_color = vec4(0.0, 0.0, 0.0, 1.0);
+			}
+			else {
+				step_offset_color.a = 0.0;
+			}	
+		}
+		
+		// dodajanje teksture korakov v skupno teksturo
+		offset_color += step_offset_color; // barve se čudno mešajo ... zato dodam pravo barvo sence kasneje
+	}
+	
+	
+	// FINAL COLOR 
+	
+	// ne switchamo
+	if (switch_cast_and_receive != true){
+		// kjer je original barva enaka senčeni barvi, damo original barvo 
+		if (length(original_color - casting_color_1) < 0.01 || length(original_color - casting_color_2) < 0.01 || length(original_color - casting_color_3) < 0.01){
+		// alfa 100%, če ne se ne vidi ...  to bom popravil, da se aplcira alpha teksture	
+			COLOR =  new_casting_color;
+			}
+		// kjer skupna zamaknjena tekstura NI transparentna, damo željeno barvo sence 
+		else if (offset_color.a > 0.0){
+			COLOR = mix(new_receiving_color, shadow_color , shadow_color.a);
+		}
+		// kjer skupna zamaknjena tekstura JE transparentna, damo željeno barvo ozadja
+		else{
+			COLOR = new_receiving_color; 
+		}
+	}
+	// switchamo ... samo obrnemo pogoj
+	else if (switch_cast_and_receive == true) {
+		if (length(original_color - casting_color_1) > 0.01){
+		// alfa 100%, če ne se ne vidi ...  to bom popravil, da se aplcira alpha teksture
+			COLOR =  new_casting_color; // alfa 100%, če ne se ne vidi ...  to bom popravil, da se aplcira alpha teksture
+			}
+		else if (offset_color.a > 0.0){
+			COLOR = mix(new_receiving_color, shadow_color , shadow_color.a);
+		}
+		else{
+			COLOR = new_receiving_color; 
+		}		
+		
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id=13]
+shader = SubResource( 12 )
+shader_param/node_size = Vector2( 320, 320 )
+shader_param/screen_size = Vector2( 640, 360 )
+shader_param/casting_color_1 = Color( 0, 1, 0, 1 )
+shader_param/casting_color_2 = Color( 1, 0, 0, 0 )
+shader_param/casting_color_3 = Color( 0, 1, 0, 0 )
+shader_param/casting_object_on_floor = true
+shader_param/shadow_color = Color( 0.0941176, 0.0941176, 0.0941176, 0.54902 )
+shader_param/shadow_distance = 1
+shader_param/shadow_direction = Vector2( 1, 1 )
+shader_param/pixel_scale = 1.0
+shader_param/switch_cast_and_receive = false
+shader_param/new_casting_color = Color( 0, 0, 0, 0 )
+shader_param/new_receiving_color = Color( 0, 0, 0, 0 )
+
 [sub_resource type="StyleBoxFlat" id=613]
 bg_color = Color( 0.6, 0.6, 0.6, 0.294118 )
 draw_center = false
@@ -1595,9 +1796,9 @@ show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -3662.0
-margin_top = -15373.0
+margin_top = -15405.0
 margin_right = 6863.0
-margin_bottom = 4418.0
+margin_bottom = 4386.0
 color = Color( 0.490196, 0.443137, 0.423529, 1 )
 
 [node name="ShaderCanvasRect_SidewalkDirt" parent="Ground" instance=ExtResource( 16 )]
@@ -1629,8 +1830,8 @@ visible = false
 script = ExtResource( 17 )
 _points = SubResource( 11630 )
 shape_material = ExtResource( 5 )
-tessellation_stages = 6
-tessellation_tolerence = 2.1
+tessellation_stages = 5
+tessellation_tolerence = 4.0
 flip_edges = false
 render_edges = true
 collision_size = 32.0
@@ -1638,48 +1839,53 @@ collision_offset = 0.0
 collision_polygon_node_path = NodePath("")
 
 [node name="StreetSSD" type="Node2D" parent="Ground"]
+visible = false
 modulate = Color( 0.901961, 0.85098, 0.72549, 1 )
 script = ExtResource( 17 )
 _points = SubResource( 11655 )
 shape_material = ExtResource( 18 )
-tessellation_stages = 6
-tessellation_tolerence = 2.1
+tessellation_stages = 5
+tessellation_tolerence = 4.0
 flip_edges = false
 render_edges = true
 collision_size = 32.0
 collision_offset = 0.0
 collision_polygon_node_path = NodePath("")
 
-[node name="Areas" type="Node2D" parent="Ground"]
+[node name="Street" parent="Ground" instance=ExtResource( 11 )]
 
-[node name="AreaGravel" parent="Ground/Areas" instance=ExtResource( 8 )]
+[node name="Sufaces" type="Node2D" parent="Ground"]
+
+[node name="SufaceGravel" parent="Ground/Sufaces" instance=ExtResource( 8 )]
 modulate = Color( 0, 0, 0, 0.337255 )
-position = Vector2( 1822, 2313 )
+position = Vector2( 1630, 2313 )
 
-[node name="SS2D_Shape_Closed" parent="Ground/Areas/AreaGravel" index="0"]
+[node name="SS2D_Shape_Closed" parent="Ground/Sufaces/SufaceGravel" index="0"]
 position = Vector2( 256, -256 )
 _points = SubResource( 11672 )
+collision_polygon_node_path = NodePath("")
 
-[node name="CollisionPolygon2D" parent="Ground/Areas/AreaGravel" index="1"]
+[node name="CollisionPolygon2D" parent="Ground/Sufaces/SufaceGravel" index="1"]
 polygon = PoolVector2Array( 1923.18, -882.648, 2256.1, 1667.37, -174.898, 1565.16, -214.479, 229.733, -169.883, 25.8682, -145.12, -86.1741, -121.39, -295.792 )
 
-[node name="AreaHole" parent="Ground/Areas" instance=ExtResource( 15 )]
+[node name="SufaceHole" parent="Ground/Sufaces" instance=ExtResource( 15 )]
 position = Vector2( 319, 2577 )
 
-[node name="SS2D_Shape_Closed" parent="Ground/Areas/AreaHole" index="0"]
+[node name="SS2D_Shape_Closed" parent="Ground/Sufaces/SufaceHole" index="0"]
 _points = SubResource( 11691 )
 
-[node name="CollisionPolygon2D" parent="Ground/Areas/AreaHole" index="1"]
+[node name="CollisionPolygon2D" parent="Ground/Sufaces/SufaceHole" index="1"]
 polygon = PoolVector2Array( 155.523, 223.823, 144.135, 238.612, 116.432, 269.004, 99.4915, 283.499, 90.7789, 289.425, 82.1068, 294.034, 77.8333, 295.742, 73.6266, 296.997, 69.5059, 297.76, 65.4897, 297.988, 63.5269, 297.889, 61.5973, 297.641, 59.7035, 297.239, 57.8477, 296.678, 56.0321, 295.953, 54.2594, 295.058, 52.5319, 293.989, 50.8519, 292.74, 39.5917, 282.942, 31.879, 274.897, 29.1561, 271.49, 27.0833, 268.469, 25.582, 265.818, 24.5734, 263.519, 23.979, 261.555, 23.8126, 260.693, 23.7197, 259.909, 23.691, 259.199, 23.7164, 258.563, 23.7863, 257.997, 23.8905, 257.501, 24.0194, 257.07, 24.1632, 256.704, 24.3119, 256.401, 24.4553, 256.157, 24.7286, 255.78, 26.2756, 255.229, 27.9148, 254.535, 29.9495, 253.5, 32.2299, 252.087, 34.6057, 250.26, 36.9276, 247.983, 38.0214, 246.664, 39.0452, 245.218, 39.9803, 243.641, 40.8081, 241.929, 41.5099, 240.076, 42.0668, 238.079, 42.4602, 235.932, 42.6711, 233.631, 42.6812, 231.172, 42.4713, 228.55, 42.0228, 225.76, 41.3167, 222.798, 39.0579, 216.339, 35.545, 209.135, 30.6281, 201.151, 28.0881, 197.081, 26.1119, 193.246, 24.6593, 189.627, 23.6902, 186.206, 23.1648, 182.965, 23.0428, 179.887, 23.2844, 176.952, 23.8495, 174.143, 24.698, 171.443, 25.7896, 168.832, 28.5428, 163.806, 35.2081, 154.037, 38.4788, 149.003, 41.2817, 143.677, 42.408, 140.859, 43.2966, 137.913, 43.9083, 134.823, 44.203, 131.568, 44.1404, 128.132, 43.6807, 124.496, 42.7837, 120.643, 41.4094, 116.553, 39.5178, 112.21, 37.0686, 107.594, 30.3385, 97.4739, 27.301, 92.327, 24.5588, 86.4344, 19.9045, 73.0073, 13.5353, 43.7487, 9.42834, 8.89587, 170.975, -111.742, 188.023, -101.452, 204.151, -88.9844, 212.606, -80.994, 220.747, -71.8649, 228.143, -61.6212, 234.362, -50.2864, 236.894, -44.2176, 238.971, -37.8853, 240.538, -31.2925, 241.542, -24.442, 241.927, -17.337, 241.641, -9.98053, 240.628, -2.37555, 238.837, 5.47491, 236.211, 13.5679, 232.699, 21.9002, 228.245, 30.469, 222.823, 39.2771, 225.051, 57.6424, 225.15, 75.5972, 223.371, 93.0292, 219.991, 109.832, 215.288, 125.901, 209.539, 141.128, 196.01, 168.636, 181.625, 191.508, 168.604, 208.895 )
 
-[node name="AreaNitro" parent="Ground/Areas" instance=ExtResource( 12 )]
+[node name="SufaceNitro" parent="Ground/Sufaces" instance=ExtResource( 12 )]
 modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 2135, 1210 )
 
-[node name="SS2D_Shape_Closed" parent="Ground/Areas/AreaNitro" index="0"]
+[node name="SS2D_Shape_Closed" parent="Ground/Sufaces/SufaceNitro" index="0"]
 _points = SubResource( 11702 )
+collision_polygon_node_path = NodePath("")
 
-[node name="CollisionPolygon2D" parent="Ground/Areas/AreaNitro" index="1"]
+[node name="CollisionPolygon2D" parent="Ground/Sufaces/SufaceNitro" index="1"]
 polygon = PoolVector2Array( -1796.97, 974.018, -1640.46, -241.441, -1501.92, -1058.41, -1434.3, -1335.57, -1418.38, -1382.3, -1403, -1418.36, -1395.53, -1432.14, -1388.23, -1442.94, -1381.11, -1450.67, -1374.16, -1455.21, -1366.63, -1457.79, -1357.76, -1459.68, -1336.2, -1461.5, -1309.87, -1460.85, -1279.13, -1457.87, -1119.52, -1426.08, -701.809, -1301.19, -139.022, -1100.44, 50.9734, -92.0073, 89.2095, 56.3398, 105.542, 103.628, 112.808, 119.106, 116.191, 124.623, 119.539, 128.604, 99.0381, 145.688, 70.9583, 165.381, -6.29712, 211.757, -230.711, 326.88, -843.309, 601.93 )
 
 [node name="Light2D" type="Light2D" parent="Ground"]
@@ -1863,9 +2069,14 @@ position = Vector2( -3667, 361 )
 
 [node name="ObjectShapeSSD" parent="LevelShapeSSD" index="0"]
 _points = SubResource( 11722 )
+shape_material = SubResource( 1823 )
+collision_polygon_node_path = NodePath("")
 
 [node name="CollisionPolygon2D" parent="LevelShapeSSD" index="1"]
-polygon = PoolVector2Array( 8.08667, 488.734, 3.31458, 2.59558, 2574.49, -175.472, 2266.93, 933.816, 2380.35, 1669.32, 1858.94, 2412.48, 2128.73, 3964.82, -17.0868, 4090.69 )
+polygon = PoolVector2Array( 8.08667, 488.734, 3.3147, 2.59561, 2574.49, -175.472, 2266.93, 933.816, 2380.35, 1669.32, 1858.94, 2412.48, 2128.73, 3964.82, -17.0867, 4090.69 )
+
+[node name="ShadowShader" parent="LevelShapeSSD" index="2"]
+material = SubResource( 13 )
 
 [node name="_ScreenSize" type="Panel" parent="."]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
@@ -1879,7 +2090,7 @@ __meta__ = {
 [connection signal="body_entered" from="Racing/RaceFinish/FinishLine" to="." method="_on_FinishLine_body_entered"]
 [connection signal="body_entered" from="Racing/Checkpoint" to="." method="_on_Checkpoint_body_entered"]
 
-[editable path="Ground/Areas/AreaGravel"]
-[editable path="Ground/Areas/AreaHole"]
-[editable path="Ground/Areas/AreaNitro"]
+[editable path="Ground/Sufaces/SufaceGravel"]
+[editable path="Ground/Sufaces/SufaceHole"]
+[editable path="Ground/Sufaces/SufaceNitro"]
 [editable path="LevelShapeSSD"]
