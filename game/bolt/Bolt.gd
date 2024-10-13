@@ -614,11 +614,6 @@ func item_picked(pickable_key: int):
 			max_engine_power = max_engine_power * pickable_value
 			yield(get_tree().create_timer(pickable_time), "timeout")
 			max_engine_power = bolt_profile["max_engine_power"]
-		Pro.PICKABLE.PICKABLE_TRACKING:
-			#			rear_mass.linear_damp = pickable_value
-			#			yield(get_tree().create_timer(pickable_time), "timeout")
-			#			rear_mass.linear_damp = bolt_profile["drive_lin_damp_rear"]
-			pass
 		Pro.PICKABLE.PICKABLE_POINTS:
 			update_bolt_points(pickable_value)
 		Pro.PICKABLE.PICKABLE_CASH:

@@ -3,7 +3,6 @@ extends PathFollow2D
 
 var tracking_target: Object = null
 
-
 func _physics_process(delta: float) -> void:
 
 	if tracking_target:

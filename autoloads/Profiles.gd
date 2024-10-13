@@ -292,7 +292,7 @@ enum PICKABLE{
 	PICKABLE_SHIELD, PICKABLE_HEALTH, PICKABLE_LIFE,
 	PICKABLE_GAS, PICKABLE_CASH, PICKABLE_NITRO,
 	
-	PICKABLE_POINTS, PICKABLE_TRACKING, 
+	PICKABLE_POINTS,
 	PICKABLE_RANDOM
 	}
 	
@@ -303,7 +303,6 @@ var pickable_profiles: Dictionary = {
 		"value": 20,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_bullet.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_MISILE: {
@@ -312,7 +311,6 @@ var pickable_profiles: Dictionary = {
 		"value": 2,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_misile.tres"),
 		"ai_target_rank": 3,
 	}, 
 	PICKABLE.PICKABLE_MINA: {
@@ -321,7 +319,6 @@ var pickable_profiles: Dictionary = {
 		"value": 3,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_mina.tres"),
 		"ai_target_rank": 3,
 	}, 
 	PICKABLE.PICKABLE_SHIELD: {
@@ -330,7 +327,6 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"elevation": 3,
 		"time": 3,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_shield.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
@@ -339,7 +335,6 @@ var pickable_profiles: Dictionary = {
 		"value": 0,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_energy.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_LIFE: {
@@ -348,7 +343,6 @@ var pickable_profiles: Dictionary = {
 		"value": 1,
 		"elevation": 3,
 		"time": 0, # sekunde
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_life.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_GAS: {
@@ -357,7 +351,6 @@ var pickable_profiles: Dictionary = {
 		"value": 200,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_gas.tres"),
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_CASH: {
@@ -366,7 +359,6 @@ var pickable_profiles: Dictionary = {
 		"value": 50,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_points.tres"),
 		"ai_target_rank": 0,
 	},
 	PICKABLE.PICKABLE_POINTS: {
@@ -375,7 +367,6 @@ var pickable_profiles: Dictionary = {
 		"value": 100,
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_points.tres"),
 		"ai_target_rank": 2,
 	},
 	PICKABLE.PICKABLE_NITRO: {
@@ -383,18 +374,8 @@ var pickable_profiles: Dictionary = {
 		"color": Ref.color_pickable_feature,
 		"value": 2, # factor
 		"elevation": 3,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_nitro.tres"),
 		"time": 1.5,
 		"ai_target_rank": 10,
-	},
-	PICKABLE.PICKABLE_TRACKING: {
-		"in_random_selection": false,
-		"color": Ref.color_pickable_feature,
-		"value": 20, # ang_damp rite
-		"elevation": 3,
-		"time": 1.5,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_tracking.tres"),
-		"ai_target_rank": 1,
 	},
 	PICKABLE.PICKABLE_RANDOM: {
 		"in_random_selection": false,
@@ -402,7 +383,6 @@ var pickable_profiles: Dictionary = {
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"elevation": 3,
 		"time": 0,
-#		"icon_scene": preload("res://game/pickables/icons/icon_pickable_random.tres"),
 		"ai_target_rank": 9,
 	},
 }

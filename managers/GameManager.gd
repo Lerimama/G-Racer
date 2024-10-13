@@ -39,8 +39,8 @@ func _input(event: InputEvent) -> void:
 	#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
 	#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
 				
-	if Input.is_action_just_pressed("no1"): # idle
-		Ref.current_3Dworld.change_follow_target(bolts_in_game[0])
+#	if Input.is_action_just_pressed("no1"): # idle
+#		Ref.current_3Dworld.change_follow_target(bolts_in_game[0])
 	#	if Input.is_action_just_pressed("no2"): # race
 	#		for bolt in bolts_in_game:
 	#			if bolt.is_in_group(Ref.group_ai):
@@ -53,15 +53,16 @@ func _input(event: InputEvent) -> void:
 	#		for bolt in bolts_in_game:
 	#			if bolt.is_in_group(Ref.group_ai):
 	#				bolt.get_node("AIController").set_ai_target(camera_leader)
-	if Input.is_action_just_pressed("no5"):
-		for bolt in bolts_in_game:
-			if bolt.is_in_group(Ref.group_humans):
-#				bolt.queue_free()
-				bolt.lose_life()
-				#				bolt.player_stats["gas_count"] = 0
-				#			if bolt.is_in_group(Ref.group_ai):
-				#				bolt.player_stats["gas_count"] = 0			
-
+	
+	
+#	if Input.is_action_just_pressed("no5"):
+#		for bolt in bolts_in_game:
+#			if bolt.is_in_group(Ref.group_humans):
+#				bolt.lose_life()
+#				#				bolt.player_stats["gas_count"] = 0
+#				#			if bolt.is_in_group(Ref.group_ai):
+#				#				bolt.player_stats["gas_count"] = 0			
+	pass
 
 func _ready() -> void:
 	printt("GM")

@@ -166,14 +166,12 @@ func set_pickables():
 				pickable_key = Pro.PICKABLE.PICKABLE_LIFE
 			20:
 				pickable_key = Pro.PICKABLE.PICKABLE_NITRO
-			21:
-				pickable_key = Pro.PICKABLE.PICKABLE_TRACKING
 			27:
 				pickable_key = Pro.PICKABLE.PICKABLE_GAS
 			30:
 				pickable_key = Pro.PICKABLE.PICKABLE_POINTS
-#			xx:
-#				pickable_key = Pro.PICKABLE.PICKABLE_CASH
+			31:
+				pickable_key = Pro.PICKABLE.PICKABLE_CASH
 			22:
 				pickable_key = Pro.PICKABLE.PICKABLE_RANDOM
 		
