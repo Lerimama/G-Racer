@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://game/splitting_shape/SlicedRigidPolygon.gd" type="Script" id=1]
+[ext_resource path="res://game/breaker/BrokenDebry.gd" type="Script" id=1]
 
 [node name="SlicedDebry" type="RigidBody2D"]
 script = ExtResource( 1 )

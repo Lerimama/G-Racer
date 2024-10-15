@@ -16,4 +16,4 @@ func _ready() -> void:
 #	collision_shape.polygon = polygon_shape.polygon
 	polygon_shape.color = debry_color
 	
-	collision_shape.disabled = false
+#	collision_shape.disabled = false

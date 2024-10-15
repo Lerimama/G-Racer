@@ -235,8 +235,6 @@ var surface_type_profiles: Dictionary = {
 
 func level_objects(): pass
 
-var splitting_shape: PackedScene = preload("res://game/splitting_shape/SplittingShape.tscn")
-
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
 var level_object_profiles: Dictionary = { 
 	# ne rabiš povsod istih vsebin, ker element vleče samo postavke, ki jih rabi

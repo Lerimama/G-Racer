@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/breaker/BreakingGame.gd" type="Script" id=1]
+[ext_resource path="res://game/breaker/Breaker.tscn" type="PackedScene" id=2]
+
+[node name="BreakingGame" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Breaker" parent="." instance=ExtResource( 2 )]
+position = Vector2( 960.3, 448.14 )
+
+[node name="MouseArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="MouseArea"]
+polygon = PoolVector2Array( -128, 96, 0, 224, 64, 96, 192, 64, 64, -32 )
+
+[node name="Polygon2D" type="Polygon2D" parent="MouseArea"]
+color = Color( 1, 0.568627, 0.921569, 0.454902 )
+polygon = PoolVector2Array( -128, 96, 0, 224, 64, 96, 192, 64, 64, -32 )
+
+[connection signal="body_entered" from="MouseArea" to="." method="_on_MouseArea_body_entered"]
+[connection signal="body_exited" from="MouseArea" to="." method="_on_MouseArea_body_exited"]

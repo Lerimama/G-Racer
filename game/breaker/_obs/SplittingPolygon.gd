@@ -1,7 +1,7 @@
 extends Polygon2D
-# slice je razenje
-# split je dajanje narazen
-# polygons so array točk, polygon2D so spawned polygon ali polygon_shapes
+# slice je nasekanje šejpa
+# split je nasekanje roba
+# polygons so array točk, poly/polygon_shapes so spawned polygon ali polygon_shapes
 
 enum SPLIT_ORIGIN {CUSTOM, CENTERED, LIVE}
 export (SPLIT_ORIGIN) var split_origin: int = 0
