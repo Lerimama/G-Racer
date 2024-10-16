@@ -48,7 +48,7 @@ func on_slice():
 func slice_polygons():
 	
 	var split_edge_count: int = 1
-	var slice_side_count: int = 4
+	var slice_side_count: int = 2
 	
 	# opredelim origin pozicijo
 	randomize()
@@ -74,7 +74,9 @@ func slice_polygons():
 		
 	# DAISY SLICE
 	var origin_point_index: int = new_polygon_points.find(slice_point)
-	sliced_polygons = triangulate_daisy(new_polygon_points, origin_point_index)
+#	sliced_polygons = triangulate_daisy(new_polygon_points, origin_point_index)
+	use_custom_origin = false
+	sliced_polygons = triangulate_daisy(new_polygon_points)
 	
 	# SIDE SLICE
 	var new_sliced_polygons: Array = sliced_polygons.duplicate()
@@ -201,17 +203,17 @@ func slice_sides(polygon_points: PoolVector2Array):
 		
 func spawn_debry_polygons(polygons_to_spawn: Array = sliced_polygons, polygon_color: Color = Color.blue):
 		
+	# spawnam v node, kjer je original Breaker shape ... po logiki
+	var new_debry_parent = get_parent().get_parent().get_parent() # ni static type, ker je lahko karkoli
+	
 	for poly in polygons_to_spawn:
-		var new_rigid_polygon: RigidBody2D = BrokenDebry.instance()
-		new_rigid_polygon.sliced_polygon_points = poly
-		new_rigid_polygon.z_index = 10 # debug
-		new_rigid_polygon.position += global_position
-		new_rigid_polygon.modulate = polygon_color
-		new_rigid_polygon.modulate.v = randf() * 1.5
-				
-		# spawnam v node, kjer je original Breaker shape ... po logiki
-		var new_rigid_polygon_parent = get_parent().get_parent() # ni static type, ker je lahko karkoli
-		new_rigid_polygon_parent.add_child(new_rigid_polygon)
+		var new_debry: RigidBody2D = BrokenDebry.instance()
+		new_debry.broken_debry_polygon = poly
+		new_debry.z_index = 10 # debug
+		new_debry.position += global_position
+#		new_debry.modulate = polygon_color
+#		new_debry.modulate.v = randf() * 1.5
+		new_debry_parent.add_child(new_debry)
 		
 	
 func spawn_crack_polygons(from_polygons: Array = sliced_polygons, polygon_color: Color = Color.black, clear_before: bool = true):

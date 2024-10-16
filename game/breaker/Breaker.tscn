@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://game/breaker/Breaker.gd" type="Script" id=1]
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
 
 [node name="Breaker" type="RigidBody2D"]
 script = ExtResource( 1 )
@@ -13,12 +12,7 @@ polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
 color = Color( 0.709804, 0.709804, 0.709804, 1 )
 polygon = PoolVector2Array( 32, 416, 96.01, 352, 64, 224, 224.01, 288, 320, 224, 320.01, 352, 352, 448, 224.01, 352, 224.01, 448, 160.01, 352 )
 
-[node name="Label" type="Label" parent="."]
-margin_top = 448.0
-margin_right = 128.0
-margin_bottom = 480.0
-theme = ExtResource( 2 )
-text = "NOVA BAZA"
-
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
+
+[node name="Chunks" type="Node2D" parent="."]
