@@ -518,7 +518,7 @@ func spawn_rigid_polygons(polygons_to_spawn: Array):
 			
 func spawn_rigid_polygons_from_2ds(polygons_to_spawn: Array):
 		
-	for poly in polygons_to_spawn:
+	for poli in polygons_to_spawn:
 		
 		var new_rigid_polygon: RigidBody2D = SlicedRigidPoly.instance()
 		# podam vektor za kopiranje
@@ -572,7 +572,7 @@ func spawn_setup_polygons(from_polygons: Array = sliced_polygons, polygon_color:
 
 func split_polygon_edge(poly_edge_points: PoolVector2Array):
 	
-	var split_points_to_add: Array = []
+	var split_points_to_add: Array
 	
 	# generiram split points
 	for point_index in poly_edge_points.size():
@@ -601,7 +601,7 @@ func split_polygon_edge(poly_edge_points: PoolVector2Array):
 
 func split_polygon_edge_on_distance(poly_edge_points: PoolVector2Array = polygon, split_on_distance: float = 0):
 	
-	var split_points_to_add: Array = []
+	var split_points_to_add: Array
 	
 	# generiram split points
 	for point_index in poly_edge_points.size():

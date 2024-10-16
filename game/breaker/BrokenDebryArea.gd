@@ -1,8 +1,8 @@
-extends RigidBody2D
+extends Area2D
 
 
 var debry_polygon: PoolVector2Array
-var debry_color: Color =Color.blue
+var debry_color: Color = Color.blue
 var vector_from_origin: Vector2
 	
 onready var debry_shape: Polygon2D = $DebryShape
@@ -19,3 +19,10 @@ func _ready() -> void:
 	
 	# props
 	debry_shape.color = debry_color
+		
+	var twiner = get_tree().create_tween()
+	twiner.tween_property(self, "modulate:a", 0, 0.5)
+	yield(twiner, "finished")
+	queue_free()
+
+	

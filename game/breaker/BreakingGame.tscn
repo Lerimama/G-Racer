@@ -8,22 +8,33 @@
 script = ExtResource( 1 )
 
 [node name="Breaker" parent="." instance=ExtResource( 2 )]
-position = Vector2( 960.3, 448.14 )
+position = Vector2( 416, 512.03 )
+
+[node name="Breaker2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1069, 512.03 )
+
+[node name="BreakerShape" parent="Breaker2" index="0"]
+polygon = PoolVector2Array( 0, 0, -96, 128, -96, 256, 0, 384, 160, 480, 384, 384, 512, 128, 384, 0, 192, -64 )
+
+[node name="Breaker3" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1696, 512.03 )
+
+[node name="BreakerShape" parent="Breaker3" index="0"]
+polygon = PoolVector2Array( 0, 0, 96, 128, 0, 224, 64, 288, 0, 384, 192, 288, 384, 384, 320, 224, 480, 192, 384, 0, 224, 64 )
 
 [node name="SlicerArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="SlicerArea"]
-visible = false
-polygon = PoolVector2Array( 32, 32, 32, -32, -32, -32, -32, 32 )
+polygon = PoolVector2Array( 96, 0, 0, -96, -96, 0, 0, 96 )
 
 [node name="SlicingPoly" type="Polygon2D" parent="SlicerArea"]
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -96, 0, 0, 96, 96, 0, 0, -96 )
 
 [node name="Shapes" type="Node2D" parent="SlicerArea"]
+visible = false
 
 [node name="RectPoly" type="Polygon2D" parent="SlicerArea/Shapes"]
-visible = false
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -32, 32, 32, 32, 32, -32, -32, -32 )
 
@@ -33,33 +44,101 @@ color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -416, 32, 480, 32, 480, 0, -416, 0 )
 
 [node name="CircoPoly" type="Polygon2D" parent="SlicerArea/Shapes"]
-visible = false
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( 0, -32, -16, -27, -28, -16, -32, 0, -29, 16, -17, 27, 0, 32, 18, 27, 29, 15, 32, 0, 30, -15, 20, -27 )
 
 [node name="Button" type="Button" parent="."]
-margin_left = 736.0
+margin_left = 928.0
 margin_top = 64.0
-margin_right = 850.0
+margin_right = 1042.0
 margin_bottom = 112.0
 theme = ExtResource( 3 )
 text = "RECT"
-
-[node name="Button2" type="Button" parent="."]
-margin_left = 896.0
-margin_top = 64.0
-margin_right = 1036.0
-margin_bottom = 112.0
-theme = ExtResource( 3 )
-text = "CIRCO"
+align = 0
 
 [node name="Button3" type="Button" parent="."]
-margin_left = 1088.0
-margin_top = 64.0
-margin_right = 1177.0
-margin_bottom = 112.0
+margin_left = 928.0
+margin_top = 128.0
+margin_right = 1029.0
+margin_bottom = 176.0
 theme = ExtResource( 3 )
 text = "LINE"
+align = 0
+
+[node name="Button2" type="Button" parent="."]
+margin_left = 928.0
+margin_top = 192.0
+margin_right = 1068.0
+margin_bottom = 240.0
+theme = ExtResource( 3 )
+text = "CIRCO"
+align = 0
+
+[node name="Button4" type="Button" parent="."]
+margin_left = 1182.0
+margin_top = 64.0
+margin_right = 1321.0
+margin_bottom = 112.0
+theme = ExtResource( 3 )
+text = "SCALE"
+align = 0
+
+[node name="Button5" type="Button" parent="."]
+margin_left = 1182.0
+margin_top = 128.0
+margin_right = 1351.0
+margin_bottom = 176.0
+theme = ExtResource( 3 )
+text = "ROTATE"
+align = 0
+
+[node name="Button6" type="Button" parent="."]
+margin_left = 1184.0
+margin_top = 192.0
+margin_right = 1316.0
+margin_bottom = 240.0
+theme = ExtResource( 3 )
+text = "PAINT"
+align = 0
+
+[node name="Button7" type="Button" parent="."]
+margin_left = 1438.0
+margin_top = 64.0
+margin_right = 1577.0
+margin_bottom = 112.0
+theme = ExtResource( 3 )
+text = "SCALE"
+align = 0
+
+[node name="Button8" type="Button" parent="."]
+margin_left = 1438.0
+margin_top = 128.0
+margin_right = 1607.0
+margin_bottom = 176.0
+theme = ExtResource( 3 )
+text = "ROTATE"
+align = 0
+
+[node name="Button9" type="Button" parent="."]
+margin_left = 1440.0
+margin_top = 192.0
+margin_right = 1572.0
+margin_bottom = 240.0
+theme = ExtResource( 3 )
+text = "PAINT"
+align = 0
 
 [connection signal="body_entered" from="SlicerArea" to="." method="_on_MouseArea_body_entered"]
 [connection signal="body_exited" from="SlicerArea" to="." method="_on_MouseArea_body_exited"]
+[connection signal="button_up" from="Button" to="." method="_on_Button_button_up"]
+[connection signal="button_up" from="Button3" to="." method="_on_Button3_button_up"]
+[connection signal="button_up" from="Button2" to="." method="_on_Button2_button_up"]
+[connection signal="button_up" from="Button4" to="." method="_on_Button4_button_up"]
+[connection signal="button_up" from="Button5" to="." method="_on_Button5_button_up"]
+[connection signal="button_up" from="Button6" to="." method="_on_Button6_button_up"]
+[connection signal="button_up" from="Button7" to="." method="_on_Button4_button_up"]
+[connection signal="button_up" from="Button8" to="." method="_on_Button5_button_up"]
+[connection signal="button_up" from="Button9" to="." method="_on_Button6_button_up"]
+
+[editable path="Breaker2"]
+[editable path="Breaker3"]
