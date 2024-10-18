@@ -1,26 +1,27 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://game/breaker/BreakingGame.gd" type="Script" id=1]
-[ext_resource path="res://game/breaker/Breaker.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://game/breaker/Demo.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
+[ext_resource path="res://game/breaker/Breaker.tscn" type="PackedScene" id=3]
 
 [node name="BreakingGame" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="Breaker" parent="." instance=ExtResource( 2 )]
+[node name="Breaker" parent="." instance=ExtResource( 3 )]
 position = Vector2( 416, 512.03 )
 
-[node name="Breaker2" parent="." instance=ExtResource( 2 )]
+[node name="Breaker2" parent="." instance=ExtResource( 3 )]
 position = Vector2( 1069, 512.03 )
 
-[node name="BreakerShape" parent="Breaker2" index="0"]
-polygon = PoolVector2Array( 0, 0, -96, 128, -96, 256, 0, 384, 160, 480, 384, 384, 512, 128, 384, 0, 192, -64 )
+[node name="Label" type="Label" parent="Breaker2"]
+modulate = Color( 0, 0, 0, 1 )
+margin_right = 40.0
+margin_bottom = 14.0
+theme = ExtResource( 2 )
+text = "REV"
 
-[node name="Breaker3" parent="." instance=ExtResource( 2 )]
+[node name="Breaker3" parent="." instance=ExtResource( 3 )]
 position = Vector2( 1696, 512.03 )
-
-[node name="BreakerShape" parent="Breaker3" index="0"]
-polygon = PoolVector2Array( 0, 0, 96, 128, 0, 224, 64, 288, 0, 384, 192, 288, 384, 384, 320, 224, 480, 192, 384, 0, 224, 64 )
 
 [node name="SlicerArea" type="Area2D" parent="."]
 
@@ -32,27 +33,29 @@ color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -96, 0, 0, 96, 96, 0, 0, -96 )
 
 [node name="Shapes" type="Node2D" parent="SlicerArea"]
-visible = false
 
 [node name="RectPoly" type="Polygon2D" parent="SlicerArea/Shapes"]
+visible = false
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
-polygon = PoolVector2Array( -32, 32, 32, 32, 32, -32, -32, -32 )
+polygon = PoolVector2Array( -96, 96, 96, 96, 96, -96, -96, -96 )
 
 [node name="LinePoly" type="Polygon2D" parent="SlicerArea/Shapes"]
 visible = false
+position = Vector2( 0, -4 )
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
-polygon = PoolVector2Array( -416, 32, 480, 32, 480, 0, -416, 0 )
+polygon = PoolVector2Array( -192, 8, 192, 8, 192, 0, -192, 0 )
 
 [node name="CircoPoly" type="Polygon2D" parent="SlicerArea/Shapes"]
+visible = false
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
-polygon = PoolVector2Array( 0, -32, -16, -27, -28, -16, -32, 0, -29, 16, -17, 27, 0, 32, 18, 27, 29, 15, 32, 0, 30, -15, 20, -27 )
+polygon = PoolVector2Array( 40, -88, 0, -96, -40, -88, -70, -70, -88, -40, -96, 0, -88, 40, -69, 69, -40, 88, 0, 96, 40, 88, 69, 69, 88, 40, 96, 0, 88, -40, 70, -70 )
 
 [node name="Button" type="Button" parent="."]
 margin_left = 928.0
 margin_top = 64.0
 margin_right = 1042.0
 margin_bottom = 112.0
-theme = ExtResource( 3 )
+theme = ExtResource( 2 )
 text = "RECT"
 align = 0
 
@@ -61,7 +64,7 @@ margin_left = 928.0
 margin_top = 128.0
 margin_right = 1029.0
 margin_bottom = 176.0
-theme = ExtResource( 3 )
+theme = ExtResource( 2 )
 text = "LINE"
 align = 0
 
@@ -70,7 +73,7 @@ margin_left = 928.0
 margin_top = 192.0
 margin_right = 1068.0
 margin_bottom = 240.0
-theme = ExtResource( 3 )
+theme = ExtResource( 2 )
 text = "CIRCO"
 align = 0
 
@@ -79,7 +82,7 @@ margin_left = 1182.0
 margin_top = 64.0
 margin_right = 1321.0
 margin_bottom = 112.0
-theme = ExtResource( 3 )
+theme = ExtResource( 2 )
 text = "SCALE"
 align = 0
 
@@ -88,7 +91,7 @@ margin_left = 1182.0
 margin_top = 128.0
 margin_right = 1351.0
 margin_bottom = 176.0
-theme = ExtResource( 3 )
+theme = ExtResource( 2 )
 text = "ROTATE"
 align = 0
 
@@ -97,7 +100,7 @@ margin_left = 1184.0
 margin_top = 192.0
 margin_right = 1316.0
 margin_bottom = 240.0
-theme = ExtResource( 3 )
+theme = ExtResource( 2 )
 text = "PAINT"
 align = 0
 
@@ -106,8 +109,8 @@ margin_left = 1438.0
 margin_top = 64.0
 margin_right = 1577.0
 margin_bottom = 112.0
-theme = ExtResource( 3 )
-text = "SCALE"
+theme = ExtResource( 2 )
+text = "BLAST"
 align = 0
 
 [node name="Button8" type="Button" parent="."]
@@ -115,8 +118,8 @@ margin_left = 1438.0
 margin_top = 128.0
 margin_right = 1607.0
 margin_bottom = 176.0
-theme = ExtResource( 3 )
-text = "ROTATE"
+theme = ExtResource( 2 )
+text = "SQUARE"
 align = 0
 
 [node name="Button9" type="Button" parent="."]
@@ -124,8 +127,8 @@ margin_left = 1440.0
 margin_top = 192.0
 margin_right = 1572.0
 margin_bottom = 240.0
-theme = ExtResource( 3 )
-text = "PAINT"
+theme = ExtResource( 2 )
+text = "HEX"
 align = 0
 
 [connection signal="body_entered" from="SlicerArea" to="." method="_on_MouseArea_body_entered"]
@@ -136,9 +139,10 @@ align = 0
 [connection signal="button_up" from="Button4" to="." method="_on_Button4_button_up"]
 [connection signal="button_up" from="Button5" to="." method="_on_Button5_button_up"]
 [connection signal="button_up" from="Button6" to="." method="_on_Button6_button_up"]
-[connection signal="button_up" from="Button7" to="." method="_on_Button4_button_up"]
-[connection signal="button_up" from="Button8" to="." method="_on_Button5_button_up"]
-[connection signal="button_up" from="Button9" to="." method="_on_Button6_button_up"]
+[connection signal="button_up" from="Button7" to="." method="_on_Button7_button_up"]
+[connection signal="button_up" from="Button8" to="." method="_on_Button8_button_up"]
+[connection signal="button_up" from="Button9" to="." method="_on_Button9_button_up"]
 
+[editable path="Breaker"]
 [editable path="Breaker2"]
 [editable path="Breaker3"]

@@ -1,0 +1,12 @@
+[gd_scene format=2]
+
+[node name="CrackedShape" type="Polygon2D"]
+color = Color( 0.721569, 0, 0, 1 )
+polygon = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )
+
+[node name="EdgeLine" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64, 0, 0 )
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+begin_cap_mode = 1
+end_cap_mode = 1

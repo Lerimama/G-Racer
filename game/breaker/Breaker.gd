@@ -1,46 +1,38 @@
 extends RigidBody2D
+# slice je zarezovanje
+# split je dajanje narazen
 
-
-var shape_poly_points: PoolVector2Array = [] # če podam ob spawnanju, se aplicira na glavno obliko
-
+var breaker_shape_polygon: PoolVector2Array = [] # podam ob spawnanju
 onready var breaker_shape: Polygon2D = $BreakerShape
-onready var slicing_shape: Polygon2D = $SlicingShape
-onready var breaker_parent = get_parent() # ni static, ker je lahko karkoli
+onready var slicer_shape: Polygon2D = $SlicerShape
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
-onready var chunks_parent: Node2D = $Chunks
 
-var BrokenChunk: PackedScene = preload("res://game/breaker/BrokenChunk.tscn")
-var break_origin_global_position: Vector2
+# breaking
+var chunk_slicing_style: int	
+var break_origin_global_position: Vector2 # se inherita skozi celo proceduro
+onready var breaker_parent = get_parent() # (za Debry) inherit skozi celo proceduro
+onready var chunks_parent: Node2D = $Chunks
+onready var Chunk: PackedScene = preload("res://game/breaker/Chunk.tscn")
 
 
 func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("no1"):
-		slicing_shape.polygon = match_shape_transforms(slicing_shape).polygon
-		slice_shape(slicing_shape.polygon)
-		slicing_shape.hide()	
-		
-	if Input.is_action_just_pressed("no2"):
-		pass
-	if Input.is_action_just_pressed("no3"):
-		pass
-	if Input.is_action_just_pressed("no4"):
-		pass
-	if Input.is_action_just_pressed("no5"):
-		pass
+		var sliced_polygons: Array = slice_breaker_shape(slicer_shape.polygon)
 
 
 func _ready() -> void:
 	
 	# če ni podan spawn shape
-	if not shape_poly_points.empty():
-		breaker_shape.polygon = shape_poly_points
+	if not breaker_shape_polygon.empty():
+		breaker_shape.polygon = breaker_shape_polygon
 	collision_shape.polygon = breaker_shape.polygon
-	slicing_shape.hide()
+	slicer_shape.hide()
 
+
+func on_hit(hitting_shape: Polygon2D, hit_position: Vector2, new_slicing_style: int):
 	
-func on_hit(hitting_shape: Polygon2D, hit_position: Vector2):
-	
+	chunk_slicing_style = new_slicing_style
 	break_origin_global_position = hit_position
 	hitting_shape.polygon = match_shape_transforms(hitting_shape).polygon
 	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
@@ -48,16 +40,16 @@ func on_hit(hitting_shape: Polygon2D, hit_position: Vector2):
 	for point in hitting_shape.polygon:
 		# od globalne pozicije pike odštejem globalno pozicijo breakerja
 		var point_global_position: Vector2 = point * hitting_shape.scale + hit_position
-		var hitting_point_position_against_breaker: Vector2 = point_global_position - position
-		adapted_polygon.append(hitting_point_position_against_breaker)
-	
-	slice_shape(adapted_polygon)
-	
-	
-# OPERATIONS ---------------------------------------------------------------------------------------------------
+		var hitting_point_position_against_object: Vector2 = point_global_position - position
+		adapted_polygon.append(hitting_point_position_against_object)
+
+	var sliced_polygons: Array = slice_breaker_shape(adapted_polygon)
 	
 	
-func slice_shape(cutting_polygon: PoolVector2Array):
+# OPERATIONS ----------------------------------------------------------------------------------
+	
+	
+func slice_breaker_shape(cutting_polygon: PoolVector2Array):
 	# najprej klipam da dobim glavne oblike
 	# potem intersektam, da dobim odlomljeno obliko
 
@@ -68,17 +60,19 @@ func slice_shape(cutting_polygon: PoolVector2Array):
 	var interecting_polygons: Array = Geometry.intersect_polygons_2d(cutting_polygon, breaker_shape.polygon)
 	if interecting_polygons.empty():
 		print("intersection empty")
-		return []
 		
-	break_apart(clipped_polygons, interecting_polygons)
+	break_apart(clipped_polygons, interecting_polygons)	
+	return [clipped_polygons, interecting_polygons]
 	
 	
 func break_apart(clipped_base_polygons: Array, interecting_base_polygons: Array):
 	
 	# če ga prekrije, razpade celoten shape
 	if clipped_base_polygons.empty():
-		spawn_broken_chunk(breaker_shape.polygon)
+		spawn_chunk(breaker_shape.polygon)
 		breaker_shape.hide()
+	
+	# če ne razade na chunk in morebitne nove breaking objekte
 	else:	
 		# shape adapt
 		breaker_shape.hide()
@@ -86,19 +80,61 @@ func break_apart(clipped_base_polygons: Array, interecting_base_polygons: Array)
 		breaker_shape.color = Color.purple
 		collision_shape.polygon = breaker_shape.polygon
 		breaker_shape.show()
-		# luknja ali ostanek
+		
+		# luknja ali novi breaking object
 		for poly in clipped_base_polygons:
-			if Geometry.is_polygon_clockwise(poly): # luknja ... glavni splitam poligon
+			if Geometry.is_polygon_clockwise(poly): # luknja ... splitam glavni poligon
 				apply_hole(poly)
 				return
-			else: # new breakers
+			else:
 				spawn_new_breaker(poly, Color.green)
+		
 		# chunks
-		reset_breaker() # debug
+		for chunk in chunks_parent.get_children(): # debug, dokler ne bo animirano
+			chunk.queue_free()
 		for poly_index in interecting_base_polygons.size(): # zazih ... skoraj ni mogoče, da bi bil notri več kot eden
 			var chunk_template: PoolVector2Array = interecting_base_polygons[poly_index]
-			spawn_broken_chunk(chunk_template)
+			spawn_chunk(chunk_template)
+
+	
+func spawn_chunk(template_polygon: PoolVector2Array):
+	
+	var new_broken_chunk: Polygon2D = Chunk.instance()
+	new_broken_chunk.chunk_polygon = template_polygon
+	new_broken_chunk.color = Color.red
+	new_broken_chunk.modulate.a = 0.2
+	new_broken_chunk.slice_origin_global_position = break_origin_global_position
+	new_broken_chunk.chunk_slice_style = chunk_slicing_style
+	chunks_parent.add_child(new_broken_chunk)
+	
+	# printt("new chunk", new_broken_chunk, new_broken_chunk.position)
 		
+		
+func spawn_new_breaker(polygon_points: PoolVector2Array, new_color: Color = Color.red):
+	
+	var new_breaker = duplicate()
+	new_breaker.breaker_shape_polygon = polygon_points
+	new_breaker.name = "Breaker"
+	breaker_parent.add_child(new_breaker)
+	
+	new_breaker.breaker_shape.color = new_color
+	for chunk in chunks_parent.get_children():
+		chunk.queue_free()
+	
+	# printt("new breaking obj", new_breaker, new_breaker.position, new_breaker.get_parent())
+
+
+func match_shape_transforms(shape_to_transform: Polygon2D):
+	
+	if shape_to_transform.transform != Transform2D.IDENTITY: 
+		# The identity Transform2D with no translation, rotation or scaling applied. 
+		# When applied to other data structures, IDENTITY performs no transformation.
+		var transformed_polygon = shape_to_transform.transform.xform(shape_to_transform.polygon)
+		shape_to_transform.transform = Transform2D.IDENTITY
+		shape_to_transform.polygon = transformed_polygon	
+	
+	return shape_to_transform
+
 
 func apply_hole(hole_polygon: PoolVector2Array):
 	# poiščem rob (s točko), ki je najbližje od enega od robov
@@ -150,48 +186,5 @@ func apply_hole(hole_polygon: PoolVector2Array):
 	
 	# apliciram na shape
 	breaker_shape.polygon = split_shape_polygon
-	slice_shape(hole_polygon)
+	slice_breaker_shape(hole_polygon)
 	
-	
-func spawn_broken_chunk(template_polygon: PoolVector2Array):
-	
-	var new_broken_chunk: Polygon2D = BrokenChunk.instance()
-	new_broken_chunk.shape_polygon = template_polygon
-	new_broken_chunk.slice_origin_global_position = break_origin_global_position
-	new_broken_chunk.color = Color.red
-	new_broken_chunk.modulate.a = 0.2
-	chunks_parent.add_child(new_broken_chunk)
-	
-	printt("new chunk", new_broken_chunk, new_broken_chunk.position)
-		
-		
-func spawn_new_breaker(polygon_points: PoolVector2Array, new_color: Color = Color.red):
-	
-	var new_breaker = duplicate()
-	new_breaker.shape_poly_points = polygon_points
-	new_breaker.name = "Breaker"
-	breaker_parent.add_child(new_breaker)
-	
-	new_breaker.breaker_shape.color = new_color
-	new_breaker.reset_breaker()
-	
-	printt("new breaker", new_breaker, new_breaker.position, new_breaker.get_parent())
-
-
-func reset_breaker():
-	
-	var current_chunks: Array = chunks_parent.get_children()
-	for chunk in current_chunks:
-		chunk.queue_free()
-
-
-func match_shape_transforms(shape_to_transform: Polygon2D):
-	
-	if shape_to_transform.transform != Transform2D.IDENTITY: 
-		# The identity Transform2D with no translation, rotation or scaling applied. 
-		# When applied to other data structures, IDENTITY performs no transformation.
-		var transformed_polygon = shape_to_transform.transform.xform(shape_to_transform.polygon)
-		shape_to_transform.transform = Transform2D.IDENTITY
-		shape_to_transform.polygon = transformed_polygon	
-	
-	return shape_to_transform

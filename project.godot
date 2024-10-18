@@ -263,6 +263,7 @@ Met="*res://autoloads/Methods.gd"
 [debug]
 
 gdscript/completion/autocomplete_setters_and_getters=true
+gdscript/warnings/unassigned_variable=false
 gdscript/warnings/unused_variable=false
 gdscript/warnings/unused_argument=false
 gdscript/warnings/narrowing_conversion=false
