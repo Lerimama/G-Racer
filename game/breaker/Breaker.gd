@@ -1,9 +1,8 @@
 extends RigidBody2D
-# slice je zarezovanje
-# split je dajanje narazen
 
-enum MATERIAL {WOOD, METAL, TILES, SOIL}
-export (MATERIAL) var current_breaker_material: int = MATERIAL.WOOD
+
+enum MATERIAL {WOOD, METAL, TILES, SOIL, GLASS}
+export (MATERIAL) var breaker_material: int = MATERIAL.WOOD
 
 var breaker_shape_polygon: PoolVector2Array = [] # podam ob spawnanju
 onready var breaker_shape: Polygon2D = $BreakerShape
@@ -12,7 +11,7 @@ onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 
 # breaking
 var origin_global_position: Vector2 # se inherita skozi vse spawne
-var chunk_slicing_style: int # se inherita skozi vse spawne
+#var chunk_slicing_style: int # se inherita skozi vse spawne
 onready var chunks_parent: Node2D = $Chunks
 onready var Chunk: PackedScene = preload("res://game/breaker/Chunk.tscn")
 
@@ -23,7 +22,7 @@ var breaking_round: int = 0
 func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("no1"):
-		slice_breaker_shape(slicer_shape.polygon)
+		slice_breaker(slicer_shape.polygon)
 
 
 func _ready() -> void:
@@ -35,9 +34,25 @@ func _ready() -> void:
 	slicer_shape.hide()
 
 
-func on_hit(hitting_shape: Polygon2D, hit_position: Vector2, new_slicing_style: int):
+func on_hit(hitting_shape: Polygon2D, hit_vector, new_slicing_style: int):
+#func on_hit(hitting_shape: Polygon2D, hit_vector: Vector2, new_slicing_style: int):
 	
-	chunk_slicing_style = new_slicing_style
+	# dobim origin a robu, ki ga križa hit vektor
+	var hit_position: Vector2
+	if hit_vector is PoolVector2Array:
+		var interline = Geometry.clip_polyline_with_polygon_2d(hit_vector, breaker_shape.polygon)
+#		var interline = Geometry.intersect_polyline_with_polygon_2d(hit_vector, breaker_shape.polygon)
+		printt("INTERLINE",interline)
+		var ind = Met.spawn_indikator(interline[0][0])
+		ind.scale *= 10
+		ind.modulate = Color.yellow
+		var indi = Met.spawn_indikator(interline[0][1], false)
+		indi.scale *= 10
+		indi.modulate = Color.blue
+	elif hit_vector is Vector2:
+		hit_position = hit_vector #_temp
+		
+#	chunk_slicing_style = new_slicing_style
 	origin_global_position = hit_position
 	hitting_shape.polygon = match_shape_transforms(hitting_shape).polygon
 	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
@@ -48,33 +63,37 @@ func on_hit(hitting_shape: Polygon2D, hit_position: Vector2, new_slicing_style: 
 		var hitting_point_position_against_object: Vector2 = point_global_position - position
 		adapted_polygon.append(hitting_point_position_against_object)
 
-	var sliced_polygons: Array = slice_breaker_shape(adapted_polygon)
+#	var sliced_polygons: Array = slice_breaker(adapted_polygon)
+	if new_slicing_style == -1:
+		slice_breaker(adapted_polygon, false)
+	else:
+		slice_breaker(adapted_polygon)
 	
 	
 # OPERATIONS ----------------------------------------------------------------------------------
 	
 	
-func slice_breaker_shape(cutting_polygon: PoolVector2Array):
+func slice_breaker(slicing_polygon: PoolVector2Array, spawn_chunks: bool = true):
 	# najprej klipam da dobim glavne oblike
 	# potem intersektam, da dobim odlomljeno obliko
 
 	# klipam, da dobim shape
-	var clipped_polygons: Array = Geometry.clip_polygons_2d(breaker_shape.polygon, cutting_polygon)
+	var clipped_polygons: Array = Geometry.clip_polygons_2d(breaker_shape.polygon, slicing_polygon)
 	# prazen je kadar se ne sekata ali pa je breaker znotraj šejpa (luknja)
 	
 	# intersektam, da dobim chunk template
-	var interecting_polygons: Array = Geometry.intersect_polygons_2d(cutting_polygon, breaker_shape.polygon)
+	var interecting_polygons: Array = Geometry.intersect_polygons_2d(slicing_polygon, breaker_shape.polygon)
 	if interecting_polygons.empty():
 		print("intersection empty")
 		
-	break_apart(clipped_polygons, interecting_polygons)	
+	break_apart(clipped_polygons, interecting_polygons, spawn_chunks)	
 	#	return [clipped_polygons, interecting_polygons]
 	
 	
-func break_apart(clipped_base_polygons: Array, interecting_base_polygons: Array):
+func break_apart(clipped_breaker_polygons: Array, interecting_base_polygons: Array, spawn_chunks: bool = true):
 	
 	# če ga prekrije, razpade celoten shape
-	if clipped_base_polygons.empty():
+	if clipped_breaker_polygons.empty():
 		spawn_chunk(breaker_shape.polygon)
 		breaker_shape.hide()
 	
@@ -82,13 +101,13 @@ func break_apart(clipped_base_polygons: Array, interecting_base_polygons: Array)
 	else:	
 		# shape adapt
 		breaker_shape.hide()
-		breaker_shape.polygon = clipped_base_polygons.pop_front()
+		breaker_shape.polygon = clipped_breaker_polygons.pop_front()
 		breaker_shape.color = Color.purple
 		collision_shape.polygon = breaker_shape.polygon
 		breaker_shape.show()
 		
 		# luknja ali novi breaking object
-		for poly in clipped_base_polygons:
+		for poly in clipped_breaker_polygons:
 			if Geometry.is_polygon_clockwise(poly): # luknja ... splitam glavni poligon
 				apply_hole(poly)
 				return
@@ -96,11 +115,12 @@ func break_apart(clipped_base_polygons: Array, interecting_base_polygons: Array)
 				spawn_new_breaker(poly, Color.green)
 		
 		# chunks
-		for chunk in chunks_parent.get_children(): # debug, dokler ne bo animirano
-			chunk.queue_free()
-		for poly_index in interecting_base_polygons.size(): # zazih ... skoraj ni mogoče, da bi bil notri več kot eden
-			var chunk_template: PoolVector2Array = interecting_base_polygons[poly_index]
-			spawn_chunk(chunk_template)
+		if spawn_chunks:
+			for chunk in chunks_parent.get_children(): # debug, dokler ne bo animirano
+				chunk.queue_free()
+			for poly_index in interecting_base_polygons.size(): # zazih ... skoraj ni mogoče, da bi bil notri več kot eden
+				var chunk_template: PoolVector2Array = interecting_base_polygons[poly_index]
+				spawn_chunk(chunk_template)
 	
 	breaking_round += 1 
 	
@@ -112,7 +132,6 @@ func spawn_chunk(template_polygon: PoolVector2Array):
 	new_broken_chunk.name = "Chunk_R%s" % str(breaking_round)
 	new_broken_chunk.color = Color.red
 	new_broken_chunk.modulate.a = 0.2
-	new_broken_chunk.chunk_slice_style = chunk_slicing_style
 	new_broken_chunk.origin_global_position = origin_global_position
 	chunks_parent.add_child(new_broken_chunk)
 	
@@ -195,5 +214,5 @@ func apply_hole(hole_polygon: PoolVector2Array):
 	
 	# apliciram na shape
 	breaker_shape.polygon = split_shape_polygon
-	slice_breaker_shape(hole_polygon)
+	slice_breaker(hole_polygon)
 	

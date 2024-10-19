@@ -1,67 +1,22 @@
 extends Node
-# slice je zarezovanje
-# split je dajanje narazen
-
-enum GRID_STYLE {SQUARE, HEX, RANDOM, OCT} # _temp ... se podvaja
-var current_grid_style: int = GRID_STYLE.HEX
+# slice funkcije hendlajo uporabo preostalih in s tem hendlajo stil razreza
 
 	
-func slice_sides(polygon_points: PoolVector2Array):
-	# 3-je koti so najmanj ... po splitanju 6
-	# število pik po splitanju je zmeraj 2-kratnik original števila pik
+func slice_grid(polygon_points: PoolVector2Array, shape_corner_count: int, triangulate: bool = false):
 	
-	var polygon_origin_point: Vector2 = polygon_points[0]
+	# zbildam grid
+	var built_grid_polygons: Array = build_grid_polygons(shape_corner_count)
 	
-	# splitam vse robove na polovico
-	polygon_points = split_outline_on_part(polygon_points)
-	
-	var new_origin_point_index: int = polygon_points.find(polygon_origin_point) # zazih ... v bistvu se ne spremeni
-	
-	# zbildam nova poligona iz nastalih pik
-	var first_polygon: PoolVector2Array = []
-	var second_polygon: PoolVector2Array = []
-	# trikotnik ... iz origin točke [0]
-	if polygon_points.size() == 6:
-		# prvi je trikotnik iz točke 0
-		first_polygon = [polygon_points[0], polygon_points[1], polygon_points[5]]
-		second_polygon = [polygon_points[1], polygon_points[2], polygon_points[4], polygon_points[5]] # pika[3] splita zunanjo stranico in je ne rabim
-	# pravokotnik ... iz origin točke [0]
-	elif polygon_points.size() == 8: 
-		# prvi je kvadrat iz točke 0
-		first_polygon = [polygon_points[0], polygon_points[1], polygon_points[5], polygon_points[6]] # pika[7] splita zadnjo stranico in je ne rabim
-		second_polygon = [polygon_points[1], polygon_points[2], polygon_points[4], polygon_points[5]] # pika[3] splita zunanjo stranico in je ne rabim
-	elif polygon_points.size() > 8: # odstranim točke med vogalnimi točkami
-		print("Too many or to little points to slice long: ", polygon_points.size())
-		var points_divisor: int = polygon_points.size() / 8
-		var reduced_polygon: PoolVector2Array = []
-		for point_index in polygon_points.size():
-			if point_index % points_divisor == 0:
-#				printt(point_index, point_index % points_divisor)
-				reduced_polygon.append(polygon_points[point_index])
-				
-		first_polygon = [reduced_polygon[0], reduced_polygon[1], reduced_polygon[5], reduced_polygon[6]] # pika[7] splita zadnjo stranico in je ne rabim
-		second_polygon = [reduced_polygon[1], reduced_polygon[2], reduced_polygon[4], reduced_polygon[5]] # pika[3] splita zunanjo stranico in je ne rabim
-	
-#	return [first_polygon] # lepa vetrnica
-	return [first_polygon, second_polygon]	
-	
-	
-func slice_grid(polygon_points: PoolVector2Array, triangulate: bool = false):
-	
-	var built_grid_polygons: Array = build_grid_polygons()
-
+	# trianguliram šejpe
 	if triangulate:
 		var triangulated_polygons: Array
 		for poly in built_grid_polygons:
-#			triangulated_polygons.append_array(triangulate_delaunay(poly))
 			triangulated_polygons.append_array(triangulate_daisy(poly)[0])
 		built_grid_polygons = triangulated_polygons
 		
-	# ločim vse točke na notranje in zunanje 
-	# ločim vse grid šejpe na čisto zunaj, za klipat, in čisto notri
+	# ločim šejpe na notranje, zunanje in vmes (za klipat)
 	var inside_polygons: Array
 	var between_polygons: Array
-	
 	for poly in built_grid_polygons:
 		var points_count: int = poly.size()
 		var inside_points: Array
@@ -85,17 +40,10 @@ func slice_grid(polygon_points: PoolVector2Array, triangulate: bool = false):
 		else:
 			intersected_grid_polygons.append_array(interecting_polygons)	
 	
-#	var tr_poly: Array = triangulate_daisy(inside_polygons)
-#	for p in inside_polygons:
-##		tr_poly.append_array(triangulate_delaunay(p))
-#		tr_poly.append_array(triangulate_delaunay(p))
-#	printt ("grid polys", tr_poly.size(), intersected_grid_polygons.size())
-#	return [tr_poly, intersected_grid_polygons]
-#	# printt ("grid polys", inside_polygons.size(), intersected_grid_polygons.size())
 	return [inside_polygons, intersected_grid_polygons]
 
 
-func slice_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int = -1):
+func slice_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int = -1, triangulate: bool = false):
 	
 	# vzamem najdaljšega od outline robov, ki prestavlja kratek rob
 	var polygon_edge_vectors: Array
@@ -119,7 +67,6 @@ func slice_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int =
 	
 	# dobim število korakov rezanja ... tukaj je malo ročno vse skupaj
 	var true_split_count: float = (longest_edge_length / shortest_edge_length) - 2
-	printt("split count", true_split_count)
 	true_split_count = int(true_split_count * 0.5) # 0.5, ker edge vedno splitam na polovico
 	
 	# režem
@@ -133,18 +80,25 @@ func slice_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int =
 	
 		for poly in polygons_to_erase:
 			spiderweb_polygons.erase(poly)
-		
+
+	# trianguliram šejpe
+	if triangulate:
+		var triangulated_polygons: Array
+		for poly in spiderweb_polygons:
+			triangulated_polygons.append_array(triangulate_daisy(poly)[0])
+		spiderweb_polygons = triangulated_polygons
+	
 	return spiderweb_polygons
 
 	
-# TRIANGULATE -----------------------------------------------------------------------------------------
+# SHAPING -----------------------------------------------------------------------------------------
 
 	
-# daisy je boljši z originom	
 func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int = -1):
 	# nasacka cvetove iz origina
 	# odstrani cvetove, ki segajo preko robov chunka
 	# origin_point_index: -1 > center origin, 0 ali več > edge point origin
+	# daisy je boljši z originom	
 	
 	# add origin
 	var origin_point: Vector2
@@ -170,7 +124,7 @@ func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int
 		var triangle_points: PoolVector2Array = [origin_point, this_point, next_point] # prva je v centru
 		all_daisy_triangles.append(triangle_points)
 		
-		# zabeležim najdaljši rob ... nakncu ostane res najdaljši
+		# zabeležim najdaljši rob ... na koncu ostane res najdaljši
 		var this_edge: Vector2 = origin_point - this_point
 		if this_edge.length() > longest_daisy_edge_length:
 			longest_daisy_edge_length = this_edge.length()
@@ -189,11 +143,11 @@ func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int
 	return [all_daisy_triangles, longest_daisy_edge_length] 
 	
 	
-# delaunay je boljši brez origina
-func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: int = -1, add_poins_count: int = 0, to_rectangles: bool = false):
+func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: int = -1, add_points_count: int = 0, merge_to_rectangles: bool = false):
 	# nasacka vse mogoče neprekrivajoče se trikotnik
 	# indexi točk ne vplivajo na rezultat
 	# origin_point_index: -2 > no origin, -1 > center origin, 0 ali več > edge point origin
+	# delaunay je boljši brez origina
 
 	# add origin
 	if origin_point_index == -1:
@@ -202,8 +156,8 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 		polygon_points.append(polygon_points[origin_point_index])
 	
 	# add random points
-	if add_poins_count > 0:
-		polygon_points = add_random_points_on_polygon(polygon_points, add_poins_count)
+	if add_points_count > 0:
+		polygon_points = add_random_points_on_polygon(polygon_points, add_points_count)
 	
 	# trianguliram
 	randomize()
@@ -227,16 +181,60 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 		delaunay_triangles.append(triangle_points)	
 	
 	# merge
-	if to_rectangles:
+	if merge_to_rectangles:
 		delaunay_triangles = merge_neighboring_polygons(delaunay_triangles)
 	
+	# odstranim poligone, ki segajo prek robov glavne oblike
+	# ni dobro v vseh primerih ... bolje, da jih je preveč kot premalo
+	#	var inside_daisy_triangles: Array = []
+	#	for poly in delaunay_triangles: 
+	#		# vsak poligon, ki je v popolnosti znotraj glavne oblike je legit
+	#		# če drugi poligon prekriva prvega, je array prazen
+	#		if Geometry.clip_polygons_2d(poly, owner.polygon).empty():
+	#			inside_daisy_triangles.append(poly)
+	#	return inside_daisy_triangles # all_daisy_triangles
+	
 	return delaunay_triangles
-	
-
-# OUTLINE SPLIT ------------------------------------------------------------------------------------------
 
 	
-func split_outline_on_part(polygon_outline_points: PoolVector2Array, split_count: int = 1, split_part: float = 0.5):
+func slice_sides(polygon_points: PoolVector2Array, split_part: float = 0.5):
+	# 3-je koti so najmanj ... po splitanju 6
+	# število pik po splitanju je zmeraj 2-kratnik original števila pik
+	
+	var polygon_origin_point: Vector2 = polygon_points[0]
+	
+	# splitam vse robove na polovico
+	polygon_points = split_outline_on_part(polygon_points, split_part)
+	
+	var new_origin_point_index: int = polygon_points.find(polygon_origin_point) # zazih ... v bistvu se ne spremeni
+	
+	# zbildam nova poligona iz nastalih pik
+	var first_polygon: PoolVector2Array = []
+	var second_polygon: PoolVector2Array = []
+	# trikotnik ... iz origin točke [0]
+	if polygon_points.size() == 6:
+		# prvi je trikotnik iz točke 0
+		first_polygon = [polygon_points[0], polygon_points[1], polygon_points[5]]
+		second_polygon = [polygon_points[1], polygon_points[2], polygon_points[4], polygon_points[5]] # pika[3] splita zunanjo stranico in je ne rabim
+	# pravokotnik ... iz origin točke [0]
+	elif polygon_points.size() == 8: 
+		# prvi je kvadrat iz točke 0
+		first_polygon = [polygon_points[0], polygon_points[1], polygon_points[5], polygon_points[6]] # pika[7] splita zadnjo stranico in je ne rabim
+		second_polygon = [polygon_points[1], polygon_points[2], polygon_points[4], polygon_points[5]] # pika[3] splita zunanjo stranico in je ne rabim
+	elif polygon_points.size() > 8: # odstranim točke med vogalnimi točkami
+		print("Too many or to little points to slice long: ", polygon_points.size())
+		var points_divisor: int = polygon_points.size() / 8
+		var reduced_polygon: PoolVector2Array = []
+		for point_index in polygon_points.size():
+			if point_index % points_divisor == 0:
+				reduced_polygon.append(polygon_points[point_index])
+		first_polygon = [reduced_polygon[0], reduced_polygon[1], reduced_polygon[5], reduced_polygon[6]] # pika[7] splita zadnjo stranico in je ne rabim
+		second_polygon = [reduced_polygon[1], reduced_polygon[2], reduced_polygon[4], reduced_polygon[5]] # pika[3] splita zunanjo stranico in je ne rabim
+	
+	return [first_polygon, second_polygon]		
+
+
+func split_outline_on_part(polygon_outline_points: PoolVector2Array, var split_part: float = 0.5, split_count: int = 1):
 	
 	for count in split_count:
 		
@@ -368,7 +366,7 @@ func split_to_length_loop(polygon_outline_points: PoolVector2Array, max_edge_len
 	return [new_outline_points, all_edges_correct]
 	
 	
-func build_grid_polygons(shape_corner_count: int = 4):
+func build_grid_polygons(shape_corner_count: int):
 
 	var grid_polygons: Array
 	var grid_split_count: int = 30
@@ -387,12 +385,11 @@ func build_grid_polygons(shape_corner_count: int = 4):
 			row_index += 1
 			
 			# lokacija nove pike
-			match current_grid_style:
-				GRID_STYLE.SQUARE:
-					shape_corner_count = 4
+			match shape_corner_count:
+				4:
 					column_offset = shape_segment_length * column_index
 					row_offset = shape_segment_length * row_index
-				GRID_STYLE.HEX:
+				6:
 					shape_corner_count = 6
 					var rotated_side: Vector2 = Vector2(shape_segment_length, 0).rotated(deg2rad(30))
 					var long_length: int = round(rotated_side.x)
@@ -401,7 +398,7 @@ func build_grid_polygons(shape_corner_count: int = 4):
 					row_offset = long_length * 2 * row_index
 					if not column % 2 == 0: 
 						row_offset += long_length
-				GRID_STYLE.OCT:
+				3,5,7,8,_:
 					shape_corner_count = 8
 					var rotated_side: Vector2 = Vector2(shape_segment_length, 0).rotated(deg2rad(45))
 					var side_length_on_grid: int = round(rotated_side.y)
@@ -409,7 +406,7 @@ func build_grid_polygons(shape_corner_count: int = 4):
 					var shape_width: float = shape_segment_length + side_length_on_grid * 2
 					column_offset = first_column_position_adapt + shape_width * (column_index - 1)
 					row_offset = shape_width * row_index
-			
+				
 			# izdelava polygona
 			var shape_polygon: PoolVector2Array
 			var shape_origin_position: Vector2 = Vector2(column_offset, row_offset)
@@ -501,7 +498,8 @@ func get_polygon_center(poly_points: PoolVector2Array):
 	return center_position
 
 
-func sort_vectors_by_length(vector_1, vector_2): # ascending ... večji je boljši
+func sort_vectors_by_length(vector_1, vector_2): 
+	# ascending ... večji je boljši
 
 	if vector_1.length() > vector_2.length():
 	    return true

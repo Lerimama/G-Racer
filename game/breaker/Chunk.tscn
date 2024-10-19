@@ -7,7 +7,7 @@
 polygon = PoolVector2Array( 111, 41, 86, 103, 32, 160, 47, 245, 32, 320, 117, 345, 187, 403, 268, 362, 377, 378, 421, 335, 497, 291, 436, 93, 377, 93, 330, 35, 216, 59 )
 script = ExtResource( 1 )
 
-[node name="SlicingOperations" type="Node" parent="."]
+[node name="Operator" type="Node" parent="."]
 script = ExtResource( 2 )
 
 [node name="Crackers" type="Node2D" parent="."]

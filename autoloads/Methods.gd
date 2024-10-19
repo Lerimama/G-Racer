@@ -103,8 +103,12 @@ func get_random_name(string_length: int):
 onready var indikator: PackedScene = preload("res://common/debug/DebugIndikator.tscn")
 var all_indikators_spawned: Array = []
 
-func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
+#func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
+func spawn_indikator(pos: Vector2, rot: float = 0, parent_node = null, clear_spawned_before: bool = false):
 	
+	if parent_node == null:
+		parent_node = get_tree().root
+		
 	if clear_spawned_before:
 		for indi in all_indikators_spawned:
 			indi.queue_free()
