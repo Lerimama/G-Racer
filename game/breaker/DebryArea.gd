@@ -6,7 +6,7 @@ var debry_action: int = ACTION.FALL
 var debry_polygon: PoolVector2Array # na spawn
 var break_origin: Vector2 # na spawn
 
-var debry_color: Color = Color.yellow
+var debry_color: Color = Color.red
 var debry_center: Vector2
 	
 onready var debry_shape: Polygon2D = $DebryShape
@@ -28,8 +28,8 @@ func _ready() -> void:
 	debry_center = get_debry_center()
 #	position += debry_center
 #	debry_shape.position -=  debry_center
-	print(debry_center)
-#	return	
+#	print(debry_center)
+	return	
 	match debry_action:
 		ACTION.FALL:
 			var fall_tween = get_tree().create_tween()

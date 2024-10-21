@@ -1,16 +1,17 @@
 extends Node2D
 
-enum SHAPES {RECT, LINE, CIRCO}
-var current_slicing_shape: int = SHAPES.RECT setget _change_slicing_shape
 
-enum TRANSFORMATIONS {SCALE, ROTATE}
-var current_trans: int = TRANSFORMATIONS.SCALE setget _change_transformations
+enum SLICER_SHAPE {RECT, LINE, CIRCO}
+var current_slicing_shape: int = SLICER_SHAPE.RECT setget _change_slicing_shape
 
-enum ACTIONS {CLICK, PAINT}
-var current_action: int = ACTIONS.CLICK setget _change_action
+enum TRANSFORMATION{SCALE, ROTATE}
+var current_trans: int = TRANSFORMATION.SCALE setget _change_transformations
 
-enum SLICE_STYLE {BLAST, GRID_SQ, GRID_HEX} # enako kot ima čunk
-var current_slice_style: int = SLICE_STYLE.BLAST setget _change_slice_style
+enum MODE {CLICK, PAINT, CUT, HIT}
+var current_mode: int = MODE.CLICK setget _change_mode
+
+enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS} # enako kot ima čunk
+var current_slice_style: int = SLICE_STYLE.SPIDERWEB setget _change_slice_style
 
 var bodies_to_slice: Array
 onready var slicer_area: Area2D = $SlicerArea
@@ -22,118 +23,128 @@ var hit_vector_start: Vector2 = Vector2.ZERO
 var hit_vector_end: Vector2 = Vector2.ZERO
 var hitting_mode: bool = false
 var hitting_line: Line2D
+var active_hitting_line: Line2D
 
 # neu
 var action_dir_index = 1
 var hitting_tick: float	= 0	
+var cut_vector_start: Vector2
+var slicer_active: bool = true
 
 
 func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("left_click"):
-		
-		if not bodies_to_slice and current_action == ACTIONS.CLICK:
-			hit_vector_start = get_global_mouse_position()
-			slicer_area.modulate = Color.green
-			slicer_area.scale *=0.1
-			hitting_line = Line2D.new()
-			add_child(hitting_line)
-			hitting_line.add_point(hit_vector_start)
-			hitting_mode = true
-			
-		else:
-			breakslice()
 
+		match current_mode:
+			MODE.HIT:
+				if not bodies_to_slice:
+					hit_vector_start = get_global_mouse_position()
+					slicer_area.modulate = Color.green
+					slicer_area.scale *=0.1
+					hitting_line = Line2D.new()
+					add_child(hitting_line)
+					hitting_line.add_point(hit_vector_start)
+					hitting_mode = true
+			_:
+				break_it()
+	
+	if Input.is_action_pressed("left_click"):
+
+		match current_mode:
+			MODE.PAINT:
+				for body in bodies_to_slice:
+					body.on_drop(slicing_shape, get_global_mouse_position(), 0)
 		
 	if Input.is_action_just_released("left_click"):
-		on_release()
+		hit_vector_start = Vector2.ZERO
+		hit_vector_end = Vector2.ZERO
+		slicer_area.modulate = Color.white
+		slicer_area.scale = Vector2.ONE
+		if hitting_mode:
+			hitting_mode = false
+		
+			if hitting_line:
+				hitting_line.add_point(get_global_mouse_position())
+				hitting_line.queue_free()
+
+		
+func _input_in_proces(delta: float):
+	
+	if Input.is_action_pressed("right_click"):
+		
+		match current_trans:
+			TRANSFORMATION.SCALE:
+				slicing_shape.scale += Vector2.ONE * delta * action_dir_index
+				if slicing_shape.scale.x > 2 or slicing_shape.scale.x < 0.1:
+					action_dir_index *= -1
+			TRANSFORMATION.ROTATE:
+				slicing_shape.rotation_degrees += delta * 100
+				if slicing_shape.rotation_degrees >= 360:
+					slicing_shape.rotation = 0
 
 					
 func _ready() -> void:
 	
-	self.current_slicing_shape = SHAPES.RECT
-	self.current_action = ACTIONS.CLICK
-	self.current_trans = TRANSFORMATIONS.SCALE
+	self.current_slicing_shape = SLICER_SHAPE.RECT
+	self.current_mode = MODE.CLICK
+	self.current_trans = TRANSFORMATION.SCALE
 	self.current_slice_style = SLICE_STYLE.BLAST
 
 
 func _process(delta: float) -> void:
 	
-	_process_input(delta)
+	_input_in_proces(delta)
 					
-	if slicing_shape.rotation_degrees >= 360:
-		slicing_shape.rotation = 0
 	collision_shape.scale = slicing_shape.scale
 	collision_shape.rotation = slicing_shape.rotation
 	
-	slicer_area.position = get_global_mouse_position()
-	
+	# ne follova, če je cutting acti
+	if slicer_active:
+		slicer_area.monitoring = true
+		slicer_area.position = get_global_mouse_position()
+	else:
+		slicer_area.modulate.a = 0
+		slicer_area.monitoring = false
+		
 	if hitting_mode:
-		hitting(delta)
+		hitting_tick += delta
+		if hitting_tick >= 0.1:
+			hitting_tick = 0
+			hitting_line.add_point(get_global_mouse_position())
 		
-		
-func _process_input(delta: float):
+
+func break_it():
 	
-	if slicing_shape.scale.x > 2 or slicing_shape.scale.x < 0.1:
-		action_dir_index *= -1
+	var break_origin: Vector2 = get_global_mouse_position()
 	
-	if Input.is_action_pressed("left_click"):
-		match current_action:
-			ACTIONS.PAINT:
-				for body in bodies_to_slice:
-					body.on_hit(slicing_shape, get_global_mouse_position(), -1)
-
-	elif Input.is_action_pressed("right_click"):
-		match current_trans:
-			TRANSFORMATIONS.SCALE:
-				slicing_shape.scale += Vector2.ONE * delta * action_dir_index
-			TRANSFORMATIONS.ROTATE:
-				slicing_shape.rotation_degrees += delta * 100
-
-
-func breakslice():
 	for body in bodies_to_slice:
+		# adapt slicer to scale and rotation
 		match current_slice_style:
 			SLICE_STYLE.BLAST:
-				body.on_hit(slicing_shape, get_global_mouse_position(), SLICE_STYLE.BLAST)
+				body.on_drop(slicing_shape, break_origin, SLICE_STYLE.BLAST)
 			SLICE_STYLE.GRID_SQ:
-				body.on_hit(slicing_shape, get_global_mouse_position(), SLICE_STYLE.GRID_SQ)
+				body.on_drop(slicing_shape, break_origin, SLICE_STYLE.GRID_SQ)
 			SLICE_STYLE.GRID_HEX:
-				body.on_hit(slicing_shape, get_global_mouse_position(), SLICE_STYLE.GRID_HEX)
+				body.on_drop(slicing_shape, break_origin, SLICE_STYLE.GRID_HEX)
 				
 				
-func on_release():
-	
-	hit_vector_start = Vector2.ZERO
-	hit_vector_end = Vector2.ZERO
-	slicer_area.modulate = Color.white
-	slicer_area.scale = Vector2.ONE
-	if hitting_mode:
-		hitting_mode = false
-	
-		if hitting_line:
-			hitting_line.add_point(get_global_mouse_position())
-			hitting_line.queue_free()
-		
 		
 func on_hit():
-	var hit_force_vector: Vector2 = hit_vector_end - hit_vector_start 
-	var hit_force_pool: PoolVector2Array = [hit_vector_start, get_global_mouse_position()]
 	
-	var new_lines: Array
+	hit_vector_end = get_global_mouse_position()
 	for body in bodies_to_slice:
-		body.on_hit(slicing_shape, hit_force_pool, SLICE_STYLE.GRID_HEX)
+		var hit_vector_pool: PoolVector2Array = [hit_vector_start, hit_vector_end]
+		printt("on_hit", slicing_shape, hit_vector_pool, SLICE_STYLE.GRID_HEX)
+		body.on_hit(slicing_shape, hit_vector_pool, SLICE_STYLE.GRID_HEX)
+	
 	
 	hitting_mode = false
+	
 	hit_vector_start = Vector2.ZERO
 	hit_vector_end = Vector2.ZERO
 	slicer_area.modulate = Color.white
 	slicer_area.scale = Vector2.ONE
-	breakslice()
-	# spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
-	
-#	var ind = Met.spawn_indikator(get_global_mouse_position())
-#	ind.scale *= 10
 	
 	if hitting_line:
 		var new = hitting_line
@@ -144,16 +155,7 @@ func on_hit():
 		new.queue_free()	
 	
 	
-func hitting(delta: float):
-	
-	hitting_tick += delta
-	if hitting_tick >= 0.1:
-#		print("dodajam", bodies_to_slice.size())
-		hitting_tick = 0
-		hitting_line.add_point(get_global_mouse_position())
-			
-
-# SEGETS ----------------------------------------------------------------------------
+# SET-GET --------------------------------------------------------------------------------------------------------
 
 
 func _change_transformations(new_trans: int):
@@ -164,9 +166,9 @@ func _change_transformations(new_trans: int):
 		
 	current_trans = new_trans
 	match new_trans:
-		TRANSFORMATIONS.SCALE:
+		TRANSFORMATION.SCALE:
 			btnz[0].modulate = Color.pink
-		TRANSFORMATIONS.ROTATE:
+		TRANSFORMATION.ROTATE:
 			btnz[1].modulate = Color.pink
 
 
@@ -178,30 +180,34 @@ func _change_slicing_shape(new_slicing_shape: int):
 		
 	current_slicing_shape = new_slicing_shape
 	match current_slicing_shape:
-		SHAPES.RECT:
+		SLICER_SHAPE.RECT:
 			slicing_shape.polygon = $SlicerArea/Shapes/RectPoly.polygon
 			btnz[0].modulate = Color.yellow
-		SHAPES.LINE:
+		SLICER_SHAPE.LINE:
 			slicing_shape.polygon = $SlicerArea/Shapes/LinePoly.polygon
 			btnz[1].modulate = Color.yellow
-		SHAPES.CIRCO:
+		SLICER_SHAPE.CIRCO:
 			slicing_shape.polygon = $SlicerArea/Shapes/CircoPoly.polygon
 			btnz[2].modulate = Color.yellow
 	collision_shape.polygon	= slicing_shape.polygon
 		
 	
-func _change_action(new_action: int):
+func _change_mode(new_action: int):
 	
-	var btnz = [$UILayer/Button6, $UILayer/Button10]
+	var btnz = [$UILayer/Button10, $UILayer/Button6, $UILayer/Button11, $UILayer/Button12]
 	for btn in btnz: 
 		btn.modulate = Color.white	
 		
-	current_action = new_action
+	current_mode = new_action
 	match new_action:
-		ACTIONS.CLICK:
-			btnz[1].modulate = Color.orange
-		ACTIONS.PAINT:
+		MODE.CLICK:
 			btnz[0].modulate = Color.orange
+		MODE.PAINT:
+			btnz[1].modulate = Color.orange
+		MODE.CUT:
+			btnz[2].modulate = Color.orange
+		MODE.HIT:
+			btnz[3].modulate = Color.orange
 
 
 func _change_slice_style(new_style: int):
@@ -220,7 +226,7 @@ func _change_slice_style(new_style: int):
 			btnz[2].modulate = Color.green
 			
 			
-# SIGNALS ---------------------------------------------------------------------------
+# SIGNALS --------------------------------------------------------------------------------------------------------
 
 				
 func _on_MouseArea_body_entered(body: Node) -> void:
@@ -232,60 +238,40 @@ func _on_MouseArea_body_entered(body: Node) -> void:
 
 func _on_MouseArea_body_exited(body: Node) -> void:
 	
-	if body.has_method("on_hit"):
-		bodies_to_slice.erase(body)
+	bodies_to_slice.erase(body)
+
+
+# BTNS --------------------------------------------------------------------------------------------------------
 	
 
 # SLICER SHAPES
-
-	
 func _on_Button_button_up() -> void:
-	self.current_slicing_shape = SHAPES.RECT
-
-
+	self.current_slicing_shape = SLICER_SHAPE.RECT
 func _on_Button3_button_up() -> void:
-	self.current_slicing_shape = SHAPES.LINE
-	
-	
+	self.current_slicing_shape = SLICER_SHAPE.LINE
 func _on_Button2_button_up() -> void:
-	self.current_slicing_shape = SHAPES.CIRCO
-
+	self.current_slicing_shape = SLICER_SHAPE.CIRCO
 
 # TRANFORMS
-
-
 func _on_Button4_button_up() -> void:
-	self.current_trans = TRANSFORMATIONS.SCALE
-
-
+	self.current_trans = TRANSFORMATION.SCALE
 func _on_Button5_button_up() -> void:
-	self.current_trans = TRANSFORMATIONS.ROTATE
+	self.current_trans = TRANSFORMATION.ROTATE
 
-
-# ACTIONS
-
-
-func _on_Button6_button_up() -> void:
-	self.current_action = ACTIONS.PAINT
-
-
+# MODE
 func _on_Button10_button_up() -> void:
-	self.current_action = ACTIONS.CLICK
+	self.current_mode = MODE.CLICK
+func _on_Button6_button_up() -> void:
+	self.current_mode = MODE.PAINT
+func _on_Button11_button_up() -> void:
+	self.current_mode = MODE.CUT
+func _on_Button12_button_up() -> void:
+	self.current_mode = MODE.HIT
 
-
-
-# DEBRY SHAPES
-
-
+# SLICE_STYLE
 func _on_Button7_button_up() -> void:
 	self.current_slice_style = SLICE_STYLE.BLAST
-
-
 func _on_Button8_button_up() -> void:
 	self.current_slice_style = SLICE_STYLE.GRID_SQ
-
-
 func _on_Button9_button_up() -> void:
 	self.current_slice_style = SLICE_STYLE.GRID_HEX
-
-

@@ -34,46 +34,132 @@ func _ready() -> void:
 	slicer_shape.hide()
 
 
-func on_hit(hitting_shape: Polygon2D, hit_vector, new_slicing_style: int):
-#func on_hit(hitting_shape: Polygon2D, hit_vector: Vector2, new_slicing_style: int):
+#func on_drop(drop_shape: Polygon2D, drop_position: Vector2, slicing_style: int):
+#
+#	origin_global_position = drop_position
+#	drop_shape.polygon = match_shape_transforms(drop_shape).polygon
+#	# od globalne pozicije pike odštejem globalno pozicijo breakerja
+#	var drop_polygon_adapted: PoolVector2Array
+#	for point in drop_shape.polygon:
+#		var point_global_position: Vector2 = point * drop_shape.scale + drop_position
+#		var hitting_point_position_against_object: Vector2 = point - position
+#		drop_polygon_adapted.append(hitting_point_position_against_object)
+#
+##	var sliced_polygons: Array = slice_breaker(adapted_polygon)
+#	slice_breaker(drop_polygon_adapted)
+#
+##	chunk_slicing_style = new_slicing_style
+#	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
+#	var adapted_polygon: PoolVector2Array = []
+#	for point in hitting_shape.polygon:
+#		# od globalne pozicije pike odštejem globalno pozicijo breakerja
+#		var point_global_position: Vector2 = point * hitting_shape.scale + hit_position
+#		var hitting_point_position_against_object: Vector2 = point_global_position - position
+#		adapted_polygon.append(hitting_point_position_against_object)
+#
+##	var sliced_polygons: Array = slice_breaker(adapted_polygon)
+#	if new_slicing_style == -1:
+#		slice_breaker(adapted_polygon, false)
+#	else:
+#		slice_breaker(adapted_polygon)
+
+
+
+
+
+
+
+
+
+func adapt_transforms_and_add_origin(shape_to_transform: Polygon2D, origin_position: Vector2): # je to origin position?
+	
+	shape_to_transform.polygon = match_shape_transforms(shape_to_transform).polygon
+	
+	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
+	var transformed_polygon: PoolVector2Array = []
+	for point in shape_to_transform.polygon:
+		# od globalne pozicije pike odštejem globalno pozicijo breakerja
+		var point_global_position: Vector2 = point * shape_to_transform.scale + origin_position
+		var hitting_point_position_against_object: Vector2 = point_global_position - position
+		transformed_polygon.append(hitting_point_position_against_object)
+
+	return transformed_polygon
+	
+
+
+func on_drop(drop_shape: Polygon2D, drop_global_position: Vector2, slicing_style: int):
+
+	origin_global_position = drop_global_position
+#	drop_shape.polygon = match_shape_transforms(drop_shape).polygon
+#
+#	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
+#	var drop_polygon_adapted: PoolVector2Array = []
+#	for point in drop_shape.polygon:
+#		# od globalne pozicije pike odštejem globalno pozicijo breakerja
+#		var point_global_position: Vector2 = point * drop_shape.scale + drop_position
+#		var hitting_point_position_against_object: Vector2 = point_global_position - position
+#		drop_polygon_adapted.append(hitting_point_position_against_object)
+
+	var drop_polygon_adapted: PoolVector2Array = adapt_transforms_and_add_origin(drop_shape, drop_global_position)
+	slice_breaker(drop_polygon_adapted, slicing_style)
+
+
+func on_hit(hit_shape: Polygon2D, hit_vector: PoolVector2Array, slicing_style: int):
 	
 	# dobim origin a robu, ki ga križa hit vektor
-	var hit_position: Vector2
+	var hit_point: Vector2
+#	var hit_edge_index: Vector2
 	if hit_vector is PoolVector2Array:
-		var interline = Geometry.clip_polyline_with_polygon_2d(hit_vector, breaker_shape.polygon)
-#		var interline = Geometry.intersect_polyline_with_polygon_2d(hit_vector, breaker_shape.polygon)
-		printt("INTERLINE",interline)
-		var ind = Met.spawn_indikator(interline[0][0])
-		ind.scale *= 10
-		ind.modulate = Color.yellow
-		var indi = Met.spawn_indikator(interline[0][1], false)
-		indi.scale *= 10
-		indi.modulate = Color.blue
-	elif hit_vector is Vector2:
-		hit_position = hit_vector #_temp
+		var hit_vector_start_pos_adapted_to_breaker: Vector2 = hit_vector[0] - global_position
+		var hit_vector_end_pos_adapted_to_breaker: Vector2 = hit_vector[1] - global_position
+		var hit_vector_pool_adapted: PoolVector2Array = [hit_vector_start_pos_adapted_to_breaker, hit_vector_end_pos_adapted_to_breaker]
 		
-#	chunk_slicing_style = new_slicing_style
-	origin_global_position = hit_position
-	hitting_shape.polygon = match_shape_transforms(hitting_shape).polygon
-	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
-	var adapted_polygon: PoolVector2Array = []
-	for point in hitting_shape.polygon:
-		# od globalne pozicije pike odštejem globalno pozicijo breakerja
-		var point_global_position: Vector2 = point * hitting_shape.scale + hit_position
-		var hitting_point_position_against_object: Vector2 = point_global_position - position
-		adapted_polygon.append(hitting_point_position_against_object)
+		hit_vector = hit_vector_pool_adapted
+		
+		
+		var poly: PoolVector2Array = breaker_shape.polygon
+		
+		# za vsak rob preverim, če ga seka hit vektor
+		for edge_index in poly.size():
+			var edge: PoolVector2Array
+			if edge_index == poly.size() - 1:
+				edge = [poly[edge_index], poly[0]]
+			else:
+				edge = [poly[edge_index], poly[edge_index + 1]]
+			var intersection_point = Geometry.segment_intersects_segment_2d(hit_vector[0],hit_vector[1],edge[0], edge[1])
+			if intersection_point:
+				hit_point = intersection_point
+				break
+			
+	var hit_global_position: Vector2 = hit_point + global_position			
+	origin_global_position = hit_global_position
+	
+	var indi = Met.spawn_indikator(hit_global_position)
+	indi.scale *= 10
+	indi.modulate = Color.blue
+	var ind = Met.spawn_indikator(hit_vector[0] + global_position)
+	ind.scale *= 10
+	ind.modulate = Color.yellow
+		
+		
+#	hit_shape.polygon = match_shape_transforms(hit_shape).polygon
+#	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
+#	var adapted_polygon: PoolVector2Array = []
+#	for point in hit_shape.polygon:
+#		# od globalne pozicije pike odštejem globalno pozicijo breakerja
+#		var point_global_position: Vector2 = point * hit_shape.scale + hit_position
+#		var hitting_point_position_against_object: Vector2 = point_global_position - position
+#		adapted_polygon.append(hitting_point_position_against_object)
 
-#	var sliced_polygons: Array = slice_breaker(adapted_polygon)
-	if new_slicing_style == -1:
-		slice_breaker(adapted_polygon, false)
-	else:
-		slice_breaker(adapted_polygon)
+	var hit_polygon_adapted: PoolVector2Array = adapt_transforms_and_add_origin(hit_shape, hit_global_position)
+
+	slice_breaker(hit_polygon_adapted, slicing_style)
 	
 	
 # OPERATIONS ----------------------------------------------------------------------------------
 	
 	
-func slice_breaker(slicing_polygon: PoolVector2Array, spawn_chunks: bool = true):
+func slice_breaker(slicing_polygon: PoolVector2Array, slicing_style: int = 0):
 	# najprej klipam da dobim glavne oblike
 	# potem intersektam, da dobim odlomljeno obliko
 
@@ -83,14 +169,15 @@ func slice_breaker(slicing_polygon: PoolVector2Array, spawn_chunks: bool = true)
 	
 	# intersektam, da dobim chunk template
 	var interecting_polygons: Array = Geometry.intersect_polygons_2d(slicing_polygon, breaker_shape.polygon)
+	
 	if interecting_polygons.empty():
 		print("intersection empty")
 		
-	break_apart(clipped_polygons, interecting_polygons, spawn_chunks)	
+	break_apart(clipped_polygons, interecting_polygons, slicing_style)	
 	#	return [clipped_polygons, interecting_polygons]
 	
 	
-func break_apart(clipped_breaker_polygons: Array, interecting_base_polygons: Array, spawn_chunks: bool = true):
+func break_apart(clipped_breaker_polygons: Array, interecting_base_polygons: Array, slicing_style: int = 0):
 	
 	# če ga prekrije, razpade celoten shape
 	if clipped_breaker_polygons.empty():
@@ -102,7 +189,7 @@ func break_apart(clipped_breaker_polygons: Array, interecting_base_polygons: Arr
 		# shape adapt
 		breaker_shape.hide()
 		breaker_shape.polygon = clipped_breaker_polygons.pop_front()
-		breaker_shape.color = Color.purple
+#		breaker_shape.color = Color.purple
 		collision_shape.polygon = breaker_shape.polygon
 		breaker_shape.show()
 		
@@ -115,7 +202,7 @@ func break_apart(clipped_breaker_polygons: Array, interecting_base_polygons: Arr
 				spawn_new_breaker(poly, Color.green)
 		
 		# chunks
-		if spawn_chunks:
+		if not slicing_style == 0:
 			for chunk in chunks_parent.get_children(): # debug, dokler ne bo animirano
 				chunk.queue_free()
 			for poly_index in interecting_base_polygons.size(): # zazih ... skoraj ni mogoče, da bi bil notri več kot eden
@@ -185,7 +272,7 @@ func apply_hole(hole_polygon: PoolVector2Array):
 			end_point = breaker_shape.polygon[0]
 		# za vsako točko na luknji preverim katera ja najdle enemu od robov shape
 		for point in hole_polygon:
-			var closest_point: Vector2 = Geometry.get_closest_point_to_edge_2d(point, start_point, end_point)
+			var closest_point: Vector2 = Geometry.get_closest_point_to_segment_2d(point, start_point, end_point)
 			var distance_between_points: float = (point - closest_point).length()
 			# najbližja
 			if distance_between_points < distance_to_closest_point or distance_to_closest_point == 0:

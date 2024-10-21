@@ -24,7 +24,6 @@ script = ExtResource( 1 )
 polygon = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )
 
 [node name="EdgeLine" type="Line2D" parent="."]
-visible = false
 points = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64, 0, 0 )
 width = 2.0
 default_color = Color( 1, 1, 1, 1 )

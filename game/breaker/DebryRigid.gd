@@ -30,7 +30,7 @@ func _ready() -> void:
 	debry_center = get_debry_center()
 #	position += debry_center
 #	debry_shape.position -=  debry_center
-	print(debry_center)
+#	print(debry_center)
 	return	
 	match debry_action:
 		ACTION.FALL:
