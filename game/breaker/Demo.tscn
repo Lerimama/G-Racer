@@ -13,6 +13,9 @@ __meta__ = {
 "_edit_group_": true
 }
 
+[node name="BreakerShape" parent="BreakerNormal" index="0"]
+polygon = PoolVector2Array( 0, 0, 0, 82.5729, 0, 319.893, 0, 384, 108.625, 384, 282.377, 384, 384, 384, 384, 290.228, 384, 68.7999, 384, 0, 297, -35, 81, -36 )
+
 [node name="Label" type="Label" parent="BreakerNormal"]
 modulate = Color( 0, 0, 0, 1 )
 margin_left = 122.04
@@ -44,7 +47,7 @@ __meta__ = {
 }
 
 [node name="BreakerShape" parent="BreakerConvex" index="0"]
-polygon = PoolVector2Array( 0, 0, 35, 153.97, -46, 242.97, 0, 384, 151, 334.97, 250, 440.97, 283, 371.97, 384, 384, 430, 269.97, 336, 153.97, 384, 0, 322, 72.97, 186, -4.03003, 213, 79.97 )
+polygon = PoolVector2Array( 0, 0, -73, 119, -46, 242.97, 0, 384, 136, 418, 334, 191, 337, 424, 384, 384, 430, 269.97, 440, 117, 384, 0, 135, 275 )
 
 [node name="Label" type="Label" parent="BreakerConvex"]
 modulate = Color( 0, 0, 0, 1 )

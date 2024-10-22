@@ -22,14 +22,6 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("no2"):
 		chunk_slice_style = SLICE_STYLE.BLAST
 		slice_chunk()
-#	if Input.is_action_just_pressed("no3"):
-#		chunk_slice_style = SLICE_STYLE.GRID_SQ
-#		slice_chunk()
-#	if Input.is_action_just_pressed("no4"):
-#		chunk_slice_style = SLICE_STYLE.GRID_HEX
-#		slice_chunk()
-#	if Input.is_action_just_pressed("no5"):
-#		pass
 		
 		
 func _ready() -> void:
@@ -54,6 +46,7 @@ func slice_chunk():
 			var grid_sliced_polygons = operator.slice_grid(polygon, 6)
 			spawn_crackers(grid_sliced_polygons[0], Color.cornflower)	
 			spawn_crackers(grid_sliced_polygons[1], Color.cornflower, false)	 
+	queue_free()
 	
 	#	color.a = 0 
 	#	sliced_polygons.clear()	
@@ -146,8 +139,8 @@ func spawn_debry(debry_polygons: Array, new_color: Color = Color.red):
 		new_debry.modulate.a = 0.4
 		
 		new_debry_parent.add_child(new_debry)
-		
 		# printt ("new debry poly", new_debry.position, new_debry.debry_polygon[0], polygon[0], new_debry.get_parent())		
+#		new_debry.position += position 
 	
 	color.a = 0 
 	
