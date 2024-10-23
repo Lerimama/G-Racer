@@ -1,60 +1,58 @@
 extends Node2D
 
-
+# menu
 enum SLICER_SHAPE {RECT, LINE, CIRCO}
 var current_slicing_shape: int = SLICER_SHAPE.RECT setget _change_slicing_shape
-
 enum TRANSFORMATION{SCALE, ROTATE}
-var current_trans: int = TRANSFORMATION.SCALE setget _change_transformations
+var current_trans: int = TRANSFORMATION.ROTATE setget _change_transformations
 
-enum TOOL {HAMMER, BOMB, PAINT, KNIFE,}
-enum MODE {DROP, PAINT, CUT, SMACK}
+enum MODE {CLICK, PAINT, CUT, STRIKE}
 var current_mode: int = MODE.CUT setget _change_mode
 
+enum TOOL {HAMMER, BOMB, PAINT, KNIFE,}
+
+# slajsanje
 enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS} # enako kot ima čunk
 var current_slice_style: int = SLICE_STYLE.SPIDERWEB setget _change_slice_style
 
 var transform_dir_index = 1
-var bodies_to_slice: Array
-onready var slicer: Area2D = $SlicerArea
-onready var slicer_shape: Polygon2D = $SlicerArea/SlicingPoly
-onready var collision_shape: CollisionPolygon2D = $SlicerArea/CollisionPolygon2D
+var bodies_to_slice: Array = []
+onready var slicer: Area2D = $Slicer
+onready var slicer_shape: Polygon2D = $Slicer/SlicingPoly
+onready var collision_shape: CollisionPolygon2D = $Slicer/CollisionPolygon2D
 
 # action
-var smack_in_progress: bool = false
-var active_slicing_line: Line2D # zadnja spawnana linija
-var slicing_line_delta: float = 0	
-var slicing_line_tick: float = 0.1 # gostota ... če je manj, so težave pri zaznavanju reze
-var slicing_start_global_position: Vector2 # na klik
+var swipe_in_progress: bool = false
+var swipe_start_global_position: Vector2 # na klik
+var active_swiping_line: Line2D # zadnja spawnana linija
+var swiping_line_delta: float = 0	
+var swiping_line_tick: float = 0.1 # gostota ... če je manj, so težave pri zaznavanju reze
 	
-			
+# power
+var loading_power: bool = false
+
+# scaling
+var default_scale = Vector2.ONE
+var swipe_scale = 0.1
+var scale_max = 3
+var scale_min = 0.1
+
+
 func _input(event: InputEvent) -> void:
 	
 	
 	if Input.is_action_just_pressed("R"):
 		_on_Reset_button_up()
-	if Input.is_action_just_pressed("left_click"):
-		slicing_start_global_position = get_global_mouse_position()
-		
-		match current_mode:
-			MODE.SMACK, MODE.CUT:
-#				print ("msak", bodies_to_slice,get_tree().get_nodes_in_group(grupa))
-#				if get_tree().get_nodes_in_group(grupa).empty(): # _temp smack with bodies in ... popedenaj tudi area signal
-				if not bodies_to_slice: # _temp smack with bodies in ... popedenaj tudi area signal
-					start_smack()
-			_:
-				break_it()
-	
-	if Input.is_action_pressed("left_click"):
+	elif Input.is_action_just_pressed("left_click"):
+		on_click()
+	elif Input.is_action_pressed("left_click"):
 		match current_mode:
 			MODE.PAINT:
 				for body in bodies_to_slice:
 					body.on_hit(slicer_shape, get_global_mouse_position(), 0)
+	elif Input.is_action_just_released("left_click"):
+		on_release()
 		
-	if Input.is_action_just_released("left_click"):
-		if smack_in_progress:
-			end_smack()
-
 					
 func _ready() -> void:
 	
@@ -64,80 +62,142 @@ func _ready() -> void:
 	self.current_slice_style = current_slice_style
 
 
+
 func _process(delta: float) -> void:
 	
 	if Input.is_action_pressed("right_click"):
-		match current_trans:
-			TRANSFORMATION.SCALE:
-				slicer_shape.scale += Vector2.ONE * delta * transform_dir_index
-				if slicer_shape.scale.x > 2 or slicer_shape.scale.x < 0.1:
-					transform_dir_index *= -1
-			TRANSFORMATION.ROTATE:
-				slicer_shape.rotation_degrees += delta * 100
-				if slicer_shape.rotation_degrees >= 360:
-					slicer_shape.rotation = 0
-	
-					
+		if not current_mode == MODE.STRIKE:
+			transform_slicer(delta)
+	if Input.is_action_pressed("left_click"):
+		if loading_power:
+			transform_slicer(delta)
 	collision_shape.scale = slicer_shape.scale
-	collision_shape.rotation = slicer_shape.rotation
+	collision_shape.rotation = slicer_shape.rotation	
+	
 	slicer.position = get_global_mouse_position()
 	
 	# slicing line points
-	if smack_in_progress:
-		slicing_line_delta += delta
-		if slicing_line_delta >= slicing_line_tick:
-			slicing_line_delta = 0
-			active_slicing_line.add_point(get_global_mouse_position())
-		
-
-func break_it():
+	if swipe_in_progress and current_mode == MODE.CUT:
+		swiping_line_delta += delta
+		if swiping_line_delta >= swiping_line_tick:
+			swiping_line_delta = 0
+			active_swiping_line.add_point(get_global_mouse_position())
 	
-	var break_origin: Vector2 = get_global_mouse_position()
-
-#	get_tree().call_group(grupa, "on_hit", slicer_shape, break_origin, current_slice_style)
-#	print (get_tree().get_nodes_in_group(grupa))
-#	for body in get_tree().get_nodes_in_group(grupa):
-#		body.on_hit(slicer_shape, break_origin, current_slice_style)
-	for body in bodies_to_slice:
-		body.on_hit(slicer_shape, break_origin, current_slice_style)
+		
+func on_release():
+	
+	if swipe_in_progress:
+		slicer.show()
+		slicer_shape.scale = Vector2.ONE	
+		finish_swipe()
+	elif current_mode == MODE.STRIKE:
+		if loading_power:
+			loading_power = false
+			var break_origin: Vector2 = get_global_mouse_position()
+			for body in bodies_to_slice:
+				body.on_hit(slicer_shape, break_origin, current_slice_style)
+		else:
+			slicer.show()
+			slicer_shape.scale = Vector2.ONE	
+	
+			
+func on_click():
+		
+	swipe_start_global_position = get_global_mouse_position()
+	
+	match current_mode:
+		MODE.STRIKE:
+			if not bodies_to_slice:
+				start_swipe()
+			else:
+				loading_power = true
+		MODE.CUT:
+			if not bodies_to_slice:
+				start_swipe()
+			else:
+				var break_origin: Vector2 = get_global_mouse_position()
+				for body in bodies_to_slice:
+					body.on_hit(slicer_shape, break_origin, current_slice_style)
+		_:
+			var break_origin: Vector2 = get_global_mouse_position()
+			for body in bodies_to_slice:
+				body.on_hit(slicer_shape, break_origin, current_slice_style)
+	
+	# collision transform ... če tega dela ni se koližn resiza neusklajeno
+	collision_shape.polygon = slicer_shape.polygon
+	collision_shape.scale = slicer_shape.scale
+	collision_shape.rotation = slicer_shape.rotation
 	
 				
-func start_smack():
+func start_swipe():
 	
-	smack_in_progress = true	
+	slicer_shape.scale = Vector2.ONE * 0.01	
+	slicer.hide()
+	swipe_in_progress = true	
 	spawn_slicing_line()
 
 
-func end_smack(is_successful: bool = false):
-	
-	var slicing_end_global_position: Vector2 = get_global_mouse_position()
-	smack_in_progress = false
+func finish_swipe(is_successful: bool = false):
+
+	swipe_in_progress = false
+	var swiping_line_last_point: Vector2 = get_global_mouse_position()
 	# slicing line editiram po drugim imeno, da lahko med tem manipuliram drugo aktivno linijo
-	var fading_slicing_line: Line2D = active_slicing_line
+	var fading_slicing_line: Line2D = active_swiping_line
 	if fading_slicing_line:
-		fading_slicing_line.add_point(slicing_end_global_position)
+		fading_slicing_line.add_point(swiping_line_last_point)
 	
 	match current_mode:
-		MODE.SMACK:
+		MODE.STRIKE:
 			if is_successful:
+				is_successful = false
+				slicer_shape.scale = Vector2.ONE# * 2
 				for body in bodies_to_slice:
-					var hit_vector_pool: PoolVector2Array = [slicing_start_global_position, slicing_end_global_position]
+					var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
 					body.on_hit(slicer_shape, hit_vector_pool, SLICE_STYLE.GRID_HEX) 
-				
 					var fade_tween = get_tree().create_tween()
 					fade_tween.tween_property(fading_slicing_line, "modulate:a", 0, 0.5).set_delay(1)
 					yield(fade_tween, "finished")
-				bodies_to_slice.clear()
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
 		MODE.CUT:
 			for body in bodies_to_slice:
-				var hit_vector_pool: PoolVector2Array = [slicing_start_global_position, slicing_end_global_position]
+				var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
 				var cutting_pool: PoolVector2Array = fading_slicing_line.points
 				body.on_hit(fading_slicing_line)
-			bodies_to_slice.clear()
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
+	slicer_shape.scale = Vector2.ONE
+			
+			
+# UTILITI --------------------------------------------------------------------------------------------------------
+
+
+func transform_slicer(delta: float):
+	
+
+		match current_trans:
+			TRANSFORMATION.SCALE:
+				if slicer_shape.scale > Vector2.ONE * scale_max:
+					transform_dir_index = -1
+				elif slicer_shape.scale < Vector2.ONE * scale_min:
+					transform_dir_index = 1
+				slicer_shape.scale += Vector2.ONE * delta * transform_dir_index * 2
+					
+			TRANSFORMATION.ROTATE:
+				slicer_shape.rotation_degrees += delta * 100
+				if slicer_shape.rotation_degrees >= 360:
+					slicer_shape.rotation = 0
+		
+			
+func spawn_slicing_line():
+	
+	# line spawn
+	var new_slicing_line = Line2D.new()
+	add_child(new_slicing_line)
+	new_slicing_line.add_point(swipe_start_global_position)
+	
+	# postane trenutno aktivna
+	active_swiping_line = new_slicing_line
 	
 	
 # SET-GET --------------------------------------------------------------------------------------------------------
@@ -152,25 +212,24 @@ func _change_mode(new_mode: int):
 	current_mode = new_mode
 	
 	# setam default slicerja, ki ga glede na mode spremenim
-	slicer.scale = Vector2.ONE
+	current_slicing_shape = SLICER_SHAPE.RECT
 	match current_mode:
-		MODE.DROP:
+		MODE.CLICK:
 			btnz[0].modulate = Color.orange
 			slicer.modulate = Color.white
+			slicer_shape.scale = Vector2.ONE
 		MODE.PAINT:
 			btnz[1].modulate = Color.orange
-			slicer.scale *= 0.5
 			slicer.modulate = Color.yellow
+			slicer_shape.scale = Vector2.ONE * 0.5
 		MODE.CUT:
 			btnz[2].modulate = Color.orange
 			slicer.modulate = Color.blue
-			slicer.scale *= 0.01
-			
-			slicer.modulate.a = 0
-		MODE.SMACK:
+		MODE.STRIKE:
 			btnz[3].modulate = Color.orange
 			slicer.modulate = Color.green
-			slicer.scale *= 0.1
+			self.current_trans = TRANSFORMATION.SCALE		
+			self.current_slicing_shape = SLICER_SHAPE.CIRCO
 
 
 func _change_transformations(new_trans: int):
@@ -196,13 +255,13 @@ func _change_slicing_shape(new_slicing_shape: int):
 	current_slicing_shape = new_slicing_shape
 	match current_slicing_shape:
 		SLICER_SHAPE.RECT:
-			slicer_shape.polygon = $SlicerArea/Shapes/RectPoly.polygon
+			slicer_shape.polygon = $Slicer/Shapes/RectPoly.polygon
 			btnz[0].modulate = Color.yellow
 		SLICER_SHAPE.LINE:
-			slicer_shape.polygon = $SlicerArea/Shapes/LinePoly.polygon
+			slicer_shape.polygon = $Slicer/Shapes/LinePoly.polygon
 			btnz[1].modulate = Color.yellow
 		SLICER_SHAPE.CIRCO:
-			slicer_shape.polygon = $SlicerArea/Shapes/CircoPoly.polygon
+			slicer_shape.polygon = $Slicer/Shapes/CircoPoly.polygon
 			btnz[2].modulate = Color.yellow
 	collision_shape.polygon	= slicer_shape.polygon
 		
@@ -221,44 +280,27 @@ func _change_slice_style(new_style: int):
 			btnz[1].modulate = Color.green
 		SLICE_STYLE.GRID_HEX:
 			btnz[2].modulate = Color.green
-			
-			
-# UTILITI --------------------------------------------------------------------------------------------------------
 
-			
-func spawn_slicing_line():
-	
-	# line spawn
-	var new_slicing_line = Line2D.new()
-	add_child(new_slicing_line)
-	new_slicing_line.add_point(slicing_start_global_position)
-	
-	# postane trenutno aktivna
-	active_slicing_line = new_slicing_line
-	
 
 # SIGNALS --------------------------------------------------------------------------------------------------------
 
 				
 func _on_MouseArea_body_entered(body: Node) -> void:
 	
-	if body.has_method("on_hit"):
-		if not bodies_to_slice.has(body):
-			bodies_to_slice.append(body)
-		if not body.is_in_group(grupa):
-			body.add_to_group(grupa)
-		if current_mode == MODE.SMACK and smack_in_progress:
-			end_smack(true)
+	if "current_material" in body:
+		if not body.current_material == body.MATERIAL.UNBREAKABLE: 
+			if not bodies_to_slice.has(body):
+				bodies_to_slice.append(body)
+			if current_mode == MODE.STRIKE and swipe_in_progress:
+				finish_swipe(true)
 
-var grupa: String = "grupa"
 
 func _on_MouseArea_body_exited(body: Node) -> void:
 
-	if body.has_method("on_hit") and current_mode == MODE.CUT and smack_in_progress:
+	if body.has_method("on_hit") and current_mode == MODE.CUT and swipe_in_progress:
 		pass
 	else:
 		bodies_to_slice.erase(body)
-		body.remove_from_group(grupa)
 		
 
 
@@ -281,13 +323,13 @@ func _on_Button5_button_up() -> void:
 
 # MODE
 func _on_Button10_button_up() -> void:
-	self.current_mode = MODE.DROP
+	self.current_mode = MODE.CLICK
 func _on_Button6_button_up() -> void:
 	self.current_mode = MODE.PAINT
 func _on_Button11_button_up() -> void:
 	self.current_mode = MODE.CUT
 func _on_Button12_button_up() -> void:
-	self.current_mode = MODE.SMACK
+	self.current_mode = MODE.STRIKE
 
 # SLICE_STYLE
 func _on_Button7_button_up() -> void:

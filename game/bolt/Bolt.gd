@@ -211,8 +211,8 @@ func _process(delta: float) -> void:
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
 	bolt_body_state = state
-	bolt_velocity = get_linear_velocity()
-	bolt_global_position = get_global_position()
+	bolt_velocity = state.get_linear_velocity() # tole je bol prej brez stejta
+	bolt_global_position = get_global_position() # OPT kje je ta funkcija
 	bolt_global_rotation = rotation # a je treba?
 
 	if not is_active:

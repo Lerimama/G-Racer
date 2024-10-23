@@ -5,16 +5,21 @@ extends Polygon2D
 enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS}
 var chunk_slice_style: int = SLICE_STYLE.BLAST #setget _change_slice_style
 
-onready var operator: Node = $Operator
 var chunk_polygon: PoolVector2Array = [] # ob spawnu
-var origin_on_edge: bool = false # _temp na spawn ali pa glede na to kje je točka
-var origin_global_position: Vector2 # na spawn
+enum ORIGIN_LOCATION {INSIDE, EDGE, OUTSIDE}
+var current_origin_location: int = ORIGIN_LOCATION.INSIDE
 
+var origin_on_edge: bool = false # sam preverja, če je bil origina na robu
+var origin_global_position: Vector2 # na spawn
+var sliced_polygons: Array = [] # _temp
+
+onready var operator: Node = $Operator
+onready var debry_parent: Node # na spawn
 onready var crackers_parent: Node2D = $Crackers
-onready var DebryRigid: PackedScene = preload("res://game/breaker/DebryRigid.tscn")
-onready var DebryArea: PackedScene = preload("res://game/breaker/DebryArea.tscn")
 onready var Cracker: PackedScene = preload("res://game/breaker/Cracker.tscn")
-var sliced_polygons_outside: Array # _temp
+onready var BreakerRigid: PackedScene = load("res://game/breaker/BreakerRigid.tscn")
+onready var BreakerArea: PackedScene = load("res://game/breaker/BreakerArea.tscn")
+
 
 
 func _input(event: InputEvent) -> void:
@@ -34,10 +39,10 @@ func slice_chunk():
 
 	match chunk_slice_style:
 		SLICE_STYLE.BLAST:
-			#			var new_sliced_polygon = slice_polygons()
-			#			spawn_debry(new_sliced_polygon)
+#			var new_sliced_polygon = slice_polygons()
+#			spawn_debry(new_sliced_polygon)
 			slice_polygons()
-			spawn_debry(sliced_polygons_outside)
+			spawn_debry(sliced_polygons)
 		SLICE_STYLE.GRID_SQ:
 			var grid_sliced_polygons = operator.slice_grid(polygon, 4)
 			spawn_crackers(grid_sliced_polygons[0], Color.cornflower)	
@@ -56,93 +61,91 @@ func slice_chunk():
 func slice_polygons():
 	
 	var origin_position: Vector2 = origin_global_position - global_position
-	
-	# preverim, če je origin na robu
-	if Geometry.is_point_in_polygon(origin_position, chunk_polygon):
-		origin_on_edge = true # debug
-	else:
-		origin_on_edge = false
-	
-	var origin_edge_index: int
-	var sliced_polygons: Array
 	var polygon_to_slice: PoolVector2Array = polygon
+	var origin_edge_index: int
 	
-	# FROM EDGE
-	if origin_on_edge:
-		# print("origin on edge")
-		# origin edge index ... pred splitanjem in dodajanjem origina
+	# preverjam origin lokacijo znotraj vs zunaj
+	if Geometry.is_point_in_polygon(origin_position, chunk_polygon):
+		current_origin_location = ORIGIN_LOCATION.INSIDE
+		# on edge?
 		for edge_index in polygon_to_slice.size():
-			var edge: PoolVector2Array
+			var edge: PoolVector2Array = []
 			if edge_index == polygon_to_slice.size() - 1:
-				edge = [polygon_to_slice[edge_index], polygon_to_slice[0]]
+				edge = [polygon_to_slice[edge_index], polygon_to_slice[0], polygon_to_slice[edge_index]] # FINTA ... pseudo trikotnik s podvajanjem ene od točk
 			else:
-				edge = [polygon_to_slice[edge_index], polygon_to_slice[edge_index + 1]]
-			edge.append(Vector2.ZERO) # finta ... dodam točko zato, da je edge tvori trikotnik in pote lahko uporabim spodnjo funkcijo
+				edge = [polygon_to_slice[edge_index], polygon_to_slice[edge_index + 1], polygon_to_slice[edge_index]] # FINTA
 			if Geometry.is_point_in_polygon(origin_position, edge):
 				origin_edge_index = edge_index
+				current_origin_location = ORIGIN_LOCATION.EDGE
 				break
-				
-		# outiline split
-		var split_edge_length: int = 50
-		#		polygon_to_slice = operator.split_outline_to_length(polygon_to_slice, split_edge_length)
-		var split_count: int = 1 # _temp
-		polygon_to_slice = operator.split_outline_on_part(polygon_to_slice, 0.5, split_count)
-			
-		# odstranim splitane pike na origin robu
-		var origin_edge_end_point_index: int
-		if origin_edge_index == polygon_to_slice.size() - 1:
-			origin_edge_end_point_index = 0
-		else:
-			origin_edge_end_point_index = origin_edge_index + 1
-		for point_index in polygon_to_slice.size(): 
-			if point_index > origin_edge_index and point_index < origin_edge_end_point_index:
-				polygon_to_slice.remove(point_index)
-		
-		# vstavim origin point
-		polygon_to_slice.insert(origin_edge_index + 1, origin_position)
-		
-		# DAISY SLICE
-		var origin_point_index: int = polygon_to_slice.find(origin_position)
-		sliced_polygons = operator.triangulate_daisy(polygon_to_slice, origin_point_index)[0]
-		
-	# CENTRAL
 	else:
-		# print("origin inside")
-		var split_edge_length: int = 150
-		polygon_to_slice = operator.split_outline_to_length(polygon_to_slice, split_edge_length)
-		sliced_polygons = operator.slice_spiderweb(polygon_to_slice)
-
-	sliced_polygons_outside = sliced_polygons # _temp
-	# printt("sliced_polygons", sliced_polygons.size(), sliced_polygons_outside.size())
-	return [sliced_polygons]
-
+		current_origin_location = ORIGIN_LOCATION.OUTSIDE
+	
+				
+	# FROM EDGE
+	printt ("slice on origin location:", ORIGIN_LOCATION.keys()[current_origin_location])
+	match current_origin_location:
+		ORIGIN_LOCATION.INSIDE:
+			var split_edge_length: int = 150
+			polygon_to_slice = operator.split_outline_to_length(polygon_to_slice, split_edge_length)
+			sliced_polygons = operator.slice_spiderweb(polygon_to_slice)
+		ORIGIN_LOCATION.EDGE:
+			# outline split
+			var split_edge_length: int = 50
+			polygon_to_slice = operator.split_outline_to_length(polygon_to_slice, split_edge_length)
+			#		var split_count: int = 1 # _temp
+			#		polygon_to_slice = operator.split_outline_on_part(polygon_to_slice, 0.5, split_count)
+			# odstranim splitane pike na origin robu
+			var origin_edge_end_point_index: int
+			if origin_edge_index == polygon_to_slice.size() - 1:
+				origin_edge_end_point_index = 0
+			else:
+				origin_edge_end_point_index = origin_edge_index + 1
+			for point_index in polygon_to_slice.size(): 
+				if point_index > origin_edge_index and point_index < origin_edge_end_point_index:
+					polygon_to_slice.remove(point_index)
+			# vstavim origin point
+			polygon_to_slice.insert(origin_edge_index + 1, origin_position)
+			# slajsam
+			var origin_point_index: int = polygon_to_slice.find(origin_position)
+			sliced_polygons = operator.triangulate_daisy(polygon_to_slice, origin_point_index)[0]
+		ORIGIN_LOCATION.OUTSIDE:
+			# ostranim trikotnike, ki segajo preko roba
+			pass
+			
 
 # SPAWN ------------------------------------------------------------------------------------------------------------
+
+
+func spawn_debry(debry_polygons: Array, new_color: Color = Color.white):
 	
-		
-func spawn_debry(debry_polygons: Array, new_color: Color = Color.red):
-		
-	var new_debry_parent = get_parent() # debug ... spawn parents
-	if not new_debry_parent == get_tree().root: # če je pomeni, da sem ga testiral brez breakerja
-		new_debry_parent = get_parent().get_parent()
-		
+	if not debry_parent:
+		debry_parent = get_tree().root # debug ... spawn parents
+	
+	print("spawning debry")	
 	for poly in debry_polygons:
-		# var new_debry: RigidBody2D = DebryRigid.instance()
-		var new_debry: Node2D = DebryArea.instance()
 		
-		new_debry.name = "%s_Debry" % name
+		# centraliziram in globaliziram
+		var centralized_spawn_position: Vector2 = position
+		var centralized_poly: Array = centralize_polygon(poly)
+		poly = centralized_poly[0]
+		centralized_spawn_position = centralized_poly[1]
+
+		var new_breaker = BreakerRigid.instance()
+#		var new_breaker = BreakerArea.instance()
+		new_breaker.name = "Breaker_Debry"
+		new_breaker.spawn_breaker_shape_polygon = poly
+		new_breaker.position = centralized_spawn_position
+		new_breaker.z_index = 10 # debug
+		new_breaker.origin_global_position = origin_global_position
+		debry_parent.add_child(new_breaker)
 		
-		new_debry.break_origin = origin_global_position
-		new_debry.debry_polygon = poly
 		
-		new_debry.z_index = 10 # debug
-		new_debry.modulate.a = 0.4
-		
-		new_debry_parent.add_child(new_debry)
+		new_breaker.breaker_shape.color = Color.pink	
+		new_breaker.current_material = new_breaker.MATERIAL.UNBREAKABLE
+		new_breaker.current_motion = new_breaker.MOTION.EXPLODE
 		# printt ("new debry poly", new_debry.position, new_debry.debry_polygon[0], polygon[0], new_debry.get_parent())		
-#		new_debry.position += position 
-	
-	color.a = 0 
+	color.a = 0 	
 	
 	
 func spawn_crackers(cracked_polygons: Array, new_color: Color = Color.black, clear_before: bool = true):
@@ -166,3 +169,17 @@ func spawn_crackers(cracked_polygons: Array, new_color: Color = Color.black, cle
 		# printt ("new cracked poly", new_polygon2d.color, new_polygon2d.polygon[0], polygon[0])		
 
 	color.a = 0
+
+
+func centralize_polygon(polygon_points: PoolVector2Array):
+	# pre: spawned pozicija je enaka breakerjev, potem pa je notranji poligon zamaknjen
+	# post: spawned pozicija je v središču spawnanega nodeta (tudi središče notranjega poligona)
+	
+	var chunk_center = operator.get_polygon_center(polygon_points)# + def_chunk_global_pos
+	
+	var moved_polygon_points: PoolVector2Array = []
+	for point in polygon_points:
+		var moved_point = point - chunk_center# + global_position
+		moved_polygon_points.append(moved_point)
+		
+	return [moved_polygon_points, chunk_center + global_position]

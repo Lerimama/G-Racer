@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/breaker/Demo.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
-[ext_resource path="res://game/breaker/Breaker.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/breaker/BreakerRigid.tscn" type="PackedScene" id=3]
 
 [node name="BreakingGame" type="Node2D"]
 script = ExtResource( 1 )
@@ -13,8 +13,11 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="BreakerShape" parent="BreakerNormal" index="0"]
+[node name="BreakerShape" parent="BreakerNormal" index="1"]
 polygon = PoolVector2Array( 0, 0, 0, 82.5729, 0, 319.893, 0, 384, 108.625, 384, 282.377, 384, 384, 384, 384, 290.228, 384, 68.7999, 384, 0, 297, -35, 81, -36 )
+
+[node name="BrokenShape" parent="BreakerNormal" index="2"]
+polygon = PoolVector2Array( -56, 465, -76, -108, 443, -107, 409, 453, 224.01, 448 )
 
 [node name="Label" type="Label" parent="BreakerNormal"]
 modulate = Color( 0, 0, 0, 1 )
@@ -46,7 +49,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="BreakerShape" parent="BreakerConvex" index="0"]
+[node name="BreakerShape" parent="BreakerConvex" index="1"]
 polygon = PoolVector2Array( 0, 0, -73, 119, -46, 242.97, 0, 384, 136, 418, 334, 191, 337, 424, 384, 384, 430, 269.97, 440, 117, 384, 0, 135, 275 )
 
 [node name="Label" type="Label" parent="BreakerConvex"]
@@ -58,29 +61,34 @@ margin_bottom = 214.0
 theme = ExtResource( 2 )
 text = "convex"
 
-[node name="SlicerArea" type="Area2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="SlicerArea"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PoolVector2Array( -266, 1435, 0, 1442, 2562, 1437, 2563, 296, 0, 296, 0, 1442, -296, 1426, -214, -73, 2743, -102, 2869, 1706, -278, 1739 )
+
+[node name="Slicer" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Slicer"]
 polygon = PoolVector2Array( 96, 0, 0, -96, -96, 0, 0, 96 )
 
-[node name="SlicingPoly" type="Polygon2D" parent="SlicerArea"]
+[node name="SlicingPoly" type="Polygon2D" parent="Slicer"]
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -96, 0, 0, 96, 96, 0, 0, -96 )
 
-[node name="Shapes" type="Node2D" parent="SlicerArea"]
+[node name="Shapes" type="Node2D" parent="Slicer"]
 
-[node name="RectPoly" type="Polygon2D" parent="SlicerArea/Shapes"]
+[node name="RectPoly" type="Polygon2D" parent="Slicer/Shapes"]
 visible = false
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -96, 96, 96, 96, 96, -96, -96, -96 )
 
-[node name="LinePoly" type="Polygon2D" parent="SlicerArea/Shapes"]
+[node name="LinePoly" type="Polygon2D" parent="Slicer/Shapes"]
 visible = false
 position = Vector2( 0, -4 )
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -192, 8, 192, 8, 192, 0, -192, 0 )
 
-[node name="CircoPoly" type="Polygon2D" parent="SlicerArea/Shapes"]
+[node name="CircoPoly" type="Polygon2D" parent="Slicer/Shapes"]
 visible = false
 color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( 40, -88, 0, -96, -40, -88, -70, -70, -88, -40, -96, 0, -88, 40, -69, 69, -40, 88, 0, 96, 40, 88, 69, 69, 88, 40, 96, 0, 88, -40, 70, -70 )
@@ -215,8 +223,8 @@ theme = ExtResource( 2 )
 text = "RESET"
 align = 0
 
-[connection signal="body_entered" from="SlicerArea" to="." method="_on_MouseArea_body_entered"]
-[connection signal="body_exited" from="SlicerArea" to="." method="_on_MouseArea_body_exited"]
+[connection signal="body_entered" from="Slicer" to="." method="_on_MouseArea_body_entered"]
+[connection signal="body_exited" from="Slicer" to="." method="_on_MouseArea_body_exited"]
 [connection signal="button_up" from="UILayer/Button6" to="." method="_on_Button6_button_up"]
 [connection signal="button_up" from="UILayer/Button11" to="." method="_on_Button11_button_up"]
 [connection signal="button_up" from="UILayer/Button10" to="." method="_on_Button10_button_up"]
