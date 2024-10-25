@@ -13,10 +13,10 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="BreakerShape" parent="BreakerNormal" index="1"]
-polygon = PoolVector2Array( 0, 0, 0, 82.5729, 0, 319.893, 0, 384, 108.625, 384, 282.377, 384, 384, 384, 384, 290.228, 384, 68.7999, 384, 0, 297, -35, 81, -36 )
+[node name="BreakerShape" parent="BreakerNormal" index="2"]
+polygon = PoolVector2Array( 0, 0, 0, 82.5729, 0, 319.893, 0, 384, 108.625, 384, 282.377, 384, 384, 384, 384, 290.228, 384, 68.7999, 384, 0, 313, -43, 121, -43 )
 
-[node name="BrokenShape" parent="BreakerNormal" index="2"]
+[node name="BrokenShape" parent="BreakerNormal" index="3"]
 polygon = PoolVector2Array( -56, 465, -76, -108, 443, -107, 409, 453, 224.01, 448 )
 
 [node name="Label" type="Label" parent="BreakerNormal"]
@@ -49,7 +49,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="BreakerShape" parent="BreakerConvex" index="1"]
+[node name="BreakerShape" parent="BreakerConvex" index="2"]
 polygon = PoolVector2Array( 0, 0, -73, 119, -46, 242.97, 0, 384, 136, 418, 334, 191, 337, 424, 384, 384, 430, 269.97, 440, 117, 384, 0, 135, 275 )
 
 [node name="Label" type="Label" parent="BreakerConvex"]
@@ -64,7 +64,7 @@ text = "convex"
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
-polygon = PoolVector2Array( -266, 1435, 0, 1442, 2562, 1437, 2563, 296, 0, 296, 0, 1442, -296, 1426, -214, -73, 2743, -102, 2869, 1706, -278, 1739 )
+polygon = PoolVector2Array( -266, 1435, 0, 1442, 2571, 1137, 2563, 296, 0, 296, 0, 1442, -296, 1426, -214, -73, 2743, -102, 2869, 1706, -278, 1739 )
 
 [node name="Slicer" type="Area2D" parent="."]
 
@@ -104,63 +104,65 @@ __meta__ = {
 }
 
 [node name="Button6" type="Button" parent="UILayer"]
-margin_left = 332.91
-margin_top = 121.99
-margin_right = 486.91
-margin_bottom = 169.99
+margin_left = 336.0
+margin_top = 184.0
+margin_right = 490.0
+margin_bottom = 232.0
 theme = ExtResource( 2 )
 text = "PAINT"
 align = 0
 
 [node name="Button11" type="Button" parent="UILayer"]
-margin_left = 332.91
-margin_top = 186.0
-margin_right = 486.91
-margin_bottom = 234.0
+margin_left = 336.0
+margin_top = 56.0
+margin_right = 490.0
+margin_bottom = 104.0
 theme = ExtResource( 2 )
 text = "CUT"
 align = 0
 
 [node name="Button10" type="Button" parent="UILayer"]
+visible = false
 margin_left = 332.44
 margin_top = 58.0
 margin_right = 486.44
 margin_bottom = 106.0
 theme = ExtResource( 2 )
+disabled = true
 text = "CLICK"
 align = 0
 
 [node name="Button12" type="Button" parent="UILayer"]
-margin_left = 556.72
-margin_top = 58.0
-margin_right = 710.72
-margin_bottom = 106.0
+margin_left = 336.0
+margin_top = 120.0
+margin_right = 490.0
+margin_bottom = 168.0
 theme = ExtResource( 2 )
 text = "HIT"
 align = 0
 
 [node name="Button" type="Button" parent="UILayer"]
-margin_left = 1023.47
+margin_left = 577.0
 margin_top = 57.99
-margin_right = 1137.47
+margin_right = 691.0
 margin_bottom = 105.99
 theme = ExtResource( 2 )
 text = "RECT"
 align = 0
 
 [node name="Button3" type="Button" parent="UILayer"]
-margin_left = 1023.47
+margin_left = 577.0
 margin_top = 121.99
-margin_right = 1124.47
+margin_right = 678.0
 margin_bottom = 169.99
 theme = ExtResource( 2 )
 text = "LINE"
 align = 0
 
 [node name="Button2" type="Button" parent="UILayer"]
-margin_left = 1023.47
+margin_left = 577.0
 margin_top = 185.99
-margin_right = 1163.47
+margin_right = 717.0
 margin_bottom = 233.99
 theme = ExtResource( 2 )
 text = "CIRCO"
@@ -185,9 +187,9 @@ text = "ROTATE"
 align = 0
 
 [node name="Button7" type="Button" parent="UILayer"]
-margin_left = 1503.43
+margin_left = 1978.0
 margin_top = 57.99
-margin_right = 1642.43
+margin_right = 2117.0
 margin_bottom = 105.99
 theme = ExtResource( 2 )
 disabled = true
@@ -195,9 +197,9 @@ text = "BLAST"
 align = 0
 
 [node name="Button8" type="Button" parent="UILayer"]
-margin_left = 1503.43
+margin_left = 1978.0
 margin_top = 121.99
-margin_right = 1682.43
+margin_right = 2157.0
 margin_bottom = 169.99
 theme = ExtResource( 2 )
 disabled = true
@@ -205,9 +207,9 @@ text = "SQUARE"
 align = 0
 
 [node name="Button9" type="Button" parent="UILayer"]
-margin_left = 1505.43
+margin_left = 1980.0
 margin_top = 185.99
-margin_right = 1637.43
+margin_right = 2112.0
 margin_bottom = 233.99
 theme = ExtResource( 2 )
 disabled = true
@@ -215,10 +217,10 @@ text = "HEX"
 align = 0
 
 [node name="Reset" type="Button" parent="UILayer"]
-margin_left = 2341.0
-margin_top = 58.0
-margin_right = 2477.0
-margin_bottom = 106.0
+margin_left = 2331.0
+margin_top = 1274.0
+margin_right = 2467.0
+margin_bottom = 1322.0
 theme = ExtResource( 2 )
 text = "RESET"
 align = 0

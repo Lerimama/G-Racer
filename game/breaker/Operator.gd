@@ -151,14 +151,16 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 
 	# add origin
 	if origin_point_index == -1:
-		polygon_points.append(get_polygon_center(polygon_points))
+		pass
+#		polygon_points.append(get_polygon_center(polygon_points))
 	elif origin_point_index >= 0:
 		polygon_points.append(polygon_points[origin_point_index])
 	
 	# add random points
 	if add_points_count > 0:
-		polygon_points = add_random_points_on_polygon(polygon_points, add_points_count)
-	
+		var new_polygon_points = add_random_points_on_polygon(polygon_points, add_points_count)
+		polygon_points = new_polygon_points
+		
 	# trianguliram
 	randomize()
 	var delaunay_triangles: Array = []
@@ -277,8 +279,69 @@ func split_outline_to_length(polygon_outline_points: PoolVector2Array, max_edge_
 	return new_outline_points
 
 
-# UTILITI ------------------------------------------------------------------------------------------
+# OPERATIONS ------------------------------------------------------------------------------------------
 
+
+func apply_hole(base_polygon, hole_polygon: PoolVector2Array):
+	# poiščem rob (s točko), ki je najbližje od enega od robov
+	# shape splitam med najbližjo točko na izbranem robu in centrom luknje
+	# ponovno slajsam novi shape
+	# bolje? ... lahko bi ga naredil podobno kot cut linijo
+#	var base_polygon = owner.breaker_shape.polygon# temp ... breaker_shape_polygon
+	
+	
+	# za vsako stranico shape polija preverim od slicer točk je najbliža in jo zapišem
+	var distance_to_closest_point: float = 0
+	var split_point_on_hole: Vector2 # za primer, če sredina oblike ni v poligonu
+	var split_edge_start_index: int = 0
+	var split_edge_vector: Vector2
+	var closest_point_on_edge: Vector2
+	var shape_polygon: PoolVector2Array = base_polygon
+	for point_index in shape_polygon.size():
+		var start_point: Vector2 = shape_polygon[point_index]
+		var end_point: Vector2
+		if point_index < shape_polygon.size() - 1:
+			end_point = base_polygon[point_index + 1]
+		else:
+			end_point = base_polygon[0]
+		# za vsako točko na luknji preverim katera ja najdle enemu od robov shape
+		for point in hole_polygon:
+			var closest_point: Vector2 = Geometry.get_closest_point_to_segment_2d(point, start_point, end_point)
+			var distance_between_points: float = (point - closest_point).length()
+			# najbližja
+			if distance_between_points < distance_to_closest_point or distance_to_closest_point == 0:
+				closest_point_on_edge = closest_point
+				split_edge_start_index = point_index
+				split_edge_vector = end_point - start_point
+				distance_to_closest_point = distance_between_points
+				split_point_on_hole = point
+				
+	# split points polygon
+	var split_shape_polygon: PoolVector2Array = base_polygon
+	# split point
+	split_shape_polygon.insert(split_edge_start_index + 1, closest_point_on_edge)
+	# hole center
+	var hole_center: Vector2 = Vector2.ZERO
+	for point in hole_polygon:
+		hole_center += point
+	hole_center /= hole_polygon.size()
+	# če center ni v poligonu, povlečem do referenčne točke najbolj oddaljena točke
+	if Geometry.is_point_in_polygon(hole_center, split_shape_polygon):
+		split_point_on_hole = hole_center
+	split_shape_polygon.insert(split_edge_start_index + 2, split_point_on_hole) # sredinska hole točka lahko ni v luknji
+	# offset split point
+	var split_offset: Vector2 = (Vector2.RIGHT * 0.01).rotated(split_edge_vector.angle())
+	split_shape_polygon.insert(split_edge_start_index + 3, closest_point_on_edge + split_offset) # prvo shape split točko
+	
+	# apliciram na shape
+	var split_base_polygon: PoolVector2Array = split_shape_polygon
+	
+	# apliciram na shape
+#	owner.breaker_shape_polygon = split_shape_polygon
+#	owner.break_it(hole_polygon)
+		
+	return [split_shape_polygon, hole_polygon]
+	
 	
 func merge_neighboring_polygons(polygons_to_merge: Array):
 	
@@ -322,7 +385,7 @@ func merge_polygon_with_neighbor(merging_polygon: PoolVector2Array, possible_nei
 	# če merge ni bil uspešen je merging polygon enak in possible nejbrs tudi
 	return [merging_polygon, possible_neighbors]
 		
-	
+
 func split_to_length_loop(polygon_outline_points: PoolVector2Array, max_edge_length: float):
 	
 	var new_outline_points: Array = polygon_outline_points
@@ -430,49 +493,101 @@ func build_grid_polygons(shape_corner_count: int):
 
 
 func add_random_points_on_polygon(polygon_points: PoolVector2Array, add_points_count: int):
-	print (add_points_count)
-#	add_points_count = 100
 	
 	# poiščem 4 skrajne točke oblike
-	var max_left_point: Vector2
-	var max_right_point: Vector2
-	var max_up_point: Vector2
-	var max_down_point: Vector2
-	for point in polygon_points:
-		if point.x > max_right_point.x or max_right_point.x == 0:
-			max_right_point = point
-		elif point.x < max_left_point.x or max_left_point.x == 0:
-			max_left_point = point
-		if point.y > max_down_point.y or max_down_point.y == 0:
-			max_down_point = point
-		elif point.y < max_up_point.y or max_up_point.y == 0:
-			max_up_point = point
+	#	var max_left_point: Vector2
+	#	var max_right_point: Vector2
+	#	var max_up_point: Vector2
+	#	var max_down_point: Vector2
+	#	for point in polygon_points:
+	#		if point.x > max_right_point.x or max_right_point.x == 0:
+	#			max_right_point = point
+	#		elif point.x < max_left_point.x or max_left_point.x == 0:
+	#			max_left_point = point
+	#		if point.y > max_down_point.y or max_down_point.y == 0:
+	#			max_down_point = point
+	#		elif point.y < max_up_point.y or max_up_point.y == 0:
+	#			max_up_point = point
+	var polygon_far_points: Array = get_polygon_far_points(polygon_points) # L-T-R-B
 	
+	# najprej nafilam poligon z r
 	var polygon_with_added_points: PoolVector2Array = []
 	for point in range(add_points_count):
-		var random_x: float = rand_range(max_left_point.x, max_right_point.x)
-		var random_y: float = rand_range(max_up_point.y, max_down_point.y)
+		var random_x: float = rand_range(polygon_far_points[0].x, polygon_far_points[2].x)
+		var random_y: float = rand_range(polygon_far_points[1].y, polygon_far_points[3].y)
 		var random_point: Vector2 = Vector2(random_x, random_y)
 		polygon_with_added_points.append(random_point)
-
-	# zavržem tiste zunaj glavnega poligona 
-	# ponovljam postopek dokler so vse znotraj
-	
+	# zavržem zunanje ... ne ponovljam dokler je kakšna, ker se lahko zascikla
 	var points_outside_base_polygon: PoolVector2Array = []
 	for point in polygon_with_added_points:
 		if not Geometry.is_point_in_polygon(point, polygon_points):
 			points_outside_base_polygon.append(point)
-	
 	for point in points_outside_base_polygon:
 		var point_add_points_polygon_index: int = polygon_with_added_points.find(point)
 		polygon_with_added_points.remove(point_add_points_polygon_index)
 	
-	# trenutno je tako, točke samo odstranim, 
-	# ena random pika se lahko skos spavna zunaj ... zato je to kar ok
+	# apliciram dodatne točke
+	for point in polygon_points:
+		polygon_with_added_points.append(point)
+	
+	# preverjam, če je bilo uspešno
+	if polygon_with_added_points.size() == polygon_points.size():
+		print ("Dodajanje random točk neuspešno ... Spawnam istega")
+		polygon_with_added_points = polygon_points
 	
 	return polygon_with_added_points
 	
 
+# UTILITI ------------------------------------------------------------------------------------------
+
+		
+func reset_shape_transforms(shape_to_transform: Polygon2D):
+	
+	if shape_to_transform.transform != Transform2D.IDENTITY: 
+		# The identity Transform2D with no translation, rotation or scaling applied. 
+		# When applied to other data structures, IDENTITY performs no transformation.
+		var transformed_polygon = shape_to_transform.transform.xform(shape_to_transform.polygon)
+		shape_to_transform.transform = Transform2D.IDENTITY
+		shape_to_transform.polygon = transformed_polygon	
+	
+	return shape_to_transform
+
+	
+func get_polygon_radius(polygon_points: PoolVector2Array, point_index: int = -1):
+	
+	var polygon_center: Vector2 = get_polygon_center(polygon_points)
+	
+	if point_index == -1:
+		var max_radius: float = 0
+		for point in polygon_points:
+			var radius_on_point: float = (point - polygon_center).length()
+			if radius_on_point > max_radius:
+				max_radius = radius_on_point
+		return max_radius
+	else:
+		var radius_on_point: float = (polygon_points[point_index] - polygon_center).length()
+		return	radius_on_point
+	
+
+func get_polygon_far_points(polygon_points: PoolVector2Array):
+	
+	var points_to_sort: Array = polygon_points
+	
+	# x
+	points_to_sort.sort_custom(self, "sort_vectors_by_x")
+	var far_right_point: Vector2 = points_to_sort[0]
+	var far_left_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
+	
+	# Y
+	points_to_sort.sort_custom(self, "sort_vectors_by_y")
+	var far_down_point: Vector2 = points_to_sort[0]
+	var far_up_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
+	
+	var far_points: Array = [far_left_point, far_up_point, far_right_point, far_down_point]
+	
+	return far_points
+	
+	
 func get_polygon_center(polygon_points: PoolVector2Array):
 	
 	var center_position: Vector2 = Vector2.ZERO
@@ -481,24 +596,12 @@ func get_polygon_center(polygon_points: PoolVector2Array):
 		for point in polygon_points:
 			center_position += point
 		center_position /= 3
+	
 	# 4 in več kotnik
 	elif polygon_points.size() > 3:
-		# poiščem 4 skrajne točke oblike
-		var max_left_point: Vector2
-		var max_right_point: Vector2
-		var max_up_point: Vector2
-		var max_down_point: Vector2
-		for point in polygon_points:
-			if point.x > max_right_point.x or max_right_point.x == 0:
-				max_right_point = point
-			elif point.x < max_left_point.x or max_left_point.x == 0:
-				max_left_point = point
-			if point.y > max_down_point.y or max_down_point.y == 0:
-				max_down_point = point
-			elif point.y < max_up_point.y or max_up_point.y == 0:
-				max_up_point = point
-		# poišče center		
-		for point in [max_left_point, max_up_point, max_right_point, max_down_point]:
+#		# poišče center	skrajnih 4 točk	
+		var polygon_far_points: PoolVector2Array = get_polygon_far_points(polygon_points) # L-T-R-B
+		for point in polygon_far_points:
 			center_position += point
 		center_position /= 4
 		
@@ -511,3 +614,43 @@ func sort_vectors_by_length(vector_1, vector_2):
 	if vector_1.length() > vector_2.length():
 	    return true
 	return false	
+
+
+func sort_vectors_by_x(vector_1, vector_2): 
+	# ascending ... večji je boljši
+
+	if vector_1.x > vector_2.x:
+	    return true
+	return false	
+
+
+func sort_vectors_by_y(vector_1, vector_2): 
+	# ascending ... večji je boljši
+
+	if vector_1.y > vector_2.y:
+	    return true
+	return false	
+
+
+#func get_polygon_longest_side(polygon_points: PoolVector2Array):
+#
+#	var longest_daisy_edge_length: float # rabim za razmerje spiderweb splitanja	
+#	var all_daisy_triangles: Array = []
+#	for point_index in polygon_points.size():
+#		var this_point: Vector2
+#		var next_point: Vector2
+#		# zadnja točka se poveže s prvo
+#		if point_index == polygon_points.size() - 1:
+#			this_point = polygon_points[point_index]
+#			next_point = polygon_points[0]
+#		else:
+#			this_point = polygon_points[point_index]
+#			next_point = polygon_points[point_index + 1]
+#		# array točk trikotnika dodam med vse trikotnike
+#		var triangle_points: PoolVector2Array = [origin_point, this_point, next_point] # prva je v centru
+#		all_daisy_triangles.append(triangle_points)
+#
+#		# zabeležim najdaljši rob ... na koncu ostane res najdaljši
+#		var this_edge: Vector2 = origin_point - this_point
+#		if this_edge.length() > longest_daisy_edge_length:
+#			longest_daisy_edge_length = this_edge.length()

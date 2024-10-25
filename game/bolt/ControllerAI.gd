@@ -407,7 +407,7 @@ func get_racing_position(position_tracker: PathFollow2D):
 	var bolt_tracker_curve: Curve2D = position_tracker.get_parent().get_curve()
 	point_on_curve_global_position = bolt_tracker_curve.interpolate_baked(ai_target_total_offset)
 	
-	Met.spawn_indikator(point_on_curve_global_position, controlled_bolt.rotation, Ref.node_creation_parent, false)
+	Met.spawn_indikator(point_on_curve_global_position, Color.white, controlled_bolt.rotation, Ref.node_creation_parent, false)
 	
 	return point_on_curve_global_position
 

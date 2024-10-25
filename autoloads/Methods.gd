@@ -104,11 +104,8 @@ onready var indikator: PackedScene = preload("res://common/debug/DebugIndikator.
 var all_indikators_spawned: Array = []
 
 #func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
-func spawn_indikator(pos: Vector2, rot: float = 0, parent_node = null, clear_spawned_before: bool = false):
+func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false):
 	
-	if parent_node == null:
-		parent_node = get_tree().root
-		
 	if clear_spawned_before:
 		for indi in all_indikators_spawned:
 			indi.queue_free()
@@ -117,15 +114,37 @@ func spawn_indikator(pos: Vector2, rot: float = 0, parent_node = null, clear_spa
 	var new_indikator = indikator.instance()
 	new_indikator.global_position = pos
 	new_indikator.global_rotation = rot
-	new_indikator.modulate = Color.red
-	new_indikator.z_index = 10
+	new_indikator.modulate = col
+	new_indikator.z_index = 100
 	parent_node.add_child(new_indikator)
 	
+	new_indikator.scale *= 10
 	all_indikators_spawned.append(new_indikator)
 		
 	return new_indikator
 
 
+var all_indikator_lines_spawned: Array = []
+func spawn_indikator_line(frist_point: Vector2, second_point: Vector2, col: Color = Color.blue, parent_node = get_tree().root, clear_spawned_before: bool = false):
+	
+	if clear_spawned_before:
+		for line in all_indikator_lines_spawned:
+			line.queue_free()
+		all_indikator_lines_spawned.clear()
+		
+	var new_indikator_line = Line2D.new()
+	new_indikator_line.points =[frist_point, second_point]
+	new_indikator_line.z_index = 100
+	new_indikator_line.default_color = col
+	parent_node.add_child(new_indikator_line)
+	
+	new_indikator_line.width = 10
+	all_indikator_lines_spawned.append(new_indikator_line)
+		
+	return new_indikator_line
+	
+	
+	
 # SCENE MANAGER (prehajanje med igro in menijem) --------------------------------------------------------------
 
 var current_scene = null

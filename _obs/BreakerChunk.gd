@@ -41,7 +41,7 @@ func slice_chunk():
 		SLICE_STYLE.BLAST:
 #			var new_sliced_polygon = slice_polygons()
 #			spawn_debry(new_sliced_polygon)
-			slice_polygons()
+			slice_chunk()
 			spawn_debry(sliced_polygons)
 		SLICE_STYLE.GRID_SQ:
 			var grid_sliced_polygons = operator.slice_grid(polygon, 4)

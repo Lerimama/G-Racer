@@ -9,7 +9,7 @@ var current_trans: int = TRANSFORMATION.ROTATE setget _change_transformations
 enum MODE {CLICK, PAINT, CUT, STRIKE}
 var current_mode: int = MODE.CUT setget _change_mode
 
-enum TOOL {HAMMER, BOMB, PAINT, KNIFE,}
+enum TOOL {HAMMER, BOMB, PAINT, KNIFE}
 
 # slajsanje
 enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS} # enako kot ima čunk
@@ -43,13 +43,15 @@ func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("R"):
 		_on_Reset_button_up()
+	if Input.is_action_just_pressed("no4"):
+		print (bodies_to_slice)
 	elif Input.is_action_just_pressed("left_click"):
 		on_click()
 	elif Input.is_action_pressed("left_click"):
 		match current_mode:
 			MODE.PAINT:
 				for body in bodies_to_slice:
-					body.on_hit(slicer_shape, get_global_mouse_position(), 0)
+					body.on_hit(slicer_shape, get_global_mouse_position(), 1)
 	elif Input.is_action_just_released("left_click"):
 		on_release()
 		
@@ -60,7 +62,6 @@ func _ready() -> void:
 	self.current_mode = current_mode
 	self.current_trans = current_trans
 	self.current_slice_style = current_slice_style
-
 
 
 func _process(delta: float) -> void:
@@ -150,10 +151,11 @@ func finish_swipe(is_successful: bool = false):
 		MODE.STRIKE:
 			if is_successful:
 				is_successful = false
-				slicer_shape.scale = Vector2.ONE# * 2
+				slicer_shape.scale = Vector2.ONE
 				for body in bodies_to_slice:
 					var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
 					body.on_hit(slicer_shape, hit_vector_pool, SLICE_STYLE.GRID_HEX) 
+					
 					var fade_tween = get_tree().create_tween()
 					fade_tween.tween_property(fading_slicing_line, "modulate:a", 0, 0.5).set_delay(1)
 					yield(fade_tween, "finished")
@@ -163,7 +165,7 @@ func finish_swipe(is_successful: bool = false):
 			for body in bodies_to_slice:
 				var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
 				var cutting_pool: PoolVector2Array = fading_slicing_line.points
-				body.on_hit(fading_slicing_line)
+				body.on_cut(fading_slicing_line)
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
 	slicer_shape.scale = Vector2.ONE
