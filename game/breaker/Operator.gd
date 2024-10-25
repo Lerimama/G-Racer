@@ -100,6 +100,7 @@ func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int
 	# origin_point_index: -1 > center origin, 0 ali več > edge point origin
 	# daisy je boljši z originom	
 	
+	var original_shape_points: PoolVector2Array = polygon_points
 	# add origin
 	var origin_point: Vector2
 	if origin_point_index == -1: # centralna ... izračuna center
@@ -128,17 +129,10 @@ func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int
 		var this_edge: Vector2 = origin_point - this_point
 		if this_edge.length() > longest_daisy_edge_length:
 			longest_daisy_edge_length = this_edge.length()
-			
-	# odstranim poligone, ki segajo prek robov glavne oblike
-	# ni dobro v vseh primerih ... bolje, da jih je preveč kot premalo
-	#	var inside_daisy_triangles: Array = []
-	#	for poly in all_daisy_triangles: 
-	#		# vsak poligon, ki je v popolnosti znotraj glavne oblike je legit
-	#		# če drugi poligon prekriva prvega, je array prazen
-	#		if Geometry.clip_polygons_2d(poly, owner.polygon).empty():
-	#			inside_daisy_triangles.append(poly)
-	#	return inside_daisy_triangles # all_daisy_triangles
 
+	# odstranim poligone izven oblike chunka
+	all_daisy_triangles = refactor_polygons_to_shape(all_daisy_triangles, original_shape_points)
+				
 	# printt ("daisy", inside_daisy_triangles.size(), daisy_triangles.size())
 	return [all_daisy_triangles, longest_daisy_edge_length] 
 	
@@ -149,6 +143,8 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 	# origin_point_index: -2 > no origin, -1 > center origin, 0 ali več > edge point origin
 	# delaunay je boljši brez origina
 
+	var original_shape_points: PoolVector2Array = polygon_points
+	
 	# add origin
 	if origin_point_index == -1:
 		pass
@@ -182,21 +178,41 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 			triangle_points.append(current_point)
 		delaunay_triangles.append(triangle_points)	
 	
+	# odstranim poligone izven oblike chunka (glede na njihov center)
+	delaunay_triangles = refactor_polygons_to_shape(delaunay_triangles, original_shape_points)
+	
 	# merge
 	if merge_to_rectangles:
 		delaunay_triangles = merge_neighboring_polygons(delaunay_triangles)
-	
-	# odstranim poligone, ki segajo prek robov glavne oblike
-	# ni dobro v vseh primerih ... bolje, da jih je preveč kot premalo
-	#	var inside_daisy_triangles: Array = []
-	#	for poly in delaunay_triangles: 
-	#		# vsak poligon, ki je v popolnosti znotraj glavne oblike je legit
-	#		# če drugi poligon prekriva prvega, je array prazen
-	#		if Geometry.clip_polygons_2d(poly, owner.polygon).empty():
-	#			inside_daisy_triangles.append(poly)
-	#	return inside_daisy_triangles # all_daisy_triangles
+
 	
 	return delaunay_triangles
+
+
+func refactor_polygons_to_shape(polygons_to_refactor: Array, refactor_to_polygon: PoolVector2Array):
+	
+	var refactored_polygons: Array = []
+	
+	var inside_triangles: Array = []
+	var outside_triangles: Array = []
+	for poly in polygons_to_refactor:
+		var poly_center: Vector2 = get_polygon_center(poly)
+		if Geometry.is_point_in_polygon(poly_center, refactor_to_polygon):
+			inside_triangles.append(poly)
+		else:
+			outside_triangles.append(poly)
+	
+	refactored_polygons = inside_triangles
+	
+	var intesected_outside_triangles: Array = []
+	for poly in outside_triangles: 
+		var intesected_polygons: Array = Geometry.intersect_polygons_2d(poly, refactor_to_polygon)
+		if not intesected_polygons.empty():
+			intesected_outside_triangles.append_array(intesected_polygons)
+	
+	refactored_polygons.append_array(intesected_outside_triangles)	
+	
+	return refactored_polygons
 
 	
 func slice_sides(polygon_points: PoolVector2Array, split_part: float = 0.5):
@@ -287,8 +303,6 @@ func apply_hole(base_polygon, hole_polygon: PoolVector2Array):
 	# shape splitam med najbližjo točko na izbranem robu in centrom luknje
 	# ponovno slajsam novi shape
 	# bolje? ... lahko bi ga naredil podobno kot cut linijo
-#	var base_polygon = owner.breaker_shape.polygon# temp ... breaker_shape_polygon
-	
 	
 	# za vsako stranico shape polija preverim od slicer točk je najbliža in jo zapišem
 	var distance_to_closest_point: float = 0
@@ -510,32 +524,32 @@ func add_random_points_on_polygon(polygon_points: PoolVector2Array, add_points_c
 	#			max_up_point = point
 	var polygon_far_points: Array = get_polygon_far_points(polygon_points) # L-T-R-B
 	
-	# najprej nafilam poligon z r
-	var polygon_with_added_points: PoolVector2Array = []
+	# najprej dobim množico rendom točk
+	var random_added_points: PoolVector2Array = []
 	for point in range(add_points_count):
 		var random_x: float = rand_range(polygon_far_points[0].x, polygon_far_points[2].x)
 		var random_y: float = rand_range(polygon_far_points[1].y, polygon_far_points[3].y)
 		var random_point: Vector2 = Vector2(random_x, random_y)
-		polygon_with_added_points.append(random_point)
-	# zavržem zunanje ... ne ponovljam dokler je kakšna, ker se lahko zascikla
-	var points_outside_base_polygon: PoolVector2Array = []
-	for point in polygon_with_added_points:
-		if not Geometry.is_point_in_polygon(point, polygon_points):
-			points_outside_base_polygon.append(point)
-	for point in points_outside_base_polygon:
-		var point_add_points_polygon_index: int = polygon_with_added_points.find(point)
-		polygon_with_added_points.remove(point_add_points_polygon_index)
+		random_added_points.append(random_point)
 	
+	# zavržem zunanje ... ne ponovljam dokler je kakšna, ker se lahko zacikla
+	var inside_added_points: PoolVector2Array = []
+	for point in random_added_points:
+		
+		if Geometry.is_point_in_polygon(point, polygon_points):
+			if get_intersecting_edge(point, polygon_points) == -1:
+				inside_added_points.append(point)
+				
 	# apliciram dodatne točke
-	for point in polygon_points:
-		polygon_with_added_points.append(point)
+	for point in inside_added_points:
+		polygon_points.append(point)
 	
 	# preverjam, če je bilo uspešno
-	if polygon_with_added_points.size() == polygon_points.size():
-		print ("Dodajanje random točk neuspešno ... Spawnam istega")
-		polygon_with_added_points = polygon_points
+#	if polygon_with_added_points.size() == polygon_points.size():
+#		print ("Dodajanje random točk neuspešno ... Spawnam istega")
+#		polygon_with_added_points = polygon_points
 	
-	return polygon_with_added_points
+	return polygon_points
 	
 
 # UTILITI ------------------------------------------------------------------------------------------
@@ -552,6 +566,38 @@ func reset_shape_transforms(shape_to_transform: Polygon2D):
 	
 	return shape_to_transform
 
+
+func get_intersecting_edge(intersecting_vector, intersected_polygon: PoolVector2Array):
+	
+	var intersected_edge_index: int = -1
+	
+	# če je podana točka
+	for edge_index in intersected_polygon.size():
+		
+		var start_point: Vector2
+		var end_point: Vector2
+		if edge_index == intersected_polygon.size() - 1:
+			start_point = intersected_polygon[edge_index]
+			end_point = intersected_polygon[0]
+		else:
+			start_point = intersected_polygon[edge_index]
+			end_point = intersected_polygon[edge_index + 1]
+		
+		if intersecting_vector is Vector2: # ne dela glih
+			var closest_point_on_edge = Geometry.get_closest_point_to_segment_2d(intersecting_vector, start_point, end_point)
+			var edge_vector: Vector2 = intersecting_vector - closest_point_on_edge
+			if edge_vector.length() < 10:
+				intersected_edge_index = edge_index
+				printt ("closest_point_on_edge", intersected_edge_index, edge_vector.length())
+		
+		if intersecting_vector is PoolVector2Array: 
+			if Geometry.segment_intersects_segment_2d(intersecting_vector[0], intersecting_vector[1], start_point, end_point):
+				intersected_edge_index = edge_index
+				printt ("segment intersects edge", intersected_edge_index)
+			
+	
+	return intersected_edge_index			
+	
 	
 func get_polygon_radius(polygon_points: PoolVector2Array, point_index: int = -1):
 	
@@ -599,7 +645,7 @@ func get_polygon_center(polygon_points: PoolVector2Array):
 	
 	# 4 in več kotnik
 	elif polygon_points.size() > 3:
-#		# poišče center	skrajnih 4 točk	
+		# poišče center	skrajnih 4 točk	
 		var polygon_far_points: PoolVector2Array = get_polygon_far_points(polygon_points) # L-T-R-B
 		for point in polygon_far_points:
 			center_position += point

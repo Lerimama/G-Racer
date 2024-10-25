@@ -249,7 +249,7 @@ _global_script_class_icons={
 [application]
 
 config/name="G Racer"
-run/main_scene="res://Main.tscn"
+run/main_scene="res://game/breaker/Demo.tscn"
 config/icon="res://assets/icon.png"
 <<<<<<<HEADconfig/name="G-Racer"
 

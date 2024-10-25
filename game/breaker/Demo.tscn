@@ -1,56 +1,54 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://game/breaker/Demo.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/breaker/BreakerRigid.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/breaker/Sounds.gd" type="Script" id=4]
 
 [node name="BreakingGame" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="BreakerNormal" parent="." instance=ExtResource( 3 )]
-position = Vector2( 416, 644 )
+position = Vector2( 384, 641 )
 __meta__ = {
 "_edit_group_": true
 }
-
-[node name="BreakerShape" parent="BreakerNormal" index="2"]
-polygon = PoolVector2Array( 0, 0, 0, 82.5729, 0, 319.893, 0, 384, 108.625, 384, 282.377, 384, 384, 384, 384, 290.228, 384, 68.7999, 384, 0, 313, -43, 121, -43 )
-
-[node name="BrokenShape" parent="BreakerNormal" index="3"]
-polygon = PoolVector2Array( -56, 465, -76, -108, 443, -107, 409, 453, 224.01, 448 )
 
 [node name="Label" type="Label" parent="BreakerNormal"]
 modulate = Color( 0, 0, 0, 1 )
 margin_left = 122.04
-margin_top = 166.03
+margin_top = 165.03
 margin_right = 261.04
-margin_bottom = 214.03
+margin_bottom = 213.03
 theme = ExtResource( 2 )
 text = "normal"
 
 [node name="BreakerClockwise" parent="." instance=ExtResource( 3 )]
-position = Vector2( 1069, 644 )
+position = Vector2( 1089, 641 )
 __meta__ = {
 "_edit_group_": true
 }
 
+[node name="BreakerBase" parent="BreakerClockwise" index="1"]
+polygon = PoolVector2Array( -32, 384, 417, 384, 197, -3 )
+
 [node name="Label" type="Label" parent="BreakerClockwise"]
 modulate = Color( 0, 0, 0, 1 )
-margin_left = 90.0
-margin_top = 166.0
-margin_right = 287.0
-margin_bottom = 214.0
+margin_left = 93.0
+margin_top = 246.1
+margin_right = 290.0
+margin_bottom = 294.1
 theme = ExtResource( 2 )
 text = "clockwise"
 
 [node name="BreakerConvex" parent="." instance=ExtResource( 3 )]
-position = Vector2( 1696, 644 )
+position = Vector2( 1794, 641 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="BreakerShape" parent="BreakerConvex" index="2"]
-polygon = PoolVector2Array( 0, 0, -73, 119, -46, 242.97, 0, 384, 136, 418, 334, 191, 337, 424, 384, 384, 430, 269.97, 440, 117, 384, 0, 135, 275 )
+[node name="BreakerBase" parent="BreakerConvex" index="1"]
+polygon = PoolVector2Array( 0, 64, 128, 192, 0, 320, 64, 384, 192, 256, 321, 384, 385, 320, 257, 192, 385, 64, 321, 0, 192, 128, 64, 0 )
 
 [node name="Label" type="Label" parent="BreakerConvex"]
 modulate = Color( 0, 0, 0, 1 )
@@ -224,6 +222,9 @@ margin_bottom = 1322.0
 theme = ExtResource( 2 )
 text = "RESET"
 align = 0
+
+[node name="Sounds" type="Node" parent="."]
+script = ExtResource( 4 )
 
 [connection signal="body_entered" from="Slicer" to="." method="_on_MouseArea_body_entered"]
 [connection signal="body_exited" from="Slicer" to="." method="_on_MouseArea_body_exited"]

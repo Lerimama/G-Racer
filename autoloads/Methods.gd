@@ -115,7 +115,7 @@ func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, paren
 	new_indikator.global_position = pos
 	new_indikator.global_rotation = rot
 	new_indikator.modulate = col
-	new_indikator.z_index = 100
+	new_indikator.z_index = 1000
 	parent_node.add_child(new_indikator)
 	
 	new_indikator.scale *= 10
