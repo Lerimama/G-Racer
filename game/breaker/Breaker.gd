@@ -1,32 +1,26 @@
 extends RigidBody2D
 # breaker je cel, chunk je odlomljeni del breakerja, debry so delčki narezanega chunka
 
+
 signal cracks_animated 
 
+enum MATERIAL {UNBREAKABLE, STONE, GLASS, } # GHOST, WOOD, METAL, TILES, SOIL
+export (MATERIAL) var current_material: int = MATERIAL.STONE
 
-# settings
-enum MATERIAL {UNBREAKABLE, STONE, GLASS, GHOST, WOOD, METAL, TILES, SOIL }
-export (MATERIAL) var current_material: int = MATERIAL.WOOD
+enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, ROCKET} # _temp ... ujema se z demotom
+var current_hit_by_type: int = HIT_BY_TYPE.KNIFE
+
+enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
+var current_motion: int = MOTION.STILL setget _change_motion
 
 enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS, NONE}
-
-enum ORIGIN_LOCATION {INSIDE, EDGE, OUTSIDE}
-var current_origin_location: int = ORIGIN_LOCATION.INSIDE
-
-enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, ROCKET} # 0 je default, če telo nima svojega tipa
-var current_hit_by_type: int = HIT_BY_TYPE.KNIFE
 
 var breaker_base_polygon: PoolVector2Array = [] setget _change_breaker_polygon # !!! polygon menjam samo prek tega setgeta
 var crack_color: Color = Color.black
 export (int) var crack_width: float = 0 setget _change_crack_width
-
 var cut_breaks_shapes: int = 1 # nobena, spodnja ali vse
 var breaking_round: int = 1 # kolikokrat je bil brejker že nalomljen
 var origin_global_position: Vector2 # se inherita skozi vse spawne
-
-# motion
-enum MOTION {STILL, EXPLODE, FALL, SLIDE, CRACK, DISSOLVE, DISINTEGRATE}
-var current_motion: int = MOTION.STILL setget _change_motion
 var current_breaker_velocity: Vector2 = Vector2.ZERO
 
 # polygons
@@ -48,6 +42,7 @@ onready var Cracker: PackedScene = preload("res://game/breaker/Cracker.tscn")
 # debug
 var debug_solo_mode: bool = false
 
+
 func _input(event: InputEvent) -> void:
 	
 	if debug_solo_mode and Input.is_action_just_pressed("no1") and debug_solo_mode:
@@ -57,6 +52,8 @@ func _input(event: InputEvent) -> void:
 
 	
 func _ready() -> void:
+	
+	add_to_group("Breakers")
 	
 	if get_parent() == get_tree().root:
 		debug_solo_mode = true
@@ -90,9 +87,14 @@ func on_hit(hit_vector, hit_by = null): #, hitting_parent: Node = breaker_parent
 		cut_it(hit_vector)
 		return
 	
-	elif "collision_shape" in hit_by:
-		var hit_by_polygon: PoolVector2Array = hit_by.collision_shape.polygon
-		current_hit_by_type = hit_by.tool_type
+	else:
+		var hit_by_polygon: PoolVector2Array = slicer_shape.polygon
+		if "collision_shape" in hit_by:
+			hit_by_polygon = hit_by.collision_shape.polygon
+		
+		current_hit_by_type = HIT_BY_TYPE.KNIFE
+		if "tool_type" in hit_by:
+			current_hit_by_type = hit_by.tool_type
 		
 		# swipe hit  
 		if hit_vector is PoolVector2Array:
@@ -124,11 +126,9 @@ func on_hit(hit_vector, hit_by = null): #, hitting_parent: Node = breaker_parent
 			break_it(hit_by_polygon)
 			return
 		break_it(transformed_hit_polygon)
-	else:
-		print("Ni collision shapeta, ni posledic")
 
 
-# BREJKANJE (chunkization) ------------------------------------------------------------------------------------------------
+# BREJK (chunkization) ------------------------------------------------------------------------------------------------
 
 
 func break_it(slicing_polygon: PoolVector2Array):
@@ -221,7 +221,7 @@ func cut_it(slice_line: Line2D, slicing_style: int = 0):
 			queue_free()
 
 					
-# SLAJSANJE (debrization) -----------------------------------------------------------------------------------------------
+# SLAJS (debrization) -----------------------------------------------------------------------------------------------
 	
 			
 func slice_chunks(chunk_polygons: Array, whole_breaker: bool = false, with_cracker: bool = true):
@@ -238,6 +238,8 @@ func slice_chunks(chunk_polygons: Array, whole_breaker: bool = false, with_crack
 		var derby_polygons: Array
 		
 		match current_slicing_style:
+			SLICE_STYLE.NONE:
+				derby_polygons.append(chunk)
 			SLICE_STYLE.GRID_SQ:
 				var grid_sliced_polygons: Array = operator.slice_grid(chunk, 4)
 				derby_polygons = grid_sliced_polygons[0]
@@ -271,29 +273,29 @@ func split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 	var origin_edge_index: int
 	
 	# dobim origin lokacijo glede na poligon
+	var origin_location_on_shape: int = -1 # -1 = out, 1 = in, 0 = edge
 	if Geometry.is_point_in_polygon(origin_position, chunk_polygon):
 		origin_edge_index = operator.get_outline_segment_with_point(origin_position, chunk_polygon)
-		if origin_edge_index > - 1: # -1 pomeni, da je znotraj poligona in ni na robu
-			current_origin_location = ORIGIN_LOCATION.EDGE
+		if origin_edge_index == - 1: # -1 pomeni, da je znotraj poligona in ni na robu
+			origin_location_on_shape = 1
 		else:
-			current_origin_location = ORIGIN_LOCATION.INSIDE
-	else:
-		current_origin_location = ORIGIN_LOCATION.OUTSIDE
-	printt ("slice on origin location:", ORIGIN_LOCATION.keys()[current_origin_location])
+			origin_location_on_shape = 0
+	
+	printt ("slice on origin location:", origin_location_on_shape)
 	
 	# slajsam glede na lokacijo ... drugi parametri še pridejo
 	var sliced_chunk_polygons: Array
-	match current_origin_location:
-		ORIGIN_LOCATION.INSIDE:
-			var split_edge_length: int = 150
-			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
-			sliced_chunk_polygons = operator.slice_spiderweb(chunk_polygon)
-		ORIGIN_LOCATION.EDGE:
+	match origin_location_on_shape:
+		-1:
+			#			var split_edge_length: int = 150
+			#			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
+			sliced_chunk_polygons = operator.triangulate_delaunay(chunk_polygon, -1, 10)
+		0:
 			# outline split
 			var split_edge_length: int = 50
 			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
 			#			var split_count: int = 1 # _temp
-			#		chunk_polygon = operator.split_outline_on_part(chunk_polygon, 0.5, split_count)
+			#			chunk_polygon = operator.split_outline_on_part(chunk_polygon, 0.5, split_count)
 			# odstranim splitane pike na origin robu
 			var origin_edge_end_point_index: int
 			if origin_edge_index == chunk_polygon.size() - 1:
@@ -308,10 +310,11 @@ func split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 			# slajsam
 			var origin_point_index: int = chunk_polygon.find(origin_position)
 			sliced_chunk_polygons = operator.triangulate_daisy(chunk_polygon, origin_point_index)[0]
-		ORIGIN_LOCATION.OUTSIDE:
-#			var split_edge_length: int = 150
-#			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
-			sliced_chunk_polygons = operator.triangulate_delaunay(chunk_polygon, -1, 10)
+		1:
+			var split_edge_length: int = 150
+			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
+			sliced_chunk_polygons = operator.slice_spiderweb(chunk_polygon)
+
 	
 	return sliced_chunk_polygons
 
@@ -465,7 +468,7 @@ func _change_motion(new_motion_state: int):
 			linear_damp = 2
 			var force_vector = global_position - origin_global_position
 			apply_central_impulse(force_vector * 20)
-		MOTION.DISSOLVE:
+		MOTION.DISSAPEAR:
 			gravity_scale = 0
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
@@ -490,8 +493,9 @@ func _change_crack_width(new_width: float):
 
 func _exit_tree() -> void:
 	
-	if "bodies_to_slice" in breaker_parent:
-		breaker_parent.bodies_to_slice.erase(self) # demo
+	if "bodies_to_slice" in breaker_parent: # _temp ... demo
+		breaker_parent.bodies_to_slice.erase(self)
 
 
-
+func _on_VisibilityNotifier2D_screen_exited() -> void:
+	queue_free()

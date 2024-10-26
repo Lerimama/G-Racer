@@ -49,21 +49,6 @@ func slice_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int =
 	var polygon_edges: Array = get_outline_segments_by_length(polygon_points)
 	var shortest_edge: Vector2 = polygon_edges[polygon_edges.size() - 1]
 	var shortest_edge_length: float = shortest_edge.length()
-	#	var polygon_edge_vectors: Array = []
-	#	for edge_index in polygon_points.size():
-	#		var start_edge_point: Vector2
-	#		var end_edge_point: Vector2
-	#		if edge_index == polygon_points.size() - 1:
-	#			start_edge_point = polygon_points[edge_index]
-	#			end_edge_point = polygon_points[0]
-	#		else:
-	#			start_edge_point = polygon_points[edge_index]
-	#			end_edge_point = polygon_points[edge_index + 1]
-	#		var edge_vector: Vector2 = end_edge_point - start_edge_point
-	#		polygon_edge_vectors.append(edge_vector)
-	#
-	#	polygon_edge_vectors.sort_custom(self, "sort_vectors_by_length")
-	#	var shortest_edge_length: float = polygon_edge_vectors.pop_back().length()
 	
 	# potem ga primerjam z najdaljšim robom cvetov 
 	var triangulated_daisy: Array = triangulate_daisy(polygon_points)
@@ -470,20 +455,6 @@ func build_grid_polygons(shape_corner_count: int):
 
 func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_count: int):
 	
-	# poiščem 4 skrajne točke oblike
-	#	var max_left_point: Vector2
-	#	var max_right_point: Vector2
-	#	var max_up_point: Vector2
-	#	var max_down_point: Vector2
-	#	for point in polygon_points:
-	#		if point.x > max_right_point.x or max_right_point.x == 0:
-	#			max_right_point = point
-	#		elif point.x < max_left_point.x or max_left_point.x == 0:
-	#			max_left_point = point
-	#		if point.y > max_down_point.y or max_down_point.y == 0:
-	#			max_down_point = point
-	#		elif point.y < max_up_point.y or max_up_point.y == 0:
-	#			max_up_point = point
 	var polygon_far_points: Array = get_polygon_far_points(polygon_points) # L-T-R-B
 	
 	# najprej dobim množico rendom točk
@@ -497,19 +468,12 @@ func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_c
 	# zavržem zunanje ... ne ponovljam dokler je kakšna, ker se lahko zacikla
 	var inside_added_points: PoolVector2Array = []
 	for point in random_added_points:
-		
 		if Geometry.is_point_in_polygon(point, polygon_points):
-			if get_intersecting_edge(point, polygon_points) == -1:
+			if get_outline_segment_with_point(point, polygon_points) == -1:
 				inside_added_points.append(point)
-				
 	# apliciram dodatne točke
 	for point in inside_added_points:
 		polygon_points.append(point)
-	
-	# preverjam, če je bilo uspešno
-#	if polygon_with_added_points.size() == polygon_points.size():
-#		print ("Dodajanje random točk neuspešno ... Spawnam istega")
-#		polygon_with_added_points = polygon_points
 	
 	return polygon_points
 
@@ -556,7 +520,6 @@ func split_to_length_loop(polygon_outline_points: PoolVector2Array, max_edge_len
 	# printt ("longs", too_long.size())
 	return [new_outline_points, all_edges_correct]
 
-		
 
 # GETTERS ------------------------------------------------------------------------------------------------------
 
@@ -582,7 +545,7 @@ func get_outline_segments_by_length(outline_polygon: PoolVector2Array):
 	return outline_segments_by_length
 	
 	
-func get_outline_segment_with_point(point: Vector2, outline_polygon: PoolVector2Array, global: bool = false):
+func get_outline_segment_with_point_bad(point: Vector2, outline_polygon: PoolVector2Array, global: bool = false):
 		
 	var edge_with_point_index: int = -1
 	
@@ -591,6 +554,7 @@ func get_outline_segment_with_point(point: Vector2, outline_polygon: PoolVector2
 		if edge_index == outline_polygon.size() - 1:
 			edge = [outline_polygon[edge_index], outline_polygon[0], outline_polygon[edge_index]] # FINTA ... pseudo trikotnik s podvajanjem ene od točk
 		else:
+			edge = [outline_polygon[edge_index], outline_polygon[edge_index + 1], outline_polygon[edge_index]] # FINTA
 			edge = [outline_polygon[edge_index], outline_polygon[edge_index + 1], outline_polygon[edge_index]] # FINTA
 		
 		if Geometry.is_point_in_polygon(point, edge):
@@ -620,7 +584,7 @@ func get_outline_intersecting_segment(hit_segment: PoolVector2Array, outline_pol
 	return intersection_data
 
 
-func get_intersecting_edge(intersecting_vector, intersected_polygon: PoolVector2Array):
+func get_outline_segment_with_point(intersecting_vector, intersected_polygon: PoolVector2Array):
 	
 	var intersected_edge_index: int = -1
 	
@@ -641,12 +605,12 @@ func get_intersecting_edge(intersecting_vector, intersected_polygon: PoolVector2
 			var edge_vector: Vector2 = intersecting_vector - closest_point_on_edge
 			if edge_vector.length() < 10:
 				intersected_edge_index = edge_index
-				printt ("closest_point_on_edge", intersected_edge_index, edge_vector.length())
+				#				printt ("closest_point_on_edge", intersected_edge_index, edge_vector.length())
 		
 		if intersecting_vector is PoolVector2Array: 
 			if Geometry.segment_intersects_segment_2d(intersecting_vector[0], intersecting_vector[1], start_point, end_point):
 				intersected_edge_index = edge_index
-				printt ("segment intersects edge", intersected_edge_index)
+				#				printt ("segment intersects edge", intersected_edge_index)
 			
 	
 	return intersected_edge_index			
@@ -708,6 +672,7 @@ func get_polygon_center(polygon_points: PoolVector2Array):
 
 
 # UTILITI ------------------------------------------------------------------------------------------
+
 
 func centralize_polygon_position(polygon_points: PoolVector2Array): # RFK ... v operatorja
 	# pred: spawned pozicija je enaka breakerjevi, notranji poligon je zamaknjen
@@ -772,27 +737,3 @@ func sort_vectors_by_y(vector_1, vector_2):
 	if vector_1.y > vector_2.y:
 	    return true
 	return false	
-
-
-#func get_polygon_longest_side(polygon_points: PoolVector2Array):
-#
-#	var longest_daisy_edge_length: float # rabim za razmerje spiderweb splitanja	
-#	var all_daisy_triangles: Array = []
-#	for point_index in polygon_points.size():
-#		var this_point: Vector2
-#		var next_point: Vector2
-#		# zadnja točka se poveže s prvo
-#		if point_index == polygon_points.size() - 1:
-#			this_point = polygon_points[point_index]
-#			next_point = polygon_points[0]
-#		else:
-#			this_point = polygon_points[point_index]
-#			next_point = polygon_points[point_index + 1]
-#		# array točk trikotnika dodam med vse trikotnike
-#		var triangle_points: PoolVector2Array = [origin_point, this_point, next_point] # prva je v centru
-#		all_daisy_triangles.append(triangle_points)
-#
-#		# zabeležim najdaljši rob ... na koncu ostane res najdaljši
-#		var this_edge: Vector2 = origin_point - this_point
-#		if this_edge.length() > longest_daisy_edge_length:
-#			longest_daisy_edge_length = this_edge.length()

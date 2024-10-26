@@ -33,6 +33,8 @@ var min_slicer_scale = Vector2.ONE * 0.1
 
 var swipe_scale = 0.1
 var scale_max = 3
+var breakers_count: int = 0
+
 
 func _input(event: InputEvent) -> void:
 	
@@ -61,6 +63,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	
+	breakers_count = get_tree().get_nodes_in_group("Breakers").size()
+	$UILayer/Count.text = "SHAPES COUNT: %s" % str(breakers_count)
 	
 	if Input.is_action_pressed("right_click"):
 		if current_tool != TOOL.HAMMER:
@@ -252,22 +257,6 @@ func _change_slicing_shape(new_slicing_shape: int):
 	collision_shape.polygon	= slicer_shape.polygon
 		
 
-#func _change_slice_style(new_style: int):
-#
-#	var btnz = [$UILayer/Button7, $UILayer/Button8, $UILayer/Button9]
-#	for btn in btnz: 
-#		btn.modulate = Color.white
-#
-#	current_slice_style = new_style
-#	match current_slice_style:
-#		SLICE_STYLE.BLAST:
-#			btnz[0].modulate = Color.green
-#		SLICE_STYLE.GRID_SQ:
-#			btnz[1].modulate = Color.green
-#		SLICE_STYLE.GRID_HEX:
-#			btnz[2].modulate = Color.green
-
-
 # SIGNALS --------------------------------------------------------------------------------------------------------
 
 				
@@ -308,9 +297,17 @@ func _on_Button5_button_up() -> void:
 	self.current_trans = TRANSFORMATION.ROTATE
 
 # TOOL
+var gravity_force_multiplier: int = 1
 func _on_Button10_button_up() -> void:
-#	self.current_mode = TOOL.CLICK
-	pass
+	
+	gravity_force_multiplier += 1
+	if gravity_force_multiplier > 1:
+		gravity_force_multiplier = -1
+	
+	# Set the default gravity strength to 98.
+	$UILayer/Button10.text = "GRAVITY: %01d" % gravity_force_multiplier
+	Physics2DServer.area_set_param(get_viewport().find_world_2d().get_space(), Physics2DServer.AREA_PARAM_GRAVITY, 98 * gravity_force_multiplier)
+
 func _on_Button6_button_up() -> void:
 	self.current_tool = TOOL.PAINT
 func _on_Button11_button_up() -> void:

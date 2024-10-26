@@ -55,3 +55,7 @@ __meta__ = {
 visible = false
 position = Vector2( 10.9834, 10.9833 )
 scale = Vector2( 10, 10 )
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

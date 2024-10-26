@@ -4,9 +4,7 @@ extends Polygon2D
 export (int) var crack_width: float = 2 setget _change_crack_width
 var cracker_color: Color = Color.white
 var crack_color: Color = Color.black
-
 onready var crack: Polygon2D = $Crack
-var animate_cracks: bool = true
 
 func _ready() -> void:
 	
