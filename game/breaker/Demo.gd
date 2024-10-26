@@ -3,17 +3,12 @@ extends Node2D
 # menu
 enum SLICER_SHAPE {RECT, LINE, CIRCO}
 var current_slicing_shape: int = SLICER_SHAPE.RECT setget _change_slicing_shape
+
 enum TRANSFORMATION{SCALE, ROTATE}
 var current_trans: int = TRANSFORMATION.ROTATE setget _change_transformations
 
-enum MODE {CLICK, PAINT, CUT, STRIKE}
-var current_mode: int = MODE.CUT setget _change_mode
-
-enum TOOL {HAMMER, BOMB, PAINT, KNIFE}
-
-# slajsanje
-enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS} # enako kot ima čunk
-var current_slice_style: int = SLICE_STYLE.SPIDERWEB setget _change_slice_style
+enum TOOL {KNIFE, HAMMER, PAINT, ROCKET}
+var current_tool: int = TOOL.KNIFE setget _change_tool
 
 var transform_dir_index = 1
 var bodies_to_slice: Array = []
@@ -32,11 +27,12 @@ var swiping_line_tick: float = 0.1 # gostota ... če je manj, so težave pri zaz
 var loading_power: bool = false
 
 # scaling
-var default_scale = Vector2.ONE
+var default_slicer_scale = Vector2.ONE
+var max_slicer_scale = Vector2.ONE * 3
+var min_slicer_scale = Vector2.ONE * 0.1
+
 var swipe_scale = 0.1
 var scale_max = 3
-var scale_min = 0.1
-
 
 func _input(event: InputEvent) -> void:
 	
@@ -48,10 +44,10 @@ func _input(event: InputEvent) -> void:
 	elif Input.is_action_just_pressed("left_click"):
 		on_click()
 	elif Input.is_action_pressed("left_click"):
-		match current_mode:
-			MODE.PAINT:
+		match current_tool:
+			TOOL.PAINT:
 				for body in bodies_to_slice:
-					body.on_hit(slicer_shape, get_global_mouse_position(), 1)
+					body.on_hit(get_global_mouse_position(), slicer)
 	elif Input.is_action_just_released("left_click"):
 		on_release()
 		
@@ -59,18 +55,15 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 	
 	self.current_slicing_shape = current_slicing_shape
-	self.current_mode = current_mode
+	self.current_tool = current_tool
 	self.current_trans = current_trans
-	self.current_slice_style = current_slice_style
+#	self.current_slice_style = current_slice_style
 
 
 func _process(delta: float) -> void:
 	
 	if Input.is_action_pressed("right_click"):
-		if not current_mode == MODE.STRIKE:
-			transform_slicer(delta)
-	if Input.is_action_pressed("left_click"):
-		if loading_power:
+		if current_tool != TOOL.HAMMER:
 			transform_slicer(delta)
 	collision_shape.scale = slicer_shape.scale
 	collision_shape.rotation = slicer_shape.rotation	
@@ -78,7 +71,7 @@ func _process(delta: float) -> void:
 	slicer.position = get_global_mouse_position()
 	
 	# slicing line points
-	if swipe_in_progress and current_mode == MODE.CUT:
+	if swipe_in_progress and current_tool == TOOL.KNIFE:
 		swiping_line_delta += delta
 		if swiping_line_delta >= swiping_line_tick:
 			swiping_line_delta = 0
@@ -91,38 +84,27 @@ func on_release():
 		slicer.show()
 		slicer_shape.scale = Vector2.ONE	
 		finish_swipe()
-	elif current_mode == MODE.STRIKE:
-		if loading_power:
-			loading_power = false
-			var break_origin: Vector2 = get_global_mouse_position()
-			for body in bodies_to_slice:
-				body.on_hit(slicer_shape, break_origin, current_slice_style)
-		else:
-			slicer.show()
-			slicer_shape.scale = Vector2.ONE	
 	
 			
 func on_click():
 		
 	swipe_start_global_position = get_global_mouse_position()
 	
-	match current_mode:
-		MODE.STRIKE:
+	match current_tool:
+		TOOL.HAMMER:
 			if not bodies_to_slice:
 				start_swipe()
-			else:
-				loading_power = true
-		MODE.CUT:
+		TOOL.KNIFE:
 			if not bodies_to_slice:
 				start_swipe()
 			else:
 				var break_origin: Vector2 = get_global_mouse_position()
 				for body in bodies_to_slice:
-					body.on_hit(slicer_shape, break_origin, current_slice_style)
+					body.on_hit(break_origin, slicer)
 		_:
 			var break_origin: Vector2 = get_global_mouse_position()
 			for body in bodies_to_slice:
-				body.on_hit(slicer_shape, break_origin, current_slice_style)
+				body.on_hit(break_origin, slicer)
 	
 	# collision transform ... če tega dela ni se koližn resiza neusklajeno
 	collision_shape.polygon = slicer_shape.polygon
@@ -132,7 +114,7 @@ func on_click():
 				
 func start_swipe():
 	
-	slicer_shape.scale = Vector2.ONE * 0.01	
+	slicer_shape.scale = default_slicer_scale * 0.01	
 	slicer.hide()
 	swipe_in_progress = true	
 	spawn_slicing_line()
@@ -147,41 +129,43 @@ func finish_swipe(is_successful: bool = false):
 	if fading_slicing_line:
 		fading_slicing_line.add_point(swiping_line_last_point)
 	
-	match current_mode:
-		MODE.STRIKE:
+	match current_tool:
+		TOOL.HAMMER:
 			if is_successful:
 				is_successful = false
-				slicer_shape.scale = Vector2.ONE
+				slicer_shape.scale = default_slicer_scale # da lažje izračunam moč
 				for body in bodies_to_slice:
 					var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
-					body.on_hit(slicer_shape, hit_vector_pool, SLICE_STYLE.GRID_HEX) 
+					body.on_hit(hit_vector_pool, slicer) 
 					
 					var fade_tween = get_tree().create_tween()
 					fade_tween.tween_property(fading_slicing_line, "modulate:a", 0, 0.5).set_delay(1)
 					yield(fade_tween, "finished")
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
-		MODE.CUT:
+			slicer_shape.scale = default_slicer_scale * 0.01
+				
+		TOOL.KNIFE:
 			for body in bodies_to_slice:
 				var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
 				var cutting_pool: PoolVector2Array = fading_slicing_line.points
-				body.on_cut(fading_slicing_line)
+				body.on_hit(fading_slicing_line)
+#				body.on_cut(fading_slicing_line)
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
-	slicer_shape.scale = Vector2.ONE
+#			slicer_shape.scale = default_slicer_scale
 			
 			
 # UTILITI --------------------------------------------------------------------------------------------------------
 
 
 func transform_slicer(delta: float):
-	
 
 		match current_trans:
 			TRANSFORMATION.SCALE:
-				if slicer_shape.scale > Vector2.ONE * scale_max:
+				if slicer_shape.scale > max_slicer_scale:
 					transform_dir_index = -1
-				elif slicer_shape.scale < Vector2.ONE * scale_min:
+				elif slicer_shape.scale < min_slicer_scale:
 					transform_dir_index = 1
 				slicer_shape.scale += Vector2.ONE * delta * transform_dir_index * 2
 					
@@ -205,31 +189,31 @@ func spawn_slicing_line():
 # SET-GET --------------------------------------------------------------------------------------------------------
 	
 	
-func _change_mode(new_mode: int):
+func _change_tool(new_tool: int):
 	
 	var btnz = [$UILayer/Button10, $UILayer/Button6, $UILayer/Button11, $UILayer/Button12]
 	for btn in btnz: 
 		btn.modulate = Color.white	
-		
-	current_mode = new_mode
+	slicer.scale = default_slicer_scale # zazih	
+	slicer_shape.scale = default_slicer_scale # zazih	
+	current_tool = new_tool
+	slicer.tool_type = current_tool
 	
 	# setam default slicerja, ki ga glede na mode spremenim
 	current_slicing_shape = SLICER_SHAPE.RECT
-	match current_mode:
-		MODE.CLICK:
-			btnz[0].modulate = Color.orange
-			slicer.modulate = Color.white
-			slicer_shape.scale = Vector2.ONE
-		MODE.PAINT:
+	match current_tool:
+		TOOL.PAINT:
 			btnz[1].modulate = Color.orange
 			slicer.modulate = Color.yellow
-			slicer_shape.scale = Vector2.ONE * 0.5
-		MODE.CUT:
+			slicer_shape.scale = default_slicer_scale
+		TOOL.KNIFE:
 			btnz[2].modulate = Color.orange
 			slicer.modulate = Color.blue
-		MODE.STRIKE:
+		TOOL.HAMMER:
 			btnz[3].modulate = Color.orange
 			slicer.modulate = Color.green
+			slicer_shape.scale = min_slicer_scale
+			
 			self.current_trans = TRANSFORMATION.SCALE		
 			self.current_slicing_shape = SLICER_SHAPE.CIRCO
 
@@ -268,20 +252,20 @@ func _change_slicing_shape(new_slicing_shape: int):
 	collision_shape.polygon	= slicer_shape.polygon
 		
 
-func _change_slice_style(new_style: int):
-
-	var btnz = [$UILayer/Button7, $UILayer/Button8, $UILayer/Button9]
-	for btn in btnz: 
-		btn.modulate = Color.white
-			
-	current_slice_style = new_style
-	match current_slice_style:
-		SLICE_STYLE.BLAST:
-			btnz[0].modulate = Color.green
-		SLICE_STYLE.GRID_SQ:
-			btnz[1].modulate = Color.green
-		SLICE_STYLE.GRID_HEX:
-			btnz[2].modulate = Color.green
+#func _change_slice_style(new_style: int):
+#
+#	var btnz = [$UILayer/Button7, $UILayer/Button8, $UILayer/Button9]
+#	for btn in btnz: 
+#		btn.modulate = Color.white
+#
+#	current_slice_style = new_style
+#	match current_slice_style:
+#		SLICE_STYLE.BLAST:
+#			btnz[0].modulate = Color.green
+#		SLICE_STYLE.GRID_SQ:
+#			btnz[1].modulate = Color.green
+#		SLICE_STYLE.GRID_HEX:
+#			btnz[2].modulate = Color.green
 
 
 # SIGNALS --------------------------------------------------------------------------------------------------------
@@ -290,16 +274,16 @@ func _change_slice_style(new_style: int):
 func _on_MouseArea_body_entered(body: Node) -> void:
 	
 	if "current_material" in body:
-		if not body.current_material == body.MATERIAL.UNBREAKABLE: 
-			if not bodies_to_slice.has(body):
-				bodies_to_slice.append(body)
-			if current_mode == MODE.STRIKE and swipe_in_progress:
-				finish_swipe(true)
+#		if not body.current_material == body.MATERIAL.UNBREAKABLE: 
+		if not bodies_to_slice.has(body):
+			bodies_to_slice.append(body)
+		if current_tool == TOOL.HAMMER and swipe_in_progress:
+			finish_swipe(true)
 
 
 func _on_MouseArea_body_exited(body: Node) -> void:
 
-	if body.has_method("on_hit") and current_mode == MODE.CUT and swipe_in_progress:
+	if body.has_method("on_hit") and current_tool == TOOL.KNIFE and swipe_in_progress:
 		pass
 	else:
 		bodies_to_slice.erase(body)
@@ -323,23 +307,27 @@ func _on_Button4_button_up() -> void:
 func _on_Button5_button_up() -> void:
 	self.current_trans = TRANSFORMATION.ROTATE
 
-# MODE
+# TOOL
 func _on_Button10_button_up() -> void:
-	self.current_mode = MODE.CLICK
+#	self.current_mode = TOOL.CLICK
+	pass
 func _on_Button6_button_up() -> void:
-	self.current_mode = MODE.PAINT
+	self.current_tool = TOOL.PAINT
 func _on_Button11_button_up() -> void:
-	self.current_mode = MODE.CUT
+	self.current_tool = TOOL.KNIFE
 func _on_Button12_button_up() -> void:
-	self.current_mode = MODE.STRIKE
+	self.current_tool = TOOL.HAMMER
 
 # SLICE_STYLE
 func _on_Button7_button_up() -> void:
-	self.current_slice_style = SLICE_STYLE.BLAST
+#	self.current_slice_style = SLICE_STYLE.BLAST
+	pass
 func _on_Button8_button_up() -> void:
-	self.current_slice_style = SLICE_STYLE.GRID_SQ
+#	self.current_slice_style = SLICE_STYLE.GRID_SQ
+	pass
 func _on_Button9_button_up() -> void:
-	self.current_slice_style = SLICE_STYLE.GRID_HEX
+#	self.current_slice_style = SLICE_STYLE.GRID_HEX
+	pass
 
 # reset
 func _on_Reset_button_up() -> void:

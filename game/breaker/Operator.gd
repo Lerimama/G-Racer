@@ -41,25 +41,30 @@ func slice_grid(polygon_points: PoolVector2Array, shape_corner_count: int, trian
 			intersected_grid_polygons.append_array(interecting_polygons)	
 	
 	return [inside_polygons, intersected_grid_polygons]
-
-
+	
+	
 func slice_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int = -1, triangulate: bool = false):
 	
 	# vzamem najdaljšega od outline robov, ki prestavlja kratek rob
-	var polygon_edge_vectors: Array = []
-	for edge_index in polygon_points.size():
-		var start_edge_point: Vector2
-		var end_edge_point: Vector2
-		if edge_index == polygon_points.size() - 1:
-			start_edge_point = polygon_points[edge_index]
-			end_edge_point = polygon_points[0]
-		else:
-			start_edge_point = polygon_points[edge_index]
-			end_edge_point = polygon_points[edge_index + 1]
-		var edge_vector: Vector2 = end_edge_point - start_edge_point
-		polygon_edge_vectors.append(edge_vector)
-	polygon_edge_vectors.sort_custom(self, "sort_vectors_by_length")
-	var shortest_edge_length: float = polygon_edge_vectors.pop_back().length()
+	var polygon_edges: Array = get_outline_segments_by_length(polygon_points)
+	var shortest_edge: Vector2 = polygon_edges[polygon_edges.size() - 1]
+	var shortest_edge_length: float = shortest_edge.length()
+	#	var polygon_edge_vectors: Array = []
+	#	for edge_index in polygon_points.size():
+	#		var start_edge_point: Vector2
+	#		var end_edge_point: Vector2
+	#		if edge_index == polygon_points.size() - 1:
+	#			start_edge_point = polygon_points[edge_index]
+	#			end_edge_point = polygon_points[0]
+	#		else:
+	#			start_edge_point = polygon_points[edge_index]
+	#			end_edge_point = polygon_points[edge_index + 1]
+	#		var edge_vector: Vector2 = end_edge_point - start_edge_point
+	#		polygon_edge_vectors.append(edge_vector)
+	#
+	#	polygon_edge_vectors.sort_custom(self, "sort_vectors_by_length")
+	#	var shortest_edge_length: float = polygon_edge_vectors.pop_back().length()
+	
 	# potem ga primerjam z najdaljšim robom cvetov 
 	var triangulated_daisy: Array = triangulate_daisy(polygon_points)
 	var daisy_polygons: Array = triangulated_daisy[0]
@@ -154,7 +159,7 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 	
 	# add random points
 	if add_points_count > 0:
-		var new_polygon_points = add_random_points_on_polygon(polygon_points, add_points_count)
+		var new_polygon_points = add_random_points_to_polygon(polygon_points, add_points_count)
 		polygon_points = new_polygon_points
 		
 	# trianguliram
@@ -295,7 +300,7 @@ func split_outline_to_length(polygon_outline_points: PoolVector2Array, max_edge_
 	return new_outline_points
 
 
-# OPERATIONS ------------------------------------------------------------------------------------------
+# OPERATIONS ---------------------------------------------------------------------------------------------------
 
 
 func apply_hole(base_polygon, hole_polygon: PoolVector2Array):
@@ -398,49 +403,6 @@ func merge_polygon_with_neighbor(merging_polygon: PoolVector2Array, possible_nei
 	# če je bil merge uspešen je merging polygon mergan, possible nejbrs pa so za enomanjši
 	# če merge ni bil uspešen je merging polygon enak in possible nejbrs tudi
 	return [merging_polygon, possible_neighbors]
-		
-
-func split_to_length_loop(polygon_outline_points: PoolVector2Array, max_edge_length: float):
-	
-	var new_outline_points: Array = polygon_outline_points
-	var split_part: float = 0.5
-	
-	# za vsak edge preverim dolžino in ga splitam dokler ni krajši od določene
-	for edge_index in polygon_outline_points.size():
-		var start_point: Vector2
-		var end_point: Vector2
-		if edge_index == polygon_outline_points.size() - 1:
-			start_point = polygon_outline_points[edge_index]
-			end_point = polygon_outline_points[0]
-		else:
-			start_point = polygon_outline_points[edge_index]
-			end_point = polygon_outline_points[edge_index + 1]
-		# splitam, če je večji od
-		var edge_vector: Vector2 = end_point - start_point
-		if edge_vector.length() > max_edge_length:
-			var split_point: Vector2 = start_point + edge_vector * split_part
-			var start_point_in_new_outline_points_index: int = new_outline_points.find(start_point)
-			new_outline_points.insert(start_point_in_new_outline_points_index + 1, split_point)
-			
-	# preverim, če je še kakšen rob predolg ... resplitam
-	var all_edges_correct: bool = true
-	
-	for edge_index in new_outline_points.size():
-		var start_point: Vector2
-		var end_point: Vector2
-		if edge_index == new_outline_points.size() - 1:
-			start_point = new_outline_points[edge_index]
-			end_point = new_outline_points[0]
-		else:
-			start_point = new_outline_points[edge_index]
-			end_point = new_outline_points[edge_index + 1]
-		var edge_vector: Vector2 = end_point - start_point
-		if edge_vector.length() > max_edge_length:
-			all_edges_correct = false
-			break
-			
-	# printt ("longs", too_long.size())
-	return [new_outline_points, all_edges_correct]
 	
 	
 func build_grid_polygons(shape_corner_count: int):
@@ -506,7 +468,7 @@ func build_grid_polygons(shape_corner_count: int):
 	return grid_polygons	
 
 
-func add_random_points_on_polygon(polygon_points: PoolVector2Array, add_points_count: int):
+func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_count: int):
 	
 	# poiščem 4 skrajne točke oblike
 	#	var max_left_point: Vector2
@@ -550,21 +512,112 @@ func add_random_points_on_polygon(polygon_points: PoolVector2Array, add_points_c
 #		polygon_with_added_points = polygon_points
 	
 	return polygon_points
-	
 
-# UTILITI ------------------------------------------------------------------------------------------
+	
+func split_to_length_loop(polygon_outline_points: PoolVector2Array, max_edge_length: float):
+	
+	var new_outline_points: Array = polygon_outline_points
+	var split_part: float = 0.5
+	
+	# za vsak edge preverim dolžino in ga splitam dokler ni krajši od določene
+	for edge_index in polygon_outline_points.size():
+		var start_point: Vector2
+		var end_point: Vector2
+		if edge_index == polygon_outline_points.size() - 1:
+			start_point = polygon_outline_points[edge_index]
+			end_point = polygon_outline_points[0]
+		else:
+			start_point = polygon_outline_points[edge_index]
+			end_point = polygon_outline_points[edge_index + 1]
+		# splitam, če je večji od
+		var edge_vector: Vector2 = end_point - start_point
+		if edge_vector.length() > max_edge_length:
+			var split_point: Vector2 = start_point + edge_vector * split_part
+			var start_point_in_new_outline_points_index: int = new_outline_points.find(start_point)
+			new_outline_points.insert(start_point_in_new_outline_points_index + 1, split_point)
+			
+	# preverim, če je še kakšen rob predolg ... resplitam
+	var all_edges_correct: bool = true
+	
+	for edge_index in new_outline_points.size():
+		var start_point: Vector2
+		var end_point: Vector2
+		if edge_index == new_outline_points.size() - 1:
+			start_point = new_outline_points[edge_index]
+			end_point = new_outline_points[0]
+		else:
+			start_point = new_outline_points[edge_index]
+			end_point = new_outline_points[edge_index + 1]
+		var edge_vector: Vector2 = end_point - start_point
+		if edge_vector.length() > max_edge_length:
+			all_edges_correct = false
+			break
+			
+	# printt ("longs", too_long.size())
+	return [new_outline_points, all_edges_correct]
 
 		
-func reset_shape_transforms(shape_to_transform: Polygon2D):
+
+# GETTERS ------------------------------------------------------------------------------------------------------
+
+
+func get_outline_segments_by_length(outline_polygon: PoolVector2Array):
 	
-	if shape_to_transform.transform != Transform2D.IDENTITY: 
-		# The identity Transform2D with no translation, rotation or scaling applied. 
-		# When applied to other data structures, IDENTITY performs no transformation.
-		var transformed_polygon = shape_to_transform.transform.xform(shape_to_transform.polygon)
-		shape_to_transform.transform = Transform2D.IDENTITY
-		shape_to_transform.polygon = transformed_polygon	
+	var outline_segments_by_length: Array = []
 	
-	return shape_to_transform
+	for edge_index in outline_polygon.size():
+		var start_edge_point: Vector2
+		var end_edge_point: Vector2
+		if edge_index == outline_polygon.size() - 1:
+			start_edge_point = outline_polygon[edge_index]
+			end_edge_point = outline_polygon[0]
+		else:
+			start_edge_point = outline_polygon[edge_index]
+			end_edge_point = outline_polygon[edge_index + 1]
+		var edge_vector: Vector2 = end_edge_point - start_edge_point
+		outline_segments_by_length.append(edge_vector)
+	
+	outline_segments_by_length.sort_custom(self, "sort_vectors_by_length")	
+	
+	return outline_segments_by_length
+	
+	
+func get_outline_segment_with_point(point: Vector2, outline_polygon: PoolVector2Array, global: bool = false):
+		
+	var edge_with_point_index: int = -1
+	
+	for edge_index in outline_polygon.size():
+		var edge: PoolVector2Array = []
+		if edge_index == outline_polygon.size() - 1:
+			edge = [outline_polygon[edge_index], outline_polygon[0], outline_polygon[edge_index]] # FINTA ... pseudo trikotnik s podvajanjem ene od točk
+		else:
+			edge = [outline_polygon[edge_index], outline_polygon[edge_index + 1], outline_polygon[edge_index]] # FINTA
+		
+		if Geometry.is_point_in_polygon(point, edge):
+			edge_with_point_index = edge_index
+			break	
+				
+	return edge_with_point_index
+	
+	
+func get_outline_intersecting_segment(hit_segment: PoolVector2Array, outline_polygon: PoolVector2Array, global: bool = false):
+		
+	var intersection_data: Array = [] # array, da lahko preverejam uspešnost
+	
+	for edge_index in outline_polygon.size():
+		var edge: PoolVector2Array = []
+		if edge_index == outline_polygon.size() - 1:
+			edge = [outline_polygon[edge_index], outline_polygon[0]]
+		else:
+			edge = [outline_polygon[edge_index], outline_polygon[edge_index + 1]]
+		
+		var new_intersection_point = Geometry.segment_intersects_segment_2d(hit_segment[0],hit_segment[1],edge[0], edge[1])
+		if new_intersection_point:
+			intersection_data.append(new_intersection_point)
+			intersection_data.append(edge_index)
+			break		
+				
+	return intersection_data
 
 
 func get_intersecting_edge(intersecting_vector, intersected_polygon: PoolVector2Array):
@@ -652,6 +705,49 @@ func get_polygon_center(polygon_points: PoolVector2Array):
 		center_position /= 4
 		
 	return center_position
+
+
+# UTILITI ------------------------------------------------------------------------------------------
+
+func centralize_polygon_position(polygon_points: PoolVector2Array): # RFK ... v operatorja
+	# pred: spawned pozicija je enaka breakerjevi, notranji poligon je zamaknjen
+	# po: spawned ima origin v središču shape polygona
+	
+	var chunk_center = get_polygon_center(polygon_points)# + def_chunk_global_pos
+	
+	var moved_polygon_points: PoolVector2Array = []
+	for point in polygon_points:
+		var moved_point = point - chunk_center# + global_position
+		moved_polygon_points.append(moved_point)
+		
+	return [moved_polygon_points, chunk_center + owner.position] # global_position]
+	
+	
+func adapt_transforms_and_add_origin(shape_to_transform: Polygon2D, origin_position: Vector2): # je to origin position? # RFK ... v operatorja
+	
+	shape_to_transform.polygon = reset_shape_transforms(shape_to_transform).polygon
+	
+	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
+	var transformed_polygon: PoolVector2Array = []
+	for point in shape_to_transform.polygon:
+		# od globalne pozicije pike odštejem globalno pozicijo breakerja
+		var point_global_position: Vector2 = point * shape_to_transform.scale + origin_position
+		var hitting_point_position_against_object: Vector2 = point_global_position - owner.position
+		transformed_polygon.append(hitting_point_position_against_object)
+
+	return transformed_polygon
+	
+		
+func reset_shape_transforms(shape_to_transform: Polygon2D):
+	
+	if shape_to_transform.transform != Transform2D.IDENTITY: 
+		# The identity Transform2D with no translation, rotation or scaling applied. 
+		# When applied to other data structures, IDENTITY performs no transformation.
+		var transformed_polygon = shape_to_transform.transform.xform(shape_to_transform.polygon)
+		shape_to_transform.transform = Transform2D.IDENTITY
+		shape_to_transform.polygon = transformed_polygon	
+	
+	return shape_to_transform
 
 
 func sort_vectors_by_length(vector_1, vector_2): 

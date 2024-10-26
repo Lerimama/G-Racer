@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://game/breaker/BreakerRigid.gd" type="Script" id=1]
+[ext_resource path="res://game/breaker/Breaker.gd" type="Script" id=1]
 [ext_resource path="res://common/debug/DebugIndikator.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/breaker/Operator.gd" type="Script" id=4]
 
@@ -30,10 +30,9 @@ color = Color( 0.709804, 0.709804, 0.709804, 1 )
 polygon = PoolVector2Array( 32, 416, -64, 384, -224, 64, 512, 64, 416, 192, 448, 320, 416, 448, 224.01, 448, 128, 448 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-visible = false
 polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
 
-[node name="CrackerRect" type="ColorRect" parent="."]
+[node name="CrackersMask" type="ColorRect" parent="."]
 margin_right = 96.0
 margin_bottom = 96.0
 grow_horizontal = 2
@@ -41,7 +40,7 @@ grow_vertical = 2
 rect_clip_content = true
 color = Color( 0.403922, 0.705882, 0.266667, 0 )
 
-[node name="Crackers" type="Node2D" parent="CrackerRect"]
+[node name="Crackers" type="Node2D" parent="CrackersMask"]
 z_index = 100
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

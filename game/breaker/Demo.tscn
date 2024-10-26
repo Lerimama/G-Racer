@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://game/breaker/Demo.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
-[ext_resource path="res://game/breaker/BreakerRigid.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/breaker/Breaker.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/breaker/Sounds.gd" type="Script" id=4]
+[ext_resource path="res://game/breaker/Slicer.gd" type="Script" id=5]
 
 [node name="BreakingGame" type="Node2D"]
 script = ExtResource( 1 )
@@ -65,6 +66,7 @@ text = "convex"
 polygon = PoolVector2Array( -266, 1435, 0, 1442, 2571, 1137, 2563, 296, 0, 296, 0, 1442, -296, 1426, -214, -73, 2743, -102, 2869, 1706, -278, 1739 )
 
 [node name="Slicer" type="Area2D" parent="."]
+script = ExtResource( 5 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Slicer"]
 polygon = PoolVector2Array( 96, 0, 0, -96, -96, 0, 0, 96 )
