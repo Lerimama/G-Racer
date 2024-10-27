@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://game/breaker/Demo.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
@@ -6,6 +6,10 @@
 [ext_resource path="res://game/breaker/Sounds.gd" type="Script" id=4]
 [ext_resource path="res://game/breaker/Slicer.gd" type="Script" id=5]
 [ext_resource path="res://game/breaker/Ball.gd" type="Script" id=6]
+[ext_resource path="res://game/breaker/Concrete 3.JPG" type="Texture" id=7]
+[ext_resource path="res://game/breaker/03.jpg" type="Texture" id=8]
+[ext_resource path="res://game/breaker/Concrete 1.JPG" type="Texture" id=9]
+[ext_resource path="res://common/PolygonCirco2D.tscn" type="PackedScene" id=10]
 
 [sub_resource type="PhysicsMaterial" id=2]
 friction = 0.5
@@ -21,7 +25,7 @@ script = ExtResource( 1 )
 color = Color( 0, 0, 0, 1 )
 invert_enable = true
 invert_border = 437.8
-polygon = PoolVector2Array( 0, 1440, 2561, 1120, 2561, 288, 0, 288 )
+polygon = PoolVector2Array( 0, 1152, 1024, 1376, 1024, 1793, 1536, 1793, 1536, 1376, 2561, 1152, 2561, 288, 0, 288 )
 
 [node name="BreakerNormal" parent="." instance=ExtResource( 3 )]
 position = Vector2( 384, 641 )
@@ -29,6 +33,10 @@ contact_monitor = true
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="BreakerBase" parent="BreakerNormal" index="1"]
+texture = ExtResource( 7 )
+texture_scale = Vector2( 8, 8 )
 
 [node name="Label" type="Label" parent="BreakerNormal"]
 modulate = Color( 0, 0, 0, 1 )
@@ -44,8 +52,11 @@ position = Vector2( 1089, 641 )
 __meta__ = {
 "_edit_group_": true
 }
+current_material = 4
 
 [node name="BreakerBase" parent="BreakerClockwise" index="1"]
+texture = ExtResource( 8 )
+texture_scale = Vector2( 6, 6 )
 polygon = PoolVector2Array( -32, 384, 417, 384, 197, -3 )
 
 [node name="Label" type="Label" parent="BreakerClockwise"]
@@ -62,8 +73,11 @@ position = Vector2( 1794, 641 )
 __meta__ = {
 "_edit_group_": true
 }
+current_material = 3
 
 [node name="BreakerBase" parent="BreakerConvex" index="1"]
+texture = ExtResource( 9 )
+texture_scale = Vector2( 8, 8 )
 polygon = PoolVector2Array( 0, 64, 128, 192, 0, 320, 64, 384, 192, 256, 321, 384, 385, 320, 257, 192, 385, 64, 321, 0, 192, 128, 64, 0 )
 
 [node name="Label" type="Label" parent="BreakerConvex"]
@@ -78,14 +92,14 @@ text = "convex"
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
-polygon = PoolVector2Array( -352, 1440, 0, 1440, 2561, 1120, 2561, 288, 0, 288, 0, 1152, -256, 1152, -214, -73, 2743, -102, 2869, 1706, -278, 1739 )
+polygon = PoolVector2Array( 1536, 1793, 1536, 1376, 2561, 1152, 2561, 288, 0, 288, 0, 1152, 1024, 1376, 1024, 1793, -256, 1793, -256, -128, 2945, -128, 2945, 1793 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 collision_layer = 128
 collision_mask = 128
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D2"]
-polygon = PoolVector2Array( 0, 1440, 0, 1152, -256, 1184, -256, 1408 )
+polygon = PoolVector2Array( 1536, 1665, 1536, 1440, 1024, 1440, 1024, 1665 )
 
 [node name="Slicer" type="Area2D" parent="."]
 script = ExtResource( 5 )
@@ -94,7 +108,6 @@ script = ExtResource( 5 )
 polygon = PoolVector2Array( 96, 0, 0, -96, -96, 0, 0, 96 )
 
 [node name="SlicingPoly" type="Polygon2D" parent="Slicer"]
-color = Color( 1, 0.568627, 0.921569, 0.454902 )
 polygon = PoolVector2Array( -96, 0, 0, 96, 96, 0, 0, -96 )
 
 [node name="Shapes" type="Node2D" parent="Slicer"]
@@ -129,10 +142,7 @@ script = ExtResource( 6 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
 shape = SubResource( 1 )
 
-[node name="CollisionShape2D_poly" type="Polygon2D" parent="Ball"]
-position = Vector2( -0.0375729, -0.436008 )
-scale = Vector2( 0.248125, 0.248125 )
-polygon = PoolVector2Array( -128.05, -0.079895, -123.05, -34.0799, -109.05, -64.0799, -89.05, -91.0799, -64.05, -111.08, -33.05, -124.08, 0.950027, -129.08, 35.95, -124.08, 63.95, -113.08, 90.95, -93.0799, 111.95, -64.0799, 122.95, -35.0799, 127.95, -5.0799, 124.95, 30.9201, 111.95, 62.9201, 64.95, 109.92, -2.04997, 127.92, -66.05, 111.92, -112.05, 63.9201 )
+[node name="PolygonCirco2D" parent="Ball" instance=ExtResource( 10 )]
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 

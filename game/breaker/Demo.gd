@@ -8,7 +8,7 @@ enum TRANSFORMATION{SCALE, ROTATE}
 var current_trans: int = TRANSFORMATION.ROTATE setget _change_transformations
 
 enum TOOL {KNIFE, HAMMER, PAINT, ROCKET}
-var current_tool: int = TOOL.KNIFE setget _change_tool
+var current_tool: int = TOOL.HAMMER setget _change_tool
 
 var transform_dir_index = 1
 var bodies_to_slice: Array = []
@@ -119,8 +119,9 @@ func on_click():
 				
 func start_swipe():
 	
-	slicer_shape.scale = default_slicer_scale * 0.01	
-	slicer.hide()
+	if current_tool == TOOL.KNIFE:
+		slicer_shape.scale = default_slicer_scale * 0.01	
+		slicer.hide()
 	swipe_in_progress = true	
 	spawn_slicing_line()
 
@@ -142,13 +143,12 @@ func finish_swipe(is_successful: bool = false):
 				for body in bodies_to_slice:
 					var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
 					body.on_hit(hit_vector_pool, slicer) 
-					
-					var fade_tween = get_tree().create_tween()
-					fade_tween.tween_property(fading_slicing_line, "modulate:a", 0, 0.5).set_delay(1)
-					yield(fade_tween, "finished")
+				slicer_shape.scale = min_slicer_scale
+				var fade_tween = get_tree().create_tween()
+				fade_tween.tween_property(fading_slicing_line, "modulate:a", 0, 0.5).set_delay(1)
+				yield(fade_tween, "finished")
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
-			slicer_shape.scale = default_slicer_scale * 0.01
 				
 		TOOL.KNIFE:
 			for body in bodies_to_slice:
@@ -209,14 +209,12 @@ func _change_tool(new_tool: int):
 	match current_tool:
 		TOOL.PAINT:
 			btnz[1].modulate = Color.orange
-			slicer.modulate = Color.yellow
 			slicer_shape.scale = default_slicer_scale
 		TOOL.KNIFE:
 			btnz[2].modulate = Color.orange
-			slicer.modulate = Color.blue
+			slicer.modulate.a = 0.5
 		TOOL.HAMMER:
 			btnz[3].modulate = Color.orange
-			slicer.modulate = Color.green
 			slicer_shape.scale = min_slicer_scale
 			
 			self.current_trans = TRANSFORMATION.SCALE		

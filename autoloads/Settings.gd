@@ -5,6 +5,11 @@ var game_camera_zoom_factor: float = 0.25 # resolucija igre je 4 krat manjša 25
 var camera_shake_on: bool =  true
 var get_it_time: float = 2
 
+# game units ... ferrari je 4500 mm bolt pa 225px
+var kg_per_unit_mass = 10
+var px_per_unit_meter = 50
+var mm_per_unit_grid: float = 640 # grid enotra je 32px, 1 px je 2 cm
+
 enum LEVEL {
 	FIRST_DRIVE, 
 	ROUND, DUEL, NITRO, CITY,

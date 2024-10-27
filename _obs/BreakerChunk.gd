@@ -21,7 +21,6 @@ onready var BreakerRigid: PackedScene = load("res://game/breaker/BreakerRigid.ts
 onready var BreakerArea: PackedScene = load("res://game/breaker/BreakerArea.tscn")
 
 
-
 func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("no2"):

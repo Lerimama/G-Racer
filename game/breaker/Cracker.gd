@@ -1,7 +1,7 @@
 extends Polygon2D
 
 
-export (int) var crack_width: float = 2 setget _change_crack_width
+export (int) var crack_width: float = 1.5 setget _change_crack_width
 var cracker_color: Color = Color.white
 var crack_color: Color = Color.black
 onready var crack: Polygon2D = $Crack
@@ -30,7 +30,8 @@ func _change_crack_width(new_width: float):
 		crack.polygon = offset_polygons[0]
 		crack_width = new_width
 	else:
-		printt("Error! Offset to big ... multiple inset_polygons result", new_width)	
+		crack_width = new_width / 2
+		#		printt("Cracker offset to big ... multiple inset_polygons result", crack_width)	
 	
 #	cracker_shape.color = cracker_color
 #	print (crack_width)

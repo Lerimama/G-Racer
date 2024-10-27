@@ -119,9 +119,9 @@ func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int
 		var this_edge: Vector2 = origin_point - this_point
 		if this_edge.length() > longest_daisy_edge_length:
 			longest_daisy_edge_length = this_edge.length()
-
+ 
 	# odstranim poligone izven oblike chunka
-	all_daisy_triangles = refactor_polygons_to_shape(all_daisy_triangles, original_shape_points)
+	all_daisy_triangles = reclip_polygons_to_shape(all_daisy_triangles, original_shape_points)
 				
 	# printt ("daisy", inside_daisy_triangles.size(), daisy_triangles.size())
 	return [all_daisy_triangles, longest_daisy_edge_length] 
@@ -169,7 +169,7 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 		delaunay_triangles.append(triangle_points)	
 	
 	# odstranim poligone izven oblike chunka (glede na njihov center)
-	delaunay_triangles = refactor_polygons_to_shape(delaunay_triangles, original_shape_points)
+	delaunay_triangles = reclip_polygons_to_shape(delaunay_triangles, original_shape_points)
 	
 	# merge
 	if merge_to_rectangles:
@@ -177,32 +177,6 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 
 	
 	return delaunay_triangles
-
-
-func refactor_polygons_to_shape(polygons_to_refactor: Array, refactor_to_polygon: PoolVector2Array):
-	
-	var refactored_polygons: Array = []
-	
-	var inside_triangles: Array = []
-	var outside_triangles: Array = []
-	for poly in polygons_to_refactor:
-		var poly_center: Vector2 = get_polygon_center(poly)
-		if Geometry.is_point_in_polygon(poly_center, refactor_to_polygon):
-			inside_triangles.append(poly)
-		else:
-			outside_triangles.append(poly)
-	
-	refactored_polygons = inside_triangles
-	
-	var intesected_outside_triangles: Array = []
-	for poly in outside_triangles: 
-		var intesected_polygons: Array = Geometry.intersect_polygons_2d(poly, refactor_to_polygon)
-		if not intesected_polygons.empty():
-			intesected_outside_triangles.append_array(intesected_polygons)
-	
-	refactored_polygons.append_array(intesected_outside_triangles)	
-	
-	return refactored_polygons
 
 	
 func slice_sides(polygon_points: PoolVector2Array, split_part: float = 0.5):
@@ -273,11 +247,11 @@ func split_outline_on_part(polygon_outline_points: PoolVector2Array, var split_p
 func split_outline_to_length(polygon_outline_points: PoolVector2Array, max_edge_length: float):
 	
 	#	max_edge_length = 30 # _temp
-	var split_outline_checked: Array = split_to_length_loop(polygon_outline_points, max_edge_length) # 0 = edge pike, 1 = trua
+	var split_outline_checked: Array = split_outline_on_length(polygon_outline_points, max_edge_length) # 0 = edge pike, 1 = trua
 	
 	var is_outline_correct: bool = split_outline_checked[1]
 	while not is_outline_correct:
-		split_outline_checked = split_to_length_loop(split_outline_checked[0], max_edge_length)
+		split_outline_checked = split_outline_on_length(split_outline_checked[0], max_edge_length)
 		is_outline_correct = split_outline_checked[1]
 	
 	var new_outline_points: Array = split_outline_checked[0]
@@ -286,6 +260,75 @@ func split_outline_to_length(polygon_outline_points: PoolVector2Array, max_edge_
 
 
 # OPERATIONS ---------------------------------------------------------------------------------------------------
+
+	
+func split_outline_on_length(polygon_outline_points: PoolVector2Array, max_edge_length: float):
+	
+	var new_outline_points: Array = polygon_outline_points
+	var split_part: float = 0.5
+	
+	# za vsak edge preverim dolžino in ga splitam dokler ni krajši od določene
+	for edge_index in polygon_outline_points.size():
+		var start_point: Vector2
+		var end_point: Vector2
+		if edge_index == polygon_outline_points.size() - 1:
+			start_point = polygon_outline_points[edge_index]
+			end_point = polygon_outline_points[0]
+		else:
+			start_point = polygon_outline_points[edge_index]
+			end_point = polygon_outline_points[edge_index + 1]
+		# splitam, če je večji od
+		var edge_vector: Vector2 = end_point - start_point
+		if edge_vector.length() > max_edge_length:
+			var split_point: Vector2 = start_point + edge_vector * split_part
+			var start_point_in_new_outline_points_index: int = new_outline_points.find(start_point)
+			new_outline_points.insert(start_point_in_new_outline_points_index + 1, split_point)
+			
+	# preverim, če je še kakšen rob predolg ... resplitam
+	var all_edges_correct: bool = true
+	
+	for edge_index in new_outline_points.size():
+		var start_point: Vector2
+		var end_point: Vector2
+		if edge_index == new_outline_points.size() - 1:
+			start_point = new_outline_points[edge_index]
+			end_point = new_outline_points[0]
+		else:
+			start_point = new_outline_points[edge_index]
+			end_point = new_outline_points[edge_index + 1]
+		var edge_vector: Vector2 = end_point - start_point
+		if edge_vector.length() > max_edge_length:
+			all_edges_correct = false
+			break
+			
+	# printt ("longs", too_long.size())
+	return [new_outline_points, all_edges_correct]
+
+
+func reclip_polygons_to_shape(polygons_to_refactor: Array, refactor_to_polygon: PoolVector2Array):
+	
+	var refactored_polygons: Array = []
+	
+	var inside_triangles: Array = []
+	var outside_triangles: Array = []
+	for poly in polygons_to_refactor:
+		var poly_center: Vector2 = get_polygon_center(poly)
+		if Geometry.is_point_in_polygon(poly_center, refactor_to_polygon):
+			inside_triangles.append(poly)
+		else:
+			outside_triangles.append(poly)
+	
+	refactored_polygons = inside_triangles
+	
+	var intesected_outside_triangles: Array = []
+	for poly in outside_triangles: 
+		var intesected_polygons: Array = Geometry.intersect_polygons_2d(poly, refactor_to_polygon)
+		if not intesected_polygons.empty():
+			intesected_outside_triangles.append_array(intesected_polygons)
+	
+	refactored_polygons.append_array(intesected_outside_triangles)	
+	
+	return refactored_polygons
 
 
 func apply_hole(base_polygon, hole_polygon: PoolVector2Array):
@@ -358,7 +401,6 @@ func merge_neighboring_polygons(polygons_to_merge: Array):
 		polygons_to_merge = merging_polygons[1]
 		# če je bil merge uspešen je merging polygon mergan, possible nejbrs pa so za enomanjši
 		# če merge ni bil uspešen je merging polygon enak in possible nejbrs tudi
-		# printt ("delaunay", merged_polygons.size(), polygons_to_merge.size())
 	
 	return merged_polygons
 
@@ -477,49 +519,6 @@ func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_c
 	
 	return polygon_points
 
-	
-func split_to_length_loop(polygon_outline_points: PoolVector2Array, max_edge_length: float):
-	
-	var new_outline_points: Array = polygon_outline_points
-	var split_part: float = 0.5
-	
-	# za vsak edge preverim dolžino in ga splitam dokler ni krajši od določene
-	for edge_index in polygon_outline_points.size():
-		var start_point: Vector2
-		var end_point: Vector2
-		if edge_index == polygon_outline_points.size() - 1:
-			start_point = polygon_outline_points[edge_index]
-			end_point = polygon_outline_points[0]
-		else:
-			start_point = polygon_outline_points[edge_index]
-			end_point = polygon_outline_points[edge_index + 1]
-		# splitam, če je večji od
-		var edge_vector: Vector2 = end_point - start_point
-		if edge_vector.length() > max_edge_length:
-			var split_point: Vector2 = start_point + edge_vector * split_part
-			var start_point_in_new_outline_points_index: int = new_outline_points.find(start_point)
-			new_outline_points.insert(start_point_in_new_outline_points_index + 1, split_point)
-			
-	# preverim, če je še kakšen rob predolg ... resplitam
-	var all_edges_correct: bool = true
-	
-	for edge_index in new_outline_points.size():
-		var start_point: Vector2
-		var end_point: Vector2
-		if edge_index == new_outline_points.size() - 1:
-			start_point = new_outline_points[edge_index]
-			end_point = new_outline_points[0]
-		else:
-			start_point = new_outline_points[edge_index]
-			end_point = new_outline_points[edge_index + 1]
-		var edge_vector: Vector2 = end_point - start_point
-		if edge_vector.length() > max_edge_length:
-			all_edges_correct = false
-			break
-			
-	# printt ("longs", too_long.size())
-	return [new_outline_points, all_edges_correct]
-
 
 # GETTERS ------------------------------------------------------------------------------------------------------
 
@@ -545,28 +544,9 @@ func get_outline_segments_by_length(outline_polygon: PoolVector2Array):
 	return outline_segments_by_length
 	
 	
-func get_outline_segment_with_point_bad(point: Vector2, outline_polygon: PoolVector2Array, global: bool = false):
+func get_outline_intersecting_segments(hit_segment: PoolVector2Array, outline_polygon: PoolVector2Array, global: bool = false):
 		
-	var edge_with_point_index: int = -1
-	
-	for edge_index in outline_polygon.size():
-		var edge: PoolVector2Array = []
-		if edge_index == outline_polygon.size() - 1:
-			edge = [outline_polygon[edge_index], outline_polygon[0], outline_polygon[edge_index]] # FINTA ... pseudo trikotnik s podvajanjem ene od točk
-		else:
-			edge = [outline_polygon[edge_index], outline_polygon[edge_index + 1], outline_polygon[edge_index]] # FINTA
-			edge = [outline_polygon[edge_index], outline_polygon[edge_index + 1], outline_polygon[edge_index]] # FINTA
-		
-		if Geometry.is_point_in_polygon(point, edge):
-			edge_with_point_index = edge_index
-			break	
-				
-	return edge_with_point_index
-	
-	
-func get_outline_intersecting_segment(hit_segment: PoolVector2Array, outline_polygon: PoolVector2Array, global: bool = false):
-		
-	var intersection_data: Array = [] # array, da lahko preverejam uspešnost
+	var all_intersections: Array = [] # array, da lahko preverejam uspešnost
 	
 	for edge_index in outline_polygon.size():
 		var edge: PoolVector2Array = []
@@ -577,11 +557,12 @@ func get_outline_intersecting_segment(hit_segment: PoolVector2Array, outline_pol
 		
 		var new_intersection_point = Geometry.segment_intersects_segment_2d(hit_segment[0],hit_segment[1],edge[0], edge[1])
 		if new_intersection_point:
-			intersection_data.append(new_intersection_point)
-			intersection_data.append(edge_index)
-			break		
+			var new_intersection_data: Array = [new_intersection_point]
+			new_intersection_data.append(edge_index)
+			all_intersections.append(new_intersection_data)
+#			break		
 				
-	return intersection_data
+	return all_intersections
 
 
 func get_outline_segment_with_point(intersecting_vector, intersected_polygon: PoolVector2Array):
@@ -674,18 +655,19 @@ func get_polygon_center(polygon_points: PoolVector2Array):
 # UTILITI ------------------------------------------------------------------------------------------
 
 
-func centralize_polygon_position(polygon_points: PoolVector2Array): # RFK ... v operatorja
+func centralize_polygon_position(polygon_points: PoolVector2Array):
 	# pred: spawned pozicija je enaka breakerjevi, notranji poligon je zamaknjen
 	# po: spawned ima origin v središču shape polygona
 	
-	var chunk_center = get_polygon_center(polygon_points)# + def_chunk_global_pos
+	var polygon_centralized_position: Vector2 = get_polygon_center(polygon_points)# + def_chunk_global_pos
 	
 	var moved_polygon_points: PoolVector2Array = []
 	for point in polygon_points:
-		var moved_point = point - chunk_center# + global_position
+		var moved_point = point - polygon_centralized_position
 		moved_polygon_points.append(moved_point)
 		
-	return [moved_polygon_points, chunk_center + owner.position] # global_position]
+#	return [moved_polygon_points, polygon_center + owner.position] # global_position]
+	return [moved_polygon_points, polygon_centralized_position] # global_position]
 	
 	
 func adapt_transforms_and_add_origin(shape_to_transform: Polygon2D, origin_position: Vector2): # je to origin position? # RFK ... v operatorja

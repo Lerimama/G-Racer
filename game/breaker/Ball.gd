@@ -52,8 +52,8 @@ func _on_Ball_body_entered(body: Node) -> void:
 		var collision_position: Vector2 = body_state.get_contact_collider_position(0)
 		collision_position = position # OPT ... bolj natančen vektor
 		var force_position: Vector2 = collision_position - velocity * velocity_multiplier
-		Met.spawn_indikator(collision_position, Color.blue)
-		Met.spawn_indikator(force_position, Color.red)
+#		Met.spawn_indikator(collision_position, Color.blue)
+#		Met.spawn_indikator(force_position, Color.red)
 
 		var hit_vector_pool: PoolVector2Array = [collision_position, force_position]
 		body.on_hit(hit_vector_pool, self) 

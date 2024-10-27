@@ -3,7 +3,6 @@
 [ext_resource path="res://game/breaker/Cracker.gd" type="Script" id=1]
 
 [node name="Cracker" type="Polygon2D"]
-color = Color( 1, 0, 0, 1 )
 polygon = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )
 script = ExtResource( 1 )
 

@@ -24,7 +24,7 @@ show_behind_parent = true
 color = Color( 0, 0, 0, 1 )
 polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
 
-[node name="Slicer" type="Polygon2D" parent="."]
+[node name="BreakerTool" type="Polygon2D" parent="."]
 visible = false
 color = Color( 0.709804, 0.709804, 0.709804, 1 )
 polygon = PoolVector2Array( 32, 416, -64, 384, -224, 64, 512, 64, 416, 192, 448, 320, 416, 448, 224.01, 448, 128, 448 )
@@ -38,7 +38,7 @@ margin_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_clip_content = true
-color = Color( 0.403922, 0.705882, 0.266667, 0 )
+color = Color( 0.384314, 0.65098, 0.517647, 0 )
 
 [node name="Crackers" type="Node2D" parent="CrackersMask"]
 z_index = 100
