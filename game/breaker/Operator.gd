@@ -127,7 +127,7 @@ func triangulate_daisy(polygon_points: PoolVector2Array, origin_point_index: int
 	return [all_daisy_triangles, longest_daisy_edge_length] 
 	
 	
-func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: int = -1, add_points_count: int = 0, merge_to_rectangles: bool = false):
+func triangulate_delaunay(polygon_points: PoolVector2Array, add_points_count: int = 0, merge_to_rectangles: bool = false):
 	# nasacka vse mogoče neprekrivajoče se trikotnik
 	# indexi točk ne vplivajo na rezultat
 	# origin_point_index: -2 > no origin, -1 > center origin, 0 ali več > edge point origin
@@ -135,12 +135,12 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 
 	var original_shape_points: PoolVector2Array = polygon_points
 	
-	# add origin
-	if origin_point_index == -1:
-		pass
-#		polygon_points.append(get_polygon_center(polygon_points))
-	elif origin_point_index >= 0:
-		polygon_points.append(polygon_points[origin_point_index])
+#	# add origin
+#	if origin_point_index == -1:
+#		pass
+##		polygon_points.append(get_polygon_center(polygon_points))
+#	elif origin_point_index >= 0:
+#		polygon_points.append(polygon_points[origin_point_index])
 	
 	# add random points
 	if add_points_count > 0:
@@ -175,7 +175,6 @@ func triangulate_delaunay(polygon_points: PoolVector2Array, origin_point_index: 
 	if merge_to_rectangles:
 		delaunay_triangles = merge_neighboring_polygons(delaunay_triangles)
 
-	
 	return delaunay_triangles
 
 	
@@ -214,6 +213,10 @@ func slice_sides(polygon_points: PoolVector2Array, split_part: float = 0.5):
 		second_polygon = [reduced_polygon[1], reduced_polygon[2], reduced_polygon[4], reduced_polygon[5]] # pika[3] splita zunanjo stranico in je ne rabim
 	
 	return [first_polygon, second_polygon]		
+
+
+	
+# OPERATIONS ---------------------------------------------------------------------------------------------------
 
 
 func split_outline_on_part(polygon_outline_points: PoolVector2Array, var split_part: float = 0.5, split_count: int = 1):
@@ -259,8 +262,51 @@ func split_outline_to_length(polygon_outline_points: PoolVector2Array, max_edge_
 	return new_outline_points
 
 
-# OPERATIONS ---------------------------------------------------------------------------------------------------
-
+func simplify_outline(polygon_points: PoolVector2Array, set_round_count: int = -1, points_left_count: int = 5):
+	
+	# število rund
+	var round_count: int
+	if set_round_count == -1:
+		var remove_points_count_limit: int = polygon_points.size() - points_left_count
+		var remove_points_per_round: float = floor(polygon_points.size() / 2)
+		round_count = ceil(remove_points_count_limit / remove_points_per_round)
+	else:
+		round_count = set_round_count
+	
+	var current_simple_polygon: PoolVector2Array = polygon_points # po vsaki rundi ga napolenm in potem ponovno pregledujem
+	for rnd in round_count:
+		print ("-----")
+		print ("runda", round_count)
+		var simple_poly: PoolVector2Array = []
+		for point_index in current_simple_polygon.size():
+			if point_index % 2 == 0:
+				simple_poly.append(current_simple_polygon[point_index])
+				# če je zadnja runda in je število novih pik enako željenemu 
+				if rnd == round_count - 1 and set_round_count == -1:
+					if simple_poly.size() == points_left_count: 
+						break
+		current_simple_polygon = simple_poly
+		
+	return current_simple_polygon
+	
+	
+func desplit_polygon_segment(polygon_outline_points: PoolVector2Array, segment_start_index: int):
+	# odstranim splitane pike na (origin) robu
+	
+	var desplit_polygon: PoolVector2Array = polygon_outline_points
+	
+	var segment_end_index: int
+	if segment_start_index == desplit_polygon.size() - 1:
+		segment_end_index = 0
+	else:
+		segment_end_index = segment_start_index + 1
+	
+	for point_index in desplit_polygon.size(): 
+		if point_index > segment_start_index and point_index < segment_end_index:
+				desplit_polygon.remove(point_index)
+				
+	return desplit_polygon
+	
 	
 func split_outline_on_length(polygon_outline_points: PoolVector2Array, max_edge_length: float):
 	
@@ -383,10 +429,6 @@ func apply_hole(base_polygon, hole_polygon: PoolVector2Array):
 	# apliciram na shape
 	var split_base_polygon: PoolVector2Array = split_shape_polygon
 	
-	# apliciram na shape
-#	owner.breaker_shape_polygon = split_shape_polygon
-#	owner.break_it(hole_polygon)
-		
 	return [split_shape_polygon, hole_polygon]
 	
 	
@@ -507,11 +549,13 @@ func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_c
 		var random_point: Vector2 = Vector2(random_x, random_y)
 		random_added_points.append(random_point)
 	
-	# zavržem zunanje ... ne ponovljam dokler je kakšna, ker se lahko zacikla
+	# zavržem zunanje in na robu ... ne ponovljam dokler je kakšna, ker se lahko zacikla
 	var inside_added_points: PoolVector2Array = []
 	for point in random_added_points:
+		# če je v poligonu, preverim še, če je na robu
 		if Geometry.is_point_in_polygon(point, polygon_points):
-			if get_outline_segment_with_point(point, polygon_points) == -1:
+			var intersection_edge_index: int = get_outline_segment_closest_to_point(point, polygon_points, 0)[0]
+			if intersection_edge_index == -1: # _temp ... dodaš distanco? 
 				inside_added_points.append(point)
 	# apliciram dodatne točke
 	for point in inside_added_points:
@@ -520,6 +564,10 @@ func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_c
 	return polygon_points
 
 
+func distort_outline(polygon_points: PoolVector2Array):
+	pass
+	
+	
 # GETTERS ------------------------------------------------------------------------------------------------------
 
 
@@ -565,13 +613,14 @@ func get_outline_intersecting_segments(hit_segment: PoolVector2Array, outline_po
 	return all_intersections
 
 
-func get_outline_segment_with_point(intersecting_vector, intersected_polygon: PoolVector2Array):
+func get_outline_segment_closest_to_point(point: Vector2, intersected_polygon: PoolVector2Array, distance_from_point_limit: float = -1): 
+	# poiščem segment, ki je najbližje točki in v omejeni distanci
 	
-	var intersected_edge_index: int = -1
+	var closest_edge_index: int = -1
+	var shortest_distance_to_point: float = 0
+	var closest_point_on_closest_edge: Vector2 = point 
 	
-	# če je podana točka
 	for edge_index in intersected_polygon.size():
-		
 		var start_point: Vector2
 		var end_point: Vector2
 		if edge_index == intersected_polygon.size() - 1:
@@ -581,20 +630,15 @@ func get_outline_segment_with_point(intersecting_vector, intersected_polygon: Po
 			start_point = intersected_polygon[edge_index]
 			end_point = intersected_polygon[edge_index + 1]
 		
-		if intersecting_vector is Vector2: # ne dela glih
-			var closest_point_on_edge = Geometry.get_closest_point_to_segment_2d(intersecting_vector, start_point, end_point)
-			var edge_vector: Vector2 = intersecting_vector - closest_point_on_edge
-			if edge_vector.length() < 10:
-				intersected_edge_index = edge_index
-				#				printt ("closest_point_on_edge", intersected_edge_index, edge_vector.length())
-		
-		if intersecting_vector is PoolVector2Array: 
-			if Geometry.segment_intersects_segment_2d(intersecting_vector[0], intersecting_vector[1], start_point, end_point):
-				intersected_edge_index = edge_index
-				#				printt ("segment intersects edge", intersected_edge_index)
-			
+		var closest_point_on_edge = Geometry.get_closest_point_to_segment_2d(point, start_point, end_point)
+		var edge_distance_to_point: float = (point - closest_point_on_edge).length()
+		if edge_distance_to_point < shortest_distance_to_point or shortest_distance_to_point == 0:
+			if distance_from_point_limit == -1 or edge_distance_to_point < distance_from_point_limit:
+				shortest_distance_to_point = edge_distance_to_point
+				closest_edge_index = edge_index
+				closest_point_on_closest_edge = closest_point_on_edge
 	
-	return intersected_edge_index			
+	return [closest_edge_index, closest_point_on_closest_edge]		
 	
 	
 func get_polygon_radius(polygon_points: PoolVector2Array, point_index: int = -1):
@@ -670,20 +714,25 @@ func centralize_polygon_position(polygon_points: PoolVector2Array):
 	return [moved_polygon_points, polygon_centralized_position] # global_position]
 	
 	
-func adapt_transforms_and_add_origin(shape_to_transform: Polygon2D, origin_position: Vector2): # je to origin position? # RFK ... v operatorja
+func adapt_transforms_and_add_origin(polygon_to_transform: PoolVector2Array, origin_position: Vector2, shape_scale: Vector2 = Vector2.ONE, shape_rotation: float = 0): 
+
+	var transforming_shape: Polygon2D = Polygon2D.new() # ... za transforms
+	transforming_shape.polygon = polygon_to_transform
+	transforming_shape.scale = shape_scale
+	transforming_shape.rotation = shape_rotation # še ni vpeljano
 	
-	shape_to_transform.polygon = reset_shape_transforms(shape_to_transform).polygon
+	transforming_shape.polygon = reset_shape_transforms(transforming_shape).polygon
 	
 	# prenosni poligon, ki ima pike adaptirane, kot, da bi bil na poziciji cutting polija
 	var transformed_polygon: PoolVector2Array = []
-	for point in shape_to_transform.polygon:
+	for point in transforming_shape.polygon:
 		# od globalne pozicije pike odštejem globalno pozicijo breakerja
-		var point_global_position: Vector2 = point * shape_to_transform.scale + origin_position
+		var point_global_position: Vector2 = point * transforming_shape.scale + origin_position
 		var hitting_point_position_against_object: Vector2 = point_global_position - owner.position
 		transformed_polygon.append(hitting_point_position_against_object)
 
 	return transformed_polygon
-	
+		
 		
 func reset_shape_transforms(shape_to_transform: Polygon2D):
 	

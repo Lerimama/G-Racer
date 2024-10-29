@@ -271,7 +271,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 # BATTLE ----------------------------------------------------------------------------
 
 
-func on_hit(hit_by: Node):
+func on_hit(hit_by: Node, hit_global_position: Vector2):
 	
 	if is_shielded:
 		return

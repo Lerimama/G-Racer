@@ -1,30 +1,28 @@
 extends RigidBody2D
 # breaker je cel, chunk je odlomljeni del breakerja, debry so delčki narezanega chunka
 
+
 signal cracks_animated 
+
+var is_breakable: bool = true
 
 enum MATERIAL {STONE, GLASS, GRAVEL, WOOD } # GHOST, WOOD, METAL, TILES, SOIL
 export (MATERIAL) var current_material: int = MATERIAL.STONE
 
-enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
-
-enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # _temp ... ujema se z demotom
+enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, ROCKET} # _temp ... ujema se z demotom
 var current_hit_by_type: int = HIT_BY_TYPE.KNIFE
 
-enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS, NONE}
+enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
 var current_motion: int = MOTION.STILL setget _change_motion
 
-export var is_breakable: bool = true
-export (NodePath) var breaker_collision2d: String
-export (NodePath) var breaker_polygon2d: String
+enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS, NONE}
+
 var breaker_base_polygon: PoolVector2Array = [] setget _change_breaker_polygon # !!! polygon menjam samo prek tega setgeta
-export (int) var crack_width: float = 0 setget _change_crack_width
-
-
 var crack_color: Color = Color.black
+export (int) var crack_width: float = 0 setget _change_crack_width
 var cut_breaks_shapes: int = 1 # nobena, spodnja ali vse
 var breaking_round: int = 1 # kolikokrat je bil brejker že nalomljen
-var break_origin_global: Vector2 = Vector2.ZERO # se inherita skozi vse spawne
+var break_origin_global_position: Vector2 # se inherita skozi vse spawne
 var current_breaker_velocity: Vector2 = Vector2.ZERO
 
 # polygons
@@ -38,18 +36,16 @@ onready var breaker_parent: Node = get_parent()
 onready var crackers_mask: ColorRect = $CrackersMask
 onready var crackers_parent: Node2D = crackers_mask.get_node("Crackers")
 onready var operator: Node = $Operator
+onready var custom_split_origin: Position2D = $CustomSplitOrigin
+onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var Breaker: PackedScene = load("res://game/breaker/Breaker.tscn")
 onready var Cracker: PackedScene = preload("res://game/breaker/Cracker.tscn")
-
-# neu
-enum BREAK_SIZE {XSMALL, SMALL, MEDIUM, LARGE, XLARGE}	
-var current_break_size: int = BREAK_SIZE.MEDIUM
 
 
 func _input(event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("no1"):
-		on_hit_demo(Vector2.ZERO, breaker_tool, HIT_BY_TYPE.KNIFE)
+		on_hit_demo(custom_split_origin.position, breaker_tool, HIT_BY_TYPE.KNIFE)
 	if Input.is_action_just_pressed("no2"):
 		slice_chunks([breaker_tool.polygon])
 
@@ -57,8 +53,6 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 	
 	add_to_group("Breakers") # debug
-	
-	
 	
 	# če ni spawnan
 	if breaker_base_polygon.empty():
@@ -78,46 +72,47 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	current_breaker_velocity = state.get_linear_velocity()
 	
 	
-func on_hit(hitting_node: Node2D, hit_global_position: Vector2): # shape je lahko: polygon2D, coližn shape poly, ... če se kaj pojavi vneseš tukaj
-#	break_origin_global = Vector2.ZERO
-	printt ("origin", break_origin_global, hitting_node.position, hitting_node.global_position)
-	
+func on_hit(hitter: Node2D): # shape je lahko: polygon2D, coližn shape poly, ... če se kaj pojavi vneseš tukaj
 	# opredelim data za celotno slajsanje: origin, smer, območje vpliva in moč
 	
 	if not is_breakable:
 		return
 	
-	if hitting_node is Line2D:
-		cut_it(hitting_node)
+	if hitter is Line2D:
+		cut_it(hitter)
 		return
 		
 	var hit_by_type: int = HIT_BY_TYPE.HAMMER
 	
 	# hitter properties
-	var hit_shape = hitting_node.influence_area.get_child(0)
-	var hit_shape_scale = hitting_node.influence_area.scale
+	var hit_shape = hitter.influence_area.get_child(0)
+	var hit_shape_scale = hitter.influence_area.scale
 	var hit_by_direction: Vector2 = Vector2.ZERO
-	if "direction" in hitting_node:
-		hit_by_direction = hitting_node.direction
-	current_hit_by_type = hitting_node.object_type
+	if "direction" in hitter:
+		hit_by_direction = hitter.direction
+	var hit_global_position: Vector2 = hitter.global_position
+	
+	# hit type
+	current_hit_by_type = hit_by_type
 
 	# slicing polygon
 	var hit_by_polygon: PoolVector2Array = []
 	if hit_shape is Polygon2D or hit_shape is CollisionPolygon2D:
 		hit_by_polygon = hit_shape.polygon
+#		print ("polygon", hit_by_polygon)
 	elif hit_shape is CollisionShape2D:
 		print ("Hit shape je CollShape ... Uporabim Breaker tool ... naštimaj to")
 		hit_by_polygon = breaker_tool.polygon
 	
-	# break origin ... vector intersection or closest point
-	#	var intersection_vector_length: float = operator.get_polygon_radius(hit_by_polygon) * hit_shape_scale.x 
-	var influence_radius: float = operator.get_polygon_radius(hit_by_polygon) * hit_shape_scale.x 
-	var intersection_vector_start: Vector2 = hit_global_position - position
-	var intersection_vector_end: Vector2 = intersection_vector_start + hit_by_direction * influence_radius
-	var intersection_vector_pool: PoolVector2Array = [intersection_vector_start, intersection_vector_end]
+	# hit vector
+	var intersection_vector_start: Vector2 = hit_global_position - global_position
+	var intersection_vector_length: float = operator.get_polygon_radius(hit_by_polygon) * hit_shape_scale.x
+	var intersection_vector_end: Vector2 = hit_by_direction.normalized() * intersection_vector_length
+	var intersection_vector_pool: PoolVector2Array = [intersection_vector_start, intersection_vector_end] # pika začetka in pika konca, ker drugače se lahko zgodi, da ni zunaj
+	
+	# vector intersection ... poišče presečišče ali najbližjo točko
 	var intersection_data: Array = operator.get_outline_intersecting_segments(intersection_vector_pool, breaker_base_polygon) # [[vector2, index], ...]
 	var intersection_point: Vector2
-	
 	if intersection_data.empty():
 		# poiščem najbližjo štartni točki 
 		var closest_point_on_closest_edge: Vector2 = operator.get_outline_segment_closest_to_point(intersection_vector_start, breaker_base_polygon)[1]
@@ -135,40 +130,73 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2): # shape je lahk
 				shortest_dist_to_hit_start = point_to_hit_start_dist
 				closest_point_to_hit_start = point
 		intersection_point = closest_point_to_hit_start
-	break_origin_global = intersection_point + global_position
-	
-	# opredelim velikost prilagodim hit polygon
-	var influence_radius_per_unit: float = influence_radius / Set.unit_one 
-	var simplify_round_count: int = 0
-	if influence_radius_per_unit < 0.5:
-		current_break_size = BREAK_SIZE.XSMALL
-		simplify_round_count = 3
-	elif influence_radius_per_unit < 1:
-		current_break_size = BREAK_SIZE.SMALL
-		simplify_round_count = 3
-	elif influence_radius_per_unit < 2:
-		current_break_size = BREAK_SIZE.MEDIUM
-		simplify_round_count = 2
-	elif influence_radius_per_unit < 3.5:
-		current_break_size = BREAK_SIZE.LARGE
-		simplify_round_count = 1
-	else:
-		current_break_size = BREAK_SIZE.XLARGE
-		simplify_round_count = 1
-	
-	var simple_hit_polygon = operator.simplify_outline(hit_by_polygon, simplify_round_count)
-	printt ("rad", influence_radius_per_unit, influence_radius / Set.unit_one)
-#		0:
-#			pass
-	
-	#	Met.spawn_indikator_line(intersection_vector_start + position, intersection_vector_end + position, Color.blanchedalmond, get_parent())
 	
 	# break
-	var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(simple_hit_polygon, break_origin_global, hit_shape_scale)
-#	var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global, hit_shape_scale)
+	break_origin_global_position = intersection_point + global_position
+	printt ("hit", hitter, break_origin_global_position)
+	var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global_position, hit_shape.scale)
 	break_it(transformed_hit_polygon)	
-
+		
+		
+func on_hit_demo(hit_vector, hit_shape, hit_by_type: int = HIT_BY_TYPE.KNIFE): # shape je lahko: polygon2D, coližn shape poly, ... če se kaj pojavi vneseš tukaj
+	# opredelim data za celotno slajsanje: origin, smer, območje vpliva in moč
 	
+	if not is_breakable:
+		return
+	
+	# hit type
+	current_hit_by_type = hit_by_type
+	
+	# slicing polygon
+	var hit_by_polygon: PoolVector2Array = []
+	if hit_shape is Polygon2D or hit_shape is CollisionPolygon2D:
+		hit_by_polygon = hit_shape.polygon
+	elif hit_shape is CollisionShape2D:
+		print ("Hit shape je CollShape. Uporabim Breaker tool.")
+		hit_by_polygon = breaker_tool.polygon
+	else:	
+		print ("Hit shape je kr neki. Uporabim Breaker tool.")
+		hit_by_polygon = breaker_tool.polygon
+		
+	if hit_vector is Line2D: # cut
+		current_hit_by_type = HIT_BY_TYPE.KNIFE
+		cut_it(hit_vector)
+	elif hit_vector is Vector2:# drop hit
+		break_origin_global_position = hit_vector
+		var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global_position, hit_shape.scale)
+		break_it(transformed_hit_polygon)
+	elif hit_vector is PoolVector2Array: # side hit
+		# poiščem presečišče
+		var hit_vector_local_pool: PoolVector2Array = [hit_vector[0] - global_position, hit_vector[1] - global_position] # pika začetka in pika konca, ker drugače se lahko zgodi, da ni zunaj
+		var intersection_data: Array = operator.get_outline_intersecting_segments(hit_vector_local_pool, breaker_base_polygon) # [[vector2, index], ...]
+		var intersection_point: Vector2
+		if intersection_data.size() == 1:
+			intersection_point = intersection_data[0][0]
+		elif intersection_data.size() > 1: # več presečišč > izberem najbližjo štartu hit vektorja
+			var closest_point_to_hit_start: Vector2
+			var shortest_dist_to_hit_start: float = 0
+			for intersection in intersection_data:
+				var point: Vector2 = intersection[0]
+				var point_to_hit_start_dist: float = (hit_vector_local_pool[0] - point).length()
+				if point_to_hit_start_dist < shortest_dist_to_hit_start or shortest_dist_to_hit_start == 0:
+					shortest_dist_to_hit_start = point_to_hit_start_dist
+					closest_point_to_hit_start = point
+			intersection_point = closest_point_to_hit_start
+		break_origin_global_position = intersection_point + global_position
+		# power vector in obseg hit zone
+		var power_vector: Vector2 = hit_vector[1] - break_origin_global_position
+		var hit_shape_radius: float = operator.get_polygon_radius(hit_by_polygon)
+		var power_to_radius_factor: float = power_vector.length() / hit_shape_radius
+		var power_adapted_hit_polygon: PoolVector2Array = []
+		for point in hit_by_polygon:
+			var adapted_point: Vector2 = point * power_to_radius_factor
+			power_adapted_hit_polygon.append(adapted_point)
+		hit_by_polygon = power_adapted_hit_polygon
+		# brejkit
+		var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global_position, hit_shape.scale)
+		break_it(transformed_hit_polygon)
+	
+
 # BREJK (chunkization) ------------------------------------------------------------------------------------------------
 
 
@@ -180,7 +208,7 @@ func break_it(slicing_polygon: PoolVector2Array):
 	var clipped_polygons: Array = Geometry.clip_polygons_2d(breaker_base_polygon, slicing_polygon) # prazen je kadar se ne sekata ali pa je breaker znotraj šejpa (luknja)
 	# break whole
 	if clipped_polygons.empty(): # če slicer prekrije celoten shape > chunk
-		print("Clipped_polygons je prazen >> brejkam celega")
+		print("clipped_polygons je prazen >> brejkam celega")
 		chunks_to_slice.append(breaker_base_polygon)
 		call_deferred("slice_chunks", [breaker_base_polygon], true)
 	# break apart
@@ -263,31 +291,30 @@ func cut_it(slice_line: Line2D):
 			
 func slice_chunks(chunk_polygons: Array, whole_breaker: bool = false, with_crackers: bool = true):
 
-#	var current_slicing_style: int = get_slicing_style()
+	var current_slicing_style: int = get_slicing_style()
 	
 	# _temp
-	with_crackers = true
+	current_slicing_style = SLICE_STYLE.FRAGMENTS 
+	with_crackers = false
 	
 	var spawned_chunks: Array = [] # da ji lahko potem zbriešm
 	for chunk in chunk_polygons:
 		var chunk_derby_polygons: Array
-		#		var current_slicing_style = SLICE_STYLE.FRAGMENTS 
-		#		match current_slicing_style:
-		#			SLICE_STYLE.NONE:
-		#				chunk_derby_polygons.append(chunk)
-		##			SLICE_STYLE.GRID_SQ:
-		##				var grid_sliced_polygons: Array = operator.slice_grid(chunk, 4)
-		##				chunk_derby_polygons = grid_sliced_polygons[0]
-		##				chunk_derby_polygons.append(grid_sliced_polygons[1])
-		##			SLICE_STYLE.GRID_HEX:
-		##				var grid_sliced_polygons: Array = operator.slice_grid(chunk, 4)
-		##				chunk_derby_polygons = grid_sliced_polygons[0]
-		##				chunk_derby_polygons.append(grid_sliced_polygons[1])
-		#			SLICE_STYLE.FRAGMENTS:
-		#				chunk_derby_polygons = split_chunk_to_polygons(chunk) # izbira stila glede na orodje in material
-		#			SLICE_STYLE.BLAST:
-		#				chunk_derby_polygons = split_chunk_to_polygons(chunk)
-		chunk_derby_polygons = split_chunk_to_polygons(chunk)
+		match current_slicing_style:
+			SLICE_STYLE.NONE:
+				chunk_derby_polygons.append(chunk)
+			SLICE_STYLE.GRID_SQ:
+				var grid_sliced_polygons: Array = operator.slice_grid(chunk, 4)
+				chunk_derby_polygons = grid_sliced_polygons[0]
+				chunk_derby_polygons.append(grid_sliced_polygons[1])
+			SLICE_STYLE.GRID_HEX:
+				var grid_sliced_polygons: Array = operator.slice_grid(chunk, 4)
+				chunk_derby_polygons = grid_sliced_polygons[0]
+				chunk_derby_polygons.append(grid_sliced_polygons[1])
+			SLICE_STYLE.FRAGMENTS:
+				chunk_derby_polygons = split_chunk_to_polygons(chunk) # izbira stila glede na orodje in material
+			SLICE_STYLE.BLAST:
+				chunk_derby_polygons = split_chunk_to_polygons(chunk)
 		if with_crackers:
 			spawned_chunks.append(spawn_chunk(chunk))
 			spawn_crackers(chunk_derby_polygons, chunk)
@@ -304,13 +331,13 @@ func slice_chunks(chunk_polygons: Array, whole_breaker: bool = false, with_crack
 func split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 	# izbira stila glede na orodje in material	
 	
-	var origin_position: Vector2 = break_origin_global - global_position
-	var is_on_edge_distance: float = 10
-	
-	# origin type in edge index
+	var origin_position: Vector2 = break_origin_global_position - global_position
 	var origin_edge_index: int
+	
+	# dobim origin lokacijo glede na poligon
 	var origin_location_on_shape: int = -1 # -1 = out, 1 = in, 0 = edge
 	if Geometry.is_point_in_polygon(origin_position, chunk_polygon):
+		var is_on_edge_distance: float = 5
 		origin_edge_index = operator.get_outline_segment_closest_to_point(origin_position, chunk_polygon, is_on_edge_distance)[0]
 		if origin_edge_index == - 1: # -1 pomeni, da je znotraj poligona in ni na robu
 			origin_location_on_shape = 1
@@ -318,72 +345,47 @@ func split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 			origin_location_on_shape = 0
 	
 	
-	# origin location
+	# slajsam glede na lokacijo ... drugi parametri še pridejo
 	var sliced_chunk_polygons: Array
-	var polygon_with_origin: PoolVector2Array = chunk_polygon
 	match origin_location_on_shape:
-		-1: # zunaj ... dodam origin in reclipam slicane poligone
-			print("slice origin OUTSIDE")
-			polygon_with_origin.append(origin_position)
-#			sliced_chunk_polygons = operator.triangulate_delaunay(chunk_polygon, 10)
-		0: # edge ... splitam edge na origin točki
-			print("slice origin EDGE")
-			polygon_with_origin.insert(origin_edge_index + 1, origin_position)
-		1: # notri ... dodam origin
+		-1: # zunaj
+			print("slice on origin OUTSIDE")
+			#			var split_edge_length: int = 150
+			#			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
+			sliced_chunk_polygons = operator.triangulate_delaunay(chunk_polygon, -1, 10)
+		0:
+			print("slice on origin EDGE")
+			# outline split
+			var split_edge_length: int = 50
+			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
+			#			var split_count: int = 1 # _temp
+			#			chunk_polygon = operator.split_outline_on_part(chunk_polygon, 0.5, split_count)
+			# odstranim splitane pike na origin robu
+			var origin_edge_end_point_index: int
+			if origin_edge_index == chunk_polygon.size() - 1:
+				origin_edge_end_point_index = 0
+			else:
+				origin_edge_end_point_index = origin_edge_index + 1
+			for point_index in chunk_polygon.size(): 
+				if point_index > origin_edge_index and point_index < origin_edge_end_point_index:
+					chunk_polygon.remove(point_index)
+			# vstavim origin point
+			chunk_polygon.insert(origin_edge_index + 1, origin_position)
+			# slajsam
+			var origin_point_index: int = chunk_polygon.find(origin_position)
+			sliced_chunk_polygons = operator.triangulate_daisy(chunk_polygon, origin_point_index)[0]
+		1:
 			print("slice on origin INSIDE")
-			polygon_with_origin.append(origin_position)
-#			var split_edge_length: int = 150
-#			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
-#			sliced_chunk_polygons = operator.slice_spiderweb(chunk_polygon)
+			var split_edge_length: int = 150
+			chunk_polygon = operator.split_outline_to_length(chunk_polygon, split_edge_length)
+			sliced_chunk_polygons = operator.slice_spiderweb(chunk_polygon)
 
-	# za delaunay
-	var delaunay_add_points_count: int = 0
-	var daisy_side_split_count: int = 0
-	match current_break_size:
-		BREAK_SIZE.XSMALL:
-			delaunay_add_points_count = 0
-			daisy_side_split_count = 0
-		BREAK_SIZE.SMALL:
-			delaunay_add_points_count = 2
-			daisy_side_split_count = 0
-		BREAK_SIZE.MEDIUM:
-			delaunay_add_points_count = 6
-			daisy_side_split_count = 1
-		BREAK_SIZE.LARGE:
-			delaunay_add_points_count = 10
-			daisy_side_split_count = 3
-		BREAK_SIZE.XLARGE:
-			delaunay_add_points_count = 14
-			daisy_side_split_count = 6
 	
-	# tool type
-			
-#	var side_sliced_polygons: Array
-#	for poly in first_slice_polys:
-#		var new_poly = operator.split_outline_on_part(poly)
-#		side_sliced_polygons.append_array(operator.triangulate_delaunay(new_poly))
-#	sliced_chunk_polygons = side_sliced_polygons
-#	sliced_chunk_polygons = operator.triangulate_daisy(desplit_chunk_polygon, origin_edge_index + 1)[0]
-#	sliced_chunk_polygons = operator.slice_spiderweb(desplit_chunk_polygon)
-	var tool_slice_polygons: Array
-	match current_hit_by_type:
-		HIT_BY_TYPE.KNIFE: # delunay
-			tool_slice_polygons = operator.triangulate_delaunay(chunk_polygon, delaunay_add_points_count)
-			pass
-		HIT_BY_TYPE.HAMMER: # delunay
-			tool_slice_polygons = operator.triangulate_delaunay(chunk_polygon, delaunay_add_points_count)
-		HIT_BY_TYPE.PAINT:#erase
-			pass
-		HIT_BY_TYPE.EXPLODING: # daisy / spiderweb
-			tool_slice_polygons = operator.triangulate_daisy(polygon_with_origin, origin_edge_index + 1)[0]
-			pass
-	
-	sliced_chunk_polygons = tool_slice_polygons
-
 	return sliced_chunk_polygons
-	
+
 
 # SPAWN ----------------------------------------------------------------------------------------------------------------
+	
 	
 	
 func spawn_breaker(new_braker_polygon: PoolVector2Array, spawn_and_slice: bool = false):
@@ -421,14 +423,15 @@ func spawn_debry(debry_polygons: Array):
 		var new_breaker = Breaker.instance()
 		new_breaker.name = "Breaker_Debry"
 		new_breaker.position = centralized_global_position
+#		new_breaker.break_origin_global_position = break_origin_global_position
 		new_breaker.is_breakable = false
+		
 		breaker_parent.add_child(new_breaker)
 		
 		if breaker_base.texture:
 			copy_texture_between_shapes(new_breaker.breaker_base, breaker_base)
 			new_breaker.breaker_base.texture_offset = new_breaker.position - position
 		new_breaker.breaker_base.color = breaker_base.color
-		new_breaker.break_origin_global = break_origin_global # za animacijo
 	
 		# setgets
 		new_breaker.crack_width = 2
@@ -440,7 +443,7 @@ func spawn_chunk(new_chunk_polygon: PoolVector2Array):
 	
 	var new_poly: Polygon2D = Polygon2D.new()
 	new_poly.polygon = new_chunk_polygon
-	new_poly.color = breaker_base.color
+	new_poly.color = Color.white
 	add_child(new_poly)
 	
 	if breaker_base.texture:
@@ -476,9 +479,9 @@ func spawn_crackers(cracked_polygons: Array, chunk_polygon: PoolVector2Array):
 	var end_mask_size: Vector2 = chunk_size
 	var end_crackers_position: Vector2 = Vector2.ZERO # konča na svoji def poziciji znotraj maske (0,0)
 	
-	if break_origin_global:
+	if break_origin_global_position:
 		start_mask_size = Vector2.ZERO
-		start_mask_position = break_origin_global - position # origin pozicija lokalno
+		start_mask_position = break_origin_global_position - position # origin pozicija lokalno
 		start_crackers_position = end_mask_position - start_mask_position 
 	else:
 		start_mask_position = chunk_position # pozicija izvora znotraj brejkerja
@@ -491,7 +494,7 @@ func spawn_crackers(cracked_polygons: Array, chunk_polygon: PoolVector2Array):
 	crackers_parent.position = start_crackers_position
 	
 	# animiram istočasno tweenam rect masko in crackers parent ... crackerji zgledajo pri miru
-	var reveal_time: float = 0.5
+	var reveal_time: float = 1
 	var reveal_tween = get_tree().create_tween().set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_QUART)
 	reveal_tween.tween_property(crackers_mask, "rect_size", end_mask_size, reveal_time)
 	reveal_tween.parallel().tween_property(crackers_mask, "rect_position", end_mask_position, reveal_time)
@@ -563,7 +566,7 @@ func _change_motion(new_motion_state: int):
 #			mode = RigidBody2D.MODE_RIGID
 			set_deferred("mode", RigidBody2D.MODE_RIGID)
 			linear_damp = 2
-			var force_vector = global_position - break_origin_global
+			var force_vector = global_position - break_origin_global_position
 			apply_central_impulse(force_vector * 20)
 		MOTION.DISSAPEAR:
 			set_deferred("mode", RigidBody2D.MODE_RIGID)
@@ -611,64 +614,3 @@ func _on_VisibilityNotifier2D_screen_exited() -> void:
 	
 	if get_parent().name == "BreakingGame":
 		queue_free()
-
-
-
-		
-func on_hit_demo(hit_vector, hit_shape, hit_by_type: int = HIT_BY_TYPE.KNIFE): # shape je lahko: polygon2D, coližn shape poly, ... če se kaj pojavi vneseš tukaj
-	# opredelim data za celotno slajsanje: origin, smer, območje vpliva in moč
-	
-	if not is_breakable:
-		return
-	
-	# hit type
-	current_hit_by_type = hit_by_type
-	
-	# slicing polygon
-	var hit_by_polygon: PoolVector2Array = []
-	if hit_shape is Polygon2D or hit_shape is CollisionPolygon2D:
-		hit_by_polygon = hit_shape.polygon
-	elif hit_shape is CollisionShape2D:
-		print ("Hit shape je CollShape. Uporabim Breaker tool.")
-		hit_by_polygon = breaker_tool.polygon
-	else:	
-		print ("Hit shape je kr neki. Uporabim Breaker tool.")
-		hit_by_polygon = breaker_tool.polygon
-		
-	if hit_vector is Line2D: # cut
-		current_hit_by_type = HIT_BY_TYPE.KNIFE
-		cut_it(hit_vector)
-	elif hit_vector is Vector2:# drop hit
-		break_origin_global = hit_vector
-		var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global, hit_shape.scale)
-		break_it(transformed_hit_polygon)
-	elif hit_vector is PoolVector2Array: # side hit
-		# poiščem presečišče
-		var hit_vector_local_pool: PoolVector2Array = [hit_vector[0] - global_position, hit_vector[1] - global_position] # pika začetka in pika konca, ker drugače se lahko zgodi, da ni zunaj
-		var intersection_data: Array = operator.get_outline_intersecting_segments(hit_vector_local_pool, breaker_base_polygon) # [[vector2, index], ...]
-		var intersection_point: Vector2
-		if intersection_data.size() == 1:
-			intersection_point = intersection_data[0][0]
-		elif intersection_data.size() > 1: # več presečišč > izberem najbližjo štartu hit vektorja
-			var closest_point_to_hit_start: Vector2
-			var shortest_dist_to_hit_start: float = 0
-			for intersection in intersection_data:
-				var point: Vector2 = intersection[0]
-				var point_to_hit_start_dist: float = (hit_vector_local_pool[0] - point).length()
-				if point_to_hit_start_dist < shortest_dist_to_hit_start or shortest_dist_to_hit_start == 0:
-					shortest_dist_to_hit_start = point_to_hit_start_dist
-					closest_point_to_hit_start = point
-			intersection_point = closest_point_to_hit_start
-		break_origin_global = intersection_point + global_position
-		# power vector in obseg hit zone
-		var power_vector: Vector2 = hit_vector[1] - break_origin_global
-		var hit_shape_radius: float = operator.get_polygon_radius(hit_by_polygon)
-		var power_to_radius_factor: float = power_vector.length() / hit_shape_radius
-		var power_adapted_hit_polygon: PoolVector2Array = []
-		for point in hit_by_polygon:
-			var adapted_point: Vector2 = point * power_to_radius_factor
-			power_adapted_hit_polygon.append(adapted_point)
-		hit_by_polygon = power_adapted_hit_polygon
-		# brejkit
-		var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global, hit_shape.scale)
-		break_it(transformed_hit_polygon)

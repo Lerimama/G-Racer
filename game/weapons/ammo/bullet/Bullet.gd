@@ -29,6 +29,11 @@ onready var bullet_mass: float = ammo_profile["mass"]
 onready var speed: float = 320 #ammo_profile["speed"] # PRO
 onready var vision_ray: RayCast2D = $VisionRay
 onready var collision_shape: CollisionShape2D = $BulletCollision
+onready var influence_area: Area2D = $InfluenceArea
+
+# neu
+enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var object_type = TYPE.EXPLODING
 
 
 func _ready() -> void:
@@ -40,7 +45,7 @@ func _ready() -> void:
 	mass = bullet_mass
 		
 	# set movement vector
-	direction = Vector2(cos(rotation), sin(rotation))
+	direction = Vector2.RIGHT.rotated(rotation)
 	
 	# spawn trail
 	new_bullet_trail = BulletTrail.instance()
@@ -59,8 +64,10 @@ func _physics_process(delta: float) -> void:
 		else:
 			in_spawner_area = false
 			if vision_ray.get_collider().has_method("on_hit"):
-				vision_ray.get_collider().on_hit(self) # pošljem node z vsemi podatki in kolizijo
-			explode_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
+				vision_ray.get_collider().on_hit(self, vision_ray.get_collision_point()) # pošljem node z vsemi podatki in kolizijo
+				
+			call_deferred("explode_bullet", vision_ray.get_collision_point(), vision_ray.get_collision_normal())
+#			explode_bullet(vision_ray.get_collision_point(), vision_ray.get_collision_normal())
 	else:
 		in_spawner_area = true
 	

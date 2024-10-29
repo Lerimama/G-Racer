@@ -49,6 +49,11 @@ onready var max_speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
+onready var influence_area: Area2D = $InfluenceArea
+
+# neu
+enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var object_type = TYPE.EXPLODING
 
 
 func _ready() -> void:
@@ -127,7 +132,7 @@ func _physics_process(delta: float) -> void:
 		if collision.collider != spawner: # sam sebe lahko ubiješ
 			explode()
 			if collision.collider.has_method("on_hit"):
-				collision.collider.on_hit(self) # pošljem node z vsemi podatki in kolizijo
+				collision.collider.on_hit(self, global_position) # pošljem node z vsemi podatki in kolizijo
 
 		
 func dissarm():

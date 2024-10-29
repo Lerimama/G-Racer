@@ -49,7 +49,7 @@ func _input(event: InputEvent) -> void:
 		match current_tool:
 			TOOL.PAINT:
 				for body in bodies_to_slice:
-					body.on_hit(get_global_mouse_position(), slicer)
+					body.on_hit_demo(get_global_mouse_position(), slicer, current_tool)
 	elif Input.is_action_just_released("left_click"):
 		on_release()
 		
@@ -105,11 +105,11 @@ func on_click():
 			else:
 				var break_origin: Vector2 = get_global_mouse_position()
 				for body in bodies_to_slice:
-					body.on_hit(break_origin, slicer)
+					body.on_hit_demo(break_origin, slicer_shape, current_tool)
 		_:
 			var break_origin: Vector2 = get_global_mouse_position()
 			for body in bodies_to_slice:
-				body.on_hit(break_origin, slicer)
+				body.on_hit_demo(break_origin, slicer_shape, current_tool)
 	
 	# collision transform ... če tega dela ni se koližn resiza neusklajeno
 	collision_shape.polygon = slicer_shape.polygon
@@ -142,7 +142,7 @@ func finish_swipe(is_successful: bool = false):
 				slicer_shape.scale = default_slicer_scale # da lažje izračunam moč
 				for body in bodies_to_slice:
 					var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
-					body.on_hit(hit_vector_pool, slicer) 
+					body.on_hit_demo(hit_vector_pool, slicer_shape, current_tool) 
 				slicer_shape.scale = min_slicer_scale
 				var fade_tween = get_tree().create_tween()
 				fade_tween.tween_property(fading_slicing_line, "modulate:a", 0, 0.5).set_delay(1)
@@ -153,9 +153,8 @@ func finish_swipe(is_successful: bool = false):
 		TOOL.KNIFE:
 			for body in bodies_to_slice:
 				var hit_vector_pool: PoolVector2Array = [swipe_start_global_position, swiping_line_last_point]
-				var cutting_pool: PoolVector2Array = fading_slicing_line.points
-				body.on_hit(fading_slicing_line)
-#				body.on_cut(fading_slicing_line)
+				var cutting_vector_pool: PoolVector2Array = fading_slicing_line.points
+				body.on_hit_demo(fading_slicing_line, slicer_shape, current_tool)
 			if fading_slicing_line:
 				fading_slicing_line.queue_free()
 #			slicer_shape.scale = default_slicer_scale
@@ -260,17 +259,17 @@ func _change_slicing_shape(new_slicing_shape: int):
 				
 func _on_MouseArea_body_entered(body: Node) -> void:
 	
-	if "current_material" in body:
-#		if not body.current_material == body.MATERIAL.UNBREAKABLE: 
-		if not bodies_to_slice.has(body):
-			bodies_to_slice.append(body)
-		if current_tool == TOOL.HAMMER and swipe_in_progress:
-			finish_swipe(true)
+	if "is_breakable" in body:
+		if body.is_breakable: 
+			if not bodies_to_slice.has(body):
+				bodies_to_slice.append(body)
+			if current_tool == TOOL.HAMMER and swipe_in_progress:
+				finish_swipe(true)
 
 
 func _on_MouseArea_body_exited(body: Node) -> void:
 
-	if body.has_method("on_hit") and current_tool == TOOL.KNIFE and swipe_in_progress:
+	if current_tool == TOOL.KNIFE and swipe_in_progress:
 		pass
 	else:
 		bodies_to_slice.erase(body)
@@ -327,3 +326,6 @@ func _on_Button9_button_up() -> void:
 # reset
 func _on_Reset_button_up() -> void:
 	get_tree().reload_current_scene()
+
+
+

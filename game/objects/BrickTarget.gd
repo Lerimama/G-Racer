@@ -23,7 +23,7 @@ func _ready() -> void:
 	sprite.modulate = brick_color
 	
 
-func on_hit(hit_by: Node):
+func on_hit(hit_by: Node, hit_global_position: Vector2):
 	
 	if hit_by is Bullet:
 		hit_count += 1

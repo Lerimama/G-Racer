@@ -13,7 +13,14 @@ var controlling_force: Vector2
 var velocity: Vector2
 var velocity_multiplier: float = 0.1
 var body_state: Physics2DDirectBodyState
-onready var collision_shape: Polygon2D = $CollisionShape2D_poly
+onready var collision_shape: CollisionShape2D = $CollisionShape2D
+onready var polygon_circo_2d: Polygon2D = $PolygonCirco2D
+onready var influence_area: Area2D = $InfluenceArea
+
+# neu
+var direction: Vector2
+enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var object_type = TYPE.HAMMER
 
 
 func _input(event: InputEvent) -> void:
@@ -38,7 +45,10 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 	pass
 
-
+func _process(delta: float) -> void:
+	
+	direction = velocity.normalized()
+	
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	
 	body_state = state
@@ -54,13 +64,12 @@ func _on_Ball_body_entered(body: Node) -> void:
 		var force_position: Vector2 = collision_position - velocity * velocity_multiplier
 #		Met.spawn_indikator(collision_position, Color.blue)
 #		Met.spawn_indikator(force_position, Color.red)
-
-		var hit_vector_pool: PoolVector2Array = [collision_position, force_position]
-		body.on_hit(hit_vector_pool, self) 
-		
 		modulate = Color.red
 		body.modulate = Color.red
 		var blend_tween = get_tree().create_tween()
 		blend_tween.tween_property(self, "modulate", Color.white, 0.3)
 		blend_tween.parallel().tween_property(body, "modulate", Color.white, 0.2)
+
+		body.on_hit(self, position) 
+		
 					

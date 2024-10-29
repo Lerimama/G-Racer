@@ -86,7 +86,7 @@ func _on_ActiveTimer_timeout() -> void:
 	explode()
 	for body in detect_area.get_overlapping_bodies():
 		if body.has_method("on_hit") and body != spawner:
-			body.on_hit(self)
+			body.on_hit(self, global_position)
 			
 
 # kvefri
@@ -107,4 +107,4 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 			explode()
 			# animacije
 			#		animation_player.play("shockwave_mina")
-			body.on_hit(self)
+			body.on_hit(self, global_position)

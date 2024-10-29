@@ -8,7 +8,9 @@ var get_it_time: float = 2
 # game units ... ferrari je 4500 mm bolt pa 225px
 var kg_per_unit_mass = 10
 var px_per_unit_meter = 50
-var mm_per_unit_grid: float = 640 # grid enotra je 32px, 1 px je 2 cm
+var mm_per_32_grid_unit: float = 640 # grid enotra je 32px, 1 px je 2 cm
+var m_per_32_grid_unit: float = 0.64 # grid enotra je 32px, 1 px je 2 cm
+var unit_one: float = 32
 
 enum LEVEL {
 	FIRST_DRIVE, 
