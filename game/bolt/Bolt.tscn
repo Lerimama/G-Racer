@@ -5,7 +5,7 @@
 [ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=4]
 [ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=5]
-[ext_resource path="res://game/pickables/atlas_pickables.png" type="Texture" id=6]
+[ext_resource path="res://assets/textures/atlas_pickables.png" type="Texture" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
@@ -98,6 +98,7 @@ margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
 [sub_resource type="AtlasTexture" id=5255]
+flags = 2
 atlas = ExtResource( 6 )
 region = Rect2( 48, 0, 8, 8 )
 

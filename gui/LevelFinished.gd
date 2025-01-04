@@ -7,7 +7,7 @@ onready var content: Control = $Content
 
 func _ready() -> void:
 	
-	Ref.level_completed = self
+	Refs.level_completed = self
 	visible = false
 
 
@@ -42,7 +42,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
 		new_ranking_line.get_node("Bolt").text = bolt.player_name
-		new_ranking_line.get_node("Result").text = Met.get_clock_time(bolt.player_stats["level_time"])
+		new_ranking_line.get_node("Result").text = Mets.get_clock_time(bolt.player_stats["level_time"])
 		results.add_child(new_ranking_line)
 		
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
@@ -60,7 +60,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 			
 
 func _on_QuitBtn_pressed() -> void:
-	Ref.main_node.game_out()
+	Refs.main_node.game_out()
 	$Menu/QuitBtn.set_disabled(true)
 
 func _on_QuitGameBtn_pressed() -> void:
@@ -74,5 +74,5 @@ func _on_ContinueBtn_pressed() -> void:
 	fade_out_tween.tween_property(self, "modulate:a", 0, 1)
 	fade_out_tween.tween_callback(self, "hide")
 	yield(fade_out_tween, "finished")
-	Ref.game_manager.set_next_level()
+	Refs.game_manager.set_next_level()
 	

@@ -215,7 +215,7 @@ func _gui_build_toolbar():
 
 	tb_pivot = create_tool_button(ICON_PIVOT_POINT, SS2D_Strings.EN_TOOLTIP_EDIT_VERT)
 	tb_pivot.connect("pressed", self, "_enter_mode", [MODE.SET_PIVOT])
-	
+
 	tb_freehand = create_tool_button(ICON_FREEHAND_MODE, SS2D_Strings.EN_TOOLTIP_FREEHAND)
 	tb_freehand.connect("pressed", self, "_enter_mode", [MODE.FREEHAND])
 
@@ -281,7 +281,7 @@ func get_current_viewport():
 	if !get_tree().get_edited_scene_root():
 		return
 	var editor_viewport = get_tree().get_edited_scene_root().get_parent()
-	
+
 	if editor_viewport is Viewport:
 		target_viewport = editor_viewport
 	elif editor_viewport is ViewportContainer:
@@ -360,14 +360,14 @@ func _enter_tree():
 	plugin = preload("res://addons/rmsmartshape/inpsector_plugin.gd").new()
 	if plugin != null:
 		add_inspector_plugin(plugin)
-		
+
 	pass
 
 
 func _exit_tree():
 	if (plugin != null):
 		remove_inspector_plugin(plugin)
-		
+
 	gui_point_info_panel.visible = false
 	gui_edge_info_panel.visible = false
 	remove_control_from_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU, tb_hb)
@@ -388,11 +388,11 @@ func forward_canvas_gui_input(event):
 	var grab_threshold = get_editor_interface().get_editor_settings().get(
 		"editors/poly_editor/point_grab_radius"
 	)
-	
+
 	var key_return_value = false
 	if event is InputEventKey:
 		key_return_value = _input_handle_keyboard_event(event)
-	
+
 	var mb_return_value = false
 	if event is InputEventMouseButton:
 		mb_return_value = _input_handle_mouse_button_event(event, et, grab_threshold)
@@ -408,7 +408,7 @@ func forward_canvas_gui_input(event):
 
 func handles(object):
 	var hideToolbar:bool = true
-	
+
 	tb_hb_legacy_import.hide()
 	update_overlays()
 	gui_point_info_panel.visible = false
@@ -419,7 +419,7 @@ func handles(object):
 		if selection.get_selected_nodes().size() == 1:
 			if selection.get_selected_nodes()[0] is SS2D_Shape_Base:
 				hideToolbar = false
-				
+
 	if hideToolbar == true:
 		tb_hb.hide()
 
@@ -797,7 +797,7 @@ func forward_canvas_draw_over_viewport(overlay: Control):
 				draw_new_point_close_preview(overlay)
 			draw_freehand_circle(overlay)
 			draw_mode_edit_vert(overlay, false)
-			
+
 
 	shape.update()
 
@@ -966,7 +966,7 @@ func draw_new_point_close_preview(overlay: Control):
 	var mouse = overlay.get_local_mouse_position()
 	var a = t.xform(shape.get_point_position(closest_edge_keys[0]))
 	var b = t.xform(shape.get_point_position(closest_edge_keys[1]))
-#	var a = 
+#	var a =
 #	var b = t.xform()
 	overlay.draw_line(mouse, a, color, width, true)
 	color.a = 0.1
@@ -1350,7 +1350,7 @@ func _get_edge_point_keys_from_offset(offset: float, straight: bool = false, pos
 		else:
 			this_offset = shape.get_closest_offset(shape.get_point_position(key))
 			next_offset = shape.get_closest_offset(shape.get_point_position(key_next))
-		
+
 		if offset >= this_offset and offset <= next_offset:
 			return [key, key_next]
 		# for when the shape is closed and the final point has an offset of 0
@@ -1534,7 +1534,7 @@ func _input_handle_mouse_motion_event(
 		else:
 			deselect_verts()
 			on_edge = _input_motion_is_on_edge(mm, grab_threshold)
-	
+
 	elif current_mode == MODE.EDIT_EDGE:
 		# Don't update if edge panel is visible
 		if gui_edge_info_panel.visible:
@@ -1545,7 +1545,7 @@ func _input_handle_mouse_motion_event(
 		else:
 			deselect_verts()
 		on_edge = _input_motion_is_on_edge(mm, grab_threshold)
-	
+
 	elif current_mode == MODE.FREEHAND:
 		if _mouse_lmb_pressed:
 			if not Input.is_key_pressed(KEY_CONTROL):
@@ -1582,7 +1582,7 @@ func _input_handle_mouse_motion_event(
 							return true
 		else:
 			_input_find_closest_edge_keys( mm )
-	
+
 	update_overlays()
 	return false
 

@@ -24,7 +24,7 @@ export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
 var time: float = 0
 var test_view_on = false
 
-# mouse drag 
+# mouse drag
 var mouse_used: bool = false # če je miška ni redi z dreganje ekrana
 var camera_center = Vector2(320, 180)
 var mouse_position_on_drag_start: Vector2 # zamik pozicije miške ob kliku
@@ -51,12 +51,12 @@ var reset_camera_target: Node2D # ne dela
 
 
 func _ready():
-	
+
 	$TestHud.hide()
 	$SetupPanel.hide()
 	$CameraSetupToggle.set_focus_mode(0)
 	$NodeSetupToggle.set_focus_mode(0)
-	
+
 	trauma_btn.set_focus_mode(0)
 	reset_view_btn.set_focus_mode(0)
 	zoom_slider.set_focus_mode(0)
@@ -78,13 +78,13 @@ func _ready():
 
 	seed_slider.value = noise.seed
 	octaves_slider.value = noise.octaves
-	period_slider.value = noise.period 
+	period_slider.value = noise.period
 	persistence_slider.value = noise.persistence
-	lacunarity_slider.value = noise.lacunarity 
+	lacunarity_slider.value = noise.lacunarity
 
-	
+
 func _input(event: InputEvent) -> void:
-	
+
 	if test_view_on:
 		if Input.is_action_just_pressed("click") and not mouse_used:
 			drag_on = true
@@ -95,26 +95,26 @@ func _input(event: InputEvent) -> void:
 
 		if Input.is_mouse_button_pressed(BUTTON_WHEEL_UP) and test_view_on:
 			parent_camera.zoom -= Vector2(0.1, 0.1)
-			
+
 		if Input.is_mouse_button_pressed(BUTTON_WHEEL_DOWN) and test_view_on:
 			parent_camera.zoom += Vector2(0.1, 0.1)
 			drag_on = false
 	else:
 			drag_on = false
-		
-	
+
+
 func _process(delta):
-	
-	
+
+
 	time += delta
-	#	if test_view_on: 
+	#	if test_view_on:
 	# start decay
-	#	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo 
+	#	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo
 	var shake = trauma
 	parent_camera.offset.x = noise.get_noise_3d(time * time_scale, 0, 0) * max_horizontal * shake
 	parent_camera.offset.y = noise.get_noise_3d(0, time * time_scale, 0) * max_vertical * shake
 	parent_camera.rotation_degrees = noise.get_noise_3d(0, 0, time * time_scale) * max_rotation * shake
-	
+
 	# start decay
 	if trauma > 0:
 		yield(get_tree().create_timer(trauma_time), "timeout")
@@ -125,10 +125,10 @@ func _process(delta):
 	shake_bar.value = shake
 	seed_slider.value = noise.seed
 	octaves_slider.value = noise.octaves
-	period_slider.value = noise.period 
+	period_slider.value = noise.period
 	persistence_slider.value = noise.persistence
-	lacunarity_slider.value = noise.lacunarity 
-	
+	lacunarity_slider.value = noise.lacunarity
+
 	# drag
 	if drag_on:
 		parent_camera.position += mouse_position_on_drag_start - parent_camera.get_global_mouse_position()
@@ -138,14 +138,19 @@ func shake_camera(added_trauma):
 	trauma = clamp(trauma + added_trauma, 0, 1)
 
 
+func _on_ZoomBox_toggled(button_pressed: bool) -> void:
+
+	get_parent().debug_max_zoom_out = button_pressed
+
+
 func _on_CheckBox_toggled(button_pressed: bool) -> void:
-	
+
 	$TestHud.visible = button_pressed
 	test_view_on = button_pressed
 
 
 func _on_NodeCheckBox_toggled(button_pressed: bool) -> void:
-	
+
 	$SetupPanel.visible = button_pressed
 
 
@@ -153,7 +158,7 @@ func _on_NodeCheckBox_toggled(button_pressed: bool) -> void:
 
 
 func _on_ShakeToggle_toggled(button_pressed: bool) -> void:
-	
+
 	if shake_on:
 		bolt_explosion_shake = 0
 		bullet_hit_shake = 0
@@ -176,7 +181,7 @@ func _on_ZoomSlider_value_changed(value: float) -> void:
 	parent_camera.zoom = Vector2(value, value)
 
 func _on_ResetView_pressed() -> void:
-	parent_camera.position = testing_start_camera_position 
+	parent_camera.position = testing_start_camera_position
 	parent_camera.zoom = testing_start_camera_zoom
 
 func _on_Seed_value_changed(value: float) -> void:
@@ -251,5 +256,4 @@ func _on_CheckBox_mouse_entered() -> void:
 	mouse_used = true
 func _on_CheckBox_mouse_exited() -> void:
 	mouse_used = false
-
 

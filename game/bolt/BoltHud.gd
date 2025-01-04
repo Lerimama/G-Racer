@@ -35,9 +35,9 @@ func _process(delta: float) -> void:
 	if health_bar.visible:
 		health_bar_line.rect_scale.x = owner.player_stats["health"] / owner.max_health
 		if health_bar_line.rect_scale.x <= 0.5:
-			health_bar_line.color = Ref.color_red
+			health_bar_line.color = Refs.color_red
 		else:
-			health_bar_line.color = Ref.color_blue
+			health_bar_line.color = Refs.color_blue
 
 	# manage selector
 	if weapon_selector.visible:

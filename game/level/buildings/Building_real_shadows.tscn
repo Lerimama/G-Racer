@@ -1,0 +1,183 @@
+[gd_scene load_steps=32 format=2]
+
+[ext_resource path="res://game/level/buildings/BreakableObject.gd" type="Script" id=1]
+[ext_resource path="res://assets/textures/building/tile_roof_edge.png" type="Texture" id=2]
+[ext_resource path="res://common/ShadowPolygon_math.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/textures/building/tile_roof_edge_cornerL.png" type="Texture" id=4]
+[ext_resource path="res://common/ShadowPolygon.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=6]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=8]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=9]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=10]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=11]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=12]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=13]
+[ext_resource path="res://assets/textures/building/tile_roof_edge_cornerR.png" type="Texture" id=14]
+[ext_resource path="res://assets/textures/building/tile_roof_top.png" type="Texture" id=15]
+
+[sub_resource type="Resource" id=8148]
+script = ExtResource( 10 )
+texture_idx = 3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8149]
+script = ExtResource( 7 )
+position = Vector2( -256.439, -192.178 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 8148 )
+
+[sub_resource type="Resource" id=8150]
+script = ExtResource( 10 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8151]
+script = ExtResource( 7 )
+position = Vector2( 256, -192 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 8150 )
+
+[sub_resource type="Resource" id=8152]
+script = ExtResource( 10 )
+texture_idx = -1
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8153]
+script = ExtResource( 7 )
+position = Vector2( 256, 320 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 8152 )
+
+[sub_resource type="Resource" id=8154]
+script = ExtResource( 10 )
+texture_idx = 3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8155]
+script = ExtResource( 7 )
+position = Vector2( -256.439, -192.178 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 8154 )
+
+[sub_resource type="Resource" id=8156]
+script = ExtResource( 10 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8157]
+script = ExtResource( 7 )
+position = Vector2( -256, 320 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 8156 )
+
+[sub_resource type="Resource" id=8158]
+script = ExtResource( 11 )
+_points = {
+0: SubResource( 8149 ),
+1: SubResource( 8151 ),
+2: SubResource( 8153 ),
+3: SubResource( 8155 ),
+4: SubResource( 8157 )
+}
+_point_order = [ 0, 1, 2, 4, 3 ]
+_constraints = {
+[ 0, 3 ]: 15
+}
+_next_key = 6
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=8133]
+script = ExtResource( 8 )
+textures = [ ExtResource( 2 ) ]
+texture_normals = [  ]
+textures_corner_outer = [ ExtResource( 4 ) ]
+textures_corner_inner = [ ExtResource( 14 ) ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = true
+use_taper_texture = true
+fit_mode = 0
+
+[sub_resource type="Resource" id=8134]
+script = ExtResource( 9 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=8135]
+script = ExtResource( 12 )
+edge_material = SubResource( 8133 )
+normal_range = SubResource( 8134 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = -0.7
+
+[sub_resource type="Resource" id=8132]
+script = ExtResource( 13 )
+_edge_meta_materials = [ SubResource( 8135 ) ]
+fill_textures = [ ExtResource( 15 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = true
+fill_mesh_offset = 0.0
+render_offset = 0.0
+
+[sub_resource type="OccluderPolygon2D" id=8147]
+cull_mode = 1
+polygon = PoolVector2Array( 0, 0, 0, 256, 256, 256, 256, 0 )
+
+[node name="BreakableObject" type="StaticBody2D"]
+script = ExtResource( 1 )
+
+[node name="PolygonShadow" parent="." instance=ExtResource( 5 )]
+visible = false
+color = Color( 0.960784, 0.0509804, 0.0509804, 1 )
+
+[node name="PolygonShadow2" parent="." instance=ExtResource( 3 )]
+shadow_casting_polygon_path = NodePath("../CollisionPolygon2D")
+
+[node name="SS2D_Shape_Closed" type="Node2D" parent="."]
+position = Vector2( 256, 192 )
+script = ExtResource( 6 )
+_points = SubResource( 8158 )
+shape_material = SubResource( 8132 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("../CollisionPolygon2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+modulate = Color( 1, 1, 1, 0.3 )
+polygon = PoolVector2Array( -0.542725, -0.281677, 512.104, -0.1035, 512.104, 512.104, -0.103394, 512.104 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+visible = false
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+occluder = SubResource( 8147 )
+
+[node name="TestPolygon2D" type="Polygon2D" parent="."]
+visible = false
+color = Color( 0.647059, 0.168627, 0.168627, 1 )
+polygon = PoolVector2Array( 48, 72, 48, 360, 360, 392, 424, 88 )

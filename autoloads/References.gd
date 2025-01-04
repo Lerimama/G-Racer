@@ -58,7 +58,7 @@ var color_brick_bouncer = Color.red
 var color_brick_light_off = Color.white
 var color_brick_light_on = Color.red
 
-var color_pickable_random = Color.red 
+var color_pickable_random = Color.red
 var color_pickable_stat = Color.red
 var color_pickable_feature = Color.yellow
 var color_pickable_ammo = Color.black
@@ -67,7 +67,7 @@ var color_pickable_ammo = Color.black
 var color_almost_white_text: Color = Color("#f5f5f5") # če spremeniš tukaj, moraš tudi v temi
 var color_gui_gray: Color = Color("#78ffffff") # siv text s transparenco (ikone ...#838383) ... v kodi samo na btn defocus
 var color_hud_text: Color = color_almost_white_text # za vse, ki modulirajo barvo glede na + ali -
-#var color_almost_black_pixel: Color = Color("#141414") 
+#var color_almost_black_pixel: Color = Color("#141414")
 #var color_dark_gray_pixel: Color = Color("#232323")#Color("#323232") # start normal
 #var color_white_pixel: Color = Color(1, 1, 1, 1.22)
 #var color_thumb_hover: Color = Color("#232323")

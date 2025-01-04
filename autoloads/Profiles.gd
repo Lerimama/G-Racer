@@ -20,14 +20,14 @@ var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"gas_count": 5000,
 	# score
 	"points" : 0,
-	"level_rank" : 0, 
+	"level_rank" : 0,
 	"laps_count" : 0,
 	"best_lap_time" : 0,
 	"level_time" : 0, # sekunde ... naj bodo stotinke
 }
 
 enum PLAYER {P1, P2, P3, P4}
-var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam	
+var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 	PLAYER.P1 : {
 		"player_name": "P1",
 		"player_avatar": preload("res://gui/avatars/avatar_01.png"),
@@ -39,7 +39,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	PLAYER.P2 : {
 		"player_name": "P2",
 		"player_avatar": preload("res://gui/avatars/avatar_02.png"),
-		"player_color": Ref.color_red,
+		"player_color": Refs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLT_TYPE.BASIC,
@@ -47,14 +47,14 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	PLAYER.P3 : {
 		"player_name" : "P3",
 		"player_avatar" : preload("res://gui/avatars/avatar_03.png"),
-		"player_color" : Ref.color_yellow, # color_yellow, color_green, color_red
+		"player_color" : Refs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
 		"player_avatar" : preload("res://gui/avatars/avatar_04.png"),
-		"player_color" : Ref.color_green,
+		"player_color" : Refs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
@@ -66,12 +66,12 @@ var ai_profile: Dictionary = {
 	# race
 	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	# battle
-	"battle_engine_power": 120, # je enaka kot od  bolta 
+	"battle_engine_power": 120, # je enaka kot od  bolta
 	"aim_time": 1,
 #	"seek_rotation_range": 60,
 #	"seek_rotation_speed": 3,
 #	"seek_distance": 640 * 0.7,
-	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo 
+	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo
 	# ni še implementiran!!!!!!
 	"ai_brake_distance": 0.8, # množenje s hitrostjo
 	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
@@ -80,7 +80,7 @@ var ai_profile: Dictionary = {
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2, AI}
 var controller_profiles : Dictionary = {
 	CONTROLLER_TYPE.ARROWS: {
-		fwd_action = "p1_fwd", 
+		fwd_action = "p1_fwd",
 		rev_action = "p1_rev",
 		left_action = "p1_left",
 		right_action = "p1_right",
@@ -89,7 +89,7 @@ var controller_profiles : Dictionary = {
 		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
 		},
 	CONTROLLER_TYPE.WASD : {
-		fwd_action = "p2_fwd", 
+		fwd_action = "p2_fwd",
 		rev_action = "p2_rev",
 		left_action = "p2_left",
 		right_action = "p2_right",
@@ -134,7 +134,7 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
 		"power_burst_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
-		"max_engine_power": 500000, # 1 - 500 konjev 
+		"max_engine_power": 500000, # 1 - 500 konjev
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
@@ -213,17 +213,20 @@ var ammo_profiles : Dictionary = {
 
 func levels(): pass
 
-enum SURFACE_TYPE {PLAIN, NITRO, GRAVEL, HOLE, TRACKING}
+enum SURFACE_TYPE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
-	SURFACE_TYPE.PLAIN: {
+	SURFACE_TYPE.NONE: {
 		"engine_power_factor": 1, # koliko original powerja
+	},
+	SURFACE_TYPE.CONCRETE: {
+		"engine_power_factor": 1.15, # koliko original powerja
 	},
 	SURFACE_TYPE.NITRO: {
 		"engine_power_factor": 2, # koliko original powerja
 	},
 	SURFACE_TYPE.GRAVEL: {
-		"engine_power_factor": 0.3, 
-		"rear_lin_damp": 20, # vrednost, da riti nič ne odnaša
+		"engine_power_factor": 0.3,
+#		"drive_lin_damp_rear": 20, # še ni notrivrednost, da riti nič ne odnaša
 	},
 	SURFACE_TYPE.HOLE: {
 		"engine_power_factor": 0.1,
@@ -236,10 +239,10 @@ var surface_type_profiles: Dictionary = {
 func level_objects(): pass
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
-var level_object_profiles: Dictionary = { 
+var level_object_profiles: Dictionary = {
 	# ne rabiš povsod istih vsebin, ker element vleče samo postavke, ki jih rabi
 	LEVEL_OBJECT.BRICK_GHOST: {
-		"color": Ref.color_brick_ghost,
+		"color": Refs.color_brick_ghost,
 		"value": 30,
 		"speed_brake_div": 10,
 		"elevation": 5,
@@ -247,7 +250,7 @@ var level_object_profiles: Dictionary = {
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
-		"color": Ref.color_brick_bouncer,
+		"color": Refs.color_brick_bouncer,
 		"value": 10,
 		"bounce_strength": 2,
 		"elevation": 5,
@@ -255,22 +258,22 @@ var level_object_profiles: Dictionary = {
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
-		"color": Ref.color_brick_magnet_off,
+		"color": Refs.color_brick_magnet_off,
 		"value": 0,
 		"gravity_force": 300.0,
 		"elevation": 5,
 		"object_scene": preload("res://game/objects/BrickMagnet.tscn"),
 		"ai_target_rank": 0, # 0 pomeni, da se izogneš
-	},	
+	},
 	LEVEL_OBJECT.BRICK_TARGET: {
-		"color": Ref.color_brick_target,
+		"color": Refs.color_brick_target,
 		"value": 100,
 		"elevation": 5,
 		"object_scene": preload("res://game/objects/BrickTarget.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.FLATLIGHT: {
-		"color": Ref.color_brick_light_off,
+		"color": Refs.color_brick_light_off,
 		"value": 10,
 		"elevation": 0,
 		"object_scene": preload("res://game/objects/FlatLight.tscn"),
@@ -288,98 +291,86 @@ var level_object_profiles: Dictionary = {
 func pickables(): pass
 
 enum PICKABLE{
-	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA, 
+	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA,
 	PICKABLE_SHIELD, PICKABLE_HEALTH, PICKABLE_LIFE,
 	PICKABLE_GAS, PICKABLE_CASH, PICKABLE_NITRO,
-	
 	PICKABLE_POINTS,
 	PICKABLE_RANDOM
 	}
-	
+
 var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_BULLET: {
-		"in_random_selection": true, # vključeno v random izbor?
-		"color": Ref.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 20,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_MISILE: {
-		"in_random_selection": true,
-		"color": Ref.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 2,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
-	}, 
+	},
 	PICKABLE.PICKABLE_MINA: {
-		"in_random_selection": true,
-		"color": Ref.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
-	}, 
+	},
 	PICKABLE.PICKABLE_SHIELD: {
-		"in_random_selection": true,
-		"color": Ref.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 1,
 		"elevation": 3,
 		"time": 3,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
-		"in_random_selection": true,
-		"color": Ref.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 0,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_LIFE: {
-		"in_random_selection": true,
-		"color": Ref.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 1,
 		"elevation": 3,
 		"time": 0, # sekunde
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_GAS: {
-		"in_random_selection": false,
-		"color": Ref.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 200,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_CASH: {
-		"in_random_selection": false,
-		"color": Ref.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 0,
 	},
 	PICKABLE.PICKABLE_POINTS: {
-		"in_random_selection": false,
-		"color": Ref.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 100,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 2,
 	},
 	PICKABLE.PICKABLE_NITRO: {
-		"in_random_selection": false,
-		"color": Ref.color_pickable_feature,
+		"color": Refs.color_pickable_feature,
 		"value": 2, # factor
 		"elevation": 3,
 		"time": 1.5,
 		"ai_target_rank": 10,
 	},
-	PICKABLE.PICKABLE_RANDOM: {
-		"in_random_selection": false,
-		"color": Ref.color_pickable_random,
+	PICKABLE.PICKABLE_RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
+		"color": Refs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"elevation": 3,
 		"time": 0,

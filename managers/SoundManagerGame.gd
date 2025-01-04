@@ -16,38 +16,38 @@ onready	var sfx_bus_index: int = AudioServer.get_bus_index("GameSfx")
 
 
 func _input(event: InputEvent) -> void:
-	
+
 	# un/mute
 	if Input.is_action_just_pressed("mute_track"):
 		var is_bus_mute: bool = AudioServer.is_bus_mute(music_bus_index)
 		AudioServer.set_bus_mute(music_bus_index, not is_bus_mute)
 		music_set_to_mute = not is_bus_mute
 
-	if Input.is_action_just_pressed("skip_track"):	
+	if Input.is_action_just_pressed("skip_track"):
 		var is_bus_mute: bool = AudioServer.is_bus_mute(sfx_bus_index)
 		AudioServer.set_bus_mute(sfx_bus_index, not is_bus_mute)
-		sfx_set_to_mute = not is_bus_mute	
-	
-			
+		sfx_set_to_mute = not is_bus_mute
+
+
 func _ready() -> void:
-	
-	Ref.sound_manager = self
+
+	Refs.sound_manager = self
 	randomize()
 
 	# če je bus na štartu setan na mute je mute
 	music_set_to_mute = AudioServer.is_bus_mute(music_bus_index)
-	sfx_set_to_mute = AudioServer.is_bus_mute(sfx_bus_index)	
-	
+	sfx_set_to_mute = AudioServer.is_bus_mute(sfx_bus_index)
+
 # SFX --------------------------------------------------------------------------------------------------------
-	
+
 #onready var sfx: Node = $Sfx
 onready var music: Node = $Music
-	
-		
+
+
 func play_sfx(effect_for: String):
-	
+
 	match effect_for:
-#		"mina_explode": 
+#		"mina_explode":
 #			$Sfx/MisileExplode.play()
 #			# ustavim, če se pleja ...
 ##			$Sfx/MisileFlight.set_volume_db(-80)
@@ -62,16 +62,16 @@ func play_sfx(effect_for: String):
 
 
 func stop_sfx(effect_for: String):
-	
+
 	match effect_for:
-		"bolt_engine": 
+		"bolt_engine":
 			pass
 			if $Sfx/BoltEngine.is_playing():
 				$Sfx/BoltEngine.stop()
-	
-			
+
+
 func play_gui_sfx(effect_for: String):
-	
+
 	match effect_for:
 		# events
 		"start_countdown_a":
@@ -92,7 +92,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			Met.get_random_member($GuiSfx/Inputs/Typing).play()
+			Mets.get_random_member($GuiSfx/Inputs/Typing).play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":
@@ -105,53 +105,53 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/MenuFade.play()
 		"screen_slide":
 			$GuiSfx/ScreenSlide.play()
-		
+
 
 # MUSKA --------------------------------------------------------------------------------------------------------
-		
+
 
 func play_music():
-	
+
 	# set track
 	var current_track: AudioStreamPlayer
-#	if Ref.game_manager.level_settings["level"] == Set.Levels.RACE_NITRO: # get level name drugače
+#	if Refs.game_manager.level_settings["level"] == Sets.Levels.RACE_NITRO: # get level name drugače
 #		current_track = game_music.get_node("Nitro")
 #	else:
 #		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
 	current_track = game_music.get_child(currently_playing_track_index - 1)
-	
+
 	#	printt("muza", current_track)
-	if not music_set_to_mute:	
-		current_track.play()	
+	if not music_set_to_mute:
+		current_track.play()
 
 
 func stop_music():
-	
+
 	for music_track in game_music.get_children():
 		if music_track.is_playing():
-			Met.sound_fade_out_and_reset(music, 2)
+			Mets.sound_fade_out_and_reset(music, 2)
 
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov
-	
+
 	# slajder je omejen med -30 in 10
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("GameMusic"), value_on_slider)
-		
-		
+
+
 func skip_track():
-	
+
 	currently_playing_track_index += 1
-	
+
 	if currently_playing_track_index > game_music.get_child_count():
 		currently_playing_track_index = 1
-	
+
 	for music_track in game_music.get_children():
 		if music_track.is_playing():
 			#			var current_music_volume = music_track.volume_db
-			#			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)	
+			#			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)
 			#			fade_out.tween_property(music_track, "volume_db", -80, 0.5)
 			#			fade_out.tween_callback(music_track, "stop")
 			#			fade_out.tween_callback(music_track, "set_volume_db", [current_music_volume]) # reset glasnosti
 			#			fade_out.tween_callback(self, "play_music", ["game_music"])
-			yield(Met.sound_fade_out_and_reset(music, 2), "fadeout_finished")
+			yield(Mets.sound_fade_out_and_reset(music, 2), "fadeout_finished")
 			play_music()

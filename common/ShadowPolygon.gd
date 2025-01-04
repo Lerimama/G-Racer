@@ -9,11 +9,14 @@ var shadow_color: Color = Color.black
 var shadow_transparency: float = 0.2
 
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_polygon_path)
-onready var shadow_direction: Vector2 = Ref.game_manager.shadows_direction # odvisno od igre
+onready var shadow_direction: Vector2 = Refs.game_manager.shadows_direction # odvisno od igre
+
+# owner
+onready var shadow_owner: Node2D = get_parent()
 
 
 func _ready() -> void:
-	
+
 	if shadow_casting_node:
 		update_shadows()
 	else:
@@ -24,21 +27,21 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 
 	if shadow_casting_node and visible:
-		node_height = owner.height
-		node_elevation = owner.elevation
-		shadow_direction = Ref.game_manager.shadows_direction
+		node_height = shadow_owner.height
+		node_elevation = shadow_owner.elevation
+		shadow_direction = Refs.game_manager.shadows_direction
 		var shadow_polygon: Array = inject_corners(shadow_casting_node.polygon)
 		polygon = shadow_polygon
 		position += shadow_direction * node_elevation
 
 
 func update_shadows():
-		
+
 		# trenutne vrednosti
-		node_height = owner.height
-		node_elevation = owner.elevation
-		shadow_direction = Ref.game_manager.shadows_direction
-		
+		node_height = shadow_owner.height
+		node_elevation = shadow_owner.elevation
+		shadow_direction = Refs.game_manager.shadows_direction
+
 		# skrijem, če je vse 0
 		if node_height == 0 and node_elevation == 0:
 			if visible:
@@ -56,14 +59,14 @@ func update_shadows():
 			modulate.a = shadow_transparency
 			if not visible:
 				show()
-#	node_height = owner.height
-#	node_elevation = owner.elevation
-#	shadow_direction = Ref.game_manager.shadows_direction
+#	node_height = shadow_owner.height
+#	node_elevation = shadow_owner.elevation
+#	shadow_direction = Refs.game_manager.shadows_direction
 #	var shadow_polygon: Array = inject_corners(shadow_casting_node.polygon)
 #	polygon = shadow_polygon
 #	position += shadow_direction * node_elevation
-	
-	
+
+
 #func _update_shadow(new_direction: Vector2):
 #	if shadow_casting_node:
 #
@@ -72,13 +75,13 @@ func update_shadows():
 #		var shadow_polygon: Array = inject_new_corners(shadow_casting_node.polygon)
 #		polygon = shadow_polygon
 
-		
+
 func inject_corners(polygon_to_upgrade: Array):
 		# deluje če je poligon 4-kotnik (naredi še iskanje skrajnih točke, če ni)
-		
+
 		# premaknem poligon
 		position = shadow_direction * node_height
-		
+
 		# opredelim osnovno smer sence in glede na to dodam pike
 		if shadow_direction.x >= 0 and shadow_direction.y >= 0: # DOWN RIGHT
 			# apliciram nove pike v array pik in ga prenesem v polygon sence
@@ -98,6 +101,6 @@ func inject_corners(polygon_to_upgrade: Array):
 			polygon_to_upgrade.insert(2, polygon_to_upgrade[1] - shadow_direction * node_height)
 			polygon_to_upgrade.insert(4, polygon_to_upgrade[4] - shadow_direction * node_height)
 			polygon_to_upgrade[3] -= shadow_direction * node_height
-		
-		
+
+
 		return polygon_to_upgrade

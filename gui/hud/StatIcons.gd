@@ -6,7 +6,7 @@ export var icon_texture: AtlasTexture  # ta se uporabi na vseh ikona
 var stat_value: int setget _on_stat_change
 var previous_stat_value: int # preverjam smer spremembe lajfa
 
-var def_stat_color: Color = Ref.color_hud_base setget _on_bolt_color_set
+var def_stat_color: Color = Refs.color_hud_base setget _on_bolt_color_set
 
 onready var stat_icon: Control = $StatIcon
 onready var stat_icons: Array = get_children()
@@ -33,11 +33,11 @@ func _on_stat_change(new_value: int): # ne rabim parametra
 	if previous_stat_value == stat_value:
 		return
 	elif stat_value < previous_stat_value:
-		modulate = Ref.color_red
+		modulate = Refs.color_red
 		yield(get_tree().create_timer(0.5), "timeout")
 		modulate = def_stat_color
 	elif stat_value > previous_stat_value:
-		modulate = Ref.color_green
+		modulate = Refs.color_green
 		yield(get_tree().create_timer(0.5), "timeout")
 		modulate = def_stat_color
 	

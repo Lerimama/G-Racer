@@ -1,0 +1,85 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=1]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=2]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=3]
+[ext_resource path="res://game/level/streets/street_asphalt_SSD.tres" type="Resource" id=4]
+[ext_resource path="res://addons/rmsmartshape/shapes/shape_open.gd" type="Script" id=5]
+[ext_resource path="res://game/level/streets/Street.gd" type="Script" id=6]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 3 )
+texture_idx = 4
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 1 )
+position = Vector2( 1155.34, 4901.61 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1 )
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 1 )
+position = Vector2( 4825.2, -3509.92 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 3 )
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 3 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 1 )
+position = Vector2( 1682.91, -1400.4 )
+point_in = Vector2( -712.719, 1824.56 )
+point_out = Vector2( 712.719, -1824.56 )
+properties = SubResource( 5 )
+
+[sub_resource type="Resource" id=7]
+script = ExtResource( 2 )
+_points = {
+0: SubResource( 2 ),
+41: SubResource( 4 ),
+76: SubResource( 6 )
+}
+_point_order = [ 0, 76, 41 ]
+_constraints = {
+}
+_next_key = 77
+_material_overrides = {
+}
+
+[node name="Street" type="Area2D"]
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_group_": true,
+"_editor_description_": ""
+}
+
+[node name="StreetSSD" type="Node2D" parent="."]
+modulate = Color( 0.901961, 0.85098, 0.72549, 1 )
+script = ExtResource( 5 )
+_points = SubResource( 7 )
+shape_material = ExtResource( 4 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 1000.0
+collision_offset = 1.0
+collision_polygon_node_path = NodePath("../CollisionPolygon2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+modulate = Color( 1, 1, 1, 0.3 )
+polygon = PoolVector2Array( 655.34, 4902.32, 652.158, 2417.43, 803.157, 296.176, 965.666, -705.523, 1079.11, -1167.48, 1218.65, -1586.04, 1398.36, -1967.2, 1619.67, -2311, 1872.04, -2613.78, 2146.9, -2877.42, 2436.34, -3104.62, 2740.15, -3302.57, 3320.99, -3597.48, 3866.17, -3799.65, 4322.63, -3924.22, 4733.34, -4001.41, 4917.06, -3018.43, 4546.25, -2949.55, 4171.6, -2847.43, 3721.66, -2681.26, 3240.56, -2436.78, 3018.72, -2291.7, 2802.24, -2122.08, 2603.07, -1931.43, 2425.45, -1718.79, 2272.95, -1482.34, 2147.17, -1214.76, 2039.96, -890.413, 1945.56, -506.001, 1796.44, 411.875, 1651.55, 2452.2, 1655.34, 4900.9 )

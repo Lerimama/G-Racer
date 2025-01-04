@@ -67,17 +67,17 @@ func setDrawTarget(inDrawTargetPoint):
 ##################################################################################
 func _process(delta):
 
-	if(!drawTargetSpatialRef.get_ref()): return;
+	if(!drawTargetSpatialRefs.get_ref()): return;
 
-	global_transform.origin = drawSourceSpatialRef.get_ref().global_transform.origin;
+	global_transform.origin = drawSourceSpatialRefs.get_ref().global_transform.origin;
 
 	clear();
 #	begin(Mesh.PRIMITIVE_LINES, null);
-#	if(drawTargetSpatialRef.get_ref()):
-#		drawLine(drawTargetSpatialRef.get_ref().global_transform.origin - global_transform.origin);
+#	if(drawTargetSpatialRefs.get_ref()):
+#		drawLine(drawTargetSpatialRefs.get_ref().global_transform.origin - global_transform.origin);
 #	end();
 	currentShift += delta*speedFactor;
-	drawDashedLineTo(drawTargetSpatialRef.get_ref().global_transform.origin - global_transform.origin);
+	drawDashedLineTo(drawTargetSpatialRefs.get_ref().global_transform.origin - global_transform.origin);
 
 	if(currentShift>600.0):
 		currentShift = 0;
@@ -142,7 +142,7 @@ func drawDashedLineTo(inTargetPoint):
 ##################################################################################
 static func newEmptyWeakRef():
 	var weakRef = weakref(Node.new());
-	weakRef.get_ref().free()
+	weakRefs.get_ref().free()
 	return weakRef;
 ##################################################################################
 #########                         Inner Classes                          #########

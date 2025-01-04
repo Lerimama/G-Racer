@@ -249,16 +249,16 @@ _global_script_class_icons={
 [application]
 
 config/name="G Racer"
-run/main_scene="res://game/Game.tscn"
+run/main_scene="res://Main.tscn"
 config/icon="res://assets/icon.png"
 <<<<<<<HEADconfig/name="G-Racer"
 
 [autoload]
 
-Set="*res://autoloads/Settings.gd"
-Ref="*res://autoloads/References.gd"
-Pro="*res://autoloads/Profiles.gd"
-Met="*res://autoloads/Methods.gd"
+Sets="*res://autoloads/Settings.gd"
+Refs="*res://autoloads/References.gd"
+Pros="*res://autoloads/Profiles.gd"
+Mets="*res://autoloads/Methods.gd"
 
 [debug]
 

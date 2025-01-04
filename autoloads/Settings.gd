@@ -13,14 +13,15 @@ var m_per_32_grid_unit: float = 0.64 # grid enotra je 32px, 1 px je 2 cm
 var unit_one: float = 32
 
 enum LEVEL {
-	FIRST_DRIVE, 
+	FIRST_DRIVE,
+	STAFF,
 	ROUND, DUEL, NITRO, CITY,
-#	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO, 
-#	RACE_TRAINING, 
-#	TRAINING, 
-#	DEBUG_RACE, 
-#	DEBUG_DUEL, 
-#	FREE, TESTDRIVE, 
+#	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO,
+#	RACE_TRAINING,
+#	TRAINING,
+#	DEBUG_RACE,
+#	DEBUG_DUEL,
+#	FREE, TESTDRIVE,
 	}
 var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
@@ -29,12 +30,18 @@ var level_settings: Dictionary = {
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
+	LEVEL.STAFF: {
+		"level_name": "",
+		"level_path": "res://game/level/LevelStaff.tscn",
+		"time_limit": 0,
+		"lap_limit": 0,
+		},
 }
 
 
 enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var default_game_settings: Dictionary = { # setano za dirkanje
-	
+
 	# time
 #	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
 	"game_time_limit": 0, # če je 0 ni omejitve
@@ -53,6 +60,9 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"full_equip_mode": true,
 	"drifting_mode": true, # drift ali tilt?
 	"shadows_direction": Vector2.ONE, # drift ali tilt?
+	# debug
+	"max_zoomout": false,
+
 }
 
 
@@ -65,28 +75,32 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 
 #var current_game_levels: Array = []
 #var current_game_levels: Array = [LEVEL.ROUND]
-#var current_game_levels: Array = [LEVEL.DUEL]
-var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
+var current_game_levels: Array = [LEVEL.STAFF]
+#var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
 #var current_game_levels: Array = [LEVEL.NITRO]
 #var current_game_levels: Array = [LEVEL.00]
 
-	
+
 func get_level_game_settings(selected_level_index: int):
-	
+
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
 	current_game_settings = default_game_settings.duplicate() # naloži default, potrebne spremeni ob loadanju igre
 	var current_level: int = current_game_levels[selected_level_index]
-	
+
 	# debug
 	current_game_settings["start_countdown"] = false
-	
+
 	match current_level:
 		# racing
 		# duel
-		LEVEL.DUEL: 
+		LEVEL.STAFF:
+			pass
+#			current_game_settings["max_zoomout"] = true
+#			current_game_settings["start_countdown"] = true
+		LEVEL.DUEL:
 			current_game_settings["start_countdown"] = false
 			current_game_settings["sudden_death_mode"] = true
-#			current_game_settings["stopwatch_mode"] = false		
-			
+#			current_game_settings["stopwatch_mode"] = false
+
 	return current_game_settings # pobere GM ob setanju igre

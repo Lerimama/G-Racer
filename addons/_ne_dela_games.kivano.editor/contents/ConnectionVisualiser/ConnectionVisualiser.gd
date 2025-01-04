@@ -56,8 +56,8 @@ func on_selection_changed():
 	#
 	while(!outGoingLines.empty()):
 		var lineRef = outGoingLines.pop_front();
-		if(lineRef.get_ref()):
-			lineRef.get_ref().queue_free();
+		if(lineRefs.get_ref()):
+			lineRefs.get_ref().queue_free();
 
 	#
 	var selectedNodes = editorPlugin.get_editor_interface().get_selection().get_selected_nodes();

@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://common/shaders/bolt_shield.material" type="Material" id=1]
+[ext_resource path="res://assets/materials/bolt_shield.material" type="Material" id=1]
 [ext_resource path="res://game/weapons/ammo/shield/Shield.gd" type="Script" id=2]
 
 [sub_resource type="CircleShape2D" id=118]
@@ -130,7 +130,7 @@ tracks/1/keys = {
 [node name="Shield" type="Area2D"]
 script = ExtResource( 2 )
 
-[node name="_BoltPolygon2D" type="Polygon2D" parent="."]
+[node name="__BoltPolygon2D" type="Polygon2D" parent="."]
 visible = false
 polygon = PoolVector2Array( -104, -48, -96, -56, 96, -56, 112, -40, 104, -32, 112, -24, 104, -16, 112, -8, 104, 0, 112, 8, 104, 16, 112, 24, 104, 32, 112, 40, 96, 56, -96, 56, -104, 48, -104, 0 )
 

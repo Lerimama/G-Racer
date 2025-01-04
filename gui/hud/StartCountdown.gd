@@ -14,7 +14,7 @@ extends Control
 #
 #func start_countdown():
 #
-#	if Ref.game_manager.game_settings["start_countdown"]:
+#	if Refs.game_manager.game_settings["start_countdown"]:
 #		modulate.a = 0
 #		visible = true
 #		animation_player.play("countdown_3")
@@ -25,12 +25,12 @@ extends Control
 #
 #func play_countdown_a_sound():
 #
-##	Ref.sound_manager.play_gui_sfx("start_countdown_a")
+##	Refs.sound_manager.play_gui_sfx("start_countdown_a")
 #	pass
 #
 #func play_countdown_b_sound():
 #
-##	Ref.sound_manager.play_gui_sfx("start_countdown_b")
+##	Refs.sound_manager.play_gui_sfx("start_countdown_b")
 #	pass
 #
 #

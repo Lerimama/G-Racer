@@ -20,7 +20,7 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 onready var smoke_particles: Particles2D = $SmokeParticles
 
-onready var weapon_profile: Dictionary = Pro.ammo_profiles[Pro.AMMO.MINA]
+onready var weapon_profile: Dictionary = Pros.ammo_profiles[Pros.AMMO.MINA]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var speed: float = weapon_profile["speed"]
@@ -31,14 +31,14 @@ onready var MisileHit = preload("res://game/weapons/ammo/misile/MisileHit.tscn")
 
 
 func _ready() -> void:
-	
-	add_to_group(Ref.group_mine)
+
+	add_to_group(Refs.group_mine)
 #	modulate = spawner_color
-	
+
 	drop_direction = -transform.x # rikverc na osi x
-	
+
 	$Sounds/MinaShoot.play()
-	
+
 	# drop mine
 	var drop_tween = get_tree().create_tween()
 	drop_tween.tween_property(self, "speed", 0.0, drop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -48,12 +48,12 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	
+
 	global_position += drop_direction * speed * delta # motion
-	
-		 
+
+
 func activate():
-	
+
 	detect_area.monitoring = true
 	if lifetime > 0:
 		active_timer.start(lifetime)
@@ -67,9 +67,9 @@ func explode():
 	new_hit_fx.get_node("ExplosionParticles").set_emitting(true)
 	new_hit_fx.get_node("SmokeParticles").set_emitting(true)
 	new_hit_fx.get_node("BlastAnimated").play()
-	Ref.node_creation_parent.add_child(new_hit_fx)
-	
-		
+	Refs.node_creation_parent.add_child(new_hit_fx)
+
+
 #	var new_misile_explosion = MisileExplosion.instance()
 #	new_misile_explosion.global_position = global_position
 #	new_misile_explosion.set_one_shot(true)
@@ -77,9 +77,9 @@ func explode():
 #	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawner_color
 #	new_misile_explosion.set_emitting(true)
 #	new_misile_explosion.get_node("ExplosionBlast").play()
-#	Ref.node_creation_parent.add_child(new_misile_explosion)
+#	Refs.node_creation_parent.add_child(new_misile_explosion)
 	queue_free()
-	
+
 
 func _on_ActiveTimer_timeout() -> void:
 
@@ -87,7 +87,7 @@ func _on_ActiveTimer_timeout() -> void:
 	for body in detect_area.get_overlapping_bodies():
 		if body.has_method("on_hit") and body != spawner:
 			body.on_hit(self, global_position)
-			
+
 
 # kvefri
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
@@ -97,12 +97,12 @@ func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:
-	
-	# ustavi ob trku s telesom	
+
+	# ustavi ob trku s telesom
 	if body != spawner:
 		drop_direction = Vector2.ZERO
-		
-	# sproži val in detect_area shape			
+
+	# sproži val in detect_area shape
 		if body.has_method("on_hit"):
 			explode()
 			# animacije

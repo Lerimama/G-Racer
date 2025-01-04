@@ -5,7 +5,7 @@ extends Control
 func _input(event: InputEvent) -> void:
 	
 			
-#	if Ref.game_manager.game_on:
+#	if Refs.game_manager.game_on:
 		if Input.is_action_just_pressed("ui_cancel"):
 			if not visible:
 				pause_game()
@@ -59,21 +59,21 @@ func _on_PlayBtn_pressed() -> void:
 func _on_RestartBtn_pressed() -> void:
 
 #	Global.sound_manager.play_gui_sfx("btn_confirm")
-	Ref.sound_manager.stop_music()
+	Refs.sound_manager.stop_music()
 	
-#	Ref.game_manager.stop_game_elements()
+#	Refs.game_manager.stop_game_elements()
 	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
 	
-	Ref.main_node.reload_game()
+	Refs.main_node.reload_game()
 	
 	
 func _on_QuitBtn_pressed() -> void:
 
 #	Global.game_manager.stop_game_elements()
-	Ref.sound_manager.stop_music()
+	Refs.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
-	Ref.game_manager.game_on = false
-	Ref.main_node.game_out()
+	Refs.game_manager.game_on = false
+	Refs.main_node.game_out()
 
 
 # SETTINGS BTNZ ---------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ func _on_QuitBtn_pressed() -> void:
 #		Global.sound_manager.play_gui_sfx("btn_cancel")
 #		Global.sound_manager.game_music_set_to_off = true
 #		Global.sound_manager.stop_music("game_music")
-#		Ref.sound_manager.stop_music()
+#		Refs.sound_manager.stop_music()
 
 
 

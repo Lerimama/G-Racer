@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://_obs/BreakerChunk.gd" type="Script" id=1]
-[ext_resource path="res://game/breaker/Operator.gd" type="Script" id=2]
+[ext_resource path="res://breaker/Operator.gd" type="Script" id=2]
 
 [node name="Chunk" type="Polygon2D"]
 polygon = PoolVector2Array( 111, 41, 86, 103, 32, 160, 47, 245, 32, 320, 117, 345, 187, 403, 268, 362, 377, 378, 421, 335, 497, 291, 436, 93, 377, 93, 330, 35, 216, 59 )

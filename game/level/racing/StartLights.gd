@@ -11,23 +11,23 @@ onready var light_timer: Timer = $LightTimer
 
 
 func _ready() -> void:
-	
-	hide()
+
+	visible = Refs.game_manager.game_settings["start_countdown"]
 	for light in off_lights:
 		light.show()
 	for light in on_lights:
 		light.hide()
-	
-	
+
+
 func start_countdown():
-	
+
 	show()
 	light_timer.start()
 	turn_on_light()
 
 
 func turn_on_light():
-	
+
 	if light_index < 3:
 		$CountdownA.play()
 		on_lights[light_index].show()
@@ -36,14 +36,14 @@ func turn_on_light():
 		light_timer.start()
 	else:
 		turn_off_all_lights()
-	
+
 
 func turn_off_all_lights():
-	
+
 	light_index = 0
 	$CountdownB.play()
 	emit_signal("countdown_finished") # GM yielda za ta signal
-	
+
 	for light in on_lights:
 		var turn_off_tween = get_tree().create_tween()
 		turn_off_tween.tween_property(light, "modulate:a", 0, 0.2)
@@ -52,5 +52,5 @@ func turn_off_all_lights():
 
 
 func _on_Timer_timeout() -> void:
-	
+
 	turn_on_light()

@@ -1,9 +1,9 @@
 extends Node
 
-	
+
 var players_activated: Array
-var enemies_mode: bool 
-var easy_mode: bool 
+var enemies_mode: bool
+var easy_mode: bool
 var arena_on = false
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -29,7 +29,7 @@ onready var play_back_btn: Button = $UI/Play/BackBtn
 onready var players_back_btn: Button = $UI/SelectPlayers/BackBtn
 onready var arena_back_btn: Button = $UI/Arena/BackBtn
 
-	
+
 func _ready() -> void:
 
 	# main
@@ -51,41 +51,41 @@ func _ready() -> void:
 	arena_back_btn.connect("pressed", self, "_on_arena_back_btn_pressed")
 
 	temp_back_btn.connect("pressed", self, "_on_temp_back_btn_pressed")
-	
+
 	play_btn.grab_focus()
-	
+
 
 func _process(delta: float) -> void:
-	
+
 	# temp barvanje player gumbov
 	if $UI/SelectPlayers/ItemList/thumb/PlayersBtn.has_focus():
 		$UI/SelectPlayers/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/SelectPlayers/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Ref.color_blue
+		$UI/SelectPlayers/ItemList/thumb/PlayersBtn.get_parent().self_modulate = Refs.color_blue
 	if $UI/SelectPlayers/ItemList/thumb2/PlayersBtn.has_focus():
 		$UI/SelectPlayers/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/SelectPlayers/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Ref.color_red
+		$UI/SelectPlayers/ItemList/thumb2/PlayersBtn.get_parent().self_modulate = Refs.color_red
 	if $UI/SelectPlayers/ItemList/thumb3/PlayersBtn.has_focus():
 		$UI/SelectPlayers/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/SelectPlayers/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Ref.color_yellow
+		$UI/SelectPlayers/ItemList/thumb3/PlayersBtn.get_parent().self_modulate = Refs.color_yellow
 	if $UI/SelectPlayers/ItemList/thumb4/PlayersBtn.has_focus():
 		$UI/SelectPlayers/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/SelectPlayers/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Ref.color_green	
+		$UI/SelectPlayers/ItemList/thumb4/PlayersBtn.get_parent().self_modulate = Refs.color_green
 	if $UI/SelectPlayers/ItemList/thumb5/EnemiesBtn.has_focus():
 		$UI/SelectPlayers/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/SelectPlayers/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Ref.color_gray0
+		$UI/SelectPlayers/ItemList/thumb5/EnemiesBtn.get_parent().self_modulate = Refs.color_gray0
 	if $UI/SelectPlayers/ItemList/thumb6/EasyBtn.has_focus():
 		$UI/SelectPlayers/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Color.white
 	else:
-		$UI/SelectPlayers/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Ref.color_gray0
-		
-	
+		$UI/SelectPlayers/ItemList/thumb6/EasyBtn.get_parent().self_modulate = Refs.color_gray0
+
+
 func _on_AnimationPlayer_animation_finished(animation) -> void:
-	
+
 	match animation:
 		"play_in":
 			if animation_player.get_current_animation_position() == 0:
@@ -97,21 +97,21 @@ func _on_AnimationPlayer_animation_finished(animation) -> void:
 				$UI/Play/thumb/ConfirmBtn.grab_focus()
 			else:
 				$UI/SelectPlayers/ItemList/thumb/PlayersBtn.grab_focus()
-		"arena_in": 
+		"arena_in":
 			if not arena_on:
 				arena_on = true
 				spawn_generator()
 			else:
 				arena_on = false
-				
+
 		"start_game":
 			var arena_save_name = "prva arena"
 			# trenutna mapa
 			var current_used_cells: Array = new_world.arena_tilemap.get_used_cells()
 			# shrani trenutno mapo v profile
-			Pro.arena_tilemap_profiles[arena_save_name] = current_used_cells
+			Pros.arena_tilemap_profiles[arena_save_name] = current_used_cells
 			printt("ANIM", current_used_cells)
-			Met.switch_to_scene("res://game/arena/Arena.tscn", current_used_cells) # 2. arg je zato, da jih zbrišemo		
+			Mets.switch_to_scene("res://game/arena/Arena.tscn", current_used_cells) # 2. arg je zato, da jih zbrišemo
 
 
 # BTNZ ------------------------------------------------------------------------------------------
@@ -126,8 +126,8 @@ func _on_about_btn_pressed():
 	animation_player.play("about_in")
 func _on_quit_btn_pressed():
 	get_tree().quit()
-	
-		
+
+
 # back btnz
 func _on_settings_back_btn_pressed():
 	animation_player.play_backwards("settings_in")
@@ -140,36 +140,37 @@ func _on_players_back_btn_pressed():
 
 
 # play
-func _on_ConfirmBtn_2_pressed() -> void:
-#	Set.set_game_settings(Set.Levels.NITRO)
-	Set.current_game_levels = [Set.Levels.NITRO]
-	animation_player.play("players_in")
-func _on_ConfirmBtn_3_pressed() -> void:
-#	Set.set_game_settings(Set.Levels.OSMICA)
-	Set.current_game_levels = [Set.Levels.RACE_8]
-	animation_player.play("players_in")
-func _on_ConfirmBtn_5_pressed() -> void:
-#	Set.set_game_settings(Set.Levels.DUEL)
-	Set.current_game_levels = [Set.Levels.DUEL]
-	animation_player.play("players_in")
-func _on_ConfirmBtn_7_pressed() -> void:
-#	Set.set_game_settings(Set.Levels.RACE_DIRECT)
-	Set.current_game_levels = [Set.Levels.RACE_DIRECT]
+func _on_ConfirmBtn_3_pressed() -> void: # DEF
+	Sets.current_game_levels = [Sets.LEVEL.FIRST_DRIVE]
 	animation_player.play("players_in")
 func _on_ConfirmBtn_8_pressed() -> void:
-#	Set.set_game_settings(Set.Levels.RACE_SNAKE)
-	Set.current_game_levels = [Set.Levels.RACE_SNAKE]
+	Sets.current_game_levels = [Sets.LEVEL.LEVEL.STAFF]
 	animation_player.play("players_in")
+
+# ---
+func _on_ConfirmBtn_2_pressed() -> void:
+#	Sets.set_game_settings(Sets.Levels.NITRO)
+	Sets.current_game_levels = [Sets.Levels.NITRO]
+	animation_player.play("players_in")
+func _on_ConfirmBtn_5_pressed() -> void:
+#	Sets.set_game_settings(Sets.Levels.DUEL)
+	Sets.current_game_levels = [Sets.Levels.DUEL]
+	animation_player.play("players_in")
+func _on_ConfirmBtn_7_pressed() -> void:
+#	Sets.set_game_settings(Sets.Levels.RACE_DIRECT)
+	Sets.current_game_levels = [Sets.Levels.RACE_DIRECT]
+	animation_player.play("players_in")
+
 func _on_ConfirmBtn_6_pressed() -> void:
-	Set.current_game_levels = [Set.Levels.RACE_DIRECT, Set.Levels.RACE_CIRCO, Set.Levels.RACE_ROUND, Set.Levels.RACE_SNAKE, Set.Levels.RACE_NITRO]
+	Sets.current_game_levels = [Sets.Levels.RACE_DIRECT, Sets.Levels.RACE_CIRCO, Sets.Levels.RACE_ROUND, Sets.Levels.RACE_SNAKE, Sets.Levels.RACE_NITRO]
 	animation_player.play("players_in")
 
 # debug
 func _on_ConfirmBtn_1_pressed() -> void:
-	Set.set_game_settings(Set.Levels.DEBUG_DUEL)
+	Sets.set_game_settings(Sets.Levels.DEBUG_DUEL)
 	animation_player.play("players_in")
 func _on_ConfirmBtn_4_pressed() -> void:
-	Set.set_game_settings(Set.Levels.DEBUG_RACE)
+	Sets.set_game_settings(Sets.Levels.DEBUG_RACE)
 	animation_player.play("players_in")
 
 
@@ -180,61 +181,61 @@ onready var select_players: Control = $UI/SelectPlayers
 
 
 func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.PLAYER.P1
+	var bolt_to_manage: int = Pros.PLAYER.P1
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb/PlayersBtn/Label
 	if button_pressed:
 		btn_label_node.modulate = Color.white
 		players_activated.append(bolt_to_manage)
-		btn_label_node.text = Met.get_random_name(5)
+		btn_label_node.text = Mets.get_random_name(5)
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Ref.color_gray0
+			btn_label_node.modulate = Refs.color_gray0
 			btn_label_node.text = "P1"
-	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
-			
+	Pros.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+
 func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.PLAYER.P2
+	var bolt_to_manage: int = Pros.PLAYER.P2
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb2/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
-		btn_label_node.text = Met.get_random_name(5)
+		btn_label_node.text = Mets.get_random_name(5)
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Ref.color_gray0
+			btn_label_node.modulate = Refs.color_gray0
 			btn_label_node.text = "P2"
-	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
-			
+	Pros.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+
 func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.PLAYER.P3
+	var bolt_to_manage: int = Pros.PLAYER.P3
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb3/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
-		btn_label_node.text = Met.get_random_name(5)
+		btn_label_node.text = Mets.get_random_name(5)
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Ref.color_gray0
+			btn_label_node.modulate = Refs.color_gray0
 			btn_label_node.text = "P3"
-	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
-			
+	Pros.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+
 func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pro.PLAYER.P4
+	var bolt_to_manage: int = Pros.PLAYER.P4
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb4/PlayersBtn/Label
 	if button_pressed:
 		players_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
-		btn_label_node.text = Met.get_random_name(5)
+		btn_label_node.text = Mets.get_random_name(5)
 	else:
 		if players_activated.has(bolt_to_manage):
 			players_activated.erase(bolt_to_manage)
-			btn_label_node.modulate = Ref.color_gray0
+			btn_label_node.modulate = Refs.color_gray0
 			btn_label_node.text = "P1"
-	Pro.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text	
-			
+	Pros.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+
 func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb5/EnemiesBtn/Label
 	if button_pressed:
@@ -242,7 +243,7 @@ func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 		btn_label_node.modulate = Color.white
 	else:
 		enemies_mode = false
-		btn_label_node.modulate = Ref.color_gray0
+		btn_label_node.modulate = Refs.color_gray0
 func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb6/EasyBtn/Label
 	if button_pressed:
@@ -250,18 +251,18 @@ func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
 		btn_label_node.modulate = Color.white
 	else:
 		easy_mode = false
-		btn_label_node.modulate = Ref.color_gray0
+		btn_label_node.modulate = Refs.color_gray0
 func _on_PlayBtn_pressed() -> void:
-	
+
 	if players_activated.empty():
 		return
-		
-	# setam vrednost v Set.
-	Set.current_game_settings["enemies_mode"] = enemies_mode # slovar, ki je duplikat in se ustvari na Set. ready
-	Set.players_on_game_start = players_activated
-	
-#	Set.bolts_activated = players_in_game
-	Ref.main_node.home_out()
+
+	# setam vrednost v Sets.
+	Sets.current_game_settings["enemies_mode"] = enemies_mode # slovar, ki je duplikat in se ustvari na Sets. ready
+	Sets.players_on_game_start = players_activated
+
+#	Sets.bolts_activated = players_in_game
+	Refs.main_node.home_out()
 
 
 # generate arena
@@ -270,7 +271,7 @@ func _on_arena_confirm_btn_pressed():
 func _on_arena_back_btn_pressed():
 	arena_on = false
 	animation_player.play_backwards("arena_in")
-func spawn_generator():	
+func spawn_generator():
 	# spucaj
 #	if not new_world == null:
 #		new_world.queue_free()

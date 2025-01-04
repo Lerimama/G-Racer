@@ -11,33 +11,33 @@ onready var game_music: Node2D = $GameMusic
 #onready var menu_music: AudioStreamPlayer = $Music/MenuMusic/WarmUpShort
 #onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
 
-	
+
 func _ready() -> void:
-	
-	Ref.sound_manager = self
+
+	Refs.sound_manager = self
 	randomize()
 
-	
+
 # SFX --------------------------------------------------------------------------------------------------------
-	
-	
+
+
 func play_sfx(effect_for: String):
-	
+
 	if game_sfx_set_to_off:
-		return	
-		
+		return
+
 	match effect_for:
 		"stray_step":
 			$GameSfx/StraySlide.play()
 		"blinking": # GM na strays spawn, ker se bolje sliši
-			Met.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
-			Met.get_random_member($GameSfx/BlinkingStatic).play()
+			Mets.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
+			Mets.get_random_member($GameSfx/BlinkingStatic).play()
 		"thunder_strike": # intro in GM na strays spawn
 			$GameSfx/Burst.play()
-			
-			
+
+
 func play_gui_sfx(effect_for: String):
-	
+
 	match effect_for:
 		# events
 		"start_countdown_a":
@@ -58,7 +58,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			Met.get_random_member($GuiSfx/Inputs/Typing).play()
+			Mets.get_random_member($GuiSfx/Inputs/Typing).play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":
@@ -71,36 +71,36 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/MenuFade.play()
 		"screen_slide":
 			$GuiSfx/ScreenSlide.play()
-		
+
 
 # MUSKA --------------------------------------------------------------------------------------------------------
-		
+
 
 func play_music():
-	
+
 	if game_music_set_to_off:
 		return
 
 	# set track
 	var current_track: AudioStreamPlayer
-	
-#	if Ref.game_manager.level_settings["level"] == Set.Levels.NITRO: # get level name drugače
+
+#	if Refs.game_manager.level_settings["level"] == Sets.Levels.NITRO: # get level name drugače
 #		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
 #		current_track = game_music.get_node("Nitro")
 #	else:
 	current_track = game_music.get_child(currently_playing_track_index - 1)
-	
-	# Met.sound_play_fade_in(game_music, 0, 2)
-	current_track.play()	
+
+	# Mets.sound_play_fade_in(game_music, 0, 2)
+	current_track.play()
 
 
 func stop_music():
 #func stop_music(stop_reason: String):
-	
+
 	for music in game_music.get_children():
 		if music.is_playing():
-			Met.sound_fade_out_and_reset(music, 2)
-			
+			Mets.sound_fade_out_and_reset(music, 2)
+
 #	match stop_reason:
 #		"game_music":
 #			for music in game_music.get_children():
@@ -115,25 +115,25 @@ func stop_music():
 #					fade_out.tween_callback(music, "stop")
 #					# volume reset
 #					fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
-					
+
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov
-	
+
 	# slajder je omejen med -30 in 10
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("GameMusic"), value_on_slider)
-		
-		
+
+
 func skip_track():
-	
+
 	currently_playing_track_index += 1
-	
+
 	if currently_playing_track_index > game_music.get_child_count():
 		currently_playing_track_index = 1
-	
+
 	for music in game_music.get_children():
 		if music.is_playing():
 			var current_music_volume = music.volume_db
-			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)	
+			var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN_OUT)
 			fade_out.tween_property(music, "volume_db", -80, 0.5)
 			fade_out.tween_callback(music, "stop")
 			fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
