@@ -1,13 +1,17 @@
 extends StaticBody2D
 
-
+# shadows
 export var height: float = 30
 export var elevation: float = 0
+export var transparency: float = 1
+export var shadow_alpha: float = 0.2
+export var shadow_color: Color = Color.black
+
 export var occlude_light: bool = true
 
-onready var polygon_shadow: Polygon2D = $PolygonShadow
 onready var light_occluder_2d: LightOccluder2D = $LightOccluder2D
 onready var collision_polygon_2d: CollisionPolygon2D = $CollisionPolygon2D
+#onready var polygon_shadow: Polygon2D = $PolygonShadow
 
 
 func _ready() -> void:

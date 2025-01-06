@@ -2,9 +2,9 @@
 
 [ext_resource path="res://game/level/buildings/BreakableObject.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/building/tile_roof_edge.png" type="Texture" id=2]
-[ext_resource path="res://common/ShadowPolygon_math.tscn" type="PackedScene" id=3]
+[ext_resource path="res://common/ShadowPolygon.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/textures/building/tile_roof_edge_cornerL.png" type="Texture" id=4]
-[ext_resource path="res://common/ShadowPolygon.tscn" type="PackedScene" id=5]
+[ext_resource path="res://common/ShadowPolygon_orig.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=6]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=8]

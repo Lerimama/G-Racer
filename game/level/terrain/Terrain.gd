@@ -1,8 +1,10 @@
 
 extends StaticBody2D
 
-
-export var shape_height: float = 50 setget _change_shape_height # pravo dobi iz parenta ... debelina pomeni debelino sence
+# shadows
+export var height: float = 50 setget _change_shape_height
+export var elevation: float = 0
+export var transparency: float = 1
 export var shadow_alpha: float = 0.2
 export var shadow_color: Color = Color.black
 
@@ -21,59 +23,14 @@ onready var shadow_shader_rect: ColorRect = $ShadowShader
 
 
 func _ready() -> void:
-
-	# dodam glavni material
-#	if shape_SSD_material:
-#		object_shape.shape_material = shape_SSD_material
-
-	# dodam senco
-	#	if use_shader_shadow:
-	#		# vse pobarvam s casting barvo in setam shader
-	#		object_shape.modulate = shadow_casting_color
-	#		# resizam rect v smeri sence
-	#		if shadow_direction.x > 0:
-	#			shadow_shader_rect.rect_size.x += shape_height * 2
-	#		elif shadow_direction.x < 0:
-	#			shadow_shader_rect.rect_size.x += shape_height * 2
-	#			shadow_shader_rect.rect_position.x -= shape_height * 2
-	#		if shadow_direction.y > 0:
-	#			shadow_shader_rect.rect_size.y += shape_height * 2
-	#		elif shadow_direction.y < 0:
-	#			shadow_shader_rect.rect_size.y += shape_height * 2
-	#			shadow_shader_rect.rect_position.y -= shape_height * 2
-	#
-	#		# shader povečam za debelino sence v smeri sence
-	#		shadow_shader_rect.material.set_shader_param("casting_color_1", shadow_casting_color)
-	#		shadow_shader_rect.material.set_shader_param("casting_object_on_floor", use_shader_shadow)
-	#		shadow_shader_rect.material.set_shader_param("shadow_distance", shape_height)
-	#		shadow_shader_rect.material.set_shader_param("shadow_direction", shadow_direction)
-	#	else:
-	object_shape.modulate = Color.black
-	var shadow_shape: Node2D = object_shape.duplicate()
-	shadow_shape.name = "Shadow"
-	shadow_shape.collision_polygon_node_path = ""
-	add_child(shadow_shape)
-	move_child(shadow_shape, 0)
-	shadow_shape.position += shadow_direction * shape_height
-	shadow_shape.modulate.a = shadow_alpha
-
-	# dodam bottom shade
-#	if shade_SSD_material:
-#		var shade_shape: Node2D = object_shape.duplicate()
-#		shade_shape.name = "Shade"
-#		shade_shape.shape_material = shade_SSD_material
-#		shade_shape.collision_polygon_node_path = ""
-#		add_child(shade_shape)
-#		move_child(shade_shape, 0)
-
-
+	pass
 
 
 func _change_shape_height(new_height: float):
 
-	shape_height = new_height
+	height = new_height
 	if has_node("Shadow"): # start error prevent
-		get_node("Shadow").position = shadow_direction * shape_height
+		get_node("Shadow").position = shadow_direction * height
 		if new_height == 0:
 			get_node("Shadow").modulate.a = 0
 		else:
@@ -84,7 +41,7 @@ func _change_shadow_dir(new_direction: Vector2):
 
 	shadow_direction = new_direction
 	if has_node("Shadow"):
-		get_node("Shadow").position = shadow_direction * shape_height
+		get_node("Shadow").position = shadow_direction * height
 	elif use_shader_shadow:
 		shadow_shader_rect.material.set_shader_param("shadow_direction", shadow_direction)
 

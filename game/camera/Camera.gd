@@ -89,6 +89,9 @@ func shake_camera(shake_power: float):
 
 func set_camera_limits():
 
+	if Refs.game_manager.game_settings["max_zoomout"]:
+		 return
+
 	var corner_TL: float
 	var corner_TR: float
 	var corner_BL: float

@@ -13,12 +13,12 @@ var bolts_checked: Array
 var camera_leader: Node2D # trenutno vodilni igralec (rabim za camera target in pull target)
 
 # game
-var game_settings: Dictionary # set_game seta iz profilov
+#var game_settings: Dictionary # set_game seta iz profilov
 var activated_player_ids: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
 var fast_start_window: bool = false # bolt ga čekira in reagira
 var start_bolt_position_nodes: Array # dobi od tilemapa
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
-export var shadows_direction: Vector2 = Vector2(1, 1) # set_game seta iz profilov
+
 
 # level
 var level_settings: Dictionary # set_level seta iz profilov
@@ -29,6 +29,9 @@ var pickables_in_game: Array
 
 onready var level_finished_ui: Control = $"../UI/LevelFinished"
 onready var game_over_ui: Control = $"../UI/GameOver"
+onready var game_settings: Dictionary = Sets.get_level_game_settings(current_level_index) # set_game seta iz profilov
+onready var shadows_direction: Vector2 = game_settings["shadows_direction"] # Vector2(1, 1) # set_game seta iz profilov
+onready var shadows_length: float = game_settings["shadows_length"] # set_game seta iz profilov
 
 
 func _input(event: InputEvent) -> void:

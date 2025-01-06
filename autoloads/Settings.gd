@@ -59,7 +59,9 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"easy_mode": false,
 	"full_equip_mode": true,
 	"drifting_mode": true, # drift ali tilt?
-	"shadows_direction": Vector2.ONE, # drift ali tilt?
+	"shadows_direction": Vector2.ONE,
+#	"shadows_direction": Vector2(0-800, 0),
+	"shadows_length": 0, # višina vira
 	# debug
 	"max_zoomout": false,
 

@@ -695,7 +695,7 @@ func get_surfaces():
 
 	# če ni arej, ki so podlaga, določim gravel tip
 	if surfaces_under_bolt.empty():
-		current_top_suface_type = Pros.SURFACE_TYPE.NONE
+		current_top_suface_type = Pros.SURFACE.NONE
 	# če so, preverim istost nove podlage
 	else:
 		var new_top_surface: Area2D = surfaces_under_bolt[surfaces_under_bolt.size() - 1]
@@ -704,11 +704,11 @@ func get_surfaces():
 
 	# gravelšejk
 	#	match current_top_suface_type:
-	#		Pros.SURFACE_TYPE.GRAVEL:
+	#		Pros.SURFACE.GRAVEL:
 	#			animation_player.play("gravel_shake")
 	#		_:
 	#			animation_player.stop()
-#	printt ("SURF", Pros.SURFACE_TYPE.keys()[current_top_suface_type])
+#	printt ("SURF", Pros.SURFACE.keys()[current_top_suface_type])
 
 	var new_engine_power_factor: float = Pros.surface_type_profiles[current_top_suface_type]["engine_power_factor"]
 	max_engine_power = bolt_profile["max_engine_power"] * new_engine_power_factor

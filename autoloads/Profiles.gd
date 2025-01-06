@@ -213,25 +213,25 @@ var ammo_profiles : Dictionary = {
 
 func levels(): pass
 
-enum SURFACE_TYPE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
+enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
-	SURFACE_TYPE.NONE: {
+	SURFACE.NONE: {
 		"engine_power_factor": 1, # koliko original powerja
 	},
-	SURFACE_TYPE.CONCRETE: {
+	SURFACE.CONCRETE: {
 		"engine_power_factor": 1.15, # koliko original powerja
 	},
-	SURFACE_TYPE.NITRO: {
+	SURFACE.NITRO: {
 		"engine_power_factor": 2, # koliko original powerja
 	},
-	SURFACE_TYPE.GRAVEL: {
+	SURFACE.GRAVEL: {
 		"engine_power_factor": 0.3,
 #		"drive_lin_damp_rear": 20, # še ni notrivrednost, da riti nič ne odnaša
 	},
-	SURFACE_TYPE.HOLE: {
+	SURFACE.HOLE: {
 		"engine_power_factor": 0.1,
 	},
-	SURFACE_TYPE.TRACKING: {
+	SURFACE.TRACKING: {
 	},
 }
 
@@ -246,7 +246,7 @@ var level_object_profiles: Dictionary = {
 		"value": 30,
 		"speed_brake_div": 10,
 		"elevation": 5,
-		"object_scene": preload("res://game/objects/BrickGhost.tscn"),
+		"object_scene": preload("res://game/level/objects/BrickGhost.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
@@ -254,7 +254,7 @@ var level_object_profiles: Dictionary = {
 		"value": 10,
 		"bounce_strength": 2,
 		"elevation": 5,
-		"object_scene": preload("res://game/objects/BrickBouncer.tscn"),
+		"object_scene": preload("res://game/level/objects/BrickBouncer.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
@@ -262,27 +262,27 @@ var level_object_profiles: Dictionary = {
 		"value": 0,
 		"gravity_force": 300.0,
 		"elevation": 5,
-		"object_scene": preload("res://game/objects/BrickMagnet.tscn"),
+		"object_scene": preload("res://game/level/objects/BrickMagnet.tscn"),
 		"ai_target_rank": 0, # 0 pomeni, da se izogneš
 	},
 	LEVEL_OBJECT.BRICK_TARGET: {
 		"color": Refs.color_brick_target,
 		"value": 100,
 		"elevation": 5,
-		"object_scene": preload("res://game/objects/BrickTarget.tscn"),
+		"object_scene": preload("res://game/level/objects/BrickTarget.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.FLATLIGHT: {
 		"color": Refs.color_brick_light_off,
 		"value": 10,
 		"elevation": 0,
-		"object_scene": preload("res://game/objects/FlatLight.tscn"),
+		"object_scene": preload("res://game/level/objects/FlatLight.tscn"),
 		"ai_target_rank": 3,
 	},
 	LEVEL_OBJECT.GOAL_PILLAR: {
 		"value": 1000,
 		"elevation": 5,
-		"object_scene": preload("res://game/objects/GoalPillar.tscn"),
+		"object_scene": preload("res://game/level/objects/GoalPillar.tscn"),
 		"ai_target_rank": 5,
 	},
 }
@@ -381,4 +381,17 @@ var pickable_profiles: Dictionary = {
 
 var arena_tilemap_profiles: Dictionary = { # za generator
 	"default_arena" : Vector2.ONE,
+}
+
+func z_index(): pass
+
+var z_indexes: Dictionary = {
+	"pickables_z_index": 1,
+	"bolt_z_index": 1,
+	"shadows": 1,
+	Refs.group_shadows: 0,
+	"surface_z_index": 1,
+	"SURFACE": 6,
+	"PICKABLE": 1,
+	"LEVEL_OBJECT": 1,
 }

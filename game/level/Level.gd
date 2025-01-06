@@ -232,7 +232,7 @@ func set_level_navigation(): #_temp zrihtaj set_level_navigation
 
 func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
 
-	var scene_to_spawn: PackedScene = preload("res://game/pickables/Pickable.tscn")
+	var scene_to_spawn: PackedScene = preload("res://game/level/pickables/Pickable.tscn")
 	var pickable_tile_offset: Vector2 = Vector2(8,8)
 
 	var new_pickable_scene = scene_to_spawn.instance() #

@@ -8,37 +8,36 @@
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=6]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
 [ext_resource path="res://game/level/surfaces/SurfaceGravel.tscn" type="PackedScene" id=8]
-[ext_resource path="res://breaker/Breaker.tscn" type="PackedScene" id=9]
-[ext_resource path="res://game/objects/GoalPillar.tscn" type="PackedScene" id=10]
+[ext_resource path="res://game/level/breakers/BreakerConcrete.tscn" type="PackedScene" id=9]
+[ext_resource path="res://game/level/objects/GoalPillar.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/materials/ground_dirt.material" type="Material" id=11]
 [ext_resource path="res://game/level/surfaces/SurfaceNitro.tscn" type="PackedScene" id=12]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=13]
 [ext_resource path="res://common/tex/noise/7547.jpg" type="Texture" id=14]
-[ext_resource path="res://game/pickables/PickableHealth.tscn" type="PackedScene" id=15]
+[ext_resource path="res://game/level/pickables/PickableHealth.tscn" type="PackedScene" id=15]
 [ext_resource path="res://common/shader_rect/ShaderCanvasRect.tscn" type="PackedScene" id=16]
 [ext_resource path="res://assets/materials/ground_linart.material" type="Material" id=17]
-[ext_resource path="res://game/pickables/PickableCash.tscn" type="PackedScene" id=18]
+[ext_resource path="res://game/level/pickables/PickableCash.tscn" type="PackedScene" id=18]
 [ext_resource path="res://assets/materials/ground_dust.material" type="Material" id=19]
 [ext_resource path="res://game/level/racing/BoltTracker.gd" type="Script" id=20]
 [ext_resource path="res://game/level/StartPosition.tscn" type="PackedScene" id=21]
 [ext_resource path="res://game/level/racing/StartLights.tscn" type="PackedScene" id=22]
 [ext_resource path="res://common/shader_rect/ShaderTextureRect.tscn" type="PackedScene" id=23]
 [ext_resource path="res://game/level/racing/LevelTrack.gd" type="Script" id=24]
-[ext_resource path="res://game/pickables/PickableGas.tscn" type="PackedScene" id=25]
+[ext_resource path="res://game/level/pickables/PickableGas.tscn" type="PackedScene" id=25]
 [ext_resource path="res://game/level/tileset_level_objects.tres" type="TileSet" id=26]
 [ext_resource path="res://game/level/Level.gd" type="Script" id=27]
-[ext_resource path="res://game/pickables/PickableMina.tscn" type="PackedScene" id=28]
-[ext_resource path="res://game/pickables/PickableMisile.tscn" type="PackedScene" id=29]
-[ext_resource path="res://game/pickables/PickableShield.tscn" type="PackedScene" id=30]
-[ext_resource path="res://game/pickables/PickableNitro.tscn" type="PackedScene" id=31]
-[ext_resource path="res://game/pickables/PickableLife.tscn" type="PackedScene" id=32]
-[ext_resource path="res://game/pickables/PickableBullet.tscn" type="PackedScene" id=33]
-[ext_resource path="res://game/pickables/PickableRandom.tscn" type="PackedScene" id=34]
+[ext_resource path="res://game/level/pickables/PickableMina.tscn" type="PackedScene" id=28]
+[ext_resource path="res://game/level/pickables/PickableMisile.tscn" type="PackedScene" id=29]
+[ext_resource path="res://game/level/pickables/PickableShield.tscn" type="PackedScene" id=30]
+[ext_resource path="res://game/level/pickables/PickableNitro.tscn" type="PackedScene" id=31]
+[ext_resource path="res://game/level/pickables/PickableLife.tscn" type="PackedScene" id=32]
+[ext_resource path="res://game/level/pickables/PickableBullet.tscn" type="PackedScene" id=33]
+[ext_resource path="res://game/level/pickables/PickableRandom.tscn" type="PackedScene" id=34]
 [ext_resource path="res://game/level/buildings/Building.tscn" type="PackedScene" id=35]
 [ext_resource path="res://game/level/streets/StreetConcrete.tscn" type="PackedScene" id=36]
 [ext_resource path="res://game/level/surfaces/SurfaceHole.tscn" type="PackedScene" id=37]
 [ext_resource path="res://game/level/streets/StreetAsphalt.tscn" type="PackedScene" id=38]
-[ext_resource path="res://breaker/BreakerSSD.tscn" type="PackedScene" id=51]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
 seed = 7
@@ -613,6 +612,9 @@ _next_key = 31
 _material_overrides = {
 }
 
+[sub_resource type="PhysicsMaterial" id=1]
+friction = 0.0
+
 [sub_resource type="Resource" id=11701]
 script = ExtResource( 13 )
 texture_idx = 3
@@ -938,41 +940,37 @@ theme = ExtResource( 3 )
 
 [node name="Terrain" type="Node2D" parent="."]
 
-[node name="Breaker" parent="Terrain" instance=ExtResource( 9 )]
-position = Vector2( 672, 1800 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="BreakerBase" parent="Terrain/Breaker" index="1"]
-color = Color( 0.501961, 0.501961, 0.501961, 1 )
-polygon = PoolVector2Array( 64, 32, 0.0400391, 128, -31.96, 256, 32.04, 320, 288, 320, 384, 256, 448, 256, 448, 128, 384, 0, 320, -32, 96, -32 )
-
 [node name="TerrainMountain" parent="Terrain" instance=ExtResource( 5 )]
-position = Vector2( 64, 1984 )
+position = Vector2( 88, 2088 )
 
-[node name="ObjectShapeSSD" parent="Terrain/TerrainMountain" index="0"]
+[node name="ObjectShapeSSD" parent="Terrain/TerrainMountain" index="1"]
 _points = SubResource( 11689 )
 
-[node name="CollisionPolygon2D" parent="Terrain/TerrainMountain" index="1"]
-polygon = PoolVector2Array( -0.120728, 1272.16, -0.0834694, -0.0651855, 256.017, -64.0625, 384.07, 63.9828, 344, 192, 272.048, 375.997, 384.042, 575.996, 320.015, 768.001, 384.105, 1152.06 )
+[node name="CollisionPolygon2D" parent="Terrain/TerrainMountain" index="2"]
+polygon = PoolVector2Array( -0.120728, 1272.16, -0.0834656, -0.0651855, 256.017, -64.0625, 384.07, 63.9827, 344, 192, 272.048, 375.997, 384.042, 575.996, 320.015, 768.001, 384.105, 1152.06 )
+
+[node name="ShadowShader" parent="Terrain/TerrainMountain" index="3"]
+visible = true
 
 [node name="TerrainMountain2" parent="Terrain" instance=ExtResource( 5 )]
-position = Vector2( 64, 3520 )
-shape_height = 50.0
+position = Vector2( 104, 3480 )
 
-[node name="ObjectShapeSSD" parent="Terrain/TerrainMountain2" index="0"]
+[node name="ObjectShapeSSD" parent="Terrain/TerrainMountain2" index="1"]
 _points = SubResource( 11700 )
 
-[node name="CollisionPolygon2D" parent="Terrain/TerrainMountain2" index="1"]
+[node name="CollisionPolygon2D" parent="Terrain/TerrainMountain2" index="2"]
 polygon = PoolVector2Array( -0.103554, 448.104, -0.103554, -0.103516, 448.215, -0.125, 192.034, 448.058 )
 
-[node name="Breaker2" parent="Terrain" instance=ExtResource( 9 )]
-visible = false
-position = Vector2( 128, 3144 )
+[node name="ShadowShader" parent="Terrain/TerrainMountain2" index="3"]
+visible = true
 
-[node name="BreakerSSD" parent="Terrain" instance=ExtResource( 51 )]
-position = Vector2( 688, 2648 )
+[node name="BreakerConcrete" parent="Terrain" instance=ExtResource( 9 )]
+position = Vector2( 816, 2576 )
+physics_material_override = SubResource( 1 )
+elevation = 100
+
+[node name="BreakerBase" parent="Terrain/BreakerConcrete" index="2"]
+polygon = PoolVector2Array( 0, 384, 208, 384, 208, 184, 392, 216, 384, 0, 248, 0, 176, 120, -104, 80, 128, 256, -128, 304 )
 
 [node name="Objects" type="Node2D" parent="."]
 z_index = 1
@@ -1026,13 +1024,13 @@ position = Vector2( 2681, 2958 )
 position = Vector2( 2487, 2788 )
 
 [node name="Building" parent="." instance=ExtResource( 35 )]
-position = Vector2( 64, 512 )
+position = Vector2( 72, 560 )
 
 [node name="SS2D_Shape_Closed" parent="Building" index="1"]
 _points = SubResource( 11717 )
 
 [node name="CollisionPolygon2D" parent="Building" index="2"]
-polygon = PoolVector2Array( -0.542603, -0.281555, 1664.1, -0.103546, 1664.1, 456.104, 576.013, 456.033, 384.037, 640.016, 384.104, 1344.1, -0.103455, 1344.1 )
+polygon = PoolVector2Array( -0.542603, -0.281555, 1664.1, -0.103516, 1664.1, 456.104, 576.013, 456.033, 384.037, 640.016, 384.104, 1344.1, -0.103455, 1344.1 )
 
 [node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="."]
 visible = false
@@ -1248,7 +1246,7 @@ text = "Pikables
 [editable path="Ground/StreetConcrete"]
 [editable path="Ground/Surfaces/SurfaceGravel"]
 [editable path="Ground/Surfaces/SurfaceNitro"]
-[editable path="Terrain/Breaker"]
 [editable path="Terrain/TerrainMountain"]
 [editable path="Terrain/TerrainMountain2"]
+[editable path="Terrain/BreakerConcrete"]
 [editable path="Building"]

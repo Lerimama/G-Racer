@@ -89,16 +89,16 @@ _material_overrides = {
 }
 
 [node name="TerrainMountain" instance=ExtResource( 3 )]
-shape_height = 100.0
+modulate = Color( 0, 0, 0, 1 )
 
-[node name="ObjectShapeSSD" parent="." index="0"]
+[node name="ObjectShapeSSD" parent="." index="1"]
 _points = SubResource( 11 )
 shape_material = ExtResource( 2 )
 
-[node name="CollisionPolygon2D" parent="." index="1"]
+[node name="CollisionPolygon2D" parent="." index="2"]
 visible = false
 polygon = PoolVector2Array( -0.103555, 448.104, -0.103553, -0.103553, 640.104, -0.103553, 640.104, 448.104 )
 
-[node name="ShadowShader" parent="." index="2"]
+[node name="ShadowShader" parent="." index="3"]
 margin_right = 704.0
 margin_bottom = 512.0

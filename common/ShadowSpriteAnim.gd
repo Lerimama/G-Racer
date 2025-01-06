@@ -16,6 +16,8 @@ onready var shadow_owner: Node2D = get_parent()
 
 func _ready() -> void:
 
+	add_to_group(Refs.group_shadows)
+
 	if shadow_casting_node:
 		frames = shadow_casting_node.frames
 		playing = shadow_casting_node.playing

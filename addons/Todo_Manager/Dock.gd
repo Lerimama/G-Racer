@@ -65,7 +65,7 @@ func get_active_script() -> TodoItem:
 		for todo_item in todo_items:
 			if todo_item.script_path == script_path:
 				return todo_item
-		
+
 		# nothing found
 		var todo_item := TodoItem.new(script_path, [])
 		return todo_item
@@ -88,20 +88,20 @@ func go_to_script(script_path: String, line_number : int = 0) -> void:
 func get_exec_flags(editor_path : String, script_path : String, line_number : int) -> PoolStringArray:
 	var args : PoolStringArray
 	var script_global_path = ProjectSettings.globalize_path(script_path)
-	
+
 	if editor_path.ends_with("code.cmd") or editor_path.ends_with("code"): ## VS Code
 		args.append(ProjectSettings.globalize_path("res://"))
 		args.append("--goto")
 		args.append(script_global_path +  ":" + String(line_number))
-	
+
 	elif editor_path.ends_with("rider64.exe") or editor_path.ends_with("rider"): ## Rider
 		args.append("--line")
 		args.append(String(line_number))
 		args.append(script_global_path)
-		
+
 	else: ## Atom / Sublime
 		args.append(script_global_path + ":" + String(line_number))
-	
+
 	return args
 
 func sort_alphabetical(a, b) -> bool:
@@ -126,7 +126,7 @@ func populate_settings() -> void:
 		colour_picker.index = i
 		colours_container.add_child(colour_picker)
 		colour_picker.colour_picker.connect("color_changed", self, "change_colour", [i])
-		
+
 		## Create Patterns
 		var pattern_edit := Pattern.instance()
 		pattern_edit.text = patterns[i][0]
@@ -135,7 +135,7 @@ func populate_settings() -> void:
 		pattern_edit.line_edit.connect("text_changed", self, "change_pattern", [i, colour_picker])
 		pattern_edit.remove_button.connect("pressed", self, "remove_pattern", [i, pattern_edit, colour_picker])
 	$VBoxContainer/TabContainer/Settings/ScrollContainer/MarginContainer/VBoxContainer/HBoxContainer4/Patterns/AddPatternButton.raise()
-	
+
 	# path filtering
 	var ignore_paths_field := ignore_textbox
 	if !ignore_paths_field.is_connected("text_changed", self, "_on_ignore_paths_changed"):
@@ -164,12 +164,12 @@ func create_config_file() -> void:
 	config.set_value("scripts", "sort_alphabetical", sort_alphabetical)
 	config.set_value("scripts", "script_colour", script_colour)
 	config.set_value("scripts", "ignore_paths", ignore_paths)
-	
+
 	config.set_value("patterns", "patterns", patterns)
-	
+
 	config.set_value("config", "auto_refresh", auto_refresh)
 	config.set_value("config", "builtin_enabled", builtin_enabled)
-	
+
 	var err = config.save("res://addons/Todo_Manager/todo.cfg")
 
 
@@ -201,7 +201,7 @@ func _on_Tree_item_activated() -> void:
 	match tabs.current_tab:
 		0:
 			item = project_tree.get_selected()
-		1: 
+		1:
 			item = current_tree.get_selected()
 	if item.get_metadata(0) is Todo:
 		var todo : Todo = item.get_metadata(0)
@@ -259,7 +259,7 @@ func _on_ignore_paths_changed(new_text: String) -> void:
 	var split: Array = text.split(',')
 	ignore_paths.clear()
 	for elem in split:
-		if elem == " " || elem == "": 
+		if elem == " " || elem == "":
 			continue
 		ignore_paths.push_front(elem.lstrip(' ').rstrip(' '))
 	# validate so no empty string slips through (all paths ignored)

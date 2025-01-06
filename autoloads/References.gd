@@ -25,6 +25,7 @@ var group_misiles = "Misiles"
 var group_bullets = "Bullets"
 var group_mine = "Mine"
 var group_pickables = "Pickables"
+var group_shadows = "Shadows"
 #var group_arena =  "Arena"
 #var group_tilemap = "Tilemap" # defender in patterns
 #var group_menu_confirm_btns = "Menu confirm btns"

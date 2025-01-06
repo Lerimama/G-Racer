@@ -12,8 +12,8 @@
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=10]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=11]
 [ext_resource path="res://assets/textures/building/tile_roof_edge.png" type="Texture" id=12]
-[ext_resource path="res://common/ShadowPolygon.tscn" type="PackedScene" id=13]
 [ext_resource path="res://game/level/buildings/Building.gd" type="Script" id=14]
+[ext_resource path="res://common/ShadowPolygon.tscn" type="PackedScene" id=15]
 
 [sub_resource type="Resource" id=8148]
 script = ExtResource( 11 )
@@ -150,7 +150,8 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="PolygonShadow" parent="." instance=ExtResource( 13 )]
+[node name="PolygonShadow" parent="." instance=ExtResource( 15 )]
+shadow_casting_polygon_path = NodePath("../CollisionPolygon2D")
 
 [node name="SS2D_Shape_Closed" type="Node2D" parent="."]
 position = Vector2( 256, 192 )

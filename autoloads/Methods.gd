@@ -116,7 +116,8 @@ func spawn_indikator(pos: Vector2, col: Color = Color.red, scale_by: float = 10,
 	new_indikator.global_rotation = rot
 	new_indikator.modulate = col
 	new_indikator.z_index = 1000
-	parent_node.add_child(new_indikator)
+	parent_node.call_deferred("add_child", new_indikator)
+#	parent_node.add_child(new_indikator)
 
 	new_indikator.scale *= scale_by
 	all_indikators_spawned.append(new_indikator)
@@ -124,8 +125,30 @@ func spawn_indikator(pos: Vector2, col: Color = Color.red, scale_by: float = 10,
 	return new_indikator
 
 
+func spawn_polygon_2d(poylgon_points: PoolVector2Array, spawn_parent = get_tree().root, col: Color = Color.blue):
+
+	var new_polygon_shape: Polygon2D = Polygon2D.new()
+	new_polygon_shape.polygon = poylgon_points
+	new_polygon_shape.color = col
+	spawn_parent.add_child(new_polygon_shape)
+
+	return new_polygon_shape
+
+
+func spawn_line_2d(first_point: Vector2, second_point: Vector2, spawn_parent = get_tree().root, col: Color = Color.blue, line_width: float = 10):
+
+	var new_indikator_line = Line2D.new()
+	new_indikator_line.points =[first_point, second_point]
+	new_indikator_line.default_color = col
+	new_indikator_line.width = line_width
+	spawn_parent.call_deferred("add_child", new_indikator_line)
+
+#	spawn_parent.add_child(new_indikator_line)
+
+	return new_indikator_line
+
 var all_indikator_lines_spawned: Array = []
-func spawn_indikator_line(frist_point: Vector2, second_point: Vector2, col: Color = Color.blue, parent_node = get_tree().root, clear_spawned_before: bool = false):
+func spawn_indikator_line(first_point: Vector2, second_point: Vector2, col: Color = Color.blue, parent_node = get_tree().root, clear_spawned_before: bool = false):
 
 	if clear_spawned_before:
 		for line in all_indikator_lines_spawned:
@@ -133,7 +156,7 @@ func spawn_indikator_line(frist_point: Vector2, second_point: Vector2, col: Colo
 		all_indikator_lines_spawned.clear()
 
 	var new_indikator_line = Line2D.new()
-	new_indikator_line.points =[frist_point, second_point]
+	new_indikator_line.points =[first_point, second_point]
 	new_indikator_line.z_index = 100
 	new_indikator_line.default_color = col
 	parent_node.add_child(new_indikator_line)
