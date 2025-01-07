@@ -1,10 +1,10 @@
 [gd_resource type="TileSet" load_steps=525 format=2]
 
 [ext_resource path="res://_zaloga ... ni v uporabi/shaders/level_texture_shader.tres" type="Material" id=1]
-[ext_resource path="res://_obs/textures/areas/tile_arena_navigation.png" type="Texture" id=2]
-[ext_resource path="res://_obs/textures/areas/tileset_arena_edge.png" type="Texture" id=3]
-[ext_resource path="res://_obs/textures/areas/tile_arena_colored.png" type="Texture" id=4]
-[ext_resource path="res://_obs/textures/areas/tileset_arena_edge_broken.png" type="Texture" id=5]
+[ext_resource path="res://_zaloga ... ni v uporabi/tilemap_edge/tile_arena_navigation.png" type="Texture" id=2]
+[ext_resource path="res://_zaloga ... ni v uporabi/tilemap_edge/tileset_arena_edge.png" type="Texture" id=3]
+[ext_resource path="res://_zaloga ... ni v uporabi/tilemap_edge/tile_arena_colored.png" type="Texture" id=4]
+[ext_resource path="res://_zaloga ... ni v uporabi/tilemap_edge/tileset_arena_edge_broken.png" type="Texture" id=5]
 
 [sub_resource type="OccluderPolygon2D" id=680]
 polygon = PoolVector2Array( 8, 8, 0, 8, 0, 0, 8, 0 )

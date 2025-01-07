@@ -1,17 +1,17 @@
-[gd_scene load_steps=146 format=2]
+[gd_scene load_steps=141 format=2]
 
 [ext_resource path="res://common/tex/cross.png" type="Texture" id=1]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=2]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=4]
-[ext_resource path="res://game/level/terrain/TerrainMountain.tscn" type="PackedScene" id=5]
+[ext_resource path="res://game/level/terrain/ObjectMountain_SS2D.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=6]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
-[ext_resource path="res://game/level/surfaces/SurfaceGravel.tscn" type="PackedScene" id=8]
+[ext_resource path="res://game/level/terrain/surfaces/SurfaceGravel_SS2D.tscn" type="PackedScene" id=8]
 [ext_resource path="res://game/level/breakers/BreakerConcrete.tscn" type="PackedScene" id=9]
 [ext_resource path="res://game/level/objects/GoalPillar.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/materials/ground_dirt.material" type="Material" id=11]
-[ext_resource path="res://game/level/surfaces/SurfaceNitro.tscn" type="PackedScene" id=12]
+[ext_resource path="res://game/level/terrain/surfaces/SurfaceNitro_SS2D.tscn" type="PackedScene" id=12]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=13]
 [ext_resource path="res://common/tex/noise/7547.jpg" type="Texture" id=14]
 [ext_resource path="res://game/level/pickables/PickableHealth.tscn" type="PackedScene" id=15]
@@ -34,10 +34,14 @@
 [ext_resource path="res://game/level/pickables/PickableLife.tscn" type="PackedScene" id=32]
 [ext_resource path="res://game/level/pickables/PickableBullet.tscn" type="PackedScene" id=33]
 [ext_resource path="res://game/level/pickables/PickableRandom.tscn" type="PackedScene" id=34]
-[ext_resource path="res://game/level/buildings/Building.tscn" type="PackedScene" id=35]
-[ext_resource path="res://game/level/streets/StreetConcrete.tscn" type="PackedScene" id=36]
-[ext_resource path="res://game/level/surfaces/SurfaceHole.tscn" type="PackedScene" id=37]
-[ext_resource path="res://game/level/streets/StreetAsphalt.tscn" type="PackedScene" id=38]
+[ext_resource path="res://game/level/buildings/Building_SS2D.tscn" type="PackedScene" id=35]
+[ext_resource path="res://game/level/terrain/streets/StreetConcrete_SS2D.tscn" type="PackedScene" id=36]
+[ext_resource path="res://game/level/terrain/surfaces/SurfaceHole_SS2D.tscn" type="PackedScene" id=37]
+[ext_resource path="res://game/level/terrain/streets/StreetAsphalt_SS2D.tscn" type="PackedScene" id=38]
+[ext_resource path="res://game/level/breakers/Breaker_ClosedSS2D.tscn" type="PackedScene" id=39]
+[ext_resource path="res://game/level/breakers/Breaker_OpenSS2D.tscn" type="PackedScene" id=40]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=41]
+[ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=42]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
 seed = 7
@@ -60,7 +64,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11626]
 script = ExtResource( 7 )
-position = Vector2( -743, 3332 )
+position = Vector2( -2657.71, 3732.75 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11625 )
@@ -73,7 +77,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11628]
 script = ExtResource( 7 )
-position = Vector2( -2807, -1980 )
+position = Vector2( -2808.02, -1970.45 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11627 )
@@ -86,60 +90,62 @@ width = 1.0
 
 [sub_resource type="Resource" id=11630]
 script = ExtResource( 7 )
-position = Vector2( 265, 636 )
-point_in = Vector2( -1055, 2172 )
-point_out = Vector2( 993, -2964 )
+position = Vector2( 371.508, -359.83 )
+point_in = Vector2( -370.614, 655.701 )
+point_out = Vector2( 712.719, -1824.56 )
 properties = SubResource( 11629 )
 
 [sub_resource type="Resource" id=11631]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11632]
+script = ExtResource( 7 )
+position = Vector2( -301.621, 1387.09 )
+point_in = Vector2( 0, 413.376 )
+point_out = Vector2( -64.1445, -1147.48 )
+properties = SubResource( 11631 )
+
+[sub_resource type="Resource" id=11633]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11634]
+script = ExtResource( 7 )
+position = Vector2( 33.3569, 2855.29 )
+point_in = Vector2( -726.973, 1047.7 )
+point_out = Vector2( 484.648, -719.846 )
+properties = SubResource( 11633 )
+
+[sub_resource type="Resource" id=11635]
 script = ExtResource( 6 )
 _points = {
 0: SubResource( 11626 ),
 41: SubResource( 11628 ),
-76: SubResource( 11630 )
+76: SubResource( 11630 ),
+77: SubResource( 11632 ),
+78: SubResource( 11634 )
 }
-_point_order = [ 0, 76, 41 ]
+_point_order = [ 0, 78, 77, 76, 41 ]
 _constraints = {
 }
-_next_key = 81
+_next_key = 79
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11632]
+[sub_resource type="Resource" id=11636]
 script = ExtResource( 13 )
 texture_idx = 4
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11633]
-script = ExtResource( 7 )
-position = Vector2( 4856, 3928 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11632 )
-
-[sub_resource type="Resource" id=11634]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11635]
-script = ExtResource( 7 )
-position = Vector2( 1144, -2512 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11634 )
-
-[sub_resource type="Resource" id=11636]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
 [sub_resource type="Resource" id=11637]
 script = ExtResource( 7 )
-position = Vector2( 1152, 2480 )
+position = Vector2( 2195.91, 3725.62 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11636 )
@@ -152,7 +158,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11639]
 script = ExtResource( 7 )
-position = Vector2( 2432, 2480 )
+position = Vector2( 1138.92, 2375.63 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11638 )
@@ -165,7 +171,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11641]
 script = ExtResource( 7 )
-position = Vector2( 2432, 816 )
+position = Vector2( 3054.92, 2355.63 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11640 )
@@ -178,7 +184,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11643]
 script = ExtResource( 7 )
-position = Vector2( 1152, 816 )
+position = Vector2( 3030.92, 571.627 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11642 )
@@ -191,54 +197,54 @@ width = 1.0
 
 [sub_resource type="Resource" id=11645]
 script = ExtResource( 7 )
-position = Vector2( 1152, 3944 )
+position = Vector2( 1082.92, 555.627 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11644 )
 
 [sub_resource type="Resource" id=11646]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11647]
+script = ExtResource( 7 )
+position = Vector2( 1105.39, -2547.93 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11646 )
+
+[sub_resource type="Resource" id=11648]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11649]
+script = ExtResource( 7 )
+position = Vector2( 1115.46, 3726.19 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11648 )
+
+[sub_resource type="Resource" id=11650]
 script = ExtResource( 6 )
 _points = {
-0: SubResource( 11633 ),
-41: SubResource( 11635 ),
-77: SubResource( 11637 ),
-79: SubResource( 11639 ),
-80: SubResource( 11641 ),
-81: SubResource( 11643 ),
-82: SubResource( 11645 )
+0: SubResource( 11637 ),
+77: SubResource( 11639 ),
+78: SubResource( 11641 ),
+79: SubResource( 11643 ),
+80: SubResource( 11645 ),
+81: SubResource( 11647 ),
+82: SubResource( 11649 )
 }
-_point_order = [ 0, 82, 77, 79, 80, 81, 41 ]
+_point_order = [ 0, 82, 77, 78, 79, 80, 81 ]
 _constraints = {
 }
 _next_key = 83
 _material_overrides = {
 }
-
-[sub_resource type="Resource" id=11647]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11648]
-script = ExtResource( 7 )
-position = Vector2( 448, 640 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11647 )
-
-[sub_resource type="Resource" id=11649]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11650]
-script = ExtResource( 7 )
-position = Vector2( 448, 0 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11649 )
 
 [sub_resource type="Resource" id=11651]
 script = ExtResource( 13 )
@@ -248,7 +254,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11652]
 script = ExtResource( 7 )
-position = Vector2( 0, 640 )
+position = Vector2( 448, 640 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11651 )
@@ -261,7 +267,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11654]
 script = ExtResource( 7 )
-position = Vector2( 0, 0 )
+position = Vector2( 448, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11653 )
@@ -274,19 +280,45 @@ width = 1.0
 
 [sub_resource type="Resource" id=11656]
 script = ExtResource( 7 )
-position = Vector2( 448, 0 )
+position = Vector2( 0, 640 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11655 )
 
 [sub_resource type="Resource" id=11657]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11658]
+script = ExtResource( 7 )
+position = Vector2( 0, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11657 )
+
+[sub_resource type="Resource" id=11659]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11660]
+script = ExtResource( 7 )
+position = Vector2( 448, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11659 )
+
+[sub_resource type="Resource" id=11661]
 script = ExtResource( 6 )
 _points = {
-4: SubResource( 11648 ),
-5: SubResource( 11650 ),
-7: SubResource( 11652 ),
-8: SubResource( 11654 ),
-9: SubResource( 11656 )
+4: SubResource( 11652 ),
+5: SubResource( 11654 ),
+7: SubResource( 11656 ),
+8: SubResource( 11658 ),
+9: SubResource( 11660 )
 }
 _point_order = [ 5, 4, 7, 8, 9 ]
 _constraints = {
@@ -296,32 +328,6 @@ _next_key = 11
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11658]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11659]
-script = ExtResource( 7 )
-position = Vector2( 1344, 320 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11658 )
-
-[sub_resource type="Resource" id=11660]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11661]
-script = ExtResource( 7 )
-position = Vector2( 1344, 0 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11660 )
-
 [sub_resource type="Resource" id=11662]
 script = ExtResource( 13 )
 texture_idx = 0
@@ -330,7 +336,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11663]
 script = ExtResource( 7 )
-position = Vector2( 0, 320 )
+position = Vector2( 1344, 320 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11662 )
@@ -343,7 +349,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11665]
 script = ExtResource( 7 )
-position = Vector2( 0, 0 )
+position = Vector2( 1344, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11664 )
@@ -356,19 +362,45 @@ width = 1.0
 
 [sub_resource type="Resource" id=11667]
 script = ExtResource( 7 )
-position = Vector2( 1344, 0 )
+position = Vector2( 0, 320 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11666 )
 
 [sub_resource type="Resource" id=11668]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11669]
+script = ExtResource( 7 )
+position = Vector2( 0, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11668 )
+
+[sub_resource type="Resource" id=11670]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11671]
+script = ExtResource( 7 )
+position = Vector2( 1344, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11670 )
+
+[sub_resource type="Resource" id=11672]
 script = ExtResource( 6 )
 _points = {
-4: SubResource( 11659 ),
-5: SubResource( 11661 ),
-7: SubResource( 11663 ),
-8: SubResource( 11665 ),
-9: SubResource( 11667 )
+4: SubResource( 11663 ),
+5: SubResource( 11665 ),
+7: SubResource( 11667 ),
+8: SubResource( 11669 ),
+9: SubResource( 11671 )
 }
 _point_order = [ 5, 4, 7, 8, 9 ]
 _constraints = {
@@ -378,32 +410,6 @@ _next_key = 11
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11669]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11670]
-script = ExtResource( 7 )
-position = Vector2( 0, 1272 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11669 )
-
-[sub_resource type="Resource" id=11671]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11672]
-script = ExtResource( 7 )
-position = Vector2( 256, -64 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11671 )
-
 [sub_resource type="Resource" id=11673]
 script = ExtResource( 13 )
 texture_idx = 0
@@ -412,7 +418,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11674]
 script = ExtResource( 7 )
-position = Vector2( 0, 0 )
+position = Vector2( 53.8174, 2028.79 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11673 )
@@ -425,7 +431,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11676]
 script = ExtResource( 7 )
-position = Vector2( 0, 1272 )
+position = Vector2( 384, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11675 )
@@ -438,7 +444,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11678]
 script = ExtResource( 7 )
-position = Vector2( 384, 576 )
+position = Vector2( 0, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11677 )
@@ -451,7 +457,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11680]
 script = ExtResource( 7 )
-position = Vector2( 384, 64 )
+position = Vector2( 53.8174, 2028.79 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11679 )
@@ -464,9 +470,9 @@ width = 1.0
 
 [sub_resource type="Resource" id=11682]
 script = ExtResource( 7 )
-position = Vector2( 344, 192 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
+position = Vector2( 343.637, 629.542 )
+point_in = Vector2( 158.089, -406.994 )
+point_out = Vector2( -158.089, 406.994 )
 properties = SubResource( 11681 )
 
 [sub_resource type="Resource" id=11683]
@@ -477,7 +483,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11684]
 script = ExtResource( 7 )
-position = Vector2( 272, 376 )
+position = Vector2( 413.497, 1677.01 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11683 )
@@ -490,7 +496,7 @@ width = 1.0
 
 [sub_resource type="Resource" id=11686]
 script = ExtResource( 7 )
-position = Vector2( 384, 1152 )
+position = Vector2( 295.772, 1381.01 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11685 )
@@ -503,55 +509,64 @@ width = 1.0
 
 [sub_resource type="Resource" id=11688]
 script = ExtResource( 7 )
-position = Vector2( 320, 768 )
+position = Vector2( 295.772, 1182.56 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11687 )
 
 [sub_resource type="Resource" id=11689]
-script = ExtResource( 6 )
-_points = {
-0: SubResource( 11670 ),
-1: SubResource( 11672 ),
-2: SubResource( 11674 ),
-3: SubResource( 11676 ),
-4: SubResource( 11678 ),
-31: SubResource( 11680 ),
-32: SubResource( 11682 ),
-33: SubResource( 11684 ),
-34: SubResource( 11686 ),
-35: SubResource( 11688 )
-}
-_point_order = [ 3, 2, 1, 31, 32, 33, 4, 35, 34, 0 ]
-_constraints = {
-[ 0, 3 ]: 15
-}
-_next_key = 36
-_material_overrides = {
-}
-
-[sub_resource type="Resource" id=11690]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11691]
+[sub_resource type="Resource" id=11690]
 script = ExtResource( 7 )
-position = Vector2( 0, 448 )
+position = Vector2( 477.405, 967.292 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11690 )
+properties = SubResource( 11689 )
+
+[sub_resource type="Resource" id=11691]
+script = ExtResource( 6 )
+_points = {
+0: SubResource( 11674 ),
+1: SubResource( 11676 ),
+2: SubResource( 11678 ),
+3: SubResource( 11680 ),
+4: SubResource( 11682 ),
+31: SubResource( 11684 ),
+32: SubResource( 11686 ),
+33: SubResource( 11688 ),
+34: SubResource( 11690 )
+}
+_point_order = [ 3, 2, 1, 4, 34, 33, 32, 31, 0 ]
+_constraints = {
+[ 0, 3 ]: 15
+}
+_next_key = 35
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=1823]
+script = ExtResource( 41 )
+_edge_meta_materials = [  ]
+fill_textures = [ ExtResource( 42 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
 
 [sub_resource type="Resource" id=11692]
 script = ExtResource( 13 )
-texture_idx = 0
+texture_idx = 3
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=11693]
 script = ExtResource( 7 )
-position = Vector2( 448, 0 )
+position = Vector2( -256.439, -192.178 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11692 )
@@ -564,172 +579,100 @@ width = 1.0
 
 [sub_resource type="Resource" id=11695]
 script = ExtResource( 7 )
-position = Vector2( 0, 0 )
+position = Vector2( 1408, -192 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11694 )
 
 [sub_resource type="Resource" id=11696]
 script = ExtResource( 13 )
-texture_idx = 0
+texture_idx = -1
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=11697]
 script = ExtResource( 7 )
-position = Vector2( 0, 448 )
+position = Vector2( 1408, 264 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11696 )
 
 [sub_resource type="Resource" id=11698]
 script = ExtResource( 13 )
-texture_idx = 0
+texture_idx = 3
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=11699]
 script = ExtResource( 7 )
-position = Vector2( 192, 448 )
+position = Vector2( -256.439, -192.178 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 11698 )
 
 [sub_resource type="Resource" id=11700]
-script = ExtResource( 6 )
-_points = {
-0: SubResource( 11691 ),
-1: SubResource( 11693 ),
-2: SubResource( 11695 ),
-3: SubResource( 11697 ),
-4: SubResource( 11699 )
-}
-_point_order = [ 3, 2, 1, 4, 0 ]
-_constraints = {
-[ 0, 3 ]: 15
-}
-_next_key = 31
-_material_overrides = {
-}
-
-[sub_resource type="PhysicsMaterial" id=1]
-friction = 0.0
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
 
 [sub_resource type="Resource" id=11701]
-script = ExtResource( 13 )
-texture_idx = 3
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11702]
-script = ExtResource( 7 )
-position = Vector2( -256.439, -192.178 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11701 )
-
-[sub_resource type="Resource" id=11703]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11704]
-script = ExtResource( 7 )
-position = Vector2( 1408, -192 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11703 )
-
-[sub_resource type="Resource" id=11705]
-script = ExtResource( 13 )
-texture_idx = -1
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11706]
-script = ExtResource( 7 )
-position = Vector2( 1408, 264 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11705 )
-
-[sub_resource type="Resource" id=11707]
-script = ExtResource( 13 )
-texture_idx = 3
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11708]
-script = ExtResource( 7 )
-position = Vector2( -256.439, -192.178 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11707 )
-
-[sub_resource type="Resource" id=11709]
-script = ExtResource( 13 )
-texture_idx = 0
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11710]
 script = ExtResource( 7 )
 position = Vector2( -256, 1152 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11709 )
+properties = SubResource( 11700 )
 
-[sub_resource type="Resource" id=11711]
+[sub_resource type="Resource" id=11702]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11712]
+[sub_resource type="Resource" id=11703]
 script = ExtResource( 7 )
 position = Vector2( 320, 264 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11711 )
+properties = SubResource( 11702 )
 
-[sub_resource type="Resource" id=11713]
+[sub_resource type="Resource" id=11704]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11714]
+[sub_resource type="Resource" id=11705]
 script = ExtResource( 7 )
 position = Vector2( 128, 1152 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11713 )
+properties = SubResource( 11704 )
 
-[sub_resource type="Resource" id=11715]
+[sub_resource type="Resource" id=11706]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11716]
+[sub_resource type="Resource" id=11707]
 script = ExtResource( 7 )
 position = Vector2( 128, 448 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11715 )
+properties = SubResource( 11706 )
 
-[sub_resource type="Resource" id=11717]
+[sub_resource type="Resource" id=11708]
 script = ExtResource( 6 )
 _points = {
-0: SubResource( 11702 ),
-1: SubResource( 11704 ),
-2: SubResource( 11706 ),
-3: SubResource( 11708 ),
-4: SubResource( 11710 ),
-6: SubResource( 11712 ),
-7: SubResource( 11714 ),
-8: SubResource( 11716 )
+0: SubResource( 11693 ),
+1: SubResource( 11695 ),
+2: SubResource( 11697 ),
+3: SubResource( 11699 ),
+4: SubResource( 11701 ),
+6: SubResource( 11703 ),
+7: SubResource( 11705 ),
+8: SubResource( 11707 )
 }
 _point_order = [ 0, 1, 2, 6, 8, 7, 4, 3 ]
 _constraints = {
@@ -752,7 +695,7 @@ _data = {
 "points": PoolVector2Array(  )
 }
 
-[sub_resource type="Image" id=11718]
+[sub_resource type="Image" id=11709]
 data = {
 "data": PoolByteArray( 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255 ),
 "format": "RGBA8",
@@ -764,7 +707,7 @@ data = {
 [sub_resource type="ImageTexture" id=11379]
 flags = 3
 flags = 3
-image = SubResource( 11718 )
+image = SubResource( 11709 )
 size = Vector2( 32, 32 )
 script = ExtResource( 2 )
 atlas = ExtResource( 4 )
@@ -779,7 +722,7 @@ extents = Vector2( 512, 24 )
 [sub_resource type="CanvasItemMaterial" id=11038]
 blend_mode = 1
 
-[sub_resource type="Image" id=11719]
+[sub_resource type="Image" id=11710]
 data = {
 "data": PoolByteArray( 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 ),
 "format": "RGBA8",
@@ -791,7 +734,7 @@ data = {
 [sub_resource type="ImageTexture" id=11624]
 flags = 3
 flags = 3
-image = SubResource( 11719 )
+image = SubResource( 11710 )
 size = Vector2( 32, 32 )
 script = ExtResource( 2 )
 atlas = ExtResource( 4 )
@@ -892,11 +835,11 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="StreetSSD" parent="Ground/StreetAsphalt" index="0"]
-_points = SubResource( 11631 )
+[node name="StreetSS2D" parent="Ground/StreetAsphalt" index="0"]
+_points = SubResource( 11635 )
 
 [node name="CollisionPolygon2D" parent="Ground/StreetAsphalt" index="1"]
-polygon = PoolVector2Array( -1243, 3331.23, -1242.29, 3279.41, -1228.55, 3143.52, -1189.58, 2939.9, -1111.8, 2649.16, -801.08, 1786.04, -203.987, 462.647, -141.826, 247.688, -100.072, 42.3218, -80.9038, -139.051, -81.0156, -297.662, -97.1768, -435.608, -126.671, -555.873, -167.729, -662.024, -219.717, -757.612, -282.916, -845.516, -358.002, -927.567, -445.498, -1004.56, -545.415, -1076.54, -657.168, -1143.17, -772.857, -1200.99, -1052.15, -1307.65, -1345.27, -1385.26, -1639.47, -1438.22, -2206.13, -1488.42, -2800.49, -1480.04, -2813.51, -2479.96, -2168.59, -2487.71, -1506.88, -2429.39, -1128.25, -2361.42, -745.101, -2259.35, -371.391, -2116.86, -177.658, -2020.71, 4.16895, -1911.98, 178.649, -1785.87, 343.029, -1640.7, 493.953, -1475.18, 627.561, -1288.76, 739.833, -1081.94, 827.148, -856.254, 886.799, -613.909, 917.215, -357.135, 917.77, -87.574, 888.355, 194.016, 828.934, 487.744, 733.987, 809.353, 125.924, 2161.09, -157.447, 2947.84, -214.888, 3163.43, -239.169, 3288.86, -243.626, 3331.07, -243, 3332.77 )
+polygon = PoolVector2Array( -2641.65, 3233.01, -2339.93, 3242.98, -2033.19, 3232.61, -1662.83, 3193.04, -1263.58, 3109.47, -1081.48, 3052.32, -903.557, 2980.51, -741.397, 2896.1, -591.573, 2794.23, -534.497, 2746.38, -476.772, 2690.92, -424.52, 2632.41, -382.717, 2578.01, -335.717, 2497.09, -327.774, 2478.31, -320.321, 2457.21, -316.125, 2441.09, -314.096, 2428.92, -313.403, 2419.43, -313.572, 2411.14, -314.518, 2402.65, -316.48, 2392.76, -319.904, 2380.56, -322.67, 2372.12, -344.607, 2324.57, -371.072, 2279.58, -594.661, 1970.71, -663.252, 1862.55, -792.792, 1483.92, -806.085, 994.313, -792.125, 801.68, -766.988, 629.726, -729.912, 470.207, -680.964, 322.824, -621.561, 188.541, -546.059, 54.7991, -176.158, -430.178, -80.6963, -573.164, -57.4717, -655.863, -49.6309, -692.919, -43.8867, -732.003, -41.502, -765.846, -41.7773, -795.008, -44.126, -820.247, -48.1426, -842.479, -53.6523, -862.699, -60.7266, -881.88, -69.6504, -900.88, -80.8584, -920.362, -94.8525, -940.76, -106.691, -956.066, -158.841, -1009.35, -221.429, -1058.75, -300.914, -1109.33, -396.371, -1159.14, -499.995, -1204.27, -762.27, -1291.64, -1043.04, -1357.9, -1662.67, -1444.29, -2222.92, -1475.51, -2803.9, -1470.47, -2812.14, -2470.43, -2199.06, -2475.23, -1565.48, -2439.56, -858.93, -2340.8, -489.225, -2253.64, -142.621, -2138.23, 34.8159, -2061.4, 200.685, -1974.43, 359.679, -1872.58, 509.611, -1753.1, 640.912, -1620.21, 708.924, -1535.69, 766.347, -1451.63, 817.732, -1361.91, 862.189, -1266.88, 898.895, -1167.09, 927.174, -1063.29, 946.568, -956.356, 956.861, -847.18, 958.069, -736.573, 950.393, -625.189, 934.14, -513.487, 907.659, -394.095, 823.712, -146.496, 643.251, 143.031, 289.877, 603.627, 273.202, 635.082, 251.868, 683.136, 232.771, 740.84, 215.742, 814.771, 201.965, 910.243, 193.456, 1024.62, 199.756, 1362.06, 204.9, 1366.25, 232.407, 1408.61, 466.294, 1732.94, 541.357, 1860.82, 603.366, 1994.68, 634.036, 2080.57, 657.319, 2165.35, 674.557, 2255.24, 684.527, 2349.52, 686.212, 2447.16, 678.919, 2546.9, 662.344, 2647.48, 636.542, 2747.75, 601.822, 2846.89, 554.642, 2952.35, 449.431, 3132.57, 347.873, 3267.56, 243.438, 3384.68, 132.325, 3491.59, 9.58203, 3593.36, -228.485, 3754.54, -484.071, 3888.27, -744.365, 3993.79, -1011.59, 4077.2, -1506.75, 4180.78, -1962.65, 4230.12, -2339, 4242.98, -2673.77, 4232.49 )
 
 [node name="StreetConcrete" parent="Ground" instance=ExtResource( 36 )]
 position = Vector2( 0, 3664 )
@@ -904,11 +847,11 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="StreetSSD" parent="Ground/StreetConcrete" index="0"]
-_points = SubResource( 11646 )
+[node name="StreetSS2D" parent="Ground/StreetConcrete" index="0"]
+_points = SubResource( 11650 )
 
 [node name="CollisionPolygon2D" parent="Ground/StreetConcrete" index="1"]
-polygon = PoolVector2Array( 4858.16, 4428, 799.211, 4298.32, 798.447, 2126.45, 2078.45, 2126.45, 2078.45, 1169.55, 798.872, 1169.98, 644.001, -2510.8, 1644, -2513.2, 1505.13, 462.022, 2785.55, 462.447, 2785.55, 2833.55, 1505.55, 2833.55, 1504.79, 3589.68, 4853.84, 3428 )
+polygon = PoolVector2Array( 2196.17, 4225.62, 758.942, 4076.75, 786.594, 2020.85, 2697.17, 2006.32, 2678.29, 926.105, 726.645, 906.438, 605.403, -2551.55, 1605.38, -2544.31, 1439.19, 204.816, 3383.55, 217.149, 3412.67, 2704.94, 1491.25, 2730.41, 1471.98, 3375.63, 2195.65, 3225.62 )
 
 [node name="Surfaces" type="Node2D" parent="Ground"]
 
@@ -916,7 +859,7 @@ polygon = PoolVector2Array( 4858.16, 4428, 799.211, 4298.32, 798.447, 2126.45, 2
 position = Vector2( 2048, 448 )
 
 [node name="SS2D_Shape_Closed" parent="Ground/Surfaces/SurfaceGravel" index="0"]
-_points = SubResource( 11657 )
+_points = SubResource( 11661 )
 
 [node name="CollisionPolygon2D" parent="Ground/Surfaces/SurfaceGravel" index="1"]
 polygon = PoolVector2Array( 448.104, -0.103546, 448.104, 640.104, -0.103516, 640.104, -0.103516, -0.103546 )
@@ -925,7 +868,7 @@ polygon = PoolVector2Array( 448.104, -0.103546, 448.104, 640.104, -0.103516, 640
 position = Vector2( 2688, 448 )
 
 [node name="SS2D_Shape_Closed" parent="Ground/Surfaces/SurfaceNitro" index="0"]
-_points = SubResource( 11668 )
+_points = SubResource( 11672 )
 
 [node name="CollisionPolygon2D" parent="Ground/Surfaces/SurfaceNitro" index="1"]
 polygon = PoolVector2Array( 1344.1, -0.103546, 1344.1, 320.104, -0.103516, 320.104, -0.103516, -0.103546 )
@@ -937,40 +880,31 @@ position = Vector2( 2944, 640 )
 margin_right = 6160.0
 margin_bottom = 8384.0
 theme = ExtResource( 3 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Terrain" type="Node2D" parent="."]
 
 [node name="TerrainMountain" parent="Terrain" instance=ExtResource( 5 )]
 position = Vector2( 88, 2088 )
+height = 50.0
 
-[node name="ObjectShapeSSD" parent="Terrain/TerrainMountain" index="1"]
-_points = SubResource( 11689 )
+[node name="ObjectShapeSS2D" parent="Terrain/TerrainMountain" index="1"]
+_points = SubResource( 11691 )
+shape_material = SubResource( 1823 )
 
 [node name="CollisionPolygon2D" parent="Terrain/TerrainMountain" index="2"]
-polygon = PoolVector2Array( -0.120728, 1272.16, -0.0834656, -0.0651855, 256.017, -64.0625, 384.07, 63.9827, 344, 192, 272.048, 375.997, 384.042, 575.996, 320.015, 768.001, 384.105, 1152.06 )
-
-[node name="ShadowShader" parent="Terrain/TerrainMountain" index="3"]
-visible = true
-
-[node name="TerrainMountain2" parent="Terrain" instance=ExtResource( 5 )]
-position = Vector2( 104, 3480 )
-
-[node name="ObjectShapeSSD" parent="Terrain/TerrainMountain2" index="1"]
-_points = SubResource( 11700 )
-
-[node name="CollisionPolygon2D" parent="Terrain/TerrainMountain2" index="2"]
-polygon = PoolVector2Array( -0.103554, 448.104, -0.103554, -0.103516, 448.215, -0.125, 192.034, 448.058 )
-
-[node name="ShadowShader" parent="Terrain/TerrainMountain2" index="3"]
-visible = true
+polygon = PoolVector2Array( 53.7048, 2029.07, -0.108299, -0.105469, 384.043, -0.0666504, 388.75, 10.3574, 399.925, 41.1323, 412.913, 91.8779, 423.103, 162.148, 425.882, 251.496, 416.638, 359.476, 390.761, 485.64, 343.637, 629.542, 319.087, 700.406, 303.997, 760.906, 297.278, 811.844, 296.719, 833.975, 297.845, 854.016, 300.521, 872.065, 304.611, 888.223, 309.98, 902.588, 316.49, 915.263, 324.007, 926.345, 332.394, 935.935, 341.517, 944.133, 351.238, 951.039, 361.422, 956.753, 371.934, 961.374, 382.637, 965.002, 393.396, 967.738, 414.538, 970.931, 434.272, 971.751, 465.173, 969.472, 477.691, 967.127, 295.801, 1182.57, 295.781, 1381.01, 413.579, 1677.03 )
 
 [node name="BreakerConcrete" parent="Terrain" instance=ExtResource( 9 )]
-position = Vector2( 816, 2576 )
-physics_material_override = SubResource( 1 )
-elevation = 100
+position = Vector2( 955, 2520 )
 
-[node name="BreakerBase" parent="Terrain/BreakerConcrete" index="2"]
-polygon = PoolVector2Array( 0, 384, 208, 384, 208, 184, 392, 216, 384, 0, 248, 0, 176, 120, -104, 80, 128, 256, -128, 304 )
+[node name="BreakerClosedSS2D" parent="Terrain" instance=ExtResource( 39 )]
+position = Vector2( 1419, 2511 )
+
+[node name="BreakerOpenSS2D" parent="Terrain" instance=ExtResource( 40 )]
+position = Vector2( 481, 2538 )
 
 [node name="Objects" type="Node2D" parent="."]
 z_index = 1
@@ -1027,7 +961,7 @@ position = Vector2( 2487, 2788 )
 position = Vector2( 72, 560 )
 
 [node name="SS2D_Shape_Closed" parent="Building" index="1"]
-_points = SubResource( 11717 )
+_points = SubResource( 11708 )
 
 [node name="CollisionPolygon2D" parent="Building" index="2"]
 polygon = PoolVector2Array( -0.542603, -0.281555, 1664.1, -0.103516, 1664.1, 456.104, 576.013, 456.033, 384.037, 640.016, 384.104, 1344.1, -0.103455, 1344.1 )
@@ -1247,6 +1181,4 @@ text = "Pikables
 [editable path="Ground/Surfaces/SurfaceGravel"]
 [editable path="Ground/Surfaces/SurfaceNitro"]
 [editable path="Terrain/TerrainMountain"]
-[editable path="Terrain/TerrainMountain2"]
-[editable path="Terrain/BreakerConcrete"]
 [editable path="Building"]

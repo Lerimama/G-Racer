@@ -1,0 +1,129 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=1]
+[ext_resource path="res://game/level/terrain/Object_SS2D.gd" type="Script" id=2]
+[ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=3]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=4]
+[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=7]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=8]
+[ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=10]
+
+[sub_resource type="Resource" id=1824]
+script = ExtResource( 7 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1825]
+script = ExtResource( 4 )
+position = Vector2( 0, 384 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1824 )
+
+[sub_resource type="Resource" id=1826]
+script = ExtResource( 7 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1827]
+script = ExtResource( 4 )
+position = Vector2( 384, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1826 )
+
+[sub_resource type="Resource" id=1828]
+script = ExtResource( 7 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1829]
+script = ExtResource( 4 )
+position = Vector2( 0, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1828 )
+
+[sub_resource type="Resource" id=1830]
+script = ExtResource( 7 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1831]
+script = ExtResource( 4 )
+position = Vector2( 0, 384 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1830 )
+
+[sub_resource type="Resource" id=1832]
+script = ExtResource( 7 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=1833]
+script = ExtResource( 4 )
+position = Vector2( 384, 384 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1832 )
+
+[sub_resource type="Resource" id=1834]
+script = ExtResource( 8 )
+_points = {
+0: SubResource( 1825 ),
+1: SubResource( 1827 ),
+2: SubResource( 1829 ),
+3: SubResource( 1831 ),
+4: SubResource( 1833 )
+}
+_point_order = [ 3, 2, 1, 4, 0 ]
+_constraints = {
+[ 0, 3 ]: 15
+}
+_next_key = 31
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=1823]
+script = ExtResource( 10 )
+_edge_meta_materials = [  ]
+fill_textures = [ ExtResource( 1 ) ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
+
+[node name="Object" type="StaticBody2D"]
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+height = 100.0
+
+[node name="PolygonShadow" parent="." instance=ExtResource( 6 )]
+shadow_casting_polygon_path = NodePath("../CollisionPolygon2D")
+
+[node name="ObjectShapeSS2D" type="Node2D" parent="."]
+script = ExtResource( 3 )
+_points = SubResource( 1834 )
+shape_material = SubResource( 1823 )
+tessellation_stages = 5
+tessellation_tolerence = 4.0
+flip_edges = false
+render_edges = true
+collision_size = 32.0
+collision_offset = 0.0
+collision_polygon_node_path = NodePath("../CollisionPolygon2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -0.103552, 384.104, -0.103553, -0.103553, 384.104, -0.103553, 384.104, 384.104 )
+
+[connection signal="on_dirty_update" from="ObjectShapeSS2D" to="." method="_on_ObjectShapeSS2D_on_dirty_update"]

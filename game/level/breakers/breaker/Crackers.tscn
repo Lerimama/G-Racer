@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://game/level/breakers/breaker/Crackers.gd" type="Script" id=1]
+
+[node name="Crackers" type="ColorRect"]
+margin_right = 96.0
+margin_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_clip_content = true
+color = Color( 0.384314, 0.65098, 0.517647, 0 )
+script = ExtResource( 1 )
+
+[node name="CrackersParent" type="Node2D" parent="."]
+z_index = 100

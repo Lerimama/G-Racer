@@ -30,9 +30,18 @@ var pickables_in_game: Array
 onready var level_finished_ui: Control = $"../UI/LevelFinished"
 onready var game_over_ui: Control = $"../UI/GameOver"
 onready var game_settings: Dictionary = Sets.get_level_game_settings(current_level_index) # set_game seta iz profilov
-onready var shadows_direction: Vector2 = game_settings["shadows_direction"] # Vector2(1, 1) # set_game seta iz profilov
-onready var shadows_length: float = game_settings["shadows_length"] # set_game seta iz profilov
+# shadows
+onready var shadows_direction_from_source: Vector2 = game_settings["shadows_direction_from_source"] # Vector2(1, 1) # set_game seta iz profilov
+onready var shadows_length_from_source: float = game_settings["shadows_length_from_source"] # set_game seta iz profilov
+onready var shadows_alpha_from_source: float = game_settings["shadows_alpha_from_source"] # set_game seta iz profilov
+onready var shadows_color_from_source: Color = game_settings["shadows_color_from_source"] # set_game seta iz profilov
 
+
+#onready var shadows_color: Color = game_settings["shadows_color"] # set_game seta iz profilov
+#	"shadows_direction_from_source": Vector2.ONE, # odvisna od x,y položaja vira svetlobe
+##	"shadows_direction_from_source": Vector2(0-800, 0),
+#	"shadows_length_from_source": 0, # odvisna od višine vira svetlobe
+#	"shadows_alpha_from_source": 0.2, # odvisna od moči svetlobe
 
 func _input(event: InputEvent) -> void:
 

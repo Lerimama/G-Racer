@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://common/shadows/ShadowSpriteAnim.gd" type="Script" id=1]
+
+[sub_resource type="SpriteFrames" id=534]
+animations = [ {
+"frames": [  ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[node name="SpriteShadowAnim" type="AnimatedSprite"]
+modulate = Color( 0, 0, 0, 0.27451 )
+frames = SubResource( 534 )
+script = ExtResource( 1 )
+shadow_casting_node_path = NodePath("../AnimSprite")

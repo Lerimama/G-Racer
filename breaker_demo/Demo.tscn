@@ -9,7 +9,7 @@
 [ext_resource path="res://breaker_demo/Sounds.gd" type="Script" id=7]
 [ext_resource path="res://breaker_demo/Slicer.gd" type="Script" id=8]
 [ext_resource path="res://breaker_demo/Concrete 1.JPG" type="Texture" id=9]
-[ext_resource path="res://common/PolygonCirco2D.tscn" type="PackedScene" id=10]
+[ext_resource path="res://breaker_demo/PolygonCirco2D.tscn" type="PackedScene" id=10]
 
 [sub_resource type="PhysicsMaterial" id=2]
 friction = 0.5

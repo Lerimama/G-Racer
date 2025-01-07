@@ -141,6 +141,7 @@ func set_level_objects():
 
 func set_pickables():
 
+
 	if tilemap_objects.get_used_cells().empty():
 		return
 
