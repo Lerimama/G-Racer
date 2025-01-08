@@ -45,7 +45,6 @@ process_material = ExtResource( 7 )
 texture = ExtResource( 4 )
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-visible = false
 polygon = PoolVector2Array( -16, -8, 8, -8, 8, 8, -16, 8 )
 
 [node name="ThrustOverParticles" type="Particles2D" parent="."]

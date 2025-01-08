@@ -37,12 +37,6 @@ onready var shadows_alpha_from_source: float = game_settings["shadows_alpha_from
 onready var shadows_color_from_source: Color = game_settings["shadows_color_from_source"] # set_game seta iz profilov
 
 
-#onready var shadows_color: Color = game_settings["shadows_color"] # set_game seta iz profilov
-#	"shadows_direction_from_source": Vector2.ONE, # odvisna od x,y položaja vira svetlobe
-##	"shadows_direction_from_source": Vector2(0-800, 0),
-#	"shadows_length_from_source": 0, # odvisna od višine vira svetlobe
-#	"shadows_alpha_from_source": 0.2, # odvisna od moči svetlobe
-
 func _input(event: InputEvent) -> void:
 
 
@@ -50,6 +44,9 @@ func _input(event: InputEvent) -> void:
 	#		var bus_index: int = AudioServer.get_bus_index("GameMusic")
 	#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
 	#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
+
+	if Input.is_action_just_pressed("no3"): # daynight
+		_animate_day_night()
 
 #	if Input.is_action_just_pressed("no1"): # idle
 #		Refs.current_3Dworld.change_follow_target(bolts_in_game[0])
@@ -75,6 +72,7 @@ func _input(event: InputEvent) -> void:
 #				#			if bolt.is_in_group(Refs.group_ai):
 #				#				bolt.player_stats["gas_count"] = 0
 	pass
+
 
 func _ready() -> void:
 	printt("GM")
@@ -138,8 +136,8 @@ func set_game():
 	if current_level_index == 0:
 		# debug ... kadar ne štartam igre iz home menija
 		if Sets.players_on_game_start.empty():
-			activated_player_ids = [Pros.PLAYER.P1]
-#			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2]
+#			activated_player_ids = [Pros.PLAYER.P1]
+			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2]
 #			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2, Pros.PLAYER.P3, Pros.PLAYER.P4]
 		else:
 			activated_player_ids = Sets.players_on_game_start
@@ -335,6 +333,17 @@ func set_next_level():
 	camera_leader = null # trenutno vodilni igralec (rabim za camera target in pull target)
 
 	call_deferred("set_game")
+
+
+func _animate_day_night():
+
+	var day_length: float = 10
+	var day_start_direction: Vector2 = Vector2.LEFT
+
+	var day_night_tween = get_tree().create_tween()
+	for shadow in get_tree().get_nodes_in_group(Refs.group_shadows):
+		if shadow is Polygon2D:
+			day_night_tween.parallel().tween_property(shadow, "shadow_angle_degrees", 0, day_length).from(-180).set_ease(Tween.EASE_IN_OUT)
 
 
 # RACING ---------------------------------------------------------------------------------------------
@@ -544,7 +553,7 @@ func start_spawning_pickables():
 	start_spawning_pickables()
 
 
-# PRIVAT ----------------------------------------------------------------------------------------------------
+# SIGNALI ----------------------------------------------------------------------------------------------------
 
 
 func _on_level_is_set(tilemap_navigation_cells_positions: Array):

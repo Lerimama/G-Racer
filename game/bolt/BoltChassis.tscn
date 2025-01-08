@@ -34,21 +34,22 @@ position = Vector2( 0, -52 )
 position = Vector2( 0, 52 )
 position_on_bolt = 1
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
+[node name="BoltShape" type="Polygon2D" parent="."]
+modulate = Color( 0.890196, 0.168627, 0.168627, 0.262745 )
 polygon = PoolVector2Array( -104, -48, -96, -56, 96, -56, 112, -40, 104, -32, 112, -24, 104, -16, 112, -8, 104, 0, 112, 8, 104, 16, 112, 24, 104, 32, 112, 40, 96, 56, -96, 56, -104, 48, -104, 0 )
 
-[node name="Polygon2D" type="Polygon2D" parent="Polygon2D"]
+[node name="Polygon2D" type="Polygon2D" parent="BoltShape"]
 position = Vector2( 32, 0 )
 color = Color( 1, 1, 1, 0.298039 )
 polygon = PoolVector2Array( 24, -48, 40, -32, 32, -16, 40, 0, 32, 16, 40, 32, 24, 48, 40, 48, 56, 32, 48, 16, 56, 0, 48, -16, 56, -32, 40, -48 )
 
-[node name="Polygon2D4" type="Polygon2D" parent="Polygon2D"]
+[node name="Polygon2D4" type="Polygon2D" parent="BoltShape"]
 position = Vector2( 112, 73 )
 scale = Vector2( -1, 1 )
 color = Color( 1, 1, 1, 0.298039 )
 polygon = PoolVector2Array( 16, -17, 32, -41, 40, -25, 56, -41, 56, -25, 72, -33, 72, -17 )
 
-[node name="Polygon2D5" type="Polygon2D" parent="Polygon2D"]
+[node name="Polygon2D5" type="Polygon2D" parent="BoltShape"]
 position = Vector2( 112, -72 )
 scale = Vector2( -1, -1 )
 color = Color( 1, 1, 1, 0.298039 )

@@ -68,6 +68,7 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 
 	# debug
 	"max_zoomout": false,
+	"max_zoomin": true,
 
 }
 
@@ -96,13 +97,14 @@ func get_level_game_settings(selected_level_index: int):
 
 	# debug
 	current_game_settings["start_countdown"] = false
+	current_game_settings["max_zoomout"] = false
+	current_game_settings["max_zoomin"] = false
 
 	match current_level:
 		# racing
 		# duel
 		LEVEL.STAFF:
 			pass
-#			current_game_settings["max_zoomout"] = true
 #			current_game_settings["start_countdown"] = true
 		LEVEL.DUEL:
 			current_game_settings["start_countdown"] = false

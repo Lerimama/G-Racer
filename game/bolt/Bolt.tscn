@@ -278,11 +278,13 @@ polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="Chassis" parent="." instance=ExtResource( 3 )]
 
-[node name="Polygon2D" parent="Chassis" index="2"]
-modulate = Color( 1, 1, 1, 0.490196 )
+[node name="DriveTrain" parent="Chassis" index="1"]
+visible = false
+
+[node name="Šipa" parent="Chassis" index="3"]
+visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-visible = false
 polygon = PoolVector2Array( -96, -56, 96, -56, 112, -40, 112, 40, 96, 56, -95.9049, 56, -104, 48, -104, -48 )
 
 [node name="Light2D" type="Light2D" parent="."]

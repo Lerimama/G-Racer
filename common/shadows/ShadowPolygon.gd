@@ -4,15 +4,34 @@ extends Polygon2D
 export (NodePath) var shadow_casting_polygon_path: String
 export var shadow_z_index: int = 0 # samo, če rabiš spcifičnega
 
+#onready var shadow_owner: Node2D = get_parent()
 onready var shadow_owner: Node2D = get_parent()
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_polygon_path)
 
 # od ownerja, igre in obeh
 onready var shadow_offset: float = shadow_owner.elevation
-onready var shadow_direction: Vector2 = Refs.game_manager.shadows_direction_from_source.normalized()
+onready var shadow_direction: Vector2 = Refs.game_manager.shadows_direction_from_source.normalized() setget _on_direction_change
 onready var shadow_color: Color = Refs.game_manager.shadows_color_from_source
 onready var shadow_alpha: float = Refs.game_manager.shadows_alpha_from_source * shadow_owner.transparency
 onready var shadow_length: float = (shadow_owner.height + shadow_offset) * Refs.game_manager.shadows_length_from_source
+
+var shadow_angle_degrees: float setget _on_angle_change # za animirano rotacijo rabim kot
+
+
+func _on_angle_change(new_angle: float):
+
+	printt("prej", shadow_angle_degrees, shadow_direction.angle(), shadow_direction)
+	shadow_angle_degrees = new_angle
+	shadow_direction = Vector2.RIGHT.rotated(deg2rad(shadow_angle_degrees))
+	_update_shadow()
+
+	printt("rotiram", shadow_angle_degrees, shadow_direction.angle(), shadow_direction)
+
+func _on_direction_change(new_direction: Vector2):
+	print("d", shadow_owner.name, shadow_direction, new_direction)
+	shadow_direction = new_direction.normalized()
+	print("after", shadow_direction, new_direction)
+	_update_shadow()
 
 
 func _ready() -> void:
@@ -30,27 +49,30 @@ func _ready() -> void:
 
 	# shadows
 	if shadow_casting_node:
+
 		_update_shadow()
 	else:
-		printerr ("No shadow casting node for: ", self)
+		printerr ("Shadow casting missing: ", self)
 		hide()
 
 
 func _update_shadow(with_shape_update: bool = true):
+#	print("shadow update")
 
 	# pogrebam nove nastavitve
 	shadow_offset = shadow_owner.elevation
 	shadow_length = (shadow_owner.height + shadow_offset) * Refs.game_manager.shadows_length_from_source
 	shadow_alpha = Refs.game_manager.shadows_alpha_from_source * shadow_owner.transparency
-	shadow_direction = Refs.game_manager.shadows_direction_from_source.normalized()
+	#	shadow_direction = Refs.game_manager.shadows_direction_from_source.normalized()
 	shadow_color = Refs.game_manager.shadows_color_from_source
 
-	if shadow_length == 0:
+	if shadow_length == 0 or shadow_direction == Vector2.ZERO:
 		hide()
 	else:
 		if with_shape_update:
 			var new_shadow_polygon: PoolVector2Array = _update_shadow_polygon()
 		show()
+
 
 func _update_shadow_polygon():
 	# dupliciram original polygon in ga zamaknem

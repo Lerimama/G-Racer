@@ -28,18 +28,22 @@ func _ready() -> void:
 
 func home_in_intro():
 
-	Mets.spawn_new_scene(home_scene_path, self)
-	Mets.current_scene.open_with_intro()
+	spawn_new_scene(home_scene_path, self)
+	current_scene.open_with_intro()
+#	Mets.spawn_new_scene(home_scene_path, self)
+#	Mets.current_scene.open_with_intro()
 
 	var fade_in = get_tree().create_tween()
-	fade_in.tween_property(Mets.current_scene, "modulate", Color.white, fade_time)
+#	fade_in.tween_property(Mets.current_scene, "modulate", Color.white, fade_time)
+	fade_in.tween_property(current_scene, "modulate", Color.white, fade_time)
 
 
 func home_in_no_intro(): # debug
 
 	get_tree().set_pause(false)
 
-	Mets.spawn_new_scene(home_scene_path, self)
+	spawn_new_scene(home_scene_path, self)
+#	Mets.spawn_new_scene(home_scene_path, self)
 #	Mets.current_scene.open_without_intro()
 
 #	Mets.current_scene.modulate = Color.black
@@ -51,14 +55,19 @@ func home_in_from_game():
 
 	get_tree().set_pause(false)
 
-	Mets.spawn_new_scene(home_scene_path, self)
-	Mets.current_scene.open_from_game() # select game screen
+#	Mets.spawn_new_scene(home_scene_path, self)
+#	Mets.current_scene.open_from_game() # select game screen
+
+	spawn_new_scene(home_scene_path, self)
+	current_scene.open_from_game() # select game screen
 
 	yield(get_tree().create_timer(0.7), "timeout") # da se title naštima
 
-	Mets.current_scene.modulate = Color.black
+#	Mets.current_scene.modulate = Color.black
+	current_scene.modulate = Color.black
 	var fade_in = get_tree().create_tween()
-	fade_in.tween_property(Mets.current_scene, "modulate", Color.white, fade_time)
+#	fade_in.tween_property(Mets.current_scene, "modulate", Color.white, fade_time)
+	fade_in.tween_property(current_scene, "modulate", Color.white, fade_time)
 
 
 func home_out():
@@ -70,7 +79,8 @@ func home_out():
 
 	var fade_out = get_tree().create_tween()
 #	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, 1)
-	fade_out.tween_callback(Mets, "release_scene", [Mets.current_scene])
+	fade_out.tween_callback(self, "release_scene", [current_scene])
+#	fade_out.tween_callback(Mets, "release_scene", [Mets.current_scene])
 	fade_out.tween_callback(self, "game_in")#.set_delay(1)
 
 
@@ -85,7 +95,8 @@ func game_in():
 #	Sets.get_game_settings(0) # setaš prvi level (ali edini)
 
 #	Sets.get_level_game_settings(0) # setaš prvi level
-	Mets.spawn_new_scene(game_scene_path, self)
+#	Mets.spawn_new_scene(game_scene_path, self)
+	spawn_new_scene(game_scene_path, self)
 #	Mets.current_scene.modulate = Color.black
 #	Refs.game_manager.call_deferred("set_game")
 #	Refs.game_manager.set_game()
@@ -116,21 +127,35 @@ func game_in():
 
 func game_over_in():
 
-	printt ("GO", Mets.current_scene)
+#	printt ("GO", Mets.current_scene)
+	printt ("GO", current_scene)
 	$Sounds/MenuFade.play()
 
 	# game_out
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, fade_time)
+	fade_out.tween_property(current_scene, "modulate", Color.black, fade_time)
 	yield(fade_out, "finished")
-	Mets.release_scene(Mets.current_scene)
+	release_scene(current_scene)
 
 	var path = "res://game/GameEnd.tscn"
-	Mets.spawn_new_scene(path, self)
-	Mets.current_scene.modulate = Color.black
+	spawn_new_scene(path, self)
+	current_scene.modulate = Color.black
 	var fade_in = get_tree().create_tween()
-	fade_in.tween_property(Mets.current_scene, "modulate", Color.white, fade_time).from(Color.black)
-	printt ("GO poo", Mets.current_scene)
+	fade_in.tween_property(current_scene, "modulate", Color.white, fade_time).from(Color.black)
+	printt ("GO poo", current_scene)
+
+#	# game_out
+#	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+#	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, fade_time)
+#	yield(fade_out, "finished")
+#	Mets.release_scene(Mets.current_scene)
+#
+#	var path = "res://game/GameEnd.tscn"
+#	Mets.spawn_new_scene(path, self)
+#	Mets.current_scene.modulate = Color.black
+#	var fade_in = get_tree().create_tween()
+#	fade_in.tween_property(Mets.current_scene, "modulate", Color.white, fade_time).from(Color.black)
+#	printt ("GO poo", Mets.current_scene)
 
 #	fade_in.tween_callback(Refs.game_manager, "set_game")
 #	Refs.game_manager.game_over(1)
@@ -166,10 +191,14 @@ func game_out():
 	$Sounds/MenuFade.play()
 
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, fade_time)
-	fade_out.tween_callback(Mets, "release_scene", [Mets.current_scene])
-#	fade_out.tween_callback(self, "home_in_from_game").set_delay(1) # fajn delay ker se release zgodi šele v naslednjem frejmu
+	fade_out.tween_property(current_scene, "modulate", Color.black, fade_time)
+	fade_out.tween_callback(self, "release_scene", [current_scene])
 	fade_out.tween_callback(self, "home_in_no_intro").set_delay(1) # fajn delay ker se release zgodi šele v naslednjem frejmu
+
+#	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+#	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, fade_time)
+#	fade_out.tween_callback(Mets, "release_scene", [Mets.current_scene])
+#	fade_out.tween_callback(self, "home_in_no_intro").set_delay(1) # fajn delay ker se release zgodi šele v naslednjem frejmu
 
 
 func reload_game(): # game out z drugačnim zaključkom
@@ -181,12 +210,44 @@ func reload_game(): # game out z drugačnim zaključkom
 
 	$Sounds/ScreenSlide.play()
 
+#	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+#	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, fade_time)
+#	fade_out.tween_callback(Mets, "release_scene", [Mets.current_scene])
+#	fade_out.tween_callback(self, "game_in").set_delay(1) # dober delay ker se relese zgodi šele v naslednjem frejmu
+
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	fade_out.tween_property(Mets.current_scene, "modulate", Color.black, fade_time)
-	fade_out.tween_callback(Mets, "release_scene", [Mets.current_scene])
+	fade_out.tween_property(current_scene, "modulate", Color.black, fade_time)
+	fade_out.tween_callback(self, "release_scene", [current_scene])
 	fade_out.tween_callback(self, "game_in").set_delay(1) # dober delay ker se relese zgodi šele v naslednjem frejmu
+
 #	yield(fade_out, "finished")
 #	get_tree().set_current_scene(Mets.current_scene)
 #	print("CURR", get_tree().current_scene)
 #	get_tree().reload_current_scene()
 
+
+
+var current_scene = null
+
+func release_scene(scene_node): # release scene
+	scene_node.set_physics_process(false)
+	call_deferred("_free_scene", scene_node)
+
+
+func _free_scene(scene_node):
+	print ("SCENE RELEASED (in next step): ", scene_node)
+	scene_node.free()
+
+
+func spawn_new_scene(scene_path, parent_node): # spawn scene
+	print(scene_path, parent_node)
+	var scene_resource = ResourceLoader.load(scene_path)
+
+	current_scene = scene_resource.instance()
+	print ("SCENE INSTANCED: ", current_scene)
+
+#	current_scene.modulate.a = 0
+	parent_node.add_child(current_scene) # direct child of root
+	print ("SCENE ADDED: ", current_scene)
+
+	return current_scene

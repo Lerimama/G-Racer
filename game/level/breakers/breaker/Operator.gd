@@ -1,5 +1,5 @@
 extends Node
-
+class_name Operator
 
 
 # SPLIT funkcije hendlajo uporabo preostalih in s tem hendlajo stil razreza --------------------------------------------

@@ -32,7 +32,7 @@ func _spawn_crackers():
 		var new_cracker: Polygon2D = Cracker.instance()
 		new_cracker.position -= chunk_position
 		new_cracker.polygon = cracked_polygons[poly_index]
-		new_cracker.name = "%s_Crackers" % name
+		new_cracker.name = "%s_Cracker" % name
 		new_cracker.cracker_color = breaker_shape.color
 		new_cracker.crack_color = cracks_color
 		crackers_parent.add_child(new_cracker)

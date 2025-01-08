@@ -36,6 +36,8 @@ func _process(delta: float) -> void:
 
 				if Refs.game_manager.game_settings["max_zoomout"]:
 					zoom.x = camera_max_zoom * 2# OPT ... zoom podvajanje
+				elif Refs.game_manager.game_settings["max_zoomin"]:
+					zoom.x = camera_max_zoom * 0.32# OPT ... zoom podvajanje
 				else:
 					# zoom
 					if follow_target.is_in_group(Refs.group_bolts) and not follow_target.bolt_velocity == null:
@@ -60,7 +62,7 @@ func _process(delta: float) -> void:
 #			if not debug_max_zoom_out:
 			zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
 			# debug
-			if not Refs.game_manager.game_settings["max_zoomout"]:
+			if not Refs.game_manager.game_settings["max_zoomout"] and not Refs.game_manager.game_settings["max_zoomin"]:
 				zoom.x = clamp(zoom.x, camera_min_zoom, camera_max_zoom)
 			zoom.y = zoom.x
 
@@ -89,7 +91,7 @@ func shake_camera(shake_power: float):
 
 func set_camera_limits():
 
-	if Refs.game_manager.game_settings["max_zoomout"]:
+	if Refs.game_manager.game_settings["max_zoomout"] or Refs.game_manager.game_settings["max_zoomin"]:
 		 return
 
 	var corner_TL: float

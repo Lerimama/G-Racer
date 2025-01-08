@@ -97,12 +97,16 @@ var elevation: float = 7 # PRO
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $LauncherL, $LauncherR]
 onready var bolt_sprite: Sprite = $Chassis/BoltSprite
-onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
+#onready var bolt_poly: Polygon2D = $Chassis/Polygon2D
+onready var bolt_poly: Polygon2D = $Chassis/BoltShape
 onready var terrain_detect: Area2D = $TerrainDetect
 #var current_top_suface: Area2D = null # preverjam spremembo, da ne setam na vsak frejm
 var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-
+# breaker
+#export var height: float = 50 setget _change_shape_height
+#export var elevation: float = 0
+export var transparency: float = 1
 
 func _ready() -> void:
 
@@ -270,8 +274,12 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 # BATTLE ----------------------------------------------------------------------------
 
+#func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
+func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
-func on_hit(hit_by: Node, hit_global_position: Vector2):
+
+#	$BreakerLite.on_hit(hit_by, hit_global_position) # debug
+#	return
 
 	if is_shielded:
 		return
@@ -795,7 +803,7 @@ func _on_ReviveTimer_timeout() -> void:
 	revive_bolt()
 
 
-func _on_Bolt_body_entered(body: Node) -> void:
+func _on_Bolt_body_entered(body: Node2D) -> void:
 
 	if not $Sounds/HitWall2.is_playing():
 		$Sounds/HitWall.play()
