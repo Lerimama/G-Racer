@@ -9,9 +9,10 @@ export var elevation = 0 # setget
 export var transparency: float = 1 # setget
 export (int) var shape_edge_width: float = 0 setget _on_change_shape_edge_width
 
+var shape_polygon: PoolVector2Array = [] setget _on_change_shape # !!! polygon menjam samo prek tega setgeta
 var break_origin_global: Vector2 = Vector2.ZERO # se inherita skozi vse spawne
 var shape_edge_color: Color = Color.black
-var shape_polygon: PoolVector2Array = [] setget _on_change_shape # !!! polygon menjam samo prek tega setgeta
+var debry_owner: Node2D # original lastnik delca ... poda brejker ob spawnu
 
 # polygons
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
@@ -19,15 +20,14 @@ onready var edge_shape: Polygon2D = $DebryShape/EdgeShape
 onready var debry_shape: Polygon2D = $DebryShape
 
 
+
 func _ready() -> void:
 
 	# če ni podana oblika, izbere defaultno
 	if shape_polygon.empty():
-		#		print("shape_polygon empty")
 		self.shape_polygon = debry_shape.polygon
 	# če je podana oblika, jo prevzame
 	else:
-		#		print("shape_polygon true")
 		self.shape_polygon = shape_polygon
 
 	self.current_motion = current_motion
@@ -47,32 +47,26 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 
 
 func _on_change_motion(new_motion_state: int):
+	# animacije so enake kot v breakerju
 
 	current_motion =  new_motion_state
 
 	# _temp
 #	if not current_motion == MOTION.STILL:
-#		current_motion =  MOTION.MINIMIZE
+	current_motion =  MOTION.MINIMIZE
 
-	printt("AreaDebry MOTION", name, MOTION.keys()[current_motion])
+	printt("Debry Area MOTION", MOTION.keys()[current_motion])
 
 	match current_motion:
 		MOTION.STILL:
 			pass
-#			mode = RigidBody2D.MODE_STATIC
-#			set_deferred("mode", RigidBody2D.MODE_STATIC)
 		MOTION.FALL:
+			print("animate debry FALL")
 			pass
-#			gravity_scale = 1
-#			set_deferred("mode", RigidBody2D.MODE_RIGID)
 		MOTION.EXPLODE:
+			print("animate debry EXPLOSION")
 			pass
-#			gravity_scale = 0
-##			mode = RigidBody2D.MODE_RIGID
-#			set_deferred("mode", RigidBody2D.MODE_RIGID)
-#			linear_damp = 2
 			var force_vector = global_position - break_origin_global
-#			apply_central_impulse(force_vector * 20)
 		MOTION.DISSAPEAR:
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
@@ -90,6 +84,7 @@ func _on_change_motion(new_motion_state: int):
 			yield(minimize_tween, "finished")
 			queue_free()
 		MOTION.CRACK:
+			print("animate debry CRACK")
 			pass
 
 

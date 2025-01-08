@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://game/level/breakers/breaker/Breaker_orig.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/level/breakers/breaker/Breaker.tscn" type="PackedScene" id=1]
 
 [node name="BreakerConcrete" instance=ExtResource( 1 )]
 __meta__ = {

@@ -41,7 +41,8 @@ func _ready() -> void:
 # SFX --------------------------------------------------------------------------------------------------------
 
 #onready var sfx: Node = $Sfx
-onready var music: Node = $Music
+#onready var music: Node = $Music
+onready var music: AudioStreamPlayer = $GameMusic/Nitro
 
 
 func play_sfx(effect_for: String):

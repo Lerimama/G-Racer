@@ -5,7 +5,7 @@ export (NodePath) var shadow_casting_polygon_path: String
 export var shadow_z_index: int = 0 # samo, če rabiš spcifičnega
 
 #onready var shadow_owner: Node2D = get_parent()
-onready var shadow_owner: Node2D = get_parent()
+onready var shadow_owner: Node = get_parent()
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_polygon_path)
 
 # od ownerja, igre in obeh
