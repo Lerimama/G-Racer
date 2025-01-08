@@ -18,15 +18,8 @@ onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var edge_shape: Polygon2D = $DebryShape/EdgeShape
 onready var debry_shape: Polygon2D = $DebryShape
 
-# nodes
-var breaker_debry_world: Node
-
 
 func _ready() -> void:
-
-	# določim svet spawnanja
-	if breaker_debry_world == null:
-		breaker_debry_world = get_parent()
 
 	# če ni podana oblika, izbere defaultno
 	if shape_polygon.empty():

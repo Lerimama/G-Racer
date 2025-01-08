@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=1]
-[ext_resource path="res://game/level/breakers/breaker/Operator.gd" type="Script" id=2]
-[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=3]
-[ext_resource path="res://game/level/breakers/breaker/Breaker.gd" type="Script" id=4]
+[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=2]
+[ext_resource path="res://game/level/breakers/breaker/Breaker_orig.gd" type="Script" id=3]
+[ext_resource path="res://game/level/breakers/breaker/Operator.gd" type="Script" id=4]
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
@@ -11,19 +11,19 @@ friction = 0.0
 [node name="Breaker" type="RigidBody2D"]
 mode = 1
 physics_material_override = SubResource( 1 )
-script = ExtResource( 4 )
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="Operator" type="Node" parent="."]
-script = ExtResource( 2 )
+script = ExtResource( 4 )
 
-[node name="PolygonShadow" parent="." instance=ExtResource( 3 )]
+[node name="PolygonShadow" parent="." instance=ExtResource( 1 )]
 shadow_casting_polygon_path = NodePath("../BreakerBase")
 
 [node name="BreakerBase" type="Polygon2D" parent="."]
-texture = ExtResource( 1 )
+texture = ExtResource( 2 )
 polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
 
 [node name="EdgeShape" type="Polygon2D" parent="BreakerBase"]

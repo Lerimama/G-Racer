@@ -1,16 +1,16 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://game/level/breakers/breaker/BreakerShape.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/level/breakers/breaker/BreakerRigid.gd" type="Script" id=2]
 [ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=3]
-[ext_resource path="res://game/level/breakers/breaker/RigidObject.gd" type="Script" id=4]
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
 
-[node name="RigidObject" type="RigidBody2D"]
+[node name="BreakerRigid" type="RigidBody2D"]
 mode = 1
 physics_material_override = SubResource( 1 )
-script = ExtResource( 4 )
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
 }

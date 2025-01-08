@@ -38,8 +38,8 @@ onready var breaker_parent: Node = get_parent()
 onready var crackers_mask: ColorRect = $CrackersMask
 onready var crackers_parent: Node2D = crackers_mask.get_node("Crackers")
 onready var operator: Node = $Operator
-onready var Breaker: PackedScene = load("res://breaker/Breaker.tscn")
-onready var Cracker: PackedScene = preload("res://breaker/Cracker.tscn")
+onready var Breaker: PackedScene = load("res://breaker_demo/Breaker.tscn")
+onready var Cracker: PackedScene = preload("res://breaker_demo/Cracker.tscn")
 
 
 func _input(event: InputEvent) -> void:
