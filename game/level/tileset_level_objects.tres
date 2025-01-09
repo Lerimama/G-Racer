@@ -3,7 +3,7 @@
 [ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=1]
 
 [resource]
-41/name = "atlas_level.png 41"
+41/name = "brick_ghost"
 41/texture = ExtResource( 1 )
 41/tex_offset = Vector2( 0, 0 )
 41/modulate = Color( 1, 1, 1, 1 )
@@ -17,7 +17,7 @@
 41/shape_one_way_margin = 0.0
 41/shapes = [  ]
 41/z_index = 0
-42/name = "atlas_level.png 42"
+42/name = "brick_magnet"
 42/texture = ExtResource( 1 )
 42/tex_offset = Vector2( 0, 0 )
 42/modulate = Color( 1, 1, 1, 1 )
@@ -31,7 +31,7 @@
 42/shape_one_way_margin = 0.0
 42/shapes = [  ]
 42/z_index = 0
-43/name = "atlas_level.png 43"
+43/name = "brick_target"
 43/texture = ExtResource( 1 )
 43/tex_offset = Vector2( 0, 0 )
 43/modulate = Color( 1, 1, 1, 1 )
@@ -45,7 +45,7 @@
 43/shape_one_way_margin = 0.0
 43/shapes = [  ]
 43/z_index = 0
-44/name = "atlas_level.png 44"
+44/name = "brick_bouncer"
 44/texture = ExtResource( 1 )
 44/tex_offset = Vector2( 0, 0 )
 44/modulate = Color( 1, 1, 1, 1 )
@@ -59,7 +59,7 @@
 44/shape_one_way_margin = 0.0
 44/shapes = [  ]
 44/z_index = 0
-45/name = "atlas_level.png 45"
+45/name = "light"
 45/texture = ExtResource( 1 )
 45/tex_offset = Vector2( 0, 0 )
 45/modulate = Color( 1, 1, 1, 1 )

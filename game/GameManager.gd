@@ -343,7 +343,7 @@ func _animate_day_night():
 	var day_night_tween = get_tree().create_tween()
 	for shadow in get_tree().get_nodes_in_group(Refs.group_shadows):
 		if shadow is Polygon2D:
-			day_night_tween.parallel().tween_property(shadow, "shadow_angle_degrees", 0, day_length).from(-180).set_ease(Tween.EASE_IN_OUT)
+			day_night_tween.parallel().tween_property(shadow, "shadow_rotation_degrees", 0, day_length).from(-180).set_ease(Tween.EASE_IN_OUT)
 
 
 # RACING ---------------------------------------------------------------------------------------------

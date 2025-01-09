@@ -4,8 +4,11 @@ extends Polygon2D
 export (NodePath) var shadow_casting_polygon_path: String
 export var shadow_z_index: int = 0 # samo, če rabiš spcifičnega
 
+var shadow_rotation_degrees: float setget _on_angle_change # za animirano rotacijo ... v stopinjah, ker lažje setam
+var shadow_owner_rotation: float
+
 #onready var shadow_owner: Node2D = get_parent()
-onready var shadow_owner: Node = get_parent()
+onready var shadow_owner: Node2D = get_parent()
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_polygon_path)
 
 # od ownerja, igre in obeh
@@ -15,23 +18,17 @@ onready var shadow_color: Color = Refs.game_manager.shadows_color_from_source
 onready var shadow_alpha: float = Refs.game_manager.shadows_alpha_from_source * shadow_owner.transparency
 onready var shadow_length: float = (shadow_owner.height + shadow_offset) * Refs.game_manager.shadows_length_from_source
 
-var shadow_angle_degrees: float setget _on_angle_change # za animirano rotacijo rabim kot
+
+func _process(delta: float) -> void:
+
+	# preverjam spremembo rotacije lastnika (vsak node2d ima rotacijo)
+	var prev_shadow_owner_rotation = shadow_owner_rotation
+	shadow_owner_rotation = shadow_owner.rotation
+	# če je sprememba v rotaciji apdejtam senčko
+	if not shadow_owner_rotation == prev_shadow_owner_rotation:
+		_on_change_owner_rotation(shadow_owner_rotation - prev_shadow_owner_rotation)
 
 
-func _on_angle_change(new_angle: float):
-
-	printt("prej", shadow_angle_degrees, shadow_direction.angle(), shadow_direction)
-	shadow_angle_degrees = new_angle
-	shadow_direction = Vector2.RIGHT.rotated(deg2rad(shadow_angle_degrees))
-	_update_shadow()
-
-	printt("rotiram", shadow_angle_degrees, shadow_direction.angle(), shadow_direction)
-
-func _on_direction_change(new_direction: Vector2):
-	print("d", shadow_owner.name, shadow_direction, new_direction)
-	shadow_direction = new_direction.normalized()
-	print("after", shadow_direction, new_direction)
-	_update_shadow()
 
 
 func _ready() -> void:
@@ -45,7 +42,8 @@ func _ready() -> void:
 		z_index = shadow_z_index
 
 	# popravim rotacijo sence glede na globalno rotacijo poligona
-	shadow_direction = shadow_direction.rotated(-global_rotation)
+	#	shadow_direction = shadow_direction.rotated(- global_rotation) ... na rotacijo sence
+	shadow_direction = shadow_direction.rotated(- shadow_owner.rotation)
 
 	# shadows
 	if shadow_casting_node:
@@ -70,11 +68,11 @@ func _update_shadow(with_shape_update: bool = true):
 		hide()
 	else:
 		if with_shape_update:
-			var new_shadow_polygon: PoolVector2Array = _update_shadow_polygon()
+			var new_shadow_polygon: PoolVector2Array = update_shadow_polygon()
 		show()
 
 
-func _update_shadow_polygon():
+func update_shadow_polygon():
 	# dupliciram original polygon in ga zamaknem
 	# povežem sorodne pare točko med obema poligonoma v kvadrate
 	# kvadrate združim z original obliko
@@ -117,3 +115,26 @@ func _update_shadow_polygon():
 	set_deferred("polygon", merged_shadow)
 
 	return merged_shadow
+
+
+# ON CHANGE -----------------------------------------------------------------------------------------------
+
+
+func _on_direction_change(new_direction: Vector2):
+
+	shadow_direction = new_direction.normalized()
+	_update_shadow()
+
+
+func _on_change_owner_rotation(rotation_change: float):
+
+	shadow_direction = shadow_direction.rotated(- rotation_change)
+	_update_shadow()
+
+
+func _on_angle_change(new_rotation: float):
+
+	shadow_rotation_degrees = new_rotation
+	shadow_direction = Vector2.RIGHT.rotated(deg2rad(shadow_rotation_degrees))
+	_update_shadow()
+

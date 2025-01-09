@@ -549,7 +549,7 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 	#	collision_shape.set_deferred("polygon", shape_polygon)
 
 	if breaker_shape_parent.has_node("PolygonShadow"):
-		breaker_shape_parent.get_node("PolygonShadow")._update_shadow_polygon()
+		breaker_shape_parent.get_node("PolygonShadow").update_shadow_polygon()
 
 
 func _on_change_motion(new_motion_state: int):

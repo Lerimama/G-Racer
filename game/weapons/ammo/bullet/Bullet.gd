@@ -29,7 +29,7 @@ onready var bullet_mass: float = ammo_profile["mass"]
 onready var speed: float = 320 #ammo_profile["speed"] # PRO
 onready var vision_ray: RayCast2D = $VisionRay
 onready var collision_shape: CollisionShape2D = $BulletCollision
-onready var influence_area: Area2D = $InfluenceArea
+onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
 # neu
 enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker

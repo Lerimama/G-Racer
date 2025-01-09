@@ -34,8 +34,9 @@ onready var drive_out_position: Vector2 = $Racing/LevelFinish/DriveOutPosition.p
 func _ready() -> void:
 	printt("LEVEL")
 
-	Refs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
+	$__ScreenSize.hide()
 
+	Refs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	for child in start_positions_node.get_children():
 		child.hide()
 

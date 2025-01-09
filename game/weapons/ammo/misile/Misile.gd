@@ -2,7 +2,6 @@ extends KinematicBody2D
 class_name Misile
 
 
-
 var spawner: Node
 var spawner_color: Color
 var spawner_speed: float
@@ -49,7 +48,7 @@ onready var max_speed: float = weapon_profile["speed"]
 onready var lifetime: float = weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
-onready var influence_area: Area2D = $InfluenceArea
+onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
 # neu
 enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker

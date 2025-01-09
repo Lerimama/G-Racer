@@ -19,6 +19,7 @@ onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 onready var smoke_particles: Particles2D = $SmokeParticles
+onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
 onready var weapon_profile: Dictionary = Pros.ammo_profiles[Pros.AMMO.MINA]
 onready var reload_time: float = weapon_profile["reload_time"]
@@ -28,6 +29,10 @@ onready var lifetime: float = 0 #weapon_profile["lifetime"]
 onready var mass: float = weapon_profile["mass"]
 onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
 onready var MisileHit = preload("res://game/weapons/ammo/misile/MisileHit.tscn")
+
+# neu
+enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var object_type = TYPE.EXPLODING
 
 
 func _ready() -> void:
@@ -57,6 +62,7 @@ func activate():
 	detect_area.monitoring = true
 	if lifetime > 0:
 		active_timer.start(lifetime)
+
 
 func explode():
 
@@ -89,7 +95,6 @@ func _on_ActiveTimer_timeout() -> void:
 			body.on_hit(self, global_position)
 
 
-# kvefri
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 	#	explode()
 	#	active_timer.stop()

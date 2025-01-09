@@ -5,5 +5,5 @@
 [node name="PolygonShadow" type="Polygon2D"]
 modulate = Color( 1, 1, 1, 0.207843 )
 color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 0, 64, 64, 64, 64, 0, 0, 0 )
+polygon = PoolVector2Array( 0, 256, 64, 320, 320, 320, 320, 64, 256, 0, 0, 0 )
 script = ExtResource( 1 )

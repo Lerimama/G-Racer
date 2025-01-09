@@ -49,7 +49,7 @@ var breaker_world: Node # če ni podan ob spananju, je get_parent()
 
 
 func _ready() -> void:
-	print("BREAKER IN .........................")
+
 	# določim svet spawnanja
 	if breaker_world == null:
 		breaker_world = get_parent()
@@ -509,7 +509,7 @@ func _on_change_breaker_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred("polygon", breaker_base_polygon)
 
-	$PolygonShadow._update_shadow_polygon()
+	$PolygonShadow.update_shadow_polygon()
 
 
 func _on_change_motion(new_motion_state: int):

@@ -1,4 +1,4 @@
-[gd_scene load_steps=149 format=2]
+[gd_scene load_steps=265 format=2]
 
 [ext_resource path="res://common/tex/cross.png" type="Texture" id=1]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=2]
@@ -43,9 +43,6 @@
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=41]
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=42]
 [ext_resource path="res://game/level/breakers/BreakerRigidConcrete.tscn" type="PackedScene" id=43]
-[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=44]
-[ext_resource path="res://game/level/breakers/breaker/Kintest.gd" type="Script" id=45]
-[ext_resource path="res://game/level/breakers/breaker/BreakerShape.tscn" type="PackedScene" id=46]
 [ext_resource path="res://game/level/breakers/breaker/BreakerRigid.tscn" type="PackedScene" id=47]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
@@ -61,79 +58,79 @@ height = 2000
 seamless = true
 noise = SubResource( 10546 )
 
-[sub_resource type="Resource" id=11693]
+[sub_resource type="Resource" id=11863]
 script = ExtResource( 13 )
 texture_idx = 4
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11694]
+[sub_resource type="Resource" id=11864]
 script = ExtResource( 7 )
 position = Vector2( -2657.71, 3732.75 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11693 )
+properties = SubResource( 11863 )
 
-[sub_resource type="Resource" id=11695]
+[sub_resource type="Resource" id=11865]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11696]
+[sub_resource type="Resource" id=11866]
 script = ExtResource( 7 )
 position = Vector2( -2808.02, -1970.45 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11695 )
+properties = SubResource( 11865 )
 
-[sub_resource type="Resource" id=11697]
+[sub_resource type="Resource" id=11867]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11698]
+[sub_resource type="Resource" id=11868]
 script = ExtResource( 7 )
 position = Vector2( 371.508, -359.83 )
 point_in = Vector2( -370.614, 655.701 )
 point_out = Vector2( 712.719, -1824.56 )
-properties = SubResource( 11697 )
+properties = SubResource( 11867 )
 
-[sub_resource type="Resource" id=11699]
+[sub_resource type="Resource" id=11869]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11700]
+[sub_resource type="Resource" id=11870]
 script = ExtResource( 7 )
 position = Vector2( -301.621, 1387.09 )
 point_in = Vector2( 0, 413.376 )
 point_out = Vector2( -64.1445, -1147.48 )
-properties = SubResource( 11699 )
+properties = SubResource( 11869 )
 
-[sub_resource type="Resource" id=11701]
+[sub_resource type="Resource" id=11871]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11702]
+[sub_resource type="Resource" id=11872]
 script = ExtResource( 7 )
 position = Vector2( 33.3569, 2855.29 )
 point_in = Vector2( -726.973, 1047.7 )
 point_out = Vector2( 484.648, -719.846 )
-properties = SubResource( 11701 )
+properties = SubResource( 11871 )
 
-[sub_resource type="Resource" id=11703]
+[sub_resource type="Resource" id=11873]
 script = ExtResource( 6 )
 _points = {
-0: SubResource( 11694 ),
-41: SubResource( 11696 ),
-76: SubResource( 11698 ),
-77: SubResource( 11700 ),
-78: SubResource( 11702 )
+0: SubResource( 11864 ),
+41: SubResource( 11866 ),
+76: SubResource( 11868 ),
+77: SubResource( 11870 ),
+78: SubResource( 11872 )
 }
 _point_order = [ 0, 78, 77, 76, 41 ]
 _constraints = {
@@ -142,107 +139,107 @@ _next_key = 79
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11704]
+[sub_resource type="Resource" id=11874]
 script = ExtResource( 13 )
 texture_idx = 4
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11705]
+[sub_resource type="Resource" id=11875]
 script = ExtResource( 7 )
 position = Vector2( 2195.91, 3725.62 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11704 )
+properties = SubResource( 11874 )
 
-[sub_resource type="Resource" id=11706]
+[sub_resource type="Resource" id=11876]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11707]
+[sub_resource type="Resource" id=11877]
 script = ExtResource( 7 )
 position = Vector2( 1138.92, 2375.63 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11706 )
+properties = SubResource( 11876 )
 
-[sub_resource type="Resource" id=11708]
+[sub_resource type="Resource" id=11878]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11709]
+[sub_resource type="Resource" id=11879]
 script = ExtResource( 7 )
 position = Vector2( 3054.92, 2355.63 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11708 )
+properties = SubResource( 11878 )
 
-[sub_resource type="Resource" id=11710]
+[sub_resource type="Resource" id=11880]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11711]
+[sub_resource type="Resource" id=11881]
 script = ExtResource( 7 )
 position = Vector2( 3030.92, 571.627 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11710 )
+properties = SubResource( 11880 )
 
-[sub_resource type="Resource" id=11712]
+[sub_resource type="Resource" id=11882]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11713]
+[sub_resource type="Resource" id=11883]
 script = ExtResource( 7 )
 position = Vector2( 1082.92, 555.627 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11712 )
+properties = SubResource( 11882 )
 
-[sub_resource type="Resource" id=11714]
+[sub_resource type="Resource" id=11884]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11715]
+[sub_resource type="Resource" id=11885]
 script = ExtResource( 7 )
 position = Vector2( 1105.39, -2547.93 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11714 )
+properties = SubResource( 11884 )
 
-[sub_resource type="Resource" id=11716]
+[sub_resource type="Resource" id=11886]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11717]
+[sub_resource type="Resource" id=11887]
 script = ExtResource( 7 )
 position = Vector2( 1115.46, 3726.19 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11716 )
+properties = SubResource( 11886 )
 
-[sub_resource type="Resource" id=11718]
+[sub_resource type="Resource" id=11888]
 script = ExtResource( 6 )
 _points = {
-0: SubResource( 11705 ),
-77: SubResource( 11707 ),
-78: SubResource( 11709 ),
-79: SubResource( 11711 ),
-80: SubResource( 11713 ),
-81: SubResource( 11715 ),
-82: SubResource( 11717 )
+0: SubResource( 11875 ),
+77: SubResource( 11877 ),
+78: SubResource( 11879 ),
+79: SubResource( 11881 ),
+80: SubResource( 11883 ),
+81: SubResource( 11885 ),
+82: SubResource( 11887 )
 }
 _point_order = [ 0, 82, 77, 78, 79, 80, 81 ]
 _constraints = {
@@ -251,79 +248,79 @@ _next_key = 83
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11719]
+[sub_resource type="Resource" id=11889]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11720]
+[sub_resource type="Resource" id=11890]
 script = ExtResource( 7 )
-position = Vector2( 448, 640 )
+position = Vector2( 1376.35, 222.915 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11719 )
+properties = SubResource( 11889 )
 
-[sub_resource type="Resource" id=11721]
+[sub_resource type="Resource" id=11891]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11722]
+[sub_resource type="Resource" id=11892]
 script = ExtResource( 7 )
-position = Vector2( 448, 0 )
+position = Vector2( 1369.62, -369.994 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11721 )
+properties = SubResource( 11891 )
 
-[sub_resource type="Resource" id=11723]
+[sub_resource type="Resource" id=11893]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11724]
+[sub_resource type="Resource" id=11894]
 script = ExtResource( 7 )
-position = Vector2( 0, 640 )
+position = Vector2( -13.4543, 263.278 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11723 )
+properties = SubResource( 11893 )
 
-[sub_resource type="Resource" id=11725]
+[sub_resource type="Resource" id=11895]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11726]
+[sub_resource type="Resource" id=11896]
 script = ExtResource( 7 )
 position = Vector2( 0, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11725 )
+properties = SubResource( 11895 )
 
-[sub_resource type="Resource" id=11727]
+[sub_resource type="Resource" id=11897]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11728]
+[sub_resource type="Resource" id=11898]
 script = ExtResource( 7 )
-position = Vector2( 448, 0 )
+position = Vector2( 1369.62, -369.994 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11727 )
+properties = SubResource( 11897 )
 
-[sub_resource type="Resource" id=11729]
+[sub_resource type="Resource" id=11899]
 script = ExtResource( 6 )
 _points = {
-4: SubResource( 11720 ),
-5: SubResource( 11722 ),
-7: SubResource( 11724 ),
-8: SubResource( 11726 ),
-9: SubResource( 11728 )
+4: SubResource( 11890 ),
+5: SubResource( 11892 ),
+7: SubResource( 11894 ),
+8: SubResource( 11896 ),
+9: SubResource( 11898 )
 }
 _point_order = [ 5, 4, 7, 8, 9 ]
 _constraints = {
@@ -333,79 +330,79 @@ _next_key = 11
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11730]
+[sub_resource type="Resource" id=11900]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11731]
+[sub_resource type="Resource" id=11901]
 script = ExtResource( 7 )
 position = Vector2( 1344, 320 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11730 )
+properties = SubResource( 11900 )
 
-[sub_resource type="Resource" id=11732]
+[sub_resource type="Resource" id=11902]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11733]
+[sub_resource type="Resource" id=11903]
 script = ExtResource( 7 )
 position = Vector2( 1344, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11732 )
+properties = SubResource( 11902 )
 
-[sub_resource type="Resource" id=11734]
+[sub_resource type="Resource" id=11904]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11735]
+[sub_resource type="Resource" id=11905]
 script = ExtResource( 7 )
-position = Vector2( 0, 320 )
+position = Vector2( -6.72705, 703.449 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11734 )
+properties = SubResource( 11904 )
 
-[sub_resource type="Resource" id=11736]
+[sub_resource type="Resource" id=11906]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11737]
+[sub_resource type="Resource" id=11907]
 script = ExtResource( 7 )
 position = Vector2( 0, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11736 )
+properties = SubResource( 11906 )
 
-[sub_resource type="Resource" id=11738]
+[sub_resource type="Resource" id=11908]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11739]
+[sub_resource type="Resource" id=11909]
 script = ExtResource( 7 )
 position = Vector2( 1344, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11738 )
+properties = SubResource( 11908 )
 
-[sub_resource type="Resource" id=11740]
+[sub_resource type="Resource" id=11910]
 script = ExtResource( 6 )
 _points = {
-4: SubResource( 11731 ),
-5: SubResource( 11733 ),
-7: SubResource( 11735 ),
-8: SubResource( 11737 ),
-9: SubResource( 11739 )
+4: SubResource( 11901 ),
+5: SubResource( 11903 ),
+7: SubResource( 11905 ),
+8: SubResource( 11907 ),
+9: SubResource( 11909 )
 }
 _point_order = [ 5, 4, 7, 8, 9 ]
 _constraints = {
@@ -415,141 +412,307 @@ _next_key = 11
 _material_overrides = {
 }
 
-[sub_resource type="Resource" id=11741]
+[sub_resource type="Resource" id=11911]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11742]
+[sub_resource type="Resource" id=11912]
 script = ExtResource( 7 )
-position = Vector2( 53.8174, 2028.79 )
+position = Vector2( 1362.9, 269.454 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11741 )
+properties = SubResource( 11911 )
 
-[sub_resource type="Resource" id=11743]
+[sub_resource type="Resource" id=11913]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11744]
+[sub_resource type="Resource" id=11914]
 script = ExtResource( 7 )
-position = Vector2( 384, 0 )
+position = Vector2( 1389.8, -20.1814 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11743 )
+properties = SubResource( 11913 )
 
-[sub_resource type="Resource" id=11745]
+[sub_resource type="Resource" id=11915]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11746]
+[sub_resource type="Resource" id=11916]
+script = ExtResource( 7 )
+position = Vector2( -6.72729, 975.807 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11915 )
+
+[sub_resource type="Resource" id=11917]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11918]
 script = ExtResource( 7 )
 position = Vector2( 0, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11745 )
+properties = SubResource( 11917 )
 
-[sub_resource type="Resource" id=11747]
+[sub_resource type="Resource" id=11919]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11748]
+[sub_resource type="Resource" id=11920]
 script = ExtResource( 7 )
-position = Vector2( 53.8174, 2028.79 )
+position = Vector2( 1389.8, -20.1814 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11747 )
+properties = SubResource( 11919 )
 
-[sub_resource type="Resource" id=11749]
+[sub_resource type="Resource" id=11921]
+script = ExtResource( 6 )
+_points = {
+4: SubResource( 11912 ),
+5: SubResource( 11914 ),
+7: SubResource( 11916 ),
+8: SubResource( 11918 ),
+9: SubResource( 11920 )
+}
+_point_order = [ 5, 4, 7, 8, 9 ]
+_constraints = {
+[ 5, 9 ]: 15
+}
+_next_key = 11
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=11922]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11750]
+[sub_resource type="Resource" id=11923]
+script = ExtResource( 7 )
+position = Vector2( -31.709, 4751.38 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11922 )
+
+[sub_resource type="Resource" id=11924]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11925]
+script = ExtResource( 7 )
+position = Vector2( 384, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11924 )
+
+[sub_resource type="Resource" id=11926]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11927]
+script = ExtResource( 7 )
+position = Vector2( 0, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11926 )
+
+[sub_resource type="Resource" id=11928]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11929]
+script = ExtResource( 7 )
+position = Vector2( -31.709, 4751.38 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11928 )
+
+[sub_resource type="Resource" id=11930]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11931]
 script = ExtResource( 7 )
 position = Vector2( 343.637, 629.542 )
 point_in = Vector2( 158.089, -406.994 )
 point_out = Vector2( -158.089, 406.994 )
-properties = SubResource( 11749 )
+properties = SubResource( 11930 )
 
-[sub_resource type="Resource" id=11751]
+[sub_resource type="Resource" id=11932]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11752]
+[sub_resource type="Resource" id=11933]
 script = ExtResource( 7 )
-position = Vector2( 413.497, 1677.01 )
+position = Vector2( 477.642, 3971.96 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11751 )
+properties = SubResource( 11932 )
 
-[sub_resource type="Resource" id=11753]
+[sub_resource type="Resource" id=11934]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11754]
+[sub_resource type="Resource" id=11935]
 script = ExtResource( 7 )
 position = Vector2( 295.772, 1381.01 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11753 )
+properties = SubResource( 11934 )
 
-[sub_resource type="Resource" id=11755]
+[sub_resource type="Resource" id=11936]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11756]
+[sub_resource type="Resource" id=11937]
 script = ExtResource( 7 )
 position = Vector2( 295.772, 1182.56 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11755 )
+properties = SubResource( 11936 )
 
-[sub_resource type="Resource" id=11757]
+[sub_resource type="Resource" id=11938]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11758]
+[sub_resource type="Resource" id=11939]
 script = ExtResource( 7 )
 position = Vector2( 477.405, 967.292 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11757 )
+properties = SubResource( 11938 )
 
-[sub_resource type="Resource" id=11759]
+[sub_resource type="Resource" id=11940]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11941]
+script = ExtResource( 7 )
+position = Vector2( 249.765, 3509.59 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11940 )
+
+[sub_resource type="Resource" id=11942]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11943]
+script = ExtResource( 7 )
+position = Vector2( 463.581, 2540.29 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11942 )
+
+[sub_resource type="Resource" id=11944]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11945]
+script = ExtResource( 7 )
+position = Vector2( 292.528, 1998.63 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11944 )
+
+[sub_resource type="Resource" id=11946]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11947]
+script = ExtResource( 7 )
+position = Vector2( 449.327, 1606.63 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11946 )
+
+[sub_resource type="Resource" id=11948]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11949]
+script = ExtResource( 7 )
+position = Vector2( 508.156, 88.95 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11948 )
+
+[sub_resource type="Resource" id=11950]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11951]
+script = ExtResource( 7 )
+position = Vector2( 327.61, 4827.94 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11950 )
+
+[sub_resource type="Resource" id=11952]
 script = ExtResource( 6 )
 _points = {
-0: SubResource( 11742 ),
-1: SubResource( 11744 ),
-2: SubResource( 11746 ),
-3: SubResource( 11748 ),
-4: SubResource( 11750 ),
-31: SubResource( 11752 ),
-32: SubResource( 11754 ),
-33: SubResource( 11756 ),
-34: SubResource( 11758 )
+0: SubResource( 11923 ),
+1: SubResource( 11925 ),
+2: SubResource( 11927 ),
+3: SubResource( 11929 ),
+4: SubResource( 11931 ),
+31: SubResource( 11933 ),
+32: SubResource( 11935 ),
+33: SubResource( 11937 ),
+34: SubResource( 11939 ),
+35: SubResource( 11941 ),
+36: SubResource( 11943 ),
+37: SubResource( 11945 ),
+38: SubResource( 11947 ),
+39: SubResource( 11949 ),
+40: SubResource( 11951 )
 }
-_point_order = [ 3, 2, 1, 4, 34, 33, 32, 31, 0 ]
+_point_order = [ 3, 2, 1, 39, 4, 34, 33, 32, 38, 37, 36, 35, 31, 40, 0 ]
 _constraints = {
 [ 0, 3 ]: 15
 }
-_next_key = 35
+_next_key = 41
 _material_overrides = {
 }
 
@@ -562,6 +725,354 @@ fill_texture_z_index = 0
 fill_texture_show_behind_parent = false
 fill_mesh_offset = 0.0
 render_offset = 0.0
+
+[sub_resource type="Resource" id=12017]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12018]
+script = ExtResource( 7 )
+position = Vector2( 5858.47, 45.3062 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12017 )
+
+[sub_resource type="Resource" id=12019]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12020]
+script = ExtResource( 7 )
+position = Vector2( 0, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12019 )
+
+[sub_resource type="Resource" id=12021]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12022]
+script = ExtResource( 7 )
+position = Vector2( 16.7942, 348.11 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12021 )
+
+[sub_resource type="Resource" id=12023]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12024]
+script = ExtResource( 7 )
+position = Vector2( 5801.4, 390.99 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12023 )
+
+[sub_resource type="Resource" id=12025]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12026]
+script = ExtResource( 7 )
+position = Vector2( 5581.84, 8061.38 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12025 )
+
+[sub_resource type="Resource" id=12027]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12028]
+script = ExtResource( 7 )
+position = Vector2( -126.715, 8068.93 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12027 )
+
+[sub_resource type="Resource" id=12029]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12030]
+script = ExtResource( 7 )
+position = Vector2( 326.344, 7902.81 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12029 )
+
+[sub_resource type="Resource" id=12031]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12032]
+script = ExtResource( 7 )
+position = Vector2( 945.526, 7804.64 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12031 )
+
+[sub_resource type="Resource" id=12033]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12034]
+script = ExtResource( 7 )
+position = Vector2( 1851.65, 7872.6 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12033 )
+
+[sub_resource type="Resource" id=12035]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12036]
+script = ExtResource( 7 )
+position = Vector2( 2787.97, 7698.93 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12035 )
+
+[sub_resource type="Resource" id=12037]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12038]
+script = ExtResource( 7 )
+position = Vector2( 3331.64, 7200.56 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12037 )
+
+[sub_resource type="Resource" id=12039]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12040]
+script = ExtResource( 7 )
+position = Vector2( 4048.98, 6943.83 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12039 )
+
+[sub_resource type="Resource" id=12041]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12042]
+script = ExtResource( 7 )
+position = Vector2( 4320.82, 6800.36 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12041 )
+
+[sub_resource type="Resource" id=12043]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12044]
+script = ExtResource( 7 )
+position = Vector2( 4970.21, 6392.61 )
+point_in = Vector2( -113.265, 309.591 )
+point_out = Vector2( 113.265, -309.591 )
+properties = SubResource( 12043 )
+
+[sub_resource type="Resource" id=12045]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12046]
+script = ExtResource( 7 )
+position = Vector2( 5294.9, 5448.73 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12045 )
+
+[sub_resource type="Resource" id=12047]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12048]
+script = ExtResource( 7 )
+position = Vector2( 4622.86, 4202.82 )
+point_in = Vector2( -67.959, 588.978 )
+point_out = Vector2( 67.959, -588.978 )
+properties = SubResource( 12047 )
+
+[sub_resource type="Resource" id=12049]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12050]
+script = ExtResource( 7 )
+position = Vector2( 5211.84, 3402.41 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12049 )
+
+[sub_resource type="Resource" id=12051]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12052]
+script = ExtResource( 7 )
+position = Vector2( 5181.63, 2337.72 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12051 )
+
+[sub_resource type="Resource" id=12053]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12054]
+script = ExtResource( 7 )
+position = Vector2( 4902.25, 1076.71 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12053 )
+
+[sub_resource type="Resource" id=12055]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12056]
+script = ExtResource( 7 )
+position = Vector2( 4260.41, 789.769 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12055 )
+
+[sub_resource type="Resource" id=12057]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12058]
+script = ExtResource( 7 )
+position = Vector2( 0, 0 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12057 )
+
+[sub_resource type="Resource" id=12059]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12060]
+script = ExtResource( 7 )
+position = Vector2( 2576.54, 465.077 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12059 )
+
+[sub_resource type="Resource" id=12061]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12062]
+script = ExtResource( 7 )
+position = Vector2( 5340.21, 1424.05 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12061 )
+
+[sub_resource type="Resource" id=12063]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12064]
+script = ExtResource( 7 )
+position = Vector2( -323.039, 7812.2 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12063 )
+
+[sub_resource type="Resource" id=12065]
+script = ExtResource( 6 )
+_points = {
+1: SubResource( 12018 ),
+2: SubResource( 12020 ),
+34: SubResource( 12022 ),
+39: SubResource( 12024 ),
+41: SubResource( 12026 ),
+43: SubResource( 12028 ),
+44: SubResource( 12030 ),
+45: SubResource( 12032 ),
+46: SubResource( 12034 ),
+47: SubResource( 12036 ),
+48: SubResource( 12038 ),
+49: SubResource( 12040 ),
+50: SubResource( 12042 ),
+51: SubResource( 12044 ),
+52: SubResource( 12046 ),
+53: SubResource( 12048 ),
+54: SubResource( 12050 ),
+55: SubResource( 12052 ),
+56: SubResource( 12054 ),
+57: SubResource( 12056 ),
+58: SubResource( 12058 ),
+59: SubResource( 12060 ),
+60: SubResource( 12062 ),
+61: SubResource( 12064 )
+}
+_point_order = [ 2, 1, 39, 41, 43, 61, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 60, 56, 57, 59, 34, 58 ]
+_constraints = {
+[ 2, 58 ]: 15
+}
+_next_key = 62
+_material_overrides = {
+}
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
@@ -1078,7 +1589,7 @@ func _on_change_breaker_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred(\"polygon\", breaker_base_polygon)
 
-	$PolygonShadow._update_shadow_polygon()
+	$PolygonShadow.update_shadow_polygon()
 
 
 func _on_change_motion(new_motion_state: int):
@@ -1144,124 +1655,467 @@ func _on_VisibilityNotifier2D_screen_exited() -> void:
 	pass
 "
 
-[sub_resource type="PhysicsMaterial" id=11777]
-friction = 0.0
-
-[sub_resource type="Resource" id=11760]
-script = ExtResource( 13 )
-texture_idx = 3
-flip = false
-width = 1.0
-
-[sub_resource type="Resource" id=11761]
-script = ExtResource( 7 )
-position = Vector2( -256.439, -192.178 )
-point_in = Vector2( 0, 0 )
-point_out = Vector2( 0, 0 )
-properties = SubResource( 11760 )
-
-[sub_resource type="Resource" id=11762]
+[sub_resource type="Resource" id=11996]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11763]
+[sub_resource type="Resource" id=11997]
+script = ExtResource( 7 )
+position = Vector2( 234.105, 28.793 )
+point_in = Vector2( -152.563, 44.4974 )
+point_out = Vector2( 152.563, -44.4974 )
+properties = SubResource( 11996 )
+
+[sub_resource type="Resource" id=11998]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11999]
+script = ExtResource( 7 )
+position = Vector2( 746.318, 286.746 )
+point_in = Vector2( -91.1138, -269.104 )
+point_out = Vector2( 91.1138, 269.104 )
+properties = SubResource( 11998 )
+
+[sub_resource type="Resource" id=12000]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12001]
+script = ExtResource( 7 )
+position = Vector2( -21.3967, 527.611 )
+point_in = Vector2( 48.7353, 298.769 )
+point_out = Vector2( -48.7353, -298.769 )
+properties = SubResource( 12000 )
+
+[sub_resource type="Resource" id=12002]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12003]
+script = ExtResource( 7 )
+position = Vector2( 234.105, 28.793 )
+point_in = Vector2( -152.563, 44.4974 )
+point_out = Vector2( 152.563, -44.4974 )
+properties = SubResource( 12002 )
+
+[sub_resource type="Resource" id=12004]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12005]
+script = ExtResource( 7 )
+position = Vector2( 191.888, 1195.35 )
+point_in = Vector2( 77.5082, -34.7451 )
+point_out = Vector2( -77.5082, 34.7451 )
+properties = SubResource( 12004 )
+
+[sub_resource type="Resource" id=12006]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12007]
+script = ExtResource( 7 )
+position = Vector2( 731.892, 788.763 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12006 )
+
+[sub_resource type="Resource" id=12008]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12009]
+script = ExtResource( 7 )
+position = Vector2( 1002.61, 711.44 )
+point_in = Vector2( 46.6165, -250.033 )
+point_out = Vector2( -46.6165, 250.033 )
+properties = SubResource( 12008 )
+
+[sub_resource type="Resource" id=12010]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12011]
+script = ExtResource( 7 )
+position = Vector2( 699.836, 1259.7 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12010 )
+
+[sub_resource type="Resource" id=12013]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12014]
+script = ExtResource( 7 )
+position = Vector2( 839.984, -146.668 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12013 )
+
+[sub_resource type="Resource" id=12015]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=12016]
+script = ExtResource( 7 )
+position = Vector2( 201.925, 389.452 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 12015 )
+
+[sub_resource type="Resource" id=12012]
+script = ExtResource( 6 )
+_points = {
+1: SubResource( 11997 ),
+2: SubResource( 11999 ),
+5: SubResource( 12001 ),
+7: SubResource( 12003 ),
+8: SubResource( 12005 ),
+10: SubResource( 12007 ),
+11: SubResource( 12009 ),
+12: SubResource( 12011 ),
+13: SubResource( 12014 ),
+14: SubResource( 12016 )
+}
+_point_order = [ 1, 13, 2, 11, 10, 12, 8, 5, 14, 7 ]
+_constraints = {
+[ 1, 7 ]: 15
+}
+_next_key = 15
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=11953]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11954]
+script = ExtResource( 7 )
+position = Vector2( 21.0923, 14.2389 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11953 )
+
+[sub_resource type="Resource" id=11955]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 2.3
+
+[sub_resource type="Resource" id=11956]
+script = ExtResource( 7 )
+position = Vector2( 516.717, 32.5693 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11955 )
+
+[sub_resource type="Resource" id=11957]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11958]
+script = ExtResource( 7 )
+position = Vector2( 1221.64, 246.76 )
+point_in = Vector2( -141.023, -180.842 )
+point_out = Vector2( 128.309, 134.225 )
+properties = SubResource( 11957 )
+
+[sub_resource type="Resource" id=11959]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11960]
+script = ExtResource( 7 )
+position = Vector2( 951.496, 815.883 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11959 )
+
+[sub_resource type="Resource" id=11961]
+script = ExtResource( 6 )
+_points = {
+0: SubResource( 11954 ),
+1: SubResource( 11956 ),
+2: SubResource( 11958 ),
+3: SubResource( 11960 )
+}
+_point_order = [ 0, 1, 2, 3 ]
+_constraints = {
+}
+_next_key = 0
+_material_overrides = {
+}
+
+[sub_resource type="PhysicsMaterial" id=11777]
+friction = 0.0
+
+[sub_resource type="Resource" id=11962]
+script = ExtResource( 13 )
+texture_idx = 3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11963]
+script = ExtResource( 7 )
+position = Vector2( -256.439, -192.178 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11962 )
+
+[sub_resource type="Resource" id=11964]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11965]
 script = ExtResource( 7 )
 position = Vector2( 1408, -192 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11762 )
+properties = SubResource( 11964 )
 
-[sub_resource type="Resource" id=11764]
+[sub_resource type="Resource" id=11966]
 script = ExtResource( 13 )
 texture_idx = -1
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11765]
+[sub_resource type="Resource" id=11967]
 script = ExtResource( 7 )
 position = Vector2( 1408, 264 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11764 )
+properties = SubResource( 11966 )
 
-[sub_resource type="Resource" id=11766]
+[sub_resource type="Resource" id=11968]
 script = ExtResource( 13 )
 texture_idx = 3
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11767]
+[sub_resource type="Resource" id=11969]
 script = ExtResource( 7 )
 position = Vector2( -256.439, -192.178 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11766 )
+properties = SubResource( 11968 )
 
-[sub_resource type="Resource" id=11768]
+[sub_resource type="Resource" id=11970]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11769]
+[sub_resource type="Resource" id=11971]
 script = ExtResource( 7 )
 position = Vector2( -256, 1152 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11768 )
+properties = SubResource( 11970 )
 
-[sub_resource type="Resource" id=11770]
+[sub_resource type="Resource" id=11972]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11771]
+[sub_resource type="Resource" id=11973]
 script = ExtResource( 7 )
 position = Vector2( 320, 264 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11770 )
+properties = SubResource( 11972 )
 
-[sub_resource type="Resource" id=11772]
+[sub_resource type="Resource" id=11974]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11773]
+[sub_resource type="Resource" id=11975]
 script = ExtResource( 7 )
 position = Vector2( 128, 1152 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11772 )
+properties = SubResource( 11974 )
 
-[sub_resource type="Resource" id=11774]
+[sub_resource type="Resource" id=11976]
 script = ExtResource( 13 )
 texture_idx = 0
 flip = false
 width = 1.0
 
-[sub_resource type="Resource" id=11775]
+[sub_resource type="Resource" id=11977]
 script = ExtResource( 7 )
 position = Vector2( 128, 448 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
-properties = SubResource( 11774 )
+properties = SubResource( 11976 )
 
-[sub_resource type="Resource" id=11776]
+[sub_resource type="Resource" id=11978]
 script = ExtResource( 6 )
 _points = {
-0: SubResource( 11761 ),
-1: SubResource( 11763 ),
-2: SubResource( 11765 ),
-3: SubResource( 11767 ),
-4: SubResource( 11769 ),
-6: SubResource( 11771 ),
-7: SubResource( 11773 ),
-8: SubResource( 11775 )
+0: SubResource( 11963 ),
+1: SubResource( 11965 ),
+2: SubResource( 11967 ),
+3: SubResource( 11969 ),
+4: SubResource( 11971 ),
+6: SubResource( 11973 ),
+7: SubResource( 11975 ),
+8: SubResource( 11977 )
+}
+_point_order = [ 0, 1, 2, 6, 8, 7, 4, 3 ]
+_constraints = {
+[ 0, 3 ]: 15
+}
+_next_key = 10
+_material_overrides = {
+}
+
+[sub_resource type="Resource" id=11979]
+script = ExtResource( 13 )
+texture_idx = 3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11980]
+script = ExtResource( 7 )
+position = Vector2( -256.439, -192.178 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11979 )
+
+[sub_resource type="Resource" id=11981]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11982]
+script = ExtResource( 7 )
+position = Vector2( 1408, -192 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11981 )
+
+[sub_resource type="Resource" id=11983]
+script = ExtResource( 13 )
+texture_idx = -1
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11984]
+script = ExtResource( 7 )
+position = Vector2( 1408, 264 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11983 )
+
+[sub_resource type="Resource" id=11985]
+script = ExtResource( 13 )
+texture_idx = 3
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11986]
+script = ExtResource( 7 )
+position = Vector2( -256.439, -192.178 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11985 )
+
+[sub_resource type="Resource" id=11987]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11988]
+script = ExtResource( 7 )
+position = Vector2( -256, 1152 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11987 )
+
+[sub_resource type="Resource" id=11989]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11990]
+script = ExtResource( 7 )
+position = Vector2( 320, 264 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11989 )
+
+[sub_resource type="Resource" id=11991]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11992]
+script = ExtResource( 7 )
+position = Vector2( 128, 1152 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11991 )
+
+[sub_resource type="Resource" id=11993]
+script = ExtResource( 13 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=11994]
+script = ExtResource( 7 )
+position = Vector2( 128, 448 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 11993 )
+
+[sub_resource type="Resource" id=11995]
+script = ExtResource( 6 )
+_points = {
+0: SubResource( 11980 ),
+1: SubResource( 11982 ),
+2: SubResource( 11984 ),
+3: SubResource( 11986 ),
+4: SubResource( 11988 ),
+6: SubResource( 11990 ),
+7: SubResource( 11992 ),
+8: SubResource( 11994 )
 }
 _point_order = [ 0, 1, 2, 6, 8, 7, 4, 3 ]
 _constraints = {
@@ -1279,12 +2133,12 @@ outlines = [ PoolVector2Array( 505, 461, 505, 1587, 5851, 1566, 5836, 418 ), Poo
 [sub_resource type="RectangleShape2D" id=622]
 extents = Vector2( 144, 4 )
 
-[sub_resource type="Curve2D" id=11208]
+[sub_resource type="Curve2D" id=11862]
 _data = {
 "points": PoolVector2Array(  )
 }
 
-[sub_resource type="Image" id=11778]
+[sub_resource type="Image" id=12066]
 data = {
 "data": PoolByteArray( 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255 ),
 "format": "RGBA8",
@@ -1296,7 +2150,7 @@ data = {
 [sub_resource type="ImageTexture" id=11379]
 flags = 3
 flags = 3
-image = SubResource( 11778 )
+image = SubResource( 12066 )
 size = Vector2( 32, 32 )
 script = ExtResource( 2 )
 atlas = ExtResource( 4 )
@@ -1311,7 +2165,7 @@ extents = Vector2( 512, 24 )
 [sub_resource type="CanvasItemMaterial" id=11038]
 blend_mode = 1
 
-[sub_resource type="Image" id=11779]
+[sub_resource type="Image" id=12067]
 data = {
 "data": PoolByteArray( 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 ),
 "format": "RGBA8",
@@ -1323,7 +2177,7 @@ data = {
 [sub_resource type="ImageTexture" id=11624]
 flags = 3
 flags = 3
-image = SubResource( 11779 )
+image = SubResource( 12067 )
 size = Vector2( 32, 32 )
 script = ExtResource( 2 )
 atlas = ExtResource( 4 )
@@ -1349,13 +2203,18 @@ __meta__ = {
 "_edit_vertical_guides_": [ 1152.0 ],
 "_editor_description_": ""
 }
-level_type = 3
+level_type = 2
+
+[node name="LevelZeroPosition" type="Position2D" parent="."]
+rotation = -0.785397
+__meta__ = {
+"_edit_lock_": true,
+"_gizmo_extents_": 500.0
+}
 
 [node name="Background" type="Node2D" parent="."]
+visible = false
 z_index = -4
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="Background" type="ColorRect" parent="Background"]
 show_behind_parent = true
@@ -1385,10 +2244,10 @@ z_index = -1
 show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -888.0
-margin_top = -1016.0
-margin_right = 11283.0
-margin_bottom = 10012.0
+margin_left = -3473.0
+margin_top = -5080.0
+margin_right = 4783.0
+margin_bottom = 4104.0
 color = Color( 0.490196, 0.443137, 0.423529, 1 )
 
 [node name="ShaderCanvasRect_SidewalkDirt" parent="Ground" instance=ExtResource( 16 )]
@@ -1419,55 +2278,63 @@ margin_bottom = 2215.0
 texture = ExtResource( 14 )
 
 [node name="StreetAsphalt" parent="Ground" instance=ExtResource( 38 )]
-position = Vector2( 4831, 3644 )
+position = Vector2( 2843, -1441 )
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="StreetSS2D" parent="Ground/StreetAsphalt" index="0"]
-_points = SubResource( 11703 )
+_points = SubResource( 11873 )
 
 [node name="CollisionPolygon2D" parent="Ground/StreetAsphalt" index="1"]
-polygon = PoolVector2Array( -2641.65, 3233.01, -2339.93, 3242.98, -2033.19, 3232.61, -1662.83, 3193.04, -1263.58, 3109.47, -1081.48, 3052.32, -903.557, 2980.51, -741.397, 2896.1, -591.573, 2794.23, -534.497, 2746.38, -476.772, 2690.92, -424.52, 2632.41, -382.717, 2578.01, -335.717, 2497.09, -327.774, 2478.31, -320.321, 2457.21, -316.125, 2441.09, -314.096, 2428.92, -313.403, 2419.43, -313.572, 2411.14, -314.518, 2402.65, -316.48, 2392.76, -319.904, 2380.56, -322.67, 2372.12, -344.607, 2324.57, -371.072, 2279.58, -594.661, 1970.71, -663.252, 1862.55, -792.792, 1483.92, -806.085, 994.313, -792.125, 801.68, -766.988, 629.726, -729.912, 470.207, -680.964, 322.824, -621.561, 188.541, -546.059, 54.7991, -176.158, -430.178, -80.6963, -573.164, -57.4717, -655.863, -49.6309, -692.919, -43.8867, -732.003, -41.502, -765.846, -41.7773, -795.008, -44.126, -820.247, -48.1426, -842.479, -53.6523, -862.699, -60.7266, -881.88, -69.6504, -900.88, -80.8584, -920.362, -94.8525, -940.76, -106.691, -956.066, -158.841, -1009.35, -221.429, -1058.75, -300.914, -1109.33, -396.371, -1159.14, -499.995, -1204.27, -762.27, -1291.64, -1043.04, -1357.9, -1662.67, -1444.29, -2222.92, -1475.51, -2803.9, -1470.47, -2812.14, -2470.43, -2199.06, -2475.23, -1565.48, -2439.56, -858.93, -2340.8, -489.225, -2253.64, -142.621, -2138.23, 34.8159, -2061.4, 200.685, -1974.43, 359.679, -1872.58, 509.611, -1753.1, 640.912, -1620.21, 708.924, -1535.69, 766.347, -1451.63, 817.732, -1361.91, 862.189, -1266.88, 898.895, -1167.09, 927.174, -1063.29, 946.568, -956.356, 956.861, -847.18, 958.069, -736.573, 950.393, -625.189, 934.14, -513.487, 907.659, -394.095, 823.712, -146.496, 643.251, 143.031, 289.877, 603.627, 273.202, 635.082, 251.868, 683.136, 232.771, 740.84, 215.742, 814.771, 201.965, 910.243, 193.456, 1024.62, 199.756, 1362.06, 204.9, 1366.25, 232.407, 1408.61, 466.294, 1732.94, 541.357, 1860.82, 603.366, 1994.68, 634.036, 2080.57, 657.319, 2165.35, 674.557, 2255.24, 684.527, 2349.52, 686.212, 2447.16, 678.919, 2546.9, 662.344, 2647.48, 636.542, 2747.75, 601.822, 2846.89, 554.642, 2952.35, 449.431, 3132.57, 347.873, 3267.56, 243.438, 3384.68, 132.325, 3491.59, 9.58203, 3593.36, -228.485, 3754.54, -484.071, 3888.27, -744.365, 3993.79, -1011.59, 4077.2, -1506.75, 4180.78, -1962.65, 4230.12, -2339, 4242.98, -2673.77, 4232.49 )
+polygon = PoolVector2Array( -2641.65, 3233.01, -2339.93, 3242.98, -2033.19, 3232.61, -1662.83, 3193.04, -1263.58, 3109.47, -1081.48, 3052.32, -903.557, 2980.51, -741.397, 2896.1, -591.573, 2794.23, -534.497, 2746.38, -476.772, 2690.92, -424.52, 2632.41, -382.717, 2578.01, -335.717, 2497.09, -327.774, 2478.31, -320.321, 2457.21, -316.125, 2441.09, -314.096, 2428.92, -313.403, 2419.43, -313.572, 2411.14, -314.518, 2402.65, -316.48, 2392.76, -319.904, 2380.56, -322.67, 2372.12, -344.607, 2324.57, -371.073, 2279.58, -594.661, 1970.71, -663.253, 1862.55, -792.792, 1483.92, -806.085, 994.313, -792.125, 801.68, -766.988, 629.726, -729.912, 470.207, -680.964, 322.824, -621.561, 188.541, -546.059, 54.7991, -176.158, -430.178, -80.6963, -573.164, -57.4717, -655.863, -49.6309, -692.919, -43.8865, -732.003, -41.5017, -765.846, -41.7773, -795.008, -44.126, -820.247, -48.1423, -842.479, -53.6523, -862.699, -60.7263, -881.88, -69.6501, -900.88, -80.8586, -920.362, -94.8528, -940.76, -106.691, -956.066, -158.841, -1009.35, -221.429, -1058.75, -300.914, -1109.33, -396.371, -1159.14, -499.995, -1204.27, -762.27, -1291.64, -1043.04, -1357.9, -1662.67, -1444.29, -2222.92, -1475.51, -2803.9, -1470.47, -2812.14, -2470.43, -2199.06, -2475.23, -1565.48, -2439.56, -858.93, -2340.8, -489.225, -2253.64, -142.621, -2138.23, 34.8162, -2061.4, 200.685, -1974.43, 359.679, -1872.58, 509.611, -1753.1, 640.911, -1620.21, 708.924, -1535.69, 766.347, -1451.63, 817.732, -1361.91, 862.189, -1266.88, 898.895, -1167.09, 927.174, -1063.29, 946.568, -956.356, 956.861, -847.18, 958.07, -736.573, 950.392, -625.189, 934.139, -513.487, 907.659, -394.095, 823.712, -146.496, 643.251, 143.031, 289.877, 603.627, 273.202, 635.082, 251.868, 683.136, 232.771, 740.84, 215.742, 814.771, 201.965, 910.243, 193.455, 1024.62, 199.756, 1362.06, 204.9, 1366.25, 232.407, 1408.61, 466.294, 1732.94, 541.357, 1860.82, 603.366, 1994.68, 634.036, 2080.57, 657.319, 2165.35, 674.557, 2255.24, 684.527, 2349.52, 686.212, 2447.16, 678.919, 2546.9, 662.344, 2647.48, 636.542, 2747.75, 601.822, 2846.89, 554.642, 2952.35, 449.431, 3132.57, 347.873, 3267.56, 243.439, 3384.68, 132.325, 3491.59, 9.58179, 3593.36, -228.485, 3754.54, -484.071, 3888.27, -744.365, 3993.78, -1011.59, 4077.2, -1506.75, 4180.78, -1962.65, 4230.12, -2339, 4242.98, -2673.77, 4232.49 )
 
 [node name="StreetConcrete" parent="Ground" instance=ExtResource( 36 )]
-position = Vector2( 0, 3664 )
+position = Vector2( -3034, -1380 )
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="StreetSS2D" parent="Ground/StreetConcrete" index="0"]
-_points = SubResource( 11718 )
+_points = SubResource( 11888 )
 
 [node name="CollisionPolygon2D" parent="Ground/StreetConcrete" index="1"]
-polygon = PoolVector2Array( 2196.17, 4225.62, 758.942, 4076.75, 786.594, 2020.85, 2697.17, 2006.32, 2678.29, 926.105, 726.645, 906.438, 605.403, -2551.55, 1605.38, -2544.31, 1439.19, 204.816, 3383.55, 217.149, 3412.67, 2704.94, 1491.25, 2730.41, 1471.98, 3375.63, 2195.65, 3225.62 )
+polygon = PoolVector2Array( 2196.17, 4225.62, 758.942, 4076.75, 786.594, 2020.85, 2697.17, 2006.32, 2678.29, 926.105, 726.646, 906.438, 605.403, -2551.55, 1605.38, -2544.31, 1439.19, 204.816, 3383.55, 217.149, 3412.67, 2704.94, 1491.25, 2730.41, 1471.98, 3375.63, 2195.65, 3225.62 )
 
 [node name="Surfaces" type="Node2D" parent="Ground"]
 
 [node name="SurfaceGravel" parent="Ground/Surfaces" instance=ExtResource( 8 )]
-position = Vector2( 2048, 448 )
+position = Vector2( -1377, -3144 )
 
 [node name="SS2D_Shape_Closed" parent="Ground/Surfaces/SurfaceGravel" index="0"]
-_points = SubResource( 11729 )
+_points = SubResource( 11899 )
 
 [node name="CollisionPolygon2D" parent="Ground/Surfaces/SurfaceGravel" index="1"]
-polygon = PoolVector2Array( 448.104, -0.103546, 448.104, 640.104, -0.103516, 640.104, -0.103516, -0.103546 )
+polygon = PoolVector2Array( 1369.74, -370.149, 1376.45, 223.015, -13.5693, 263.391, -0.0742188, -0.0598145 )
 
 [node name="SurfaceNitro" parent="Ground/Surfaces" instance=ExtResource( 12 )]
-position = Vector2( 2688, 448 )
+position = Vector2( -1369, -3904 )
 
 [node name="SS2D_Shape_Closed" parent="Ground/Surfaces/SurfaceNitro" index="0"]
-_points = SubResource( 11740 )
+_points = SubResource( 11910 )
 
 [node name="CollisionPolygon2D" parent="Ground/Surfaces/SurfaceNitro" index="1"]
-polygon = PoolVector2Array( 1344.1, -0.103546, 1344.1, 320.104, -0.103516, 320.104, -0.103516, -0.103546 )
+polygon = PoolVector2Array( 1344.1, -0.103516, 1344.08, 320.061, -6.84863, 703.608, -0.101929, -0.102783 )
 
 [node name="SurfaceHole" parent="Ground/Surfaces" instance=ExtResource( 37 )]
-position = Vector2( 2944, 640 )
+position = Vector2( -1391, -2830 )
+
+[node name="SS2D_Shape_Closed" parent="Ground/Surfaces/SurfaceHole" index="0"]
+_points = SubResource( 11921 )
+
+[node name="CollisionPolygon2D" parent="Ground/Surfaces/SurfaceHole" index="1"]
+polygon = PoolVector2Array( 1389.93, -20.2939, 1362.95, 269.489, -6.85352, 976.013, -0.101318, -0.100586 )
 
 [node name="CameraLimits" type="Panel" parent="."]
-margin_right = 6160.0
-margin_bottom = 8384.0
+margin_left = -3405.0
+margin_top = -5159.0
+margin_right = 4678.0
+margin_bottom = 3825.0
 theme = ExtResource( 3 )
 __meta__ = {
 "_edit_lock_": true
@@ -1476,56 +2343,1615 @@ __meta__ = {
 [node name="Terrain" type="Node2D" parent="."]
 
 [node name="TerrainMountain" parent="Terrain" instance=ExtResource( 5 )]
-position = Vector2( 88, 2088 )
+position = Vector2( -3098, -3107 )
 height = 50.0
 
 [node name="ObjectShapeSS2D" parent="Terrain/TerrainMountain" index="1"]
-_points = SubResource( 11759 )
+_points = SubResource( 11952 )
 shape_material = SubResource( 1823 )
 
 [node name="CollisionPolygon2D" parent="Terrain/TerrainMountain" index="2"]
-polygon = PoolVector2Array( 53.7048, 2029.07, -0.108299, -0.105469, 384.043, -0.0666504, 388.75, 10.3574, 399.925, 41.1323, 412.913, 91.8779, 423.103, 162.148, 425.882, 251.496, 416.638, 359.476, 390.761, 485.64, 343.637, 629.542, 319.087, 700.406, 303.997, 760.906, 297.278, 811.844, 296.719, 833.975, 297.845, 854.016, 300.521, 872.065, 304.611, 888.223, 309.98, 902.588, 316.49, 915.263, 324.007, 926.345, 332.394, 935.935, 341.517, 944.133, 351.238, 951.039, 361.422, 956.753, 371.934, 961.374, 382.637, 965.002, 393.396, 967.738, 414.538, 970.931, 434.272, 971.751, 465.173, 969.472, 477.691, 967.127, 295.801, 1182.57, 295.781, 1381.01, 413.579, 1677.03 )
+polygon = PoolVector2Array( -31.7966, 4751.45, -0.102295, -0.103027, 384.007, -0.0227051, 508.221, 88.9219, 504.682, 116.184, 485.181, 206.624, 343.637, 629.542, 319.087, 700.406, 303.997, 760.906, 297.278, 811.844, 296.719, 833.975, 297.845, 854.016, 300.521, 872.065, 304.611, 888.223, 309.979, 902.588, 316.49, 915.263, 324.007, 926.345, 332.395, 935.935, 341.517, 944.133, 351.238, 951.039, 361.422, 956.753, 371.934, 961.374, 382.637, 965.002, 393.396, 967.738, 414.538, 970.931, 434.272, 971.751, 465.173, 969.472, 477.691, 967.127, 295.801, 1182.57, 295.793, 1381, 449.385, 1606.62, 292.557, 1998.63, 463.598, 2540.29, 249.793, 3509.59, 477.666, 3971.96, 327.696, 4828.07 )
+
+[node name="TerrainMountain2" parent="Terrain" instance=ExtResource( 5 )]
+position = Vector2( -1280, -4552 )
+height = 50.0
+
+[node name="ObjectShapeSS2D" parent="Terrain/TerrainMountain2" index="1"]
+_points = SubResource( 12065 )
+shape_material = SubResource( 1823 )
+
+[node name="CollisionPolygon2D" parent="Terrain/TerrainMountain2" index="2"]
+polygon = PoolVector2Array( -0.112793, -0.108398, 5858.6, 45.1934, 5801.4, 390.99, 5581.94, 8061.48, -126.738, 8068.98, -323.306, 7812.04, 326.344, 7902.8, 945.526, 7804.64, 1851.64, 7872.6, 2787.96, 7698.91, 3331.64, 7200.56, 4048.98, 6943.83, 4320.82, 6800.36, 4406.36, 6780.19, 4603.04, 6712.58, 4714.96, 6657.67, 4769.4, 6624.36, 4820.96, 6586.93, 4868.22, 6545.2, 4909.78, 6499.01, 4927.99, 6474.2, 4944.25, 6448.21, 4958.38, 6421.02, 4970.21, 6392.61, 5294.82, 5448.75, 5180.34, 5336.89, 4933.39, 5046.64, 4805.63, 4855.86, 4748.61, 4752.77, 4699.2, 4645.97, 4659.64, 4536.51, 4632.23, 4425.46, 4619.21, 4313.87, 4618.81, 4258.21, 4622.86, 4202.82, 4640.67, 4096.77, 4667.68, 3999.33, 4702.45, 3910.24, 4743.56, 3829.28, 4789.58, 3756.19, 4839.08, 3690.74, 4890.64, 3632.67, 4942.83, 3581.75, 5043.4, 3500.37, 5129.37, 3444.65, 5211.77, 3402.37, 5181.63, 2337.72, 5340.14, 1424.08, 4902.25, 1076.71, 4260.41, 789.772, 2576.54, 465.078, 16.7021, 348.203 )
 
 [node name="BreakerConcrete" parent="Terrain" instance=ExtResource( 9 )]
-position = Vector2( 1373, 2122 )
+position = Vector2( 1176, -672 )
 physics_material_override = SubResource( 1 )
 script = SubResource( 11692 )
 
 [node name="BreakerClosedSS2D" parent="Terrain" instance=ExtResource( 39 )]
-position = Vector2( 1419, 2511 )
+position = Vector2( 808, 0 )
 physics_material_override = SubResource( 1 )
 script = SubResource( 11692 )
+
+[node name="CollisionPolygon2D" parent="Terrain/BreakerClosedSS2D" index="4"]
+polygon = PoolVector2Array( 234.105, 27.7927, 840.311, -147.859, 832.223, -140.082, 812.537, -117.79, 786.324, -81.4878, 758.984, -31.8748, 746.578, -2.29438, 735.915, 30.3525, 727.669, 65.9786, 722.516, 104.497, 721.129, 145.82, 724.184, 189.86, 732.356, 236.531, 746.319, 285.745, 764.725, 332.115, 785.403, 371.001, 807.8, 403.44, 831.359, 430.471, 855.525, 453.129, 879.743, 472.453, 926.115, 505.244, 947.157, 520.786, 966.03, 537.141, 974.479, 545.948, 982.178, 555.347, 989.057, 565.469, 995.047, 576.441, 1000.08, 588.396, 1004.08, 601.461, 1006.98, 615.766, 1008.72, 631.442, 1009.22, 648.618, 1008.42, 667.423, 1002.61, 710.441, 997.735, 732.661, 991.891, 752.513, 985.154, 770.107, 977.597, 785.55, 969.294, 798.953, 960.32, 810.423, 950.746, 820.072, 940.647, 828.005, 930.096, 834.335, 919.167, 839.168, 907.934, 842.615, 896.469, 844.784, 884.848, 845.785, 873.142, 845.725, 861.425, 844.716, 849.771, 842.865, 826.948, 837.074, 805.258, 829.225, 767.637, 810.843, 732.003, 787.983, 699.94, 1258.83, 474.928, 1213.5, 303.953, 1189.75, 235.967, 1187.14, 210.365, 1189.35, 200.164, 1191.48, 195.777, 1192.82, 191.888, 1194.35, 188.248, 1195.66, 184.595, 1196.34, 180.93, 1196.41, 177.255, 1195.86, 173.57, 1194.73, 169.876, 1193.01, 166.175, 1190.73, 162.469, 1187.89, 158.756, 1184.51, 155.04, 1180.6, 147.599, 1171.24, 132.716, 1146.69, 103.192, 1077.12, 74.4551, 985.55, -21.3973, 526.612, -26.9207, 475.824, -27.134, 454.184, -25.7937, 434.896, -23.0081, 417.844, -18.8856, 402.917, -13.5342, 390, -10.4317, 384.261, -7.06317, 378.981, -3.44177, 374.147, 0.418823, 369.745, 4.50519, 365.76, 8.80353, 362.179, 13.3005, 358.986, 17.9824, 356.169, 22.8357, 353.712, 27.8467, 351.602, 38.288, 348.364, 49.1978, 346.343, 60.4675, 345.424, 71.9885, 345.493, 95.3503, 348.145, 118.415, 353.389, 160.178, 368.025, 201.725, 388.222, 185.499, 338.357, 171.88, 286.07, 160.804, 224.809, 157.659, 192.966, 156.878, 161.462, 159.038, 131.159, 161.401, 116.727, 164.714, 102.918, 169.051, 89.8399, 174.482, 77.5997, 181.081, 66.3056, 188.92, 56.0653, 193.326, 51.374, 198.069, 46.9863, 203.158, 42.9158, 208.602, 39.1761, 214.409, 35.7804, 220.59, 32.7419 )
+
+[node name="SS2D_Shape_Closed" parent="Terrain/BreakerClosedSS2D" index="6"]
+_points = SubResource( 12012 )
 
 [node name="BreakerOpenSS2D" parent="Terrain" instance=ExtResource( 40 )]
-position = Vector2( 901, 2154 )
+position = Vector2( 128, -2856 )
 physics_material_override = SubResource( 1 )
 script = SubResource( 11692 )
 
-[node name="RigidObject" parent="Terrain" instance=ExtResource( 47 )]
-position = Vector2( -486, 2827 )
+[node name="CollisionPolygon2D" parent="Terrain/BreakerOpenSS2D" index="4"]
+polygon = PoolVector2Array( 42.1846, 28.4778, 1033.44, 65.0903, 1631.69, 148.737, 1873.08, 199.668, 2104.17, 273.559, 2208.77, 319.017, 2302.14, 370.587, 2343.75, 398.742, 2381.5, 428.491, 2415.01, 459.899, 2443.86, 493.014, 2455.19, 506.039, 2464.51, 520.28, 2472.69, 535.045, 2479.55, 550.525, 2485.05, 566.738, 2489.23, 583.66, 2492.12, 601.259, 2493.78, 619.502, 2493.52, 657.791, 2488.75, 698.254, 2479.84, 740.622, 2467.15, 784.633, 2431.71, 876.484, 2385.13, 971.654, 2269.42, 1163.35, 1902.99, 1631.77, 1852.58, 1592.34, 2216.72, 1127.02, 2328.94, 941.016, 2373.06, 850.872, 2406.49, 764.224, 2417.74, 725.167, 2425.58, 687.934, 2429.64, 653.82, 2429.84, 622.153, 2428.63, 609.336, 2426.54, 596.545, 2423.63, 584.747, 2419.94, 573.893, 2415.46, 563.904, 2410.1, 554.709, 2403.55, 546.399, 2390.92, 539.051, 2358.04, 515.215, 2323.83, 495.823, 2286.12, 477.863, 2246.35, 461.998, 2157.51, 423.297, 2060.02, 390.375, 1838.09, 326.831, 1608.47, 278.858, 1022.68, 170.141, 39.8192, 92.4341 )
 
-[node name="BreakerRigid" parent="Terrain" instance=ExtResource( 47 )]
-position = Vector2( -522, 2311 )
-
-[node name="KinematicBody2D" type="KinematicBody2D" parent="Terrain"]
-position = Vector2( -469, 3392 )
-script = ExtResource( 45 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="PolygonShadow" parent="Terrain/KinematicBody2D" instance=ExtResource( 44 )]
-shadow_casting_polygon_path = NodePath("../BreakerShape")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Terrain/KinematicBody2D"]
-polygon = PoolVector2Array( 7, -5, 247, -1, 409, 150, 186, 337, 7, 339 )
-
-[node name="BreakerShape" parent="Terrain/KinematicBody2D" instance=ExtResource( 46 )]
-visible = false
+[node name="SS2D_Shape_Open" parent="Terrain/BreakerOpenSS2D" index="6"]
+scale = Vector2( 2, 2 )
+_points = SubResource( 11961 )
 
 [node name="BreakerRigidConcrete" parent="Terrain" instance=ExtResource( 43 )]
-position = Vector2( 672, 2858 )
+position = Vector2( -2437, -163 )
 physics_material_override = SubResource( 11777 )
+
+[node name="BreakerShape" parent="Terrain/BreakerRigidConcrete" index="1"]
+color = Color( 0.4, 0.4, 0.4, 1 )
+polygon = PoolVector2Array( 0, 0, -2, 461, 735, 443, 833, 268, 1020, 185, 1082, 449, 1237, 440, 1463, 394, 1796, 253, 1835, -7 )
+
+[node name="BreakerTool" parent="Terrain/BreakerRigidConcrete/BreakerShape" index="2"]
+visible = true
+
+[node name="BreakerRigid" parent="Terrain" instance=ExtResource( 47 )]
+position = Vector2( -1389, -1775 )
+
+[node name="Bricks" type="Node2D" parent="Terrain"]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Line" type="Node2D" parent="Terrain/Bricks"]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BreakerBrick" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( -400, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick2" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( -256, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick2" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick2" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick3" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( -112, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick3" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick3" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick4" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( 32, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick4" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick4" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick5" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( 176, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick5" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick5" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick6" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( 320, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick6" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick6" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick7" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( 464, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick7" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick7" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick8" parent="Terrain/Bricks/Line" instance=ExtResource( 47 )]
+position = Vector2( 608, -192 )
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Line/BreakerBrick8" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Line/BreakerBrick8" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="Square" type="Node2D" parent="Terrain/Bricks"]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BreakerBrick" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick2" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick2" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick2" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick3" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick3" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick3" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick4" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick4" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick4" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick5" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick5" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick5" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick6" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick6" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick6" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick7" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick7" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick7" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick8" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick8" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick8" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick9" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick9" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick9" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick10" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick10" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick10" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick11" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick11" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick11" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick12" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -2328 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick12" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick12" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick13" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick13" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick13" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick14" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick14" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick14" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick15" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick15" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick15" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick16" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick16" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick16" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick17" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick17" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick17" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick18" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick18" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick18" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick19" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick19" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick19" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick20" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick20" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick20" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick21" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick21" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick21" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick22" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick22" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick22" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick23" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick23" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick23" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick24" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -2184 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick24" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick24" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick25" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick25" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick25" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick26" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick26" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick26" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick27" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick27" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick27" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick28" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick28" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick28" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick29" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick29" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick29" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick30" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick30" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick30" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick31" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick31" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick31" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick32" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick32" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick32" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick33" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick33" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick33" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick34" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick34" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick34" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick35" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick35" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick35" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick36" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -2040 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick36" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick36" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick37" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick37" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick37" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick38" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick38" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick38" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick39" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick39" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick39" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick40" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick40" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick40" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick41" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick41" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick41" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick42" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick42" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick42" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick43" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick43" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick43" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick44" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick44" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick44" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick45" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick45" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick45" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick46" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick46" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick46" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick47" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick47" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick47" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick48" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1896 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick48" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick48" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick49" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick49" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick49" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick50" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick50" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick50" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick51" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick51" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick51" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick52" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick52" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick52" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick53" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick53" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick53" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick54" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick54" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick54" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick55" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick55" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick55" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick56" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick56" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick56" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick57" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick57" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick57" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick58" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick58" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick58" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick59" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick59" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick59" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick60" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1752 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick60" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick60" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick61" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick61" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick61" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick62" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick62" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick62" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick63" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick63" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick63" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick64" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick64" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick64" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick65" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick65" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick65" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick66" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick66" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick66" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick67" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick67" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick67" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick68" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick68" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick68" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick69" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick69" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick69" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick70" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick70" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick70" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick71" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick71" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick71" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick72" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1608 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick72" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick72" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick73" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick73" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick73" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick74" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick74" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick74" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick75" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick75" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick75" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick76" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick76" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick76" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick77" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick77" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick77" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick78" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick78" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick78" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick79" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick79" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick79" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick80" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick80" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick80" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick81" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick81" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick81" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick82" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick82" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick82" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick83" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick83" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick83" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick84" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1464 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick84" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick84" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick85" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick85" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick85" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick86" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick86" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick86" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick87" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick87" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick87" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick88" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick88" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick88" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick89" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick89" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick89" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick90" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick90" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick90" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick91" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick91" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick91" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick92" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick92" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick92" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick93" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick93" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick93" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick94" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick94" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick94" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick95" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick95" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick95" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick96" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1320 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick96" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick96" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick97" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick97" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick97" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick98" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick98" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick98" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick99" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick99" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick99" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick100" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick100" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick100" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick101" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick101" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick101" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick102" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick102" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick102" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick103" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick103" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick103" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick104" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick104" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick104" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick105" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick105" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick105" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick106" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick106" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick106" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick107" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick107" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick107" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick108" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1176 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick108" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick108" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick109" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick109" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick109" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick110" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick110" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick110" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick111" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick111" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick111" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick112" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick112" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick112" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick113" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick113" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick113" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick114" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick114" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick114" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick115" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick115" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick115" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick116" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick116" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick116" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick117" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick117" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick117" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick118" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick118" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick118" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick119" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick119" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick119" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick120" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -1032 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick120" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick120" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick121" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( -144, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick121" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick121" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick122" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 0, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick122" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick122" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick123" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 144, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick123" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick123" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick124" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 288, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick124" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick124" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick125" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 432, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick125" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick125" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick126" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 576, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick126" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick126" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick127" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 720, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick127" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick127" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick128" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 864, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick128" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick128" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick129" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1008, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick129" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick129" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick130" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1152, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick130" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick130" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick131" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1296, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick131" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick131" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
+
+[node name="BreakerBrick132" parent="Terrain/Bricks/Square" instance=ExtResource( 47 )]
+position = Vector2( 1440, -888 )
+mass = 500.0
+height = 50
+
+[node name="BreakerShape" parent="Terrain/Bricks/Square/BreakerBrick132" index="1"]
+polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
+
+[node name="CollisionPolygon2D" parent="Terrain/Bricks/Square/BreakerBrick132" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281677, 128, 0, 128, 128, 0, 128 )
 
 [node name="Objects" type="Node2D" parent="."]
 z_index = 1
@@ -1535,57 +3961,73 @@ position = Vector2( -3, 0 )
 tile_set = ExtResource( 26 )
 bake_navigation = true
 format = 1
-tile_data = PoolIntArray( 1179675, 45, 0, 1179676, 45, 0, 1179677, 45, 0, 1245211, 45, 0, 1245212, 45, 0, 1245213, 45, 0, 1310747, 45, 0, 1310748, 45, 0, 1310749, 45, 0, 1376283, 45, 0, 1376284, 45, 0, 1376285, 45, 0, 1441819, 45, 0, 1441820, 45, 0, 1441821, 45, 0, 1507355, 45, 0, 1507356, 45, 0, 1507357, 45, 0, 1572891, 45, 0, 1572892, 45, 0, 1572893, 45, 0, 1638427, 45, 0, 1638428, 45, 0, 1638429, 45, 0, 1703963, 45, 0, 1703964, 45, 0, 1703965, 45, 0, 1769499, 45, 0, 1769500, 45, 0, 1769501, 45, 0, 1835035, 45, 0, 1835036, 45, 0, 1835037, 45, 0, 1900571, 45, 0, 1900572, 45, 0, 1900573, 45, 0, 1966107, 45, 0, 1966108, 45, 0, 1966109, 45, 0, 2031643, 45, 0, 2031644, 45, 0, 2031645, 45, 0, 2162715, 41, 0, 2162716, 41, 0, 2162717, 41, 0, 2228251, 41, 0, 2228252, 41, 0, 2228253, 41, 0, 2293787, 41, 0, 2293788, 41, 0, 2293789, 41, 0, 2293792, 44, 0, 2293793, 44, 0, 2293794, 44, 0, 2359323, 41, 0, 2359324, 41, 0, 2359325, 41, 0, 2359328, 44, 0, 2359329, 44, 0, 2359330, 44, 0, 2424859, 41, 0, 2424860, 41, 0, 2424861, 41, 0, 2424864, 44, 0, 2424865, 44, 0, 2424866, 44, 0, 2752539, 43, 0, 2752540, 43, 0, 2752541, 43, 0, 2752544, 42, 0, 2752545, 42, 0, 2752546, 42, 0, 2818075, 43, 0, 2818076, 43, 0, 2818077, 43, 0, 2818080, 42, 0, 2818081, 42, 0, 2818082, 42, 0, 2883611, 43, 0, 2883612, 43, 0, 2883613, 43, 0, 2883616, 42, 0, 2883617, 42, 0, 2883618, 42, 0, 2949147, 43, 0, 2949148, 43, 0, 2949149, 43, 0, 2949152, 42, 0, 2949153, 42, 0, 2949154, 42, 0, 3014683, 43, 0, 3014684, 43, 0, 3014685, 43, 0, 3014688, 42, 0, 3014689, 42, 0, 3014690, 42, 0, 4522070, 14, 0, 4522075, 15, 0, 4522080, 17, 0, 4849750, 18, 0, 4849755, 19, 0, 4849760, 20, 0, 5177430, 27, 0, 5177435, 31, 0, 5177440, 35, 0, 5505110, 30, 0, 5505115, 22, 0 )
+tile_data = PoolIntArray( 1638362, 45, 0, 1638363, 45, 0, 1638364, 45, 0, 1638365, 45, 0, 1638366, 45, 0, 1638367, 45, 0, 1638368, 45, 0, 1638369, 45, 0, 1638370, 45, 0, 1638371, 45, 0, 1638372, 45, 0, 1638373, 45, 0, 1638374, 45, 0, 1638375, 45, 0, 1638376, 45, 0, 1638377, 45, 0, 1638379, 42, 0, 1638380, 42, 0, 1638381, 42, 0, 1638382, 42, 0, 1638383, 42, 0, 1638384, 42, 0, 1638385, 42, 0, 1638386, 42, 0, 1638387, 42, 0, 1638388, 42, 0, 1638389, 42, 0, 1638390, 42, 0, 1638391, 42, 0, 1638392, 42, 0, 1638393, 42, 0, 1638394, 42, 0, 1638395, 42, 0, 1638396, 42, 0, 1638397, 42, 0, 1638398, 42, 0, 1638399, 42, 0, 1572864, 42, 0, 1572865, 42, 0, 1572866, 42, 0, 1572867, 42, 0, 1572868, 42, 0, 1572869, 42, 0, 1572870, 42, 0, 1572871, 42, 0, 1572872, 42, 0, 1703898, 45, 0, 1703899, 45, 0, 1703900, 45, 0, 1703901, 45, 0, 1703902, 45, 0, 1703903, 45, 0, 1703904, 45, 0, 1703905, 45, 0, 1703906, 45, 0, 1703907, 45, 0, 1703908, 45, 0, 1703909, 45, 0, 1703910, 45, 0, 1703911, 45, 0, 1703912, 45, 0, 1703913, 45, 0, 1703915, 42, 0, 1703916, 42, 0, 1703917, 42, 0, 1703918, 42, 0, 1703919, 42, 0, 1703920, 42, 0, 1703921, 42, 0, 1703922, 42, 0, 1703923, 42, 0, 1703924, 42, 0, 1703925, 42, 0, 1703926, 42, 0, 1703927, 42, 0, 1703928, 42, 0, 1703929, 42, 0, 1703930, 42, 0, 1703931, 42, 0, 1703932, 42, 0, 1703933, 42, 0, 1703934, 42, 0, 1703935, 42, 0, 1638400, 42, 0, 1638401, 42, 0, 1638402, 42, 0, 1638403, 42, 0, 1638404, 42, 0, 1638405, 42, 0, 1638406, 42, 0, 1638407, 42, 0, 1638408, 42, 0, 1769434, 45, 0, 1769435, 45, 0, 1769436, 45, 0, 1769437, 45, 0, 1769438, 45, 0, 1769439, 45, 0, 1769440, 45, 0, 1769441, 45, 0, 1769442, 45, 0, 1769443, 45, 0, 1769444, 45, 0, 1769445, 45, 0, 1769446, 45, 0, 1769447, 45, 0, 1769448, 45, 0, 1769449, 45, 0, 1769451, 42, 0, 1769452, 42, 0, 1769453, 42, 0, 1769454, 42, 0, 1769455, 42, 0, 1769456, 42, 0, 1769457, 42, 0, 1769458, 42, 0, 1769459, 42, 0, 1769460, 42, 0, 1769461, 42, 0, 1769462, 42, 0, 1769463, 42, 0, 1769464, 42, 0, 1769465, 42, 0, 1769466, 42, 0, 1769467, 42, 0, 1769468, 42, 0, 1769469, 42, 0, 1769470, 42, 0, 1769471, 42, 0, 1703936, 42, 0, 1703937, 42, 0, 1703938, 42, 0, 1703939, 42, 0, 1703940, 42, 0, 1703941, 42, 0, 1703942, 42, 0, 1703943, 42, 0, 1703944, 42, 0, 1703946, 44, 0, 1703947, 44, 0, 1703948, 44, 0, 1703949, 44, 0, 1703950, 44, 0, 1703951, 44, 0, 1703952, 44, 0, 1966068, 43, 0, 1966069, 43, 0, 1966070, 43, 0, 1966071, 43, 0, 1966072, 43, 0, 1966073, 43, 0, 1966074, 43, 0, 1966075, 43, 0, 1966076, 43, 0, 1966077, 43, 0, 1966078, 43, 0, 1966079, 43, 0, 1900544, 43, 0, 2031604, 43, 0, 2031605, 43, 0, 2031606, 43, 0, 2031607, 43, 0, 2031608, 43, 0, 2031609, 43, 0, 2031610, 43, 0, 2031611, 43, 0, 2031612, 43, 0, 2031613, 43, 0, 2031614, 43, 0, 2031615, 43, 0, 1966080, 43, 0, 2097140, 43, 0, 2097141, 43, 0, 2097142, 43, 0, 2097143, 43, 0, 2097144, 43, 0, 2097145, 43, 0, 2097146, 43, 0, 2097147, 43, 0, 2097148, 43, 0, 2097149, 43, 0, 2097150, 43, 0, 2097151, 43, 0, 2031616, 43, 0, 2162676, 43, 0, 2162677, 43, 0, 2162678, 43, 0, 2162679, 43, 0, 2162680, 43, 0, 2162681, 43, 0, 2162682, 43, 0, 2162683, 43, 0, 2162684, 43, 0, 2162685, 43, 0, 2162686, 43, 0, 2162687, 43, 0, 2097152, 43, 0, 2228212, 43, 0, 2228213, 43, 0, 2228214, 43, 0, 2228215, 43, 0, 2228216, 43, 0, 2228217, 43, 0, 2228218, 43, 0, 2228219, 43, 0, 2228220, 43, 0, 2228221, 43, 0, 2228222, 43, 0, 2228223, 43, 0, 2162688, 43, 0, 2293748, 43, 0, 2293749, 43, 0, 2293750, 43, 0, 2293751, 43, 0, 2293752, 43, 0, 2293753, 43, 0, 2293754, 43, 0, 2293755, 43, 0, 2293756, 43, 0, 2293757, 43, 0, 2293758, 43, 0, 2293759, 43, 0, 2228224, 43, 0, 2359284, 43, 0, 2359285, 43, 0, 2359286, 43, 0, 2359287, 43, 0, 2359288, 43, 0, 2359289, 43, 0, 2359290, 43, 0, 2359291, 43, 0, 2359292, 43, 0, 2359293, 43, 0, 2359294, 43, 0, 2359295, 43, 0, 2293760, 43, 0, 2424820, 43, 0, 2424821, 43, 0, 2424822, 43, 0, 2424823, 43, 0, 2424824, 43, 0, 2424825, 43, 0, 2424826, 43, 0, 2424827, 43, 0, 2424828, 43, 0, 2424829, 43, 0, 2424830, 43, 0, 2424831, 43, 0, 2359296, 43, 0, 2490356, 43, 0, 2490357, 43, 0, 2490358, 43, 0, 2490359, 43, 0, 2490360, 43, 0, 2490361, 43, 0, 2490362, 43, 0, 2490363, 43, 0, 2490364, 43, 0, 2490365, 43, 0, 2490366, 43, 0, 2490367, 43, 0, 2424832, 43, 0, 2555892, 43, 0, 2555893, 43, 0, 2555894, 43, 0, 2555895, 43, 0, 2555896, 43, 0, 2555897, 43, 0, 2555898, 43, 0, 2555899, 43, 0, 2555900, 43, 0, 2555901, 43, 0, 2555902, 43, 0, 2555903, 43, 0, 2490368, 43, 0, 2621428, 43, 0, 2621429, 43, 0, 2621430, 43, 0, 2621431, 43, 0, 2621432, 43, 0, 2621433, 43, 0, 2621434, 43, 0, 2621435, 43, 0, 2621436, 43, 0, 2621437, 43, 0, 2621438, 43, 0, 2621439, 43, 0, 2555904, 43, 0, 2686964, 43, 0, 2686965, 43, 0, 2686966, 43, 0, 2686967, 43, 0, 2686968, 43, 0, 2686969, 43, 0, 2686970, 43, 0, 2686971, 43, 0, 2686972, 43, 0, 2686973, 43, 0, 2686974, 43, 0, 2686975, 43, 0, 2621440, 43, 0, 2752500, 43, 0, 2752501, 43, 0, 2752502, 43, 0, 2752503, 43, 0, 2752504, 43, 0, 2752505, 43, 0, 2752506, 43, 0, 2752507, 43, 0, 2752508, 43, 0, 2752509, 43, 0, 2752510, 43, 0, 2752511, 43, 0, 2686976, 43, 0, 2818036, 43, 0, 2818037, 43, 0, 2818038, 43, 0, 2818039, 43, 0, 2818040, 43, 0, 2818041, 43, 0, 2818042, 43, 0, 2818043, 43, 0, 2818044, 43, 0, 2818045, 43, 0, 2818046, 43, 0, 2818047, 43, 0, 2752512, 43, 0, 2883572, 43, 0, 2883573, 43, 0, 2883574, 43, 0, 2883575, 43, 0, 2883576, 43, 0, 2883577, 43, 0, 2883578, 43, 0, 2883579, 43, 0, 2883580, 43, 0, 2883581, 43, 0, 2883582, 43, 0, 2883583, 43, 0, 2818048, 43, 0, 3080171, 42, 0, 3080172, 42, 0, 3080173, 42, 0, 3080174, 42, 0, 3080175, 42, 0, 3080176, 42, 0, 3080177, 42, 0, 3080178, 42, 0, 3080179, 42, 0, 3080180, 42, 0, 3080181, 42, 0, 3080182, 42, 0, 3080183, 42, 0, 3080184, 42, 0, 3080185, 42, 0, 3080186, 42, 0, 3080187, 42, 0, 3080188, 42, 0, 3080189, 42, 0, 3080190, 42, 0, 3080191, 42, 0, 3014656, 42, 0, 3014658, 44, 0, 3014659, 44, 0, 3014660, 44, 0, 3014661, 44, 0, 3014662, 44, 0, 3014663, 44, 0, 3014664, 44, 0, 3014665, 44, 0, 3014666, 44, 0, 3014667, 44, 0, 3014668, 44, 0, 3014669, 44, 0, 3014670, 44, 0, 3014671, 44, 0, 3014672, 44, 0, 3014673, 44, 0, 3014674, 44, 0, 3014675, 44, 0, 3014676, 44, 0, 3014677, 44, 0, 3014678, 44, 0, 3014679, 44, 0, 3145707, 42, 0, 3145708, 42, 0, 3145709, 42, 0, 3145710, 42, 0, 3145711, 42, 0, 3145712, 42, 0, 3145713, 42, 0, 3145714, 42, 0, 3145715, 42, 0, 3145716, 42, 0, 3145717, 42, 0, 3145718, 42, 0, 3145719, 42, 0, 3145720, 42, 0, 3145721, 42, 0, 3145722, 42, 0, 3145723, 42, 0, 3145724, 42, 0, 3145725, 42, 0, 3145726, 42, 0, 3145727, 42, 0, 3080192, 42, 0, 3211243, 42, 0, 3211244, 42, 0, 3211245, 42, 0, 3211246, 42, 0, 3211247, 42, 0, 3211248, 42, 0, 3211249, 42, 0, 3211250, 42, 0, 3211251, 42, 0, 3211252, 42, 0, 3211253, 42, 0, 3211254, 42, 0, 3211255, 42, 0, 3211256, 42, 0, 3211257, 42, 0, 3211258, 42, 0, 3211259, 42, 0, 3211260, 42, 0, 3211261, 42, 0, 3211262, 42, 0, 3211263, 42, 0, 3145728, 42, 0, 4522070, 14, 0, 4522075, 15, 0, 4522080, 17, 0, 4849750, 18, 0, 4849755, 19, 0, 4849760, 20, 0, 5177430, 27, 0, 5177435, 31, 0, 5177440, 35, 0, 5505110, 30, 0, 5505115, 22, 0 )
 
 [node name="GoalPillar" parent="Objects" instance=ExtResource( 10 )]
-position = Vector2( 4288, 600 )
+position = Vector2( 1400, 1488 )
+
+[node name="GoalPillar2" parent="Objects" instance=ExtResource( 10 )]
+position = Vector2( 1816, 160 )
+
+[node name="GoalPillar3" parent="Objects" instance=ExtResource( 10 )]
+position = Vector2( 2200, 976 )
 
 [node name="Pickables" type="Node2D" parent="."]
 
 [node name="PickableBullet" parent="Pickables" instance=ExtResource( 33 )]
-position = Vector2( 2693, 2430 )
+position = Vector2( -565, -1964 )
 
 [node name="PickableCash" parent="Pickables" instance=ExtResource( 18 )]
-position = Vector2( 2680, 2607 )
+position = Vector2( -578, -1787 )
 
 [node name="PickableGas" parent="Pickables" instance=ExtResource( 25 )]
-position = Vector2( 2872, 2609 )
+position = Vector2( -386, -1785 )
 
 [node name="PickableHealth" parent="Pickables" instance=ExtResource( 15 )]
-position = Vector2( 2682, 2791 )
+position = Vector2( -576, -1603 )
 
 [node name="PickableLife" parent="Pickables" instance=ExtResource( 32 )]
-position = Vector2( 2880, 2791 )
+position = Vector2( -378, -1603 )
 
 [node name="PickableMina" parent="Pickables" instance=ExtResource( 28 )]
-position = Vector2( 2493, 2426 )
+position = Vector2( -765, -1968 )
 
 [node name="PickableMisile" parent="Pickables" instance=ExtResource( 29 )]
-position = Vector2( 2878, 2434 )
+position = Vector2( -380, -1960 )
 
 [node name="PickableNitro" parent="Pickables" instance=ExtResource( 31 )]
-position = Vector2( 2493, 2608 )
+position = Vector2( -765, -1786 )
 
 [node name="PickableRandom" parent="Pickables" instance=ExtResource( 34 )]
-position = Vector2( 2882, 2959 )
+position = Vector2( -376, -1435 )
 
 [node name="PickableRandom3" parent="Pickables" instance=ExtResource( 34 )]
-position = Vector2( 2482, 2955 )
+position = Vector2( -776, -1439 )
 
 [node name="PickableRandom2" parent="Pickables" instance=ExtResource( 34 )]
-position = Vector2( 2681, 2958 )
+position = Vector2( -577, -1436 )
 
 [node name="PickableShield" parent="Pickables" instance=ExtResource( 30 )]
-position = Vector2( 2487, 2788 )
+position = Vector2( -771, -1606 )
 
 [node name="Building" parent="." instance=ExtResource( 35 )]
-position = Vector2( 72, 560 )
+position = Vector2( -3092, -4607 )
 
 [node name="SS2D_Shape_Closed" parent="Building" index="1"]
-_points = SubResource( 11776 )
+_points = SubResource( 11978 )
 
 [node name="CollisionPolygon2D" parent="Building" index="2"]
-polygon = PoolVector2Array( -0.542603, -0.281555, 1664.1, -0.103516, 1664.1, 456.104, 576.013, 456.033, 384.037, 640.016, 384.104, 1344.1, -0.103455, 1344.1 )
+polygon = PoolVector2Array( -0.54248, -0.281738, 1664.1, -0.103516, 1664.1, 456.104, 576.013, 456.033, 384.037, 640.016, 384.104, 1344.1, -0.103516, 1344.1 )
+
+[node name="Building2" parent="." instance=ExtResource( 35 )]
+position = Vector2( -3144, 3513 )
+rotation = -1.57079
+
+[node name="SS2D_Shape_Closed" parent="Building2" index="1"]
+_points = SubResource( 11995 )
+
+[node name="CollisionPolygon2D" parent="Building2" index="2"]
+polygon = PoolVector2Array( -0.542725, -0.281737, 1664.1, -0.10355, 1664.1, 456.103, 576.013, 456.033, 384.037, 640.016, 384.104, 1344.1, -0.10346, 1344.1 )
 
 [node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="."]
 visible = false
@@ -1595,7 +4037,10 @@ navpoly = SubResource( 10545 )
 [node name="Racing" type="Node" parent="."]
 
 [node name="LevelStart" type="Node2D" parent="Racing"]
-position = Vector2( 1152, 3200 )
+position = Vector2( 9, 23 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="StartLights" parent="Racing/LevelStart" instance=ExtResource( 22 )]
 position = Vector2( -7.62939e-06, -120 )
@@ -1650,7 +4095,7 @@ position = Vector2( 104, 0 )
 position = Vector2( 312, 0 )
 
 [node name="LevelTrack" type="Path2D" parent="Racing"]
-curve = SubResource( 11208 )
+curve = SubResource( 11862 )
 script = ExtResource( 24 )
 
 [node name="BoltTracker" type="PathFollow2D" parent="Racing/LevelTrack"]
@@ -1663,7 +4108,7 @@ scale = Vector2( 2, 2 )
 texture = ExtResource( 1 )
 
 [node name="LevelFinish" type="Node2D" parent="Racing"]
-position = Vector2( 1152, 1576 )
+position = Vector2( -1918, 1843 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -1701,7 +4146,7 @@ points = PoolVector2Array( -320, 0, 472, 0 )
 default_color = Color( 1, 0, 1, 1 )
 
 [node name="Checkpoint" type="Area2D" parent="Racing"]
-position = Vector2( 2249, 3424 )
+position = Vector2( 2528, -408 )
 monitoring = false
 monitorable = false
 __meta__ = {
@@ -1738,22 +4183,15 @@ position = Vector2( 104, 0 )
 [node name="StartPosition4" parent="Racing/__StartPositions" instance=ExtResource( 21 )]
 position = Vector2( 312, 0 )
 
-[node name="__ScreenSize" type="Panel" parent="."]
-modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
-margin_right = 2560.0
-margin_bottom = 1440.0
-custom_styles/panel = SubResource( 613 )
-__meta__ = {
-"_edit_lock_": true
-}
-
 [node name="Labels" type="Node2D" parent="."]
+visible = false
+position = Vector2( -4670, 34 )
 
 [node name="_note" type="Label" parent="Labels"]
-margin_left = 64.0
-margin_top = 80.0
-margin_right = 714.0
-margin_bottom = 383.0
+margin_left = -724.0
+margin_top = 19.0
+margin_right = -74.0
+margin_bottom = 322.0
 theme = ExtResource( 3 )
 text = "Z INDEX
 - background = -10
@@ -1794,8 +4232,15 @@ text = "Pikables
 - ob pobiranju kliče na plejerju on item picked 
 - pleyer aplicira posledice glede na PICKABLE"
 
-[node name="BreakerRigid" parent="." instance=ExtResource( 47 )]
-position = Vector2( -619, 1779 )
+[node name="__ScreenSize" type="Panel" parent="."]
+visible = false
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+margin_right = 2560.0
+margin_bottom = 1440.0
+custom_styles/panel = SubResource( 613 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [connection signal="body_entered" from="Racing/LevelFinish/FinishLine" to="." method="_on_FinishLine_body_entered"]
 [connection signal="body_entered" from="Racing/Checkpoint" to="." method="_on_Checkpoint_body_entered"]
@@ -1804,5 +4249,151 @@ position = Vector2( -619, 1779 )
 [editable path="Ground/StreetConcrete"]
 [editable path="Ground/Surfaces/SurfaceGravel"]
 [editable path="Ground/Surfaces/SurfaceNitro"]
+[editable path="Ground/Surfaces/SurfaceHole"]
 [editable path="Terrain/TerrainMountain"]
+[editable path="Terrain/TerrainMountain2"]
+[editable path="Terrain/BreakerClosedSS2D"]
+[editable path="Terrain/BreakerOpenSS2D"]
+[editable path="Terrain/BreakerRigidConcrete"]
+[editable path="Terrain/Bricks/Line/BreakerBrick"]
+[editable path="Terrain/Bricks/Line/BreakerBrick2"]
+[editable path="Terrain/Bricks/Line/BreakerBrick3"]
+[editable path="Terrain/Bricks/Line/BreakerBrick4"]
+[editable path="Terrain/Bricks/Line/BreakerBrick5"]
+[editable path="Terrain/Bricks/Line/BreakerBrick6"]
+[editable path="Terrain/Bricks/Line/BreakerBrick7"]
+[editable path="Terrain/Bricks/Line/BreakerBrick8"]
+[editable path="Terrain/Bricks/Square/BreakerBrick"]
+[editable path="Terrain/Bricks/Square/BreakerBrick2"]
+[editable path="Terrain/Bricks/Square/BreakerBrick3"]
+[editable path="Terrain/Bricks/Square/BreakerBrick4"]
+[editable path="Terrain/Bricks/Square/BreakerBrick5"]
+[editable path="Terrain/Bricks/Square/BreakerBrick6"]
+[editable path="Terrain/Bricks/Square/BreakerBrick7"]
+[editable path="Terrain/Bricks/Square/BreakerBrick8"]
+[editable path="Terrain/Bricks/Square/BreakerBrick9"]
+[editable path="Terrain/Bricks/Square/BreakerBrick10"]
+[editable path="Terrain/Bricks/Square/BreakerBrick11"]
+[editable path="Terrain/Bricks/Square/BreakerBrick12"]
+[editable path="Terrain/Bricks/Square/BreakerBrick13"]
+[editable path="Terrain/Bricks/Square/BreakerBrick14"]
+[editable path="Terrain/Bricks/Square/BreakerBrick15"]
+[editable path="Terrain/Bricks/Square/BreakerBrick16"]
+[editable path="Terrain/Bricks/Square/BreakerBrick17"]
+[editable path="Terrain/Bricks/Square/BreakerBrick18"]
+[editable path="Terrain/Bricks/Square/BreakerBrick19"]
+[editable path="Terrain/Bricks/Square/BreakerBrick20"]
+[editable path="Terrain/Bricks/Square/BreakerBrick21"]
+[editable path="Terrain/Bricks/Square/BreakerBrick22"]
+[editable path="Terrain/Bricks/Square/BreakerBrick23"]
+[editable path="Terrain/Bricks/Square/BreakerBrick24"]
+[editable path="Terrain/Bricks/Square/BreakerBrick25"]
+[editable path="Terrain/Bricks/Square/BreakerBrick26"]
+[editable path="Terrain/Bricks/Square/BreakerBrick27"]
+[editable path="Terrain/Bricks/Square/BreakerBrick28"]
+[editable path="Terrain/Bricks/Square/BreakerBrick29"]
+[editable path="Terrain/Bricks/Square/BreakerBrick30"]
+[editable path="Terrain/Bricks/Square/BreakerBrick31"]
+[editable path="Terrain/Bricks/Square/BreakerBrick32"]
+[editable path="Terrain/Bricks/Square/BreakerBrick33"]
+[editable path="Terrain/Bricks/Square/BreakerBrick34"]
+[editable path="Terrain/Bricks/Square/BreakerBrick35"]
+[editable path="Terrain/Bricks/Square/BreakerBrick36"]
+[editable path="Terrain/Bricks/Square/BreakerBrick37"]
+[editable path="Terrain/Bricks/Square/BreakerBrick38"]
+[editable path="Terrain/Bricks/Square/BreakerBrick39"]
+[editable path="Terrain/Bricks/Square/BreakerBrick40"]
+[editable path="Terrain/Bricks/Square/BreakerBrick41"]
+[editable path="Terrain/Bricks/Square/BreakerBrick42"]
+[editable path="Terrain/Bricks/Square/BreakerBrick43"]
+[editable path="Terrain/Bricks/Square/BreakerBrick44"]
+[editable path="Terrain/Bricks/Square/BreakerBrick45"]
+[editable path="Terrain/Bricks/Square/BreakerBrick46"]
+[editable path="Terrain/Bricks/Square/BreakerBrick47"]
+[editable path="Terrain/Bricks/Square/BreakerBrick48"]
+[editable path="Terrain/Bricks/Square/BreakerBrick49"]
+[editable path="Terrain/Bricks/Square/BreakerBrick50"]
+[editable path="Terrain/Bricks/Square/BreakerBrick51"]
+[editable path="Terrain/Bricks/Square/BreakerBrick52"]
+[editable path="Terrain/Bricks/Square/BreakerBrick53"]
+[editable path="Terrain/Bricks/Square/BreakerBrick54"]
+[editable path="Terrain/Bricks/Square/BreakerBrick55"]
+[editable path="Terrain/Bricks/Square/BreakerBrick56"]
+[editable path="Terrain/Bricks/Square/BreakerBrick57"]
+[editable path="Terrain/Bricks/Square/BreakerBrick58"]
+[editable path="Terrain/Bricks/Square/BreakerBrick59"]
+[editable path="Terrain/Bricks/Square/BreakerBrick60"]
+[editable path="Terrain/Bricks/Square/BreakerBrick61"]
+[editable path="Terrain/Bricks/Square/BreakerBrick62"]
+[editable path="Terrain/Bricks/Square/BreakerBrick63"]
+[editable path="Terrain/Bricks/Square/BreakerBrick64"]
+[editable path="Terrain/Bricks/Square/BreakerBrick65"]
+[editable path="Terrain/Bricks/Square/BreakerBrick66"]
+[editable path="Terrain/Bricks/Square/BreakerBrick67"]
+[editable path="Terrain/Bricks/Square/BreakerBrick68"]
+[editable path="Terrain/Bricks/Square/BreakerBrick69"]
+[editable path="Terrain/Bricks/Square/BreakerBrick70"]
+[editable path="Terrain/Bricks/Square/BreakerBrick71"]
+[editable path="Terrain/Bricks/Square/BreakerBrick72"]
+[editable path="Terrain/Bricks/Square/BreakerBrick73"]
+[editable path="Terrain/Bricks/Square/BreakerBrick74"]
+[editable path="Terrain/Bricks/Square/BreakerBrick75"]
+[editable path="Terrain/Bricks/Square/BreakerBrick76"]
+[editable path="Terrain/Bricks/Square/BreakerBrick77"]
+[editable path="Terrain/Bricks/Square/BreakerBrick78"]
+[editable path="Terrain/Bricks/Square/BreakerBrick79"]
+[editable path="Terrain/Bricks/Square/BreakerBrick80"]
+[editable path="Terrain/Bricks/Square/BreakerBrick81"]
+[editable path="Terrain/Bricks/Square/BreakerBrick82"]
+[editable path="Terrain/Bricks/Square/BreakerBrick83"]
+[editable path="Terrain/Bricks/Square/BreakerBrick84"]
+[editable path="Terrain/Bricks/Square/BreakerBrick85"]
+[editable path="Terrain/Bricks/Square/BreakerBrick86"]
+[editable path="Terrain/Bricks/Square/BreakerBrick87"]
+[editable path="Terrain/Bricks/Square/BreakerBrick88"]
+[editable path="Terrain/Bricks/Square/BreakerBrick89"]
+[editable path="Terrain/Bricks/Square/BreakerBrick90"]
+[editable path="Terrain/Bricks/Square/BreakerBrick91"]
+[editable path="Terrain/Bricks/Square/BreakerBrick92"]
+[editable path="Terrain/Bricks/Square/BreakerBrick93"]
+[editable path="Terrain/Bricks/Square/BreakerBrick94"]
+[editable path="Terrain/Bricks/Square/BreakerBrick95"]
+[editable path="Terrain/Bricks/Square/BreakerBrick96"]
+[editable path="Terrain/Bricks/Square/BreakerBrick97"]
+[editable path="Terrain/Bricks/Square/BreakerBrick98"]
+[editable path="Terrain/Bricks/Square/BreakerBrick99"]
+[editable path="Terrain/Bricks/Square/BreakerBrick100"]
+[editable path="Terrain/Bricks/Square/BreakerBrick101"]
+[editable path="Terrain/Bricks/Square/BreakerBrick102"]
+[editable path="Terrain/Bricks/Square/BreakerBrick103"]
+[editable path="Terrain/Bricks/Square/BreakerBrick104"]
+[editable path="Terrain/Bricks/Square/BreakerBrick105"]
+[editable path="Terrain/Bricks/Square/BreakerBrick106"]
+[editable path="Terrain/Bricks/Square/BreakerBrick107"]
+[editable path="Terrain/Bricks/Square/BreakerBrick108"]
+[editable path="Terrain/Bricks/Square/BreakerBrick109"]
+[editable path="Terrain/Bricks/Square/BreakerBrick110"]
+[editable path="Terrain/Bricks/Square/BreakerBrick111"]
+[editable path="Terrain/Bricks/Square/BreakerBrick112"]
+[editable path="Terrain/Bricks/Square/BreakerBrick113"]
+[editable path="Terrain/Bricks/Square/BreakerBrick114"]
+[editable path="Terrain/Bricks/Square/BreakerBrick115"]
+[editable path="Terrain/Bricks/Square/BreakerBrick116"]
+[editable path="Terrain/Bricks/Square/BreakerBrick117"]
+[editable path="Terrain/Bricks/Square/BreakerBrick118"]
+[editable path="Terrain/Bricks/Square/BreakerBrick119"]
+[editable path="Terrain/Bricks/Square/BreakerBrick120"]
+[editable path="Terrain/Bricks/Square/BreakerBrick121"]
+[editable path="Terrain/Bricks/Square/BreakerBrick122"]
+[editable path="Terrain/Bricks/Square/BreakerBrick123"]
+[editable path="Terrain/Bricks/Square/BreakerBrick124"]
+[editable path="Terrain/Bricks/Square/BreakerBrick125"]
+[editable path="Terrain/Bricks/Square/BreakerBrick126"]
+[editable path="Terrain/Bricks/Square/BreakerBrick127"]
+[editable path="Terrain/Bricks/Square/BreakerBrick128"]
+[editable path="Terrain/Bricks/Square/BreakerBrick129"]
+[editable path="Terrain/Bricks/Square/BreakerBrick130"]
+[editable path="Terrain/Bricks/Square/BreakerBrick131"]
+[editable path="Terrain/Bricks/Square/BreakerBrick132"]
 [editable path="Building"]
+[editable path="Building2"]
