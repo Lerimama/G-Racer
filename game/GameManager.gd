@@ -31,10 +31,11 @@ onready var level_finished_ui: Control = $"../UI/LevelFinished"
 onready var game_over_ui: Control = $"../UI/GameOver"
 onready var game_settings: Dictionary = Sets.get_level_game_settings(current_level_index) # set_game seta iz profilov
 # shadows
-onready var shadows_direction_from_source: Vector2 = game_settings["shadows_direction_from_source"] # Vector2(1, 1) # set_game seta iz profilov
-onready var shadows_length_from_source: float = game_settings["shadows_length_from_source"] # set_game seta iz profilov
-onready var shadows_alpha_from_source: float = game_settings["shadows_alpha_from_source"] # set_game seta iz profilov
-onready var shadows_color_from_source: Color = game_settings["shadows_color_from_source"] # set_game seta iz profilov
+onready var game_shadows_direction: Vector2 = game_settings["game_shadows_direction"] # Vector2(1, 1) # set_game seta iz profilov
+onready var game_shadows_length_factor: float = game_settings["game_shadows_length_factor"] # set_game seta iz profilov
+onready var game_shadows_alpha: float = game_settings["game_shadows_alpha"] # set_game seta iz profilov
+onready var game_shadows_color: Color = game_settings["game_shadows_color"] # set_game seta iz profilov
+onready var game_shadows_rotation_deg: float = game_settings["game_shadows_rotation_deg"] # set_game seta iz profilov
 
 
 func _input(event: InputEvent) -> void:
@@ -343,7 +344,7 @@ func _animate_day_night():
 	var day_night_tween = get_tree().create_tween()
 	for shadow in get_tree().get_nodes_in_group(Refs.group_shadows):
 		if shadow is Polygon2D:
-			day_night_tween.parallel().tween_property(shadow, "shadow_rotation_degrees", 0, day_length).from(-180).set_ease(Tween.EASE_IN_OUT)
+			day_night_tween.parallel().tween_property(shadow, "shadow_rotation_deg", 0, day_length).from(-180).set_ease(Tween.EASE_IN_OUT)
 
 
 # RACING ---------------------------------------------------------------------------------------------

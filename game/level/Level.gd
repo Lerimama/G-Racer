@@ -1,4 +1,3 @@
-tool
 extends Node2D
 
 
@@ -34,7 +33,7 @@ onready var drive_out_position: Vector2 = $Racing/LevelFinish/DriveOutPosition.p
 func _ready() -> void:
 	printt("LEVEL")
 
-	$__ScreenSize.hide()
+	$__ScreenSize.hide() # debug
 
 	Refs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	for child in start_positions_node.get_children():

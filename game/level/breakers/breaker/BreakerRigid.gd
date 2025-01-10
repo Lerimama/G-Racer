@@ -20,4 +20,4 @@ func _change_rotation(new_rot):
 
 	if not new_rot == rot:
 		rot = new_rot
-		$PolygonShadow.update_shadow_polygon()
+		$ShapeShadow.update_shadow()

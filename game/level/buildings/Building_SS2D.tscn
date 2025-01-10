@@ -13,7 +13,7 @@
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=11]
 [ext_resource path="res://assets/textures/building/tile_roof_edge.png" type="Texture" id=12]
 [ext_resource path="res://game/level/buildings/Building_SS2D.gd" type="Script" id=14]
-[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=15]
+[ext_resource path="res://common/shadows/ShapeShadow.tscn" type="PackedScene" id=15]
 
 [sub_resource type="Resource" id=8148]
 script = ExtResource( 11 )

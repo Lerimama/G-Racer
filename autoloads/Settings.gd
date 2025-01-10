@@ -60,13 +60,14 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"full_equip_mode": true,
 	"drifting_mode": true, # drift ali tilt?
 	# shadows
-	"shadows_direction_from_source": Vector2.ONE, # odvisna od x,y položaja vira svetlobe
-#	"shadows_direction_from_source": Vector2(0-800, 0),
-	"shadows_color_from_source": Color.black, # odvisna od višine vira svetlobe
-	"shadows_length_from_source": 1, # odvisna od višine vira svetlobe
-	"shadows_alpha_from_source": 0.2, # odvisna od moči svetlobe
+#	"game_shadows_direction": Vector2.ONE, # odvisna od x,y položaja vira svetlobe
+	"game_shadows_rotation_deg": 45,
+	"game_shadows_color": Color.black, # odvisna od višine vira svetlobe
+	"game_shadows_length_factor": 1, # odvisna od višine vira svetlobe
+	"game_shadows_alpha": 0.2, # odvisna od moči svetlobe
 
 	# debug
+	"game_shadows_direction": Vector2(-800, 0),
 	"max_zoomout": false,
 	"max_zoomin": true,
 

@@ -10,4 +10,4 @@ func _physics_process(delta: float) -> void:
 		var target_offset: float = racing_curve.get_closest_offset(tracking_target.global_position)
 		offset = target_offset
 
-	
+

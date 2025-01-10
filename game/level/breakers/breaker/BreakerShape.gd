@@ -37,7 +37,7 @@ onready var edge_shape: Polygon2D = $EdgeShape
 onready var collision_shape: CollisionPolygon2D# = $"../CollisionPolygon2D"
 onready var operator: Node = $Operator
 
-onready var OwnerScene: PackedScene = load("res://game/level/breakers/breaker/RigidObject.tscn") # funkcije in LNF originala, fizika, breakable
+onready var OwnerScene: PackedScene = load("res://game/level/breakers/RigidObject.tscn") # funkcije in LNF originala, fizika, breakable
 onready var BreakerRigid: PackedScene = load("res://game/level/breakers/breaker/BreakerRigid.tscn") #  LNF originala, fizika, (un)breakable
 onready var Debry: PackedScene = preload("res://game/level/breakers/breaker/Debry.tscn") # LNF originala, brez fizike, unbreakable
 onready var CrackerBox: PackedScene = preload("res://game/level/breakers/breaker/CrackerBox.tscn") # za animacijo lomljenja na kose ... LNF originala
@@ -548,15 +548,15 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 	collision_shape.polygon = shape_polygon
 	#	collision_shape.set_deferred("polygon", shape_polygon)
 
-	if breaker_shape_parent.has_node("PolygonShadow"):
-		breaker_shape_parent.get_node("PolygonShadow").update_shadow_polygon()
+	if breaker_shape_parent.has_node("ShapeShadow"):
+		breaker_shape_parent.get_node("ShapeShadow").update_shadow()
 
 
 func _on_change_motion(new_motion_state: int):
 
 	current_motion =  new_motion_state
 
-	printt("Breaker MOTION", MOTION.keys()[current_motion])
+#	printt("Breaker MOTION", MOTION.keys()[current_motion])
 
 	# debug
 #	if not current_motion == MOTION.STILL:
@@ -594,10 +594,10 @@ func _on_change_motion(new_motion_state: int):
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
 			var random_delay: float = (randi() % 3)/10
-			var dissolve_tween = get_tree().create_tween()
-			dissolve_tween.tween_property(breaker_shape_parent, "modulate:a", 0, random_duration).set_delay(random_delay)
-			yield(dissolve_tween, "finished")
-			breaker_shape_parent.queue_free() # izven tweena je bolj pregledno
+			yield(get_tree().create_timer(random_delay), "timeout")
+			var animation_tween = get_tree().create_tween()
+			animation_tween.tween_property(breaker_shape_parent, "modulate:a", 0, random_duration).set_delay(random_delay)
+			animation_tween.tween_callback(breaker_shape_parent, "queue_free")
 		MOTION.MINIMIZE:
 			if breaker_shape_parent is RigidBody2D:
 				#				breaker_shape_parent.set_deferred("mode", RigidBody2D.MODE_RIGID)
@@ -606,10 +606,10 @@ func _on_change_motion(new_motion_state: int):
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
 			var random_delay: float = (randi() % 3)/10
-			var minimize_tween = get_tree().create_tween()
-			minimize_tween.tween_property(breaker_shape_parent, "scale", Vector2.ZERO, random_duration).set_delay(random_delay)
-			yield(minimize_tween, "finished")
-			breaker_shape_parent.queue_free()
+			yield(get_tree().create_timer(random_delay), "timeout")
+			var animation_tween = get_tree().create_tween()
+			animation_tween.tween_property(breaker_shape_parent, "scale", Vector2.ZERO, random_duration).set_delay(random_delay)
+			animation_tween.tween_callback(breaker_shape_parent, "queue_free")
 		MOTION.CRACK:
 			pass
 

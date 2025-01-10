@@ -43,7 +43,7 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred("polygon", shape_polygon)
 
-	$PolygonShadow.update_shadow_polygon()
+	$ShapeShadow.update_shadow()
 
 
 func _on_change_motion(new_motion_state: int):
@@ -55,7 +55,7 @@ func _on_change_motion(new_motion_state: int):
 #	if not current_motion == MOTION.STILL:
 	current_motion =  MOTION.MINIMIZE
 
-	printt("Debry Area MOTION", MOTION.keys()[current_motion])
+#	printt("Debry Area MOTION", MOTION.keys()[current_motion])
 
 	match current_motion:
 		MOTION.STILL:
@@ -71,18 +71,18 @@ func _on_change_motion(new_motion_state: int):
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
 			var random_delay: float = (randi() % 3)/10
-			var dissolve_tween = get_tree().create_tween()
-			dissolve_tween.tween_property(self, "modulate:a", 0, random_duration).set_delay(random_delay)
-			yield(dissolve_tween, "finished")
-			queue_free()
+			yield(get_tree().create_timer(random_delay), "timeout")
+			var animation_tween = get_tree().create_tween()
+			animation_tween.tween_property(self, "modulate:a", 0, random_duration).set_delay(random_delay)
+			animation_tween.tween_callback(self, "queue_free")
 		MOTION.MINIMIZE:
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
 			var random_delay: float = (randi() % 3)/10
-			var minimize_tween = get_tree().create_tween()
-			minimize_tween.tween_property(self, "scale", Vector2.ZERO, random_duration).set_delay(random_delay)
-			yield(minimize_tween, "finished")
-			queue_free()
+			yield(get_tree().create_timer(random_delay), "timeout")
+			var animation_tween = get_tree().create_tween()
+			animation_tween.tween_property(self, "scale", Vector2.ZERO, random_duration)
+			animation_tween.tween_callback(self, "queue_free")
 		MOTION.CRACK:
 			print("animate debry CRACK")
 			pass

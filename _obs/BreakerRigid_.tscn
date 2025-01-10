@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://common/shadows/ShapeShadow.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/level/breakers/breaker/BreakerShape.tscn" type="PackedScene" id=2]
 [ext_resource path="res://_obs/BreakerRigid_.gd" type="Script" id=3]
 

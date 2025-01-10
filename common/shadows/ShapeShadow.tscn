@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://common/shadows/ShapeShadow.gd" type="Script" id=1]
+[ext_resource path="res://common/shadows/shadow_color_blur.material" type="Material" id=2]
+
+[node name="ShapeShadow" type="Polygon2D"]
+material = ExtResource( 2 )
+polygon = PoolVector2Array( 0, 64, 64, 64, 64, 0, 0, 0 )
+script = ExtResource( 1 )
+shadow_owner_shape_path = ""

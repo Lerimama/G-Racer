@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=1]
 [ext_resource path="res://game/level/breakers/breaker/Operator.gd" type="Script" id=2]
-[ext_resource path="res://common/shadows/ShadowPolygon.tscn" type="PackedScene" id=3]
+[ext_resource path="res://common/shadows/ShapeShadow.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/level/breakers/breaker/BreakerRigid.gd" type="Script" id=4]
 [ext_resource path="res://game/level/breakers/breaker/BreakerShape.gd" type="Script" id=5]
 
@@ -17,8 +17,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="PolygonShadow" parent="." instance=ExtResource( 3 )]
-shadow_casting_polygon_path = NodePath("../BreakerShape")
+[node name="ShapeShadow" parent="." instance=ExtResource( 3 )]
 
 [node name="BreakerShape" type="Polygon2D" parent="."]
 texture = ExtResource( 1 )
@@ -36,7 +35,6 @@ color = Color( 0, 0, 0, 1 )
 polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
 
 [node name="BreakerTool" type="Polygon2D" parent="BreakerShape"]
-visible = false
 color = Color( 0, 1, 0.109804, 1 )
 polygon = PoolVector2Array( -32, 0, -30.9072, -8.31519, -27.7275, -15.9949, -22.6337, -22.6277, -16.0009, -27.7214, -8.29779, -30.9011, 0, -32, 0, -32.0099, 8.28033, -30.9011, 16.0303, -27.7058, 22.6397, -22.6355, 27.7091, -16.0033, 30.9148, -8.27563, 32, 0, 30.9066, 8.24866, 27.7283, 15.9957, 22.6628, 22.6173, 16.0026, 27.7117, 8.28552, 30.9202, 0, 32, -8.27057, 30.9301, -16.0369, 27.6914, -22.5924, 22.6519, -27.7275, 15.9661, -30.9228, 8.302 )
 
@@ -46,7 +44,6 @@ color = Color( 1, 0, 0, 1 )
 polygon = PoolVector2Array( -32, 0, -30.9072, -8.31519, -27.7275, -15.9949, -22.6337, -22.6277, -16.0009, -27.7214, -8.29779, -30.9011, 0, -32, 0, -32.0099, 8.28033, -30.9011, 16.0303, -27.7058, 22.6397, -22.6355, 27.7091, -16.0033, 30.9148, -8.27563, 32, 0, 30.9066, 8.24866, 27.7283, 15.9957, 22.6628, 22.6173, 16.0026, 27.7117, 8.28552, 30.9202, 0, 32, -8.27057, 30.9301, -16.0369, 27.6914, -22.5924, 22.6519, -27.7275, 15.9661, -30.9228, 8.302 )
 
 [node name="CircoRandomShape" type="Polygon2D" parent="BreakerShape/BreakerTool"]
-visible = false
 color = Color( 0.454902, 0.94902, 1, 1 )
 polygon = PoolVector2Array( -32, 0, -28, -7, -27.7275, -15.9949, -20, -21, -16, -28, -8, -29, 0, -32, 0, -32.0099, 9, -29, 16.0303, -27.7058, 23, -20, 27.7091, -16.0033, 29, -7, 32, 0, 28, 9, 27.7283, 15.9957, 22, 21, 16.0026, 27.7117, 7, 29, 0, 32, -9, 28, -16.0369, 27.6914, -19, 23, -28, 16, -30, 6 )
 
