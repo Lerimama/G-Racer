@@ -267,7 +267,6 @@ func slice_chunks(chunk_polygons: Array, whole_breaker: bool = false, with_crack
 
 #	var current_slicing_style: int = get_slicing_style()
 
-	# _temp
 	with_crackers = true
 
 	var spawned_chunks: Array = [] # da ji lahko potem zbriešm
@@ -548,7 +547,7 @@ func _change_motion(new_motion_state: int):
 
 	current_motion =  new_motion_state
 
-	# _temp
+	# debug
 	if not current_motion == MOTION.STILL:
 		current_motion =  MOTION.MINIMIZE
 

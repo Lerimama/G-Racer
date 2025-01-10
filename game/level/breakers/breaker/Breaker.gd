@@ -132,7 +132,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 		# poiščem najbližjo štartni točki
 		var closest_point_on_closest_edge: Vector2 = operator.get_outline_segment_closest_to_point(intersection_vector_start, breaker_base_polygon)[1]
 		intersection_point = closest_point_on_closest_edge
-		printt("No intersection on hit vector ...  new closest point", intersection_point, intersection_vector_start)
+#		printt("No intersection on hit vector ...  new closest point", intersection_point, intersection_vector_start)
 	if intersection_data.size() == 1:
 		intersection_point = intersection_data[0][0]
 	elif intersection_data.size() > 1: # več presečišč > izberem najbližjo štartu hit vektorja

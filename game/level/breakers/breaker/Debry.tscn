@@ -11,7 +11,7 @@ __meta__ = {
 }
 
 [node name="ShapeShadow" parent="." instance=ExtResource( 1 )]
-shadow_owner_shape_path = ""
+shadow_owner_shape_path = NodePath("../DebryShape")
 
 [node name="DebryShape" type="Polygon2D" parent="."]
 texture = ExtResource( 2 )

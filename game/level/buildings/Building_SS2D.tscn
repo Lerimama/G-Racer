@@ -151,7 +151,7 @@ __meta__ = {
 }
 
 [node name="PolygonShadow" parent="." instance=ExtResource( 15 )]
-shadow_casting_polygon_path = NodePath("../CollisionPolygon2D")
+shadow_owner_shape_path = NodePath("../CollisionPolygon2D")
 
 [node name="SS2D_Shape_Closed" type="Node2D" parent="."]
 position = Vector2( 256, 192 )

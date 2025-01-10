@@ -45,39 +45,14 @@ onready var BreakerRigid: PackedScene = load("res://game/level/breakers/breaker/
 onready var Debry: PackedScene = preload("res://game/level/breakers/breaker/Debry.tscn") # LNF originala, brez fizike, unbreakable
 onready var CrackerBox: PackedScene = preload("res://game/level/breakers/breaker/CrackerBox.tscn") # za animacijo lomljenja na kose ... LNF originala
 
-# neu
-onready var breaker_shape_owner: Node2D = get_parent()
-# detect owner
-var breaker_owner_global_rotation_deg: float # za detect
-var breaker_rotation_deg: float = 0 setget _change_breaker_rotation
-
-
-func _change_breaker_rotation(new_rotation: float):
-	print("rotiram", new_rotation)
-	rotation = new_rotation
-	pass
-
-func _detect_on_owner():
-	pass
-#	# pri rotaciji popravljam pozicijo nečesa manjšega a globjega ... samo parameter
-#	if "rotation_degrees" in breaker_shape_owner:
-##		print("rotiram")
-#		# rotacija lastnika
-#		var prev_rotation_deg = breaker_owner_global_rotation_deg
-#		breaker_owner_global_rotation_deg = breaker_shape_owner.rotation_degrees
-#		var rotation_change: float = breaker_owner_global_rotation_deg - prev_rotation_deg
-#		if not rotation_change == 0:
-#			var new_rotation_deg: float = breaker_rotation_deg - rotation_change
-##			rotation_degrees = breaker_shape_owner.rotation_degrees
-##			self.breaker_rotation_deg = new_rotation_deg
-
+onready var breaker_shape_parent: Node2D = get_parent()
 
 
 func _ready() -> void:
-	printt("breaker_shape_owner", breaker_shape_owner.get_parent().position)
+
 	# določim svet spawnanja
 	if world_node == null:
-		world_node = breaker_shape_owner.get_parent()
+		world_node = breaker_shape_parent.get_parent()
 
 	if collision_shape_path:
 		collision_shape = get_node(collision_shape_path)
@@ -95,11 +70,6 @@ func _ready() -> void:
 	breaker_tool.hide()
 
 
-func _process(delta: float) -> void: # preverjanje sprememb nekaterih lastnosti lastnika
-
-	_detect_on_owner()
-
-
 func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 #	printt("HIT", hitting_node, hit_global_position)
 
@@ -107,7 +77,9 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 	# če se pojavi kaj novega vneseš tukaj
 
 	# opredelim data za celotno slajsanje: origin, smer, območje vpliva in moč
+
 	#	break_origin_global = Vector2.ZERO
+	#	printt ("origin", break_origin_global, hitting_node.position, hitting_node.global_position)
 
 	if not is_breakable:
 		return
@@ -135,20 +107,19 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 		hit_by_polygon = breaker_tool.polygon
 
 	# break origin ... vector intersection or closest point
+	#	var intersection_vector_length: float = operator.get_polygon_radius(hit_by_polygon) * hit_shape_scale.x
 	var influence_radius: float = operator.get_polygon_radius(hit_by_polygon) * hit_shape_scale.x
-	var intersection_vector_start: Vector2 = hit_global_position - breaker_shape_owner.global_position # more bit globalna pozicija, če se njegov parent premika
+	var intersection_vector_start: Vector2 = hit_global_position - breaker_shape_parent.position
 	var intersection_vector_end: Vector2 = intersection_vector_start + hit_by_direction * influence_radius
 	var intersection_vector_pool: PoolVector2Array = [intersection_vector_start, intersection_vector_end]
 	var intersection_data: Array = operator.get_outline_intersecting_segments(intersection_vector_pool, shape_polygon) # [[vector2, index], ...]
-
-	var owner_delta_rotation: float
-
 	var intersection_point: Vector2
+
 	if intersection_data.empty():
 		# poiščem najbližjo štartni točki
 		var closest_point_on_closest_edge: Vector2 = operator.get_outline_segment_closest_to_point(intersection_vector_start, shape_polygon)[1]
 		intersection_point = closest_point_on_closest_edge
-		printt("No intersection on hit vector ...  new closest point", intersection_point, intersection_vector_start)
+#		printt("No intersection on hit vector ...  new closest point", intersection_point, intersection_vector_start)
 	if intersection_data.size() == 1:
 		intersection_point = intersection_data[0][0]
 	elif intersection_data.size() > 1: # več presečišč > izberem najbližjo štartu hit vektorja
@@ -161,8 +132,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 				shortest_dist_to_hit_start = point_to_hit_start_dist
 				closest_point_to_hit_start = point
 		intersection_point = closest_point_to_hit_start
-
-	break_origin_global = intersection_point + breaker_shape_owner.position # z razlogom ni global_position, isto je v split_chunk
+	break_origin_global = intersection_point + breaker_shape_parent.global_position
 
 	# opredelim velikost prilagodim hit polygon
 	var influence_radius_per_unit: float = influence_radius / Sets.unit_one
@@ -249,7 +219,7 @@ func _cut_it(slice_line: Line2D):
 	var slicing_line_adapted: PoolVector2Array = []
 	for point in slice_line.points:
 		# od globalne pozicije pike odštejem globalno pozicijo breakerja
-		var point_to_local_position: Vector2 = point - breaker_shape_owner.position
+		var point_to_local_position: Vector2 = point - breaker_shape_parent.position
 		slicing_line_adapted.append(point_to_local_position)
 
 	# je šel cut skozi?
@@ -340,7 +310,7 @@ func _slice_chunks(chunk_polygons: Array, slice_whole_breaker: bool = false, sli
 func _split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 	# izbira stila glede na orodje in material
 
-	var origin_position: Vector2 = break_origin_global - breaker_shape_owner.position # lahko bi blo global_pos ampak je tako tudi v on_hit
+	var origin_position: Vector2 = break_origin_global - breaker_shape_parent.global_position
 	var is_on_edge_distance: float = 10
 
 	# origin type (edge index)
@@ -392,6 +362,7 @@ func _split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 			daisy_side_split_count = 6
 
 	# tool type
+
 	#	var side_sliced_polygons: Array
 	#	for poly in first_slice_polys:
 	#		var new_poly = operator.split_outline_on_part(poly)
@@ -428,13 +399,15 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 	# DEBRY_BREAKER: fizika, unbreakable
 	# DEBRY_AREA: no fizik, unbreakable
 
+#	printt("spawn %s" % BREAKER_TYPE.keys()[new_breaker_type], breaker_shape_parent)
+
 	var new_piece: Node2D
 
 	match new_breaker_type:
 		BREAKER_TYPE.OWNER:
 			new_piece = OwnerScene.instance()
-			new_piece.name = breaker_shape_owner.name + "_Round_%d" % breaking_round
-			new_piece.position = breaker_shape_owner.position
+			new_piece.name = breaker_shape_parent.name + "_Round_%d" % breaking_round
+			new_piece.position = breaker_shape_parent.position
 
 			var new_breaker_owner_breaker = new_piece.get_node(name)
 			new_breaker_owner_breaker.world_node = world_node
@@ -442,8 +415,7 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 		BREAKER_TYPE.BREAKER:
 			new_piece = BreakerRigid.instance()
 			new_piece.name = name + "_Round_%d" % breaking_round
-			#			new_piece.position = position
-			new_piece.position = breaker_shape_owner.position
+			new_piece.position = position
 
 			var new_breaker_breaker = new_piece.get_node(name)
 			new_breaker_breaker.world_node = world_node
@@ -453,13 +425,15 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 			var centralized_polygon_data: Array = operator.centralize_polygon_position(new_piece_polygon)
 			var centralized_breaker_polygon: PoolVector2Array = centralized_polygon_data[0]
 			new_piece_polygon = centralized_polygon_data[0]
+			# global pozicija ... lokalno v globalno
+			var centralized_global_position: Vector2 = centralized_polygon_data[1] + breaker_shape_parent.position
 			# spawn
 			new_piece = BreakerRigid.instance()
 			new_piece.name =  name + "_DebryBreaker"
-			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
+			new_piece.position = centralized_global_position
 			new_piece.is_breakable = false
-			new_piece.height = 0 # _temp debryshadows
-			new_piece.elevation = 0 # _temp debryshadows
+			new_piece.height = 0 # _temo debryshadows
+			new_piece.elevation = 0 # _temo debryshadows
 
 			var new_breaker_breaker = new_piece.get_node(name)
 			new_breaker_breaker.world_node = world_node
@@ -469,22 +443,25 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 			var centralized_polygon_data: Array = operator.centralize_polygon_position(new_piece_polygon)
 			var centralized_breaker_polygon: PoolVector2Array = centralized_polygon_data[0]
 			new_piece_polygon = centralized_polygon_data[0]
-			# spawn
+			# global pozicija ... lokalno v globalno
+			var centralized_global_position: Vector2 = centralized_polygon_data[1] + breaker_shape_parent.position
+			# sapwn
 			new_piece = Debry.instance()
 			new_piece.name =  name + "_DebryArea"
-			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
-			new_piece.debry_owner = breaker_shape_owner
+			new_piece.position = centralized_global_position
+			new_piece.debry_owner = breaker_shape_parent
 			# debug senčke
 			new_piece.height = 0 # _temo debryshadows
 			new_piece.elevation = 0 # _temo debryshadows
 
 	world_node.add_child(new_piece)
 
+
 	# after setup
 	if new_breaker_type == BREAKER_TYPE.DEBRY_AREA: # area ma skript že na glavnem nodetu
 		if texture:
 			_copy_texture_between_shapes(new_piece.debry_shape, self)
-			new_piece.debry_shape.texture_offset = new_piece.position - breaker_shape_owner.position # ne-debry je ZERO
+			new_piece.debry_shape.texture_offset = new_piece.position - breaker_shape_parent.position # ne-debry je ZERO
 		new_piece.debry_shape.color = color
 		new_piece.shape_polygon = new_piece_polygon
 		new_piece.break_origin_global = break_origin_global # za animacijo debryja
@@ -495,7 +472,7 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 		var internal_breaker_shape: Polygon2D = new_piece.get_node(name)
 		if texture:
 			_copy_texture_between_shapes(internal_breaker_shape, self)
-			internal_breaker_shape.texture_offset = new_piece.position - breaker_shape_owner.position # ne-debry je ZERO
+			internal_breaker_shape.texture_offset = new_piece.position - breaker_shape_parent.position # ne-debry je ZERO
 		internal_breaker_shape.color = color
 		internal_breaker_shape.shape_polygon = new_piece_polygon
 		internal_breaker_shape.break_origin_global = break_origin_global # za animacijo debryja
@@ -528,7 +505,7 @@ func _spawn_crackers(cracked_polygons: Array, chunk_polygon: PoolVector2Array):
 	# po animaciji se kvefrijajo
 
 	var new_box_of_crackers = CrackerBox.instance()
-	new_box_of_crackers.breaker_position = breaker_shape_owner.position
+	new_box_of_crackers.breaker_position = breaker_shape_parent.position
 	new_box_of_crackers.break_origin_global = break_origin_global
 	new_box_of_crackers.cracked_polygons = cracked_polygons
 	new_box_of_crackers.chunk_polygon = chunk_polygon
@@ -576,68 +553,68 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 	collision_shape.polygon = shape_polygon
 	#	collision_shape.set_deferred("polygon", shape_polygon)
 
-	if breaker_shape_owner.has_node("ShapeShadow"):
-		breaker_shape_owner.get_node("ShapeShadow").update_shadow()
+	if breaker_shape_parent.has_node("ShapeShadow"):
+		breaker_shape_parent.get_node("ShapeShadow").update_shadow()
 
 
 func _on_change_motion(new_motion_state: int):
 
 	current_motion =  new_motion_state
 
+#	printt("Breaker MOTION", MOTION.keys()[current_motion])
+
 	# debug
-	#	printt("Breaker MOTION", MOTION.keys()[current_motion])
-	#	if not current_motion == MOTION.STILL:
-	#		current_motion = MOTION.MINIMIZE
+#	if not current_motion == MOTION.STILL:
+#		current_motion = MOTION.MINIMIZE
 
 	match current_motion:
 		MOTION.STILL:
-			if breaker_shape_owner is RigidBody2D:
-				breaker_shape_owner.mode = RigidBody2D.MODE_RIGID
-				#				breaker_shape_owner.set_deferred("mode", RigidBody2D.MODE_STATIC)
+			if breaker_shape_parent is RigidBody2D:
+				breaker_shape_parent.mode = RigidBody2D.MODE_RIGID
+				#				breaker_shape_parent.set_deferred("mode", RigidBody2D.MODE_STATIC)
 		MOTION.FALL:
-			if breaker_shape_owner is RigidBody2D:
-				breaker_shape_owner.gravity_scale = 1
-				breaker_shape_owner.mode = RigidBody2D.MODE_RIGID
-				#				breaker_shape_owner.set_deferred("mode", RigidBody2D.MODE_RIGID)
+			if breaker_shape_parent is RigidBody2D:
+				breaker_shape_parent.gravity_scale = 1
+				breaker_shape_parent.mode = RigidBody2D.MODE_RIGID
+				#				breaker_shape_parent.set_deferred("mode", RigidBody2D.MODE_RIGID)
 			else:
 				print("animate FALL")
 				pass
 		MOTION.EXPLODE:
-			if breaker_shape_owner is RigidBody2D:
-				breaker_shape_owner.gravity_scale = 0
-				breaker_shape_owner.mode = RigidBody2D.MODE_RIGID
-				#				breaker_shape_owner.set_deferred("mode", RigidBody2D.MODE_RIGID)
-				breaker_shape_owner.linear_damp = 2
-				var force_vector = breaker_shape_owner.position - break_origin_global
-#				var force_vector = breaker_shape_owner.global_position - break_origin_global
-				breaker_shape_owner.apply_central_impulse(force_vector * 20)
+			if breaker_shape_parent is RigidBody2D:
+				breaker_shape_parent.gravity_scale = 0
+				breaker_shape_parent.mode = RigidBody2D.MODE_RIGID
+				#				breaker_shape_parent.set_deferred("mode", RigidBody2D.MODE_RIGID)
+				breaker_shape_parent.linear_damp = 2
+				var force_vector = breaker_shape_parent.global_position - break_origin_global
+				breaker_shape_parent.apply_central_impulse(force_vector * 20)
 			else:
 				print("animate EXPLOSION")
 				pass
 		MOTION.DISSAPEAR:
-			if breaker_shape_owner is RigidBody2D:
-				#				breaker_shape_owner.set_deferred("mode", RigidBody2D.MODE_RIGID)
-				breaker_shape_owner.mode = RigidBody2D.MODE_RIGID
-				breaker_shape_owner.gravity_scale = 0
+			if breaker_shape_parent is RigidBody2D:
+				#				breaker_shape_parent.set_deferred("mode", RigidBody2D.MODE_RIGID)
+				breaker_shape_parent.mode = RigidBody2D.MODE_RIGID
+				breaker_shape_parent.gravity_scale = 0
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
 			var random_delay: float = (randi() % 3)/10
 			yield(get_tree().create_timer(random_delay), "timeout")
 			var animation_tween = get_tree().create_tween()
-			animation_tween.tween_property(breaker_shape_owner, "modulate:a", 0, random_duration).set_delay(random_delay)
-			animation_tween.tween_callback(breaker_shape_owner, "queue_free")
+			animation_tween.tween_property(breaker_shape_parent, "modulate:a", 0, random_duration).set_delay(random_delay)
+			animation_tween.tween_callback(breaker_shape_parent, "queue_free")
 		MOTION.MINIMIZE:
-			if breaker_shape_owner is RigidBody2D:
-				#				breaker_shape_owner.set_deferred("mode", RigidBody2D.MODE_RIGID)
-				breaker_shape_owner.mode = RigidBody2D.MODE_RIGID
-				breaker_shape_owner.gravity_scale = 0
+			if breaker_shape_parent is RigidBody2D:
+				#				breaker_shape_parent.set_deferred("mode", RigidBody2D.MODE_RIGID)
+				breaker_shape_parent.mode = RigidBody2D.MODE_RIGID
+				breaker_shape_parent.gravity_scale = 0
 			randomize()
 			var random_duration: float = (randi() % 5 + 5)/10.0
 			var random_delay: float = (randi() % 3)/10
 			yield(get_tree().create_timer(random_delay), "timeout")
 			var animation_tween = get_tree().create_tween()
-			animation_tween.tween_property(breaker_shape_owner, "scale", Vector2.ZERO, random_duration).set_delay(random_delay)
-			animation_tween.tween_callback(breaker_shape_owner, "queue_free")
+			animation_tween.tween_property(breaker_shape_parent, "scale", Vector2.ZERO, random_duration).set_delay(random_delay)
+			animation_tween.tween_callback(breaker_shape_parent, "queue_free")
 		MOTION.CRACK:
 			pass
 

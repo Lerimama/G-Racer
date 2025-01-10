@@ -1,5 +1,4 @@
-extends KinematicBody2D
-# testni brejker in shadow holder
+extends RigidBody2D
 
 export var height = 500
 export var elevation = 0

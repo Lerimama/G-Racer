@@ -1,8 +1,9 @@
 extends StaticBody2D
 
 
-export var height: float = 0 # PRO
-export var elevation: float = 10 # PRO
+export var height: float = 0
+export var elevation: float = 100
+export var transparency: float = 1
 
 var hit_count: int = 0
 var def_particle_speed = 5

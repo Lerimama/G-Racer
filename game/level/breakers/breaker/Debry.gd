@@ -51,8 +51,8 @@ func _on_change_motion(new_motion_state: int):
 
 	current_motion =  new_motion_state
 
-	# _temp
-#	if not current_motion == MOTION.STILL:
+	# debug
+	#	if not current_motion == MOTION.STILL:
 	current_motion =  MOTION.MINIMIZE
 
 #	printt("Debry Area MOTION", MOTION.keys()[current_motion])

@@ -16,6 +16,7 @@ __meta__ = {
 }
 
 [node name="ShapeShadow" parent="." instance=ExtResource( 3 )]
+shadow_owner_shape_path = NodePath("../BreakerShape")
 
 [node name="BreakerShape" parent="." instance=ExtResource( 1 )]
 

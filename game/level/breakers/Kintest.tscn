@@ -12,13 +12,13 @@ height = 100
 [node name="ShapeShadow" parent="." instance=ExtResource( 1 )]
 offset = Vector2( 2, 2 )
 polygon = PoolVector2Array( 0, 256, 64, 320, 320, 320, 320, 64, 256, 0, 0, 0 )
-shadow_owner_shape_path = "../BreakerShape"
+shadow_owner_shape_path = NodePath("../TextureRect")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-visible = false
 polygon = PoolVector2Array( 0, 2, 383, 1, 383, 385, -2, 386 )
 
 [node name="BreakerShape" parent="." instance=ExtResource( 3 )]
+visible = false
 polygon = PoolVector2Array( 0, 0, 68, 266, 279, 266, 384, 0 )
 
 [node name="Sprite" type="Sprite" parent="."]

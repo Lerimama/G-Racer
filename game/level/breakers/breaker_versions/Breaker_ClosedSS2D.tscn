@@ -103,7 +103,7 @@ render_offset = 0.0
 [node name="BreakerClosedSS2D" instance=ExtResource( 1 )]
 
 [node name="ShapeShadow" parent="." index="1"]
-shadow_owner_shape_path = ""
+shadow_owner_shape_path = NodePath("../CollisionPolygon2D")
 
 [node name="CollisionPolygon2D" parent="." index="4"]
 visible = true

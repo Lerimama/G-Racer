@@ -7,4 +7,3 @@
 material = ExtResource( 2 )
 polygon = PoolVector2Array( 0, 64, 64, 64, 64, 0, 0, 0 )
 script = ExtResource( 1 )
-shadow_owner_shape_path = ""
