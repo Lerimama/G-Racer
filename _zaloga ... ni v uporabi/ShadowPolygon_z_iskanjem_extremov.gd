@@ -50,7 +50,7 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 	for hull_point_index in casting_node_hull.size() - 1: # zadnja pika v hull je eneaka prvi in je ne upoštevam
 		all_points_sum += casting_node_hull[hull_point_index]
 	var center = all_points_sum / (casting_node_hull.size() - 1)
-	Mets.spawn_indikator(position + center, Color.red, 20, 0,shadow_owner)
+	Mets.spawn_indikator(position + center, Color.red, 0,shadow_owner)
 
 #	var center: = Mets.centra
 	# preverim točke poligona, ki so najdlje obe smeri
@@ -83,7 +83,7 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 		if distance_to_line > max_distance:
 			max_distance = distance_to_line
 			extreme_left_point_index = point_index
-	Mets.spawn_indikator(position + shadow_casting_node.polygon[extreme_left_point_index], Color.blue, 10, 0,shadow_owner)
+	Mets.spawn_indikator(position + shadow_casting_node.polygon[extreme_left_point_index], Color.blue, 0, shadow_owner)
 	max_distance = 0
 	var extreme_right_point_index: int
 	for point_index in right_polygon_points_indexes:
@@ -91,7 +91,7 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 		if distance_to_line > max_distance:
 			max_distance = distance_to_line
 			extreme_right_point_index = point_index
-	Mets.spawn_indikator(position + shadow_casting_node.polygon[extreme_right_point_index], Color.yellow, 10, 0,shadow_owner)
+	Mets.spawn_indikator(position + shadow_casting_node.polygon[extreme_right_point_index], Color.yellow, 0,shadow_owner)
 
 
 	return [extreme_left_point_index, extreme_right_point_index]

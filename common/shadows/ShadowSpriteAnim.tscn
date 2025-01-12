@@ -14,4 +14,3 @@ animations = [ {
 modulate = Color( 0, 0, 0, 0.27451 )
 frames = SubResource( 534 )
 script = ExtResource( 1 )
-shadow_casting_node_path = NodePath("../AnimSprite")

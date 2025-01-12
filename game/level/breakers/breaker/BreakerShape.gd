@@ -5,7 +5,7 @@ enum MATERIAL {STONE, GLASS, GRAVEL, WOOD } # GHOST, WOOD, METAL, TILES, SOIL
 export (MATERIAL) var current_material: int = MATERIAL.STONE
 
 enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
-var current_motion: int = MOTION.STILL setget _on_change_motion
+var current_motion: int = MOTION.STILL setget _change_motion
 
 enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # _temp ... ujema se z demotom
 var current_hit_by_type: int = HIT_BY_TYPE.KNIFE
@@ -16,24 +16,20 @@ var current_break_size: int = BREAK_SIZE.MEDIUM
 enum SLICE_STYLE {ERASE, BLAST, GRID_SQ, GRID_HEX, SPIDERWEB, FRAGMENTS, NONE}
 enum BREAKER_TYPE {OWNER, BREAKER, DEBRY_BREAKER, DEBRY_AREA}
 
-
 # -------------------------------------------------------------------------
-
 
 export var height = 500 # setget
 export var elevation = 0 # setget
 export var transparency: float = 1 # setget
 export var is_breakable: bool = true
-export (int) var shape_edge_width: float = 0 setget _on_change_shape_edge_width
+export (int) var shape_edge_width: float = 0 setget _change_shape_edge_width
 export (NodePath) var collision_shape_path: String # če je svet kaj drugega kot njegov parent
 
-var shape_polygon: PoolVector2Array = [] setget _on_change_shape # !!! polygon menjam samo prek tega setgeta
+var shape_polygon: PoolVector2Array = [] setget _change_shape # !!! polygon menjam samo prek tega setgeta
 var break_origin_global: Vector2 = Vector2.ZERO # se inherita skozi vse spawne
 var edge_shape_color: Color = Color.black
 var cut_breaks_shapes: int = 1 # nobena, spodnja ali vse
 var breaking_round: int = 0 # kolikokrat je bil brejker že nalomljen
-# spawn okolje ... fizični svet kjer se nahaja lastnik brejkerja
-var world_node: Node # če ga ne podam ob spawnu, je parent lastnika
 
 onready var breaker_tool: Polygon2D = $BreakerTool
 onready var edge_shape: Polygon2D = $EdgeShape
@@ -47,10 +43,13 @@ onready var CrackerBox: PackedScene = preload("res://game/level/breakers/breaker
 
 # neu
 onready var breaker_shape_owner: Node2D = get_parent()
-# detect owner
 var breaker_owner_global_rotation_deg: float # za detect
 var breaker_rotation_deg: float = 0 setget _change_breaker_rotation
+# spawn okolje ... fizični svet kjer se nahaja lastnik brejkerja
+var world_node: Node # če ga ne podam ob spawnu, je parent lastnika
 
+
+# detect rotation
 
 func _change_breaker_rotation(new_rotation: float):
 	print("rotiram", new_rotation)
@@ -58,23 +57,23 @@ func _change_breaker_rotation(new_rotation: float):
 	pass
 
 func _detect_on_owner():
-	pass
-#	# pri rotaciji popravljam pozicijo nečesa manjšega a globjega ... samo parameter
-#	if "rotation_degrees" in breaker_shape_owner:
-##		print("rotiram")
-#		# rotacija lastnika
-#		var prev_rotation_deg = breaker_owner_global_rotation_deg
-#		breaker_owner_global_rotation_deg = breaker_shape_owner.rotation_degrees
-#		var rotation_change: float = breaker_owner_global_rotation_deg - prev_rotation_deg
-#		if not rotation_change == 0:
-#			var new_rotation_deg: float = breaker_rotation_deg - rotation_change
-##			rotation_degrees = breaker_shape_owner.rotation_degrees
-##			self.breaker_rotation_deg = new_rotation_deg
 
+	#	# pri rotaciji popravljam pozicijo nečesa manjšega a globjega ... samo parameter
+	#	if "rotation_degrees" in breaker_shape_owner:
+	##		print("rotiram")
+	#		# rotacija lastnika
+	#		var prev_rotation_deg = breaker_owner_global_rotation_deg
+	#		breaker_owner_global_rotation_deg = breaker_shape_owner.rotation_degrees
+	#		var rotation_change: float = breaker_owner_global_rotation_deg - prev_rotation_deg
+	#		if not rotation_change == 0:
+	#			var new_rotation_deg: float = breaker_rotation_deg - rotation_change
+	##			rotation_degrees = breaker_shape_owner.rotation_degrees
+	##			self.breaker_rotation_deg = new_rotation_deg
+	pass
 
 
 func _ready() -> void:
-	printt("breaker_shape_owner", breaker_shape_owner.get_parent().position)
+
 	# določim svet spawnanja
 	if world_node == null:
 		world_node = breaker_shape_owner.get_parent()
@@ -131,7 +130,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 	if hit_shape is Polygon2D or hit_shape is CollisionPolygon2D:
 		hit_by_polygon = hit_shape.polygon
 	elif hit_shape is CollisionShape2D:
-		print ("Hit shape je CollShape ... Uporabim Breaker tool ... naštimaj to")
+		print ("Hit shape je CollShape ... Uporabim Breaker tool")
 		hit_by_polygon = breaker_tool.polygon
 
 	# break origin ... vector intersection or closest point
@@ -432,19 +431,26 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 
 	match new_breaker_type:
 		BREAKER_TYPE.OWNER:
+			# centralized ver ... ne vem če deluje
+			var centralized_polygon_data: Array = operator.centralize_polygon_position(new_piece_polygon)
+			var centralized_breaker_polygon: PoolVector2Array = centralized_polygon_data[0]
+			new_piece_polygon = centralized_polygon_data[0]
 			new_piece = OwnerScene.instance()
 			new_piece.name = breaker_shape_owner.name + "_Round_%d" % breaking_round
-			new_piece.position = breaker_shape_owner.position
-
+			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
+			#			new_piece.position = breaker_shape_owner.position
 			var new_breaker_owner_breaker = new_piece.get_node(name)
 			new_breaker_owner_breaker.world_node = world_node
 
 		BREAKER_TYPE.BREAKER:
+			# centralized ver ... ne vem če deluje
+			var centralized_polygon_data: Array = operator.centralize_polygon_position(new_piece_polygon)
+			var centralized_breaker_polygon: PoolVector2Array = centralized_polygon_data[0]
+			new_piece_polygon = centralized_polygon_data[0]
 			new_piece = BreakerRigid.instance()
 			new_piece.name = name + "_Round_%d" % breaking_round
-			#			new_piece.position = position
-			new_piece.position = breaker_shape_owner.position
-
+			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
+			#			new_piece.position = breaker_shape_owner.position
 			var new_breaker_breaker = new_piece.get_node(name)
 			new_breaker_breaker.world_node = world_node
 
@@ -458,9 +464,9 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 			new_piece.name =  name + "_DebryBreaker"
 			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
 			new_piece.is_breakable = false
-			new_piece.height = 0 # _temp debryshadows
-			new_piece.elevation = 0 # _temp debryshadows
-
+			# debug ... skrijem debry senčke
+			new_piece.height = 0
+			new_piece.elevation = 0
 			var new_breaker_breaker = new_piece.get_node(name)
 			new_breaker_breaker.world_node = world_node
 
@@ -474,9 +480,9 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 			new_piece.name =  name + "_DebryArea"
 			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
 			new_piece.debry_owner = breaker_shape_owner
-			# debug senčke
-			new_piece.height = 0 # _temo debryshadows
-			new_piece.elevation = 0 # _temo debryshadows
+			# debug ... skrijem debry senčke
+			new_piece.height = 0
+			new_piece.elevation = 0
 
 	world_node.add_child(new_piece)
 
@@ -567,7 +573,7 @@ func _get_slicing_style(sliced_by_type: int = current_hit_by_type):
 	return slice_style
 
 
-func _on_change_shape(new_breaker_polygon: PoolVector2Array):
+func _change_shape(new_breaker_polygon: PoolVector2Array):
 
 	shape_polygon = new_breaker_polygon
 	polygon = shape_polygon
@@ -577,10 +583,10 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 	#	collision_shape.set_deferred("polygon", shape_polygon)
 
 	if breaker_shape_owner.has_node("ShapeShadow"):
-		breaker_shape_owner.get_node("ShapeShadow").update_shadow()
+		breaker_shape_owner.get_node("ShapeShadow").update_shadows()
 
 
-func _on_change_motion(new_motion_state: int):
+func _change_motion(new_motion_state: int):
 
 	current_motion =  new_motion_state
 
@@ -642,7 +648,7 @@ func _on_change_motion(new_motion_state: int):
 			pass
 
 
-func _on_change_shape_edge_width(new_width: float):
+func _change_shape_edge_width(new_width: float):
 
 	if edge_shape:
 		var offset_polygons: Array = Geometry.offset_polygon_2d(edge_shape.polygon, new_width)

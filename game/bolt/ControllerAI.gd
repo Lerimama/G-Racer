@@ -50,16 +50,16 @@ var nav_target_position: Vector2 = Vector2.ZERO
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
 
 
-func _input(event: InputEvent) -> void:
-
-	if Input.is_action_just_pressed("no1"): # idle
-		set_ai_target(null)
-	if Input.is_action_just_pressed("no2"): # race
-		set_ai_target(controlled_bolt.bolt_position_tracker)
-	if Input.is_action_just_pressed("no3"):
-		set_ai_target(level_navigation_target)
-	if Input.is_action_just_pressed("no4"): # follow leader
-		set_ai_target(Refs.game_manager.camera_leader)
+#func _input(event: InputEvent) -> void:
+#
+#	if Input.is_action_just_pressed("no1"): # idle
+#		set_ai_target(null)
+#	if Input.is_action_just_pressed("no2"): # race
+#		set_ai_target(controlled_bolt.bolt_position_tracker)
+#	if Input.is_action_just_pressed("no3"):
+#		set_ai_target(level_navigation_target)
+#	if Input.is_action_just_pressed("no4"): # follow leader
+#		set_ai_target(Refs.game_manager.camera_leader)
 
 
 func _ready() -> void:
@@ -131,7 +131,8 @@ func ai_state_machine(delta: float):
 			var racing_line_point_position: Vector2 = get_racing_position(ai_target)
 			navigation_agent.set_target_location(racing_line_point_position)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power
-
+#			controlled_bolt.bolt_shift = 1
+#			controlled_bolt.current_motion = controlled_bolt.MOTION.FWD
 		AI_STATE.SEARCH: # target = level_navigation ... vozi po navigaciji in išče novo tarčo, dokler je ne najde
 			controlled_bolt.engine_power = 150 # drži samo dokler je setana, zato nitreba resetirat
 			update_vision()
@@ -183,8 +184,6 @@ func ai_state_machine(delta: float):
 			if not possible_targets.empty():
 				if possible_targets[0].ai_target_rank > ai_target.ai_target_rank:
 					set_ai_target(possible_targets[0]) # menja tarčo
-
-
 
 
 func set_ai_target(new_ai_target: Node2D):
@@ -360,19 +359,19 @@ func get_nav_position_on_distance(from_position: Vector2, min_distance: float = 
 				if current_angle_to_bolt_deg < 30  and current_angle_to_bolt_deg > - 30 :
 					front_cells_for_random_selection.append(nav_position)
 					#					# debug ind
-					#					var indi = Mets.spawn_indikator(nav_position, controlled_bolt.rotation, Refs.node_creation_parent, false)
+					#					var indi = Mets.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Refs.node_creation_parent)
 					#					indi.modulate = Color.yellow
 				# če je na straneh
 				elif current_angle_to_bolt_deg < 90  and current_angle_to_bolt_deg > -90 :
 					side_cells_for_random_selection.append(nav_position)
 					#					# debug ind
-					#					var indi = Mets.spawn_indikator(nav_position, controlled_bolt.rotation, Refs.node_creation_parent, false)
+					#					var indi = Mets.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Refs.node_creation_parent)
 					#					indi.modulate = Color.blue
 				# če ni v razponu kota
 				else:
 					all_cells_for_random_selection.append(nav_position)
 					#					# debug ind
-					#					var indi = Mets.spawn_indikator(nav_position, controlled_bolt.rotation, Refs.node_creation_parent, false)
+					#					var indi = Mets.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Refs.node_creation_parent)
 					#					indi.modulate = Color.green
 			else:
 				# random select, samo nabiram za žrebanje,
@@ -407,7 +406,7 @@ func get_racing_position(position_tracker: PathFollow2D):
 	var bolt_tracker_curve: Curve2D = position_tracker.get_parent().get_curve()
 	point_on_curve_global_position = bolt_tracker_curve.interpolate_baked(ai_target_total_offset)
 
-	Mets.spawn_indikator(point_on_curve_global_position, Color.white, controlled_bolt.rotation, Refs.node_creation_parent, false)
+	Mets.spawn_indikator(point_on_curve_global_position, Color.white, controlled_bolt.rotation, Refs.node_creation_parent)
 
 	return point_on_curve_global_position
 

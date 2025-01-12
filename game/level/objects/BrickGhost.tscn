@@ -142,7 +142,7 @@ __meta__ = {
 }
 
 [node name="BrickShadow" parent="." instance=ExtResource( 1 )]
-shadow_casting_node_path = NodePath("../Sprite")
+shadow_owner_shape_path = NodePath("../Sprite")
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = SubResource( 18 )

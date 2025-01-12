@@ -21,4 +21,4 @@ func _change_shape_height(new_height: float):
 
 func _on_ObjectShapeSS2D_on_dirty_update() -> void:
 
-	$ShapeShadow.update_shadow()
+	$ShapeShadow.update_shadows()

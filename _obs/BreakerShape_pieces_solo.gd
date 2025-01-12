@@ -591,7 +591,7 @@ func _on_change_breaker_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred("polygon", breaker_base_polygon)
 
-	$"../PolygonShadow".update_shadow_polygon()
+	$"../PolygonShadow".update_shadows()
 
 
 func _on_change_motion(new_motion_state: int):

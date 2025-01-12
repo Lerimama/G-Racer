@@ -98,7 +98,6 @@ __meta__ = {
 [node name="Shadow" parent="." instance=ExtResource( 6 )]
 position = Vector2( 6, -4.5 )
 rotation = 1.5708
-shadow_casting_node_path = NodePath("../Sprite")
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 6, -4.5 )

@@ -30,7 +30,7 @@ enum PLAYER {P1, P2, P3, P4}
 var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 	PLAYER.P1 : {
 		"player_name": "P1",
-		"player_avatar": preload("res://gui/avatars/avatar_01.png"),
+		"player_avatar": preload("res://game/gui/avatars/avatar_01.png"),
 #		"player_color": Color.white,
 		"player_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
@@ -38,7 +38,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	PLAYER.P2 : {
 		"player_name": "P2",
-		"player_avatar": preload("res://gui/avatars/avatar_02.png"),
+		"player_avatar": preload("res://game/gui/avatars/avatar_02.png"),
 		"player_color": Refs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
@@ -46,14 +46,14 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	PLAYER.P3 : {
 		"player_name" : "P3",
-		"player_avatar" : preload("res://gui/avatars/avatar_03.png"),
+		"player_avatar" : preload("res://game/gui/avatars/avatar_03.png"),
 		"player_color" : Refs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
-		"player_avatar" : preload("res://gui/avatars/avatar_04.png"),
+		"player_avatar" : preload("res://game/gui/avatars/avatar_04.png"),
 		"player_color" : Refs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,

@@ -8,7 +8,6 @@
 
 [sub_resource type="StreamTexture" id=1814]
 flags = 2
-load_path = "res://.import/mount_edge_shade_small.png-c470e8e60cb965ec88a635f2081be292.stex"
 
 [sub_resource type="Resource" id=1811]
 script = ExtResource( 3 )

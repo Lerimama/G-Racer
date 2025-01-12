@@ -32,7 +32,7 @@ func _ready() -> void:
 #	icon.texture = icon_texture
 	modulate = pickable_color
 #	pickable_shadow.shadow_distance = pickable_altitude
-	animation_player.play("edge_rotate")
+#	animation_player.play("edge_rotate") # _temp unanimated
 
 
 func _on_Item_body_entered(body: Node) -> void:
@@ -61,3 +61,8 @@ func _on_Item_body_entered(body: Node) -> void:
 #		monitoring = false
 
 		queue_free()
+
+
+func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
+	print("new_lap")
+	pass # Replace with function body.

@@ -1,7 +1,7 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://game/bolt/fx/ExplodingBolt.gd" type="Script" id=1]
-[ext_resource path="res://game/bolt/fx/animation_exsplosion_blast.png" type="Texture" id=2]
+[ext_resource path="res://game/bolt/fx/explosion_blast_anim.tres" type="SpriteFrames" id=2]
 [ext_resource path="res://common/tex/circo_32.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
@@ -41,26 +41,6 @@ damping_random = 0.61
 scale_random = 1.0
 scale_curve = SubResource( 10 )
 color_ramp = SubResource( 8 )
-
-[sub_resource type="AtlasTexture" id=114]
-atlas = ExtResource( 2 )
-region = Rect2( 0, 0, 32, 32 )
-
-[sub_resource type="AtlasTexture" id=115]
-atlas = ExtResource( 2 )
-region = Rect2( 32, 0, 32, 32 )
-
-[sub_resource type="AtlasTexture" id=116]
-atlas = ExtResource( 2 )
-region = Rect2( 64, 0, 32, 32 )
-
-[sub_resource type="SpriteFrames" id=113]
-animations = [ {
-"frames": [ SubResource( 114 ), SubResource( 115 ), SubResource( 116 ), null ],
-"loop": false,
-"name": "default",
-"speed": 25.0
-} ]
 
 [node name="ExplodingBolt" type="Node2D"]
 script = ExtResource( 1 )
@@ -104,6 +84,6 @@ texture = ExtResource( 3 )
 
 [node name="ExplosionBlast" type="AnimatedSprite" parent="."]
 scale = Vector2( 4, 4 )
-frames = SubResource( 113 )
+frames = ExtResource( 2 )
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

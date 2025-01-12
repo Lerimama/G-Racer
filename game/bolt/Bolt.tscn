@@ -222,11 +222,10 @@ position_on_bolt = 1
 position = Vector2( 192, 128 )
 
 [node name="Shadow" type="Sprite" parent="."]
-visible = false
 modulate = Color( 1, 1, 1, 0.243137 )
 texture = SubResource( 5264 )
 script = ExtResource( 12 )
-shadow_casting_node_path = NodePath("../Chassis/BoltSprite")
+shadow_owner_shape_path = NodePath("../Chassis/BoltSprite")
 shadow_color = Color( 0, 0, 0, 0 )
 
 [node name="Mass" type="Node2D" parent="."]
@@ -277,6 +276,9 @@ offset = Vector2( -20, -19 )
 polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="Chassis" parent="." instance=ExtResource( 3 )]
+
+[node name="BoltSprite" parent="Chassis" index="0"]
+visible = true
 
 [node name="DriveTrain" parent="Chassis" index="1"]
 visible = false

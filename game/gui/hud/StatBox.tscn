@@ -1,0 +1,197 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://game/gui/avatars/avatar_04.png" type="Texture" id=1]
+[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
+[ext_resource path="res://game/gui/icon_life.tres" type="Texture" id=3]
+[ext_resource path="res://game/gui/icon_win.tres" type="Texture" id=4]
+[ext_resource path="res://game/gui/icon_bullet.tres" type="Texture" id=5]
+[ext_resource path="res://game/gui/hud/StatLine.tscn" type="PackedScene" id=6]
+[ext_resource path="res://game/gui/hud/StatBox.gd" type="Script" id=7]
+[ext_resource path="res://game/gui/icon_misile.tres" type="Texture" id=8]
+[ext_resource path="res://game/gui/icon_mina.tres" type="Texture" id=9]
+
+[node name="StatBox" type="VBoxContainer"]
+margin_top = -2.0
+margin_right = 906.0
+margin_bottom = 744.0
+theme = ExtResource( 2 )
+custom_constants/separation = -1
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 48.0 ]
+}
+
+[node name="PlayerLine" type="HBoxContainer" parent="."]
+margin_right = 906.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 200, 64 )
+size_flags_horizontal = 9
+custom_constants/separation = 16
+
+[node name="Avatar" type="TextureRect" parent="PlayerLine"]
+margin_top = 3.0
+margin_right = 57.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 57, 57 )
+size_flags_vertical = 4
+texture = ExtResource( 1 )
+expand = true
+
+[node name="PlayerName" type="Label" parent="PlayerLine"]
+margin_left = 73.0
+margin_top = 4.0
+margin_right = 157.0
+margin_bottom = 59.0
+rect_min_size = Vector2( 0, 55 )
+text = "AXL"
+valign = 2
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="GameoverLabel" type="Label" parent="PlayerLine"]
+visible = false
+margin_left = 61.0
+margin_top = 9.0
+margin_right = 454.0
+margin_bottom = 57.0
+size_flags_vertical = 8
+text = "... ZATE JE KONEC!"
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="WinLabel" type="Label" parent="PlayerLine"]
+visible = false
+margin_left = 458.0
+margin_top = 9.0
+margin_right = 750.0
+margin_bottom = 57.0
+size_flags_vertical = 8
+text = "... ZMAGA!!!!!!"
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="StatWins" parent="PlayerLine" instance=ExtResource( 6 )]
+margin_left = 173.0
+margin_top = 7.0
+margin_right = 906.0
+margin_bottom = 64.0
+size_flags_vertical = 8
+icon_texture = ExtResource( 4 )
+show_icons = true
+
+[node name="StatWins" parent="." instance=ExtResource( 6 )]
+margin_top = 63.0
+margin_right = 906.0
+margin_bottom = 120.0
+alignment = 2
+icon_texture = ExtResource( 4 )
+show_icons = true
+
+[node name="Icon" parent="StatWins" index="0"]
+margin_left = 173.0
+margin_right = 213.0
+
+[node name="Name" parent="StatWins" index="1"]
+margin_left = 229.0
+margin_right = 364.0
+
+[node name="Label" parent="StatWins" index="2"]
+margin_left = 380.0
+margin_right = 437.0
+
+[node name="TimeLabel" parent="StatWins" index="3"]
+margin_left = 453.0
+margin_right = 654.0
+
+[node name="StatIcons" parent="StatWins" index="4"]
+margin_left = 670.0
+margin_right = 906.0
+
+[node name="StatCash" parent="." instance=ExtResource( 6 )]
+margin_top = 119.0
+margin_right = 906.0
+margin_bottom = 176.0
+alignment = 2
+label_name = "CASH"
+
+[node name="StatLife" parent="." instance=ExtResource( 6 )]
+margin_top = 175.0
+margin_right = 906.0
+margin_bottom = 232.0
+alignment = 2
+icon_texture = ExtResource( 3 )
+show_icons = true
+
+[node name="StatBullet" parent="." instance=ExtResource( 6 )]
+margin_top = 231.0
+margin_right = 906.0
+margin_bottom = 288.0
+alignment = 2
+icon_texture = ExtResource( 5 )
+show_name_icon = true
+
+[node name="StatMisile" parent="." instance=ExtResource( 6 )]
+margin_top = 287.0
+margin_right = 906.0
+margin_bottom = 344.0
+alignment = 2
+icon_texture = ExtResource( 8 )
+show_name_icon = true
+
+[node name="StatMina" parent="." instance=ExtResource( 6 )]
+margin_top = 343.0
+margin_right = 906.0
+margin_bottom = 400.0
+alignment = 2
+icon_texture = ExtResource( 9 )
+show_name_icon = true
+
+[node name="StatGas" parent="." instance=ExtResource( 6 )]
+margin_top = 399.0
+margin_right = 906.0
+margin_bottom = 456.0
+alignment = 2
+label_name = "GAS"
+
+[node name="StatPoints" parent="." instance=ExtResource( 6 )]
+margin_top = 455.0
+margin_right = 906.0
+margin_bottom = 512.0
+alignment = 2
+label_name = "POINTS"
+
+[node name="StatRank" parent="." instance=ExtResource( 6 )]
+margin_top = 511.0
+margin_right = 906.0
+margin_bottom = 568.0
+alignment = 2
+label_name = "RANK"
+
+[node name="StatLap" parent="." instance=ExtResource( 6 )]
+margin_top = 567.0
+margin_right = 906.0
+margin_bottom = 624.0
+alignment = 2
+label_name = "CURRENT LAP"
+
+[node name="StatBestLap" parent="." instance=ExtResource( 6 )]
+margin_top = 623.0
+margin_right = 906.0
+margin_bottom = 680.0
+alignment = 2
+label_name = "BEST LAP TIME"
+show_time = true
+
+[node name="StatLevelTime" parent="." instance=ExtResource( 6 )]
+margin_top = 679.0
+margin_right = 906.0
+margin_bottom = 736.0
+alignment = 2
+label_name = "RACE TIME"
+show_time = true
+
+[editable path="StatWins"]

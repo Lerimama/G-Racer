@@ -38,6 +38,7 @@ onready var game_shadows_color: Color = game_settings["game_shadows_color"] # se
 onready var game_shadows_rotation_deg: float = game_settings["game_shadows_rotation_deg"] # set_game seta iz profilov
 
 
+
 func _input(event: InputEvent) -> void:
 
 
@@ -46,7 +47,11 @@ func _input(event: InputEvent) -> void:
 	#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
 	#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
 
-	if Input.is_action_just_pressed("no3"): # daynight
+	if Input.is_action_just_pressed("no1"):
+		get_tree().set_group(Refs.group_shadows, "imitate_3d", true)
+	elif Input.is_action_just_pressed("no2"):
+		get_tree().set_group(Refs.group_shadows, "imitate_3d", false)
+	elif Input.is_action_just_pressed("no3"):
 		_animate_day_night()
 
 #	if Input.is_action_just_pressed("no1"): # idle
@@ -76,7 +81,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _ready() -> void:
-	printt("GM")
+#	printt("GM")
 
 	Refs.game_manager = self
 	Refs.current_level = null # da deluje reštart
@@ -135,13 +140,23 @@ func set_game():
 	activated_player_ids = []
 	# če je prvi level so aktivirani dodani v meniju
 	if current_level_index == 0:
+
+
+
+
 		# debug ... kadar ne štartam igre iz home menija
 		if Sets.players_on_game_start.empty():
-#			activated_player_ids = [Pros.PLAYER.P1]
-			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2]
+			activated_player_ids = [Pros.PLAYER.P1]
+#			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2]
 #			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2, Pros.PLAYER.P3, Pros.PLAYER.P4]
+#			game_settings["enemies_mode"] = true # debug
+
+
+
+
 		else:
 			activated_player_ids = Sets.players_on_game_start
+
 	# če ni prvi level dodam kvalificirane player_id
 	elif current_level_index > 0:
 		if human_bolts_qualified.empty():
@@ -152,7 +167,6 @@ func set_game():
 	human_bolts_qualified = []
 
 	# get enemies
-#	game_settings["enemies_mode"] = true # debug
 
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI player_id
@@ -163,9 +177,8 @@ func set_game():
 			var new_player_index: int = activated_player_ids.size()
 			var new_player_id: int = Pros.player_profiles.keys()[new_player_index]
 			Pros.player_profiles[new_player_id]["controller_type"] = Pros.ai_profile["controller_type"]
-#			Pros.player_profiles[new_player_id]["bolt_scene"] = Pros.ai_profile["bolt_scene"]
 			activated_player_ids.append(new_player_id) # da prepoznam v spawn funkciji .... trik pač
-	printt("PLAYERS", activated_player_ids)
+	#	printt("PLAYERS", activated_player_ids)
 
 	# adaptacija količine orožij
 	Pros.default_player_stats["bullet_count"] = 0

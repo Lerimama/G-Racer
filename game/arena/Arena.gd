@@ -8,7 +8,7 @@ onready var screen_edge: StaticBody2D = $PlayingField/ScreenEdge
 
 
 func _ready() -> void:
-	print("ARENA")
+#	print("ARENA")
 
 	# RFK NCP
 	Refs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level

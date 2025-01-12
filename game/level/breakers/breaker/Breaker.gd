@@ -9,7 +9,7 @@ enum MATERIAL {STONE, GLASS, GRAVEL, WOOD } # GHOST, WOOD, METAL, TILES, SOIL
 export (MATERIAL) var current_material: int = MATERIAL.STONE
 
 enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
-var current_motion: int = MOTION.STILL setget _on_change_motion
+var current_motion: int = MOTION.STILL setget _change_motion
 
 enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # _temp ... ujema se z demotom
 var current_hit_by_type: int = HIT_BY_TYPE.KNIFE
@@ -23,9 +23,9 @@ export var height = 500 # setget
 export var elevation = 0 # setget
 export var transparency: float = 1 # setget
 export var is_breakable: bool = true
-export (int) var shape_edge_width: float = 0 setget _on_change_shape_edge_width
+export (int) var shape_edge_width: float = 0 setget _change_shape_edge_width
 
-var breaker_base_polygon: PoolVector2Array = [] setget _on_change_breaker_shape # !!! polygon menjam samo prek tega setgeta
+var breaker_base_polygon: PoolVector2Array = [] setget _change_breaker_shape # !!! polygon menjam samo prek tega setgeta
 
 var crack_color: Color = Color.black
 var cut_breaks_shapes: int = 1 # nobena, spodnja ali vse
@@ -501,7 +501,7 @@ func _get_slicing_style(sliced_by_type: int = current_hit_by_type):
 	return slice_style
 
 
-func _on_change_breaker_shape(new_breaker_polygon: PoolVector2Array):
+func _change_breaker_shape(new_breaker_polygon: PoolVector2Array):
 
 	breaker_base_polygon = new_breaker_polygon
 	breaker_base.polygon = breaker_base_polygon
@@ -509,10 +509,10 @@ func _on_change_breaker_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred("polygon", breaker_base_polygon)
 
-	$ShapeShadow.update_shadow()
+	$ShapeShadow.update_shadows()
 
 
-func _on_change_motion(new_motion_state: int):
+func _change_motion(new_motion_state: int):
 
 	current_motion =  new_motion_state
 
@@ -558,7 +558,7 @@ func _on_change_motion(new_motion_state: int):
 			pass
 
 
-func _on_change_shape_edge_width(new_width: float):
+func _change_shape_edge_width(new_width: float):
 
 	if edge_shape:
 		var offset_polygons: Array = Geometry.offset_polygon_2d(edge_shape.polygon, new_width)

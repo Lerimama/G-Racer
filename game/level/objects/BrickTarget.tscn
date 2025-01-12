@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
 [ext_resource path="res://common/shadows/ShadowSprite.tscn" type="PackedScene" id=2]
@@ -7,9 +7,6 @@
 [ext_resource path="res://game/level/objects/BrickTarget.gd" type="Script" id=5]
 [ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=6]
 [ext_resource path="res://common/tex/circo_8.png" type="Texture" id=7]
-[ext_resource path="res://common/shadows/shadow_color_blur.material" type="Material" id=8]
-[ext_resource path="res://common/shadows/ShapeShadow.gd" type="Script" id=9]
-[ext_resource path="res://assets/textures/tile_brick_targett.png" type="Texture" id=10]
 
 [sub_resource type="PhysicsMaterial" id=14]
 
@@ -148,21 +145,11 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="ShapeShadow" type="Polygon2D" parent="."]
-visible = false
-material = ExtResource( 8 )
-polygon = PoolVector2Array( 0, 64, 64, 64, 64, 0, 0, 0 )
-script = ExtResource( 9 )
-
-[node name="Sprite2" type="Sprite" parent="."]
-visible = false
-texture = ExtResource( 10 )
-centered = false
-
 [node name="BrickShadow" parent="." instance=ExtResource( 2 )]
-shadow_casting_node_path = NodePath("../Sprite")
+shadow_owner_shape_path = NodePath("../Sprite")
 
 [node name="Sprite" type="Sprite" parent="."]
+visible = false
 texture = SubResource( 28 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

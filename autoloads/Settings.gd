@@ -64,10 +64,10 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"game_shadows_rotation_deg": 45,
 	"game_shadows_color": Color.black, # odvisna od višine vira svetlobe
 	"game_shadows_length_factor": 1, # odvisna od višine vira svetlobe
-	"game_shadows_alpha": 0.2, # odvisna od moči svetlobe
+	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
 
 	# debug
-	"game_shadows_direction": Vector2(-800, 0),
+	"game_shadows_direction": Vector2(-800, 0), # ... samo še sprajti
 	"max_zoomout": false,
 	"max_zoomin": true,
 

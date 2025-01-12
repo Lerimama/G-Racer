@@ -109,8 +109,8 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 export var transparency: float = 1
 
 func _ready() -> void:
+#	printt("BOLT", self.name)
 
-	printt("BOLT", self)
 	all_thrusts = front_thrusts
 	all_thrusts.append_array(rear_thrusts)
 
@@ -486,8 +486,6 @@ func lap_finished(level_lap_limit: int):
 
 
 func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
-
-	#	Mets.spawn_indikator(pull_position, rotation, self) # debug ... indi
 
 	# disejblam koližne
 	bolt_controller.set_process_input(false)

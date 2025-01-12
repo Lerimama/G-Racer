@@ -1,10 +1,10 @@
 [gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
+[ext_resource path="res://common/shadows/ShapeShadow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/level/objects/GoalPillar.gd" type="Script" id=4]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
-[ext_resource path="res://common/shadows/ShadowSprite.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=9]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=10]
@@ -59,12 +59,12 @@ repeat = false
 radius = 96.1873
 
 [sub_resource type="CircleShape2D" id=559]
-radius = 102.02
+radius = 192.167
 
 [sub_resource type="Animation" id=571]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("IconCirco:rotation_degrees")
+tracks/0/path = NodePath("SplitCirco:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -79,7 +79,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id=572]
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("IconCirco:rotation_degrees")
+tracks/0/path = NodePath("SplitCirco:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -105,20 +105,27 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Shadow" parent="." instance=ExtResource( 7 )]
-shadow_casting_node_path = NodePath("../Sprite")
-
-[node name="IconCirco" type="Sprite" parent="."]
+[node name="SplitCirco" type="Sprite" parent="."]
+visible = false
 scale = Vector2( 2.10417, 2.10417 )
 texture = SubResource( 568 )
 region_rect = Rect2( 0, 0, 16, 16 )
 
-[node name="LightPoly" type="Polygon2D" parent="."]
-color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( -36, -32, 0, -48, 34, -33, 46, 0, 35, 33, -1, 48, -36, 31, -47, 0 )
-
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Circo" type="Sprite" parent="."]
+visible = false
 texture = SubResource( 575 )
+
+[node name="ShapeShadow" parent="." instance=ExtResource( 2 )]
+shadow_owner_shape_path = NodePath("../PillarShape")
+
+[node name="PillarShape" type="Polygon2D" parent="."]
+scale = Vector2( 1.482, 1.482 )
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( -32, 0, -30.9072, -8.31519, -27.7275, -15.9949, -22.6337, -22.6277, -16.0009, -27.7214, -8.29779, -30.9011, 0, -32, 0, -32.0099, 8.28033, -30.9011, 16.0303, -27.7058, 22.6397, -22.6355, 27.7091, -16.0033, 30.9148, -8.27563, 32, 0, 30.9066, 8.24866, 27.7283, 15.9957, 22.6628, 22.6173, 16.0026, 27.7117, 8.28552, 30.9202, 0, 32, -8.27057, 30.9301, -16.0369, 27.6914, -22.5924, 22.6519, -27.7275, 15.9661, -30.9228, 8.302, -31.4169, 4.49361 )
+
+[node name="LightPoly" type="Polygon2D" parent="."]
+scale = Vector2( 1.236, 1.236 )
+polygon = PoolVector2Array( -32, 0, -30.9072, -8.31519, -27.7275, -15.9949, -22.6337, -22.6277, -16.0009, -27.7214, -8.29779, -30.9011, 0, -32, 0, -32.0099, 8.28033, -30.9011, 16.0303, -27.7058, 22.6397, -22.6355, 27.7091, -16.0033, 30.9148, -8.27563, 32, 0, 30.9066, 8.24866, 27.7283, 15.9957, 22.6628, 22.6173, 16.0026, 27.7117, 8.28552, 30.9202, 0, 32, -8.27057, 30.9301, -16.0369, 27.6914, -22.5924, 22.6519, -27.7275, 15.9661, -30.9228, 8.302 )
 
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="."]
 scale = Vector2( 0.5, 0.5 )

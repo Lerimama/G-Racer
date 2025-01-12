@@ -104,7 +104,8 @@ onready var indikator: PackedScene = preload("res://common/debug/DebugIndikator.
 var all_indikators_spawned: Array = []
 
 #func spawn_indikator(pos: Vector2, rot: float, parent_node: Node2D, clear_spawned_before: bool = false):
-func spawn_indikator(pos: Vector2, col: Color = Color.red, scale_by: float = 10, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false):
+#func spawn_indikator(pos: Vector2, col: Color = Color.red, scale_by: float = 10, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false):
+func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false, scale_by: float = 10):
 
 	if clear_spawned_before:
 		for indi in all_indikators_spawned:

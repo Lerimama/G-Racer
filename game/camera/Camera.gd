@@ -1,6 +1,8 @@
 extends Camera2D
 
 
+signal camera_position_changed
+
 var follow_target: Node = null setget _on_follow_target_change
 
 var bolt_explosion_shake = 0
@@ -18,10 +20,18 @@ onready var test_ui = $TestUI
 
 var debug_max_zoom_out: = false
 
+## neu
+#onready var camera_position: Vector2 = get_camera_position() setget _change_camera_position
+#
+#
+#func _change_camera_position(new_position: Vector2):
+#
+#	camera_position = new_position
+
 
 func _ready():
+#	print("KAMERA")
 
-	print("KAMERA")
 	if Refs.current_camera == null:
 		Refs.current_camera = self
 	zoom = Vector2.ONE
@@ -84,7 +94,6 @@ func _on_follow_target_change(new_follow_target):
 func shake_camera(shake_power: float):
 	print("shake izklopljen")
 	# time, power in nivo popuščanja
-
 	#	test_ui.shake_camera(shake_power) # debug
 	pass
 

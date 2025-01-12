@@ -2,14 +2,14 @@ extends Area2D
 
 
 enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
-var current_motion: int = MOTION.STILL setget _on_change_motion
+var current_motion: int = MOTION.STILL setget _change_motion
 
 export var height = 500 # setget
 export var elevation = 0 # setget
 export var transparency: float = 1 # setget
-export (int) var shape_edge_width: float = 0 setget _on_change_shape_edge_width
+export (int) var shape_edge_width: float = 0 setget _change_shape_edge_width
 
-var shape_polygon: PoolVector2Array = [] setget _on_change_shape # !!! polygon menjam samo prek tega setgeta
+var shape_polygon: PoolVector2Array = [] setget _change_shape # !!! polygon menjam samo prek tega setgeta
 var break_origin_global: Vector2 = Vector2.ZERO # se inherita skozi vse spawne
 var shape_edge_color: Color = Color.black
 var debry_owner: Node2D # original lastnik delca ... poda brejker ob spawnu
@@ -35,7 +35,7 @@ func _ready() -> void:
 	edge_shape.color =  shape_edge_color
 
 
-func _on_change_shape(new_breaker_polygon: PoolVector2Array):
+func _change_shape(new_breaker_polygon: PoolVector2Array):
 
 	shape_polygon = new_breaker_polygon
 	debry_shape.polygon = shape_polygon
@@ -43,10 +43,10 @@ func _on_change_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred("polygon", shape_polygon)
 
-	$ShapeShadow.update_shadow()
+	$ShapeShadow.update_shadows()
 
 
-func _on_change_motion(new_motion_state: int):
+func _change_motion(new_motion_state: int):
 	# animacije so enake kot v breakerju
 
 	current_motion =  new_motion_state
@@ -88,7 +88,7 @@ func _on_change_motion(new_motion_state: int):
 			pass
 
 
-func _on_change_shape_edge_width(new_width: float):
+func _change_shape_edge_width(new_width: float):
 
 	if edge_shape:
 		var offset_polygons: Array = Geometry.offset_polygon_2d(edge_shape.polygon, new_width)

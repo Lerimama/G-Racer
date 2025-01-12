@@ -1,8 +1,9 @@
 extends StaticBody2D
 
 
-export var height: float = 0 # PRO
-export var elevation: float = 10 # PRO
+export var height: float = 40 # PRO
+export var elevation: float = 20 # PRO
+export var transparency: float = 1 # PRO
 
 var magnet_color_on: Color = Refs.color_brick_magnet_on # opredeli se v animaciji
 var magnet_on: bool

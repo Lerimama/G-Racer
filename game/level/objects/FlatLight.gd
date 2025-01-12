@@ -1,8 +1,10 @@
 extends StaticBody2D
 
 
-export var height: float = 0 # PRO
+export var height: float = 5 # PRO
 export var elevation: float = 0 # PRO
+export var transparency: float = 1 # PRO
+
 export var off_color: Color = Color.yellow
 export var on_color: Color = Color.green
 

@@ -31,7 +31,7 @@ onready var drive_out_position: Vector2 = $Racing/LevelFinish/DriveOutPosition.p
 
 
 func _ready() -> void:
-	printt("LEVEL")
+#	printt("LEVEL")
 
 	$__ScreenSize.hide() # debug
 
