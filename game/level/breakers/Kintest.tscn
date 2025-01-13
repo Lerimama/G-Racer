@@ -12,12 +12,15 @@ load_path = "res://.import/tile_split_circo.png-25b58d95486209f8ab5bb32c225e59c0
 
 [node name="Kintest" type="KinematicBody2D"]
 script = ExtResource( 2 )
+height = 460
+elevation = 101
+transparency = 0.97
 
 [node name="ShapeShadow" parent="." instance=ExtResource( 1 )]
 modulate = Color( 1, 1, 1, 0.588235 )
+self_modulate = Color( 1, 1, 1, 0 )
 polygon = PoolVector2Array( 0, 256, 64, 320, 320, 320, 320, 64, 256, 0, 0, 0 )
-shadow_caster_path = NodePath("../Sprite2")
-attached_shapes = [ NodePath("../Polygon2D2"), NodePath("../Polygon2D") ]
+shadow_caster_paths = [ NodePath("../Polygon2D"), NodePath("../Polygon2D2"), NodePath("../TextureRect"), NodePath("../BreakerShape") ]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
@@ -29,10 +32,11 @@ polygon = PoolVector2Array( 0, 0, 68, 266, 279, 266, 384, 0 )
 
 [node name="Sprite" type="Sprite" parent="."]
 visible = false
+rotation = -4.18879
 texture = ExtResource( 4 )
-centered = false
 
 [node name="Sprite2" type="Sprite" parent="."]
+visible = false
 position = Vector2( 48, 48 )
 texture = SubResource( 1 )
 
@@ -48,6 +52,7 @@ visible = false
 polygon = PoolVector2Array( 5, 53, 25, 115, 111, 129, 116, 35 )
 
 [node name="Polygon2D2" type="Polygon2D" parent="."]
+visible = false
 polygon = PoolVector2Array( 242, 79, 77, 240, 189, 250, 222, 181 )
 
 [editable path="ShapeShadow"]

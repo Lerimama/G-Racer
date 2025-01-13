@@ -2379,9 +2379,6 @@ __meta__ = {
 position = Vector2( -328, -192 )
 height = 50
 
-[node name="ShapeShadow" parent="Objects/Bricks/Line/BreakerBrick" index="0"]
-shadow_caster_path = NodePath("../BreakerShape")
-
 [node name="BreakerShape" parent="Objects/Bricks/Line/BreakerBrick" index="1"]
 polygon = PoolVector2Array( 0, 0, 0, 128, 128, 128, 128, 0 )
 

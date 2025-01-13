@@ -583,7 +583,7 @@ func _change_shape(new_breaker_polygon: PoolVector2Array):
 	#	collision_shape.set_deferred("polygon", shape_polygon)
 
 	if breaker_shape_owner.has_node("ShapeShadow"):
-		breaker_shape_owner.get_node("ShapeShadow").update_shadows()
+		breaker_shape_owner.get_node("ShapeShadow").update_all_shadows()
 
 
 func _change_motion(new_motion_state: int):
