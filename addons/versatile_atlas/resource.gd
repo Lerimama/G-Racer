@@ -19,7 +19,7 @@ export var repeat: bool = false setget set_repeat
 func _init():
 #	print("init start")
 	update_image()
-	
+
 	# Remove possible meta laying around
 	if Engine.editor_hint and has_meta("done_set"):
 		remove_meta("done_set")
@@ -66,11 +66,11 @@ func update_image():
 	if region.size.x == 0 or region.size.y == 0:
 		set_invalid()
 		return
-	
+
 	assert(not(atlas is GradientTexture2D or atlas is CurveTexture), "Sorry, but VersatileAtlasTexture does not work with GradientTexture2D or CurveTexture")
 	if OS.is_debug_build() and atlas is AnimatedTexture:
 		push_warning("VersatileAtlasTexture does not work with AnimatedTexture")
-	
+
 	var p_flags = flags
 #	printt("has_meta", has_meta("done_set"))
 #
@@ -83,7 +83,7 @@ func update_image():
 #		breakpoint
 #
 	var p_image = atlas.get_data().get_rect(add_rects(region, margin))
-	
+
 	# False only if position and size are both Vector2.ZERO
 	if margin.position or margin.size:
 		# Easier to edit
@@ -98,13 +98,13 @@ func update_image():
 			p_image.fill_rect(Rect2(Vector2(image_size.x - arr_margin[2], 0), Vector2(arr_margin[2], image_size.y)), margin_color)
 		if arr_margin[3]:
 			p_image.fill_rect(Rect2(Vector2(0, image_size.y - arr_margin[3]), image_size), margin_color)
-		
+
 		if margin_color.a <= ALPHA_FIX_THERESHOLD:
 			p_image.fix_alpha_edges()
-	
+
 	if atlas.flags & FLAG_MIPMAPS:
 		p_image.generate_mipmaps()
-	
+
 	create_from_image(p_image)
 	flags = p_flags
 	update_repeat()
@@ -128,13 +128,13 @@ func update_repeat():
 
 func set_invalid():
 	var data = get_data()
-	
+
 	if not data or data.get_data() != FALLBACK_IMAGE.get_data():
 #		print("FALLBACK")
 		create_from_image(FALLBACK_IMAGE, flags)
 		update_repeat()
-	
+
 	if is_debug_running() and has_meta("done_set"):
 		push_warning("Atlas or region are invalid, used fallback image.")
-	
+
 	emit_changed()

@@ -31,7 +31,7 @@ func _process(delta):
 				if n.get_global_transform() != monitored_transform:
 					refresh()
 					monitored_transform = n.get_global_transform()
-					
+
 func _cubic_bezier(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2, t: float):
 	var q0 = p0.linear_interpolate(p1, t)
 	var q1 = p1.linear_interpolate(p2, t)
@@ -133,10 +133,10 @@ func refresh():
 			#print("RMSmartShapeAnchor2D::refresh Point Count: %s" %s point_count)
 			var pt_a_index = track_control_point + point_count
 			var pt_b_index = track_control_point + point_count + 1
-			
+
 			if control_point_offset < 0:
 				pt_b_index -= 2
-			
+
 			if control_point_offset < 0:
 				pt_b_index = pt_a_index - 1
 
@@ -154,7 +154,7 @@ func refresh():
 
 			var pt_a:Vector2 = node.global_transform.xform( node.get_point_position(pt_a_index) )
 			var pt_b:Vector2 = node.global_transform.xform( node.get_point_position(pt_b_index) )
-			
+
 			# might need to know the direction of the shape before determining which in/out
 			# is needed.
 			var pt_a_handle:Vector2
@@ -163,13 +163,13 @@ func refresh():
 			var n_pt:Vector2
 			var n_pt_a:Vector2
 			var n_pt_b:Vector2
-			
+
 			var angle = 0.0
 
 			if (control_point_offset >= 0):
 				pt_a_handle = node.global_transform.xform( node.get_point_position(pt_a_index) + node.get_point_out(pt_a_index))
 				pt_b_handle = node.global_transform.xform( node.get_point_position(pt_b_index) + node.get_point_in(pt_b_index))
-				
+
 				n_pt = _cubic_bezier(pt_a, pt_a_handle, pt_b_handle, pt_b, control_point_offset)
 				n_pt_a = _cubic_bezier(pt_a, pt_a_handle, pt_b_handle, pt_b, clamp(control_point_offset-0.1,0.0,1.0))
 				n_pt_b = _cubic_bezier(pt_a, pt_a_handle, pt_b_handle, pt_b, clamp(control_point_offset+0.1,0.0,1.0))
@@ -178,7 +178,7 @@ func refresh():
 			else:
 				pt_a_handle = node.global_transform.xform( node.get_point_position(pt_a_index) + node.get_point_in(pt_a_index))
 				pt_b_handle = node.global_transform.xform( node.get_point_position(pt_b_index) + node.get_point_out(pt_b_index))
-				
+
 				n_pt = _cubic_bezier(pt_a, pt_a_handle, pt_b_handle, pt_b, -control_point_offset)
 				n_pt_a = _cubic_bezier(pt_a, pt_a_handle, pt_b_handle, pt_b, clamp(-control_point_offset-0.1,0.0,1.0))
 				n_pt_b = _cubic_bezier(pt_a, pt_a_handle, pt_b_handle, pt_b, clamp(-control_point_offset+0.1,0.0,1.0))

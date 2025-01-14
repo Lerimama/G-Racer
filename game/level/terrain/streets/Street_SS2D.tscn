@@ -61,6 +61,7 @@ _material_overrides = {
 }
 
 [node name="Street" type="Area2D"]
+z_as_relative = false
 script = ExtResource( 6 )
 __meta__ = {
 "_edit_group_": true,

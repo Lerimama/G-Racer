@@ -10,7 +10,7 @@ export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 var navigation_cells_positions: Array
 var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
 
-onready	var checkpoint: Area2D = $Racing/Checkpoint
+onready var checkpoint: Area2D = $Racing/Checkpoint
 onready var level_track: Path2D = $Racing/LevelTrack
 onready var navigation_instance: NavigationPolygonInstance = $NavigationPolygonInstance
 onready var tilemap_objects: TileMap = $Objects/Objects

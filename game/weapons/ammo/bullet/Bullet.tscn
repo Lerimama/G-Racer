@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
 [ext_resource path="res://common/tex/circo_8.png" type="Texture" id=2]
-[ext_resource path="res://common/shadows/ShadowSprite.tscn" type="PackedScene" id=3]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/textures/ammo_atlas.png" type="Texture" id=4]
 [ext_resource path="res://assets/sounds/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/materials/fx/bullet_thrust_particles_material.tres" type="Material" id=6]
@@ -77,10 +77,8 @@ audio_stream = ExtResource( 8 )
 [node name="Bullet" type="RigidBody2D"]
 script = ExtResource( 7 )
 
-[node name="Shadow" parent="." instance=ExtResource( 3 )]
-visible = false
-rotation = 1.5708
-shadow_casting_node_path = NodePath("../Sprite")
+[node name="ShapeShadows" parent="." instance=ExtResource( 3 )]
+shadow_caster_paths = [ NodePath("../SpritePoly") ]
 
 [node name="TrailPosition" type="Position2D" parent="."]
 position = Vector2( -6, 0 )
@@ -102,6 +100,10 @@ lifetime = 0.05
 randomness = 1.0
 process_material = ExtResource( 6 )
 texture = ExtResource( 2 )
+
+[node name="SpritePoly" type="Polygon2D" parent="."]
+color = Color( 1, 1, 1, 0 )
+polygon = PoolVector2Array( 6, -2, 6, 2, -6, 2, -6, -2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 rotation = 1.5708

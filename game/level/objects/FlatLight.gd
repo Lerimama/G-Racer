@@ -3,7 +3,6 @@ extends StaticBody2D
 
 export var height: float = 5 # PRO
 export var elevation: float = 0 # PRO
-export var transparency: float = 1 # PRO
 
 export var off_color: Color = Color.yellow
 export var on_color: Color = Color.green
@@ -15,7 +14,6 @@ var level_object_key: int # poda spawner, uravnava vse ostalo
 #onready var elevation: float = Pros.level_object_profiles[level_object_key]["elevation"] # PRO elevation
 onready var reward_points: float = Pros.level_object_profiles[level_object_key]["value"]
 onready var ai_target_rank: int = Pros.level_object_profiles[level_object_key]["ai_target_rank"]
-onready var brick_shadow: Sprite = $BrickShadow
 onready var light_2d: Light2D = $Light2D
 onready var sprite: Sprite = $Sprite
 

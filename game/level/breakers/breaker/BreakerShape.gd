@@ -20,7 +20,6 @@ enum BREAKER_TYPE {OWNER, BREAKER, DEBRY_BREAKER, DEBRY_AREA}
 
 export var height = 500 # setget
 export var elevation = 0 # setget
-export var transparency: float = 1 # setget
 export var is_breakable: bool = true
 export (int) var shape_edge_width: float = 0 setget _change_shape_edge_width
 export (NodePath) var collision_shape_path: String # če je svet kaj drugega kot njegov parent
@@ -48,6 +47,7 @@ var breaker_rotation_deg: float = 0 setget _change_breaker_rotation
 # spawn okolje ... fizični svet kjer se nahaja lastnik brejkerja
 var world_node: Node # če ga ne podam ob spawnu, je parent lastnika
 
+var is_debry: bool = false
 
 # detect rotation
 
@@ -92,6 +92,20 @@ func _ready() -> void:
 	self.shape_edge_width = shape_edge_width
 	edge_shape.color =  edge_shape_color
 	breaker_tool.hide()
+
+	if is_debry:
+		is_breakable = false
+
+	# SS2D breaker
+	# SS2D shape spremeni brejker koližn in signalizira spremembo brejkerju
+	# brejker spremeni bazna oblika
+	# po prejkerju se spremeni senčka
+	if has_node("SS2D_Shape_Closed"):
+		$SS2D_Shape_Closed.connect("on_dirty_update", self, "_on_SS2D_dirty_update") # po spremembi, ko je vse apdejtano
+		$SS2D_Shape_Closed.hide()
+	elif has_node("SS2D_Shape_Open"):
+		$SS2D_Shape_Open.connect("on_dirty_update", self, "_on_SS2D_dirty_update") # po spremembi, ko je vse apdejtano
+		$SS2D_Shape_Open.hide()
 
 
 func _process(delta: float) -> void: # preverjanje sprememb nekaterih lastnosti lastnika
@@ -463,6 +477,7 @@ func _spawn_to_pieces(new_piece_polygon: PoolVector2Array, new_breaker_type: int
 			new_piece = BreakerRigid.instance()
 			new_piece.name =  name + "_DebryBreaker"
 			new_piece.position = centralized_polygon_data[1] + breaker_shape_owner.position
+			new_piece.is_debry = true
 			new_piece.is_breakable = false
 			# debug ... skrijem debry senčke
 			new_piece.height = 0
@@ -579,11 +594,11 @@ func _change_shape(new_breaker_polygon: PoolVector2Array):
 	polygon = shape_polygon
 	edge_shape.polygon = shape_polygon
 	self.shape_edge_width = shape_edge_width
-	collision_shape.polygon = shape_polygon
-	#	collision_shape.set_deferred("polygon", shape_polygon)
+#	collision_shape.polygon = shape_polygon
+	collision_shape.set_deferred("polygon", shape_polygon)
 
-	if breaker_shape_owner.has_node("ShapeShadow"):
-		breaker_shape_owner.get_node("ShapeShadow").update_all_shadows()
+	if breaker_shape_owner.has_node("ShapeShadows"):
+		breaker_shape_owner.get_node("ShapeShadows").update_all_shadows()
 
 
 func _change_motion(new_motion_state: int):
@@ -663,3 +678,8 @@ func _change_shape_edge_width(new_width: float):
 func _on_VisibilityNotifier2D_screen_exited() -> void:
 
 	print("Out of screen")
+
+
+func _on_SS2D_dirty_update(): # samo SS2D breaker
+
+	self.shape_polygon = collision_shape.polygon

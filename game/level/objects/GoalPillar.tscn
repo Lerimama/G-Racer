@@ -1,7 +1,7 @@
 [gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
-[ext_resource path="res://common/shadows/ShapeShadow.tscn" type="PackedScene" id=2]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/level/objects/GoalPillar.gd" type="Script" id=4]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
@@ -115,8 +115,8 @@ region_rect = Rect2( 0, 0, 16, 16 )
 visible = false
 texture = SubResource( 575 )
 
-[node name="ShapeShadow" parent="." instance=ExtResource( 2 )]
-shadow_owner_shape_path = NodePath("../PillarShape")
+[node name="ShapeShadows" parent="." instance=ExtResource( 2 )]
+shadow_caster_paths = [ NodePath("../PillarShape") ]
 
 [node name="PillarShape" type="Polygon2D" parent="."]
 scale = Vector2( 1.482, 1.482 )

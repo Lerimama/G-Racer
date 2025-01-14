@@ -6,7 +6,6 @@ var current_motion: int = MOTION.STILL setget _change_motion
 
 export var height = 500 # setget
 export var elevation = 0 # setget
-export var transparency: float = 1 # setget
 export (int) var shape_edge_width: float = 0 setget _change_shape_edge_width
 
 var shape_polygon: PoolVector2Array = [] setget _change_shape # !!! polygon menjam samo prek tega setgeta
@@ -43,7 +42,7 @@ func _change_shape(new_breaker_polygon: PoolVector2Array):
 	self.shape_edge_width = shape_edge_width
 	collision_shape.set_deferred("polygon", shape_polygon)
 
-	$ShapeShadow.update_shadows()
+	$ShapeShadows.update_all_shadows()
 
 
 func _change_motion(new_motion_state: int):

@@ -1,0 +1,70 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=1]
+[ext_resource path="res://common/shadows/ShadowTest.gd" type="Script" id=2]
+[ext_resource path="res://game/level/breakers/breaker/BreakerShape.tscn" type="PackedScene" id=3]
+[ext_resource path="res://common/shadows/image_to_poly.png" type="Texture" id=4]
+[ext_resource path="res://assets/textures/tile_split_circo.png" type="Texture" id=5]
+[ext_resource path="res://game/bolt/fx/explosion_blast_anim.tres" type="SpriteFrames" id=7]
+
+[sub_resource type="StreamTexture" id=1]
+flags = 2
+load_path = "res://.import/tile_split_circo.png-25b58d95486209f8ab5bb32c225e59c0.stex"
+
+[node name="ShadowTest" type="KinematicBody2D"]
+rotation = 0.256777
+script = ExtResource( 2 )
+elevation = 100
+
+[node name="ShapeShadows" parent="." instance=ExtResource( 1 )]
+shadow_caster_paths = [ NodePath("../Sprite"), NodePath("../TextureRect"), NodePath("../CollisionPolygon2D"), NodePath("../Polygon2D2") ]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( 88, 56 )
+polygon = PoolVector2Array( 0, 2, 383, 1, 383, 385, -2, 386 )
+
+[node name="BreakerShape" parent="." instance=ExtResource( 3 )]
+visible = false
+polygon = PoolVector2Array( 0, 0, 68, 266, 279, 266, 384, 0 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 192, 320 )
+rotation = -0.144927
+scale = Vector2( 1.39, 1.39 )
+texture = ExtResource( 4 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+visible = false
+position = Vector2( 48, 48 )
+texture = SubResource( 1 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_left = 89.409
+margin_top = 2.45635
+margin_right = 185.409
+margin_bottom = 98.4564
+texture = ExtResource( 5 )
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
+polygon = PoolVector2Array( 5, 53, 25, 115, 111, 129, 116, 35 )
+
+[node name="Polygon2D2" type="Polygon2D" parent="."]
+position = Vector2( 294.897, -168.415 )
+rotation = 0.136948
+offset = Vector2( 100, 100 )
+polygon = PoolVector2Array( 242, 79, 77, 240, 189, 250, 222, 181 )
+
+[node name="unmerged" type="Polygon2D" parent="."]
+visible = false
+polygon = PoolVector2Array( 322, 40, 313, 109, 426, 105, 414, 39 )
+
+[node name="unmerged2" type="Polygon2D" parent="."]
+visible = false
+polygon = PoolVector2Array( 629, 42, 630, 105, 551, 83, 560, 54 )
+
+[node name="ExplosionBlast" type="AnimatedSprite" parent="."]
+position = Vector2( 979.891, 194.168 )
+scale = Vector2( 4, 4 )
+frames = ExtResource( 7 )
+frame = 1

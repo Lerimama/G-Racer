@@ -7,8 +7,8 @@ var spawner_color: Color
 var spawner_speed: float
 var in_spawner_area: bool =  true
 
-export var height: float = 0
-onready var elevation: float = spawner.elevation + 7 # PRO rabi jo senčka
+#export var height: float = 0
+export var elevation: float = 0 # PRO rabi jo senčka
 
 # gibanje
 #export var height: float = 0 # PRO
@@ -33,7 +33,7 @@ onready var drop_position: Position2D = $DropPosition
 onready var hit_position: Position2D = $HitPosition
 
 onready var homming_detect: Area2D = $HommingArea
-onready var collision_shape: CollisionShape2D = $MisileCollision
+onready var collision_shape: CollisionPolygon2D = $MisileCollision
 onready var vision_ray: RayCast2D = $VisionRay
 
 onready var MisileExplosion = preload("res://game/weapons/ammo/misile/MisileExplosionParticles.tscn")
@@ -62,10 +62,10 @@ func _ready() -> void:
 	add_to_group(Refs.group_misiles)
 #	$Sprite.modulate = spawner_color
 	collision_shape.set_deferred("disabled", true) # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
+	elevation = spawner.elevation + 7 # PRO rabi jo senčka
 
 	$Sounds/MisileShoot.play()
 	$Sounds/MisileFlight.play()
-
 	# set movement
 	var random_range = rand_range(direction_start_range[0],direction_start_range[1]) # oblika variable zato, da isto rotiramo tudi misilo
 	rotation += random_range # rotacija misile

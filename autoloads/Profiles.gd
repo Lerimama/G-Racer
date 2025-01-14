@@ -386,12 +386,25 @@ var arena_tilemap_profiles: Dictionary = { # za generator
 func z_index(): pass
 
 var z_indexes: Dictionary = {
-	"pickables_z_index": 1,
-	"bolt_z_index": 1,
-	"shadows": 1,
-	Refs.group_shadows: 0,
-	"surface_z_index": 1,
-	"SURFACE": 6,
-	"PICKABLE": 1,
-	"LEVEL_OBJECT": 1,
+	# indexi so delno poštimani tudi v nodetih levela
+	# ref "background": -10,
+	"ground": 0, # streets, surfaces
+	"bolts": 1,
+	# TUDU
+	"pickables": 1, # v levelu
+	"breakers": 1,
+	"mounts": 100, # noben objekt levela ni všje
+	"building": 10, # noben objekt levela ni všje
+	"hill": 50, # noben objekt levela ni všje
+	"sky": 1000, # top
+#	"surface_z_index": 1,
+#	"SURFACE": 6,
+#	"PICKABLE": 1,
+#	"LEVEL_OBJECT": 1,
 }
+#Z INDEX
+#- background = -10
+#- ground terrain < -1
+#- flat objects and default = 0
+#- not flat or floating object = 1 - 9
+#- sky > 10

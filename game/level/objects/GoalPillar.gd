@@ -3,7 +3,6 @@ extends StaticBody2D
 
 export var height: float = 100 # PRO
 export var elevation: float = 10 # PRO
-export var transparency: float = 10 # PRO
 
 var turned_on: bool = false
 var bolts_in_goal_area: Array = []

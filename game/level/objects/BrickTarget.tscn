@@ -1,7 +1,7 @@
 [gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
-[ext_resource path="res://common/shadows/ShadowSprite.tscn" type="PackedScene" id=2]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=3]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=4]
 [ext_resource path="res://game/level/objects/BrickTarget.gd" type="Script" id=5]
@@ -145,11 +145,10 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="BrickShadow" parent="." instance=ExtResource( 2 )]
-shadow_owner_shape_path = NodePath("../Sprite")
+[node name="ShapeShadows" parent="." instance=ExtResource( 2 )]
+shadow_caster_paths = [ NodePath("../Sprite") ]
 
 [node name="Sprite" type="Sprite" parent="."]
-visible = false
 texture = SubResource( 28 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

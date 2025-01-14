@@ -3,7 +3,6 @@ extends StaticBody2D
 
 export var height: float = 40 # PRO
 export var elevation: float = 20 # PRO
-export var transparency: float = 1 # PRO
 
 var def_particle_speed: float = 6
 var level_object_key: int # poda spawner, uravnava vse ostalo
@@ -17,7 +16,6 @@ onready var ai_target_rank: int = Pros.level_object_profiles[level_object_key]["
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var brick_shadow: Sprite = $BrickShadow
 
 
 func _ready() -> void:

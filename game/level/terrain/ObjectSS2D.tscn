@@ -1,10 +1,10 @@
 [gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=1]
-[ext_resource path="res://game/level/terrain/Object_SS2D.gd" type="Script" id=2]
+[ext_resource path="res://game/level/terrain/ObjectSS2D.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=4]
-[ext_resource path="res://common/shadows/ShapeShadow.tscn" type="PackedScene" id=6]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=7]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=8]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=10]
@@ -108,8 +108,8 @@ __meta__ = {
 }
 height = 100.0
 
-[node name="ShapeShadow" parent="." instance=ExtResource( 6 )]
-shadow_owner_shape_path = NodePath("../CollisionPolygon2D")
+[node name="ShapeShadows" parent="." instance=ExtResource( 5 )]
+shadow_caster_paths = [ NodePath("../CollisionPolygon2D") ]
 
 [node name="ObjectShapeSS2D" type="Node2D" parent="."]
 script = ExtResource( 3 )

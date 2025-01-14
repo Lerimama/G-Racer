@@ -2,7 +2,7 @@ extends Area2D
 class_name Pickable #, "res://assets/class_icons/pickable_icon.png"
 
 export var height: float = 0 # PRO
-#export var elevation: float = 10 # PRO fili
+export var elevation: float = 10 # PRO fili
 
 export var pickable_key: int = 0 # OPT... določen za primer, če ga dam manualno v level ... zaporedje iz profilov
 #export (Pros.PICKABLE) var new_pickable_key: int = 0 # ne dela
@@ -13,12 +13,12 @@ onready var pickable_value: float = Pros.pickable_profiles[pickable_key]["value"
 onready var pickable_color: Color = Pros.pickable_profiles[pickable_key]["color"]
 #onready var icon_texture: Texture = Pros.pickable_profiles[pickable_key]["icon_scene"]
 
-onready var elevation: float = Pros.pickable_profiles[pickable_key]["elevation"]
+#onready var elevation: float = Pros.pickable_profiles[pickable_key]["elevation"]
 
 onready var ai_target_rank: int = Pros.pickable_profiles[pickable_key]["ai_target_rank"]
 onready var icon: Sprite = $Icon
 onready var detect_area: CollisionShape2D = $CollisionShape2D
-onready var pickable_shadow: Sprite = $PickableShadow
+#onready var pickable_shadow: Sprite = $PickableShadow
 #onready var detect_area: CollisionPolygon2D = $CollisionPolygon2D
 #onready var sounds: Node = $Sounds
 #onready var sound_picked: AudioStreamPlayer = $Sounds/PickedDefault

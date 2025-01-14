@@ -2,8 +2,8 @@
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
-[ext_resource path="res://common/shadows/ShadowSprite.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/level/objects/FlatLight.gd" type="Script" id=4]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=6]
 [ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=7]
 
@@ -110,9 +110,8 @@ elevation = 2.0
 off_color = Color( 0, 0, 0, 1 )
 on_color = Color( 1, 0, 0, 1 )
 
-[node name="BrickShadow" parent="." instance=ExtResource( 3 )]
-shadow_owner_shape_path = NodePath("../Sprite")
-shadow_color = Color( 0, 0, 0, 0.392157 )
+[node name="ShapeShadows" parent="." instance=ExtResource( 5 )]
+shadow_caster_paths = [ NodePath("../Sprite") ]
 
 [node name="Light2D" type="Light2D" parent="."]
 enabled = false

@@ -3,7 +3,6 @@ extends StaticBody2D
 
 export var height: float = 40 # PRO
 export var elevation: float = 20 # PRO
-export var transparency: float = 1 # PRO
 
 var hit_count: int = 0
 var def_particle_speed = 5
@@ -16,7 +15,6 @@ onready var ai_target_rank: int = Pros.level_object_profiles[level_object_key]["
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var brick_shadow: Sprite = $BrickShadow
 
 
 func _ready() -> void:

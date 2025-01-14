@@ -8,4 +8,5 @@ var surface_type: int = Pros.SURFACE.CONCRETE
 
 
 func _ready() -> void:
+
 	pass

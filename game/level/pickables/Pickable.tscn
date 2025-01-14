@@ -1,12 +1,11 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/textures/atlas_pickables.png" type="Texture" id=3]
 [ext_resource path="res://game/level/pickables/Pickable.gd" type="Script" id=4]
-[ext_resource path="res://common/shadows/ShapeShadow.gd" type="Script" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=6]
 [ext_resource path="res://common/tex/light_2.png" type="Texture" id=7]
-[ext_resource path="res://common/shadows/shadow_color_blur.material" type="Material" id=8]
 
 [sub_resource type="Image" id=577]
 data = {
@@ -87,13 +86,8 @@ tracks/0/keys = {
 collision_layer = 5
 script = ExtResource( 4 )
 
-[node name="ShapeShadow" type="Polygon2D" parent="."]
-modulate = Color( 1, 1, 1, 0.196078 )
-material = ExtResource( 8 )
-color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 0, 64, 64, 64, 64, 0, 0, 0 )
-script = ExtResource( 5 )
-shadow_owner_shape_path = NodePath("../IconCirco")
+[node name="ShapeShadows" parent="." instance=ExtResource( 2 )]
+shadow_caster_paths = [ NodePath("../IconCirco"), NodePath("../Icon") ]
 
 [node name="IconCirco" type="Sprite" parent="."]
 texture = SubResource( 576 )

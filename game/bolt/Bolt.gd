@@ -92,8 +92,8 @@ var active_trail: Line2D
 onready var direction_line: Line2D = $DirectionLine
 
 # neu
-var height: float = 0 # PRO
-var elevation: float = 7 # PRO
+export var height: float = 0 # PRO
+export var elevation: float = 7 # PRO
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $LauncherL, $LauncherR]
 onready var bolt_sprite: Sprite = $Chassis/BoltSprite
@@ -106,7 +106,6 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 # breaker
 #export var height: float = 50 setget _change_shape_height
 #export var elevation: float = 0
-export var transparency: float = 1
 
 func _ready() -> void:
 #	printt("BOLT", self.name)
@@ -116,6 +115,10 @@ func _ready() -> void:
 
 	add_to_group(Refs.group_bolts)
 	player_name = player_profile["player_name"]
+
+	z_as_relative = false
+	z_index = Pros.z_indexes["bolts"]
+
 	# bolt
 	bolt_color = player_profile["player_color"] # bolt se obarva ...
 	bolt_sprite.modulate = bolt_color

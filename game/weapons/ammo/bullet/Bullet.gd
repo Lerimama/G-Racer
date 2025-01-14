@@ -2,8 +2,8 @@ extends RigidBody2D
 class_name Bullet
 
 
-export var height: float = 0 # PRO
-onready var elevation: float = spawner.elevation + 4 # PRO rabi jo senčka
+#export var height: float = 0
+export var elevation: float = 0 # v ready
 
 var spawner: Node
 var spawner_color: Color
@@ -43,6 +43,7 @@ func _ready() -> void:
 	$Sounds/BulletShoot.play()
 
 	mass = bullet_mass
+	elevation = spawner.elevation + 4 # PRO rabi jo senčka
 
 	# set movement vector
 	direction = Vector2.RIGHT.rotated(rotation)
@@ -51,7 +52,6 @@ func _ready() -> void:
 	new_bullet_trail = BulletTrail.instance()
 	new_bullet_trail.z_index = trail_position.z_index + 1
 	Refs.node_creation_parent.add_child(new_bullet_trail)
-
 
 func _physics_process(delta: float) -> void:
 

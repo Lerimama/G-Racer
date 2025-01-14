@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=2]
-
-[ext_resource path="res://common/shadows/ShadowSprite.gd" type="Script" id=1]
-
-[node name="Shadow" type="Sprite"]
-script = ExtResource( 1 )
-shadow_color = Color( 0, 0, 0, 0.27451 )

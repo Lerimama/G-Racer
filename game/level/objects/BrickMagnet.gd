@@ -3,7 +3,6 @@ extends StaticBody2D
 
 export var height: float = 40 # PRO
 export var elevation: float = 20 # PRO
-export var transparency: float = 1 # PRO
 
 var magnet_color_on: Color = Refs.color_brick_magnet_on # opredeli se v animaciji
 var magnet_on: bool
@@ -22,7 +21,6 @@ onready var forcefield: Area2D = $ForceField
 onready var forcefield_collision: CollisionShape2D = $ForceField/CollisionShape2D
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var brick_shadow: Sprite = $BrickShadow
 onready var magnet_timer: Timer = $MagnetTimer
 
 
