@@ -1,6 +1,7 @@
 extends Node
 
 # global nodes
+var temp_object = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var setup_layer = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var node_creation_parent = null # NCP ... ven?

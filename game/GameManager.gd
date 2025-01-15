@@ -149,7 +149,7 @@ func set_game():
 			activated_player_ids = [Pros.PLAYER.P1]
 #			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2]
 #			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2, Pros.PLAYER.P3, Pros.PLAYER.P4]
-#			game_settings["enemies_mode"] = true # debug
+			game_settings["enemies_mode"] = true # debug
 
 
 
@@ -534,8 +534,10 @@ func spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 
 	# setup
 	if Pros.player_profiles[spawned_bolt_id]["controller_type"] == Pros.CONTROLLER_TYPE.AI:
-		new_bolt.bolt_controller.level_navigation_positions = navigation_positions.duplicate()
-
+#		new_bolt.bolt_controller.level_navigation_positions = navigation_positions.duplicate() # _temp zakaj tukaj
+		new_bolt.bolt_controller.level_navigation_positions = Refs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
+#		new_bolt.bolt_controller.level_navigation_positions = Refs.current_level.navigation_cells_positions.duplicate() # _temp zakaj tukaj
+#		printt ("POS", Refs.current_level.navigation_cells_positions.size() )
 	match Refs.current_level.level_type:
 		Refs.current_level.LEVEL_TYPE.RACE, Refs.current_level.LEVEL_TYPE.RACE_LAPS:
 			new_bolt.bolt_position_tracker = Refs.current_level.level_track.set_new_bolt_tracker(new_bolt)

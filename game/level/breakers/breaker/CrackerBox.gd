@@ -24,9 +24,12 @@ func _ready() -> void:
 func _spawn_crackers():
 
 	# chunk rect za animacijo maske
-	var chunk_far_points: Array = get_polygon_far_points(chunk_polygon) # L-T-R-B
-	var chunk_position: Vector2 = Vector2(chunk_far_points[0].x, chunk_far_points[1].y)
-	var chunk_size: Vector2 = Vector2(chunk_far_points[2].x, chunk_far_points[3].y) - chunk_position
+#	var chunk_far_points: Array = get_polygon_far_points(chunk_polygon) # L-T-R-B
+#	var chunk_position: Vector2 = Vector2(chunk_far_points[0].x, chunk_far_points[1].y)
+#	var chunk_size: Vector2 = Vector2(chunk_far_points[2].x, chunk_far_points[3].y) - chunk_position
+	var chunk_far_points_rect: Rect2 = get_polygon_bounding_rect(chunk_polygon) # L-T-R-B
+	var chunk_position: Vector2 = chunk_far_points_rect.position
+	var chunk_size: Vector2 = chunk_far_points_rect.size
 
 	for poly_index in cracked_polygons.size():
 		var new_cracker: Polygon2D = Cracker.instance()
@@ -73,6 +76,24 @@ func _spawn_crackers():
 	# pucam krekerje po animaciji
 	for child in crackers_parent.get_children():
 		child.queue_free()
+
+
+func get_polygon_bounding_rect(polygon_points: PoolVector2Array):
+
+	var polygon_hull: Array = Geometry.convex_hull_2d(polygon_points)
+	var hull_point_x_values: Array = []
+	var hull_point_y_values: Array = []
+	for point in polygon_hull:
+		hull_point_x_values.append(point.x)
+		hull_point_y_values.append(point.y)
+
+	var bounding_rect: Rect2
+	bounding_rect.position = Vector2(hull_point_x_values.min(), hull_point_x_values.min())
+	var bounding_rect_size_x: float = abs(hull_point_x_values.max() - hull_point_x_values.min())
+	var bounding_rect_size_y: float = abs(hull_point_y_values.max() - hull_point_y_values.min())
+	bounding_rect.size = Vector2(bounding_rect_size_x, bounding_rect_size_y)
+
+	return bounding_rect
 
 
 func get_polygon_far_points(polygon_points: PoolVector2Array):

@@ -3,3 +3,4 @@
 [ext_resource path="res://game/level/breakers/BreakerRigid.tscn" type="PackedScene" id=1]
 
 [node name="BreakerRigidConcrete" instance=ExtResource( 1 )]
+sleeping = true

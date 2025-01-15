@@ -36,7 +36,7 @@ onready var collision_shape: CollisionPolygon2D# = $"../CollisionPolygon2D"
 onready var operator: Node = $Operator
 
 onready var OwnerScene: PackedScene = load("res://game/level/breakers/RigidObject.tscn") # funkcije in LNF originala, fizika, breakable
-onready var BreakerRigid: PackedScene = load("res://game/level/breakers/breaker/BreakerRigid.tscn") #  LNF originala, fizika, (un)breakable
+onready var BreakerRigid: PackedScene = load("res://game/level/breakers/BreakerRigid.tscn") #  LNF originala, fizika, (un)breakable
 onready var Debry: PackedScene = preload("res://game/level/breakers/breaker/Debry.tscn") # LNF originala, brez fizike, unbreakable
 onready var CrackerBox: PackedScene = preload("res://game/level/breakers/breaker/CrackerBox.tscn") # za animacijo lomljenja na kose ... LNF originala
 

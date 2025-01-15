@@ -6,7 +6,7 @@
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=4]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=5]
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=6]
-[ext_resource path="res://game/level/breakers/old breaker_versions/Breaker.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/level/breakers/breaker/Breaker.tscn" type="PackedScene" id=7]
 
 [sub_resource type="Resource" id=15]
 script = ExtResource( 3 )

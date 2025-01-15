@@ -10,9 +10,9 @@ position = Vector2( 26, 0 )
 script = ExtResource( 1 )
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-path_desired_distance = 70.0
-target_desired_distance = 8.0
-path_max_distance = 10.0
+path_desired_distance = 52.95
+target_desired_distance = 100.0
+avoidance_enabled = true
 
 [node name="DetectArea" type="Area2D" parent="."]
 position = Vector2( -24, 0 )

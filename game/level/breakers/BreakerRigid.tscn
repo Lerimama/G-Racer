@@ -55,3 +55,5 @@ polygon = PoolVector2Array( -32, -32, 32, -32, 32, 32, -32, 32 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( -0.542725, -0.281677, 384, 0, 384, 384, 0, 384 )
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]

@@ -98,7 +98,7 @@ func get_level_game_settings(selected_level_index: int):
 
 	# debug
 	current_game_settings["start_countdown"] = false
-	current_game_settings["max_zoomout"] = false
+	current_game_settings["max_zoomout"] = true
 	current_game_settings["max_zoomin"] = false
 
 	match current_level:

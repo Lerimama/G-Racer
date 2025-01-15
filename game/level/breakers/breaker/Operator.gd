@@ -538,13 +538,20 @@ func build_grid_polygons(shape_corner_count: int):
 
 func add_random_points_to_polygon(polygon_points: PoolVector2Array, add_points_count: int):
 
-	var polygon_far_points: Array = get_polygon_far_points(polygon_points) # L-T-R-B
+#	var polygon_far_points: Array = get_polygon_far_points(polygon_points) # L-T-R-B
+
+	var polygon_bounding_rect: Rect2 = get_polygon_bounding_rect(polygon_points) # L-T-R-B
+#	var chunk_position: Vector2 = chunk_far_points_rect.position
+#	var chunk_size: Vector2 = chunk_far_points_rect.size
+
 
 	# najprej dobim množico rendom točk
 	var random_added_points: PoolVector2Array = []
 	for point in range(add_points_count):
-		var random_x: float = rand_range(polygon_far_points[0].x, polygon_far_points[2].x)
-		var random_y: float = rand_range(polygon_far_points[1].y, polygon_far_points[3].y)
+#		var random_x: float = rand_range(polygon_far_points[0].x, polygon_far_points[2].x)
+#		var random_y: float = rand_range(polygon_far_points[1].y, polygon_far_points[3].y)
+		var random_x: float = rand_range(polygon_bounding_rect.position.x, polygon_bounding_rect.size.x)
+		var random_y: float = rand_range(polygon_bounding_rect.position.y, polygon_bounding_rect.size.y)
 		var random_point: Vector2 = Vector2(random_x, random_y)
 		random_added_points.append(random_point)
 
@@ -669,6 +676,24 @@ func get_polygon_far_points(polygon_points: PoolVector2Array):
 	var far_points: Array = [far_left_point, far_up_point, far_right_point, far_down_point]
 
 	return far_points
+
+
+func get_polygon_bounding_rect(polygon_points: PoolVector2Array):
+
+	var polygon_hull: Array = Geometry.convex_hull_2d(polygon_points)
+	var hull_point_x_values: Array = []
+	var hull_point_y_values: Array = []
+	for point in polygon_hull:
+		hull_point_x_values.append(point.x)
+		hull_point_y_values.append(point.y)
+
+	var bounding_rect: Rect2
+	bounding_rect.position = Vector2(hull_point_x_values.min(), hull_point_x_values.min())
+	var bounding_rect_size_x: float = abs(hull_point_x_values.max() - hull_point_x_values.min())
+	var bounding_rect_size_y: float = abs(hull_point_y_values.max() - hull_point_y_values.min())
+	bounding_rect.size = Vector2(bounding_rect_size_x, bounding_rect_size_y)
+
+	return bounding_rect
 
 
 func get_polygon_center(polygon_points: PoolVector2Array):
