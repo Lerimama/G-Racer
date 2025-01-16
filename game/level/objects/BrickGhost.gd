@@ -28,7 +28,7 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	if body.is_in_group(Refs.group_bolts):
 		animation_player.play("outro")
 		body.update_bolt_points(reward_points)
-		print("ghost - manipulate eng power")
+		#		print("ghost - manipulate eng power")
 #		body.manipulate_engine_power(0, 0.5)
 
 

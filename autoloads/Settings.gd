@@ -25,19 +25,22 @@ enum LEVEL {
 	}
 var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
+		"level_type": "RACING", # ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/Level.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
 	LEVEL.STAFF: {
+#		"level_type": "BATTLE", # ko bi le lahko level podatki bli tukej
+#		"level_type": "RACING", # _temp ...  ko bi le lahko level podatki bli tukej
+		"level_type": "RACE_GOAL", # _temp ...  ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
 }
-
 
 enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var default_game_settings: Dictionary = { # setano za dirkanje

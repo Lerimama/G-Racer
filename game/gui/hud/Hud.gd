@@ -175,3 +175,7 @@ func _on_stats_changed(player_id: int, player_stats: Dictionary):
 			Mets.write_clock_time(record_lap_time, record_lap_label.get_node("TimeLabel"))
 			if not record_lap_label.visible:
 				record_lap_label.show()
+
+
+func _on_game_state_change(new_game_state, level_settings):
+	pass

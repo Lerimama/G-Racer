@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/theme/theme_lerimama.tres" type="Theme" id=1]
+[ext_resource path="res://autoloads/connect_cover.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.513726, 0.513726, 0.513726, 1 )
+expand_margin_left = 32.0
+expand_margin_right = 32.0
+expand_margin_top = 16.0
+expand_margin_bottom = 16.0
+anti_aliasing = false
+
+[node name="ConnectCover" type="CanvasLayer"]
+layer = 4
+script = ExtResource( 2 )
+
+[node name="Undi" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -185.0
+margin_top = -104.0
+margin_right = 185.0
+margin_bottom = 104.0
+theme = ExtResource( 1 )
+color = Color( 0, 0, 0, 0.470588 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 560.0
+margin_top = 328.0
+margin_right = 720.0
+margin_bottom = 384.0
+grow_horizontal = 2
+theme = ExtResource( 1 )
+custom_styles/normal = SubResource( 1 )
+text = "% Connecting"
+align = 1
+valign = 1
+
+[node name="Shadow" type="ColorRect" parent="Label"]
+modulate = Color( 0, 0, 0, 0.392157 )
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -24.0
+margin_top = -8.0
+margin_right = 40.0
+margin_bottom = 24.0
+theme = ExtResource( 1 )
+color = Color( 0, 0, 0, 1 )

@@ -27,7 +27,6 @@
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
-bounce = 0.2
 
 [sub_resource type="ViewportTexture" id=5264]
 viewport_path = NodePath("ShadowViewport")

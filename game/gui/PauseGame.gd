@@ -23,6 +23,8 @@ func pause_game():
 
 	get_viewport().set_disable_input(true) # anti dablklik
 
+	Refs.game_manager.game_state = Refs.game_manager.GAME_STATE.PAUSED
+
 	visible = true
 
 #	Global.sound_manager.play_gui_sfx("screen_slide")
@@ -46,6 +48,8 @@ func play_on():
 	fade_out_tween.tween_callback(self, "hide")
 	fade_out_tween.tween_callback(get_tree(), "set_pause", [false])
 	fade_out_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
+	yield(fade_out_tween, "finished")
+	Refs.game_manager.game_state = Refs.game_manager.GAME_STATE.ON
 
 
 # MENU ---------------------------------------------------------------------------------------------
@@ -72,6 +76,7 @@ func _on_QuitBtn_pressed() -> void:
 #	Global.game_manager.stop_game_elements()
 	Refs.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
+	Refs.game_manager.game_state = Refs.game_manager.GAME_STATE.OFF
 	Refs.game_manager.game_on = false
 	Refs.main_node.game_out()
 

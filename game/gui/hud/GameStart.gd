@@ -5,7 +5,7 @@ export var countdown_time: float = 5
 #export(int, -1, 1) var timer_mode
 var timer_mode: = -1
 
-#var game_is_on: bool = false 
+#var game_is_on: bool = false
 var current_time = 0 # to je za beleženje tre
 
 
@@ -14,14 +14,14 @@ onready var start: Label = $Start
 
 
 func _ready() -> void:
-	
+
 	start.visible =  false
 	count_down.visible =  true
-	
+
 func _physics_process(delta: float) -> void:
-	
+
 	current_time += delta
-	
+
 	if not Refs.game_manager.game_on:
 #	if not get_parent().game_is_on:
 		if current_time < (countdown_time - 1): # - 1 zato  ker se končana prvi sekundi
@@ -43,7 +43,7 @@ func _physics_process(delta: float) -> void:
 #			game_time = 0
 #			current_second = time_seconds
 #			time_minutes += timer_mode
-#			minutes.text = "%02d" % time_minutes	
+#			minutes.text = "%02d" % time_minutes
 #
 #		if time_minutes < 1:
 #			clock.modulate = Refs.color_red
@@ -53,9 +53,9 @@ func _physics_process(delta: float) -> void:
 #			yield(get_tree().create_timer(1), "timeout")
 #			game_over.visible = true
 #			modulate = Color.blue
-#	else: 
+#	else:
 #		game_time = 0
 #
-		
-	
-	
+
+
+

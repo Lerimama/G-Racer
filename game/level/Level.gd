@@ -3,7 +3,7 @@ extends Node2D
 
 signal level_is_set(navigation, spawn_positions, other_)
 
-enum LEVEL_TYPE {RACE, RACE_LAPS, BATTLE, CHASE}
+enum LEVEL_TYPE {RACE, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
 export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
 
 # navigacija
@@ -29,9 +29,12 @@ onready var finish_line: Area2D = $Racing/LevelFinish/FinishLine
 onready var finish_camera_position_node: Position2D = $Racing/LevelFinish/CameraPosition
 onready var drive_out_position: Vector2 = $Racing/LevelFinish/DriveOutPosition.position
 
+# neu
+onready var temp_level_goals: Array = [$Racing/Checkpoint, $Racing/LevelFinish]
+
 
 func _ready() -> void:
-#	printt("LEVEL")
+	printt("LEVEL", temp_level_goals)
 
 	$__ScreenSize.hide() # debug
 
@@ -55,6 +58,11 @@ func _ready() -> void:
 			checkpoint.show()
 			level_finish.show()
 			finish_line.monitoring = true
+		LEVEL_TYPE.RACE_GOAL: # _temp level
+			level_start.show()
+			checkpoint.show()
+			level_finish.show()
+			finish_line.monitoring = true
 		LEVEL_TYPE.CHASE:
 #			level_start.hide()
 			checkpoint.show()
@@ -68,7 +76,9 @@ func _ready() -> void:
 		checkpoint.monitoring = false
 
 	set_level_objects()
-	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ...
+	navigation_cells_positions = $LevelNavigation.level_navigation_points.duplicate()
+#	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ...
+
 	resize_to_level_size()
 
 	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
@@ -179,57 +189,6 @@ func set_pickables():
 		if pickable_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)
 			spawn_pickable(cell_global_position, "pickable_name_as_key", pickable_key)
-
-
-func set_level_navigation(): #_temp zrihtaj set_level_navigation
-
-#	var navigation_polygon: NavigationPolygon = $LevelNavigation.navpoly
-#	var outer_polygon: PoolVector2Array = navigation_polygon.get_outline(0)
-#
-#	# dimenzija zunanjega polygona, da ne grem po skončnem polju
-#	var nav_limits_square: Rect2 = Rect2(Vector2(0, 0), Vector2(0, 0))
-#	for point in outer_polygon:
-#		if point.x > nav_limits_square.size.x:
-#			nav_limits_square.size.x = point.x
-#		elif point.x < nav_limits_square.position.x or nav_limits_square.position.x == 0:
-#			nav_limits_square.position.x = point.x
-#		if point.y > nav_limits_square.size.y:
-#			nav_limits_square.size.y = point.y
-#		elif point.y < nav_limits_square.position.y or nav_limits_square.position.y == 0:
-#			nav_limits_square.position.y = point.y
-#
-#	# naberem vse točke znotraj kvadrata zunanjega poligona (glede na gostoto)
-#	var nav_point_density: int = 80
-#	var outer_square_points: Array = []
-#	var x_count: int = round(nav_limits_square.size.x / nav_point_density)
-#	var y_count: int = round(nav_limits_square.size.y / nav_point_density)
-#	for x in x_count:
-#		for y in y_count:
-#			var current_point: Vector2 = Vector2(x * nav_point_density, y * nav_point_density)
-#			current_point += nav_limits_square.position # adaptiram za pozicijo nodeta
-#			outer_square_points.append(current_point)
-#	# naberem vse točke glavnega poligona
-#	var navigation_shape_nav_points: Array = []
-#	for nav_point in outer_square_points:
-#		if Geometry.is_point_in_polygon(nav_point, outer_polygon):
-#			navigation_shape_nav_points.append(nav_point)
-#	# odstranim točke notranjih poligonov (luknje znotraj navigacije)
-#	for poly in navigation_polygon.get_polygon_count():
-#		if poly > 0: # preskočim prvega, ki je zunanji
-#			var current_poly = navigation_polygon.get_outline(poly)
-#			for nav_point in outer_square_points:
-#				if Geometry.is_point_in_polygon(nav_point, current_poly):
-#					navigation_shape_nav_points.erase(nav_point)
-##	# debug ... indi
-#	for p in navigation_shape_nav_points:
-##		p += $NavigationPolygonInstance.position
-##		Mets.spawn_indikator(p, Color.red, 0, Refs.node_creation_parent, false)
-#		pass
-#
-#	navigation_cells_positions = navigation_shape_nav_points.duplicate()
-
-
-	navigation_cells_positions = $LevelNavigation.level_navigation_points
 
 
 # UTILITI ---------------------------------------------------------------------------------------------------------------------------------------

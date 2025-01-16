@@ -4,8 +4,8 @@ class_name Bolt
 
 signal stats_changed (stats_owner_id, player_stats) # bolt in damage
 
-enum MOTION {IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
-var current_motion: int = MOTION.IDLE setget _on_motion_change
+enum MOTION {ENGINES_OFF, IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
+var motion: int = MOTION.IDLE setget _on_motion_change
 var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
 
 # player and stats
@@ -80,7 +80,7 @@ var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ..
 var is_shooting: bool = false # način, ki je boljši za efekte
 
 # racing
-var bolt_position_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju
+var bolt_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju
 var race_time_on_previous_lap: float = 0
 
 # trail
@@ -172,7 +172,7 @@ func _process(delta: float) -> void:
 		# force global rotation ... premaknjena na kotrolerje
 		#	force_rotation = heading_rotation + get_global_rotation() # da ne striže (_FP!!) prestavljeno v kontrolerja
 
-		match current_motion:
+		match motion:
 			MOTION.IDLE:
 				engine_power = 0
 				for thrust in all_thrusts:
@@ -227,7 +227,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 	else:
 		# sile na neuporabljeno masso se resetirajo ob menjavi motion stanja
 		var debug_force: Vector2 # dbueg
-		match current_motion:
+		match motion:
 			MOTION.IDLE:
 				var force: Vector2 = Vector2.RIGHT.rotated(force_rotation) * bolt_shift
 				if bolt_shift > 0:
@@ -386,7 +386,9 @@ func revive_bolt():
 
 func shutdown_engines():
 
-	engines_on = false
+#	engines_on = false
+	motion = MOTION.ENGINES_OFF
+
 	engine_power = 0 # zazih
 	if $Sounds/Engine.is_playing():
 		var current_engine_volume: float = $Sounds/Engine.get_volume_db()
@@ -402,7 +404,8 @@ func shutdown_engines():
 
 func start_engines():
 
-	engines_on = true
+#	engines_on = true
+	motion = MOTION.IDLE
 	$Sounds/EngineStart.play()
 
 
@@ -580,7 +583,7 @@ func drive_out():
 	#	set_sleeping(true)
 	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
 	#	set_physics_process(false)
-	#	current_motion = MOTION.IDLE
+	#	motion = MOTION.IDLE
 
 
 func revup():
@@ -681,7 +684,7 @@ func spawn_bolt_controller():
 func reset_bolt():
 	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v bolt "v igri"
 
-	current_motion = MOTION.IDLE
+	motion = MOTION.IDLE
 	front_mass.set_applied_force(Vector2.ZERO)
 	front_mass.set_applied_torque(0)
 	rear_mass.set_applied_force(Vector2.ZERO)
@@ -746,9 +749,9 @@ func _on_bolt_activity_change(bolt_is_active: bool):
 func _on_motion_change(new_motion: int):
 
 	# nastavim nov engine
-	if not new_motion == current_motion:
-		current_motion = new_motion
-		match current_motion:
+	if not new_motion == motion:
+		motion = new_motion
+		match motion:
 			MOTION.IDLE:
 				if bolt_shift > 0:
 					rear_mass.set_applied_force(Vector2.ZERO)

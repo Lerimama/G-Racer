@@ -167,6 +167,16 @@ func spawn_indikator_line(first_point: Vector2, second_point: Vector2, col: Colo
 
 
 
+func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja biltin funkcija
+
+	if str(object_to_check) == "[Deleted Object]": # anti home_out nek toggle btn
+		print ("Object in deletion: ", object_to_check, " > [Deleted Object]")
+		return true
+	else:
+		printt ("Object OK ... not in deletion: ", object_to_check)
+		return false
+
+
 # SCENE MANAGER (prehajanje med igro in menijem) --------------------------------------------------------------
 
 #var current_scene = null
