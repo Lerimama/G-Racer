@@ -167,6 +167,57 @@ func spawn_indikator_line(first_point: Vector2, second_point: Vector2, col: Colo
 
 
 
+func get_raycast_collision_to_position(raycast_node: RayCast2D, check_position: Vector2):
+
+		var distance_to_position: float = (check_position - raycast_node.global_position).length()
+		raycast_node.look_at(check_position)
+		raycast_node.cast_to.x = distance_to_position
+		raycast_node.force_raycast_update()
+		return raycast_node.get_collider()
+
+
+
+func detect_and_update_raycast_on_rotation(raycast_node: RayCast2D, ray_direction: Vector2, raycast_length: float = 450):
+
+	if raycast_length == 0:
+		return
+	else:
+		raycast_node.cast_to = ray_direction * raycast_length
+		raycast_node.force_raycast_update()
+		return raycast_node.get_collider()
+
+
+#rotation ver
+#func detect_and_update_raycast_on_rotation(raycast_node: RayCast2D, ray_rotation: float, raycast_length: float = 450):
+#	print(raycast_node.name, " rotation = ", ray_rotation)
+
+
+#	var cast_to_vector: Vector2 = Vector2.ZERO
+#		#	if ray_rotation is Vector2:
+#		#		cast_to_vector = ray_rotation.normalized()
+#		#		var rotation_as_vector: Vector2 = ray_rotation
+#		#		ray_rotation = raycast_node.get_angle_to(rotation_as_vector)
+#		#	else:
+#	var rotated_vector: Vector2 = raycast_node.global_position.rotated(ray_rotation)
+#	raycast_length = rotated_vector.length()
+#	cast_to_vector = rotated_vector.normalized()
+
+
+func detect_collision_in_direction(direction_to_check: Vector2, raycast_node: RayCast2D, raycast_length: float = 45):
+	# PA ver
+	if direction_to_check == Vector2.ZERO:
+		raycast_node.cast_to = Vector2.ZERO
+		return
+	else:
+		raycast_node.cast_to = raycast_length * direction_to_check
+		raycast_node.force_raycast_update()
+
+		return raycast_node.get_collider()
+
+
+
+
+
 func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja biltin funkcija
 
 	if str(object_to_check) == "[Deleted Object]": # anti home_out nek toggle btn
@@ -175,6 +226,8 @@ func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja 
 	else:
 		printt ("Object OK ... not in deletion: ", object_to_check)
 		return false
+
+
 
 
 # SCENE MANAGER (prehajanje med igro in menijem) --------------------------------------------------------------

@@ -4,3 +4,6 @@
 
 [node name="BreakerRigidConcrete" instance=ExtResource( 1 )]
 sleeping = true
+
+[node name="ShapeShadows" parent="." index="0"]
+shadow_owner_path = ""

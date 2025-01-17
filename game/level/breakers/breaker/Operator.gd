@@ -779,24 +779,24 @@ func reset_shape_transforms(shape_to_transform: Polygon2D):
 	return shape_to_transform
 
 
-func sort_vectors_by_length(vector_1, vector_2):
-	# ascending ... večji je boljši
+func sort_vectors_by_length(vector_1, vector_2):# descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if vector_1.length() > vector_2.length():
 	    return true
 	return false
 
 
-func sort_vectors_by_x(vector_1, vector_2):
-	# ascending ... večji je boljši
+func sort_vectors_by_x(vector_1, vector_2):# descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if vector_1.x > vector_2.x:
 	    return true
 	return false
 
 
-func sort_vectors_by_y(vector_1, vector_2):
-	# ascending ... večji je boljši
+func sort_vectors_by_y(vector_1, vector_2):# descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if vector_1.y > vector_2.y:
 	    return true

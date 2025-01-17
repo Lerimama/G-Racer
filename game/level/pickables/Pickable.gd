@@ -15,7 +15,8 @@ onready var pickable_color: Color = Pros.pickable_profiles[pickable_key]["color"
 
 #onready var elevation: float = Pros.pickable_profiles[pickable_key]["elevation"]
 
-onready var ai_target_rank: int = Pros.pickable_profiles[pickable_key]["ai_target_rank"]
+var ai_target_rank: int = 3
+#onready var ai_target_rank: int = Pros.pickable_profiles[pickable_key]["ai_target_rank"]
 onready var icon: Sprite = $Icon
 onready var detect_area: CollisionShape2D = $CollisionShape2D
 #onready var pickable_shadow: Sprite = $PickableShadow
@@ -64,5 +65,5 @@ func _on_Item_body_entered(body: Node) -> void:
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
-	print("new_lap")
+	print("new_loop")
 	pass # Replace with function body.

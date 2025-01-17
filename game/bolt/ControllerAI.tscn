@@ -13,21 +13,21 @@ script = ExtResource( 1 )
 path_desired_distance = 52.95
 target_desired_distance = 100.0
 avoidance_enabled = true
+radius = 160.0
 
-[node name="DetectArea" type="Area2D" parent="."]
+[node name="ScanningArea" type="Area2D" parent="."]
+visible = false
 position = Vector2( -24, 0 )
-collision_layer = 4
-collision_mask = 4
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ScanningArea"]
 shape = SubResource( 5261 )
 
-[node name="DetectRay" type="RayCast2D" parent="."]
+[node name="ScanningRay" type="RayCast2D" parent="."]
 position = Vector2( -24, 0 )
 enabled = true
 cast_to = Vector2( 64, 0 )
-collision_mask = 4
+collision_mask = 8
 collide_with_areas = true
 
 [node name="TargetRay" type="RayCast2D" parent="."]
@@ -48,6 +48,7 @@ margin_right = 16.0
 margin_bottom = 16.0
 
 [node name="DirectionLine" type="Line2D" parent="."]
+visible = false
 points = PoolVector2Array( 0, 0, 100, 0 )
 width = 4.0
 default_color = Color( 1, 1, 0, 1 )
@@ -77,3 +78,4 @@ polygon = PoolVector2Array( 16, -16, 32, -40, 40, -24, 56, -40, 56, -24, 72, -32
 [connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_navigation_finished"]
 [connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]
 [connection signal="target_reached" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_target_reached"]
+[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_velocity_computed"]

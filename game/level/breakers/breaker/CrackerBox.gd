@@ -24,9 +24,6 @@ func _ready() -> void:
 func _spawn_crackers():
 
 	# chunk rect za animacijo maske
-#	var chunk_far_points: Array = get_polygon_far_points(chunk_polygon) # L-T-R-B
-#	var chunk_position: Vector2 = Vector2(chunk_far_points[0].x, chunk_far_points[1].y)
-#	var chunk_size: Vector2 = Vector2(chunk_far_points[2].x, chunk_far_points[3].y) - chunk_position
 	var chunk_far_points_rect: Rect2 = get_polygon_bounding_rect(chunk_polygon) # L-T-R-B
 	var chunk_position: Vector2 = chunk_far_points_rect.position
 	var chunk_size: Vector2 = chunk_far_points_rect.size
@@ -94,25 +91,6 @@ func get_polygon_bounding_rect(polygon_points: PoolVector2Array):
 	bounding_rect.size = Vector2(bounding_rect_size_x, bounding_rect_size_y)
 
 	return bounding_rect
-
-
-func get_polygon_far_points(polygon_points: PoolVector2Array):
-
-	var points_to_sort: Array = polygon_points
-
-	# x
-	points_to_sort.sort_custom(self, "sort_vectors_by_x")
-	var far_right_point: Vector2 = points_to_sort[0]
-	var far_left_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
-
-	# Y
-	points_to_sort.sort_custom(self, "sort_vectors_by_y")
-	var far_down_point: Vector2 = points_to_sort[0]
-	var far_up_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
-
-	var far_points: Array = [far_left_point, far_up_point, far_right_point, far_down_point]
-
-	return far_points
 
 
 func _copy_texture_between_shapes(copy_to: Polygon2D, copy_from: Polygon2D):

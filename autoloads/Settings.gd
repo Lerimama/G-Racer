@@ -32,9 +32,9 @@ var level_settings: Dictionary = {
 		"lap_limit": 0,
 		},
 	LEVEL.STAFF: {
-#		"level_type": "BATTLE", # ko bi le lahko level podatki bli tukej
+		"level_type": "BATTLE", # ko bi le lahko level podatki bli tukej
 #		"level_type": "RACING", # _temp ...  ko bi le lahko level podatki bli tukej
-		"level_type": "RACE_GOAL", # _temp ...  ko bi le lahko level podatki bli tukej
+#		"level_type": "RACE_GOAL", # _temp ...  ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
@@ -72,7 +72,7 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	# debug
 	"game_shadows_direction": Vector2(-800, 0), # ... samo še sprajti
 	"max_zoomout": false,
-	"max_zoomin": true,
+	"max_zoomin": false,
 
 }
 
@@ -101,8 +101,8 @@ func get_level_game_settings(selected_level_index: int):
 
 	# debug
 	current_game_settings["start_countdown"] = false
-	current_game_settings["max_zoomout"] = true
-	current_game_settings["max_zoomin"] = false
+#	current_game_settings["max_zoomout"] = true
+#	current_game_settings["max_zoomin"] = true
 
 	match current_level:
 		# racing

@@ -9,52 +9,49 @@ var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
 var controlled_bolt: RigidBody2D
-var controller_type: int
-
-# nodes
-onready var navigation_agent = $NavigationAgent2D
-onready var detect_ray = $DetectRay # za iskanje tarče in ?
-onready var vision_ray = $VisionRay # za zaviranje in ?
-onready var target_ray: RayCast2D = $TargetRay # za "locked on target" in ?
-onready var detect_area: Area2D = $DetectArea
+var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
 
 # navigacija
 var ai_target: Node2D = null
 var ai_navigation_line: Line2D
 var level_navigation_positions: Array # poda GM ob spawnu
+onready var navigation_agent = $NavigationAgent2D
 onready var level_navigation_target_node: Position2D = Refs.current_level.level_navigation.nav_position_target
 onready var level_navigation: NavigationPolygonInstance = Refs.current_level.level_navigation
 
 # motion
-var ai_brake_distance_factor: float = 0.5 # delež dolžine vektorja hitrosti ... vision ray je na tej dolžini
-var ai_brake_factor: float = 0.8 # množenje s hitrostjo
-var ai_closeup_distance: float = 70
-var ai_urgent_stop_distance: float = 20
-var ai_navigation_target_range: Array = [50, 300] # min dist 0 pomeni iskanje najbližja možna
-var target_ray_angle_limit: float = 30
-var target_ray_seek_length: float = 320
-var target_ray_rotation_speed: float = 1
+var ai_navigation_target_range: Array = [600, 800] # min dist 0 pomeni iskanje najbližja možna
 var braking_velocity: Vector2
+var breaking_distance_factor: float = 0.5 # kako daleč je ovira preden bremza
+var braking_power_factor: float = 0.8 # množenje s hitrostjo ... male spremembe
+var breaking_factor_near: float = 0.95
+var breaking_factor_keep: float = 0.68 # nežno se ustavi
+var engine_power_factor_keep: float = 0
+var engine_power_factor_search: float = 0.5
+var keep_distance: float = 500
+var near_distance: float = 800
+
+# ai targets
+var search_target_reached: bool = false
+var target_prev_position: Vector2 = Vector2.ZERO # če zgubi gibajočo se tarčo gre do zadnje lokacij tarče
+onready var target_ray: RayCast2D = $TargetRay # čekira "locked on" ... col_layer ai targets, vision brakers > bodies, areas
+onready var scanning_ray = $ScanningRay # skenira za vision brake ... col_layer vision brakers > bodies, areas
+onready var scanning_area: Area2D = $ScanningArea # objekti na tem območju so podvrženi inšpekciji
 
 # debug
 onready var force_direction_line: Line2D = $DirectionLine
-
-# neu
-var target_prev_position: Vector2 = Vector2.ZERO # če zgubi gibajočo se tarčo gre do zadnje lokacij tarče
 var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
-var current_game_goals: Array
-var vision_breaker: Node # _temp vision breaker
 
-
-# ni v uporabi
-var closeup_engine_power
-var search_engine_power
-var hold_engine_power
-var engine_power_hunt: float
-var engine_power_race: float
-var engine_power_search: float
+# neu ... za zrihtat
+onready var vision_ray = $VisionRay # čekiranje okolice za prilagajanje vožnje ... skrit disejbla čekiranje, bodies
+var current_game_goals: Array # lovi jih v zaporedju
+# ni še v uporabi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
+var instructed_speed =  3 setget _change_speed
 
+
+func _change_speed(ss):
+	pass
 
 
 func _input(event: InputEvent) -> void:
@@ -91,7 +88,7 @@ func _ready() -> void:
 	ai_navigation_line.z_index = 10
 
 	# ray exceptions
-	detect_ray.add_exception(controlled_bolt)
+	scanning_ray.add_exception(controlled_bolt)
 	target_ray.add_exception(controlled_bolt)
 	vision_ray.add_exception(controlled_bolt)
 
@@ -99,12 +96,20 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 
 	if controlled_bolt.is_active:
-		_ai_state_machine(delta)
 
-		# rotacija sile proti tarči ... more bit po state mašini
+		# motion vision
+		if vision_ray.visible:
+			vision_ray.cast_to.x = controlled_bolt.bolt_velocity.length() * breaking_distance_factor # zmeraj dolg kot je dolga hitrost
+			if vision_ray.is_colliding():
+				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
+				controlled_bolt.set_linear_velocity(braking_velocity)
+
+		# states
+		_state_machine(delta)
+
+		# force rotation
 		var vector_to_target: Vector2 = Vector2.ZERO
 		if ai_target and not ai_target.is_queued_for_deletion():
-#			_ai_state_machine(delta)
 			force_direction_line.default_color = Color.yellow
 			if ai_state == AI_STATE.RACE:
 				vector_to_target = _get_tracking_position(ai_target) - controlled_bolt.bolt_global_position
@@ -120,211 +125,138 @@ func _physics_process(delta: float) -> void:
 		controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
 
 
-func _ai_state_machine(delta: float):
-	#	printt ("ai_state: ", AI_STATE.keys()[ai_state], controlled_bolt.engine_power)
-#		return
+func _state_machine(delta: float):
+#	printt ("ai_state: ", AI_STATE.keys()[ai_state], controlled_bolt.engine_power)
 
 	match ai_state:
+
 		AI_STATE.OFF:
 			pass
+
 		AI_STATE.RACE: # šiba po najbližji poti do tarče
-			_update_vision()
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				target_prev_position = navigation_agent.get_target_location()
 				var bolt_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(bolt_tracker_position)
 				#			Mets.spawn_indikator(bolt_tracker_position, Color.white, controlled_bolt.rotation, Refs.node_creation_parent)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power/2
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.SEARCH: # vozi po točkah navigacije in išče novo tarčo, dokler je ne najde
-			_update_vision()
-			if not _get_possible_targets().empty(): # če je kakšna tarča jo začne lovit
+			var new_ai_target: Node2D = _get_better_targets(ai_target)
+			# če je našel legitimno tarčo, ga dam v hunt
+			if not new_ai_target == ai_target:
+				ai_target = new_ai_target
 				self.ai_state = AI_STATE.HUNT
+			# če ni tarče in je dosegel nav target setam novo random točko
+			elif search_target_reached:
+				self.ai_state = AI_STATE.SEARCH
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power * engine_power_factor_search
 
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
-			if not navigation_agent.get_target_location() == ai_target.global_position:
+			ai_target = _get_better_targets(ai_target)
+			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				target_prev_position = navigation_agent.get_target_location()
 				navigation_agent.set_target_location(ai_target.global_position)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power/2
-			_check_target_closeup(target_ray, ai_target.global_position)
-			# lose target on vision breaker ... SEARCH new
-			if target_ray.is_colliding() and target_ray.get_collider() == vision_breaker:
-				if target_prev_position == Vector2.ZERO:
-					self.ai_state = AI_STATE.SEARCH
-				else:
-					navigation_agent.set_target_location(target_prev_position)
-					target_prev_position = Vector2.ZERO
-			elif ai_target == null or ai_target.is_queued_for_deletion():
-				if target_prev_position == Vector2.ZERO:
-					self.ai_state = AI_STATE.SEARCH
-				else:
-					navigation_agent.set_target_location(target_prev_position)
-					target_prev_position = Vector2.ZERO
-			# če obstaja druga tarča izberem tisto, ki rangira najbolje
-			if not _get_possible_targets().empty():
-				if _get_possible_targets()[0].ai_target_rank > ai_target.ai_target_rank:
-					self.ai_state = AI_STATE.FOLLOW # izbere [0] tarčo
+			_react_to_target(ai_target, true)
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.HUNT: # pobere tarčo, ki jo je videl ... ne izgubi pogleda
-			if not navigation_agent.get_target_location() == ai_target.global_position:
+			# preverjam za boljšo tarčo
+			ai_target = _get_better_targets(ai_target)
+			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				target_prev_position = navigation_agent.get_target_location()
 				navigation_agent.set_target_location(ai_target.global_position)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power / 5
-			_check_target_closeup(target_ray, ai_target.global_position)
-			# lose target on vision breaker ... SEARCH new
-			if target_ray.is_colliding() and target_ray.get_collider() == vision_breaker:
-				if target_prev_position == Vector2.ZERO:
-					self.ai_state = AI_STATE.SEARCH
-				else:
-					navigation_agent.set_target_location(target_prev_position)
-					target_prev_position = Vector2.ZERO
-			elif ai_target == null or ai_target.is_queued_for_deletion():
-				if target_prev_position == Vector2.ZERO:
-					self.ai_state = AI_STATE.SEARCH
-				else:
-					navigation_agent.set_target_location(target_prev_position)
-					target_prev_position = Vector2.ZERO
-			# če obstaja druga tarča izberem tisto, ki rangira najbolje
-			if not _get_possible_targets().empty():
-				if _get_possible_targets()[0].ai_target_rank > ai_target.ai_target_rank:
-					self.ai_state = AI_STATE.HUNT # izbere [0] tarčo
+			_react_to_target(ai_target)
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.RACE_TO_GOAL: # šiba do cilja po najbližji poti
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				navigation_agent.set_target_location(ai_target.global_position)
-#			_check_target_closeup(target_ray, ai_target.global_position)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power/2
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			_react_to_target(ai_target)
+
 		AI_STATE.MOUSE_CLICK:
 			navigation_agent.set_target_location(ai_target.global_position)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power / 3
+			_react_to_target(ai_target)
 
 
 func _change_ai_state(new_ai_state: int):
 #	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
-	# reset
-	detect_ray.enabled = false
+	scanning_ray.enabled = false
 	target_ray.enabled = false
 	target_prev_position = Vector2.ZERO
 
 	match new_ai_state:
 		AI_STATE.OFF:
+			ai_target = null
 			controlled_bolt.motion = controlled_bolt.MOTION.IDLE
 		AI_STATE.RACE:
 			ai_target = controlled_bolt.bolt_tracker
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.SEARCH:
-			detect_ray.enabled = true
-			target_ray.enabled = true
-			var nav_position_target: Node = _get_nav_position_target(controlled_bolt.bolt_global_position, ai_navigation_target_range)
+			search_target_reached = false
+			scanning_ray.enabled = true
 			ai_target = level_navigation_target_node
-#			navigation_agent.set_target_location(nav_position_target.global_position)
+			var nav_position_target: Node2D = _get_nav_position_target(controlled_bolt.bolt_global_position, ai_navigation_target_range)
 			navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.FOLLOW:
 			target_ray.enabled = true
-			ai_target = _get_possible_targets()[0]
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.HUNT:
 			target_ray.enabled = true
-			ai_target = _get_possible_targets()[0]
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.RACE_TO_GOAL:
-			target_ray.enabled = true
-			ai_target = current_game_goals[0]
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.MOUSE_CLICK:
-			target_ray.enabled = true
-#			navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 
-#	navigation_agent.set_target_location(ai_target.global_position)
 	ai_state = new_ai_state
 
 
 # HELPERS ----------------------------------------------------------------------------------------------
 
 
-func _get_possible_targets():
+func _get_better_targets(current_target: Node2D):
 
-	# detect area nabira
-	var all_possible_targets: Array = detect_area.get_overlapping_bodies()
-	all_possible_targets.append_array(detect_area.get_overlapping_areas())
+	# naberem vse možno v scanning območju
+	var possible_targets: Array = scanning_area.get_overlapping_bodies()
+	possible_targets.append_array(scanning_area.get_overlapping_areas())
+	# izločim sebe
+	possible_targets.erase(controlled_bolt)
 
-	# izločim sebe in rank = 0
-	all_possible_targets.erase(controlled_bolt)
+	# naberem ai tarče
+	var legit_targets: Array = []
+	for possible_target in possible_targets:
+		if "ai_target_rank" in possible_target: # zazih ... scen se odvija samo na področju ai_targets
+			if possible_target.ai_target_rank > 0:
+				legit_targets.append(possible_target)
 
-	# detect ray rotira in nabira
-	detect_ray.cast_to.x = target_ray_seek_length
-	detect_ray.rotation_degrees += target_ray_rotation_speed
-	if detect_ray.rotation_degrees > target_ray_angle_limit:
-		detect_ray.rotation_degrees = -target_ray_angle_limit
-	if detect_ray.is_colliding() and not detect_ray.get_collider() == level_navigation:
-		all_possible_targets.append(detect_ray.get_collider())
-	#	# target ray rotira in nabira
-	#	target_ray.cast_to.x = target_ray_seek_length
-	#	target_ray.rotation_degrees += target_ray_rotation_speed
-	#	if target_ray.rotation_degrees > target_ray_angle_limit:
-	#		target_ray.rotation_degrees = -target_ray_angle_limit
-	#	if target_ray.is_colliding() and not target_ray.get_collider() == level_navigation:
-	#		all_possible_targets.append(target_ray.get_collider())
+	# naberem samo vidne
+	var targets_in_sight: Array = []
+	for legit_target in legit_targets:
+		if not Mets.get_raycast_collision_to_position(scanning_ray, legit_target.global_position):
+			targets_in_sight.append(legit_target)
 
+	# dobim top rangirano tarčo
+	var target_ranks: Array = []
+	for target_in_sight in targets_in_sight:
+		target_ranks.append(target_in_sight.ai_target_rank)
+	var top_ranked_target_index: int = target_ranks.find(target_ranks.max())
 
-	for target in all_possible_targets:
-		if not "ai_target_rank" in ai_target: # naj bi imeli vsi na tem koližn levelu
-			all_possible_targets.erase(target)
-		elif target.ai_target_rank == 0:
-			all_possible_targets.erase(target)
+	# ... manjka razvrščanje po distanci poleg ranga
+	#	printt ("targets", possible_targets, legit_targets, targets_in_sight, top_ranked_target_index)
 
-	# če ni tarče
-	if all_possible_targets.empty():
-		return all_possible_targets
-
-	# rangiram po ranku
-	all_possible_targets.sort_custom(self, "_sort_objects_by_ai_rank")
-	# rangiram po potrebi
-	#	if player_stats["bullet_count"] == 0 and player_stats["misile_count"] == 0:
-	#		for target in all_possible_targets:
-	#			if "pickable_key" in target:
-	#				if target.pickable_key == Pros.AMMO.BULLET or target.pickable_key == Pros.AMMO.MISILE:
-	#					all_possible_targets.push_front(target)
-	# rangiram po distanci
-
-	# detect ray preveri, če so tarče za steno
-	var targets_behind_wall: Array = []
-	for possible_target in all_possible_targets:
-		target_ray.force_raycast_update()
-		target_ray.look_at(possible_target.global_position)
-		var target_ray_length: float = controlled_bolt.bolt_global_position.distance_to(possible_target.global_position)
-		target_ray.cast_to.x = target_ray_length
-		if target_ray.is_colliding() and target_ray.get_collider() == level_navigation:
-			targets_behind_wall.append(possible_target)
-	#	var targets_behind_wall: Array = []
-	#	for possible_target in all_possible_targets:
-	#		detect_ray.force_raycast_update()
-	#		detect_ray.look_at(possible_target.global_position)
-	#		var detect_ray_length: float = controlled_bolt.bolt_global_position.distance_to(possible_target.global_position)
-	#		detect_ray.cast_to.x = detect_ray_length
-	#		if detect_ray.is_colliding() and detect_ray.get_collider() == level_navigation_target_node:
-	#			targets_behind_wall.append(possible_target)
-	#			# printt("walled", Pros.PICKABLE.keys()[possible_target.pickable_key])
+	if top_ranked_target_index > -1:
+		return targets_in_sight[top_ranked_target_index]
+	else:
+		return current_target
 
 
-
-	for target_behind_wall in targets_behind_wall:
-		all_possible_targets.erase(target_behind_wall)
-
-	# if not all_possible_targets.empty():
-	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pros.PICKABLE.keys()[all_possible_targets[0].pickable_key])
-
-	return all_possible_targets
-
-
-func _sort_objects_by_ai_rank(stuff_1, stuff_2): # ascending ... večji index je boljši
-
-	if stuff_1.ai_target_rank > stuff_1.ai_target_rank:
-	    return true
-	return false
+func _check_for_obstacles():
+	pass
 
 
 func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
@@ -397,40 +329,50 @@ func _get_tracking_position(position_tracker: PathFollow2D):
 	return point_on_curve_global_position
 
 
-func _update_vision():
+func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
+	# keep_on_distance - ustavi na distanci in jo vzdržuje
+	# aggresive - posešuje do tarče
 
-	vision_ray.cast_to.x = controlled_bolt.bolt_velocity.length() * ai_brake_distance_factor # zmeraj dolg kot je dolga hitrost
-	if vision_ray.is_colliding():
-		braking_velocity = controlled_bolt.bolt_velocity * ai_brake_factor
-		controlled_bolt.set_linear_velocity(braking_velocity)
+	# debug
+	#	keep_distance = 500
+	#	near_distance = 800
+	#	keep_on_distance = true
+	#	be_aggressive = false
 
+	var any_collider = Mets.get_raycast_collision_to_position(target_ray, react_target.global_position)
 
-func _check_target_closeup(ray, target_position):
+	var target_in_sight: bool = false
+	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():
+		target_in_sight = true
 
-	match ai_state:
-		AI_STATE.FOLLOW, AI_STATE.MOUSE_CLICK: # približa in miruje, ko se oddalji gre spet naprej
-			ray.look_at(target_position)
-			var ray_velocity_length: float = controlled_bolt.bolt_global_position.distance_to(target_position)
-			ray.cast_to.x = ray_velocity_length
-			if ray_velocity_length < ai_urgent_stop_distance:
-				braking_velocity = controlled_bolt.bolt_velocity * ai_brake_factor
-				controlled_bolt.set_linear_velocity(braking_velocity)
-				controlled_bolt.engine_power = 0.1 # če je čista 0 se noče vrtet
-			elif ray_velocity_length < ai_closeup_distance:
-				var brake_factor: float = 0.95
-				braking_velocity = controlled_bolt.bolt_velocity * ai_brake_factor
-				controlled_bolt.set_linear_velocity(braking_velocity)
-				controlled_bolt.engine_power = controlled_bolt.max_engine_power/2
-			elif ray_velocity_length >= ai_closeup_distance:
+	if target_in_sight:
+		var target_closeup_breaking_factor: float = 1
+		var distance_to_target = controlled_bolt.global_position.distance_to(react_target.global_position)
+		if distance_to_target < keep_distance:
+			if keep_on_distance: # ustavi tik pred tarčo
+				target_closeup_breaking_factor = breaking_factor_keep
+				controlled_bolt.engine_power = controlled_bolt.max_engine_power * engine_power_factor_keep
+			elif be_aggressive: # fuuul power čez tarčo
 				controlled_bolt.engine_power = controlled_bolt.max_engine_power
-		AI_STATE.HUNT, AI_STATE.RACE_TO_GOAL: # se ustavi in povozi
-			ray.look_at(target_position)
-			var ray_velocity_length: float = controlled_bolt.bolt_global_position.distance_to(target_position)
-			ray.cast_to.x = ray_velocity_length
-			if ray_velocity_length < ai_urgent_stop_distance:
-				var brake_factor: float = 0.95
-				braking_velocity = controlled_bolt.bolt_velocity * ai_brake_factor
-				controlled_bolt.set_linear_velocity(braking_velocity)
+			else: # spusti gasa čez tarčo
+				controlled_bolt.engine_power = 0
+			controlled_bolt.engine_power = 0
+		elif distance_to_target < near_distance:
+			if be_aggressive: # pospešuje proti tarči
+				controlled_bolt.engine_power = controlled_bolt.max_engine_power
+				controlled_bolt.use_nitro = true
+			else: # upočasnuje proti tarči
+				target_closeup_breaking_factor = breaking_factor_near
+		else:
+			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+		braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
+		controlled_bolt.set_linear_velocity(braking_velocity)
+	else:
+		#		if target_prev_position == Vector2.ZERO:
+		#			self.ai_state = AI_STATE.SEARCH
+		#		else:
+		#			target_prev_position = Vector2.ZERO
+		navigation_agent.set_target_location(target_prev_position)
 
 
 func in_disarray(damage_amount: float): # 5 raketa, 1 metk
@@ -487,27 +429,118 @@ func _on_message_from_game_manager(message_type, message_content): # od GMja
 
 
 func _on_NavigationAgent2D_path_changed() -> void:
-	print("nav path changed")
+#	print("nav path changed")
 
 	ai_navigation_line.clear_points()
 	for point in navigation_agent.get_nav_path():
 		ai_navigation_line.add_point(point)
 
 
-func _on_NavigationAgent2D_navigation_finished() -> void:
-	print("nav finished")
-
-
 func _on_NavigationAgent2D_target_reached() -> void:
+#	print("nav target reached")
 
 	if ai_state == AI_STATE.RACE_TO_GOAL:
 		current_game_goals.pop_front()
 		self.ai_state = AI_STATE.RACE_TO_GOAL
+
 	elif ai_state == AI_STATE.MOUSE_CLICK:
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, current_mouse_follow_point)
 		ai_target = Mets.spawn_indikator(nav_path_points[0], Color.blue, 0, Refs.node_creation_parent)
 		navigation_agent.set_target_location(nav_path_points[0])
 		ai_state = AI_STATE.MOUSE_CLICK
 
-	print("nav target reached")
+	elif ai_state == AI_STATE.SEARCH:
+		search_target_reached = true
+
+
+# OBS --------------------------------------
+
+
+func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
+
+	if stuff_1.ai_target_rank > stuff_2.ai_target_rank:
+	    return true
+	return false
+
+
+func _on_NavigationAgent2D_navigation_finished() -> void:
+#	print("nav finished")
+	pass
+
+
+func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # za avoidance
+
+	var new_position: Vector2= navigation_agent.get_next_location()
+	navigation_agent.set_target_location(new_position)
+	navigation_agent.set_velocity(controlled_bolt.bolt_velocity)
+
+	pass # Replace with function body.
+	print("avoided")
+
+
+
+
+
+#func _react_to_target_old(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
+#	# keep_on_distance - ustavi na distanci in jo vzdržuje
+#	# aggresive - posešuje do tarče
+#	keep_distance = 300
+#	near_distance = 500
+#	keep_on_distance = true
+#
+#	be_aggressive = false
+#	var target_closeup_breaking_factor: float = 1
+##		target_ray.look_at(ract_target.global_position)
+##		target_ray.cast_to.x = target_ray.global_position.distance_to(ract_target.global_position)
+#	var any_collider = Mets.get_raycast_collision_to_position(target_ray, react_target.global_position)
+#	# ve kje je tarča
+#	var target_in_sight: bool = false
+#	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():
+#		target_in_sight = true
+#
+#	if target_in_sight:
+#		# tarčo tudi vidi
+#		if any_collider == react_target:
+#			var distance_to_target = controlled_bolt.global_position.distance_to(react_target.global_position)
+#			if distance_to_target < keep_distance:
+#				if keep_on_distance: # ustavi tik pred tarčo
+#					target_closeup_breaking_factor = breaking_factor_keep
+#					#					controlled_bolt.motion = controlled_bolt.MOTION.REV
+#					#					yield(get_tree().create_timer(1), "timeout")
+#					#					controlled_bolt.motion = controlled_bolt.MOTION.FWD
+#					#					self.ai_state = AI_STATE.OFF
+#				elif be_aggressive: # fuuul power čez tarčo
+#					controlled_bolt.engine_power = controlled_bolt.max_engine_power
+#				else: # spusti gasa čez tarčo
+#					controlled_bolt.engine_power = 0
+#			elif distance_to_target < near_distance:
+#				if be_aggressive: # pospešuje proti tarči
+#					controlled_bolt.engine_power = controlled_bolt.max_engine_power
+#					controlled_bolt.use_nitro = true
+#				else: # upočasnuje proti tarči
+#					target_closeup_breaking_factor = breaking_factor_near
+#			else:
+#				controlled_bolt.engine_power = controlled_bolt.max_engine_power
+#			braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
+#			controlled_bolt.set_linear_velocity(braking_velocity)
+#
+#		# tarče ne vidi ... kolajder je vision breaker, ali pa bo kvefrijana
+#		elif react_target.is_queued_for_deletion() or not any_collider == react_target:
+#			if target_prev_position == Vector2.ZERO:
+#				self.ai_state = AI_STATE.SEARCH
+#			else:
+#				navigation_agent.set_target_location(target_prev_position)
+#				target_prev_position = Vector2.ZERO
+#
+#	# ni kolajderja ... tudi tarče ni več
+#	elif not any_collider :# tarčo izgubi
+#
+#
+#	elif ai_target == null or ai_target.is_queued_for_deletion():
+#		if target_prev_position == Vector2.ZERO:
+#			self.ai_state = AI_STATE.SEARCH
+#		else:
+#			navigation_agent.set_target_location(target_prev_position)
+#			target_prev_position = Vector2.ZERO
 

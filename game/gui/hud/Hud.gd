@@ -152,7 +152,6 @@ func _on_GameTimer_gametime_is_up() -> void:
 
 
 func _on_stats_changed(player_id: int, player_stats: Dictionary):
-
 	var statbox_to_change: Control = statboxes[player_id] # bolt id kot index je enak indexu statboxa v statboxih
 
 	statbox_to_change.stat_wins.stat_value = player_stats["wins"] # setget

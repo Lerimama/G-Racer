@@ -4,18 +4,22 @@ enum STAT_TYPE {COUNT, TIME, ICONS}
 export (STAT_TYPE) var stat_type: int = STAT_TYPE.COUNT
 
 export var icon_texture: AtlasTexture = null
-export var stat_name: String = ""
-export var name_is_icon: bool = false
+export var label_name: String = ""
+export var show_time: bool = false
+export var show_icons: bool = false
+export var show_name_icon: bool = false
 
 var stat_value: int = 0 setget _on_stat_change
-var color_blink_time: float = 0.5
+
+# colors
 var def_stat_color: Color = Refs.color_hud_base
 var minus_color: Color = Refs.color_red
 var plus_color: Color = Refs.color_green
+var color_blink_time: float = 0.5
 
 onready var stat_icon: TextureRect = $Icon
-onready var stat_name_label: Label = $Name
-onready var stat_count_label: Label = $Label
+onready var stat_name: Label = $Name
+onready var stat_label: Label = $Label
 onready var stat_time_label: HBoxContainer = $TimeLabel
 onready var stat_icons: HBoxContainer = $StatIcons
 onready var blink_timer: Timer = $BlinkTimer
@@ -26,30 +30,33 @@ onready var blink_timer: Timer = $BlinkTimer
 
 func _ready() -> void:
 
-#	stat_count_label.modulate = def_stat_color
+#	stat_label.modulate = def_stat_color
 #	stat_icon.modulate = def_stat_color
 
 	get_node("Icon").texture = icon_texture
-	stat_name_label.text = "%s " % stat_name
+	stat_name.text = "%s " % label_name
 
 	# setup elementov glede na tip
-	if name_is_icon:
+	if show_name_icon:
 		stat_icon.show()
-		stat_name_label.hide()
+		stat_name.hide()
 	else:
 		stat_icon.hide()
-		stat_name_label.show()
+		stat_name.show()
 
-	stat_name_label.hide()
-	stat_time_label.hide()
-	stat_count_label.hide()
-	stat_icons.hide()
 	match stat_type:
 		STAT_TYPE.COUNT:
-			stat_count_label.show()
+			stat_time_label.hide()
+			stat_icons.hide()
+			stat_label.show()
 		STAT_TYPE.TIME:
+			stat_label.hide()
+			stat_icons.hide()
 			stat_time_label.show()
 		STAT_TYPE.ICONS:
+			stat_name.hide()
+			stat_time_label.hide()
+			stat_label.hide()
 			stat_icons.show()
 			# setam ikono na vse ikone
 			for icon in stat_icons.get_children():
@@ -62,30 +69,35 @@ func _on_stat_change(new_stat_value):
 
 	if not stat_value == new_stat_value:
 
-		# če je string je sporočilo ... skrijem vse razen sporočila
+		# če je string skrijem vse razen sporočila
 		if new_stat_value is String:
-			stat_count_label.text = str(new_stat_value)
-			#			stat_name_label.hide()
+			stat_label.text = str(new_stat_value)
 			stat_icon.hide()
+			stat_name.hide()
 			stat_time_label.hide()
 			stat_icons.hide()
-
 		# če je številka ga primerjam
 		elif new_stat_value is float or new_stat_value is int :
+			# [+]
 			if new_stat_value > stat_value:
+				stat_value = new_stat_value
 				modulate = plus_color
-			elif new_stat_value < stat_value:
-				modulate = minus_color
-			stat_value = new_stat_value
-
-			match stat_type:
-				STAT_TYPE.COUNT:
-					stat_count_label.text = "%02d" % new_stat_value
-				STAT_TYPE.TIME:
+				if stat_type == STAT_TYPE.TIME:
+#				if show_time:
 					write_clock_time(stat_value, stat_time_label)
-				STAT_TYPE.ICONS:
-					stat_count_label.text = "%02d" % new_stat_value
-					set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
+				else:
+					stat_label.text = "%02d" % new_stat_value
+			# [-]
+			elif new_stat_value < stat_value:
+				stat_value = new_stat_value
+				modulate = minus_color
+				if show_time:
+					write_clock_time(stat_value, stat_time_label)
+				else:
+					stat_label.text = "%02d" % new_stat_value
+
+			if show_icons:
+				set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
 
 			blink_timer.start(color_blink_time)
 

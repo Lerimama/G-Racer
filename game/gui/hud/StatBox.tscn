@@ -80,16 +80,17 @@ margin_top = 7.0
 margin_right = 906.0
 margin_bottom = 64.0
 size_flags_vertical = 8
+stat_type = 2
 icon_texture = ExtResource( 4 )
-show_icons = true
+stat_name = "WINS"
 
 [node name="StatWins" parent="." instance=ExtResource( 6 )]
 margin_top = 63.0
 margin_right = 906.0
 margin_bottom = 120.0
 alignment = 2
+stat_type = 2
 icon_texture = ExtResource( 4 )
-show_icons = true
 
 [node name="Icon" parent="StatWins" index="0"]
 margin_left = 173.0
@@ -116,7 +117,7 @@ margin_top = 119.0
 margin_right = 906.0
 margin_bottom = 176.0
 alignment = 2
-label_name = "CASH"
+stat_name = "CASH"
 
 [node name="StatLife" parent="." instance=ExtResource( 6 )]
 margin_top = 175.0
@@ -124,7 +125,7 @@ margin_right = 906.0
 margin_bottom = 232.0
 alignment = 2
 icon_texture = ExtResource( 3 )
-show_icons = true
+stat_name = "LIFE"
 
 [node name="StatBullet" parent="." instance=ExtResource( 6 )]
 margin_top = 231.0
@@ -132,7 +133,7 @@ margin_right = 906.0
 margin_bottom = 288.0
 alignment = 2
 icon_texture = ExtResource( 5 )
-show_name_icon = true
+name_is_icon = true
 
 [node name="StatMisile" parent="." instance=ExtResource( 6 )]
 margin_top = 287.0
@@ -140,7 +141,7 @@ margin_right = 906.0
 margin_bottom = 344.0
 alignment = 2
 icon_texture = ExtResource( 8 )
-show_name_icon = true
+name_is_icon = true
 
 [node name="StatMina" parent="." instance=ExtResource( 6 )]
 margin_top = 343.0
@@ -148,50 +149,49 @@ margin_right = 906.0
 margin_bottom = 400.0
 alignment = 2
 icon_texture = ExtResource( 9 )
-show_name_icon = true
+name_is_icon = true
 
 [node name="StatGas" parent="." instance=ExtResource( 6 )]
 margin_top = 399.0
 margin_right = 906.0
 margin_bottom = 456.0
 alignment = 2
-label_name = "GAS"
+stat_name = "GAS"
 
 [node name="StatPoints" parent="." instance=ExtResource( 6 )]
 margin_top = 455.0
 margin_right = 906.0
 margin_bottom = 512.0
 alignment = 2
-label_name = "POINTS"
+stat_name = "POINTS"
 
 [node name="StatRank" parent="." instance=ExtResource( 6 )]
 margin_top = 511.0
 margin_right = 906.0
 margin_bottom = 568.0
 alignment = 2
-label_name = "RANK"
+stat_name = "RANK"
 
 [node name="StatLap" parent="." instance=ExtResource( 6 )]
 margin_top = 567.0
 margin_right = 906.0
 margin_bottom = 624.0
 alignment = 2
-label_name = "CURRENT LAP"
+stat_name = "CURRENT LAP"
 
 [node name="StatBestLap" parent="." instance=ExtResource( 6 )]
 margin_top = 623.0
 margin_right = 906.0
 margin_bottom = 680.0
 alignment = 2
-label_name = "BEST LAP TIME"
-show_time = true
+stat_name = "BEST LAP"
 
 [node name="StatLevelTime" parent="." instance=ExtResource( 6 )]
 margin_top = 679.0
 margin_right = 906.0
 margin_bottom = 736.0
 alignment = 2
-label_name = "RACE TIME"
-show_time = true
+stat_type = 1
+stat_name = "LEVEL TIME"
 
 [editable path="StatWins"]

@@ -103,10 +103,13 @@ func _physics_process(delta: float) -> void:
 		direction = lerp(direction, global_position.direction_to(homming_target_position), 0.1)
 		rotation = global_position.direction_to(homming_target_position).angle()
 
-		if homming_detect.monitoring != true:
-			homming_detect.monitoring = true
-		elif homming_detect.monitoring == true:
-			homming_detect.monitoring = false
+		if homming_detect.monitoring:
+			homming_detect.set_deferred("monitoring", false)
+			# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
+			#			homming_detect.monitoring = false
+		else:
+			homming_detect.set_deferred("monitoring", true)
+			#			homming_detect.monitoring = true
 
 	# preverjam, če se še dotika avtorja
 	if vision_ray.is_colliding():

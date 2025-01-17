@@ -342,14 +342,6 @@ func get_possible_targets(): # SEARCH
 		detect_ray.rotation_degrees = -target_ray_angle_limit
 	if detect_ray.is_colliding() and not detect_ray.get_collider() == level_navigation_target:
 		all_possible_targets.append(detect_ray.get_collider())
-	#	# target ray rotira in nabira
-	#	target_ray.cast_to.x = target_ray_seek_length
-	#	target_ray.rotation_degrees += target_ray_rotation_speed
-	#	if target_ray.rotation_degrees > target_ray_angle_limit:
-	#		target_ray.rotation_degrees = -target_ray_angle_limit
-	#	if target_ray.is_colliding() and not target_ray.get_collider() == level_navigation_target:
-	#		all_possible_targets.append(target_ray.get_collider())
-
 
 	for target in all_possible_targets:
 		if not "ai_target_rank" in ai_target: # naj bi imeli vsi na tem koližn levelu

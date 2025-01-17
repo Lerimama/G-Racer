@@ -59,7 +59,10 @@ func _physics_process(delta: float) -> void:
 
 func activate():
 
-	detect_area.monitoring = true
+	# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
+	#	detect_area.monitoring = true
+
+	detect_area. set_deferred("monitoring", true)
 	if lifetime > 0:
 		active_timer.start(lifetime)
 

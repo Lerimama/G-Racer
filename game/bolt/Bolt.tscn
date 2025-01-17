@@ -164,6 +164,7 @@ height = 100.0
 elevation = 150.0
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 22 )]
+shadow_owner_path = ""
 shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 
 [node name="BoltController" type="Node" parent="."]

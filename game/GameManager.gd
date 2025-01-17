@@ -121,7 +121,7 @@ func set_game():
 	spawn_level()
 
 	Refs.hud.set_hud()
-	self.connect("game_state_changed", Refs.hud, "_on_game_state_change", [level_settings]) # statistika med boltom in hudom
+	self.connect("game_state_changed", Refs.hud, "_on_game_state_change") # statistika med boltom in hudom
 
 	# playing field
 	Refs.game_arena.playing_field.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
@@ -148,11 +148,10 @@ func set_game():
 
 		# debug ... kadar ne štartam igre iz home menija
 		if Sets.players_on_game_start.empty():
-			activated_player_ids = [Pros.PLAYER.P1]
+#			activated_player_ids = [Pros.PLAYER.P1]
 #			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2]
 #			activated_player_ids = [Pros.PLAYER.P1, Pros.PLAYER.P2, Pros.PLAYER.P3, Pros.PLAYER.P4]
 			game_settings["enemies_mode"] = true # debug
-
 
 
 
@@ -244,7 +243,7 @@ func start_game():
 	game_on = true
 	game_state = GAME_STATE.ON
 	emit_signal("message_to_drivers", "game_on", game_on) #  poslušajo drajverji,  hud3 "signal dobijo"
-	emit_signal("game_state_changed", game_on,level_settings) #  poslušajo drajverji,  hud3 "signal dobijo"
+	emit_signal("game_state_changed", game_on, level_settings) #  poslušajo drajverji,  hud3 "signal dobijo"
 
 	# fast start
 	fast_start_window = true
@@ -395,21 +394,24 @@ func update_ranking():
 		bolt.update_bolt_rank(current_bolt_rank)
 
 
-func sort_bolts_by_laps(bolt_1, bolt_2): # ascending ... večji index je boljši
+func sort_bolts_by_laps(bolt_1, bolt_2): # descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if bolt_1.player_stats["laps_count"] > bolt_2.player_stats["laps_count"]:
 	    return true
 	return false
 
 
-func sort_trackers_by_offset(bolt_tracker_1, bolt_tracker_2): # ascending ... večji index je boljši
+func sort_trackers_by_offset(bolt_tracker_1, bolt_tracker_2):# descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if bolt_tracker_1.offset > bolt_tracker_2.offset:
 	    return true
 	return false
 
 
-func sort_trackers_by_points(bolt_1, bolt_2): # ascending ... večji index je boljši
+func sort_trackers_by_points(bolt_1, bolt_2):# descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if bolt_1.player_stats["points"] > bolt_2.player_stats["points"]:
 	    return true

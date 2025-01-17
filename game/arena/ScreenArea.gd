@@ -13,5 +13,5 @@ func _process(delta: float) -> void:
 
 
 func _on_ScreenArea_body_exited(body: Node) -> void:
-	
+
 	emit_signal("body_exited_playing_field", body)

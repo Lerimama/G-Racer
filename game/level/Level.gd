@@ -47,33 +47,37 @@ func _ready() -> void:
 			level_start.hide()
 			checkpoint.hide()
 			level_finish.hide()
-			finish_line.monitoring = false
+			finish_line.set_deferred("monitoring", false)
+			# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
+			#			finish_line.monitoring = false
 		LEVEL_TYPE.RACE:
 			level_start.show()
 			checkpoint.hide()
 			level_finish.show()
-			finish_line.monitoring = true
+			finish_line.set_deferred("monitoring", true)
 		LEVEL_TYPE.RACE_LAPS:
 			level_start.show()
 			checkpoint.show()
 			level_finish.show()
-			finish_line.monitoring = true
+			finish_line.set_deferred("monitoring", true)
 		LEVEL_TYPE.RACE_GOAL: # _temp level
 			level_start.show()
 			checkpoint.show()
 			level_finish.show()
-			finish_line.monitoring = true
+			finish_line.set_deferred("monitoring", true)
 		LEVEL_TYPE.CHASE:
-#			level_start.hide()
+			#			level_start.hide()
+			#			level_finish.hide()
 			checkpoint.show()
-#			level_finish.hide()
-			finish_line.monitoring = true
+			finish_line.set_deferred("monitoring", true)
 
 	# kar je skrito, ne deluje
 	if checkpoint.visible:
-		checkpoint.monitoring = true
+		#		checkpoint.monitoring = true
+		checkpoint.set_deferred("monitoring", true)
 	else:
-		checkpoint.monitoring = false
+		#		checkpoint.monitoring = false
+		checkpoint.set_deferred("monitoring", false)
 
 	set_level_objects()
 	navigation_cells_positions = $LevelNavigation.level_navigation_points.duplicate()

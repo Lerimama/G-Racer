@@ -583,6 +583,7 @@ func get_outline_segments_by_length(outline_polygon: PoolVector2Array):
 		var edge_vector: Vector2 = end_edge_point - start_edge_point
 		outline_segments_by_length.append(edge_vector)
 
+	# The sorting algorithm used is not stable. This means that values considered equal may have their order changed
 	outline_segments_by_length.sort_custom(self, "sort_vectors_by_length")
 
 	return outline_segments_by_length
@@ -659,11 +660,14 @@ func get_polygon_far_points(polygon_points: PoolVector2Array):
 
 	# x
 	points_to_sort.sort_custom(self, "sort_vectors_by_x")
+	# The sorting algorithm used is not stable. This means that values considered equal may have their order changed
 	var far_right_point: Vector2 = points_to_sort[0]
 	var far_left_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
 
 	# Y
 	points_to_sort.sort_custom(self, "sort_vectors_by_y")
+	# The sorting algorithm used is not stable. This means that values considered equal may have their order changed
+
 	var far_down_point: Vector2 = points_to_sort[0]
 	var far_up_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
 
@@ -751,7 +755,9 @@ func sort_vectors_by_length(vector_1, vector_2):
 
 
 func sort_vectors_by_x(vector_1, vector_2):
-	# ascending ... večji je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
+
+	# descending ... večji je boljši
 
 	if vector_1.x > vector_2.x:
 	    return true
@@ -759,7 +765,7 @@ func sort_vectors_by_x(vector_1, vector_2):
 
 
 func sort_vectors_by_y(vector_1, vector_2):
-	# ascending ... večji je boljši
+	# descending ... večji je boljši
 
 	if vector_1.y > vector_2.y:
 	    return true

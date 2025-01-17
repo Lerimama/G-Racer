@@ -17,6 +17,7 @@ script = ExtResource( 2 )
 elevation = 100
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 1 )]
+shadow_owner_path = ""
 shadow_caster_paths = [ NodePath("../Sprite"), NodePath("../TextureRect"), NodePath("../CollisionPolygon2D"), NodePath("../Polygon2D2") ]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
@@ -28,7 +29,7 @@ visible = false
 polygon = PoolVector2Array( 0, 0, 68, 266, 279, 266, 384, 0 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 192, 320 )
+position = Vector2( 363.295, 222.015 )
 rotation = -0.144927
 scale = Vector2( 1.39, 1.39 )
 texture = ExtResource( 4 )

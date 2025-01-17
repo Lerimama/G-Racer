@@ -51,7 +51,7 @@ onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
 
 # engines
-var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
+#var engines_on: bool = false # lahko deluje tudi ko ni igre in je neaktiven
 var heading_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_power = 0
 var engine_rotation_speed: float = 0.1
