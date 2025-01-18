@@ -9,7 +9,7 @@ onready var screen_edge_collision: CollisionPolygon2D = $ScreenEdge/CollisionPol
 
 
 func _process(delta: float) -> void:
-	global_position = Refs.current_camera.get_camera_screen_center()
+	global_position = Rfs.current_camera.get_camera_screen_center()
 
 
 func _on_ScreenArea_body_exited(body: Node) -> void:

@@ -18,7 +18,7 @@ onready var smoke_particles: Particles2D = $WeaponSprite/SmokeParticles
 
 # per weapon
 var ammo_count_key: String#  = ammo_profile["ammo_count_key"] # na prvi load
-var ammo_profile: Dictionary# = Pros.ammo_profiles[weapon_key] # na prvi load
+var ammo_profile: Dictionary# = Pfs.ammo_profiles[weapon_key] # na prvi load
 var AmmoScene: PackedScene# = ammo_profile["scene"]
 var reload_time: float = 0.15 # weapon_profile["reload_time"] # PRO dodaj weapons
 
@@ -32,7 +32,7 @@ func _ready() -> void:
 
 func set_weapon(): # kliče bolt
 
-	ammo_profile = Pros.ammo_profiles[ammo_key]
+	ammo_profile = Pfs.ammo_profiles[ammo_key]
 
 	reload_time = ammo_profile["reload_time"] # PRO dodaj v nove weapon_profile
 	AmmoScene = ammo_profile["scene"]
@@ -72,11 +72,11 @@ func shoot():
 		new_ammo.global_rotation = shooting_position.global_rotation
 		new_ammo.spawner = owner
 		new_ammo.spawner_color = owner.bolt_color
-		if ammo_key == Pros.AMMO.BULLET:
+		if ammo_key == Pfs.AMMO.BULLET:
 			new_ammo.z_index = shooting_position.z_index + 1
 		else:
 			new_ammo.z_index = shooting_position.z_index - 1
-		Refs.node_creation_parent.add_child(new_ammo)
+		Rfs.node_creation_parent.add_child(new_ammo)
 
 		# stats
 		self.ammo_count = -1

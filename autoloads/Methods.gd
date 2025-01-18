@@ -300,34 +300,34 @@ func _on_button_pressed(button: BaseButton):
 	print("PRESSED ", button)
 
 	if button.name == "BackBtn":
-		Refs.sound_manager.play_gui_sfx("btn_confirm")
+		Rfs.sound_manager.play_gui_sfx("btn_confirm")
 	elif button.name == "QuitBtn" or button.name == "CancelBtn":
-		Refs.sound_manager.play_gui_sfx("btn_cancel")
+		Rfs.sound_manager.play_gui_sfx("btn_cancel")
 	elif button.name == "ContinueBtn":
 		button.set_disabled(true) # ne dela
-		Refs.sound_manager.play_gui_sfx("btn_confirm")
+		Rfs.sound_manager.play_gui_sfx("btn_confirm")
 	else:
-		Refs.sound_manager.play_gui_sfx("btn_confirm")
+		Rfs.sound_manager.play_gui_sfx("btn_confirm")
 
 
 func _on_button_toggled(button_pressed: bool) -> void:
 
 	if button_pressed:
-		Refs.sound_manager.play_gui_sfx("btn_confirm")
+		Rfs.sound_manager.play_gui_sfx("btn_confirm")
 	else:
-		Refs.sound_manager.play_gui_sfx("btn_cancel")
+		Rfs.sound_manager.play_gui_sfx("btn_cancel")
 
 
 func _on_control_hovered(control: Control):
 
 	if not control.has_focus():
 		control.grab_focus()
-		Refs.sound_manager.play_gui_sfx("btn_focus_change")
+		Rfs.sound_manager.play_gui_sfx("btn_focus_change")
 
 
 func _on_control_focused(control: Control):
 
-	Refs.sound_manager.play_gui_sfx("btn_focus_change")
+	Rfs.sound_manager.play_gui_sfx("btn_focus_change")
 	# check btn color fix
 	if control is CheckButton or control is HSlider:
 		control.modulate = Color.white

@@ -66,7 +66,7 @@ func spawn_new_trail():
 	new_trail.global_position = disp.get_node(thrust_particles_name).global_position
 	new_trail.modulate.a = bolt_trail_alpha
 	new_trail.width = 5
-	Refs.node_creation_parent.add_child(new_trail)
+	Rfs.node_creation_parent.add_child(new_trail)
 
 	# signal za deaktivacijo, če ni bila že prej
 	new_trail.connect("trail_is_exiting", self, "_on_trail_exiting")

@@ -7,7 +7,7 @@ onready var setup_layer_line: HBoxContainer = $SetupLayerLine
 
 func _ready() -> void:
 
-	Refs.setup_layer = self
+	Rfs.setup_layer = self
 	setup_layer_line.hide()
 
 func build_setup_layer(all_lines: Dictionary, lines_owner: Node2D):

@@ -9,9 +9,9 @@ export var name_is_icon: bool = false
 
 var stat_value: int = 0 setget _on_stat_change
 var color_blink_time: float = 0.5
-var def_stat_color: Color = Refs.color_hud_base
-var minus_color: Color = Refs.color_red
-var plus_color: Color = Refs.color_green
+var def_stat_color: Color = Rfs.color_hud_base
+var minus_color: Color = Rfs.color_red
+var plus_color: Color = Rfs.color_green
 
 onready var stat_icon: TextureRect = $Icon
 onready var stat_name_label: Label = $Name

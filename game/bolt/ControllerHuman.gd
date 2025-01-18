@@ -4,7 +4,7 @@ extends Node
 var controlled_bolt: RigidBody2D # seta spawner
 var controller_type: int
 
-onready var controller_actions: Dictionary = Pros.controller_profiles[controller_type]
+onready var controller_actions: Dictionary = Pfs.controller_profiles[controller_type]
 onready var fwd_action: String = controller_actions["fwd_action"]
 onready var rev_action: String = controller_actions["rev_action"]
 onready var left_action: String = controller_actions["left_action"]
@@ -18,7 +18,7 @@ func _input(event: InputEvent) -> void:
 	if controlled_bolt.is_active:
 
 		# ko ni igre ima v leru
-		if not Refs.game_manager.game_on:
+		if not Rfs.game_manager.game_on:
 			if Input.is_action_just_pressed(fwd_action):
 				controlled_bolt.revup()
 		else:
@@ -27,7 +27,7 @@ func _input(event: InputEvent) -> void:
 			if Input.is_action_pressed(fwd_action):
 				controlled_bolt.bolt_shift = 1
 				controlled_bolt.motion = controlled_bolt.MOTION.FWD
-				if Refs.game_manager.fast_start_window:
+				if Rfs.game_manager.fast_start_window:
 					controlled_bolt.revup()
 			elif Input.is_action_pressed(rev_action):
 				controlled_bolt.bolt_shift = -1
@@ -44,7 +44,7 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	controlled_bolt.add_to_group(Refs.group_humans)
+	controlled_bolt.add_to_group(Rfs.group_humans)
 
 
 func _physics_process(delta: float) -> void:
@@ -57,7 +57,7 @@ func _physics_process(delta: float) -> void:
 		#				controlled_bolt.shoot(controlled_bolt.bolt_hud.selected_ammo_index)
 		#			controlled_bolt.shoot(0)
 	# dokler ni igre fizika ne dela
-	if Refs.game_manager.game_on and controlled_bolt.is_active:
+	if Rfs.game_manager.game_on and controlled_bolt.is_active:
 #		return
 		controlled_bolt.force_rotation = controlled_bolt.heading_rotation + controlled_bolt.get_global_rotation()
 

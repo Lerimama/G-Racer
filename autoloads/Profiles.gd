@@ -39,7 +39,7 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	PLAYER.P2 : {
 		"player_name": "P2",
 		"player_avatar": preload("res://game/gui/avatars/avatar_02.png"),
-		"player_color": Refs.color_red,
+		"player_color": Rfs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLT_TYPE.BASIC,
@@ -47,14 +47,14 @@ var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	PLAYER.P3 : {
 		"player_name" : "P3",
 		"player_avatar" : preload("res://game/gui/avatars/avatar_03.png"),
-		"player_color" : Refs.color_yellow, # color_yellow, color_green, color_red
+		"player_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
 	PLAYER.P4 : {
 		"player_name" : "P4",
 		"player_avatar" : preload("res://game/gui/avatars/avatar_04.png"),
-		"player_color" : Refs.color_green,
+		"player_color" : Rfs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
@@ -242,7 +242,7 @@ enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATL
 var level_object_profiles: Dictionary = {
 	# ne rabiš povsod istih vsebin, ker element vleče samo postavke, ki jih rabi
 	LEVEL_OBJECT.BRICK_GHOST: {
-		"color": Refs.color_brick_ghost,
+		"color": Rfs.color_brick_ghost,
 		"value": 30,
 		"speed_brake_div": 10,
 		"elevation": 5,
@@ -250,7 +250,7 @@ var level_object_profiles: Dictionary = {
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
-		"color": Refs.color_brick_bouncer,
+		"color": Rfs.color_brick_bouncer,
 		"value": 10,
 		"bounce_strength": 2,
 		"elevation": 5,
@@ -258,7 +258,7 @@ var level_object_profiles: Dictionary = {
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
-		"color": Refs.color_brick_magnet_off,
+		"color": Rfs.color_brick_magnet_off,
 		"value": 0,
 		"gravity_force": 300.0,
 		"elevation": 5,
@@ -266,14 +266,14 @@ var level_object_profiles: Dictionary = {
 		"ai_target_rank": 0, # 0 pomeni, da se izogneš
 	},
 	LEVEL_OBJECT.BRICK_TARGET: {
-		"color": Refs.color_brick_target,
+		"color": Rfs.color_brick_target,
 		"value": 100,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickTarget.tscn"),
 		"ai_target_rank": 0,
 	},
 	LEVEL_OBJECT.FLATLIGHT: {
-		"color": Refs.color_brick_light_off,
+		"color": Rfs.color_brick_light_off,
 		"value": 10,
 		"elevation": 0,
 		"object_scene": preload("res://game/level/objects/FlatLight.tscn"),
@@ -300,77 +300,77 @@ enum PICKABLE{
 
 var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_BULLET: {
-		"color": Refs.color_pickable_ammo,
+		"color": Rfs.color_pickable_ammo,
 		"value": 20,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_MISILE: {
-		"color": Refs.color_pickable_ammo,
+		"color": Rfs.color_pickable_ammo,
 		"value": 2,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_MINA: {
-		"color": Refs.color_pickable_ammo,
+		"color": Rfs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_SHIELD: {
-		"color": Refs.color_pickable_ammo,
+		"color": Rfs.color_pickable_ammo,
 		"value": 1,
 		"elevation": 3,
 		"time": 3,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
-		"color": Refs.color_pickable_stat,
+		"color": Rfs.color_pickable_stat,
 		"value": 0,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_LIFE: {
-		"color": Refs.color_pickable_stat,
+		"color": Rfs.color_pickable_stat,
 		"value": 1,
 		"elevation": 3,
 		"time": 0, # sekunde
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_GAS: {
-		"color": Refs.color_pickable_stat,
+		"color": Rfs.color_pickable_stat,
 		"value": 200,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_CASH: {
-		"color": Refs.color_pickable_stat,
+		"color": Rfs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 0,
 	},
 	PICKABLE.PICKABLE_POINTS: {
-		"color": Refs.color_pickable_stat,
+		"color": Rfs.color_pickable_stat,
 		"value": 100,
 		"elevation": 3,
 		"time": 0,
 		"ai_target_rank": 2,
 	},
 	PICKABLE.PICKABLE_NITRO: {
-		"color": Refs.color_pickable_feature,
+		"color": Rfs.color_pickable_feature,
 		"value": 2, # factor
 		"elevation": 3,
 		"time": 1.5,
 		"ai_target_rank": 10,
 	},
 	PICKABLE.PICKABLE_RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
-		"color": Refs.color_pickable_random,
+		"color": Rfs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"elevation": 3,
 		"time": 0,

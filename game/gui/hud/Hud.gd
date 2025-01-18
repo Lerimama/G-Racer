@@ -17,20 +17,20 @@ onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn"
 func _ready() -> void:
 #	print("HUD")
 
-	Refs.hud = self
+	Rfs.hud = self
 
 	# skrij vse statboxe, ki se prikažejo, če je spawnan bolt
 	for box in statboxes:
 		box.hide()
 
-	Refs.game_manager.connect("bolt_spawned", self, "_on_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+	Rfs.game_manager.connect("bolt_spawned", self, "_on_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
 func set_hud(): # kliče GM
 
 	# game stats
-	match Refs.current_level.level_type:
-		Refs.current_level.LEVEL_TYPE.RACE, Refs.current_level.LEVEL_TYPE.RACE_LAPS:
+	match Rfs.current_level.level_type:
+		Rfs.current_level.LEVEL_TYPE.RACE, Rfs.current_level.LEVEL_TYPE.RACE_LAPS:
 			game_timer.hunds_mode = true
 	game_timer.show()
 	record_lap_label.hide()
@@ -50,24 +50,24 @@ func set_hud(): # kliče GM
 		box.stat_bullet.show()
 		box.stat_misile.show()
 		box.stat_mina.show()
-		match Refs.current_level.level_type:
-			Refs.current_level.LEVEL_TYPE.BATTLE:
+		match Rfs.current_level.level_type:
+			Rfs.current_level.LEVEL_TYPE.BATTLE:
 				# pokažem: wins, life, gas, points, rank
 				# skrijem: timer stotinke
 				box.stat_wins.show()
 				box.stat_life.show()
 				box.stat_level_rank.show()
-			Refs.current_level.LEVEL_TYPE.RACE:
+			Rfs.current_level.LEVEL_TYPE.RACE:
 				box.stat_wins.show()
 				box.stat_level_rank.show()
 				box.stat_level_time.show()
-			Refs.current_level.LEVEL_TYPE.RACE_LAPS:
+			Rfs.current_level.LEVEL_TYPE.RACE_LAPS:
 				box.stat_wins.show()
 				box.stat_level_rank.show()
 				box.stat_laps_count.show()
 				box.stat_best_lap.show()
 				box.stat_level_time.show()
-			Refs.current_level.LEVEL_TYPE.CHASE:
+			Rfs.current_level.LEVEL_TYPE.CHASE:
 				box.stat_gas.show()
 
 
@@ -101,15 +101,15 @@ func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool)
 	# če je zadnji krog njegov čas ostane na liniji
 	new_floating_tag.global_position = tag_owner.global_position
 	new_floating_tag.tag_owner = tag_owner
-	new_floating_tag.scale = Vector2.ONE * Sets.game_camera_zoom_factor
+	new_floating_tag.scale = Vector2.ONE * Sts.game_camera_zoom_factor
 
 	new_floating_tag.content_to_show = lap_time
 	new_floating_tag.current_tag_type = new_floating_tag.TAG_TYPE.TIME
-	Refs.node_creation_parent.add_child(new_floating_tag) # OPT ... floating bi raje v hudu
+	Rfs.node_creation_parent.add_child(new_floating_tag) # OPT ... floating bi raje v hudu
 	if best_lap == true:
-		new_floating_tag.modulate = Refs.color_green
+		new_floating_tag.modulate = Rfs.color_green
 	else:
-		new_floating_tag.modulate = Refs.color_red
+		new_floating_tag.modulate = Rfs.color_red
 
 
 
@@ -118,13 +118,13 @@ func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool)
 
 func _on_bolt_spawned(spawned_bolt: Node2D):
 
-	#	if spawned_bolt.is_in_group(Refs.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
+	#	if spawned_bolt.is_in_group(Rfs.group_ai): # če je AI ne rabim hud statsov ... zaenkrat
 	#		return
 
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
 	var spawned_player_statbox: Control = statboxes[spawned_bolt.player_id]
 	var spawned_player_stats: Dictionary = spawned_bolt.player_stats
-	var spawned_player_profile: Dictionary = Pros.player_profiles[spawned_bolt.player_id]
+	var spawned_player_profile: Dictionary = Pfs.player_profiles[spawned_bolt.player_id]
 
 	# bolt stats
 	spawned_player_statbox.stat_bullet.stat_value = spawned_player_stats["bullet_count"]
@@ -147,8 +147,8 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 
 func _on_GameTimer_gametime_is_up() -> void:
 
-	#	if Refs.current_level.level_type == Refs.current_level.LEVEL_TYPE.BATTLE:
-	Refs.game_manager.level_finished()
+	#	if Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
+	Rfs.game_manager.level_finished()
 
 
 func _on_stats_changed(player_id: int, player_stats: Dictionary):
@@ -171,7 +171,7 @@ func _on_stats_changed(player_id: int, player_stats: Dictionary):
 	if not player_stats["best_lap_time"] == 0:
 		if player_stats["best_lap_time"] < record_lap_time or record_lap_time == 0:
 			record_lap_time = player_stats["best_lap_time"]
-			Mets.write_clock_time(record_lap_time, record_lap_label.get_node("TimeLabel"))
+			Mts.write_clock_time(record_lap_time, record_lap_label.get_node("TimeLabel"))
 			if not record_lap_label.visible:
 				record_lap_label.show()
 

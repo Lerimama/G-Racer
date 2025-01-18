@@ -22,7 +22,7 @@ onready var trail_position: Position2D = $TrailPosition
 onready var BulletTrail: PackedScene = preload("res://game/weapons/ammo/bullet/BulletTrail.tscn")
 onready var BulletHit: PackedScene = preload("res://game/weapons/ammo/bullet/BulletHit.tscn")
 
-onready var ammo_profile: Dictionary = Pros.ammo_profiles[Pros.AMMO.BULLET]
+onready var ammo_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.BULLET]
 onready var hit_damage: float = ammo_profile["hit_damage"]
 onready var lifetime: float = ammo_profile["lifetime"]
 onready var bullet_mass: float = ammo_profile["mass"]
@@ -38,7 +38,7 @@ var object_type = TYPE.EXPLODING
 
 func _ready() -> void:
 
-	add_to_group(Refs.group_bullets)
+	add_to_group(Rfs.group_bullets)
 #	modulate = spawner_color
 	$Sounds/BulletShoot.play()
 
@@ -51,7 +51,7 @@ func _ready() -> void:
 	# spawn trail
 	new_bullet_trail = BulletTrail.instance()
 	new_bullet_trail.z_index = trail_position.z_index + 1
-	Refs.node_creation_parent.add_child(new_bullet_trail)
+	Rfs.node_creation_parent.add_child(new_bullet_trail)
 
 func _physics_process(delta: float) -> void:
 
@@ -95,7 +95,7 @@ func explode_bullet(collision_position: Vector2, collision_normal: Vector2):
 	new_hit_fx.global_rotation = deg2rad(180) + collision_normal.angle() # 180 dodatek omogča, da ni na vertikalah naroben kot
 	new_hit_fx.get_node("DebryParticles").set_emitting(true) # morem klicat, ker je one šot
 	new_hit_fx.get_node("FireParticles").set_emitting(true)
-	Refs.node_creation_parent.add_child(new_hit_fx)
+	Rfs.node_creation_parent.add_child(new_hit_fx)
 	new_bullet_trail.start_decay(collision_position) # zadnja pika se pripne na mesto kolizije
 	queue_free()
 

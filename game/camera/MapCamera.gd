@@ -20,14 +20,14 @@ extends Camera2D
 func _ready():
 
 	print("MAP KAMERA")
-#	Refs.current_camera = self
+#	Rfs.current_camera = self
 #	zoom = Vector2.ONE
 
 
 func _process(delta: float) -> void:
 	pass
-	if Refs.current_camera and Refs.current_camera.follow_target:
-		position = Refs.current_camera.follow_target.global_position
+	if Rfs.current_camera and Rfs.current_camera.follow_target:
+		position = Rfs.current_camera.follow_target.global_position
 
 #		 = self
 #	if not test_ui.test_view_on:
@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 #			position = follow_target.global_position
 #
 #			# zoom
-#			if follow_target.is_in_group(Refs.group_bolts) and not follow_target.bolt_velocity == null:
+#			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.bolt_velocity == null:
 #				var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
 #				# če je nad min limit
 #				if follow_target_speed > min_zoom_target_speed:
@@ -61,7 +61,7 @@ func _process(delta: float) -> void:
 #func _on_follow_target_change(new_follow_target):
 #
 #	if not new_follow_target == null:
-#		if new_follow_target.is_in_group(Refs.group_bolts) or Refs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
+#		if new_follow_target.is_in_group(Rfs.group_bolts) or Rfs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
 #			var transition_time: float = 2
 #			var transition_tween = get_tree().create_tween()
 #			transition_tween.tween_property(self, "position", new_follow_target.position, transition_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
@@ -87,7 +87,7 @@ func set_camera_limits():
 	var corner_BL: float
 	var corner_BR: float
 
-	var limits_rectangle: Control = Refs.current_level.camera_limits_rect
+	var limits_rectangle: Control = Rfs.current_level.camera_limits_rect
 	var limits_rectangle_position: Vector2 = limits_rectangle.rect_position
 	corner_TL = limits_rectangle.rect_position.x
 	corner_TR = limits_rectangle.rect_size.x

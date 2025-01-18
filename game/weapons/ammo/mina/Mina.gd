@@ -21,7 +21,7 @@ onready var active_timer: Timer = $ActiveTimer
 onready var smoke_particles: Particles2D = $SmokeParticles
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
-onready var weapon_profile: Dictionary = Pros.ammo_profiles[Pros.AMMO.MINA]
+onready var weapon_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.MINA]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var speed: float = weapon_profile["speed"]
@@ -37,7 +37,7 @@ var object_type = TYPE.EXPLODING
 
 func _ready() -> void:
 
-	add_to_group(Refs.group_mine)
+	add_to_group(Rfs.group_mine)
 #	modulate = spawner_color
 
 	drop_direction = -transform.x # rikverc na osi x
@@ -76,7 +76,7 @@ func explode():
 	new_hit_fx.get_node("ExplosionParticles").set_emitting(true)
 	new_hit_fx.get_node("SmokeParticles").set_emitting(true)
 	new_hit_fx.get_node("BlastAnimated").play()
-	Refs.node_creation_parent.add_child(new_hit_fx)
+	Rfs.node_creation_parent.add_child(new_hit_fx)
 
 
 #	var new_misile_explosion = MisileExplosion.instance()
@@ -86,7 +86,7 @@ func explode():
 #	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawner_color
 #	new_misile_explosion.set_emitting(true)
 #	new_misile_explosion.get_node("ExplosionBlast").play()
-#	Refs.node_creation_parent.add_child(new_misile_explosion)
+#	Rfs.node_creation_parent.add_child(new_misile_explosion)
 	queue_free()
 
 

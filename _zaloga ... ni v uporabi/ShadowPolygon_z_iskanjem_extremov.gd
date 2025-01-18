@@ -11,8 +11,8 @@ var shadow_transparency: float = 0.2
 onready var shadow_casting_node: Node2D = get_node(shadow_casting_polygon_path)
 #onready var shadow_direction: Vector2 = Vector2(700,45).normalized() setget _update_shadow_direction # odvisno od igre
 #onready var shadow_length: float = 0 setget _update_shadow_length  # odvisno od igre ...  "višina" vira svetlobe, 0 je default
-onready var shadow_length: float = Refs.game_manager.shadows_length setget _update_shadow_length  # odvisno od igre ...  "višina" vira svetlobe, 0 je default
-onready var shadow_direction: Vector2 = Refs.game_manager.shadows_direction.normalized() setget _update_shadow_direction # odvisno od igre
+onready var shadow_length: float = Rfs.game_manager.shadows_length setget _update_shadow_length  # odvisno od igre ...  "višina" vira svetlobe, 0 je default
+onready var shadow_direction: Vector2 = Rfs.game_manager.shadows_direction.normalized() setget _update_shadow_direction # odvisno od igre
 
 # owner
 onready var shadow_owner: Node2D = get_parent()
@@ -42,7 +42,7 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 
 	var check_vector: Vector2 = shadow_direction * checking_line_length
 	var checking_polyline: PoolVector2Array = [- check_vector/2, check_vector/2] # točke so zamaknjene > center je VectorZERO
-	Mets.spawn_line_2d(checking_polyline[0], checking_polyline[1], shadow_owner, Color.red)
+	Mts.spawn_line_2d(checking_polyline[0], checking_polyline[1], shadow_owner, Color.red)
 
 	# center poligona
 	var casting_node_hull: PoolVector2Array = Geometry.convex_hull_2d(shadow_casting_node.polygon)
@@ -50,12 +50,12 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 	for hull_point_index in casting_node_hull.size() - 1: # zadnja pika v hull je eneaka prvi in je ne upoštevam
 		all_points_sum += casting_node_hull[hull_point_index]
 	var center = all_points_sum / (casting_node_hull.size() - 1)
-	Mets.spawn_indikator(position + center, Color.red, 0,shadow_owner)
+	Mts.spawn_indikator(position + center, Color.red, 0,shadow_owner)
 
-#	var center: = Mets.centra
+#	var center: = Mts.centra
 	# preverim točke poligona, ki so najdlje obe smeri
 	var checking_polyline_normal: = checking_polyline[1].rotated(deg2rad(90)) * checking_line_length # desna prvokotnica, gledano v smeri vektorja
-	Mets.spawn_line_2d(Vector2.ZERO, checking_polyline_normal, shadow_owner, Color.red)
+	Mts.spawn_line_2d(Vector2.ZERO, checking_polyline_normal, shadow_owner, Color.red)
 
 	var polygon_points_distances: Array = []
 	var left_polygon_points_indexes: Array = []
@@ -83,7 +83,7 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 		if distance_to_line > max_distance:
 			max_distance = distance_to_line
 			extreme_left_point_index = point_index
-	Mets.spawn_indikator(position + shadow_casting_node.polygon[extreme_left_point_index], Color.blue, 0, shadow_owner)
+	Mts.spawn_indikator(position + shadow_casting_node.polygon[extreme_left_point_index], Color.blue, 0, shadow_owner)
 	max_distance = 0
 	var extreme_right_point_index: int
 	for point_index in right_polygon_points_indexes:
@@ -91,7 +91,7 @@ func _get_extreme_polygon_points(checking_line_length: float = 2000):
 		if distance_to_line > max_distance:
 			max_distance = distance_to_line
 			extreme_right_point_index = point_index
-	Mets.spawn_indikator(position + shadow_casting_node.polygon[extreme_right_point_index], Color.yellow, 0,shadow_owner)
+	Mts.spawn_indikator(position + shadow_casting_node.polygon[extreme_right_point_index], Color.yellow, 0,shadow_owner)
 
 
 	return [extreme_left_point_index, extreme_right_point_index]
@@ -138,11 +138,11 @@ func _create_new_shadow_polygon(extreme_left_point_index, extreme_right_point_in
 		var point_index_in_polygon: int = back_points_count + point_count
 		new_shadow_polygon.append(offset_shadow_polygon[offset_polygon_indexes[point_index_in_polygon]])
 	new_shadow_polygon.append(offset_shadow_polygon[extreme_left_point_index])
-	#	Mets.spawn_polygon_2d(new_shadow_polygon, shadow_owner, Color(Color.red, 0.5))
+	#	Mts.spawn_polygon_2d(new_shadow_polygon, shadow_owner, Color(Color.red, 0.5))
 
 	var merged_new_to_offset: Array = Geometry.merge_polygons_2d(new_shadow_polygon, offset_shadow_polygon)
 	var merged_to_shadow: Array = Geometry.merge_polygons_2d(shadow_casting_node.polygon,  merged_new_to_offset[0])
-	#	Mets.spawn_polygon_2d(merged_shadow[0], shadow_owner, Color(Color.yellow, 0.5))
+	#	Mts.spawn_polygon_2d(merged_shadow[0], shadow_owner, Color(Color.yellow, 0.5))
 
 #	return merged_to_shadow[0]
 	set_deferred("polygon", merged_to_shadow[0])

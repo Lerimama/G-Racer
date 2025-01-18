@@ -11,8 +11,8 @@ func _ready() -> void:
 #	print("ARENA")
 
 	# RFK NCP
-	Refs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
-	Refs.game_arena = self
+	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
+	Rfs.game_arena = self
 
 	# debug
 	$__Label.hide()

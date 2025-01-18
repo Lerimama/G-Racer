@@ -12,15 +12,15 @@ var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne 
 var player_id: int # ga seta spawner
 var player_name: String # za opredelitev statistike
 var bolt_color: Color = Color.red
-onready var player_profile: Dictionary = Pros.player_profiles[player_id].duplicate()
+onready var player_profile: Dictionary = Pfs.player_profiles[player_id].duplicate()
 onready var bolt_type: int = player_profile["bolt_type"]
-onready var player_stats: Dictionary = Pros.default_player_stats.duplicate()
+onready var player_stats: Dictionary = Pfs.default_player_stats.duplicate()
 onready var max_health: float = player_stats["health"] # zato, da se lahko resetira
 
 # bolt
 var is_active: bool = false setget _on_bolt_activity_change # predvsem za pošiljanje signala GMju
 var bolt_body_state: Physics2DDirectBodyState
-onready var bolt_profile: Dictionary = Pros.bolt_profiles[bolt_type].duplicate()
+onready var bolt_profile: Dictionary = Pfs.bolt_profiles[bolt_type].duplicate()
 onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var revive_timer: Timer = $ReviveTimer
@@ -127,11 +127,11 @@ func _ready() -> void:
 	all_thrusts = front_thrusts
 	all_thrusts.append_array(rear_thrusts)
 
-	add_to_group(Refs.group_bolts)
+	add_to_group(Rfs.group_bolts)
 	player_name = player_profile["player_name"]
 
 	z_as_relative = false
-	z_index = Pros.z_indexes["bolts"]
+	z_index = Pfs.z_indexes["bolts"]
 
 	# bolt
 	bolt_color = player_profile["player_color"] # bolt se obarva ...
@@ -163,10 +163,10 @@ func _ready() -> void:
 		"glide_power_R" : glide_power_rear,
 		"elevation" : elevation,
 	}
-	if player_id == Pros.PLAYER.P1:
-		Refs.setup_layer.build_setup_layer(setup_layer_dict, self)
-		Refs.setup_layer.add_new_line_to_setup_layer("back_linear_dump", "linear_damp", rear_mass.linear_damp, rear_mass)
-		Refs.setup_layer.add_new_line_to_setup_layer("engine_power", "max_engine_power", max_engine_power, self)
+	if player_id == Pfs.PLAYER.P1:
+		Rfs.setup_layer.build_setup_layer(setup_layer_dict, self)
+		Rfs.setup_layer.add_new_line_to_setup_layer("back_linear_dump", "linear_damp", rear_mass.linear_damp, rear_mass)
+		Rfs.setup_layer.add_new_line_to_setup_layer("engine_power", "max_engine_power", max_engine_power, self)
 
 
 func _process(delta: float) -> void:
@@ -193,7 +193,7 @@ func _process(delta: float) -> void:
 					thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 			MOTION.FWD:
 				engine_power += engine_hsp
-				if Refs.game_manager.fast_start_window:
+				if Rfs.game_manager.fast_start_window:
 					engine_power += start_burst_hsp
 				for thrust in front_thrusts:
 					thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
@@ -301,18 +301,18 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 	if is_shielded:
 		return
 
-	#	if Refs.current_level.level_type == Refs.current_level.LEVEL_TYPE.BATTLE:
+	#	if Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
 	update_stat("health", - hit_by.hit_damage)
 
-	if hit_by.is_in_group(Refs.group_bullets):
+	if hit_by.is_in_group(Rfs.group_bullets):
 		var inertia_factor: float = 100
 		var hit_by_inertia: Vector2 = hit_by.velocity * hit_by.mass * inertia_factor
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia)
-		Refs.current_camera.shake_camera(Refs.current_camera.bullet_hit_shake)
+		Rfs.current_camera.shake_camera(Rfs.current_camera.bullet_hit_shake)
 
-	elif hit_by.is_in_group(Refs.group_misiles):
+	elif hit_by.is_in_group(Rfs.group_misiles):
 		var inertia_factor: float = 100
 		var hit_by_inertia: Vector2 = hit_by.velocity * hit_by.mass * inertia_factor
 		#		apply_central_impulse(hit_by_inertia)
@@ -325,16 +325,16 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
 		#		apply_impulse( to_global(Vector2.RIGHT * bolt_sprite.texture.get_size().x/2), hit_by_inertia) # debug
-		Refs.current_camera.shake_camera(Refs.current_camera.misile_hit_shake)
-		Refs.sound_manager.play_sfx("bolt_explode")
-		#		if Refs.current_level.level_type == Refs.current_level.LEVEL_TYPE.BATTLE:
+		Rfs.current_camera.shake_camera(Rfs.current_camera.misile_hit_shake)
+		Rfs.sound_manager.play_sfx("bolt_explode")
+		#		if Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
 		explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
-	elif hit_by.is_in_group(Refs.group_mine):
+	elif hit_by.is_in_group(Rfs.group_mine):
 		var inertia_factor: float = 400000
 		var hit_by_power: float = inertia_factor
 		apply_torque_impulse(hit_by_power)
-		Refs.current_camera.shake_camera(Refs.current_camera.misile_hit_shake)
+		Rfs.current_camera.shake_camera(Rfs.current_camera.misile_hit_shake)
 
 	# health management
 	if player_stats["health"] <= 0:
@@ -374,9 +374,9 @@ func explode():
 	new_exploding_bolt.velocity = bolt_velocity # podamo hitrost, da se premika s hitrostjo bolta
 	new_exploding_bolt.spawner_color = bolt_color
 	new_exploding_bolt.z_index = z_index + 1
-	Refs.node_creation_parent.add_child(new_exploding_bolt)
+	Rfs.node_creation_parent.add_child(new_exploding_bolt)
 
-	Refs.current_camera.shake_camera(Refs.current_camera.bolt_explosion_shake)
+	Rfs.current_camera.shake_camera(Rfs.current_camera.bolt_explosion_shake)
 
 
 func revive_bolt():
@@ -445,7 +445,7 @@ func update_bolt_rank(new_bolt_rank: int):
 
 func update_stat(stat_name: String, change_value: float):
 
-	if not Refs.game_manager.game_on:
+	if not Rfs.game_manager.game_on:
 		return
 
 	if stat_name == "best_lap_time":
@@ -486,21 +486,21 @@ func update_trail():
 func lap_finished(level_lap_limit: int):
 
 	# lap time
-	var current_race_time: float = Refs.hud.game_timer.game_time_hunds
+	var current_race_time: float = Rfs.hud.game_timer.game_time_hunds
 	var current_lap_time: float = current_race_time - race_time_on_previous_lap # če je slednja 0, je prvi krog
 	var best_lap_time: float = player_stats["best_lap_time"]
 	if current_lap_time < best_lap_time or best_lap_time == 0:
 		update_stat("best_lap_time", current_lap_time)
-		Refs.hud.spawn_bolt_floating_tag(self, current_lap_time, true)
+		Rfs.hud.spawn_bolt_floating_tag(self, current_lap_time, true)
 	else:
-		Refs.hud.spawn_bolt_floating_tag(self, current_lap_time, false)
+		Rfs.hud.spawn_bolt_floating_tag(self, current_lap_time, false)
 
 	update_stat("laps_count", 1)
 
 	race_time_on_previous_lap = current_race_time # za naslednji krog
 
 	if player_stats["laps_count"] >= level_lap_limit: # trenutno končan krog je že dodan
-		Refs.game_manager.bolts_finished.append(self)
+		Rfs.game_manager.bolts_finished.append(self)
 		update_stat("level_time", current_race_time)
 		drive_out()
 
@@ -528,15 +528,15 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 		update_stat("laps_count", laps_finished_difference)
 
 	# če preskoči checkpoint, ga dodaj, če ga leader ima
-	var all_checked_bolts: Array = Refs.game_manager.bolts_checked
+	var all_checked_bolts: Array = Rfs.game_manager.bolts_checked
 	if all_checked_bolts.has(current_leader):
 		all_checked_bolts.append(self)
 
 	# ne dela
-	#	if Refs.game_manager.current_pull_positions.has(pull_position):
-	#		Refs.game_manager.current_pull_positions.erase(pull_position)
+	#	if Rfs.game_manager.current_pull_positions.has(pull_position):
+	#		Rfs.game_manager.current_pull_positions.erase(pull_position)
 
-	update_gas(Refs.game_manager.game_settings["pull_gas_penalty"])
+	update_gas(Rfs.game_manager.game_settings["pull_gas_penalty"])
 
 
 func screen_wrap():
@@ -565,7 +565,7 @@ func drive_in(drive_in_time: float = 2):
 
 	#	var drive_in_time: float = 2
 	var drive_in_finished_position: Vector2 = bolt_global_position
-	var drive_in_vector: Vector2 = Refs.current_level.drive_in_position.rotated(Refs.current_level.level_start.global_rotation)
+	var drive_in_vector: Vector2 = Rfs.current_level.drive_in_position.rotated(Rfs.current_level.level_start.global_rotation)
 	var drive_in_start_position: Vector2 = bolt_global_position + drive_in_vector
 	# premaknem ga nazaj in zapeljem do linije
 	bolt_body_state.transform.origin = drive_in_start_position
@@ -583,7 +583,7 @@ func drive_out():
 	self.is_active = false
 
 	var drive_out_time: float = 2
-	var drive_out_vector: Vector2 = Refs.current_level.drive_out_position.rotated(Refs.current_level.level_finish.global_rotation)
+	var drive_out_vector: Vector2 = Rfs.current_level.drive_out_position.rotated(Rfs.current_level.level_finish.global_rotation)
 	var drive_out_position: Vector2 = bolt_global_position + drive_out_vector
 	var angle_to_vector: float = get_angle_to(drive_out_position)
 	var drive_out_tween = get_tree().create_tween()
@@ -609,45 +609,45 @@ func revup():
 
 func item_picked(pickable_key: int):
 
-	var pickable_value: float = Pros.pickable_profiles[pickable_key]["value"]
-	var pickable_time: float = Pros.pickable_profiles[pickable_key]["time"]
+	var pickable_value: float = Pfs.pickable_profiles[pickable_key]["value"]
+	var pickable_time: float = Pfs.pickable_profiles[pickable_key]["time"]
 
 	match pickable_key:
-		Pros.PICKABLE.PICKABLE_BULLET:
-			#			if not Refs.current_level.level_type == Refs.current_level.LEVEL_TYPE.BATTLE:
+		Pfs.PICKABLE.PICKABLE_BULLET:
+			#			if not Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
 			#				player_stats["misile_count"] = 0
 			#				player_stats["mina_count"] = 0
 			update_stat("bullet_count", pickable_value)
-		Pros.PICKABLE.PICKABLE_MISILE:
-			#			if not Refs.current_level.level_type == Refs.current_level.LEVEL_TYPE.BATTLE:
+		Pfs.PICKABLE.PICKABLE_MISILE:
+			#			if not Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
 			#				player_stats["bullet_count"] = 0
 			#				player_stats["mina_count"] = 0
 			update_stat("misile_count", pickable_value)
-		Pros.PICKABLE.PICKABLE_MINA:
-			#			if not Refs.current_level.level_type == Refs.current_level.LEVEL_TYPE.BATTLE:
+		Pfs.PICKABLE.PICKABLE_MINA:
+			#			if not Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
 			#				player_stats["bullet_count"] = 0
 			#				player_stats["misile_count"] = 0
 			update_stat("mina_count", pickable_value)
-		Pros.PICKABLE.PICKABLE_SHIELD:
+		Pfs.PICKABLE.PICKABLE_SHIELD:
 			spawn_shield(pickable_value, pickable_time)
-		Pros.PICKABLE.PICKABLE_HEALTH:
+		Pfs.PICKABLE.PICKABLE_HEALTH:
 			player_stats["health"] = max_health
-		Pros.PICKABLE.PICKABLE_GAS:
+		Pfs.PICKABLE.PICKABLE_GAS:
 			update_stat("gas_count", pickable_value)
-		Pros.PICKABLE.PICKABLE_LIFE:
+		Pfs.PICKABLE.PICKABLE_LIFE:
 			update_stat("life", pickable_value)
-		Pros.PICKABLE.PICKABLE_NITRO:
+		Pfs.PICKABLE.PICKABLE_NITRO:
 			max_engine_power = max_engine_power * pickable_value
 			yield(get_tree().create_timer(pickable_time), "timeout")
 			max_engine_power = bolt_profile["max_engine_power"]
-		Pros.PICKABLE.PICKABLE_POINTS:
+		Pfs.PICKABLE.PICKABLE_POINTS:
 			update_bolt_points(pickable_value)
-		Pros.PICKABLE.PICKABLE_CASH:
+		Pfs.PICKABLE.PICKABLE_CASH:
 			update_stat("cash_count", pickable_value)
-		Pros.PICKABLE.PICKABLE_RANDOM:
-			var random_range: int = Pros.pickable_profiles.keys().size() - 1 # izloči random
+		Pfs.PICKABLE.PICKABLE_RANDOM:
+			var random_range: int = Pfs.pickable_profiles.keys().size() - 1 # izloči random
 			var random_pickable_index = randi() % random_range
-			var random_pickable_key = Pros.pickable_profiles.keys()[random_pickable_index]
+			var random_pickable_key = Pfs.pickable_profiles.keys()[random_pickable_index]
 			item_picked(random_pickable_key) # pick selected
 
 
@@ -658,7 +658,7 @@ func spawn_new_trail():
 	new_bolt_trail.modulate.a = bolt_trail_alpha
 	new_bolt_trail.z_index = trail_position.z_index
 	new_bolt_trail.width = 20
-	Refs.node_creation_parent.add_child(new_bolt_trail)
+	Rfs.node_creation_parent.add_child(new_bolt_trail)
 
 	# signal za deaktivacijo, če ni bila že prej
 	new_bolt_trail.connect("trail_is_exiting", self, "_on_trail_exiting")
@@ -668,14 +668,14 @@ func spawn_new_trail():
 
 func spawn_shield(shield_duration: float, shield_time: float):
 
-	var ShieldScene: PackedScene = Pros.ammo_profiles[Pros.AMMO.SHIELD]["scene"]
+	var ShieldScene: PackedScene = Pfs.ammo_profiles[Pfs.AMMO.SHIELD]["scene"]
 	var new_shield = ShieldScene.instance()
 	new_shield.global_position = bolt_global_position
 	new_shield.spawner = self # ime avtorja izstrelka
 	new_shield.scale = Vector2.ONE
 	new_shield.shield_time = shield_duration
 
-	Refs.node_creation_parent.add_child(new_shield)
+	Rfs.node_creation_parent.add_child(new_shield)
 
 
 func spawn_bolt_controller():
@@ -684,7 +684,7 @@ func spawn_bolt_controller():
 	bolt_controller.queue_free()
 
 	# opredelim controller sceno
-	var players_controller_profile: Dictionary = Pros.controller_profiles[player_profile["controller_type"]]
+	var players_controller_profile: Dictionary = Pfs.controller_profiles[player_profile["controller_type"]]
 	var BoltController: PackedScene = players_controller_profile["controller_scene"]
 
 	# spawn na vrh boltovega drevesa
@@ -721,7 +721,7 @@ func get_surfaces():
 
 	# če ni arej, ki so podlaga, določim gravel tip
 	if surfaces_under_bolt.empty():
-		current_top_suface_type = Pros.SURFACE.NONE
+		current_top_suface_type = Pfs.SURFACE.NONE
 	# če so, preverim istost nove podlage
 	else:
 		var new_top_surface: Area2D = surfaces_under_bolt[surfaces_under_bolt.size() - 1]
@@ -730,13 +730,13 @@ func get_surfaces():
 
 	# gravelšejk
 	#	match current_top_suface_type:
-	#		Pros.SURFACE.GRAVEL:
+	#		Pfs.SURFACE.GRAVEL:
 	#			animation_player.play("gravel_shake")
 	#		_:
 	#			animation_player.stop()
-#	printt ("SURF", Pros.SURFACE.keys()[current_top_suface_type])
+#	printt ("SURF", Pfs.SURFACE.keys()[current_top_suface_type])
 
-	var new_engine_power_factor: float = Pros.surface_type_profiles[current_top_suface_type]["engine_power_factor"]
+	var new_engine_power_factor: float = Pfs.surface_type_profiles[current_top_suface_type]["engine_power_factor"]
 	max_engine_power = bolt_profile["max_engine_power"] * new_engine_power_factor
 
 
@@ -755,7 +755,7 @@ func _on_bolt_activity_change(bolt_is_active: bool):
 			reset_bolt()
 			bolt_controller.set_process_input(false)
 			shutdown_engines() # nočeš ga skos slišat, če je multiplejer
-			Refs.game_manager.check_for_level_finished()
+			Rfs.game_manager.check_for_level_finished()
 		true:
 			bolt_controller.set_process_input(true)
 
@@ -835,7 +835,7 @@ func _on_Bolt_body_entered(body: Node2D) -> void:
 		new_collision_particles.amount = (bolt_velocity.length() + 15)/15 # količnik je korektor ... 15 dodam zato da amount ni nikoli nič
 		new_collision_particles.color = bolt_color
 		new_collision_particles.set_emitting(true)
-		Refs.node_creation_parent.add_child(new_collision_particles)
+		Rfs.node_creation_parent.add_child(new_collision_particles)
 
 	if active_trail:
 		active_trail.start_decay() # trail decay tween start
@@ -856,7 +856,7 @@ func _exit_tree() -> void: # pospravljanje morebitnih smeti
 	##	active_trail.start_decay() # trail decay tween start
 
 	self.is_active = false # zazih
-	if Refs.current_camera.follow_target == self:
-		Refs.current_camera.follow_target = null
+	if Rfs.current_camera.follow_target == self:
+		Rfs.current_camera.follow_target = null
 	if active_trail and not active_trail.in_decay:
 		active_trail.start_decay()

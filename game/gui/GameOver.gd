@@ -6,7 +6,7 @@ onready var content: Control = $Content
 
 func _ready() -> void:
 
-	Refs.game_over = self
+	Rfs.game_over = self
 	visible = false
 
 
@@ -39,7 +39,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
 		new_ranking_line.get_node("Bolt").text = bolt.player_name
-		new_ranking_line.get_node("Result").text = Mets.get_clock_time(bolt.player_stats["level_time"])
+		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.player_stats["level_time"])
 		results.add_child(new_ranking_line)
 
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
@@ -57,12 +57,12 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
 
 func _on_RestartBtn_pressed() -> void:
-	Refs.main_node.reload_game()
+	Rfs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
 	$Menu/QuitBtn.set_disabled(true)
-	Refs.main_node.game_out()
+	Rfs.main_node.game_out()
 
 
 func _on_QuitGameBtn_pressed() -> void:

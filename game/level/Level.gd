@@ -38,7 +38,7 @@ func _ready() -> void:
 
 	$__ScreenSize.hide() # debug
 
-	Refs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
+	Rfs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	for child in start_positions_node.get_children():
 		child.hide()
 
@@ -107,44 +107,44 @@ func set_level_objects():
 		var level_object_key: int = -1
 		match cell_index:
 			41: # brick ghost
-				level_object_key = Pros.LEVEL_OBJECT.BRICK_GHOST
+				level_object_key = Pfs.LEVEL_OBJECT.BRICK_GHOST
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			42: # brick magnet
-				level_object_key = Pros.LEVEL_OBJECT.BRICK_MAGNET
+				level_object_key = Pfs.LEVEL_OBJECT.BRICK_MAGNET
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			43: # brick target
-				level_object_key = Pros.LEVEL_OBJECT.BRICK_TARGET
+				level_object_key = Pfs.LEVEL_OBJECT.BRICK_TARGET
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			44: # brick bouncer
-				level_object_key = Pros.LEVEL_OBJECT.BRICK_BOUNCER
+				level_object_key = Pfs.LEVEL_OBJECT.BRICK_BOUNCER
 				spawn_tile_offset = brick_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 				for surrounding_cell in get_surrounding_cells(cell, true):
 					if not non_navigation_cell_positions.has(surrounding_cell):
 						non_navigation_cell_positions.append(surrounding_cell)
 			45: # brick light
-				level_object_key = Pros.LEVEL_OBJECT.FLATLIGHT
+				level_object_key = Pfs.LEVEL_OBJECT.FLATLIGHT
 				spawn_tile_offset = brick_tile_offset
 			6: # goal pillar
-				level_object_key = Pros.LEVEL_OBJECT.GOAL_PILLAR
+				level_object_key = Pfs.LEVEL_OBJECT.GOAL_PILLAR
 				spawn_tile_offset = pillar_tile_offset
 				non_navigation_cell_positions.append(cell_global_position)
 
 		if level_object_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)
-			var scene_to_spawn: PackedScene = Pros.level_object_profiles[level_object_key]["object_scene"]
+			var scene_to_spawn: PackedScene = Pfs.level_object_profiles[level_object_key]["object_scene"]
 			var new_object_scene = scene_to_spawn.instance()
 			new_object_scene.position = cell_global_position + spawn_tile_offset
 			new_object_scene.level_object_key = level_object_key
@@ -168,27 +168,27 @@ func set_pickables():
 		var pickable_key: int = -1
 		match cell_index:
 			14:
-				pickable_key = Pros.PICKABLE.PICKABLE_BULLET
+				pickable_key = Pfs.PICKABLE.PICKABLE_BULLET
 			15:
-				pickable_key = Pros.PICKABLE.PICKABLE_MISILE
+				pickable_key = Pfs.PICKABLE.PICKABLE_MISILE
 			35:
-				pickable_key = Pros.PICKABLE.PICKABLE_MINA
+				pickable_key = Pfs.PICKABLE.PICKABLE_MINA
 			17:
-				pickable_key = Pros.PICKABLE.PICKABLE_SHIELD
+				pickable_key = Pfs.PICKABLE.PICKABLE_SHIELD
 			18:
-				pickable_key = Pros.PICKABLE.PICKABLE_HEALTH
+				pickable_key = Pfs.PICKABLE.PICKABLE_HEALTH
 			19:
-				pickable_key = Pros.PICKABLE.PICKABLE_LIFE
+				pickable_key = Pfs.PICKABLE.PICKABLE_LIFE
 			20:
-				pickable_key = Pros.PICKABLE.PICKABLE_NITRO
+				pickable_key = Pfs.PICKABLE.PICKABLE_NITRO
 			27:
-				pickable_key = Pros.PICKABLE.PICKABLE_GAS
+				pickable_key = Pfs.PICKABLE.PICKABLE_GAS
 			30:
-				pickable_key = Pros.PICKABLE.PICKABLE_POINTS
+				pickable_key = Pfs.PICKABLE.PICKABLE_POINTS
 			31:
-				pickable_key = Pros.PICKABLE.PICKABLE_CASH
+				pickable_key = Pfs.PICKABLE.PICKABLE_CASH
 			22:
-				pickable_key = Pros.PICKABLE.PICKABLE_RANDOM
+				pickable_key = Pfs.PICKABLE.PICKABLE_RANDOM
 
 		if pickable_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)
@@ -263,12 +263,12 @@ func get_surrounding_cells(surrounded_cell: Vector2, return_global_positions: bo
 
 func _on_FinishLine_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Refs.group_bolts):
-		Refs.game_manager.bolt_across_finish_line(body)
+	if body.is_in_group(Rfs.group_bolts):
+		Rfs.game_manager.bolt_across_finish_line(body)
 
 
 func _on_Checkpoint_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Refs.group_bolts):
-		if not Refs.game_manager.bolts_checked.has(body):
-			Refs.game_manager.bolts_checked.append(body)
+	if body.is_in_group(Rfs.group_bolts):
+		if not Rfs.game_manager.bolts_checked.has(body):
+			Rfs.game_manager.bolts_checked.append(body)

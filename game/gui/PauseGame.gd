@@ -5,7 +5,7 @@ extends Control
 func _input(event: InputEvent) -> void:
 
 
-#	if Refs.game_manager.game_on:
+#	if Rfs.game_manager.game_on:
 		if Input.is_action_just_pressed("ui_cancel"):
 			if not visible:
 				pause_game()
@@ -23,7 +23,7 @@ func pause_game():
 
 	get_viewport().set_disable_input(true) # anti dablklik
 
-	Refs.game_manager.game_state = Refs.game_manager.GAME_STATE.PAUSED
+	Rfs.game_manager.game_state = Rfs.game_manager.GAME_STATE.PAUSED
 
 	visible = true
 
@@ -49,7 +49,7 @@ func play_on():
 	fade_out_tween.tween_callback(get_tree(), "set_pause", [false])
 	fade_out_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
 	yield(fade_out_tween, "finished")
-	Refs.game_manager.game_state = Refs.game_manager.GAME_STATE.ON
+	Rfs.game_manager.game_state = Rfs.game_manager.GAME_STATE.ON
 
 
 # MENU ---------------------------------------------------------------------------------------------
@@ -63,22 +63,22 @@ func _on_PlayBtn_pressed() -> void:
 func _on_RestartBtn_pressed() -> void:
 
 #	Global.sound_manager.play_gui_sfx("btn_confirm")
-	Refs.sound_manager.stop_music()
+	Rfs.sound_manager.stop_music()
 
-#	Refs.game_manager.stop_game_elements()
+#	Rfs.game_manager.stop_game_elements()
 	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
 
-	Refs.main_node.reload_game()
+	Rfs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
 
 #	Global.game_manager.stop_game_elements()
-	Refs.sound_manager.stop_music()
+	Rfs.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
-	Refs.game_manager.game_state = Refs.game_manager.GAME_STATE.OFF
-	Refs.game_manager.game_on = false
-	Refs.main_node.game_out()
+	Rfs.game_manager.game_state = Rfs.game_manager.GAME_STATE.OFF
+	Rfs.game_manager.game_on = false
+	Rfs.main_node.game_out()
 
 
 # SETTINGS BTNZ ---------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ func _on_QuitBtn_pressed() -> void:
 #		Global.sound_manager.play_gui_sfx("btn_cancel")
 #		Global.sound_manager.game_music_set_to_off = true
 #		Global.sound_manager.stop_music("game_music")
-#		Refs.sound_manager.stop_music()
+#		Rfs.sound_manager.stop_music()
 
 
 

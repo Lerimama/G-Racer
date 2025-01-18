@@ -41,7 +41,7 @@ onready var MisileHit = preload("res://game/weapons/ammo/misile/MisileHit.tscn")
 onready var MisileTrail = preload("res://game/weapons/ammo/misile/MisileTrail.tscn")
 onready var DropParticles = preload("res://game/weapons/ammo/misile/MisileDropParticles.tscn")
 
-onready var weapon_profile: Dictionary = Pros.ammo_profiles[Pros.AMMO.MISILE]
+onready var weapon_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.MISILE]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var max_speed: float = weapon_profile["speed"]
@@ -59,7 +59,7 @@ func _ready() -> void:
 
 	randomize()
 
-	add_to_group(Refs.group_misiles)
+	add_to_group(Rfs.group_misiles)
 #	$Sprite.modulate = spawner_color
 	collision_shape.set_deferred("disabled", true) # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
 	elevation = spawner.elevation + 7 # PRO rabi jo senčka
@@ -77,7 +77,7 @@ func _ready() -> void:
 	new_misile_trail.gradient.colors[2] = spawner_color
 	new_misile_trail.z_index = trail_position.z_index - 1
 	new_misile_trail.modulate.a = 0
-	Refs.node_creation_parent.add_child(new_misile_trail)
+	Rfs.node_creation_parent.add_child(new_misile_trail)
 
 
 func _physics_process(delta: float) -> void:
@@ -168,7 +168,7 @@ func dissarm():
 		new_drop_particles.color = spawner_color
 		new_drop_particles.z_index = drop_position.z_index
 		new_drop_particles.set_emitting(true)
-		Refs.node_creation_parent.add_child(new_drop_particles)
+		Rfs.node_creation_parent.add_child(new_drop_particles)
 
 		yield(get_tree().create_timer(0.15), "timeout")
 		queue_free()
@@ -191,14 +191,14 @@ func explode():
 	new_hit_fx.get_node("ExplosionParticles").set_emitting(true)
 	new_hit_fx.get_node("SmokeParticles").set_emitting(true)
 	new_hit_fx.get_node("BlastAnimated").play()
-	Refs.node_creation_parent.add_child(new_hit_fx)
+	Rfs.node_creation_parent.add_child(new_hit_fx)
 
 	queue_free()
 
 
 func _on_HommingArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Refs.group_bolts) and body != spawner:
+	if body.is_in_group(Rfs.group_bolts) and body != spawner:
 		if not is_homming:
 			$Sounds/MisileDetect.play()
 		is_homming = true

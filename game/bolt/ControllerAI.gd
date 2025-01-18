@@ -16,8 +16,8 @@ var ai_target: Node2D = null
 var ai_navigation_line: Line2D
 var level_navigation_positions: Array # poda GM ob spawnu
 onready var navigation_agent = $NavigationAgent2D
-onready var level_navigation_target_node: Position2D = Refs.current_level.level_navigation.nav_position_target
-onready var level_navigation: NavigationPolygonInstance = Refs.current_level.level_navigation
+onready var level_navigation_target_node: Position2D = Rfs.current_level.level_navigation.nav_position_target
+onready var level_navigation: NavigationPolygonInstance = Rfs.current_level.level_navigation
 
 # motion
 var ai_navigation_target_range: Array = [600, 800] # min dist 0 pomeni iskanje najbližja možna
@@ -62,11 +62,11 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed("no3"):
 		wanted_speed = 900
 	if Input.is_action_just_pressed("no4"): # follow leader
-		controlled_bolt.nitro_on = true
-#		wanted_speed = -1
+		wanted_speed = -1
+#		controlled_bolt.nitro_on = true
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, level_navigation.get_local_mouse_position())
-		ai_target = Mets.spawn_indikator(nav_path_points[0], Color.blue, 0, Refs.node_creation_parent)
+		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
 		navigation_agent.set_target_location(nav_path_points[0])
 		ai_state = AI_STATE.MOUSE_CLICK
 		current_mouse_follow_point = nav_path_points[nav_path_points.size()-1]
@@ -75,10 +75,10 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 
 	randomize()
-	controlled_bolt.add_to_group(Refs.group_ai)
+	controlled_bolt.add_to_group(Rfs.group_ai)
 
 	ai_navigation_line = Line2D.new()
-	Refs.node_creation_parent.add_child(ai_navigation_line)
+	Rfs.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
 	ai_navigation_line.default_color = Color.red
 	ai_navigation_line.z_index = 10
@@ -127,7 +127,7 @@ func _physics_process(delta: float) -> void:
 			controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
 
 
-func _manipulate_bolt_speed(speed_change_rate: float = 0.1):
+func _manipulate_speed(speed_change_rate: float = 0.1):
 
 	if wanted_speed == -1:
 		#		controlled_bolt.engine_power = controlled_bolt.max_engine_power
@@ -156,8 +156,8 @@ func _state_machine(delta: float):
 				target_prev_position = navigation_agent.get_target_location()
 				var bolt_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(bolt_tracker_position)
-				#			Mets.spawn_indikator(bolt_tracker_position, Color.white, controlled_bolt.rotation, Refs.node_creation_parent)
-			if not _manipulate_bolt_speed():
+				#			Mts.spawn_indikator(bolt_tracker_position, Color.white, controlled_bolt.rotation, Rfs.node_creation_parent)
+			if not _manipulate_speed():
 				controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.SEARCH: # vozi po točkah navigacije in išče novo tarčo, dokler je ne najde
@@ -244,7 +244,7 @@ func _update_vision():
 				max_collision_distance_position = controlled_bolt.global_position
 			1: # left
 				max_collision_distance_position = vision_ray_left.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
-				Mets.spawn_indikator(max_collision_distance_position, Color.pink)
+				Mts.spawn_indikator(max_collision_distance_position, Color.pink)
 				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
 				rotation_adapt = -1
 				#				printt("turning left")
@@ -252,7 +252,7 @@ func _update_vision():
 				max_collision_distance_position = vision_ray_right.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
 				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
 				rotation_adapt = 1
-				Mets.spawn_indikator(max_collision_distance_position, Color.orange)
+				Mts.spawn_indikator(max_collision_distance_position, Color.orange)
 				#				printerr("turning right")
 
 		return max_collision_distance_position
@@ -316,7 +316,7 @@ func _get_better_targets(current_target: Node2D):
 	# naberem samo vidne
 	var targets_in_sight: Array = []
 	for legit_target in legit_targets:
-		if not Mets.get_raycast_collision_to_position(scanning_ray, legit_target.global_position):
+		if not Mts.get_raycast_collision_to_position(scanning_ray, legit_target.global_position):
 			targets_in_sight.append(legit_target)
 
 	# dobim top rangirano tarčo
@@ -347,10 +347,10 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 	var all_nav_pos_distances: Array = [] # zaloga, če je ne najde na distanci
 
 	if distance_range[0] > 0:
-		#		if not Mets.all_indikators_spawned.empty():
-		#			for n in Mets.all_indikators_spawned:
+		#		if not Mts.all_indikators_spawned.empty():
+		#			for n in Mts.all_indikators_spawned:
 		#				n.queue_free()
-		#			Mets.all_indikators_spawned.clear()
+		#			Mts.all_indikators_spawned.clear()
 		var current_min_cell_distance: float = 0
 		var current_min_cell_angle: float = 0
 
@@ -364,15 +364,15 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 					var current_angle_to_bolt_deg: float = rad2deg(controlled_bolt.get_angle_to(nav_position))
 					# najbolj spredaj
 					if current_angle_to_bolt_deg < 30 and current_angle_to_bolt_deg > - 30 :
-						front_cells_for_random_selection.append(nav_position) # Mets.spawn_indikator(nav_position, Color.yellow, controlled_bolt.rotation, Refs.node_creation_parent)
+						front_cells_for_random_selection.append(nav_position) # Mts.spawn_indikator(nav_position, Color.yellow, controlled_bolt.rotation, Rfs.node_creation_parent)
 					# na straneh
 					elif current_angle_to_bolt_deg < 90 and current_angle_to_bolt_deg > -90 :
-						side_cells_for_random_selection.append(nav_position) # Mets.spawn_indikator(nav_position, Color.blue, controlled_bolt.rotation, Refs.node_creation_parent)
+						side_cells_for_random_selection.append(nav_position) # Mts.spawn_indikator(nav_position, Color.blue, controlled_bolt.rotation, Rfs.node_creation_parent)
 					# ni v razponu kota
 					else:
-						all_cells_for_random_selection.append(nav_position) # Mets.spawn_indikator(nav_position, Color.green, controlled_bolt.rotation, Refs.node_creation_parent)
+						all_cells_for_random_selection.append(nav_position) # Mts.spawn_indikator(nav_position, Color.green, controlled_bolt.rotation, Rfs.node_creation_parent)
 				else:
-					all_cells_for_random_selection.append(nav_position) # Mets.spawn_indikator(nav_position, Color.turquoise, 0, Refs.node_creation_parent)
+					all_cells_for_random_selection.append(nav_position) # Mts.spawn_indikator(nav_position, Color.turquoise, 0, Rfs.node_creation_parent)
 
 		# žrebam ... najprej iz sprednjih
 		if in_front:
@@ -415,7 +415,7 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 	#	keep_on_distance = true
 	#	be_aggressive = false
 
-	var any_collider = Mets.get_raycast_collision_to_position(target_ray, react_target.global_position)
+	var any_collider = Mts.get_raycast_collision_to_position(target_ray, react_target.global_position)
 
 	var target_in_sight: bool = false
 	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():
@@ -483,14 +483,14 @@ func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # 
 		#		printt ("game on SMS", new_game_state, level_settings)
 		match level_settings["level_type"]: # enums so v levelu
 			"RACING":
-				Refs.current_level.level_type = Refs.current_level.LEVEL_TYPE.RACE
+				Rfs.current_level.level_type = Rfs.current_level.LEVEL_TYPE.RACE
 				self.ai_state = AI_STATE.RACE
 			"BATTLE":
-				Refs.current_level.level_type = Refs.current_level.LEVEL_TYPE.BATTLE
+				Rfs.current_level.level_type = Rfs.current_level.LEVEL_TYPE.BATTLE
 				self.ai_state = AI_STATE.SEARCH
 			"RACE_GOAL":
-				Refs.current_level.level_type = Refs.current_level.LEVEL_TYPE.RACE_GOAL
-				current_game_goals = Refs.current_level.temp_level_goals.duplicate()
+				Rfs.current_level.level_type = Rfs.current_level.LEVEL_TYPE.RACE_GOAL
+				current_game_goals = Rfs.current_level.temp_level_goals.duplicate()
 				self.ai_state = AI_STATE.RACE_TO_GOAL
 	else:
 		#		printt ("game on SMS", new_game_state)
@@ -521,7 +521,7 @@ func _on_NavigationAgent2D_target_reached() -> void:
 
 	elif ai_state == AI_STATE.MOUSE_CLICK:
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, current_mouse_follow_point)
-		ai_target = Mets.spawn_indikator(nav_path_points[0], Color.blue, 0, Refs.node_creation_parent)
+		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
 		navigation_agent.set_target_location(nav_path_points[0])
 		ai_state = AI_STATE.MOUSE_CLICK
 
@@ -569,7 +569,7 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 #	var target_closeup_breaking_factor: float = 1
 ##		target_ray.look_at(ract_target.global_position)
 ##		target_ray.cast_to.x = target_ray.global_position.distance_to(ract_target.global_position)
-#	var any_collider = Mets.get_raycast_collision_to_position(target_ray, react_target.global_position)
+#	var any_collider = Mts.get_raycast_collision_to_position(target_ray, react_target.global_position)
 #	# ve kje je tarča
 #	var target_in_sight: bool = false
 #	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():

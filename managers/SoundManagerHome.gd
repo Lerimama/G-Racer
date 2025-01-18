@@ -14,7 +14,7 @@ onready var game_music: Node2D = $GameMusic
 
 func _ready() -> void:
 
-	Refs.sound_manager = self
+	Rfs.sound_manager = self
 	randomize()
 
 
@@ -30,8 +30,8 @@ func play_sfx(effect_for: String):
 		"stray_step":
 			$GameSfx/StraySlide.play()
 		"blinking": # GM na strays spawn, ker se bolje sliši
-			Mets.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
-			Mets.get_random_member($GameSfx/BlinkingStatic).play()
+			Mts.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
+			Mts.get_random_member($GameSfx/BlinkingStatic).play()
 		"thunder_strike": # intro in GM na strays spawn
 			$GameSfx/Burst.play()
 
@@ -58,7 +58,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			Mets.get_random_member($GuiSfx/Inputs/Typing).play()
+			Mts.get_random_member($GuiSfx/Inputs/Typing).play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":
@@ -84,13 +84,13 @@ func play_music():
 	# set track
 	var current_track: AudioStreamPlayer
 
-#	if Refs.game_manager.level_settings["level"] == Sets.Levels.NITRO: # get level name drugače
+#	if Rfs.game_manager.level_settings["level"] == Sts.Levels.NITRO: # get level name drugače
 #		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
 #		current_track = game_music.get_node("Nitro")
 #	else:
 	current_track = game_music.get_child(currently_playing_track_index - 1)
 
-	# Mets.sound_play_fade_in(game_music, 0, 2)
+	# Mts.sound_play_fade_in(game_music, 0, 2)
 	current_track.play()
 
 
@@ -99,7 +99,7 @@ func stop_music():
 
 	for music in game_music.get_children():
 		if music.is_playing():
-			Mets.sound_fade_out_and_reset(music, 2)
+			Mts.sound_fade_out_and_reset(music, 2)
 
 #	match stop_reason:
 #		"game_music":

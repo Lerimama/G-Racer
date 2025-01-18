@@ -31,7 +31,7 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	Refs.sound_manager = self
+	Rfs.sound_manager = self
 	randomize()
 
 	# če je bus na štartu setan na mute je mute
@@ -93,7 +93,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			Mets.get_random_member($GuiSfx/Inputs/Typing).play()
+			Mts.get_random_member($GuiSfx/Inputs/Typing).play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":
@@ -115,7 +115,7 @@ func play_music():
 
 	# set track
 	var current_track: AudioStreamPlayer
-#	if Refs.game_manager.level_settings["level"] == Sets.Levels.RACE_NITRO: # get level name drugače
+#	if Rfs.game_manager.level_settings["level"] == Sts.Levels.RACE_NITRO: # get level name drugače
 #		current_track = game_music.get_node("Nitro")
 #	else:
 #		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro
@@ -130,7 +130,7 @@ func stop_music():
 
 	for music_track in game_music.get_children():
 		if music_track.is_playing():
-			Mets.sound_fade_out_and_reset(music, 2)
+			Mts.sound_fade_out_and_reset(music, 2)
 
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov
@@ -154,5 +154,5 @@ func skip_track():
 			#			fade_out.tween_callback(music_track, "stop")
 			#			fade_out.tween_callback(music_track, "set_volume_db", [current_music_volume]) # reset glasnosti
 			#			fade_out.tween_callback(self, "play_music", ["game_music"])
-			yield(Mets.sound_fade_out_and_reset(music, 2), "fadeout_finished")
+			yield(Mts.sound_fade_out_and_reset(music, 2), "fadeout_finished")
 			play_music()

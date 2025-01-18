@@ -45,7 +45,7 @@ func _change_enabled(new_enabled):
 
 func _ready() -> void:
 
-	add_to_group(Refs.group_shadows)
+	add_to_group(Rfs.group_shadows)
 
 	# nodes setup
 	if shadow_caster_paths:
@@ -56,11 +56,11 @@ func _ready() -> void:
 			shadow_owner = get_parent()
 
 		# per game
-		if Refs.game_manager:
-			shadow_rotation_deg = Refs.game_manager.game_shadows_rotation_deg
-			shadows_color = Refs.game_manager.game_shadows_color
-			shadows_alpha = Refs.game_manager.game_shadows_alpha
-			shadows_length_factor = Refs.game_manager.game_shadows_length_factor
+		if Rfs.game_manager:
+			shadow_rotation_deg = Rfs.game_manager.game_shadows_rotation_deg
+			shadows_color = Rfs.game_manager.game_shadows_color
+			shadows_alpha = Rfs.game_manager.game_shadows_alpha
+			shadows_length_factor = Rfs.game_manager.game_shadows_length_factor
 
 		# per owner
 		shadow_owner_global_rotation_deg = shadow_owner.global_rotation_degrees

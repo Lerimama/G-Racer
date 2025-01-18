@@ -32,25 +32,25 @@ var debug_max_zoom_out: = false
 func _ready():
 #	print("KAMERA")
 
-	if Refs.current_camera == null:
-		Refs.current_camera = self
+	if Rfs.current_camera == null:
+		Rfs.current_camera = self
 	zoom = Vector2.ONE
 
 
 func _process(delta: float) -> void:
 
-	if Refs.current_camera == self:
+	if Rfs.current_camera == self:
 		if not test_ui.test_view_on:
 			if follow_target:
 				position = follow_target.global_position
 
-				if Refs.game_manager.game_settings["max_zoomout"]:
+				if Rfs.game_manager.game_settings["max_zoomout"]:
 					zoom.x = camera_max_zoom * 2# OPT ... zoom podvajanje
-				elif Refs.game_manager.game_settings["max_zoomin"]:
+				elif Rfs.game_manager.game_settings["max_zoomin"]:
 					zoom.x = camera_max_zoom * 0.32# OPT ... zoom podvajanje
 				else:
 					# zoom
-					if follow_target.is_in_group(Refs.group_bolts) and not follow_target.bolt_velocity == null:
+					if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.bolt_velocity == null:
 						var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
 						# če je nad min limit
 						if follow_target_speed > min_zoom_target_speed:
@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
 #			if not debug_max_zoom_out:
 			zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
 			# debug
-			if not Refs.game_manager.game_settings["max_zoomout"] and not Refs.game_manager.game_settings["max_zoomin"]:
+			if not Rfs.game_manager.game_settings["max_zoomout"] and not Rfs.game_manager.game_settings["max_zoomin"]:
 				zoom.x = clamp(zoom.x, camera_min_zoom, camera_max_zoom)
 			zoom.y = zoom.x
 
@@ -80,7 +80,7 @@ func _process(delta: float) -> void:
 func _on_follow_target_change(new_follow_target):
 
 	if not new_follow_target == null:
-		if new_follow_target.is_in_group(Refs.group_bolts) or Refs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
+		if new_follow_target.is_in_group(Rfs.group_bolts) or Rfs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
 			var transition_time: float = 2
 			var transition_tween = get_tree().create_tween()
 			transition_tween.tween_property(self, "position", new_follow_target.position, transition_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
@@ -100,7 +100,7 @@ func shake_camera(shake_power: float):
 
 func set_camera_limits():
 
-	if Refs.game_manager.game_settings["max_zoomout"] or Refs.game_manager.game_settings["max_zoomin"]:
+	if Rfs.game_manager.game_settings["max_zoomout"] or Rfs.game_manager.game_settings["max_zoomin"]:
 		 return
 
 	var corner_TL: float
@@ -108,7 +108,7 @@ func set_camera_limits():
 	var corner_BL: float
 	var corner_BR: float
 
-	var limits_rectangle: Control = Refs.current_level.camera_limits_rect
+	var limits_rectangle: Control = Rfs.current_level.camera_limits_rect
 	var limits_rectangle_position: Vector2 = limits_rectangle.rect_position
 	corner_TL = limits_rectangle.rect_position.x
 	corner_TR = limits_rectangle.rect_size.x

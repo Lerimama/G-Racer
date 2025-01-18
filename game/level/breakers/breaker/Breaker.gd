@@ -147,7 +147,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 	break_origin_global = intersection_point + global_position
 
 	# opredelim velikost prilagodim hit polygon
-	var influence_radius_per_unit: float = influence_radius / Sets.unit_one
+	var influence_radius_per_unit: float = influence_radius / Sts.unit_one
 	var simplify_round_count: int = 0
 	if influence_radius_per_unit < 0.5:
 		current_break_size = BREAK_SIZE.XSMALL
@@ -166,12 +166,12 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 		simplify_round_count = 1
 
 	var simple_hit_polygon = operator.simplify_outline(hit_by_polygon, simplify_round_count)
-#	printt ("rad", influence_radius_per_unit, influence_radius / Sets.unit_one)
+#	printt ("rad", influence_radius_per_unit, influence_radius / Sts.unit_one)
 
 	#		0:
 	#			pass
 
-		#	Mets.spawn_line_2d(intersection_vector_start + position, intersection_vector_end + position, get_parent())
+		#	Mts.spawn_line_2d(intersection_vector_start + position, intersection_vector_end + position, get_parent())
 
 	# break
 	var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(simple_hit_polygon, break_origin_global, hit_shape_scale)

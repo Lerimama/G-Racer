@@ -35,7 +35,7 @@ var target_ray_angle_limit: float = 30
 var target_ray_seek_length: float = 320
 var target_ray_rotation_speed: float = 1
 var braking_velocity: Vector2
-onready var level_navigation_target: NavigationPolygonInstance = Refs.current_level.level_navigation
+onready var level_navigation_target: NavigationPolygonInstance = Rfs.current_level.level_navigation
 
 # debug
 onready var direction_line: Line2D = $DirectionLine
@@ -52,7 +52,7 @@ var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenu
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"): # idle
-		Refs.temp_object.navigation_obstacle_2d.set_navigation(navigation_agent)
+		Rfs.temp_object.navigation_obstacle_2d.set_navigation(navigation_agent)
 #		set_ai_target(null)
 	if Input.is_action_just_pressed("no2"): # race
 		set_ai_target(controlled_bolt.bolt_tracker)
@@ -60,10 +60,10 @@ func _input(event: InputEvent) -> void:
 		set_ai_target(level_navigation_target)
 	if Input.is_action_just_pressed("no4"): # follow leader
 		set_ai_target(controlled_bolt.bolt_tracker)
-#		set_ai_target(Refs.game_manager.camera_leader)
+#		set_ai_target(Rfs.game_manager.camera_leader)
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var ind_pos = level_navigation_target._update_navigation_path(controlled_bolt.bolt_global_position, level_navigation_target.get_local_mouse_position())
-		var indi = Mets.spawn_indikator(ind_pos[0], Color.blue, 0, Refs.node_creation_parent)
+		var indi = Mts.spawn_indikator(ind_pos[0], Color.blue, 0, Rfs.node_creation_parent)
 #		navigation_agent.set_target_location(level_navigation_target.get_local_mouse_position())
 		set_ai_target(indi)
 		MOUSE_FOLLOW_pos = ind_pos[ind_pos.size()-1]
@@ -75,11 +75,11 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 
 	randomize()
-	controlled_bolt.add_to_group(Refs.group_ai)
+	controlled_bolt.add_to_group(Rfs.group_ai)
 	controlled_bolt.current_motion = controlled_bolt.MOTION.FWD # debug preset motion
 
 	ai_navigation_line = Line2D.new()
-	Refs.node_creation_parent.add_child(ai_navigation_line)
+	Rfs.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
 	ai_navigation_line.default_color = Color.red
 	ai_navigation_line.z_index = 10
@@ -98,7 +98,7 @@ func _physics_process(delta: float) -> void:
 		ai_state_machine(delta)
 
 		# dokler ni igre je in kadar je input off je OFF, drugače je akcija
-		if Refs.game_manager.game_on:
+		if Rfs.game_manager.game_on:
 			if is_processing_input():
 				if ai_target == null and not current_ai_state == AI_STATE.OFF: # setanje tarče za konec dissaraya
 					set_ai_target(level_navigation_target)
@@ -148,7 +148,7 @@ func ai_state_machine(delta: float): # !!! AI_STATE se seta samo s tarčami
 		AI_STATE.RACE: # šiba po najbližji poti do tarče ... target = position tracker
 #			update_vision()
 			var racing_line_point_position: Vector2 = get_racing_position(ai_target)
-			Mets.spawn_indikator(racing_line_point_position, Color.white, controlled_bolt.rotation, Refs.node_creation_parent)
+			Mts.spawn_indikator(racing_line_point_position, Color.white, controlled_bolt.rotation, Rfs.node_creation_parent)
 
 			navigation_agent.set_target_location(racing_line_point_position)
 #			navigation_agent.set_target_location(ai_target.global_position)
@@ -180,7 +180,7 @@ func ai_state_machine(delta: float): # !!! AI_STATE se seta samo s tarčami
 		AI_STATE.FOLLOW: # target = bolt oz. karkoli drugega .... sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			# apdejt pozicije tarče, če se premika
 			var ai_target_global_position: Vector2 = ai_target.global_position
-			if ai_target.is_in_group(Refs.group_bolts):
+			if ai_target.is_in_group(Rfs.group_bolts):
 				ai_target_global_position =  ai_target.bolt_global_position
 #			if not navigation_agent.get_target_location() == ai_target.bolt_global_position:
 #				navigation_agent.set_target_location(ai_target.bolt_global_position)
@@ -231,7 +231,7 @@ func ai_state_machine(delta: float): # !!! AI_STATE se seta samo s tarčami
 		AI_STATE.MOUSE_FOLLOW: # target = bolt oz. karkoli drugega .... sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			# apdejt pozicije tarče, če se premika
 			var ai_target_global_position: Vector2 = ai_target.global_position
-			if ai_target.is_in_group(Refs.group_bolts):
+			if ai_target.is_in_group(Rfs.group_bolts):
 				ai_target_global_position =  ai_target.bolt_global_position
 #			if not navigation_agent.get_target_location() == ai_target.bolt_global_position:
 #				navigation_agent.set_target_location(ai_target.bolt_global_position)
@@ -359,7 +359,7 @@ func get_possible_targets(): # SEARCH
 	#	if player_stats["bullet_count"] == 0 and player_stats["misile_count"] == 0:
 	#		for target in all_possible_targets:
 	#			if "pickable_key" in target:
-	#				if target.pickable_key == Pros.AMMO.BULLET or target.pickable_key == Pros.AMMO.MISILE:
+	#				if target.pickable_key == Pfs.AMMO.BULLET or target.pickable_key == Pfs.AMMO.MISILE:
 	#					all_possible_targets.push_front(target)
 	# rangiram po distanci
 
@@ -380,7 +380,7 @@ func get_possible_targets(): # SEARCH
 	#		detect_ray.cast_to.x = detect_ray_length
 	#		if detect_ray.is_colliding() and detect_ray.get_collider() == level_navigation_target:
 	#			targets_behind_wall.append(possible_target)
-	#			# printt("walled", Pros.PICKABLE.keys()[possible_target.pickable_key])
+	#			# printt("walled", Pfs.PICKABLE.keys()[possible_target.pickable_key])
 
 
 
@@ -388,7 +388,7 @@ func get_possible_targets(): # SEARCH
 		all_possible_targets.erase(target_behind_wall)
 
 	# if not all_possible_targets.empty():
-	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pros.PICKABLE.keys()[all_possible_targets[0].pickable_key])
+	#	printt("all targets %s" % all_possible_targets.size(), "walled targets %s" % targets_behind_wall.size(), "selected target %s" % Pfs.PICKABLE.keys()[all_possible_targets[0].pickable_key])
 
 	return all_possible_targets
 
@@ -405,7 +405,7 @@ func sort_objects_by_ai_rank(stuff_1, stuff_2): # ascending ... večji index je 
 func get_nav_position_on_distance(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
 
 	if level_navigation_positions.empty():
-		print("empty", level_navigation_positions.size(), Refs.current_level.navigation_cells_positions.size(), Refs.current_level.level_navigation.level_navigation_points.size())
+		print("empty", level_navigation_positions.size(), Rfs.current_level.navigation_cells_positions.size(), Rfs.current_level.level_navigation.level_navigation_points.size())
 		return
 	var selected_nav_position: Vector2
 	var all_cells_for_random_selection: Array = []
@@ -423,10 +423,10 @@ func get_nav_position_on_distance(from_position: Vector2, distance_range: Array 
 	var current_min_cell_distance: float = 0
 	var current_min_cell_angle: float = 0
 
-	if not Mets.all_indikators_spawned.empty():
-		for n in Mets.all_indikators_spawned:
+	if not Mts.all_indikators_spawned.empty():
+		for n in Mts.all_indikators_spawned:
 			n.queue_free()
-		Mets.all_indikators_spawned.clear()
+		Mts.all_indikators_spawned.clear()
 
 	for nav_position in level_navigation_positions:
 		var current_cell_distance: float = nav_position.distance_to(from_position)
@@ -436,23 +436,23 @@ func get_nav_position_on_distance(from_position: Vector2, distance_range: Array 
 				var vector_to_position: Vector2 = nav_position - controlled_bolt.bolt_global_position
 				var current_angle_to_bolt_deg: float = rad2deg(controlled_bolt.get_angle_to(nav_position))
 				# če je najbolj spredaj
-				#				var indi = Mets.spawn_indikator(nav_position, global_rotation, Refs.node_creation_parent, false)
+				#				var indi = Mts.spawn_indikator(nav_position, global_rotation, Rfs.node_creation_parent, false)
 				if current_angle_to_bolt_deg < 30  and current_angle_to_bolt_deg > - 30 :
 					front_cells_for_random_selection.append(nav_position)
 #					# debug ind
-					var indi = Mets.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Refs.node_creation_parent)
+					var indi = Mts.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Rfs.node_creation_parent)
 #					indi.modulate = Color.yellow
 				# če je na straneh
 				elif current_angle_to_bolt_deg < 90  and current_angle_to_bolt_deg > -90 :
 					side_cells_for_random_selection.append(nav_position)
 					#					# debug ind
-					#					var indi = Mets.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Refs.node_creation_parent)
+					#					var indi = Mts.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Rfs.node_creation_parent)
 					#					indi.modulate = Color.blue
 				# če ni v razponu kota
 				else:
 					all_cells_for_random_selection.append(nav_position)
 					#					# debug ind
-					#					var indi = Mets.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Refs.node_creation_parent)
+					#					var indi = Mts.spawn_indikator(nav_position, Color.red, controlled_bolt.rotation, Rfs.node_creation_parent)
 					#					indi.modulate = Color.green
 			else:
 				# random select, samo nabiram za žrebanje,
@@ -469,11 +469,11 @@ func get_nav_position_on_distance(from_position: Vector2, distance_range: Array 
 		in_front = false
 	if in_front:
 		if front_cells_for_random_selection.empty():
-			selected_nav_position = Mets.get_random_member(side_cells_for_random_selection)
+			selected_nav_position = Mts.get_random_member(side_cells_for_random_selection)
 		else:
-			selected_nav_position = Mets.get_random_member(front_cells_for_random_selection)
+			selected_nav_position = Mts.get_random_member(front_cells_for_random_selection)
 	elif random_select:
-		selected_nav_position = Mets.get_random_member(all_cells_for_random_selection)
+		selected_nav_position = Mts.get_random_member(all_cells_for_random_selection)
 
 	return selected_nav_position
 
@@ -542,7 +542,7 @@ func _on_NavigationAgent2D_navigation_finished() -> void:
 #
 #	elif current_ai_state == AI_STATE.MOUSE_FOLLOW:
 #		var ind_pos = level_navigation_target._update_navigation_path(controlled_bolt.bolt_global_position, level_navigation_target.get_local_mouse_position())
-#		var indi = Mets.spawn_indikator(ind_pos[0], Color.blue, 0, Refs.node_creation_parent)
+#		var indi = Mts.spawn_indikator(ind_pos[0], Color.blue, 0, Rfs.node_creation_parent)
 ##		navigation_agent.set_target_location(level_navigation_target.get_local_mouse_position())
 ##		set_ai_target(indi)
 #		set_ai_target(indi)
@@ -553,8 +553,8 @@ func _on_NavigationAgent2D_target_reached() -> void:
 #	current_ai_state = AI_STATE.MOUSE_FOLLOW
 	if current_ai_state == AI_STATE.MOUSE_FOLLOW:
 		var ind_pos = level_navigation_target._update_navigation_path(controlled_bolt.bolt_global_position, MOUSE_FOLLOW_pos)
-		var indi = Mets.spawn_indikator(ind_pos[0], Color.blue, 0, Refs.node_creation_parent)
-	#	var indi = Mets.spawn_indikator(level_navigation_target.get_local_mouse_position(), Color.blue, 0, Refs.node_creation_parent)
+		var indi = Mts.spawn_indikator(ind_pos[0], Color.blue, 0, Rfs.node_creation_parent)
+	#	var indi = Mts.spawn_indikator(level_navigation_target.get_local_mouse_position(), Color.blue, 0, Rfs.node_creation_parent)
 	#		navigation_agent.set_target_location(level_navigation_target.get_local_mouse_position())
 	#		set_ai_target(indi)
 		set_ai_target(indi)

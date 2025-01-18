@@ -19,7 +19,7 @@ extends Node
 #
 #
 #func _ready() -> void:
-#	Refs.data_manager = self
+#	Rfs.data_manager = self
 
 	
 #func get_top_highscore(current_game: int):

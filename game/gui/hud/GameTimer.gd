@@ -25,7 +25,7 @@ onready var hunds_label: Label = $Hunds
 func _ready() -> void:
 
 	# večino setam ob štartu tajmerja
-	modulate = Refs.color_hud_base
+	modulate = Rfs.color_hud_base
 	reset_timer()
 
 
@@ -49,13 +49,13 @@ func _process(delta: float) -> void:
 			# game time is up
 			printt(game_time, game_time_limit, game_time - game_time_limit)
 			if game_time_left <= 0:
-				modulate = Refs.color_red
+				modulate = Rfs.color_red
 				stop_timer()
 				game_time = game_time_limit # namesto spodnjega zapisa ... ne deluje
 				mins_label.text = "00"
 				secs_label.text = "00"
 				hunds_label.text = "00"
-				Refs.sound_manager.play_gui_sfx("game_countdown_a")
+				Rfs.sound_manager.play_gui_sfx("game_countdown_a")
 				if sudden_death_mode:
 					emit_signal("sudden_death_activated") # pošlje se v hud, ki javi game managerju
 				else:
@@ -64,8 +64,8 @@ func _process(delta: float) -> void:
 			elif game_time_left < countdown_start_limit: # če je countdown limit 0, ta pogoj nikoli ne velja
 				# za vsakič, ko mine sekunda
 				if game_time == floor(game_time):
-					Refs.sound_manager.play_gui_sfx("game_countdown_b")
-				modulate = Refs.color_yellow
+					Rfs.sound_manager.play_gui_sfx("game_countdown_b")
+				modulate = Rfs.color_yellow
 
 
 func reset_timer():
@@ -75,7 +75,7 @@ func reset_timer():
 		get_node("Dots2").hide()
 		hunds_label.hide()
 
-	modulate = Refs.color_hud_base
+	modulate = Rfs.color_hud_base
 
 	game_time = 0
 	game_time_hunds = 0
@@ -92,9 +92,9 @@ func reset_timer():
 
 func start_timer():
 
-	game_time_limit = Refs.game_manager.level_settings["time_limit"]
-	sudden_death_mode = Refs.game_manager.game_settings["sudden_death_mode"]
-	countdown_start_limit = Refs.game_manager.game_settings["countdown_start_limit"] # čas, ko je obarvan in se sliši bip bip
+	game_time_limit = Rfs.game_manager.level_settings["time_limit"]
+	sudden_death_mode = Rfs.game_manager.game_settings["sudden_death_mode"]
+	countdown_start_limit = Rfs.game_manager.game_settings["countdown_start_limit"] # čas, ko je obarvan in se sliši bip bip
 
 	if game_time_limit == 0:
 		stopwatch_mode = true
@@ -116,4 +116,4 @@ func unpause_timer():
 func stop_timer():
 
 	current_timer_state = TIMER_STATE.STOPPED
-	modulate = Refs.color_red
+	modulate = Rfs.color_red

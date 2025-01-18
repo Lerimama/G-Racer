@@ -4,7 +4,7 @@ extends TileMap
 var light_color: Color = Color.white # za barvanje debrisa
 
 onready var edge_shadows: ColorRect = $EdgeShadows
-onready var shadows_direction: Vector2 = Refs.game_manager.game_settings["shadows_direction"] setget _on_shadow_direction_change
+onready var shadows_direction: Vector2 = Rfs.game_manager.game_settings["shadows_direction"] setget _on_shadow_direction_change
 onready var DebrisParticles: PackedScene = preload("res://game/arena/EdgeDebrisParticles.tscn")
 onready var ExplodingEdge: PackedScene = preload("res://game/arena/ExplodingEdge.tscn")
 
@@ -54,7 +54,7 @@ func release_debris(collision_position: Vector2, collision_normal: Vector2):
 	new_debris_particles.color = light_color
 	new_debris_particles.z_index = z_index + 1
 	new_debris_particles.set_emitting(true)
-	Refs.node_creation_parent.add_child(new_debris_particles)
+	Rfs.node_creation_parent.add_child(new_debris_particles)
 
 
 func explode_tile(current_cell):
@@ -67,7 +67,7 @@ func explode_tile(current_cell):
 	var new_exploding_cell = ExplodingEdge.instance()
 	new_exploding_cell.global_position = cell_global_position
 	new_exploding_cell.z_index = z_index + 1
-	Refs.node_creation_parent.add_child(new_exploding_cell)
+	Rfs.node_creation_parent.add_child(new_exploding_cell)
 
 	# poiščem sosede in jim dodam poškodovani autotile
 	for y in 3:
