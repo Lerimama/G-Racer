@@ -56,8 +56,8 @@ var heading_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_power = 0
 var engine_rotation_speed: float = 0.1
 onready var max_engine_power: float = bolt_profile["max_engine_power"]
-onready var engine_hsp: float = bolt_profile["engine_hsp"]
-onready var power_burst_hsp: float = bolt_profile["power_burst_hsp"]
+onready var engine_hsp: float = bolt_profile["engine_hsp"] # delež engine powerja, ki se sešteva
+onready var start_burst_hsp: float = bolt_profile["start_burst_hsp"]
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
 var all_thrusts: Array # thrusts so samo vizualna prezentacija headinga
 var max_thrust_rotation_deg: float = 15
@@ -103,9 +103,23 @@ onready var terrain_detect: Area2D = $TerrainDetect
 #var current_top_suface: Area2D = null # preverjam spremembo, da ne setam na vsak frejm
 var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
 onready var animation_player: AnimationPlayer = $AnimationPlayer
+var nitro_on: bool = false setget _use_nitro
+onready var nitro_hsp: float = start_burst_hsp * 5
+
 # breaker
 #export var height: float = 50 setget _change_shape_height
 #export var elevation: float = 0
+
+func _use_nitro(new_nitro_on: bool):
+
+	if new_nitro_on == true and not nitro_on:
+		var prev_engine_power: float = engine_power
+		engine_power *= 1.2
+		print("nitro_hsp",engine_power, prev_engine_power)
+		yield(get_tree().create_timer(1),"timeout")
+		engine_power += prev_engine_power
+		nitro_on = false
+
 
 func _ready() -> void:
 #	printt("BOLT", self.name)
@@ -180,7 +194,7 @@ func _process(delta: float) -> void:
 			MOTION.FWD:
 				engine_power += engine_hsp
 				if Refs.game_manager.fast_start_window:
-					engine_power += power_burst_hsp
+					engine_power += start_burst_hsp
 				for thrust in front_thrusts:
 					thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
 				for thrust in rear_thrusts:

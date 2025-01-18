@@ -36,6 +36,23 @@ cast_to = Vector2( 128, 0 )
 collision_mask = 12
 collide_with_areas = true
 
+[node name="Vision" type="Node2D" parent="."]
+
+[node name="VisionRayCenter" type="RayCast2D" parent="Vision"]
+position = Vector2( -23, 0 )
+enabled = true
+cast_to = Vector2( 302, 0 )
+
+[node name="VisionRayLeft" type="RayCast2D" parent="Vision"]
+position = Vector2( -27, -32 )
+enabled = true
+cast_to = Vector2( 104, 0 )
+
+[node name="VisionRayRight" type="RayCast2D" parent="Vision"]
+position = Vector2( -27, 32 )
+enabled = true
+cast_to = Vector2( 203, 0 )
+
 [node name="VisionRay" type="RayCast2D" parent="."]
 position = Vector2( -23, 0 )
 enabled = true

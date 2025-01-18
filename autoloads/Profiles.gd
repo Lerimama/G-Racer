@@ -133,7 +133,7 @@ var bolt_profiles: Dictionary = {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"on_hit_disabled_time": 2,
 		"engine_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
-		"power_burst_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
+		"start_burst_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
 		"max_engine_power": 500000, # 1 - 500 konjev
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?

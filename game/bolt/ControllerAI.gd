@@ -8,7 +8,7 @@ enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
 var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
-var controlled_bolt: RigidBody2D
+var controlled_bolt: Bolt
 var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
 
 # navigacija
@@ -23,11 +23,14 @@ onready var level_navigation: NavigationPolygonInstance = Refs.current_level.lev
 var ai_navigation_target_range: Array = [600, 800] # min dist 0 pomeni iskanje najbližja možna
 var braking_velocity: Vector2
 var breaking_distance_factor: float = 0.5 # kako daleč je ovira preden bremza
-var braking_power_factor: float = 0.8 # množenje s hitrostjo ... male spremembe
+var braking_power_factor: float = 0.7 # množenje s hitrostjo ... male spremembe
 var breaking_factor_near: float = 0.95
 var breaking_factor_keep: float = 0.68 # nežno se ustavi
 var engine_power_factor_keep: float = 0
 var engine_power_factor_search: float = 0.5
+
+# vision
+onready var vision: Node2D = $Vision
 var keep_distance: float = 500
 var near_distance: float = 800
 
@@ -43,19 +46,12 @@ onready var force_direction_line: Line2D = $DirectionLine
 var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
 
 # neu ... za zrihtat
-onready var vision_ray = $VisionRay # čekiranje okolice za prilagajanje vožnje ... skrit disejbla čekiranje, bodies
 var current_game_goals: Array # lovi jih v zaporedju
-# ni še v uporabi
+var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
-var instructed_speed =  3 setget _change_speed
-
-
-func _change_speed(ss):
-	pass
 
 
 func _input(event: InputEvent) -> void:
-#{OFF, RACE, SEARCH, FOLLOW, HUNT, RACE_TO_GOAL}
 
 	if Input.is_action_just_pressed("no0"): # idle
 		self.ai_state = AI_STATE.OFF
@@ -63,10 +59,11 @@ func _input(event: InputEvent) -> void:
 		self.ai_state = AI_STATE.RACE
 	if Input.is_action_just_pressed("no2"): # race
 		self.ai_state = AI_STATE.SEARCH
-	if Input.is_action_just_pressed("no3"):
-		pass
+	if Input.is_action_pressed("no3"):
+		wanted_speed = 900
 	if Input.is_action_just_pressed("no4"): # follow leader
-		pass
+		controlled_bolt.nitro_on = true
+#		wanted_speed = -1
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, level_navigation.get_local_mouse_position())
 		ai_target = Mets.spawn_indikator(nav_path_points[0], Color.blue, 0, Refs.node_creation_parent)
@@ -79,7 +76,6 @@ func _ready() -> void:
 
 	randomize()
 	controlled_bolt.add_to_group(Refs.group_ai)
-	controlled_bolt.motion = controlled_bolt.MOTION.FWD # debug preset motion
 
 	ai_navigation_line = Line2D.new()
 	Refs.node_creation_parent.add_child(ai_navigation_line)
@@ -90,19 +86,13 @@ func _ready() -> void:
 	# ray exceptions
 	scanning_ray.add_exception(controlled_bolt)
 	target_ray.add_exception(controlled_bolt)
-	vision_ray.add_exception(controlled_bolt)
+	for ray in vision.get_children():
+		ray.add_exception(controlled_bolt)
 
 
 func _physics_process(delta: float) -> void:
 
 	if controlled_bolt.is_active:
-
-		# motion vision
-		if vision_ray.visible:
-			vision_ray.cast_to.x = controlled_bolt.bolt_velocity.length() * breaking_distance_factor # zmeraj dolg kot je dolga hitrost
-			if vision_ray.is_colliding():
-				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
-				controlled_bolt.set_linear_velocity(braking_velocity)
 
 		# states
 		_state_machine(delta)
@@ -122,8 +112,36 @@ func _physics_process(delta: float) -> void:
 		# debug line
 		force_direction_line.set_point_position(0, Vector2.ZERO)
 		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.bolt_global_rotation))
-		controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
 
+
+		var roundabout_position = _update_vision()
+		if roundabout_position:# is Vector2:
+			controlled_bolt.set_linear_velocity(braking_velocity)
+			if roundabout_position == Vector2.ZERO:
+				pass
+				controlled_bolt.force_rotation = controlled_bolt.bolt_global_position.angle_to_point(roundabout_position)
+			else:
+				controlled_bolt.force_rotation = controlled_bolt.bolt_global_position.angle_to_point(roundabout_position)
+			navigation_agent.set_target_location(roundabout_position) # _temp?
+		else:
+			controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
+
+
+func _manipulate_bolt_speed(speed_change_rate: float = 0.1):
+
+	if wanted_speed == -1:
+		#		controlled_bolt.engine_power = controlled_bolt.max_engine_power
+		return false
+
+	if wanted_speed == 0:
+		controlled_bolt.engine_power = 0
+	else:
+		var current_speed: float = controlled_bolt.bolt_body_state.get_linear_velocity().length()
+		if current_speed > wanted_speed:
+			controlled_bolt.engine_power = lerp(controlled_bolt.engine_power, 0, speed_change_rate)
+		#		printt ("speed", controlled_bolt.engine_power, current_speed)
+
+	return true
 
 func _state_machine(delta: float):
 #	printt ("ai_state: ", AI_STATE.keys()[ai_state], controlled_bolt.engine_power)
@@ -139,7 +157,8 @@ func _state_machine(delta: float):
 				var bolt_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(bolt_tracker_position)
 				#			Mets.spawn_indikator(bolt_tracker_position, Color.white, controlled_bolt.rotation, Refs.node_creation_parent)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			if not _manipulate_bolt_speed():
+				controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.SEARCH: # vozi po točkah navigacije in išče novo tarčo, dokler je ne najde
 			var new_ai_target: Node2D = _get_better_targets(ai_target)
@@ -179,6 +198,66 @@ func _state_machine(delta: float):
 			navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power / 3
 			_react_to_target(ai_target)
+
+
+func _update_vision():
+	# zazanava tudi surrounded
+	# stranski so samo za opredeljvanje smeri
+	# sprednji uravnava hitrost
+
+	var side_rays_length_extension: float = 1000 # _temp extension
+
+	var vision_ray_center: RayCast2D = $Vision/VisionRayCenter
+	var vision_ray_left: RayCast2D = $Vision/VisionRayLeft
+	var vision_ray_right: RayCast2D = $Vision/VisionRayRight
+
+	var collision_distances: Array = []
+	var nowhere_to_go: bool = false
+
+
+	#	printt("---------")
+	vision_ray_center.cast_to.x = controlled_bolt.bolt_velocity.length() * breaking_distance_factor # zmeraj dolg kot je dolga hitrost
+	if vision_ray_center.is_colliding():
+		# center preverja distanco
+		var distance_to_collision: float = vision_ray_center.global_position.distance_to(vision_ray_center.get_collision_point())
+		collision_distances.append(distance_to_collision)
+		# stranici preverjata distanco
+		for side_ray in [vision_ray_left, vision_ray_right]:
+			side_ray.cast_to.x = distance_to_collision + side_rays_length_extension
+			var distance_to_side_collision: float = side_rays_length_extension # OPT ... fejk da jo izbere .. 0 je blo včasih
+			if side_ray.is_colliding():
+				distance_to_side_collision = side_ray.global_position.distance_to(side_ray.get_collision_point())
+			collision_distances.append(distance_to_side_collision)
+
+		# preverim katera je najdlje in usmerim raketo v to smer
+		var max_collision_distance_index: int = collision_distances.find(collision_distances.max())
+		var max_collision_distance_position: Vector2 = Vector2.ZERO
+		#		printt ("dist", collision_distances, collision_distances.find(collision_distances.max()))
+		var rotation_adapt: float = 0
+		match max_collision_distance_index:
+			0: # center
+#				printt("going nowhere")
+				nowhere_to_go = true
+				braking_velocity = controlled_bolt.bolt_velocity * breaking_factor_keep
+				# ... dodaš rikverc
+				#				max_collision_distance_position = vision_ray_left.get_collision_point()
+				max_collision_distance_position = controlled_bolt.global_position
+			1: # left
+				max_collision_distance_position = vision_ray_left.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
+				Mets.spawn_indikator(max_collision_distance_position, Color.pink)
+				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
+				rotation_adapt = -1
+				#				printt("turning left")
+			2: # right
+				max_collision_distance_position = vision_ray_right.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
+				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
+				rotation_adapt = 1
+				Mets.spawn_indikator(max_collision_distance_position, Color.orange)
+				#				printerr("turning right")
+
+		return max_collision_distance_position
+	else:
+		return
 
 
 func _change_ai_state(new_ai_state: int):
@@ -254,9 +333,6 @@ func _get_better_targets(current_target: Node2D):
 	else:
 		return current_target
 
-
-func _check_for_obstacles():
-	pass
 
 
 func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
@@ -375,7 +451,7 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 		navigation_agent.set_target_location(target_prev_position)
 
 
-func in_disarray(damage_amount: float): # 5 raketa, 1 metk
+func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk
 	# drugačen smisel ... to je stvar, ko težko voziš ... dodaš "čudne" sile
 
 	#	motion = MotionStates.DISARRAY
