@@ -4,7 +4,7 @@ extends Node
 #signal highscores_updated # ko je vnešeno ime igralca
 #
 #var data_file: = File.new()
-#var current_player_ranking: int # da ob rendriranju HS, lahko označim aktualni rezultat ... v GM
+#var current_driver_ranking: int # da ob rendriranju HS, lahko označim aktualni rezultat ... v GM
 #var default_highscores: Dictionary = { # slovar, ki se uporabi, če še ni nobenega v filetu
 #	"1": {"Nobody": 0,},
 #	"2": {"Nobody": 0,},
@@ -21,7 +21,7 @@ extends Node
 #func _ready() -> void:
 #	Rfs.data_manager = self
 
-	
+
 #func get_top_highscore(current_game: int):
 #
 #	# load highscore
@@ -69,7 +69,7 @@ extends Node
 #	var current_secondary_value: int
 #
 #
-#	# izračun uvrstitve na lestvico ... štejem pozicije pred mano 
+#	# izračun uvrstitve na lestvico ... štejem pozicije pred mano
 #	# trenutno je setano, da se da uporabit sekundarno vrednost za dodatno ločevanje
 #
 #	better_positions_count = 0 # 0 je 1. mesto
@@ -79,19 +79,19 @@ extends Node
 #				current_value_to_rank = current_score_points
 #				current_secondary_value = current_score_time
 #				if ranking_score >= current_value_to_rank:
-#					better_positions_count += 1				
+#					better_positions_count += 1
 #			Profiles.HighscoreTypes.HS_TIME_LOW:
 #				current_value_to_rank = current_score_time
 #				current_secondary_value = current_score_points
 #				if ranking_score <= current_value_to_rank and not ranking_score <= 0:
-#					better_positions_count += 1				
+#					better_positions_count += 1
 #			Profiles.HighscoreTypes.HS_TIME_HIGH:
 #				current_value_to_rank = current_score_time
 #				current_secondary_value = current_score_points
 #				if ranking_score >= current_value_to_rank:
 #					better_positions_count += 1
 #
-#	current_player_ranking = better_positions_count + 1 # za označitev linije na lestvici
+#	current_driver_ranking = better_positions_count + 1 # za označitev linije na lestvici
 #
 #	# NI na lestvici
 #	if better_positions_count >= all_ranking_scores.size():
@@ -102,8 +102,8 @@ extends Node
 #		yield(Global.gameover_menu, "name_input_finished")
 #
 #		# RESUME 2
-#		# nova highscore lestvica		
-#		var current_score_owner_name = Global.gameover_menu.p1_final_stats["player_name"]
+#		# nova highscore lestvica
+#		var current_score_owner_name = Global.gameover_menu.p1_final_stats["driver_name"]
 #
 #		# dodam plejer score v array
 #		all_ranking_scores.insert(better_positions_count, current_value_to_rank)
@@ -121,7 +121,7 @@ extends Node
 #			var highscores_value: float = ranking_score
 #			var highscores_owner: String = all_ranking_score_owners[highscore_index]
 #			var position_dict: Dictionary = {
-#				highscores_owner: highscores_value,	
+#				highscores_owner: highscores_value,
 #			}
 #
 #			new_game_highscores[highscores_position_key] = position_dict

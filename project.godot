@@ -265,6 +265,7 @@ Sts="*res://autoloads/Settings.gd"
 Rfs="*res://autoloads/References.gd"
 Pfs="*res://autoloads/Profiles.gd"
 Mts="*res://autoloads/Methods.gd"
+Bts="*res://autoloads/Buttons.gd"
 
 [debug]
 
@@ -532,6 +533,7 @@ R={
 2d_physics/layer_2="screen_edge"
 2d_physics/layer_3="ai_targets"
 2d_physics/layer_4="vision_breakers"
+2d_physics/layer_5="bolts"
 2d_physics/layer_20="non_colliding"
 
 [logging]

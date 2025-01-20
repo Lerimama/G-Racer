@@ -1,7 +1,7 @@
 extends Node
 
 
-var players_activated: Array
+var drivers_activated: Array
 var enemies_mode: bool
 var easy_mode: bool
 var arena_on = false
@@ -177,64 +177,64 @@ func _on_ConfirmBtn_4_pressed() -> void:
 # players ------------------------------------------------------------------------------------------------------------------------
 
 
-onready var select_players: Control = $UI/SelectPlayers
+onready var select_drivers: Control = $UI/SelectPlayers
 
 
 func _on_PlayersBtn_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pfs.PLAYER.P1
+	var bolt_to_manage: int = Pfs.DRIVER.P1
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb/PlayersBtn/Label
 	if button_pressed:
 		btn_label_node.modulate = Color.white
-		players_activated.append(bolt_to_manage)
+		drivers_activated.append(bolt_to_manage)
 		btn_label_node.text = Mts.get_random_name(5)
 	else:
-		if players_activated.has(bolt_to_manage):
-			players_activated.erase(bolt_to_manage)
+		if drivers_activated.has(bolt_to_manage):
+			drivers_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Rfs.color_gray0
 			btn_label_node.text = "P1"
-	Pfs.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+	Pfs.driver_profiles[bolt_to_manage]["driver_name"] = btn_label_node.text
 
 func _on_PlayersBtn_2_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pfs.PLAYER.P2
+	var bolt_to_manage: int = Pfs.DRIVER.P2
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb2/PlayersBtn/Label
 	if button_pressed:
-		players_activated.append(bolt_to_manage)
+		drivers_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
 		btn_label_node.text = Mts.get_random_name(5)
 	else:
-		if players_activated.has(bolt_to_manage):
-			players_activated.erase(bolt_to_manage)
+		if drivers_activated.has(bolt_to_manage):
+			drivers_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Rfs.color_gray0
 			btn_label_node.text = "P2"
-	Pfs.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+	Pfs.driver_profiles[bolt_to_manage]["driver_name"] = btn_label_node.text
 
 func _on_PlayersBtn_3_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pfs.PLAYER.P3
+	var bolt_to_manage: int = Pfs.DRIVER.P3
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb3/PlayersBtn/Label
 	if button_pressed:
-		players_activated.append(bolt_to_manage)
+		drivers_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
 		btn_label_node.text = Mts.get_random_name(5)
 	else:
-		if players_activated.has(bolt_to_manage):
-			players_activated.erase(bolt_to_manage)
+		if drivers_activated.has(bolt_to_manage):
+			drivers_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Rfs.color_gray0
 			btn_label_node.text = "P3"
-	Pfs.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+	Pfs.driver_profiles[bolt_to_manage]["driver_name"] = btn_label_node.text
 
 func _on_PlayersBtn_4_toggled(button_pressed: bool) -> void:
-	var bolt_to_manage: int = Pfs.PLAYER.P4
+	var bolt_to_manage: int = Pfs.DRIVER.P4
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb4/PlayersBtn/Label
 	if button_pressed:
-		players_activated.append(bolt_to_manage)
+		drivers_activated.append(bolt_to_manage)
 		btn_label_node.modulate = Color.white
 		btn_label_node.text = Mts.get_random_name(5)
 	else:
-		if players_activated.has(bolt_to_manage):
-			players_activated.erase(bolt_to_manage)
+		if drivers_activated.has(bolt_to_manage):
+			drivers_activated.erase(bolt_to_manage)
 			btn_label_node.modulate = Rfs.color_gray0
 			btn_label_node.text = "P1"
-	Pfs.player_profiles[bolt_to_manage]["player_name"] = btn_label_node.text
+	Pfs.driver_profiles[bolt_to_manage]["driver_name"] = btn_label_node.text
 
 func _on_EnemiesBtn_5_toggled(button_pressed: bool) -> void:
 	var btn_label_node: Control = $UI/SelectPlayers/ItemList/thumb5/EnemiesBtn/Label
@@ -254,14 +254,14 @@ func _on_EasyBtn_6_toggled(button_pressed: bool) -> void:
 		btn_label_node.modulate = Rfs.color_gray0
 func _on_PlayBtn_pressed() -> void:
 
-	if players_activated.empty():
+	if drivers_activated.empty():
 		return
 
 	# setam vrednost v Sts.
 	Sts.current_game_settings["enemies_mode"] = enemies_mode # slovar, ki je duplikat in se ustvari na Sts. ready
-	Sts.players_on_game_start = players_activated
+	Sts.drivers_on_game_start = drivers_activated
 
-#	Sts.bolts_activated = players_in_game
+#	Sts.bolts_activated = drivers_in_game
 	Rfs.main_node.home_out()
 
 

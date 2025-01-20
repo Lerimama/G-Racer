@@ -2240,7 +2240,7 @@ extents = Vector2( 144, 4 )
 
 [sub_resource type="Curve2D" id=12385]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 0, 735, 0, 0, 0, 0, 3, -217, 0, 0, 0, 0, -525, -712, 365.587, 617.302, -365.587, -617.302, -1631, -1078, 0, 0, 0, 0, -1812, -2985, 0, 0, 0, 0, 1107, -3347, 0, 0, 0, 0, 3200, -2560, 0, 0, 0, 0, 2674, -797, 0, 0, 0, 0, 2776, 672, 0, 0, 0, 0, 2704, 1852, 0, 0, 0, 0, 582, 2368, 0, 0, 0, 0, -1761, 2422, 0, 0, 0, 0, -2049, 1247, 0, 0, 0, 0, -572, 869 )
+"points": PoolVector2Array( 0, 0, 0, 0, 0, 735, 0, 0, 0, 0, 138, -215, 0, 0, 0, 0, -69, -631, 0, 0, 0, 0, -525, -712, 365.587, 617.302, -365.587, -617.302, -1631, -1078, 0, 0, 0, 0, -1812, -2985, 0, 0, 0, 0, 1107, -3347, 0, 0, 0, 0, 3200, -2560, 0, 0, 0, 0, 2674, -797, 0, 0, 0, 0, 2776, 672, 0, 0, 0, 0, 2704, 1852, 0, 0, 0, 0, 582, 2368, 0, 0, 0, 0, -1761, 2422, 0, 0, 0, 0, -2049, 1247, 0, 0, 0, 0, -572, 869 )
 }
 
 [sub_resource type="Image" id=13450]
@@ -2588,6 +2588,24 @@ position = Vector2( -380, -1960 )
 [node name="PickableNitro" parent="Pickables" instance=ExtResource( 31 )]
 position = Vector2( -765, -1786 )
 
+[node name="PickableNitro2" parent="Pickables" instance=ExtResource( 31 )]
+position = Vector2( -1768, -1669 )
+
+[node name="PickableNitro3" parent="Pickables" instance=ExtResource( 31 )]
+position = Vector2( -1987, -1673 )
+
+[node name="PickableNitro4" parent="Pickables" instance=ExtResource( 31 )]
+position = Vector2( -1942, -1571 )
+
+[node name="PickableNitro5" parent="Pickables" instance=ExtResource( 31 )]
+position = Vector2( -1730, -1528 )
+
+[node name="PickableNitro6" parent="Pickables" instance=ExtResource( 31 )]
+position = Vector2( -1877, -1746 )
+
+[node name="PickableNitro7" parent="Pickables" instance=ExtResource( 31 )]
+position = Vector2( -1817, -1428 )
+
 [node name="PickableRandom" parent="Pickables" instance=ExtResource( 34 )]
 position = Vector2( -376, -1435 )
 
@@ -2599,6 +2617,9 @@ position = Vector2( -577, -1436 )
 
 [node name="PickableShield" parent="Pickables" instance=ExtResource( 30 )]
 position = Vector2( -771, -1606 )
+
+[node name="PickableShield3" parent="Pickables" instance=ExtResource( 30 )]
+position = Vector2( -347, -43 )
 
 [node name="PickableShield2" parent="Pickables" instance=ExtResource( 30 )]
 position = Vector2( 708, -853 )
@@ -2727,7 +2748,7 @@ script = ExtResource( 24 )
 
 [node name="BoltTracker" type="PathFollow2D" parent="Racing/LevelTrack"]
 position = Vector2( 0, 735 )
-rotation = -1.56765
+rotation = -1.42654
 script = ExtResource( 20 )
 
 [node name="CrossIndicator" type="Sprite" parent="Racing/LevelTrack/BoltTracker"]
@@ -2816,6 +2837,14 @@ collision_layer = 9
 
 [node name="Labels" type="Node2D" parent="."]
 position = Vector2( -4670, 34 )
+
+[node name="Label4" type="Label" parent="Labels"]
+margin_left = 4718.0
+margin_top = 462.0
+margin_right = 4909.0
+margin_bottom = 476.0
+theme = ExtResource( 3 )
+text = "linija se more začet pre štartom"
 
 [node name="_note" type="Label" parent="Labels"]
 margin_left = -646.0

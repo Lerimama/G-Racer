@@ -24,7 +24,7 @@ func goal_reached(bolt: Node):
 	if not turned_on:
 		turned_on = true
 		light_poly.color = Rfs.color_green
-		bolt.update_bolt_points(reward_points)
+		bolt.update_stat(Pfs.DRIVER_STATS.POINTS, reward_points)
 		$AnimationPlayer.play("edge_rotate")
 
 

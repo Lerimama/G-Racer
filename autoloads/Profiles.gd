@@ -2,18 +2,19 @@ extends Node
 
 
 # BOLTS so vozila
-# PLAYERS so vozniki vozil (P1, P2, P3, ...)
+# DRIVERS so vozniki vozil (P1, P2, P3, ...)
 # AI je komp kontroler
 # HUMAN je človeški kontroller (ARROWS, WASD, JP1, JP2, AI)
 
-func players_and_ai(): pass
+func drivers_and_ai(): pass
 
-var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+var default_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# bolt stats
 	"wins" : 2,
 	"life" : 5,
 	"cash_count": 0,
-	"health" : 10,
+#	"health" : 10,
+	"health" : 1, # health percetnage
 	"bullet_count" : 100,
 	"misile_count" : 5,
 	"mina_count" : 3,
@@ -26,42 +27,42 @@ var default_player_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	"level_time" : 0, # sekunde ... naj bodo stotinke
 }
 
-enum PLAYER {P1, P2, P3, P4}
-var player_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
-	PLAYER.P1 : {
-		"player_name": "P1",
-		"player_avatar": preload("res://game/gui/avatars/avatar_01.png"),
-#		"player_color": Color.white,
-		"player_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+enum DRIVER {P1, P2, P3, P4}
+var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
+	DRIVER.P1 : {
+		"driver_name": "P1",
+		"driver_avatar": preload("res://game/gui/avatars/avatar_01.png"),
+#		"driver_color": Color.white,
+		"driver_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
-	PLAYER.P2 : {
-		"player_name": "P2",
-		"player_avatar": preload("res://game/gui/avatars/avatar_02.png"),
-		"player_color": Rfs.color_red,
+	DRIVER.P2 : {
+		"driver_name": "P2",
+		"driver_avatar": preload("res://game/gui/avatars/avatar_02.png"),
+		"driver_color": Rfs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
-	PLAYER.P3 : {
-		"player_name" : "P3",
-		"player_avatar" : preload("res://game/gui/avatars/avatar_03.png"),
-		"player_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
+	DRIVER.P3 : {
+		"driver_name" : "P3",
+		"driver_avatar" : preload("res://game/gui/avatars/avatar_03.png"),
+		"driver_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
-	PLAYER.P4 : {
-		"player_name" : "P4",
-		"player_avatar" : preload("res://game/gui/avatars/avatar_04.png"),
-		"player_color" : Rfs.color_green,
+	DRIVER.P4 : {
+		"driver_name" : "P4",
+		"driver_avatar" : preload("res://game/gui/avatars/avatar_04.png"),
+		"driver_color" : Rfs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
 }
 
 var ai_profile: Dictionary = {
-	# za prepis player profila
+	# za prepis driver profila
 	"controller_type" : CONTROLLER_TYPE.AI,
 	# race
 	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
@@ -126,15 +127,18 @@ var controller_profiles : Dictionary = {
 	},
 }
 
+#const bolt_engine_power_factor:  =
+
+
 enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
 #		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"on_hit_disabled_time": 2,
-		"engine_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
-		"start_burst_hsp": 5000, # pospešek motorja do največje moči (horsepower?)
+		"accelaration_power": 5000, # delta seštevanje moči motorja do največje moči
 		"max_engine_power": 500000, # 1 - 500 konjev
+		"engine_power_fast_start": 5000, # pospešek motorja do največje moči (horsepower?)
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
@@ -160,54 +164,70 @@ var bolt_profiles: Dictionary = {
 }
 
 
+func equipment(): pass
+
+enum EQUIPMENT {NITRO, SHIELD}
+var equipment_profiles : Dictionary = {
+	EQUIPMENT.NITRO: {
+		"value": 1,
+		"nitro_power_adon": 1, # prišteješ moč
+		"time": 3,
+	},
+	EQUIPMENT.SHIELD: {
+#		"reload_time": 0.1, #
+#		"hit_damage": 5,
+#		"speed": 50,
+		"lifetime": 5, # cikli animacije
+		"scene": preload("res://game/weapons/ammo/shield/Shield.tscn"),
+		"time": 3,
+#		"direction_start_range": [0, 0] , # natančnost misile
+		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
+	},
+}
+
+
 func ammo(): pass
 
 enum AMMO {BULLET, MISILE, MINA, SHIELD}
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
-		"hit_damage": 2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
+		"hit_damage": 0.2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
 		"speed": 1500,
 		"lifetime": 1.0, # domet vedno merim s časom
 		"mass": 0.03, # 300g
 		"direction_start_range": [0, 0] , # natančnost misile
 #		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
 		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
-		"ammo_count_key": "bullet_count", # player stats name
+		"ammo_count_key": "bullet_count", # driver stats name
+		"ammo_stat_key": DRIVER_STATS.BULLET_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"hit_damage": 5, # 10 je max energija
+		"hit_damage": 0.5, # 10 je max energija
 		"speed": 500,
 		"lifetime": 3.2, # domet vedno merim s časom
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/misile/Misile.tscn"),
-		"ammo_count_key": "misile_count",
+		"ammo_count_key": "misile_count", # znebi se
+		"ammo_stat_key": DRIVER_STATS.MISILE_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
 	AMMO.MINA: {
 		"reload_time": 0.1, #
-		"hit_damage": 5,
+		"hit_damage": 0.5,
 		"speed": 50,
 		"lifetime": 0, # 0 pomeni večno
 		"mass": 0.5, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/mina/Mina.tscn"),
 		"ammo_count_key": "mina_count",
+		"ammo_stat_key": DRIVER_STATS.MINA_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
-	AMMO.SHIELD: {
-#		"reload_time": 0.1, #
-#		"hit_damage": 5,
-#		"speed": 50,
-		"lifetime": 5, # cikli animacije
-		"scene": preload("res://game/weapons/ammo/shield/Shield.tscn"),
-#		"mass": 3,
-#		"direction_start_range": [0, 0] , # natančnost misile
-		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
-	},
+
 }
 
 
@@ -216,22 +236,27 @@ func levels(): pass
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
 	SURFACE.NONE: {
-		"engine_power_factor": 1, # koliko original powerja
+		"max_engine_power_factor": 1, # koliko original powerja
+		"shake_amount": 0,
 	},
 	SURFACE.CONCRETE: {
-		"engine_power_factor": 1.15, # koliko original powerja
+		"max_engine_power_factor": 1.15, # koliko original powerja
+		"shake_amount": 0,
 	},
 	SURFACE.NITRO: {
-		"engine_power_factor": 2, # koliko original powerja
+		"max_engine_power_factor": 2, # koliko original powerja
+		"shake_amount": 0,
 	},
 	SURFACE.GRAVEL: {
-		"engine_power_factor": 0.3,
-#		"drive_lin_damp_rear": 20, # še ni notrivrednost, da riti nič ne odnaša
+		"max_engine_power_factor": 0.3,
+		"shake_amount": 0,
 	},
 	SURFACE.HOLE: {
-		"engine_power_factor": 0.1,
+		"max_engine_power_factor": 0.1,
+		"shake_amount": 0,
 	},
 	SURFACE.TRACKING: {
+		"shake_amount": 0,
 	},
 }
 
@@ -288,7 +313,10 @@ var level_object_profiles: Dictionary = {
 }
 
 
+
 func pickables(): pass
+
+enum DRIVER_STATS {BULLET_COUNT, MISILE_COUNT, MINA_COUNT, HEALTH, GAS_COUNT, LIFE,CASH_COUNT, POINTS }
 
 enum PICKABLE{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA,
@@ -303,77 +331,75 @@ var pickable_profiles: Dictionary = {
 		"color": Rfs.color_pickable_ammo,
 		"value": 20,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 3,
+		"driver_stat": DRIVER_STATS.BULLET_COUNT,
 	},
 	PICKABLE.PICKABLE_MISILE: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 2,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 3,
+		"driver_stat": DRIVER_STATS.MISILE_COUNT,
 	},
 	PICKABLE.PICKABLE_MINA: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 3,
-	},
-	PICKABLE.PICKABLE_SHIELD: {
-		"color": Rfs.color_pickable_ammo,
-		"value": 1,
-		"elevation": 3,
-		"time": 3,
-		"ai_target_rank": 3,
+		"driver_stat": DRIVER_STATS.MINA_COUNT,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 0,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 3,
+		"driver_stat": DRIVER_STATS.HEALTH,
 	},
 	PICKABLE.PICKABLE_LIFE: {
 		"color": Rfs.color_pickable_stat,
 		"value": 1,
 		"elevation": 3,
-		"time": 0, # sekunde
 		"ai_target_rank": 3,
+		"driver_stat": DRIVER_STATS.LIFE,
 	},
 	PICKABLE.PICKABLE_GAS: {
 		"color": Rfs.color_pickable_stat,
 		"value": 200,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 3,
+		"driver_stat": DRIVER_STATS.GAS_COUNT,
 	},
 	PICKABLE.PICKABLE_CASH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 0,
+		"driver_stat": DRIVER_STATS.CASH_COUNT,
 	},
 	PICKABLE.PICKABLE_POINTS: {
 		"color": Rfs.color_pickable_stat,
 		"value": 100,
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 2,
+		"driver_stat": DRIVER_STATS.POINTS,
+	},
+	# NO STATS ...instants
+	PICKABLE.PICKABLE_SHIELD: {
+		"color": Rfs.color_pickable_ammo,
+		"value": 1,
+		"elevation": 3,
+		"ai_target_rank": 3,
 	},
 	PICKABLE.PICKABLE_NITRO: {
 		"color": Rfs.color_pickable_feature,
 		"value": 2, # factor
 		"elevation": 3,
-		"time": 1.5,
 		"ai_target_rank": 10,
 	},
 	PICKABLE.PICKABLE_RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
 		"color": Rfs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"elevation": 3,
-		"time": 0,
 		"ai_target_rank": 9,
 	},
 }

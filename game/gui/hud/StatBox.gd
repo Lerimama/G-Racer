@@ -4,9 +4,9 @@ extends Control
 enum BOX_ALIGN {LT_CORNER, RT_CORNER, LB_CORNER, RB_CORNER}
 export (BOX_ALIGN) var statbox_hor_align: int = BOX_ALIGN.LT_CORNER
 
-onready var player_line: HBoxContainer = $PlayerLine
-onready var player_avatar: TextureRect = $PlayerLine/Avatar
-onready var player_name_label: Label = $PlayerLine/PlayerName
+onready var driver_line: HBoxContainer = $PlayerLine
+onready var driver_avatar: TextureRect = $PlayerLine/Avatar
+onready var driver_name_label: Label = $PlayerLine/PlayerName
 
 onready var stat_wins: Control = $PlayerLine/StatWins
 onready var stat_life: Control = $StatLife

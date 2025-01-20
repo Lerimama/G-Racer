@@ -1,9 +1,10 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
 [ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=4]
+[ext_resource path="res://game/bolt/Thrust.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/textures/atlas_pickables.png" type="Texture" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=8]
@@ -27,6 +28,9 @@
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
+
+[sub_resource type="ViewportTexture" id=5264]
+viewport_path = NodePath("ShadowViewport")
 
 [sub_resource type="RectangleShape2D" id=5254]
 extents = Vector2( 6.5, 6 )
@@ -166,7 +170,7 @@ shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 
 [node name="BoltController" type="Node" parent="."]
 
-[node name="TrailSource" type="Position2D" parent="."]
+[node name="TrailPosition" type="Position2D" parent="."]
 position = Vector2( -33, 0 )
 script = ExtResource( 23 )
 __meta__ = {
@@ -183,8 +187,51 @@ energy = 1.28
 range_z_min = 0
 range_z_max = 0
 
+[node name="ShadowViewport" type="Viewport" parent="."]
+size = Vector2( 384, 256 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+msaa = 4
+hdr = false
+disable_3d = true
+usage = 0
+render_target_v_flip = true
+render_target_update_mode = 3
+
+[node name="DriveTrain" type="Node2D" parent="ShadowViewport"]
+position = Vector2( 192, 128 )
+
+[node name="FrontEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
+position = Vector2( 73, 0 )
+
+[node name="ThrustL" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
+position = Vector2( 1, -53 )
+scale = Vector2( 2, 2 )
+
+[node name="ThrustR" parent="ShadowViewport/DriveTrain/FrontEngine" instance=ExtResource( 5 )]
+position = Vector2( 1, 51 )
+scale = Vector2( 2, 2 )
+position_on_bolt = 1
+
+[node name="RearEngine" type="Node2D" parent="ShadowViewport/DriveTrain"]
+position = Vector2( -68, 0 )
+
+[node name="ThrustL" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
+position = Vector2( 4, -55 )
+scale = Vector2( 2, 2 )
+
+[node name="ThrustR" parent="ShadowViewport/DriveTrain/RearEngine" instance=ExtResource( 5 )]
+position = Vector2( 4, 53 )
+scale = Vector2( 2, 2 )
+position_on_bolt = 1
+
+[node name="Chassis" parent="ShadowViewport" instance=ExtResource( 3 )]
+position = Vector2( 192, 128 )
+
 [node name="Shadow" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.243137 )
+texture = SubResource( 5264 )
 script = ExtResource( 12 )
 shadow_owner_shape_path = NodePath("../Chassis/BoltSprite")
 shadow_color = Color( 0, 0, 0, 0 )
@@ -525,5 +572,6 @@ anims/gravel_shake = SubResource( 5280 )
 [connection signal="timeout" from="BoltHud/BoltHudLines/WeaponSelector/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]
 [connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
 
+[editable path="ShadowViewport/Chassis"]
 [editable path="Chassis"]
 [editable path="LauncherL"]

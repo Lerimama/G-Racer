@@ -17,7 +17,7 @@ var camera_leader: Node2D # trenutno vodilni igralec (rabim za camera target in 
 
 # game
 #var game_settings: Dictionary # set_game seta iz profilov
-var activated_player_ids: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
+var activated_driver_ids: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
 var fast_start_window: bool = false # bolt ga čekira in reagira
 var start_bolt_position_nodes: Array # dobi od tilemapa
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
@@ -74,10 +74,10 @@ func _input(event: InputEvent) -> void:
 #	if Input.is_action_just_pressed("no5"):
 #		for bolt in bolts_in_game:
 #			if bolt.is_in_group(Rfs.group_humans):
-#				bolt.lose_life()
-#				#				bolt.player_stats["gas_count"] = 0
+#				bolt.on_destroy()
+#				#				bolt.driver_stats["gas_count"] = 0
 #				#			if bolt.is_in_group(Rfs.group_ai):
-#				#				bolt.player_stats["gas_count"] = 0
+#				#				bolt.driver_stats["gas_count"] = 0
 	pass
 
 
@@ -138,8 +138,8 @@ func _set_game():
 
 	Rfs.current_camera.follow_target = Rfs.current_level.start_camera_position_node
 
-	# players
-	activated_player_ids = []
+	# drivers
+	activated_driver_ids = []
 	# če je prvi level so aktivirani dodani v meniju
 	if current_level_index == 0:
 
@@ -147,54 +147,54 @@ func _set_game():
 
 
 		# debug ... kadar ne štartam igre iz home menija
-		if Sts.players_on_game_start.empty():
-#			activated_player_ids = [Pfs.PLAYER.P1]
-#			activated_player_ids = [Pfs.PLAYER.P1, Pfs.PLAYER.P2]
-#			activated_player_ids = [Pfs.PLAYER.P1, Pfs.PLAYER.P2, Pfs.PLAYER.P3, Pfs.PLAYER.P4]
+		if Sts.drivers_on_game_start.empty():
+#			activated_driver_ids = [Pfs.DRIVER.P1]
+			activated_driver_ids = [Pfs.DRIVER.P1, Pfs.DRIVER.P2]
+#			activated_driver_ids = [Pfs.DRIVER.P1, Pfs.DRIVER.P2, Pfs.DRIVER.P3, Pfs.DRIVER.P4]
 			game_settings["enemies_mode"] = true # debug
 
 
 
 		else:
-			activated_player_ids = Sts.players_on_game_start
+			activated_driver_ids = Sts.drivers_on_game_start
 
-	# če ni prvi level dodam kvalificirane player_id
+	# če ni prvi level dodam kvalificirane driver_id
 	elif current_level_index > 0:
 		if human_bolts_qualified.empty():
 			print("Error! Ni qvalificiranih boltov, torej igre nebi smelo biti!")
 		else:
 			for bolt in human_bolts_qualified:
-				activated_player_ids.append(bolt.player_id)
+				activated_driver_ids.append(bolt.driver_id)
 	human_bolts_qualified = []
 
 	# get enemies
 
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
-		# za vsako prazno pozicijo dodam AI player_id
-		var empty_positions_count = start_bolt_position_nodes.size() - activated_player_ids.size()
+		# za vsako prazno pozicijo dodam AI driver_id
+		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
 		empty_positions_count = 1 # debug
 		for empty_position in empty_positions_count:
 			# dobim štartni id bolta in umestim ai data
-			var new_player_index: int = activated_player_ids.size()
-			var new_player_id: int = Pfs.player_profiles.keys()[new_player_index]
-			Pfs.player_profiles[new_player_id]["controller_type"] = Pfs.ai_profile["controller_type"]
-			activated_player_ids.append(new_player_id) # da prepoznam v spawn funkciji .... trik pač
-	#	printt("PLAYERS", activated_player_ids)
+			var new_driver_index: int = activated_driver_ids.size()
+			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
+			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile["controller_type"]
+			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
+	#	printt("DRIVERS", activated_driver_ids)
 
 	# adaptacija količine orožij
-	Pfs.default_player_stats["bullet_count"] = 0
-	Pfs.default_player_stats["misile_count"] = 0
-	Pfs.default_player_stats["mina_count"] = 0
+	Pfs.default_driver_stats["bullet_count"] = 0
+	Pfs.default_driver_stats["misile_count"] = 0
+	Pfs.default_driver_stats["mina_count"] = 0
 	game_settings["full_equip_mode"] = true # debug
 	if game_settings["full_equip_mode"]:
-		Pfs.default_player_stats["bullet_count"] = 100
-		Pfs.default_player_stats["misile_count"] = 100
-		Pfs.default_player_stats["mina_count"] = 100
+		Pfs.default_driver_stats["bullet_count"] = 100
+		Pfs.default_driver_stats["misile_count"] = 100
+		Pfs.default_driver_stats["mina_count"] = 100
 
 	# spawn bolts on positions (po vrsti aktivacije)
 	var spawned_position_index = 0
-	for player_id in activated_player_ids: # so v ranking zaporedju
-		_spawn_bolt(player_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
+	for driver_id in activated_driver_ids: # so v ranking zaporedju
+		_spawn_bolt(driver_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 
 	_game_intro()
@@ -293,8 +293,8 @@ func level_finished():
 					bolts_ranked_on_level_finished.append(bolt)
 					if bolt.is_in_group(Rfs.group_ai):
 						# AI se vedno uvrsti in dobi nekaj časa glede na zadnjega v cilju
-						var worst_time_among_finished: float = bolts_finished[bolts_finished.size() - 1].player_stats["level_time"]
-						bolt.player_stats["level_time"] = worst_time_among_finished + worst_time_among_finished / 5
+						var worst_time_among_finished: float = bolts_finished[bolts_finished.size() - 1].driver_stats["level_time"]
+						bolt.driver_stats["level_time"] = worst_time_among_finished + worst_time_among_finished / 5
 						bolts_finished.append(bolt)
 					elif bolt.is_in_group(Rfs.group_humans):
 						# plejer se na Easy_mode uvrsti brez časa
@@ -318,7 +318,7 @@ func level_finished():
 
 
 		for bolt in bolts_in_game: # zazih
-			# player se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
+			# driver se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
 			# AI se deaktivira, ko gre čez cilj
 			if bolt.is_active: # zazih
 				bolt.is_active = false
@@ -391,8 +391,8 @@ func _update_ranking():
 
 	for bolt in bolts_in_game:
 		var current_bolt_rank: int = bolts_in_game.find(bolt) + 1
-		bolt.update_bolt_rank(current_bolt_rank)
-
+#		bolt.update_bolt_rank(current_bolt_rank)
+		bolt.update_level_stats("level_rank", current_bolt_rank)
 
 func bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
 
@@ -414,14 +414,14 @@ func bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
 
 func check_for_level_finished(): # za preverjanje pogojev za game over (vsakič ko bolt spreminja aktivnost)
 
-	var current_active_human_players: Array = []
+	var current_active_human_drivers: Array = []
 
 	for bolt in bolts_in_game:
 		if bolt.is_active and bolt.is_in_group(Rfs.group_humans):
-			current_active_human_players.append(bolt)
+			current_active_human_drivers.append(bolt)
 
 	# če so vsi neaktivni, preverim kdo je v cilju
-	if current_active_human_players.empty():
+	if current_active_human_drivers.empty():
 		level_finished()
 
 
@@ -436,12 +436,13 @@ func _get_bolt_pull_position(bolt_to_pull: Node2D):
 #	if game_on:
 
 		# pull pozicija brez omejitev
-		var pull_position_distance_from_leader: float = 10 # pull razdalja od vodilnega plejerja
-		var pull_position_distance_from_leader_correction: float = bolt_to_pull.bolt_sprite.get_rect().size.y * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
+		var pull_position_distance_from_leader: float = 200 # pull razdalja od vodilnega plejerja
+#		var pull_position_distance_from_leader_correction: float = bolt_to_pull.bolt_sprite.get_rect().size.y * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
+		var pull_position_distance_from_leader_correction: float = bolt_to_pull.chassis.get_node("BoltScale").rect_size.x * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
 
-#		var vector_to_leading_human_player: Vector2 = camera_leader.global_position - bolt_to_pull.global_position
-		var vector_to_leading_human_player: Vector2 = camera_leader.position - bolt_to_pull.position
-		var vector_to_pull_position: Vector2 = vector_to_leading_human_player - vector_to_leading_human_player.normalized() * pull_position_distance_from_leader
+#		var vector_to_leading_human_driver: Vector2 = camera_leader.global_position - bolt_to_pull.global_position
+		var vector_to_leading_human_driver: Vector2 = camera_leader.position - bolt_to_pull.position
+		var vector_to_pull_position: Vector2 = vector_to_leading_human_driver - vector_to_leading_human_driver.normalized() * pull_position_distance_from_leader
 #		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
 		var bolt_pull_position: Vector2 = bolt_to_pull.position + vector_to_pull_position
 
@@ -506,18 +507,18 @@ func _spawn_level():
 
 func _spawn_bolt(spawned_bolt_id: int, spawned_position_index: int):
 
-	var bolt_type: int = Pfs.player_profiles[spawned_bolt_id]["bolt_type"]
+	var bolt_type: int = Pfs.driver_profiles[spawned_bolt_id]["bolt_type"]
 	var NewBoltInstance: PackedScene = Pfs.bolt_profiles[bolt_type]["bolt_scene"]
 
 	var new_bolt = NewBoltInstance.instance()
-	new_bolt.player_id = spawned_bolt_id
+	new_bolt.driver_id = spawned_bolt_id
 	new_bolt.modulate.a = 0 # za intro
 	new_bolt.rotation_degrees = Rfs.current_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 	Rfs.node_creation_parent.add_child(new_bolt)
 
 	# setup
-	if Pfs.player_profiles[spawned_bolt_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
+	if Pfs.driver_profiles[spawned_bolt_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
 #		new_bolt.bolt_controller.level_navigation_positions = navigation_positions.duplicate() # _temp zakaj tukaj
 		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
 #		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.navigation_cells_positions.duplicate() # _temp zakaj tukaj
@@ -563,7 +564,7 @@ func _start_spawning_pickables():
 func _sort_bolts_by_laps(bolt_1, bolt_2): # descending ... večji index je boljši
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	if bolt_1.player_stats["laps_count"] > bolt_2.player_stats["laps_count"]:
+	if bolt_1.driver_stats["laps_count"] > bolt_2.driver_stats["laps_count"]:
 	    return true
 	return false
 
@@ -579,14 +580,15 @@ func _sort_trackers_by_offset(bolt_tracker_1, bolt_tracker_2):# descending ... v
 func _sort_trackers_by_points(bolt_1, bolt_2):# descending ... večji index je boljši
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	if bolt_1.player_stats["points"] > bolt_2.player_stats["points"]:
+	if bolt_1.driver_stats["points"] > bolt_2.driver_stats["points"]:
 	    return true
 	return false
 
 
 func _sort_trackers_by_speed(bolt_1, bolt_2): # temp ...  ne uporabljam# descn ... večji index je boljši
 
-	if bolt_1.velocity.length() > bolt_2.velocity.length():
+#	if bolt_1.velocity.length() > bolt_2.velocity.length():
+	if bolt_1.bolt_velocity.length() > bolt_2.bolt_velocity.length():
 	    return true
 	return false
 

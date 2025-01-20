@@ -36,7 +36,6 @@ var near_distance: float = 800
 
 # ai targets
 var search_target_reached: bool = false
-var target_prev_position: Vector2 = Vector2.ZERO # če zgubi gibajočo se tarčo gre do zadnje lokacij tarče
 onready var target_ray: RayCast2D = $TargetRay # čekira "locked on" ... col_layer ai targets, vision brakers > bodies, areas
 onready var scanning_ray = $ScanningRay # skenira za vision brake ... col_layer vision brakers > bodies, areas
 onready var scanning_area: Area2D = $ScanningArea # objekti na tem območju so podvrženi inšpekciji
@@ -49,6 +48,7 @@ var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
 var current_game_goals: Array # lovi jih v zaporedju
 var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
+var power_speed_factor: float # delež engine_power, ki manipulira z engine powerjem in imitira hitrost
 
 
 func _input(event: InputEvent) -> void:
@@ -63,7 +63,8 @@ func _input(event: InputEvent) -> void:
 		wanted_speed = 900
 	if Input.is_action_just_pressed("no4"): # follow leader
 		wanted_speed = -1
-#		controlled_bolt.nitro_on = true
+#		controlled_bolt.using_nitro = true
+
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, level_navigation.get_local_mouse_position())
 		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
@@ -127,22 +128,6 @@ func _physics_process(delta: float) -> void:
 			controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
 
 
-func _manipulate_speed(speed_change_rate: float = 0.1):
-
-	if wanted_speed == -1:
-		#		controlled_bolt.engine_power = controlled_bolt.max_engine_power
-		return false
-
-	if wanted_speed == 0:
-		controlled_bolt.engine_power = 0
-	else:
-		var current_speed: float = controlled_bolt.bolt_body_state.get_linear_velocity().length()
-		if current_speed > wanted_speed:
-			controlled_bolt.engine_power = lerp(controlled_bolt.engine_power, 0, speed_change_rate)
-		#		printt ("speed", controlled_bolt.engine_power, current_speed)
-
-	return true
-
 func _state_machine(delta: float):
 #	printt ("ai_state: ", AI_STATE.keys()[ai_state], controlled_bolt.engine_power)
 
@@ -153,11 +138,10 @@ func _state_machine(delta: float):
 
 		AI_STATE.RACE: # šiba po najbližji poti do tarče
 			if not navigation_agent.get_target_location() == ai_target.global_position:
-				target_prev_position = navigation_agent.get_target_location()
 				var bolt_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(bolt_tracker_position)
 				#			Mts.spawn_indikator(bolt_tracker_position, Color.white, controlled_bolt.rotation, Rfs.node_creation_parent)
-			if not _manipulate_speed():
+			if not _adjust_power_speed_limit():
 				controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.SEARCH: # vozi po točkah navigacije in išče novo tarčo, dokler je ne najde
@@ -174,7 +158,6 @@ func _state_machine(delta: float):
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
-				target_prev_position = navigation_agent.get_target_location()
 				navigation_agent.set_target_location(ai_target.global_position)
 			_react_to_target(ai_target, true)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power
@@ -183,7 +166,6 @@ func _state_machine(delta: float):
 			# preverjam za boljšo tarčo
 			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
-				target_prev_position = navigation_agent.get_target_location()
 				navigation_agent.set_target_location(ai_target.global_position)
 			_react_to_target(ai_target)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power
@@ -198,6 +180,24 @@ func _state_machine(delta: float):
 			navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power / 3
 			_react_to_target(ai_target)
+
+
+
+func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
+	# redko ... je pa dober obvod do poenotenja kontrole z bolti z različnimi močmi
+	# samo omejevanje, ker, če je ukaz navzgo, bolt ne more preko svoje max moči ... logično
+
+	if wanted_speed == -1:
+		return false
+
+	if wanted_speed == 0:
+		controlled_bolt.engine_power = 0
+	else:
+		var current_speed: float = controlled_bolt.bolt_body_state.get_linear_velocity().length()
+		if current_speed > wanted_speed:
+			controlled_bolt.engine_power = lerp(controlled_bolt.engine_power, 0, speed_change_rate)
+
+	return true
 
 
 func _update_vision():
@@ -265,7 +265,6 @@ func _change_ai_state(new_ai_state: int):
 
 	scanning_ray.enabled = false
 	target_ray.enabled = false
-	target_prev_position = Vector2.ZERO
 
 	match new_ai_state:
 		AI_STATE.OFF:
@@ -444,11 +443,8 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 		braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
 		controlled_bolt.set_linear_velocity(braking_velocity)
 	else:
-		#		if target_prev_position == Vector2.ZERO:
-		#			self.ai_state = AI_STATE.SEARCH
-		#		else:
-		#			target_prev_position = Vector2.ZERO
-		navigation_agent.set_target_location(target_prev_position)
+		# če izgubi pogled na tarčo, še zmeraj v tistem trenutku videl
+		navigation_agent.set_target_location(controlled_bolt.global_position)
 
 
 func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk

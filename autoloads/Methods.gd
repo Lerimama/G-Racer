@@ -3,6 +3,61 @@ extends Node2D
 ## metode in njihove variable ... bivši global
 
 
+
+var _helper_nodes: Array = []
+var helper_nodes_prefix: String = "__"
+#	randomize() # custom color scheme
+
+
+func hide_helper_nodes(delete_it: bool = false):
+
+	get_all_nodes_in_node(helper_nodes_prefix)
+	for node in _helper_nodes:
+		if "visible" in node:
+				node.hide()
+
+
+func get_all_nodes_in_node(string_to_search: String = "", node_to_check: Node = get_tree().root, all_nodes_of_nodes: Array = []):
+
+	all_nodes_of_nodes.push_back(node_to_check)
+	for node in node_to_check.get_children():
+		if not string_to_search.empty() and node.name.begins_with(string_to_search):
+			#			printt("node", node.name, node.get_parent())
+			if node.name.begins_with(helper_nodes_prefix):
+				_helper_nodes.append(node)
+		all_nodes_of_nodes = get_all_nodes_in_node(string_to_search, node)
+
+	return all_nodes_of_nodes
+
+
+
+func get_hunds_from_clock(clock_string: String):
+
+	var clock_format: String = "00:00.00"
+
+	var mins: int = int(clock_string.get_slice(":", 0))
+	var secs_and_hunds: String = clock_string.get_slice(":", 1)
+	var secs: int = int(clock_string.get_slice(".", 0))
+	var hunds: int = int(clock_string.get_slice(".", 1))
+
+	return (mins * 60 * 100) + (secs * 100) + hunds
+
+
+func generate_random_string(random_string_length: int):
+
+#	var available_characters: Array = [a, ]
+	var available_characters: String = "ABCDEFGHIJKLMNURSTUVZYXWQ0123456789"
+	var random_string: String = ""
+	for character in random_string_length:
+		var random_index: int = randi() % available_characters.length()
+		random_string += available_characters[random_index]
+
+	#	print ("Random string ", random_string)
+
+	return random_string
+
+
+
 func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 
 	# če so podane stotinke, pretvorim v sekunde z decimalko
@@ -22,6 +77,7 @@ func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds
 
 	return time_on_clock
+
 
 
 func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde
@@ -258,104 +314,108 @@ func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja 
 #	return current_scene
 
 
-# BUTTONS --------------------------------------------------------------------------------------------------
-
-# vsak hover, postane focus
-# dodam sounde na focus
-# dodam sounde na confirm, cancel, quit
-# dodam modulate na Checkbutton focus
-
-var allow_focus_sfx: bool = false # focus sounds
-
-func _on_SceneTree_node_added(node: Control):
-
-	if node is BaseButton or node is HSlider:
-		connect_to_button(node)
+# COLORS ------------------------------------------------------------------------------------------------
 
 
-func connect_buttons(root: Node): # recursively connect all buttons
-
-	for child in root.get_children():
-		if child is BaseButton or child is HSlider:
-			connect_to_button(child)
-		connect_buttons(child)
+var spectrum_rect: TextureRect
+var game_color_theme_gradient: Gradient
+onready var gradient_texture: Resource = load("res://assets/gradient/color_theme_gradient.tres")
+onready var spectrum_texture_scene: PackedScene = load("res://assets/gradient/color_theme_spectrum.tscn")
 
 
-func connect_to_button(button):
+func get_random_gradient_colors(color_count: int):
 
-	# pressing btnz
-	if button is CheckButton:
-		button.connect("toggled", self, "_on_button_toggled")
-#	else:# not HSlider:
-	elif not button is HSlider:
-		button.connect("pressed", self, "_on_button_pressed", [button])
+	var setting_game_color_theme: bool = false
 
-	# hover and focus
-	button.connect("mouse_entered", self, "_on_control_hovered", [button])
-	button.connect("focus_entered", self, "_on_control_focused", [button])
-	button.connect("focus_exited", self, "_on_control_unfocused", [button])
+	# za barvno shemo igre ... pomeni, da se kliče iz settingsov
+	if color_count == 0:
+		setting_game_color_theme = true
+		color_count = 320
 
+	# grebam texturo spectruma
+	spectrum_rect = spectrum_texture_scene.instance()
+	var spectrum_texture: Texture = spectrum_rect.texture
+	var spectrum_image: Image = spectrum_texture.get_data()
+	spectrum_image.lock()
 
-func _on_button_pressed(button: BaseButton):
-	print("PRESSED ", button)
+	var spectrum_texture_width: float = spectrum_rect.rect_size.x
+	var new_color_scheme_split_size: float = spectrum_texture_width / color_count
 
-	if button.name == "BackBtn":
-		Rfs.sound_manager.play_gui_sfx("btn_confirm")
-	elif button.name == "QuitBtn" or button.name == "CancelBtn":
-		Rfs.sound_manager.play_gui_sfx("btn_cancel")
-	elif button.name == "ContinueBtn":
-		button.set_disabled(true) # ne dela
-		Rfs.sound_manager.play_gui_sfx("btn_confirm")
-	else:
-		Rfs.sound_manager.play_gui_sfx("btn_confirm")
+	# PRVA barva
+	var random_split_index_1: int = randi() % int(color_count)
+	var random_color_position_x_1: float = random_split_index_1 * new_color_scheme_split_size # lokacija barve v spektrumu
+	var random_color_1: Color = spectrum_image.get_pixel(random_color_position_x_1, 0) # barva na lokaciji v spektrumu
 
+	# DRUGA barva
+	var random_split_index_2: int = randi() % int(color_count)
+	var random_color_position_x_2: float = random_split_index_2 * new_color_scheme_split_size # lokacija barve v spektrumu
+	var random_color_2: Color = spectrum_image.get_pixel(random_color_position_x_2, 0) # barva na lokaciji v spektrumu
 
-func _on_button_toggled(button_pressed: bool) -> void:
+	# TRETJA barva
+	var random_split_index_3: int = randi() % int(color_count)
+	var random_color_position_x_3: float = random_split_index_3 * new_color_scheme_split_size # lokacija barve v spektrumu
+	var random_color_3: Color = spectrum_image.get_pixel(random_color_position_x_3, 0) # barva na lokaciji v spektrumu
 
-	if button_pressed:
-		Rfs.sound_manager.play_gui_sfx("btn_confirm")
-	else:
-		Rfs.sound_manager.play_gui_sfx("btn_cancel")
+	# GRADIENT
 
+	# za barvno shemo igre
+	if setting_game_color_theme:
 
-func _on_control_hovered(control: Control):
+		# setam gradient barvne sheme (node)
+		game_color_theme_gradient = gradient_texture.get_gradient()
+		game_color_theme_gradient.set_color(0, random_color_1)
+		game_color_theme_gradient.set_color(1, random_color_2)
+		game_color_theme_gradient.set_color(2, random_color_3)
 
-	if not control.has_focus():
-		control.grab_focus()
-		Rfs.sound_manager.play_gui_sfx("btn_focus_change")
+		return	game_color_theme_gradient # settingsi rabijo barvno temo
 
+	# za barvno shemo levela
+	else: # ostali rabijo barve
 
-func _on_control_focused(control: Control):
+		# setam gradient barvne sheme (node)
+		var level_scheme_gradient: Gradient = gradient_texture.get_gradient()
+		level_scheme_gradient.set_color(0, random_color_1)
+		level_scheme_gradient.set_color(1, random_color_2)
+		level_scheme_gradient.set_color(2, random_color_3)
 
-	Rfs.sound_manager.play_gui_sfx("btn_focus_change")
-	# check btn color fix
-	if control is CheckButton or control is HSlider:
-		control.modulate = Color.white
+		# naberem barve glede na število potrebnih barv
+		var split_colors: Array
+		var color_split_offset: float = 1.0 / color_count
+		for n in color_count:
+			var color_position_x: float = n * color_split_offset # lokacija barve v spektrumu
+			var color = level_scheme_gradient.interpolate(color_position_x) # barva na lokaciji v spektrumu
+			split_colors.append(color)
 
-
-func _on_control_unfocused(control: Control):
-
-	if control is CheckButton or control is HSlider:
-		control.modulate = Color.red # color_gui_gray # Color.white
-
-
-func grab_focus_no_sfx(control_to_focus: Control):
-
-	allow_focus_sfx = false
-	control_to_focus.grab_focus()
-	allow_focus_sfx = true
-
-
-
+		return	split_colors # level rabi že izbrane barve
 
 
+func get_spectrum_colors(color_count: int):
+	randomize()
+
+	# grabam texturo spectruma
+	if not spectrum_rect:
+		spectrum_rect = spectrum_texture_scene.instance()
+	var spectrum_texture: Texture = spectrum_rect.texture
+	var spectrum_image: Image = spectrum_texture.get_data()
+	spectrum_image.lock()
+
+	# izžrebam barvi gradienta iz nastavljenega spektruma
+	var spectrum_texture_width: float = spectrum_rect.rect_size.x
+	var new_color_scheme_split_size: float = spectrum_texture_width / color_count
+
+	# naberem barve glede na število potrebnih barv
+	var split_colors: Array
+	var color_split_offset: float = spectrum_texture_width / color_count
+	for n in color_count:
+		var color_position_x: float = n * color_split_offset # lokacija barve v spektrumu
+		var color = spectrum_image.get_pixel(color_position_x, 0) # barva na lokaciji v spektrumu
+		split_colors.append(color)
+
+	return split_colors
 
 
 
-
-
-
-
+# SCENE --------------------------------------
 
 
 

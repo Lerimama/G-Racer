@@ -63,24 +63,19 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"full_equip_mode": true,
 	"drifting_mode": true, # drift ali tilt?
 	# shadows
-#	"game_shadows_direction": Vector2.ONE, # odvisna od x,y položaja vira svetlobe
 	"game_shadows_rotation_deg": 45,
 	"game_shadows_color": Color.black, # odvisna od višine vira svetlobe
 	"game_shadows_length_factor": 1, # odvisna od višine vira svetlobe
 	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
-
-	# debug
-	"game_shadows_direction": Vector2(-800, 0), # ... samo še sprajti
-	"max_zoomout": false,
-	"max_zoomin": false,
-
+	# camera
+	"camera_zoom_range": [1, 1.5],
 }
 
 
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
 
-var players_on_game_start: Array # seta se iz home
+var drivers_on_game_start: Array # seta se iz home
 var current_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
@@ -91,6 +86,15 @@ var current_game_levels: Array = [LEVEL.STAFF]
 #var current_game_levels: Array = [LEVEL.NITRO]
 #var current_game_levels: Array = [LEVEL.00]
 
+func _ready() -> void:
+
+	if OS.is_debug_build():
+		default_game_settings["camera_zoom_range"] = [3, 3]
+#		default_game_settings["camera_zoom_range"] = [6, 6]
+		default_game_settings["start_countdown"] = false
+		default_game_settings["easy_mode"] = true
+		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)
+
 
 func get_level_game_settings(selected_level_index: int):
 
@@ -100,10 +104,6 @@ func get_level_game_settings(selected_level_index: int):
 	var current_level: int = current_game_levels[selected_level_index]
 
 	# debug
-	current_game_settings["start_countdown"] = false
-	current_game_settings["max_zoomout"] = true
-#	current_game_settings["max_zoomin"] = true
-
 	match current_level:
 		# racing
 		# duel

@@ -120,3 +120,6 @@ collision_polygon_node_path = NodePath("../CollisionPolygon2D")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( 448.104, -0.103551, 448.104, 256.104, -0.103552, 256.104, -0.103552, -0.103552 )
+
+[connection signal="body_entered" from="." to="." method="_on_Surface_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_Surface_body_exited"]

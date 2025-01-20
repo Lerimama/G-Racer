@@ -1,13 +1,13 @@
 extends Node2D
 
 
-enum WEAPON_AMMO {BULLET, MISILE, MINA}
+enum WEAPON_AMMO {BULLET, MISILE, MINA} # zaporedje kot v profilih
 export (WEAPON_AMMO) var ammo_key = 0
 export var fx_enabled: bool = true
 
 var is_set: bool =  false
 var weapon_reloaded: bool = true
-var ammo_count: int = 0 setget _update_weapon_stats # napolnems strani bolta ali igre
+var ammo_count: int = 0 setget _change_weapon_stats # napolnems strani bolta ali igre
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -21,6 +21,10 @@ var ammo_count_key: String#  = ammo_profile["ammo_count_key"] # na prvi load
 var ammo_profile: Dictionary# = Pfs.ammo_profiles[weapon_key] # na prvi load
 var AmmoScene: PackedScene# = ammo_profile["scene"]
 var reload_time: float = 0.15 # weapon_profile["reload_time"] # PRO dodaj weapons
+
+# neu
+
+var weapon_stat_key: int
 
 
 func _ready() -> void:
@@ -39,7 +43,8 @@ func set_weapon(): # kliče bolt
 
 	# ammo count
 	ammo_count_key = ammo_profile["ammo_count_key"]
-	ammo_count = owner.player_stats[ammo_count_key]
+	ammo_count = owner.driver_stats[ammo_count_key]
+	weapon_stat_key = Pfs.ammo_profiles[ammo_key]["ammo_stat_key"]
 
 	is_set = true
 
@@ -87,10 +92,11 @@ func shoot():
 			reload_timer.start(reload_time)
 
 
-func _update_weapon_stats(ammo_count_delta: int):
+func _change_weapon_stats(ammo_count_delta: int):
 
 		ammo_count += ammo_count_delta
-		owner.update_stat(ammo_count_key, ammo_count_delta)
+#		owner.update_stat(ammo_count_key, ammo_count_delta)
+		owner.update_stat(weapon_stat_key, ammo_count_delta)
 
 
 func _on_ReloadTimer_timeout() -> void:

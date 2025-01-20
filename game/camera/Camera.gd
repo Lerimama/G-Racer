@@ -5,13 +5,13 @@ signal camera_position_changed
 
 var follow_target: Node = null setget _on_follow_target_change
 
+# shake izklopljen ... še vedno je v test ui-nodetu"
 var bolt_explosion_shake = 0
 var bullet_hit_shake = 0.02
 var misile_hit_shake = 0.05
 
 # dinamic zoom
-var camera_max_zoom: float = 1.5
-var camera_min_zoom: float = 1
+var camera_zoom_range: Array = Sts.default_game_settings["camera_zoom_range"] # [1, 1.5]
 var camera_zoom_speed_factor: float = 0.01
 var min_zoom_target_speed: float = 1000
 var max_zoom_target_speed: float = 1500
@@ -19,6 +19,8 @@ var max_zoom_target_speed: float = 1500
 onready var test_ui = $TestUI
 
 var debug_max_zoom_out: = false
+
+
 
 ## neu
 #onready var camera_position: Vector2 = get_camera_position() setget _change_camera_position
@@ -39,42 +41,39 @@ func _ready():
 
 func _process(delta: float) -> void:
 
-	if Rfs.current_camera == self:
-		if not test_ui.test_view_on:
-			if follow_target:
-				position = follow_target.global_position
 
-				if Rfs.game_manager.game_settings["max_zoomout"]:
-					zoom.x = camera_max_zoom * 2# OPT ... zoom podvajanje
-				elif Rfs.game_manager.game_settings["max_zoomin"]:
-					zoom.x = camera_max_zoom * 0.32# OPT ... zoom podvajanje
+	if Rfs.current_camera == self and not test_ui.test_view_on:
+		# _temp ... more bit če ne je zrcalna ... posledica implementacije šejka (dokler šejk ne bo v tem skriptu)
+		offset.x = 0
+		offset.y = 0
+		rotation_degrees = 0
+		if follow_target:
+
+			# follow
+			position = follow_target.global_position
+
+			# dinamic zoom
+			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.bolt_velocity == null:
+				var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
+				# če je nad min limit
+				if follow_target_speed > min_zoom_target_speed:
+					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
+					 # vel, čez min span limit, nam da procent zasedenosti zoom spanao
+					var target_speed_part_in_span: float = (follow_target_speed - min_zoom_target_speed) / max_zoom_velocity_span # %
+					var camera_zoom_span: float = abs(camera_zoom_range[1] - camera_zoom_range[0])
+					# dobljen procent zasedenosti vel span, apliciram na procenz zoom spana
+					var camera_zoom_adon_in_span: float = camera_zoom_span * target_speed_part_in_span
+					zoom.x = lerp(zoom.x, camera_zoom_range[0] + camera_zoom_adon_in_span, camera_zoom_speed_factor)
+				# če je zunaj zoom območja lerpam do minimum zooma
 				else:
-					# zoom
-					if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.bolt_velocity == null:
-						var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
-						# če je nad min limit
-						if follow_target_speed > min_zoom_target_speed:
-							var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
-							 # vel, čez min span limit, nam da procent zasedenosti zoom spanao
-							var target_speed_part_in_span: float = (follow_target_speed - min_zoom_target_speed) / max_zoom_velocity_span # %
-							var camera_zoom_span: float = abs(camera_max_zoom - camera_min_zoom)
-							# dobljen procent zasedenosti vel span, apliciram na procenz zoom spana
-							var camera_zoom_adon_in_span: float = camera_zoom_span * target_speed_part_in_span
-							zoom.x = lerp(zoom.x, camera_min_zoom + camera_zoom_adon_in_span, camera_zoom_speed_factor)
-						# če je zunaj zoom območja lerpam do minimum zooma
-						else:
-							zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
-					else:
-						zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor) # OPT ... zoom podvajanje
+					zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_speed_factor)
+			else:
+				zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_speed_factor) # OPT ... zoom podvajanje zaradi načina ifanja
 
-			# default zoom ... lerp za mehkobo prehodov
-
-#			if not debug_max_zoom_out:
-			zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)
-			# debug
-			if not Rfs.game_manager.game_settings["max_zoomout"] and not Rfs.game_manager.game_settings["max_zoomin"]:
-				zoom.x = clamp(zoom.x, camera_min_zoom, camera_max_zoom)
-			zoom.y = zoom.x
+		# default zoom ... lerp za mehkobo prehodov
+		zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_speed_factor)
+		zoom.x = clamp(zoom.x, camera_zoom_range[0], camera_zoom_range[1])
+		zoom.y = zoom.x
 
 
 func _on_follow_target_change(new_follow_target):
@@ -90,18 +89,14 @@ func _on_follow_target_change(new_follow_target):
 		follow_target = new_follow_target
 
 
-
 func shake_camera(shake_power: float):
-	print("shake izklopljen")
+	print("shake izklopljen ... še vedno je v test ui-nodetu")
 	# time, power in nivo popuščanja
 	#	test_ui.shake_camera(shake_power) # debug
 	pass
 
 
 func set_camera_limits():
-
-	if Rfs.game_manager.game_settings["max_zoomout"] or Rfs.game_manager.game_settings["max_zoomin"]:
-		 return
 
 	var corner_TL: float
 	var corner_TR: float

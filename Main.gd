@@ -185,8 +185,8 @@ func game_out():
 
 #	get_viewport().set_disable_input(true) # anti dablklik
 
-#	Global.player1_camera = null
-#	Global.player2_camera = null
+#	Global.driver1_camera = null
+#	Global.driver2_camera = null
 #
 	$Sounds/MenuFade.play()
 
@@ -205,8 +205,8 @@ func reload_game(): # game out z drugačnim zaključkom
 
 	get_viewport().set_disable_input(true) # anti dablklik
 
-#	Global.player1_camera = null
-#	Global.player2_camera = null
+#	Global.driver1_camera = null
+#	Global.driver2_camera = null
 
 	$Sounds/ScreenSlide.play()
 

@@ -9,7 +9,7 @@ var shield_time: float = 10 # spremeni jo lahko spawner
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var shield_collision: CollisionShape2D = $CollisionShape2D
 onready var shield_timer: Timer = $ShieldTimer
-onready var shield_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.SHIELD]
+onready var shield_profile: Dictionary = Pfs.equipment_profiles[Pfs.EQUIPMENT.SHIELD]
 
 
 func _ready() -> void:

@@ -66,7 +66,7 @@ func _gui_input_fw(event):
 				start = snap(get_local_mouse_position())
 			else:
 				selecting = false
-		
+
 		if event.button_index == BUTTON_WHEEL_UP:
 			if event.is_pressed():
 #				if not is_in_rect(get_global_mouse_position()):
@@ -74,7 +74,7 @@ func _gui_input_fw(event):
 #				if not is_visible_in_tree():
 #					return
 				ScnRoot.move_relative(Vector2(0, SCROLL_SENS))
-		
+
 		if event.button_index == BUTTON_WHEEL_DOWN:
 			if event.is_pressed():
 #				if not is_in_rect(get_global_mouse_position()):
@@ -82,7 +82,7 @@ func _gui_input_fw(event):
 #				if not is_visible_in_tree():
 #					return
 				ScnRoot.move_relative(Vector2(0, -SCROLL_SENS))
-	
+
 	if event is InputEventMouseMotion:
 		if event.button_mask & BUTTON_MASK_RIGHT:
 #			if not is_in_rect(get_global_mouse_position()):
@@ -95,10 +95,10 @@ func _gui_input_fw(event):
 # Unused
 func is_in_rect(point: Vector2) -> bool:
 	if not is_visible_in_tree(): return false
-	
+
 	if Zoom.get_global_rect().has_point(point):
 		return false
-	
+
 	var rect = Parent.get_global_rect()
 	# Have to do this or else it would do it when scrolling with bar
 	rect.size -= Vector2.ONE * SCROLLBAR_SIZE

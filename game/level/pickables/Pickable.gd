@@ -43,25 +43,38 @@ func _on_Item_body_entered(body: Node) -> void:
 	#	if all_sounds.size() > 1:
 	#		sound_picked = all_sounds[all_sounds.size() - 1]
 
-	if body.has_method("item_picked"):
-		if pickable_key == Pfs.PICKABLE.PICKABLE_BULLET or pickable_key == Pfs.PICKABLE.PICKABLE_MISILE \
-		or pickable_key == Pfs.PICKABLE.PICKABLE_MINA:
+	if body.is_in_group(Rfs.group_bolts):
+		if Pfs.pickable_profiles.keys().has("pickable_ammo"):
 			Rfs.sound_manager.play_sfx("pickable_ammo")
-		elif pickable_key == Pfs.PICKABLE.PICKABLE_NITRO:
-			Rfs.sound_manager.play_sfx("pickable_nitro")
 		else:
 			Rfs.sound_manager.play_sfx("pickable")
-			pass
+			if pickable_key == Pfs.PICKABLE.PICKABLE_RANDOM:
+				var random_range: int = Pfs.pickable_profiles.keys().size() - 1 # izloči random
+				var random_pickable_index = randi() % random_range
+				pickable_key = Pfs.pickable_profiles.keys()[random_pickable_index]
 
-		body.item_picked(pickable_key)
 		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
-		#		body.call_deferred("item_picked", pickable_key)
-#		sound_picked.play()
-#		modulate.a = 0
-#		monitorable = false
-#		monitoring = false
+		body.on_item_picked(pickable_key)
 
-		queue_free()
+#	if body.has_method("item_picked"):
+#		if pickable_key == Pfs.PICKABLE.PICKABLE_BULLET or pickable_key == Pfs.PICKABLE.PICKABLE_MISILE \
+#		or pickable_key == Pfs.PICKABLE.PICKABLE_MINA:
+#			Rfs.sound_manager.play_sfx("pickable_ammo")
+#		elif pickable_key == Pfs.PICKABLE.PICKABLE_NITRO:
+#			Rfs.sound_manager.play_sfx("pickable_nitro")
+#		else:
+#			Rfs.sound_manager.play_sfx("pickable")
+#			pass
+#
+#		body.item_picked(pickable_key)
+#		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
+#		#		body.call_deferred("item_picked", pickable_key)
+##		sound_picked.play()
+##		modulate.a = 0
+##		monitorable = false
+##		monitoring = false
+
+	queue_free()
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

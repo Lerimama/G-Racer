@@ -30,7 +30,7 @@ func light_reached(bolt: Node2D):
 		turned_on = true
 		light_2d.color = on_color
 		sprite.modulate = Color.white
-		bolt.update_bolt_points(reward_points)
+		bolt.update_stat(Pfs.DRIVER_STATS.POINTS, reward_points)
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:

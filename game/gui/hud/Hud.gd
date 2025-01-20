@@ -35,13 +35,13 @@ func set_hud(): # kliče GM
 	game_timer.show()
 	record_lap_label.hide()
 
-	# player stats
+	# driver stats
 	for box in statboxes:
 		# najprej skrijem vse in potem pokažem glede na igro
 		for stat in box.get_children():
 			record_lap_label.hide()
 			stat.hide()
-		box.player_line.show()
+		box.driver_line.show()
 
 		box.stat_cash.show()
 		box.stat_gas.show()
@@ -122,27 +122,27 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 	#		return
 
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
-	var spawned_player_statbox: Control = statboxes[spawned_bolt.player_id]
-	var spawned_player_stats: Dictionary = spawned_bolt.player_stats
-	var spawned_player_profile: Dictionary = Pfs.player_profiles[spawned_bolt.player_id]
+	var spawned_driver_statbox: Control = statboxes[spawned_bolt.driver_id]
+	var spawned_driver_stats: Dictionary = spawned_bolt.driver_stats
+	var spawned_driver_profile: Dictionary = Pfs.driver_profiles[spawned_bolt.driver_id]
 
 	# bolt stats
-	spawned_player_statbox.stat_bullet.stat_value = spawned_player_stats["bullet_count"]
-	spawned_player_statbox.stat_misile.stat_value = spawned_player_stats["misile_count"]
-	spawned_player_statbox.stat_mina.stat_value = spawned_player_stats["mina_count"]
-	spawned_player_statbox.stat_gas.stat_value = spawned_player_stats["gas_count"]
-	spawned_player_statbox.stat_life.stat_value = spawned_player_stats["life"]
-	spawned_player_statbox.stat_points.stat_value = spawned_player_stats["points"]
-	spawned_player_statbox.stat_cash.stat_value = spawned_player_stats["cash_count"]
-	spawned_player_statbox.stat_wins.stat_value = spawned_player_stats["wins"]
+	spawned_driver_statbox.stat_bullet.stat_value = spawned_driver_stats["bullet_count"]
+	spawned_driver_statbox.stat_misile.stat_value = spawned_driver_stats["misile_count"]
+	spawned_driver_statbox.stat_mina.stat_value = spawned_driver_stats["mina_count"]
+	spawned_driver_statbox.stat_gas.stat_value = spawned_driver_stats["gas_count"]
+	spawned_driver_statbox.stat_life.stat_value = spawned_driver_stats["life"]
+	spawned_driver_statbox.stat_points.stat_value = spawned_driver_stats["points"]
+	spawned_driver_statbox.stat_cash.stat_value = spawned_driver_stats["cash_count"]
+	spawned_driver_statbox.stat_wins.stat_value = spawned_driver_stats["wins"]
 
-	# player line
-	spawned_player_statbox.player_name_label.text = spawned_player_profile["player_name"]
-	spawned_player_statbox.player_name_label.modulate = spawned_player_profile["player_color"]
-	spawned_player_statbox.player_avatar.set_texture(spawned_player_profile["player_avatar"])
-	spawned_player_statbox.stat_wins.modulate = Color.red
+	# driver line
+	spawned_driver_statbox.driver_name_label.text = spawned_driver_profile["driver_name"]
+	spawned_driver_statbox.driver_name_label.modulate = spawned_driver_profile["driver_color"]
+	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar"])
+	spawned_driver_statbox.stat_wins.modulate = Color.red
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
-	spawned_player_statbox.visible = true
+	spawned_driver_statbox.visible = true
 
 
 func _on_GameTimer_gametime_is_up() -> void:
@@ -151,26 +151,26 @@ func _on_GameTimer_gametime_is_up() -> void:
 	Rfs.game_manager.level_finished()
 
 
-func _on_stats_changed(player_id: int, player_stats: Dictionary):
-	var statbox_to_change: Control = statboxes[player_id] # bolt id kot index je enak indexu statboxa v statboxih
+func _on_stats_changed(driver_id: int, driver_stats: Dictionary):
+	var statbox_to_change: Control = statboxes[driver_id] # bolt id kot index je enak indexu statboxa v statboxih
 
-	statbox_to_change.stat_wins.stat_value = player_stats["wins"] # setget
-	statbox_to_change.stat_life.stat_value = player_stats["life"]
-	statbox_to_change.stat_bullet.stat_value = player_stats["bullet_count"]
-	statbox_to_change.stat_misile.stat_value = player_stats["misile_count"]
-	statbox_to_change.stat_mina.stat_value = player_stats["mina_count"]
-	statbox_to_change.stat_points.stat_value = player_stats["points"]
-	statbox_to_change.stat_cash.stat_value = player_stats["cash_count"]
-	statbox_to_change.stat_gas.stat_value = player_stats["gas_count"]
-	statbox_to_change.stat_level_rank.stat_value = player_stats["level_rank"]
-	statbox_to_change.stat_laps_count.stat_value = player_stats["laps_count"] + 1 # +1 ker kaže trnenutnega, ne končanega
-	statbox_to_change.stat_best_lap.stat_value = player_stats["best_lap_time"]
-	statbox_to_change.stat_level_time.stat_value = player_stats["level_time"]
+	statbox_to_change.stat_wins.stat_value = driver_stats["wins"] # setget
+	statbox_to_change.stat_life.stat_value = driver_stats["life"]
+	statbox_to_change.stat_bullet.stat_value = driver_stats["bullet_count"]
+	statbox_to_change.stat_misile.stat_value = driver_stats["misile_count"]
+	statbox_to_change.stat_mina.stat_value = driver_stats["mina_count"]
+	statbox_to_change.stat_points.stat_value = driver_stats["points"]
+	statbox_to_change.stat_cash.stat_value = driver_stats["cash_count"]
+	statbox_to_change.stat_gas.stat_value = driver_stats["gas_count"]
+	statbox_to_change.stat_level_rank.stat_value = driver_stats["level_rank"]
+	statbox_to_change.stat_laps_count.stat_value = driver_stats["laps_count"] + 1 # +1 ker kaže trnenutnega, ne končanega
+	statbox_to_change.stat_best_lap.stat_value = driver_stats["best_lap_time"]
+	statbox_to_change.stat_level_time.stat_value = driver_stats["level_time"]
 
 	# level record time
-	if not player_stats["best_lap_time"] == 0:
-		if player_stats["best_lap_time"] < record_lap_time or record_lap_time == 0:
-			record_lap_time = player_stats["best_lap_time"]
+	if not driver_stats["best_lap_time"] == 0:
+		if driver_stats["best_lap_time"] < record_lap_time or record_lap_time == 0:
+			record_lap_time = driver_stats["best_lap_time"]
 			Mts.write_clock_time(record_lap_time, record_lap_label.get_node("TimeLabel"))
 			if not record_lap_label.visible:
 				record_lap_label.show()

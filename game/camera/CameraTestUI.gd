@@ -98,49 +98,46 @@ func _input(event: InputEvent) -> void:
 
 		if Input.is_mouse_button_pressed(BUTTON_WHEEL_DOWN) and test_view_on:
 			parent_camera.zoom += Vector2(0.1, 0.1)
-			drag_on = false
+
 	else:
-			drag_on = false
+		drag_on = false
 
 
 func _process(delta):
 
+	if test_view_on: # _temp ... ker šejk še ne dela
 
-	time += delta
-	#	if test_view_on:
-	# start decay
-	#	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo
-	var shake = trauma
-	parent_camera.offset.x = noise.get_noise_3d(time * time_scale, 0, 0) * max_horizontal * shake
-	parent_camera.offset.y = noise.get_noise_3d(0, time * time_scale, 0) * max_vertical * shake
-	parent_camera.rotation_degrees = noise.get_noise_3d(0, 0, time * time_scale) * max_rotation * shake
+		time += delta
+		#	if test_view_on:
+		# start decay
+		#	var shake = pow(trauma, 2) # narašča s kvadratno funkcijo
+		var shake = trauma
+		parent_camera.offset.x = noise.get_noise_3d(time * time_scale, 0, 0) * max_horizontal * shake
+		parent_camera.offset.y = noise.get_noise_3d(0, time * time_scale, 0) * max_vertical * shake
+		parent_camera.rotation_degrees = noise.get_noise_3d(0, 0, time * time_scale) * max_rotation * shake
 
-	# start decay
-	if trauma > 0:
-		yield(get_tree().create_timer(trauma_time), "timeout")
-		trauma = clamp(trauma - (delta * decay), 0, 1)
+		# start decay
+		if trauma > 0:
+			yield(get_tree().create_timer(trauma_time), "timeout")
+			trauma = clamp(trauma - (delta * decay), 0, 1)
 
-	# UI
-	trauma_bar.value = trauma
-	shake_bar.value = shake
-	seed_slider.value = noise.seed
-	octaves_slider.value = noise.octaves
-	period_slider.value = noise.period
-	persistence_slider.value = noise.persistence
-	lacunarity_slider.value = noise.lacunarity
+		# UI
+		trauma_bar.value = trauma
+		shake_bar.value = shake
+		seed_slider.value = noise.seed
+		octaves_slider.value = noise.octaves
+		period_slider.value = noise.period
+		persistence_slider.value = noise.persistence
+		lacunarity_slider.value = noise.lacunarity
 
-	# drag
-	if drag_on:
-		parent_camera.position += mouse_position_on_drag_start - parent_camera.get_global_mouse_position()
+		# drag
+		if drag_on:
+			parent_camera.position += mouse_position_on_drag_start - parent_camera.get_global_mouse_position()
 
 
 func shake_camera(added_trauma):
 	trauma = clamp(trauma + added_trauma, 0, 1)
 
-
-func _on_ZoomBox_toggled(button_pressed: bool) -> void:
-
-	get_parent().debug_max_zoom_out = button_pressed
 
 
 func _on_CheckBox_toggled(button_pressed: bool) -> void:
