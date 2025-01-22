@@ -1,9 +1,10 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
 [ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=4]
+[ext_resource path="res://game/bolt/BoltHandler.gd" type="Script" id=5]
 [ext_resource path="res://assets/textures/atlas_pickables.png" type="Texture" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=8]
@@ -157,14 +158,16 @@ script = ExtResource( 8 )
 __meta__ = {
 "_edit_vertical_guides_": [ -13.0, 13.0 ]
 }
-height = 100.0
-elevation = 150.0
+height = 10.0
 bolt_engines_path = NodePath("Chassis/Engines")
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 22 )]
 shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 
 [node name="BoltController" type="Node" parent="."]
+
+[node name="BoltHandler" type="Node" parent="."]
+script = ExtResource( 5 )
 
 [node name="TrailSource" type="Position2D" parent="."]
 position = Vector2( -33, 0 )

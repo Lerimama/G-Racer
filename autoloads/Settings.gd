@@ -27,7 +27,7 @@ var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
 #		"level_type": "RACING", # ko bi le lahko level podatki bli tukej
 		"level_name": "",
-		"level_path": "res://game/level/Level.tscn",
+		"level_path": "res://game/level/LevelFirstDrive.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
@@ -83,17 +83,18 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 
 #var current_game_levels: Array = []
 #var current_game_levels: Array = [LEVEL.ROUND]
-var current_game_levels: Array = [LEVEL.STAFF]
-#var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
+#var current_game_levels: Array = [LEVEL.STAFF]
+var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
 #var current_game_levels: Array = [LEVEL.NITRO]
 #var current_game_levels: Array = [LEVEL.00]
 
 func _ready() -> void:
 
 	if OS.is_debug_build():
+		default_game_settings["camera_zoom_range"] = [2, 2]
 #		default_game_settings["camera_zoom_range"] = [3, 3]
 #		default_game_settings["camera_zoom_range"] = [5, 5]
-#		default_game_settings["start_countdown"] = false
+		default_game_settings["start_countdown"] = false
 #		default_game_settings["all_bolts_on_screen_mode"] = false
 		default_game_settings["easy_mode"] = true
 		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)

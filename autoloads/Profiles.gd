@@ -89,9 +89,15 @@ var ai_profile: Dictionary = {
 	# za prepis driver profila
 	"controller_type" : CONTROLLER_TYPE.AI,
 	# race
+
+
+	# "all powers"
 	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 	# battle
 	"battle_engine_power": 120, # je enaka kot od  bolta
+
+
+
 	"aim_time": 1,
 #	"seek_rotation_range": 60,
 #	"seek_rotation_speed": 3,
@@ -111,7 +117,7 @@ var controller_profiles : Dictionary = {
 		right_action = "p1_right",
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
-		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
+		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
 		},
 	CONTROLLER_TYPE.WASD : {
 		fwd_action = "p2_fwd",
@@ -120,7 +126,7 @@ var controller_profiles : Dictionary = {
 		right_action = "p2_right",
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
-		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
+		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP1 : {
 		fwd_action = "jp1_fwd",
@@ -129,7 +135,7 @@ var controller_profiles : Dictionary = {
 		right_action = "jp1_right",
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
-		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
+		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP2 : {
 		fwd_action = "jp2_fwd",
@@ -138,7 +144,7 @@ var controller_profiles : Dictionary = {
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
-		"controller_scene": preload("res://game/bolt/ControllerHuman.tscn"),
+		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.AI : {
 		fwd_action = "ai_fwd",
@@ -153,16 +159,20 @@ var controller_profiles : Dictionary = {
 
 #const bolt_engine_power_factor:  =
 
-
+var reality_engine_power_factor: float = 1000
 enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
 #		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"on_hit_disabled_time": 2,
+
+		# "all powers"
 		"accelaration_power": 5000, # delta seštevanje moči motorja do največje moči
 		"max_engine_power": 500000, # 1 - 500 konjev
-		"engine_power_fast_start": 5000, # pospešek motorja do največje moči (horsepower?)
+		"fast_start_engine_power": 5000, # pospešek motorja do največje moči (horsepower?)
+
+
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
@@ -175,10 +185,15 @@ var bolt_profiles: Dictionary = {
 		# idle motion
 		"idle_lin_damp": 0.5,
 		"idle_ang_damp": 0.5,
+
+		# "all powers"
 		"free_rotation_power": 14000, # na oba
 		"drift_power": 17000, # na rear
 		"glide_power_F": 46500,
 		"glide_power_R": 50000,
+
+
+
 		"glide_ang_damp": 5, # da se ha rotirat
 		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
 		# material
@@ -194,7 +209,8 @@ enum EQUIPMENT {NITRO, SHIELD}
 var equipment_profiles : Dictionary = {
 	EQUIPMENT.NITRO: {
 		"value": 1,
-		"nitro_power_adon": 1, # prišteješ moč
+		# "all powers"
+		"nitro_power_adon": 300000, # prišteješ moč
 		"time": 3,
 	},
 	EQUIPMENT.SHIELD: {
@@ -260,18 +276,22 @@ func levels(): pass
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
 	SURFACE.NONE: {
+		# "all powers"
 		"max_engine_power_factor": 1, # koliko original powerja
 		"shake_amount": 0,
 	},
 	SURFACE.CONCRETE: {
+		# "all powers"
 		"max_engine_power_factor": 1.15, # koliko original powerja
 		"shake_amount": 0,
 	},
 	SURFACE.NITRO: {
+		# "all powers"
 		"max_engine_power_factor": 2, # koliko original powerja
 		"shake_amount": 0,
 	},
 	SURFACE.GRAVEL: {
+		# "all powers"
 		"max_engine_power_factor": 0.3,
 		"shake_amount": 0,
 	},

@@ -4,9 +4,14 @@ class_name Bolt
 
 signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
 
-enum MOTION {ENGINES_OFF, IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
+enum MOTION {ENGINES_OFF, IDLE, FWD, REV, DISARRAY, TILT, FREE_ROTATE, DRIFT, GLIDE} # DIZZY, DYING glede na moč motorja
+#enum MOTION {ENGINES_OFF, IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
 var motion: int = MOTION.IDLE setget _change_motion
-var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
+var free_motion_type: int = MOTION.FREE_ROTATE # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = MOTION.DRIFT # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = MOTION.GLIDE # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = v# presetan motion, ko imaš samo smerne tipke
 
 export var height: float = 0 # PRO
 export var elevation: float = 7 # PRO
@@ -57,7 +62,7 @@ var max_engine_power_adon: float = 0 # tole spremija samo kar koli vpliva na mo�
 var max_engine_power_factor: float = 1 # tole spremija samo kar koli vpliva na moč med igro, ovinek?
 onready var max_engine_power: float = bolt_profile["max_engine_power"]
 onready var accelaration_power: float = bolt_profile["accelaration_power"] # delež engine powerja, ki se sešteva
-onready var engine_power_fast_start: float = bolt_profile["engine_power_fast_start"] # 500
+onready var fast_start_engine_power: float = bolt_profile["fast_start_engine_power"] # 500
 # engine rotation / direction
 var heading_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_rotation_speed: float = 0.1
@@ -88,9 +93,14 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 #var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
 
 
-func _ready() -> void:
-#	printt("BOLT", self.name)
+func _input(event: InputEvent) -> void:
 
+	if Input.is_action_just_pressed("no1"): # idle
+		use_nitro()
+
+
+func _ready() -> void:
+#	printt("BOLT", self.name, get_collision_layer_bit(0))
 	add_to_group(Rfs.group_bolts)
 
 	z_as_relative = false
@@ -135,6 +145,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 
+#	printt("max_engine_power", max_engine_power)
 	trail_source.update_trail(bolt_velocity.length())
 
 	if not is_active: # resetiram, če ni aktiven
@@ -227,7 +238,7 @@ func _motion_state_machine():
 		MOTION.FWD:
 			engine_power += accelaration_power
 			if Rfs.game_manager.fast_start_window:
-				engine_power += engine_power_fast_start
+				engine_power += fast_start_engine_power
 			for thrust in engines.front_thrusts:
 				thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
 			for thrust in engines.rear_thrusts:
@@ -507,12 +518,15 @@ func use_nitro():
 	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
 
 	if not using_nitro:
+		printt ("pred ", max_engine_power_adon, max_engine_power, "-----------------")
 		Rfs.sound_manager.play_sfx("pickable_nitro")
 		max_engine_power_adon = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
 		engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
+		printt ("med ", max_engine_power_adon, max_engine_power,"-----------------")
 		yield(get_tree().create_timer(Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]),"timeout")
 		max_engine_power_adon = 0
 		using_nitro = false
+		printt ("po ", max_engine_power_adon, max_engine_power,"-----------------")
 
 
 func revup():

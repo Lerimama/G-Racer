@@ -533,8 +533,9 @@ R={
 2d_physics/layer_2="bolts"
 2d_physics/layer_3="ai_targets"
 2d_physics/layer_4="vision_breakers"
-2d_physics/layer_5="enemies"
+2d_physics/layer_5="players"
 2d_physics/layer_6="ammo"
+2d_physics/layer_7="enemies"
 2d_physics/layer_20="non_colliding"
 
 [logging]

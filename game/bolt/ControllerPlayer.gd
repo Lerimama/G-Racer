@@ -45,6 +45,8 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 
 	controlled_bolt.add_to_group(Rfs.group_players)
+	# player coližn lejer
+	controlled_bolt.set_collision_layer_bit(4, true)
 
 
 func _physics_process(delta: float) -> void:

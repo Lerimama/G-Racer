@@ -75,6 +75,10 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
+	# enemi koližn lejer
+	controlled_bolt.set_collision_layer_bit(6, true)
+	printt("controller", self.name, controlled_bolt.get_collision_layer_bit(0))
+
 	randomize()
 	controlled_bolt.add_to_group(Rfs.group_ai)
 

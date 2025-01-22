@@ -54,27 +54,28 @@ stream = ExtResource( 5 )
 bus = "GameSfx"
 
 [node name="BoltShape" type="Polygon2D" parent="."]
-modulate = Color( 0.890196, 0.168627, 0.168627, 0.262745 )
-polygon = PoolVector2Array( -104, -48, -96, -56, 96, -56, 112, -40, 104, -32, 112, -24, 104, -16, 112, -8, 104, 0, 112, 8, 104, 16, 112, 24, 104, 32, 112, 40, 96, 56, -96, 56, -104, 48, -104, 0 )
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( -104, -48, -96, -56, 96, -56, 112, -40, 112, 40, 96, 56, -96, 56, -104, 48, -104, 0 )
 
 [node name="Polygon2D" type="Polygon2D" parent="BoltShape"]
-position = Vector2( 32, 0 )
-color = Color( 1, 1, 1, 0.298039 )
-polygon = PoolVector2Array( 24, -48, 40, -32, 32, -16, 40, 0, 32, 16, 40, 32, 24, 48, 40, 48, 56, 32, 48, 16, 56, 0, 48, -16, 56, -32, 40, -48 )
+position = Vector2( 24, 0 )
+color = Color( 0.490196, 0.490196, 0.490196, 1 )
+polygon = PoolVector2Array( 24, -56, 40, -32, 32, -16, 40, 0, 32, 16, 40, 32, 24, 56, 40, 56, 56, 32, 48, 16, 56, 0, 48, -16, 56, -32, 40, -56 )
 
 [node name="Polygon2D4" type="Polygon2D" parent="BoltShape"]
-position = Vector2( 112, 73 )
+position = Vector2( -16, 73 )
 scale = Vector2( -1, 1 )
-color = Color( 1, 1, 1, 0.298039 )
+color = Color( 0.192157, 0.192157, 0.192157, 1 )
 polygon = PoolVector2Array( 16, -17, 32, -41, 40, -25, 56, -41, 56, -25, 72, -33, 72, -17 )
 
 [node name="Polygon2D5" type="Polygon2D" parent="BoltShape"]
-position = Vector2( 112, -72 )
+position = Vector2( -16, -72 )
 scale = Vector2( -1, -1 )
-color = Color( 1, 1, 1, 0.298039 )
+color = Color( 0.192157, 0.192157, 0.192157, 1 )
 polygon = PoolVector2Array( 16, -16, 32, -40, 40, -24, 56, -40, 56, -24, 72, -32, 72, -16 )
 
 [node name="Poze" type="Node2D" parent="."]
+visible = false
 
 [node name="Frame00" type="Polygon2D" parent="Poze"]
 color = Color( 0.458824, 0.458824, 0.458824, 1 )
@@ -107,6 +108,7 @@ position = Vector2( 27, 0 )
 polygon = PoolVector2Array( -16, -32, 0, -32, 0, 32, -16, 32 )
 
 [node name="BoltScale" type="ColorRect" parent="."]
+visible = false
 margin_left = -104.0
 margin_top = -56.0
 margin_right = 112.0

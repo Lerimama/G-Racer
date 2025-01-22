@@ -155,9 +155,9 @@ func _set_game():
 
 		# debug ... kadar ne štartam igre iz home menija
 		if Sts.drivers_on_game_start.empty():
-#			activated_driver_ids = [Pfs.DRIVER.P1]
+			activated_driver_ids = [Pfs.DRIVER.P1]
 #			activated_driver_ids = [Pfs.DRIVER.P1, Pfs.DRIVER.P2]
-			activated_driver_ids = [Pfs.DRIVER.P1, Pfs.DRIVER.P2, Pfs.DRIVER.P3, Pfs.DRIVER.P4]
+#			activated_driver_ids = [Pfs.DRIVER.P1, Pfs.DRIVER.P2, Pfs.DRIVER.P3, Pfs.DRIVER.P4]
 #			game_settings["enemies_mode"] = true # debug
 
 		else:

@@ -8,6 +8,7 @@ var level_type: int # določi glede na pripete elemente = LEVEL_TYPE.RACE_TRACK
 #export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE_TRACK
 
 export (Array, NodePath) var level_goals_paths: Array = [] # lahko jih tudi ni
+export (NodePath) var camera_limits_rect_path: String # lahko ga tudi ni ... potem ni meja
 export (NodePath) var level_finish_path: String # lahko ga tudi ni
 export (NodePath) var level_track_path: String # lahko ga tudi ni
 
@@ -18,7 +19,7 @@ var navigation_cells_positions: Array = []
 
 onready var level_navigation: NavigationPolygonInstance = $LevelNavigation
 onready var tilemap_objects: TileMap = $Objects/Objects
-onready var camera_limits_rect: Panel = $CameraLimits
+onready var camera_limits_rect: Panel # = $CameraLimits
 
 # start
 onready var level_start: Node2D = $Racing/LevelStart
@@ -41,6 +42,8 @@ func _ready() -> void:
 		child.hide()
 
 	# nodepaths
+	if camera_limits_rect_path:
+		 camera_limits_rect = get_node(camera_limits_rect_path)
 	if level_track_path:
 		 level_track = get_node(level_track_path)
 	if level_finish_path:
@@ -211,16 +214,18 @@ func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, picka
 
 func _resize_to_level_size():
 
-	# naberem rektangle za risajzat
-	var nodes_to_resize: Array = []
-	nodes_to_resize.append_array($Background.get_children())
+	if camera_limits_rect: # OPT najdi rešitev če ni
 
-	# resize and set
-	for node in nodes_to_resize:
-		node.rect_position = camera_limits_rect.rect_position
-		node.rect_size = camera_limits_rect.rect_size
-		if node.material:
-			node.material.set_shader_param("node_size", camera_limits_rect.rect_size)
+		# naberem rektangle za risajzat
+		var nodes_to_resize: Array = []
+		nodes_to_resize.append_array($Background.get_children())
+
+		# resize and set
+		for node in nodes_to_resize:
+			node.rect_position = camera_limits_rect.rect_position
+			node.rect_size = camera_limits_rect.rect_size
+			if node.material:
+				node.material.set_shader_param("node_size", camera_limits_rect.rect_size)
 
 
 func _get_tilemap_cells(tilemap: TileMap):

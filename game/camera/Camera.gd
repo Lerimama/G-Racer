@@ -29,7 +29,7 @@ func _ready():
 	zoom = Vector2.ONE
 
 #	$__screen_size.hide()
-#	playing_field.hide()
+	playing_field.hide()
 
 
 func _process(delta: float) -> void:
@@ -98,17 +98,19 @@ func set_camera_limits():
 	var corner_BL: float
 	var corner_BR: float
 
-	var limits_rectangle: Control = Rfs.current_level.camera_limits_rect
-	var limits_rectangle_position: Vector2 = limits_rectangle.rect_position
-	corner_TL = limits_rectangle.rect_position.x
-	corner_TR = limits_rectangle.rect_size.x
-	corner_BL = limits_rectangle.rect_position.y
-	corner_BR = limits_rectangle.rect_size.y
+	if Rfs.current_level.camera_limits_rect:
 
-	if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
-		return
+		var limits_rectangle: Control = Rfs.current_level.camera_limits_rect
+		var limits_rectangle_position: Vector2 = limits_rectangle.rect_position
+		corner_TL = limits_rectangle.rect_position.x
+		corner_TR = limits_rectangle.rect_size.x
+		corner_BL = limits_rectangle.rect_position.y
+		corner_BR = limits_rectangle.rect_size.y
 
-	limit_left = corner_TL
-	limit_right = corner_TR
-	limit_top = corner_BL
-	limit_bottom = corner_BR
+		if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
+			return
+
+		limit_left = corner_TL
+		limit_right = corner_TR
+		limit_top = corner_BL
+		limit_bottom = corner_BR
