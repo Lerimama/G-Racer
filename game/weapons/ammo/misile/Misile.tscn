@@ -78,6 +78,7 @@ color_ramp = SubResource( 5284 )
 radius = 144.0
 
 [node name="Misile" type="KinematicBody2D"]
+collision_layer = 32
 script = ExtResource( 1 )
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 6 )]

@@ -44,7 +44,7 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	controlled_bolt.add_to_group(Rfs.group_humans)
+	controlled_bolt.add_to_group(Rfs.group_players)
 
 
 func _physics_process(delta: float) -> void:
@@ -71,8 +71,3 @@ func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # 
 	else:
 		#		printt ("game on SMS", new_game_state)
 		pass
-
-
-func _on_message_from_game_manager(message_type, message_content):
-
-	printt ("message in", message_content)

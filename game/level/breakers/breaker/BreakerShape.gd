@@ -137,7 +137,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 	var hit_by_direction: Vector2 = Vector2.ZERO
 	if "direction" in hitting_node:
 		hit_by_direction = hitting_node.direction
-	current_hit_by_type = hitting_node.object_type
+	current_hit_by_type = hitting_node.damage_type
 
 	# slicing polygon
 	var hit_by_polygon: PoolVector2Array = []

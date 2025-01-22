@@ -75,6 +75,7 @@ random_pitch = 1.2
 audio_stream = ExtResource( 8 )
 
 [node name="Bullet" type="RigidBody2D"]
+collision_layer = 33
 script = ExtResource( 7 )
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 3 )]

@@ -32,25 +32,24 @@ var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.POINTS : 0,
 }
 
-
-var default_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-	# bolt stats
-	"wins" : 2,
-	"life" : 5,
-	"cash_count": 0,
-#	"health" : 10,
-	"health" : 1, # health percetnage
-	"bullet_count" : 100,
-	"misile_count" : 5,
-	"mina_count" : 3,
-	"gas_count": 5000,
-	# score
-	"points" : 0,
-	"level_rank" : 0,
-	"laps_count" : 0,
-	"best_lap_time" : 0,
-	"level_time" : 0, # sekunde ... naj bodo stotinke
-}
+#var default_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+#	# bolt stats
+#	"wins" : 2,
+#	"life" : 5,
+#	"cash_count": 0,
+##	"health" : 10,
+#	"health" : 1, # health percetnage
+#	"bullet_count" : 100,
+#	"misile_count" : 5,
+#	"mina_count" : 3,
+#	"gas_count": 5000,
+#	# score
+#	"points" : 0,
+#	"level_rank" : 0,
+#	"laps_count" : 0,
+#	"best_lap_time" : 0,
+#	"level_time" : 0, # sekunde ... naj bodo stotinke
+#}
 
 enum DRIVER {P1, P2, P3, P4}
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
@@ -203,7 +202,7 @@ var equipment_profiles : Dictionary = {
 #		"hit_damage": 5,
 #		"speed": 50,
 		"lifetime": 5, # cikli animacije
-		"scene": preload("res://game/weapons/ammo/shield/Shield.tscn"),
+		"scene": preload("res://game/equipment/shield/Shield.tscn"),
 		"time": 3,
 #		"direction_start_range": [0, 0] , # natančnost misile
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),

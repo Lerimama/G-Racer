@@ -45,7 +45,7 @@ onready var force_direction_line: Line2D = $DirectionLine
 var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
 
 # neu ... za zrihtat
-var ai_goals_to_reach: Array = []# lovi jih v zaporedju, ko so ujeti se zbrišejo, če obstaja cilj je na koncu
+var goals_to_reach: Array = []# lovi jih v zaporedju, ko so ujeti se zbrišejo, če obstaja cilj je na koncu
 var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
 var power_speed_factor: float # delež engine_power, ki manipulira z engine powerjem in imitira hitrost
@@ -171,6 +171,7 @@ func _state_machine(delta: float):
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power
 
 		AI_STATE.RACE_TO_GOAL: # šiba do cilja po najbližji poti
+			ai_target = goals_to_reach[0]
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power
@@ -180,7 +181,6 @@ func _state_machine(delta: float):
 			navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.engine_power = controlled_bolt.max_engine_power / 3
 			_react_to_target(ai_target)
-
 
 
 func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
@@ -287,8 +287,8 @@ func _change_ai_state(new_ai_state: int):
 			target_ray.enabled = true
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.RACE_TO_GOAL:
-#			if not ai_goals_to_reach.empty():
-#				ai_target = ai_goals_to_reach[0]
+#			if not goals_to_reach.empty():
+#				ai_target = goals_to_reach[0]
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 
 		AI_STATE.MOUSE_CLICK:
@@ -334,7 +334,6 @@ func _get_better_targets(current_target: Node2D):
 		return targets_in_sight[top_ranked_target_index]
 	else:
 		return current_target
-
 
 
 func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
@@ -473,6 +472,15 @@ func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk
 	pass
 
 
+# trenutno ne uporabljam
+func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index je boljši
+	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
+
+	if stuff_1.ai_target_rank > stuff_2.ai_target_rank:
+	    return true
+	return false
+
+
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
@@ -490,21 +498,14 @@ func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # 
 			Rfs.current_level.LEVEL_TYPE.CHASE:
 				self.ai_state = AI_STATE.SEARCH
 			Rfs.current_level.LEVEL_TYPE.RACE_GOAL:
-				ai_goals_to_reach = Rfs.current_level.level_goals.duplicate()
+				goals_to_reach = Rfs.current_level.level_goals.duplicate()
 				if Rfs.current_level.level_finish:
-					ai_goals_to_reach.append(Rfs.current_level.level_finish)
-				ai_target = ai_goals_to_reach[0]
+					goals_to_reach.append(Rfs.current_level.level_finish)
 				self.ai_state = AI_STATE.RACE_TO_GOAL
 	else:
 		#		printt ("game on SMS", new_game_state)
 		self.ai_state = AI_STATE.OFF
 		controlled_bolt.motion = controlled_bolt.MOTION.IDLE
-
-
-func _on_message_from_game_manager(message_type, message_content): # od GMja
-
-	printt ("message in", message_content)
-	# lap, finished, check point
 
 
 func _on_NavigationAgent2D_path_changed() -> void:
@@ -518,12 +519,7 @@ func _on_NavigationAgent2D_path_changed() -> void:
 func _on_NavigationAgent2D_target_reached() -> void:
 #	print("nav target reached")
 
-		if ai_state == AI_STATE.RACE_TO_GOAL:
-			printt ("ai_goals_to_reach", ai_goals_to_reach)
-			ai_goals_to_reach.pop_front()
-			printt ("after", ai_goals_to_reach)
-
-		elif ai_state == AI_STATE.MOUSE_CLICK:
+		if ai_state == AI_STATE.MOUSE_CLICK:
 			var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, current_mouse_follow_point)
 			ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
 			navigation_agent.set_target_location(nav_path_points[0])
@@ -531,17 +527,6 @@ func _on_NavigationAgent2D_target_reached() -> void:
 
 		elif ai_state == AI_STATE.SEARCH:
 			search_target_reached = true
-
-
-# OBS --------------------------------------
-
-
-func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index je boljši
-	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
-
-	if stuff_1.ai_target_rank > stuff_2.ai_target_rank:
-	    return true
-	return false
 
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
@@ -555,72 +540,11 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 	navigation_agent.set_target_location(new_position)
 	navigation_agent.set_velocity(controlled_bolt.bolt_velocity)
 
-	pass # Replace with function body.
 	print("avoided")
 
 
 
 
 
-#func _react_to_target_old(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
-#	# keep_on_distance - ustavi na distanci in jo vzdržuje
-#	# aggresive - posešuje do tarče
-#	keep_distance = 300
-#	near_distance = 500
-#	keep_on_distance = true
-#
-#	be_aggressive = false
-#	var target_closeup_breaking_factor: float = 1
-##		target_ray.look_at(ract_target.global_position)
-##		target_ray.cast_to.x = target_ray.global_position.distance_to(ract_target.global_position)
-#	var any_collider = Mts.get_raycast_collision_to_position(target_ray, react_target.global_position)
-#	# ve kje je tarča
-#	var target_in_sight: bool = false
-#	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():
-#		target_in_sight = true
-#
-#	if target_in_sight:
-#		# tarčo tudi vidi
-#		if any_collider == react_target:
-#			var distance_to_target = controlled_bolt.global_position.distance_to(react_target.global_position)
-#			if distance_to_target < keep_distance:
-#				if keep_on_distance: # ustavi tik pred tarčo
-#					target_closeup_breaking_factor = breaking_factor_keep
-#					#					controlled_bolt.motion = controlled_bolt.MOTION.REV
-#					#					yield(get_tree().create_timer(1), "timeout")
-#					#					controlled_bolt.motion = controlled_bolt.MOTION.FWD
-#					#					self.ai_state = AI_STATE.OFF
-#				elif be_aggressive: # fuuul power čez tarčo
-#					controlled_bolt.engine_power = controlled_bolt.max_engine_power
-#				else: # spusti gasa čez tarčo
-#					controlled_bolt.engine_power = 0
-#			elif distance_to_target < near_distance:
-#				if be_aggressive: # pospešuje proti tarči
-#					controlled_bolt.engine_power = controlled_bolt.max_engine_power
-#					controlled_bolt.use_nitro = true
-#				else: # upočasnuje proti tarči
-#					target_closeup_breaking_factor = breaking_factor_near
-#			else:
-#				controlled_bolt.engine_power = controlled_bolt.max_engine_power
-#			braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
-#			controlled_bolt.set_linear_velocity(braking_velocity)
-#
-#		# tarče ne vidi ... kolajder je vision breaker, ali pa bo kvefrijana
-#		elif react_target.is_queued_for_deletion() or not any_collider == react_target:
-#			if target_prev_position == Vector2.ZERO:
-#				self.ai_state = AI_STATE.SEARCH
-#			else:
-#				navigation_agent.set_target_location(target_prev_position)
-#				target_prev_position = Vector2.ZERO
-#
-#	# ni kolajderja ... tudi tarče ni več
-#	elif not any_collider :# tarčo izgubi
-#
-#
-#	elif ai_target == null or ai_target.is_queued_for_deletion():
-#		if target_prev_position == Vector2.ZERO:
-#			self.ai_state = AI_STATE.SEARCH
-#		else:
-#			navigation_agent.set_target_location(target_prev_position)
-#			target_prev_position = Vector2.ZERO
+# OBS --------------------------------------
 

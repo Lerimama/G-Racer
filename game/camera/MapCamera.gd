@@ -20,14 +20,14 @@ extends Camera2D
 func _ready():
 
 	print("MAP KAMERA")
-#	Rfs.current_camera = self
+#	Rfs.game_camera = self
 #	zoom = Vector2.ONE
 
 
 func _process(delta: float) -> void:
 	pass
-	if Rfs.current_camera and Rfs.current_camera.follow_target:
-		position = Rfs.current_camera.follow_target.global_position
+	if Rfs.game_camera and Rfs.game_camera.follow_target:
+		position = Rfs.game_camera.follow_target.global_position
 
 #		 = self
 #	if not test_ui.test_view_on:

@@ -69,6 +69,8 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
 	# camera
 	"camera_zoom_range": [1, 1.5],
+	"all_bolts_on_screen_mode": true
+
 }
 
 
@@ -90,8 +92,9 @@ func _ready() -> void:
 
 	if OS.is_debug_build():
 #		default_game_settings["camera_zoom_range"] = [3, 3]
-		default_game_settings["camera_zoom_range"] = [5, 5]
-		default_game_settings["start_countdown"] = false
+#		default_game_settings["camera_zoom_range"] = [5, 5]
+#		default_game_settings["start_countdown"] = false
+#		default_game_settings["all_bolts_on_screen_mode"] = false
 		default_game_settings["easy_mode"] = true
 		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)
 

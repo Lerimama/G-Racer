@@ -16,12 +16,12 @@ func _on_Surface_body_entered(body: Node) -> void:
 
 	if "max_engine_power_factor" in body:
 		body.max_engine_power_factor = engine_power_factor
-		if body.is_in_group(Rfs.group_humans):
+		if body.is_in_group(Rfs.group_players):
 			print ("surf", engine_power_factor, body.max_engine_power_factor)
 
 
 func _on_Surface_body_exited(body: Node) -> void:
 	if "max_engine_power_factor" in body:
 		body.max_engine_power_factor = 1
-		if body.is_in_group(Rfs.group_humans):
+		if body.is_in_group(Rfs.group_players):
 			print ("de surf", engine_power_factor, body.max_engine_power_factor)

@@ -36,6 +36,7 @@ func _ready() -> void:
 	$__ScreenSize.hide() # debug
 
 	Rfs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
+	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
 	for child in start_positions_node.get_children():
 		child.hide()
 

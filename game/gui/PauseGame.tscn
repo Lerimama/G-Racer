@@ -25,15 +25,15 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Menu" type="HBoxContainer" parent="."]
+[node name="Menu" type="VBoxContainer" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -310.0
-margin_top = 456.0
+margin_top = -128.0
 margin_right = 310.0
-margin_bottom = 504.0
+margin_bottom = 128.0
 grow_horizontal = 2
 rect_min_size = Vector2( 0, 34 )
 size_flags_horizontal = 4
@@ -43,10 +43,19 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="QuitBtn" type="Button" parent="Menu"]
-margin_left = 10.0
-margin_right = 118.0
+[node name="PlayBtn" type="Button" parent="Menu"]
+margin_right = 620.0
 margin_bottom = 48.0
+focus_neighbour_left = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 5
+size_flags_vertical = 8
+text = "RESUME"
+
+[node name="QuitBtn" type="Button" parent="Menu"]
+margin_top = 104.0
+margin_right = 620.0
+margin_bottom = 152.0
 focus_neighbour_right = NodePath("../RestartBtn")
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 5
@@ -54,9 +63,9 @@ size_flags_vertical = 8
 text = "QUIT"
 
 [node name="RestartBtn" type="Button" parent="Menu"]
-margin_left = 174.0
-margin_right = 365.0
-margin_bottom = 48.0
+margin_top = 208.0
+margin_right = 620.0
+margin_bottom = 256.0
 focus_neighbour_left = NodePath("../QuitBtn")
 focus_neighbour_right = NodePath("../PlayBtn")
 mouse_default_cursor_shape = 2
@@ -64,17 +73,8 @@ size_flags_horizontal = 5
 size_flags_vertical = 8
 text = "RESTART"
 
-[node name="PlayBtn" type="Button" parent="Menu"]
-margin_left = 421.0
-margin_right = 609.0
-margin_bottom = 48.0
-focus_neighbour_left = NodePath("../RestartBtn")
-mouse_default_cursor_shape = 2
-size_flags_horizontal = 5
-size_flags_vertical = 8
-text = "PLAY ON"
-
 [node name="Control" type="Control" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -268,6 +268,6 @@ custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "camera shake"
 flat = true
 
+[connection signal="pressed" from="Menu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Menu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
 [connection signal="pressed" from="Menu/RestartBtn" to="." method="_on_RestartBtn_pressed"]
-[connection signal="pressed" from="Menu/PlayBtn" to="." method="_on_PlayBtn_pressed"]

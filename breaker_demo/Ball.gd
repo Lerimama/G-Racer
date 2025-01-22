@@ -20,7 +20,7 @@ onready var influence_area: Area2D = $InfluenceArea
 # neu
 var direction: Vector2
 enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
-var object_type = TYPE.HAMMER
+var damage_type = TYPE.HAMMER
 
 
 func _input(event: InputEvent) -> void:

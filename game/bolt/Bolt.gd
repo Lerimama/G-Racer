@@ -148,57 +148,6 @@ func _process(delta: float) -> void:
 		update_stat(Pfs.STATS.GAS_COUNT, gas_usage)
 
 
-func _motion_state_machine():
-
-
-	heading_rotation = lerp_angle(heading_rotation, rotation_dir * deg2rad(max_engine_rotation_deg) * bolt_shift, engine_rotation_speed)
-	# printt("heading", rad2deg(heading_rotation))
-	var max_free_thrust_rotation_deg: float = 90 # PRO
-	var rotate_to_angle: float = rotation_dir * deg2rad(max_free_thrust_rotation_deg) # 60 je poseben deg2rad(max_engine_rotation_deg)
-
-	# force global rotation ... premaknjena na kotrolerje
-	#	force_rotation = heading_rotation + get_global_rotation() # da ne striže (_FP!!) prestavljeno v kontrolerja
-
-	match motion:
-		MOTION.IDLE:
-			engine_power = 0
-			for thrust in engines.all_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
-		MOTION.FWD:
-			engine_power += accelaration_power
-			if Rfs.game_manager.fast_start_window:
-				engine_power += engine_power_fast_start
-			for thrust in engines.front_thrusts:
-				thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
-			for thrust in engines.rear_thrusts:
-				thrust.rotation = - heading_rotation
-		MOTION.REV:
-			engine_power += accelaration_power
-			for thrust in engines.front_thrusts:
-				thrust.rotation = - heading_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
-			for thrust in engines.rear_thrusts:
-				thrust.rotation = heading_rotation + deg2rad(180)
-			# OPT obrat pogona v rikverc ... smooth rotacija ... dela ok dokler ne vozim naokoli, potem se smeri vrtenja podrejo
-			#				for thrust in engines.all_thrusts:
-			#					var rotation_direction: int = 1
-			#					if thrust.position_on_bolt == thrust.POSITION.LEFT:
-			#						rotation_direction = -1
-			#					var rotate_to: float = (heading_rotation + deg2rad(180)) * rotation_direction
-			#					thrust.rotation = lerp_angle(thrust.rotation, rotate_to, engine_rotation_speed)
-		MOTION.FREE_ROTATE:
-			engine_power = 0
-			for thrust in engines.front_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan
-			for thrust in engines.rear_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle + deg2rad(180), engine_rotation_speed)
-		MOTION.DRIFT: # zadnji pogon v smeri zavoja
-			engine_power = lerp(engine_power, 0, 0.01)
-		MOTION.GLIDE: # oba pogona  v smeri premika
-			engine_power = 0
-			for thrust in engines.all_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed)
-
-
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 	bolt_body_state = state
@@ -259,6 +208,57 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 		# print("power %s / " % engine_power, "force %s" % force)
 
 
+func _motion_state_machine():
+
+
+	heading_rotation = lerp_angle(heading_rotation, rotation_dir * deg2rad(max_engine_rotation_deg) * bolt_shift, engine_rotation_speed)
+	# printt("heading", rad2deg(heading_rotation))
+	var max_free_thrust_rotation_deg: float = 90 # PRO
+	var rotate_to_angle: float = rotation_dir * deg2rad(max_free_thrust_rotation_deg) # 60 je poseben deg2rad(max_engine_rotation_deg)
+
+	# force global rotation ... premaknjena na kotrolerje
+	#	force_rotation = heading_rotation + get_global_rotation() # da ne striže (_FP!!) prestavljeno v kontrolerja
+
+	match motion:
+		MOTION.IDLE:
+			engine_power = 0
+			for thrust in engines.all_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
+		MOTION.FWD:
+			engine_power += accelaration_power
+			if Rfs.game_manager.fast_start_window:
+				engine_power += engine_power_fast_start
+			for thrust in engines.front_thrusts:
+				thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+			for thrust in engines.rear_thrusts:
+				thrust.rotation = - heading_rotation
+		MOTION.REV:
+			engine_power += accelaration_power
+			for thrust in engines.front_thrusts:
+				thrust.rotation = - heading_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+			for thrust in engines.rear_thrusts:
+				thrust.rotation = heading_rotation + deg2rad(180)
+			# OPT obrat pogona v rikverc ... smooth rotacija ... dela ok dokler ne vozim naokoli, potem se smeri vrtenja podrejo
+			#				for thrust in engines.all_thrusts:
+			#					var rotation_direction: int = 1
+			#					if thrust.position_on_bolt == thrust.POSITION.LEFT:
+			#						rotation_direction = -1
+			#					var rotate_to: float = (heading_rotation + deg2rad(180)) * rotation_direction
+			#					thrust.rotation = lerp_angle(thrust.rotation, rotate_to, engine_rotation_speed)
+		MOTION.FREE_ROTATE:
+			engine_power = 0
+			for thrust in engines.front_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan
+			for thrust in engines.rear_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle + deg2rad(180), engine_rotation_speed)
+		MOTION.DRIFT: # zadnji pogon v smeri zavoja
+			engine_power = lerp(engine_power, 0, 0.01)
+		MOTION.GLIDE: # oba pogona  v smeri premika
+			engine_power = 0
+			for thrust in engines.all_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed)
+
+
 func _change_motion(new_motion: int):
 
 	# nastavim nov engine
@@ -316,12 +316,16 @@ func _change_activity(new_is_active: bool):
 		match is_active:
 			true:
 				bolt_controller.set_process_input(true)
+				call_deferred("set_physics_process", true)
+				call_deferred("set_process", true)
 			false: # ga upočasnim v trenutni smeri
 				reset_bolt()
 				bolt_controller.set_process_input(false)
 				# nočeš ga skos slišat, če je multiplejer
 				engines.shutdown_engines()
 				Rfs.game_manager.check_for_level_finished()
+				call_deferred("set_physics_process", false)
+				call_deferred("set_process", false)
 
 
 func _add_bolt_controller():
@@ -357,7 +361,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia)
-		Rfs.current_camera.shake_camera(Rfs.current_camera.bullet_hit_shake)
+		Rfs.game_camera.shake_camera(Rfs.game_camera.bullet_hit_shake)
 
 	elif hit_by.is_in_group(Rfs.group_misiles):
 		var inertia_factor: float = 100
@@ -371,7 +375,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
-		Rfs.current_camera.shake_camera(Rfs.current_camera.misile_hit_shake)
+		Rfs.game_camera.shake_camera(Rfs.game_camera.misile_hit_shake)
 		Rfs.sound_manager.play_sfx("bolt_explode")
 		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
@@ -379,7 +383,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var inertia_factor: float = 400000
 		var hit_by_power: float = inertia_factor
 		apply_torque_impulse(hit_by_power)
-		Rfs.current_camera.shake_camera(Rfs.current_camera.misile_hit_shake)
+		Rfs.game_camera.shake_camera(Rfs.game_camera.misile_hit_shake)
 
 
 func _destroy_bolt():
@@ -419,7 +423,7 @@ func _explode():
 	new_exploding_bolt.z_index = z_index + 1
 	Rfs.node_creation_parent.add_child(new_exploding_bolt)
 
-	Rfs.current_camera.shake_camera(Rfs.current_camera.bolt_explosion_shake)
+	Rfs.game_camera.shake_camera(Rfs.game_camera.bolt_explosion_shake)
 
 
 func _revive_bolt():
@@ -530,7 +534,7 @@ func _spawn_shield():
 	Rfs.node_creation_parent.add_child(new_shield)
 
 
-func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
+func pull_bolt_on_screen(pull_position: Vector2): # kliče GM
 
 	# disejblam koližne
 	bolt_controller.set_process_input(false)
@@ -546,41 +550,7 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 	collision_shape.set_deferred("disabled", false)
 	bolt_controller.set_process_input(true)
 
-	# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
-	if driver_stats[Pfs.STATS.LAPS_FINISHED] < current_leader.driver_stats[Pfs.STATS.LAPS_FINISHED]:
-		var laps_finished_difference: int = current_leader.driver_stats[Pfs.STATS.LAPS_FINISHED] - driver_stats[Pfs.STATS.LAPS_FINISHED]
-#	if driver_stats["laps_count"] < current_leader.driver_stats["laps_count"]:
-#		var laps_finished_difference: int = current_leader.driver_stats["laps_count"] - driver_stats["laps_count"]
-#		__update_bolts_level_stats("laps_count", laps_finished_difference)
-
-	# če preskoči checkpoint, ga dodaj, če ga leader ima
-#	var all_checked_bolts: Array = Rfs.game_manager.bolts_checked #  trega ni več
-	var all_checked_bolts: Array = Rfs.game_manager.bolts_in_game # začasno
-
-	if all_checked_bolts.has(current_leader):
-		all_checked_bolts.append(self)
-
-	# ne dela
-	#	if Rfs.game_manager.current_pull_positions.has(pull_position):
-	#		Rfs.game_manager.current_pull_positions.erase(pull_position)
-
 	update_stat(Pfs.STATS.GAS_COUNT, Rfs.game_manager.game_settings["pull_gas_penalty"])
-
-
-	#func __update_bolts_level_stats(stat_name: String, change_value: float): # samo za pull bolt
-	#
-	#
-	#	if not Rfs.game_manager.game_on:
-	#		return
-	#
-	#	if stat_name == "best_lap_time":
-	#		driver_stats[stat_name] = change_value
-	#	elif stat_name == "level_time":
-	#		driver_stats[stat_name] = change_value
-	#	elif stat_name == "level_rank":
-	#		driver_stats[stat_name] = change_value
-	#
-	#	emit_signal("stats_changed", driver_id, driver_stats)
 
 
 func screen_wrap(): # ne uporabljam
@@ -680,6 +650,6 @@ func _exit_tree() -> void:
 	##	active_trail.start_decay() # trail decay tween start
 
 	self.is_active = false # zazih
-	if Rfs.current_camera.follow_target == self:
-		Rfs.current_camera.follow_target = null
+	if Rfs.game_camera.follow_target == self:
+		Rfs.game_camera.follow_target = null
 	trail_source.decay()

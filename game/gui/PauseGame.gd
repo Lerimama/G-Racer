@@ -1,16 +1,14 @@
 extends Control
 
-#onready var title: Label = $Title
 
 func _input(event: InputEvent) -> void:
 
-
-#	if Rfs.game_manager.game_on:
-		if Input.is_action_just_pressed("ui_cancel"):
-			if not visible:
-				pause_game()
-			else:
-				_on_PlayBtn_pressed()
+	#	if Rfs.game_manager.game_on:
+	if Input.is_action_just_pressed("ui_cancel"):
+		if not visible:
+			pause_game()
+		else:
+			_on_PlayBtn_pressed()
 
 
 func _ready() -> void:
@@ -23,7 +21,7 @@ func pause_game():
 
 	get_viewport().set_disable_input(true) # anti dablklik
 
-	Rfs.game_manager.game_on = false
+	#	Rfs.game_manager.game_on = false ... striže s signalom iz GM, ki game on razume kot začetekin game off kot konec
 
 	visible = true
 #	Global.sound_manager.play_gui_sfx("screen_slide")
@@ -49,7 +47,7 @@ func play_on():
 	fade_out_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
 	yield(fade_out_tween, "finished")
 
-	Rfs.game_manager.game_on = true
+	#	Rfs.game_manager.game_on = true ... striže s signalom iz GM, ki game on razume kot začetekin game off kot konec
 
 
 # MENU ---------------------------------------------------------------------------------------------
@@ -76,7 +74,7 @@ func _on_QuitBtn_pressed() -> void:
 #	Global.game_manager.stop_game_elements()
 	Rfs.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
-#	Rfs.game_manager.game_on = false
+	Rfs.game_manager.game_on = false
 	Rfs.main_node.game_out()
 
 

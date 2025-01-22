@@ -1,8 +1,9 @@
-[gd_scene load_steps=271 format=2]
+[gd_scene load_steps=273 format=2]
 
 [ext_resource path="res://common/tex/cross.png" type="Texture" id=1]
 [ext_resource path="res://game/level/LevelFinish.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://assets/sounds/music/nitro_music.mp3" type="AudioStream" id=4]
 [ext_resource path="res://game/level/terrain/ObjectSS2D_Mountain.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=6]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
@@ -46,6 +47,7 @@
 [ext_resource path="res://game/level/Checkpoint.tscn" type="PackedScene" id=45]
 [ext_resource path="res://game/level/LevelNavigation.gd" type="Script" id=46]
 [ext_resource path="res://game/level/breakers/BreakerRigid.tscn" type="PackedScene" id=47]
+[ext_resource path="res://game/arena/ArenaEnvironment.tscn" type="PackedScene" id=48]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
 seed = 7
@@ -1228,7 +1230,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 	var hit_by_direction: Vector2 = Vector2.ZERO
 	if \"direction\" in hitting_node:
 		hit_by_direction = hitting_node.direction
-	current_hit_by_type = hitting_node.object_type
+	current_hit_by_type = hitting_node.damage_type
 
 	# slicing polygon
 	var hit_by_polygon: PoolVector2Array = []
@@ -2262,7 +2264,6 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
-level_goals_paths = [ NodePath("Checkpoint") ]
 level_finish_path = NodePath("Racing/LevelFinish")
 level_track_path = NodePath("Racing/LevelTrack")
 
@@ -2635,7 +2636,7 @@ polygon = PoolVector2Array( -32, 0, -28, -7, -27.7275, -15.9949, -20, -21, -16, 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="LevelNavigation/KinematicBody2D"]
 
 [node name="Checkpoint" parent="." instance=ExtResource( 45 )]
-position = Vector2( 2727, 422 )
+position = Vector2( -45, -946 )
 scale = Vector2( 1, 1 )
 
 [node name="Racing" type="Node" parent="."]
@@ -2734,10 +2735,13 @@ position = Vector2( 312, 0 )
 position = Vector2( 1400, 1488 )
 collision_layer = 9
 
-[node name="Labels" type="Node2D" parent="."]
+[node name="NCP" type="Node2D" parent="."]
+z_index = 1
+
+[node name="__Labels" type="Node2D" parent="."]
 position = Vector2( -4670, 34 )
 
-[node name="Label4" type="Label" parent="Labels"]
+[node name="Label4" type="Label" parent="__Labels"]
 margin_left = 4718.0
 margin_top = 462.0
 margin_right = 4909.0
@@ -2745,7 +2749,7 @@ margin_bottom = 476.0
 theme = ExtResource( 3 )
 text = "linija se more začet pre štartom"
 
-[node name="_note" type="Label" parent="Labels"]
+[node name="_note" type="Label" parent="__Labels"]
 margin_left = -646.0
 margin_top = 9.0
 margin_right = 4.0
@@ -2758,7 +2762,7 @@ text = "Z INDEX
 - not flat or floating object = 1 - 9
 - sky > 10"
 
-[node name="Label" type="Label" parent="Labels"]
+[node name="Label" type="Label" parent="__Labels"]
 margin_left = -634.0
 margin_top = 397.0
 margin_right = 883.0
@@ -2769,7 +2773,7 @@ text = "Surfaces
 - plain podlaga je inherit parent (lahko tudi samo menjaš material v exportu)
 - bolt zazna na kateri podlagi je in prilagodi vožnjo "
 
-[node name="Label2" type="Label" parent="Labels"]
+[node name="Label2" type="Label" parent="__Labels"]
 margin_left = -683.0
 margin_top = 638.0
 margin_right = 727.0
@@ -2780,7 +2784,7 @@ text = "Čekpojnts
 - če je čekpoint že zabeležen za ta krog, se ne zgodi nič
 - ko plejer prevozi ciljno črto, GM preveri, če so vsi čekpointi prevoženi"
 
-[node name="Label3" type="Label" parent="Labels"]
+[node name="Label3" type="Label" parent="__Labels"]
 margin_left = -674.0
 margin_top = 995.0
 margin_right = 267.0
@@ -2796,6 +2800,14 @@ modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 margin_right = 2560.0
 margin_bottom = 1440.0
 custom_styles/panel = SubResource( 613 )
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="NitroMusic" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 4 )
+bus = "GameMusic"
+
+[node name="WorldEnvironment" parent="." instance=ExtResource( 48 )]
 
 [editable path="Ground/StreetAsphalt"]
 [editable path="Ground/StreetConcrete"]

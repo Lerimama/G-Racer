@@ -5,8 +5,7 @@ var temp_object = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var setup_layer = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var node_creation_parent = null # NCP ... ven?
-var game_arena = null
-var current_camera = null
+var game_camera = null
 var game_manager = null
 var hud = null
 var sound_manager = null
@@ -15,11 +14,8 @@ var main_node = null
 var game_over = null
 var level_completed = null
 
-var current_3Dcamera = null
-var current_3Dworld = null
-
 # groups
-var group_humans = "Players"
+var group_players = "Players"
 var group_ai = "Ais"
 var group_bolts = "Bolts"
 var group_misiles = "Misiles"

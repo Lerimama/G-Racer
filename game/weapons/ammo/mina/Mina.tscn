@@ -105,6 +105,7 @@ process_material = SubResource( 5295 )
 texture = ExtResource( 3 )
 
 [node name="DetectArea" type="Area2D" parent="."]
+collision_layer = 32
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
