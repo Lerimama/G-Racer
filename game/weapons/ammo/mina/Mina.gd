@@ -31,8 +31,8 @@ onready var direction_start_range: Array = weapon_profile["direction_start_range
 onready var MisileHit = preload("res://game/weapons/ammo/misile/MisileHit.tscn")
 
 # neu
-enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
-var object_type = TYPE.EXPLODING
+enum DAMAGE_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var damage_type = DAMAGE_TYPE.EXPLODING
 
 
 func _ready() -> void:

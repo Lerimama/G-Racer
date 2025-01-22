@@ -1,7 +1,7 @@
 extends Node
 
 
-enum AI_STATE {OFF, RACE, SEARCH, FOLLOW, HUNT, RACE_TO_GOAL, MOUSE_CLICK} # ai je možgan (controller in ne bolt
+enum AI_STATE {OFF, RACE_TRACK, SEARCH, FOLLOW, HUNT, RACE_TO_GOAL, MOUSE_CLICK} # ai je možgan (controller in ne bolt
 var ai_state: int = AI_STATE.OFF setget _change_ai_state
 
 enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
@@ -45,7 +45,7 @@ onready var force_direction_line: Line2D = $DirectionLine
 var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
 
 # neu ... za zrihtat
-var current_game_goals: Array # lovi jih v zaporedju
+var ai_goals_to_reach: Array = []# lovi jih v zaporedju, ko so ujeti se zbrišejo, če obstaja cilj je na koncu
 var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
 var power_speed_factor: float # delež engine_power, ki manipulira z engine powerjem in imitira hitrost
@@ -56,7 +56,7 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("no0"): # idle
 		self.ai_state = AI_STATE.OFF
 	if Input.is_action_just_pressed("no1"): # idle
-		self.ai_state = AI_STATE.RACE
+		self.ai_state = AI_STATE.RACE_TRACK
 	if Input.is_action_just_pressed("no2"): # race
 		self.ai_state = AI_STATE.SEARCH
 	if Input.is_action_pressed("no3"):
@@ -102,7 +102,7 @@ func _physics_process(delta: float) -> void:
 		var vector_to_target: Vector2 = Vector2.ZERO
 		if ai_target and not ai_target.is_queued_for_deletion():
 			force_direction_line.default_color = Color.yellow
-			if ai_state == AI_STATE.RACE:
+			if ai_state == AI_STATE.RACE_TRACK:
 				vector_to_target = _get_tracking_position(ai_target) - controlled_bolt.bolt_global_position
 			else:
 				vector_to_target = ai_target.global_position - controlled_bolt.bolt_global_position
@@ -136,7 +136,7 @@ func _state_machine(delta: float):
 		AI_STATE.OFF:
 			pass
 
-		AI_STATE.RACE: # šiba po najbližji poti do tarče
+		AI_STATE.RACE_TRACK: # šiba po najbližji poti do tarče
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				var bolt_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(bolt_tracker_position)
@@ -270,7 +270,7 @@ func _change_ai_state(new_ai_state: int):
 		AI_STATE.OFF:
 			ai_target = null
 			controlled_bolt.motion = controlled_bolt.MOTION.IDLE
-		AI_STATE.RACE:
+		AI_STATE.RACE_TRACK:
 			ai_target = controlled_bolt.bolt_tracker
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.SEARCH:
@@ -287,7 +287,10 @@ func _change_ai_state(new_ai_state: int):
 			target_ray.enabled = true
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.RACE_TO_GOAL:
+#			if not ai_goals_to_reach.empty():
+#				ai_target = ai_goals_to_reach[0]
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
+
 		AI_STATE.MOUSE_CLICK:
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 
@@ -475,18 +478,22 @@ func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk
 
 func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # od GMja
 
+	# level type
+	var level_type: int = level_settings["level_type"]
+
 	if new_game_state == true:
-		#		printt ("game on SMS", new_game_state, level_settings)
-		match level_settings["level_type"]: # enums so v levelu
-			"RACING":
-				Rfs.current_level.level_type = Rfs.current_level.LEVEL_TYPE.RACE
-				self.ai_state = AI_STATE.RACE
-			"BATTLE":
-				Rfs.current_level.level_type = Rfs.current_level.LEVEL_TYPE.BATTLE
+		match level_type: # enums so v levelu
+			Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
+				self.ai_state = AI_STATE.RACE_TRACK
+			Rfs.current_level.LEVEL_TYPE.BATTLE:
 				self.ai_state = AI_STATE.SEARCH
-			"RACE_GOAL":
-				Rfs.current_level.level_type = Rfs.current_level.LEVEL_TYPE.RACE_GOAL
-				current_game_goals = Rfs.current_level.temp_level_goals.duplicate()
+			Rfs.current_level.LEVEL_TYPE.CHASE:
+				self.ai_state = AI_STATE.SEARCH
+			Rfs.current_level.LEVEL_TYPE.RACE_GOAL:
+				ai_goals_to_reach = Rfs.current_level.level_goals.duplicate()
+				if Rfs.current_level.level_finish:
+					ai_goals_to_reach.append(Rfs.current_level.level_finish)
+				ai_target = ai_goals_to_reach[0]
 				self.ai_state = AI_STATE.RACE_TO_GOAL
 	else:
 		#		printt ("game on SMS", new_game_state)
@@ -511,18 +518,19 @@ func _on_NavigationAgent2D_path_changed() -> void:
 func _on_NavigationAgent2D_target_reached() -> void:
 #	print("nav target reached")
 
-	if ai_state == AI_STATE.RACE_TO_GOAL:
-		current_game_goals.pop_front()
-		self.ai_state = AI_STATE.RACE_TO_GOAL
+		if ai_state == AI_STATE.RACE_TO_GOAL:
+			printt ("ai_goals_to_reach", ai_goals_to_reach)
+			ai_goals_to_reach.pop_front()
+			printt ("after", ai_goals_to_reach)
 
-	elif ai_state == AI_STATE.MOUSE_CLICK:
-		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, current_mouse_follow_point)
-		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
-		navigation_agent.set_target_location(nav_path_points[0])
-		ai_state = AI_STATE.MOUSE_CLICK
+		elif ai_state == AI_STATE.MOUSE_CLICK:
+			var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, current_mouse_follow_point)
+			ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
+			navigation_agent.set_target_location(nav_path_points[0])
+			ai_state = AI_STATE.MOUSE_CLICK
 
-	elif ai_state == AI_STATE.SEARCH:
-		search_target_reached = true
+		elif ai_state == AI_STATE.SEARCH:
+			search_target_reached = true
 
 
 # OBS --------------------------------------

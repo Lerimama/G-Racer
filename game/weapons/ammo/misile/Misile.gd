@@ -51,8 +51,8 @@ onready var direction_start_range: Array = weapon_profile["direction_start_range
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
 # neu
-enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
-var object_type = TYPE.EXPLODING
+enum DAMAGE_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var damage_type = DAMAGE_TYPE.EXPLODING
 
 
 func _ready() -> void:

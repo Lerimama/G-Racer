@@ -33,7 +33,7 @@ func _process(delta: float) -> void:
 
 	# manage health bar
 	if health_bar.visible:
-		health_bar_line.rect_scale.x = owner.driver_stats["health"]
+		health_bar_line.rect_scale.x = owner.driver_stats[Pfs.STATS.HEALTH]
 		if health_bar_line.rect_scale.x <= 0.5:
 			health_bar_line.color = Rfs.color_red
 		else:
@@ -74,11 +74,11 @@ func get_weapon_stat_value(weapon_icon: Control):
 
 	match weapon_icon_index:
 		0:
-			weapon_stat = owner.driver_stats["bullet_count"]
+			weapon_stat = owner.driver_stats[Pfs.STATS.BULLET_COUNT]
 		1:
-			weapon_stat = owner.driver_stats["misile_count"]
+			weapon_stat = owner.driver_stats[Pfs.STATS.MISILE_COUNT]
 		2:
-			weapon_stat = owner.driver_stats["mina_count"]
+			weapon_stat = owner.driver_stats[Pfs.STATS.MINA_COUNT]
 	return weapon_stat
 
 

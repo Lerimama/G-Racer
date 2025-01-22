@@ -20,6 +20,7 @@ tracks/0/keys = {
 }
 
 [node name="Launcher" instance=ExtResource( 1 )]
+weapon_ammo = 1
 
 [node name="FireParticles" parent="WeaponSprite" index="0"]
 position = Vector2( 8, -4 )

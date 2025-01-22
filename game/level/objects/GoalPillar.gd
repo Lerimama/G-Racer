@@ -1,6 +1,8 @@
 extends StaticBody2D
 
 
+signal goal_reached
+
 export var height: float = 100 # PRO
 export var elevation: float = 10 # PRO
 
@@ -21,10 +23,12 @@ func _ready() -> void:
 
 func goal_reached(bolt: Node):
 
+	emit_signal("goal_reached", self, bolt)
+
 	if not turned_on:
 		turned_on = true
 		light_poly.color = Rfs.color_green
-		bolt.update_stat(Pfs.DRIVER_STATS.POINTS, reward_points)
+		bolt.update_stat(Pfs.STATS.POINTS, reward_points)
 		$AnimationPlayer.play("edge_rotate")
 
 

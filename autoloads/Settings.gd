@@ -25,7 +25,7 @@ enum LEVEL {
 	}
 var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
-		"level_type": "RACING", # ko bi le lahko level podatki bli tukej
+#		"level_type": "RACING", # ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/Level.tscn",
 		"time_limit": 0,
@@ -33,12 +33,12 @@ var level_settings: Dictionary = {
 		},
 	LEVEL.STAFF: {
 #		"level_type": "BATTLE", # ko bi le lahko level podatki bli tukej
-		"level_type": "RACING", # _temp ...  ko bi le lahko level podatki bli tukej
+#		"level_type": "RACING", # _temp ...  ko bi le lahko level podatki bli tukej
 #		"level_type": "RACE_GOAL", # _temp ...  ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
-		"lap_limit": 0,
+		"lap_limit": 2,
 		},
 }
 
@@ -89,8 +89,8 @@ var current_game_levels: Array = [LEVEL.STAFF]
 func _ready() -> void:
 
 	if OS.is_debug_build():
-		default_game_settings["camera_zoom_range"] = [3, 3]
-#		default_game_settings["camera_zoom_range"] = [6, 6]
+#		default_game_settings["camera_zoom_range"] = [3, 3]
+		default_game_settings["camera_zoom_range"] = [5, 5]
 		default_game_settings["start_countdown"] = false
 		default_game_settings["easy_mode"] = true
 		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)

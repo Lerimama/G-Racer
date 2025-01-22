@@ -41,8 +41,9 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		# set ranking line
 		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
-		new_ranking_line.get_node("Bolt").text = bolt.driver_name
-		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.driver_stats["level_time"])
+		new_ranking_line.get_node("Bolt").text = bolt.driver_profile["driver_name"]
+#		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.driver_stats["level_time"])
+		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.driver_stats[Pfs.STATS.LEVEL_TIME])
 		results.add_child(new_ranking_line)
 
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
@@ -54,7 +55,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		if not bolts_on_finish_line.has(bolt):
 			var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
 			new_ranking_line.get_node("Rank").text = "NN"
-			new_ranking_line.get_node("Bolt").text = str(bolt.driver_name)
+			new_ranking_line.get_node("Bolt").text = str(bolt.driver_profile["driver_name"])
 			new_ranking_line.get_node("Result").text = "did no finish"
 			results.add_child(new_ranking_line)
 

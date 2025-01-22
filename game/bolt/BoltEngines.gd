@@ -5,6 +5,8 @@ extends Node2D
 onready var front_thrusts: Array = [$FrontEngine/ThrustL, $FrontEngine/ThrustR]
 onready var rear_thrusts: Array = [$RearEngine/ThrustL, $RearEngine/ThrustR]
 onready var all_thrusts: Array = [$FrontEngine/ThrustL, $FrontEngine/ThrustR, $RearEngine/ThrustL, $RearEngine/ThrustR] # thrusts so samo vizualna prezentacija headinga
+onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/fx/EngineParticlesRear.tscn")
+onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/fx/EngineParticlesFront.tscn")
 
 
 func _ready() -> void:

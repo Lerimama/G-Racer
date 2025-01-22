@@ -30,8 +30,8 @@ func play_sfx(effect_for: String):
 		"stray_step":
 			$GameSfx/StraySlide.play()
 		"blinking": # GM na strays spawn, ker se bolje sliši
-			Mts.get_random_member($GameSfx/Blinking).play() # nekateri so na mute, ker so drugače prepogosti soundi
-			Mts.get_random_member($GameSfx/BlinkingStatic).play()
+			$GameSfx/Blinking.get_children().pick_random().play()
+			$GameSfx/BlinkingStatic.get_children().pick_random().play()
 		"thunder_strike": # intro in GM na strays spawn
 			$GameSfx/Burst.play()
 
@@ -58,7 +58,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			Mts.get_random_member($GuiSfx/Inputs/Typing).play()
+			$GuiSfx/Inputs/Typing.get_children().pick_random().play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":

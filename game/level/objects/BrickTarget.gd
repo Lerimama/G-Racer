@@ -34,12 +34,12 @@ func on_hit(hit_by: Node, hit_global_position: Vector2):
 			3:
 				animation_player.play("outro")
 				modulate = Rfs.color_brick_target_hit_3
-				hit_by.update_stat(Pfs.DRIVER_STATS.POINTS, reward_points)
+				hit_by.update_stat(Pfs.STATS.POINTS, reward_points)
 
 	elif hit_by is Misile:
 		modulate = Rfs.color_red
 		animation_player.play("outro")
-		hit_by.update_stat(Pfs.DRIVER_STATS.POINTS, reward_points)
+		hit_by.update_stat(Pfs.STATS.POINTS, reward_points)
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

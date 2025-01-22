@@ -11,7 +11,7 @@ script = ExtResource( 1 )
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 path_desired_distance = 52.95
-target_desired_distance = 100.0
+target_desired_distance = 30.0
 avoidance_enabled = true
 radius = 160.0
 

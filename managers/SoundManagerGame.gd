@@ -93,7 +93,7 @@ func play_gui_sfx(effect_for: String):
 			$GuiSfx/Events/TutorialStageDone.play()
 		# input
 		"typing":
-			Mts.get_random_member($GuiSfx/Inputs/Typing).play()
+			$GuiSfx/Inputs/Typing.get_children().pick_random().play()
 		"btn_confirm":
 			$GuiSfx/Inputs/BtnConfirm.play()
 		"btn_cancel":

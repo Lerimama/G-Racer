@@ -2,26 +2,29 @@ extends RigidBody2D
 class_name Bolt
 
 
-signal stats_changed (stats_owner_id, driver_stats) # bolt in damage
+signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
 
 enum MOTION {ENGINES_OFF, IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
-var motion: int = MOTION.IDLE setget _on_motion_change
+var motion: int = MOTION.IDLE setget _change_motion
 var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
 
-# driver and stats
-var driver_id: int # ga seta spawner
-var driver_name: String # za opredelitev statistike
+export var height: float = 0 # PRO
+export var elevation: float = 7 # PRO
+
+# seta spawner
+var driver_id: int
+var driver_profile: Dictionary
+var driver_stats: Dictionary
+var bolt_profile: Dictionary
+# seta ready
+var bolt_type: int
+var ai_target_rank: int
 var bolt_color: Color = Color.red
-onready var driver_profile: Dictionary = Pfs.driver_profiles[driver_id].duplicate()
-onready var bolt_type: int = driver_profile["bolt_type"]
-onready var driver_stats: Dictionary = Pfs.default_driver_stats.duplicate()
-#onready var max_health: float = driver_stats["health"] # zato, da se lahko resetira
 
 # bolt
-var is_active: bool = false setget _change_bolt_activity # predvsem za pošiljanje signala GMju
+var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
 var bolt_body_state: Physics2DDirectBodyState
-onready var bolt_profile: Dictionary = Pfs.bolt_profiles[bolt_type].duplicate()
-onready var ai_target_rank: int = bolt_profile["ai_target_rank"]
+
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var revive_timer: Timer = $ReviveTimer
 onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/HUMAN
@@ -29,8 +32,6 @@ onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/HU
 # fx
 onready var trail_source: Position2D = $TrailSource
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
-onready var EngineParticlesRear: PackedScene = preload("res://game/bolt/fx/EngineParticlesRear.tscn")
-onready var EngineParticlesFront: PackedScene = preload("res://game/bolt/fx/EngineParticlesFront.tscn")
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
 
 # driving
@@ -78,31 +79,30 @@ var race_time_on_previous_lap: float = 0
 onready var direction_line: Line2D = $DirectionLine
 
 # neu
-export var height: float = 0 # PRO
-export var elevation: float = 7 # PRO
+var using_nitro: bool = false
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array = [$Turret, $Dropper, $LauncherL, $LauncherR]
 onready var chassis: Node2D = $Chassis
 onready var terrain_detect: Area2D = $TerrainDetect
-var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-var using_nitro: bool = false
+#var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
 
 
 func _ready() -> void:
 #	printt("BOLT", self.name)
 
 	add_to_group(Rfs.group_bolts)
-	driver_name = driver_profile["driver_name"]
 
 	z_as_relative = false
 	z_index = Pfs.z_indexes["bolts"]
 
-	# bolt
+	# lnf
+	bolt_type = driver_profile["bolt_type"]
+	ai_target_rank = bolt_profile["ai_target_rank"]
 	bolt_color = driver_profile["driver_color"] # bolt se obarva ...
 	chassis.get_node("BoltShape").modulate = bolt_color
 
-	# bolt settings
+	# fizka
 	mass = bolt_profile["mass"]
 	linear_damp = bolt_profile["drive_lin_damp"]
 	angular_damp = bolt_profile["drive_ang_damp"]
@@ -145,7 +145,7 @@ func _process(delta: float) -> void:
 
 		max_engine_power = (bolt_profile["max_engine_power"] + max_engine_power_adon) * max_engine_power_factor
 		engine_power = clamp(engine_power, 0, max_engine_power)
-		update_stat(Pfs.DRIVER_STATS.GAS_COUNT, gas_usage)
+		update_stat(Pfs.STATS.GAS_COUNT, gas_usage)
 
 
 func _motion_state_machine():
@@ -259,15 +259,97 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 		# print("power %s / " % engine_power, "force %s" % force)
 
 
+func _change_motion(new_motion: int):
+
+	# nastavim nov engine
+	if not new_motion == motion:
+		motion = new_motion
+		match motion:
+			MOTION.IDLE:
+				if bolt_shift > 0:
+					rear_mass.set_applied_force(Vector2.ZERO)
+				else:
+					front_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["idle_lin_damp"]
+				angular_damp = bolt_profile["idle_ang_damp"]
+				for thrust in engines.all_thrusts:
+					thrust.stop_fx()
+			MOTION.FWD:
+				rear_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["drive_lin_damp"]
+				angular_damp = bolt_profile["drive_ang_damp"]
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.REV:
+				front_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["drive_lin_damp"]
+				angular_damp = bolt_profile["drive_ang_damp"]
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.FREE_ROTATE:
+				linear_damp = bolt_profile["idle_lin_damp"]
+				angular_damp = bolt_profile["idle_ang_damp"] # če tega ni moraš prekinit tipko, da se preklopi preko IDLE stanja
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.DRIFT: # ni zrihtano
+				linear_damp = bolt_profile["idle_lin_damp"]
+				#			linear_damp = bolt_profile["drive_lin_damp"]
+				#			angular_damp = bolt_profile["idle_ang_damp"]
+				engine_power = max_engine_power # poskrbi za bolj "tight" obrat
+				for thrust in engines.front_thrusts:
+					thrust.stop_fx()
+				for thrust in engines.rear_thrusts:
+					thrust.start_fx()
+			MOTION.GLIDE:
+				linear_damp = bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
+				angular_damp = bolt_profile["glide_ang_damp"] # da se ne vrti, če zavija
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.DISARRAY:
+				pass
+
+
+func _change_activity(new_is_active: bool):
+
+	if not new_is_active == is_active:
+		is_active = new_is_active
+		match is_active:
+			true:
+				bolt_controller.set_process_input(true)
+			false: # ga upočasnim v trenutni smeri
+				reset_bolt()
+				bolt_controller.set_process_input(false)
+				# nočeš ga skos slišat, če je multiplejer
+				engines.shutdown_engines()
+				Rfs.game_manager.check_for_level_finished()
+
+
+func _add_bolt_controller():
+
+	 # zbrišem placeholder
+	bolt_controller.queue_free()
+
+	# opredelim controller sceno
+	var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
+	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
+
+	# spawn na vrh boltovega drevesa
+	bolt_controller = BoltController.instance()
+	bolt_controller.controlled_bolt = self
+	bolt_controller.controller_type = driver_profile["controller_type"]
+	call_deferred("add_child", bolt_controller)
+	call_deferred("move_child", bolt_controller, 0)
+
+
 # LAJF ----------------------------------------------------------------------------
+
 
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
 	if is_shielded:
 		return
 
-	#	if Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
-	update_stat(Pfs.DRIVER_STATS.HEALTH, - hit_by.hit_damage)
+	update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
 
 	if hit_by.is_in_group(Rfs.group_bullets):
 		var inertia_factor: float = 100
@@ -291,7 +373,6 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
 		Rfs.current_camera.shake_camera(Rfs.current_camera.misile_hit_shake)
 		Rfs.sound_manager.play_sfx("bolt_explode")
-		#		if Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
 		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
 	elif hit_by.is_in_group(Rfs.group_mine):
@@ -300,10 +381,6 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		apply_torque_impulse(hit_by_power)
 		Rfs.current_camera.shake_camera(Rfs.current_camera.misile_hit_shake)
 
-	# health management
-	if driver_stats["health"] <= 0:
-		_destroy_bolt()
-
 
 func _destroy_bolt():
 
@@ -311,9 +388,9 @@ func _destroy_bolt():
 	motion = MOTION.ENGINES_OFF
 	engines.shutdown_engines()
 	self.is_active = false
-	update_stat(Pfs.DRIVER_STATS.LIFE, - 1)
+	update_stat(Pfs.STATS.LIFE, - 1)
 
-	if driver_stats["life"] > 0:
+	if driver_stats[Pfs.STATS.LIFE] > 0:
 		revive_timer.start(revive_time)
 	else:
 		queue_free()
@@ -357,83 +434,25 @@ func _revive_bolt():
 	visible = true
 
 	# reset energije
-	update_stat(Pfs.DRIVER_STATS.HEALTH, 1)
+	update_stat(Pfs.STATS.HEALTH, 1)
 
 
-# LEVEL ----------------------------------------------------------------------------
+# UTILITI ------------------------------------------------------------------------------------------------
 
 
-func update_level_stats(stat_name: String, change_value: float):
+func reset_bolt():
+	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v bolt "v igri"
 
-
-	if not Rfs.game_manager.game_on:
-		return
-
-	if stat_name == "best_lap_time":
-		driver_stats[stat_name] = change_value
-	elif stat_name == "level_time":
-		driver_stats[stat_name] = change_value
-	elif stat_name == "level_rank":
-		driver_stats[stat_name] = change_value
-
-	emit_signal("stats_changed", driver_id, driver_stats)
-
-
-func update_stat(stat_key: int, change_value):
-#enum DRIVER_STATS {BULLET_COUNT, MISILE_COUNT, MINA_COUNT, HEALTH, GAS_COUNT, LIFE,CASH_COUNT, POINTS }
-
-	if not Rfs.game_manager.game_on:
-		return
-
-	var curr_stat_name: String
-	match stat_key:
-		Pfs.DRIVER_STATS.BULLET_COUNT:
-			curr_stat_name = "bullet_count"
-		Pfs.DRIVER_STATS.MISILE_COUNT:
-			curr_stat_name = "misile_count"
-		Pfs.DRIVER_STATS.MINA_COUNT:
-			curr_stat_name = "mina_count"
-		Pfs.DRIVER_STATS.HEALTH:
-			curr_stat_name = "health"
-		Pfs.DRIVER_STATS.GAS_COUNT:
-			curr_stat_name = "gas_count"
-		Pfs.DRIVER_STATS.LIFE:
-			curr_stat_name = "life"
-		Pfs.DRIVER_STATS.CASH_COUNT:
-			curr_stat_name = "cash_count"
-		Pfs.DRIVER_STATS.POINTS:
-			curr_stat_name = "points"
-
-	driver_stats[curr_stat_name] += change_value # change_value je + ali -
-
-	driver_stats["health"] = clamp(driver_stats["health"], 0, 1) # more bigt , ker max heath zmeri dodam 1
-	if driver_stats["gas_count"] <= 0: # če zmanjka bencina je deaktiviran
-		driver_stats["gas_count"] = 0
-		self.is_active = false
-
-	emit_signal("stats_changed", driver_id, driver_stats)
-
-
-func lap_finished(level_lap_limit: int):
-
-	# lap time
-	var current_race_time: float = Rfs.hud.game_timer.game_time_hunds
-	var current_lap_time: float = current_race_time - race_time_on_previous_lap # če je slednja 0, je prvi krog
-	var best_lap_time: float = driver_stats["best_lap_time"]
-	if current_lap_time < best_lap_time or best_lap_time == 0:
-		update_level_stats("best_lap_time", current_lap_time)
-		Rfs.hud.spawn_bolt_floating_tag(self, current_lap_time, true)
-	else:
-		Rfs.hud.spawn_bolt_floating_tag(self, current_lap_time, false)
-
-	update_level_stats("laps_count", 1)
-
-	race_time_on_previous_lap = current_race_time # za naslednji krog
-
-	if driver_stats["laps_count"] >= level_lap_limit: # trenutno končan krog je že dodan
-		Rfs.game_manager.bolts_finished.append(self)
-		update_level_stats("level_time", current_race_time)
-		drive_out()
+	motion = MOTION.IDLE
+	front_mass.set_applied_force(Vector2.ZERO)
+	front_mass.set_applied_torque(0)
+	rear_mass.set_applied_force(Vector2.ZERO)
+	rear_mass.set_applied_torque(0)
+	rotation_dir = 0
+	engine_power = 0
+	for thrust in engines.all_thrusts:
+		thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
+		thrust.stop_fx()
 
 
 func drive_in(drive_in_time: float = 2):
@@ -480,7 +499,16 @@ func drive_out():
 	#	motion = MOTION.IDLE
 
 
-# UTILTI ----------------------------------------------------------------------------
+func use_nitro():
+	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
+
+	if not using_nitro:
+		Rfs.sound_manager.play_sfx("pickable_nitro")
+		max_engine_power_adon = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
+		engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
+		yield(get_tree().create_timer(Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]),"timeout")
+		max_engine_power_adon = 0
+		using_nitro = false
 
 
 func revup():
@@ -488,21 +516,6 @@ func revup():
 	$Sounds/EngineRevup.play()
 	for thrust in engines.all_thrusts:
 		thrust.start_fx(true)
-
-
-func on_item_picked(pickable_key: int):
-
-	match pickable_key:
-		Pfs.PICKABLE.PICKABLE_SHIELD:
-			_spawn_shield()
-		Pfs.PICKABLE.PICKABLE_NITRO:
-			use_nitro()
-		_:
-			# če spreminja statistiko
-			if Pfs.pickable_profiles[pickable_key].keys().has("driver_stat"):
-				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
-				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
-				update_stat(change_stat_key, change_value)
 
 
 func _spawn_shield():
@@ -517,53 +530,6 @@ func _spawn_shield():
 	Rfs.node_creation_parent.add_child(new_shield)
 
 
-func use_nitro():
-	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
-
-	if not using_nitro:
-		Rfs.sound_manager.play_sfx("pickable_nitro")
-		max_engine_power_adon = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		yield(get_tree().create_timer(Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]),"timeout")
-		max_engine_power_adon = 0
-		using_nitro = false
-
-
-func _add_bolt_controller():
-
-	 # zbrišem placeholder
-	bolt_controller.queue_free()
-
-	# opredelim controller sceno
-	var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
-	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
-
-	# spawn na vrh boltovega drevesa
-	bolt_controller = BoltController.instance()
-	bolt_controller.controlled_bolt = self
-	bolt_controller.controller_type = driver_profile["controller_type"]
-	call_deferred("add_child", bolt_controller)
-	call_deferred("move_child", bolt_controller, 0)
-
-
-func reset_bolt():
-	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v bolt "v igri"
-
-	motion = MOTION.IDLE
-	front_mass.set_applied_force(Vector2.ZERO)
-	front_mass.set_applied_torque(0)
-	rear_mass.set_applied_force(Vector2.ZERO)
-	rear_mass.set_applied_torque(0)
-	rotation_dir = 0
-	engine_power = 0
-	for thrust in engines.all_thrusts:
-		thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
-		thrust.stop_fx()
-
-
-# SCREEN PULLING ----------------------------------------------------------------------------------------
-
-
 func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 
 	# disejblam koližne
@@ -572,8 +538,6 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 
 	# reštartam trail
 	trail_source.decay()
-#	if active_trail:
-#		active_trail.start_decay() # trail decay tween start
 
 	var pull_time: float = 0.2
 	var pull_tween = get_tree().create_tween()
@@ -583,12 +547,16 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 	bolt_controller.set_process_input(true)
 
 	# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
-	if driver_stats["laps_count"] < current_leader.driver_stats["laps_count"]:
-		var laps_finished_difference: int = current_leader.driver_stats["laps_count"] - driver_stats["laps_count"]
-		update_level_stats("laps_count", laps_finished_difference)
+	if driver_stats[Pfs.STATS.LAPS_FINISHED] < current_leader.driver_stats[Pfs.STATS.LAPS_FINISHED]:
+		var laps_finished_difference: int = current_leader.driver_stats[Pfs.STATS.LAPS_FINISHED] - driver_stats[Pfs.STATS.LAPS_FINISHED]
+#	if driver_stats["laps_count"] < current_leader.driver_stats["laps_count"]:
+#		var laps_finished_difference: int = current_leader.driver_stats["laps_count"] - driver_stats["laps_count"]
+#		__update_bolts_level_stats("laps_count", laps_finished_difference)
 
 	# če preskoči checkpoint, ga dodaj, če ga leader ima
-	var all_checked_bolts: Array = Rfs.game_manager.bolts_checked
+#	var all_checked_bolts: Array = Rfs.game_manager.bolts_checked #  trega ni več
+	var all_checked_bolts: Array = Rfs.game_manager.bolts_in_game # začasno
+
 	if all_checked_bolts.has(current_leader):
 		all_checked_bolts.append(self)
 
@@ -596,7 +564,23 @@ func pull_bolt_on_screen(pull_position: Vector2, current_leader: RigidBody2D):
 	#	if Rfs.game_manager.current_pull_positions.has(pull_position):
 	#		Rfs.game_manager.current_pull_positions.erase(pull_position)
 
-	update_stat(Pfs.DRIVER_STATS.GAS_COUNT, Rfs.game_manager.game_settings["pull_gas_penalty"])
+	update_stat(Pfs.STATS.GAS_COUNT, Rfs.game_manager.game_settings["pull_gas_penalty"])
+
+
+	#func __update_bolts_level_stats(stat_name: String, change_value: float): # samo za pull bolt
+	#
+	#
+	#	if not Rfs.game_manager.game_on:
+	#		return
+	#
+	#	if stat_name == "best_lap_time":
+	#		driver_stats[stat_name] = change_value
+	#	elif stat_name == "level_time":
+	#		driver_stats[stat_name] = change_value
+	#	elif stat_name == "level_rank":
+	#		driver_stats[stat_name] = change_value
+	#
+	#	emit_signal("stats_changed", driver_id, driver_stats)
 
 
 func screen_wrap(): # ne uporabljam
@@ -617,74 +601,45 @@ func screen_wrap(): # ne uporabljam
 	bolt_body_state.set_transform(xform)
 
 
-# PRIVAT ------------------------------------------------------------------------------------------------
+func on_item_picked(pickable_key: int):
+
+	match pickable_key:
+		Pfs.PICKABLE.PICKABLE_SHIELD:
+			_spawn_shield()
+		Pfs.PICKABLE.PICKABLE_NITRO:
+			use_nitro()
+		_:
+			# če spreminja statistiko
+			if Pfs.pickable_profiles[pickable_key].keys().has("driver_stat"):
+				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
+				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
+				update_stat(change_stat_key, change_value)
 
 
-func _change_bolt_activity(new_is_active: bool):
+func update_stat(stat_key: int, change_value):
 
-	if not new_is_active == is_active:
-		is_active = new_is_active
-		match is_active:
-			true:
-				bolt_controller.set_process_input(true)
-			false: # ga upočasnim v trenutni smeri
-				reset_bolt()
-				bolt_controller.set_process_input(false)
-				# nočeš ga skos slišat, če je multiplejer
-				engines.shutdown_engines()
-				Rfs.game_manager.check_for_level_finished()
+	if not Rfs.game_manager.game_on:
+		return
+
+	var curr_stat_name: String
+	driver_stats[stat_key] += change_value # change_value je + ali -
+
+	# health management
+	if stat_key == Pfs.STATS.HEALTH:
+		driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
+		if driver_stats[Pfs.STATS.HEALTH] == 0:
+			_destroy_bolt()
+		return # poštima ga bolt hud
+
+	# gas management
+	if driver_stats[Pfs.STATS.GAS_COUNT] <= 0: # če zmanjka bencina je deaktiviran
+		driver_stats[Pfs.STATS.GAS_COUNT] = 0
+		self.is_active = false
+
+	emit_signal("bolt_stat_changed", driver_id, stat_key, driver_stats[stat_key])
 
 
-func _on_motion_change(new_motion: int):
-
-	# nastavim nov engine
-	if not new_motion == motion:
-		motion = new_motion
-		match motion:
-			MOTION.IDLE:
-				if bolt_shift > 0:
-					rear_mass.set_applied_force(Vector2.ZERO)
-				else:
-					front_mass.set_applied_force(Vector2.ZERO)
-				linear_damp = bolt_profile["idle_lin_damp"]
-				angular_damp = bolt_profile["idle_ang_damp"]
-				for thrust in engines.all_thrusts:
-					thrust.stop_fx()
-			MOTION.FWD:
-				rear_mass.set_applied_force(Vector2.ZERO)
-				linear_damp = bolt_profile["drive_lin_damp"]
-				angular_damp = bolt_profile["drive_ang_damp"]
-				for thrust in engines.all_thrusts:
-					thrust.start_fx()
-			MOTION.REV:
-				front_mass.set_applied_force(Vector2.ZERO)
-				linear_damp = bolt_profile["drive_lin_damp"]
-				angular_damp = bolt_profile["drive_ang_damp"]
-				for thrust in engines.all_thrusts:
-					thrust.start_fx()
-			MOTION.FREE_ROTATE:
-				linear_damp = bolt_profile["idle_lin_damp"]
-				angular_damp = bolt_profile["idle_ang_damp"] # če tega ni moraš prekinit tipko, da se preklopi preko IDLE stanja
-				for thrust in engines.all_thrusts:
-					thrust.start_fx()
-			MOTION.DRIFT: # ni zrihtano
-				linear_damp = bolt_profile["idle_lin_damp"]
-				#			linear_damp = bolt_profile["drive_lin_damp"]
-				#			angular_damp = bolt_profile["idle_ang_damp"]
-				engine_power = max_engine_power # poskrbi za bolj "tight" obrat
-#				for thrust in front_thrusts:
-				for thrust in engines.front_thrusts:
-					thrust.stop_fx()
-#				for thrust in rear_thrusts:
-				for thrust in engines.rear_thrusts:
-					thrust.start_fx()
-			MOTION.GLIDE:
-				linear_damp = bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
-				angular_damp = bolt_profile["glide_ang_damp"] # da se ne vrti, če zavija
-				for thrust in engines.all_thrusts:
-					thrust.start_fx()
-			MOTION.DISARRAY:
-				pass
+# SIGNALI ------------------------------------------------------------------------------------------------
 
 
 func _on_ReviveTimer_timeout() -> void:

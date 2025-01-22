@@ -32,8 +32,8 @@ onready var collision_shape: CollisionShape2D = $BulletCollision
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
 # neu
-enum TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
-var object_type = TYPE.EXPLODING
+enum DAMAGE_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
+var damage_type = DAMAGE_TYPE.EXPLODING
 
 
 func _ready() -> void:
@@ -52,6 +52,7 @@ func _ready() -> void:
 	new_bullet_trail = BulletTrail.instance()
 	new_bullet_trail.z_index = trail_position.z_index + 1
 	Rfs.node_creation_parent.add_child(new_bullet_trail)
+
 
 func _physics_process(delta: float) -> void:
 

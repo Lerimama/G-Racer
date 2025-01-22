@@ -7,7 +7,7 @@ export var icon_texture: AtlasTexture = null
 export var stat_name: String = ""
 export var name_is_icon: bool = false
 
-var stat_value: int = 0 setget _on_stat_change
+var stat_value = 0 setget _on_stat_change # : razno
 var color_blink_time: float = 0.5
 var def_stat_color: Color = Rfs.color_hud_base
 var minus_color: Color = Rfs.color_red
@@ -60,18 +60,19 @@ func _ready() -> void:
 
 func _on_stat_change(new_stat_value):
 
-	if not stat_value == new_stat_value:
+	# če je string je sporočilo ... skrijem vse razen sporočila
+	if new_stat_value is String:
+		stat_count_label.text = new_stat_value
+		#			stat_name_label.hide()
+#			stat_icon.hide()
+		stat_time_label.hide()
+		stat_icons.hide()
 
-		# če je string je sporočilo ... skrijem vse razen sporočila
-		if new_stat_value is String:
-			stat_count_label.text = str(new_stat_value)
-			#			stat_name_label.hide()
-			stat_icon.hide()
-			stat_time_label.hide()
-			stat_icons.hide()
+	# če je številka ga primerjam
+	elif new_stat_value is float or new_stat_value is int :
 
-		# če je številka ga primerjam
-		elif new_stat_value is float or new_stat_value is int :
+		if not stat_value == new_stat_value:
+
 			if new_stat_value > stat_value:
 				modulate = plus_color
 			elif new_stat_value < stat_value:

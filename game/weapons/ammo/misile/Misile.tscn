@@ -134,7 +134,7 @@ __meta__ = {
 
 [node name="MisileCollision" type="CollisionPolygon2D" parent="."]
 position = Vector2( 6, -4.5 )
-polygon = PoolVector2Array( -3, 0, 0, 2, 0, 7, -3, 9, -24, 9, -24, 0 )
+polygon = PoolVector2Array( 0, 0, 0, 9, -24, 9, -24, 0 )
 disabled = true
 
 [node name="HommingArea" type="Area2D" parent="."]

@@ -8,6 +8,31 @@ extends Node
 
 func drivers_and_ai(): pass
 
+
+# vsi statsi na hudu
+enum STATS {WINS, BULLET_COUNT, MISILE_COUNT, MINA_COUNT, HEALTH, GAS_COUNT, LIFE, CASH_COUNT, POINTS, LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED}
+
+var default_level_stats: Dictionary = {
+	STATS.LEVEL_RANK: 0,
+	STATS.LEVEL_TIME: 0, # hunds
+	STATS.BEST_LAP_TIME: 0,
+	STATS.LAPS_FINISHED: [], # časi
+	STATS.GOALS_REACHED: [], # nodeti
+}
+
+var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+	STATS.WINS : 2,
+	STATS.LIFE : 5,
+	STATS.CASH_COUNT: 0,
+	STATS.HEALTH : 1, # health percetnage
+	STATS.BULLET_COUNT : 100,
+	STATS.MISILE_COUNT : 5,
+	STATS.MINA_COUNT : 3,
+	STATS.GAS_COUNT: 5000,
+	STATS.POINTS : 0,
+}
+
+
 var default_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# bolt stats
 	"wins" : 2,
@@ -200,7 +225,7 @@ var ammo_profiles : Dictionary = {
 #		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
 		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
 		"ammo_count_key": "bullet_count", # driver stats name
-		"ammo_stat_key": DRIVER_STATS.BULLET_COUNT,
+		"ammo_stat_key": STATS.BULLET_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
 	AMMO.MISILE: {
@@ -212,7 +237,7 @@ var ammo_profiles : Dictionary = {
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/misile/Misile.tscn"),
 		"ammo_count_key": "misile_count", # znebi se
-		"ammo_stat_key": DRIVER_STATS.MISILE_COUNT,
+		"ammo_stat_key": STATS.MISILE_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
 	AMMO.MINA: {
@@ -224,7 +249,7 @@ var ammo_profiles : Dictionary = {
 		"direction_start_range": [0, 0] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/mina/Mina.tscn"),
 		"ammo_count_key": "mina_count",
-		"ammo_stat_key": DRIVER_STATS.MINA_COUNT,
+		"ammo_stat_key": STATS.MINA_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 
@@ -316,8 +341,6 @@ var level_object_profiles: Dictionary = {
 
 func pickables(): pass
 
-enum DRIVER_STATS {BULLET_COUNT, MISILE_COUNT, MINA_COUNT, HEALTH, GAS_COUNT, LIFE,CASH_COUNT, POINTS }
-
 enum PICKABLE{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA,
 	PICKABLE_SHIELD, PICKABLE_HEALTH, PICKABLE_LIFE,
@@ -332,56 +355,56 @@ var pickable_profiles: Dictionary = {
 		"value": 20,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": DRIVER_STATS.BULLET_COUNT,
+		"driver_stat": STATS.BULLET_COUNT,
 	},
 	PICKABLE.PICKABLE_MISILE: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 2,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": DRIVER_STATS.MISILE_COUNT,
+		"driver_stat": STATS.MISILE_COUNT,
 	},
 	PICKABLE.PICKABLE_MINA: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": DRIVER_STATS.MINA_COUNT,
+		"driver_stat": STATS.MINA_COUNT,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 0,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": DRIVER_STATS.HEALTH,
+		"driver_stat": STATS.HEALTH,
 	},
 	PICKABLE.PICKABLE_LIFE: {
 		"color": Rfs.color_pickable_stat,
 		"value": 1,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": DRIVER_STATS.LIFE,
+		"driver_stat": STATS.LIFE,
 	},
 	PICKABLE.PICKABLE_GAS: {
 		"color": Rfs.color_pickable_stat,
 		"value": 200,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": DRIVER_STATS.GAS_COUNT,
+		"driver_stat": STATS.GAS_COUNT,
 	},
 	PICKABLE.PICKABLE_CASH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
 		"ai_target_rank": 0,
-		"driver_stat": DRIVER_STATS.CASH_COUNT,
+		"driver_stat": STATS.CASH_COUNT,
 	},
 	PICKABLE.PICKABLE_POINTS: {
 		"color": Rfs.color_pickable_stat,
 		"value": 100,
 		"elevation": 3,
 		"ai_target_rank": 2,
-		"driver_stat": DRIVER_STATS.POINTS,
+		"driver_stat": STATS.POINTS,
 	},
 	# NO STATS ...instants
 	PICKABLE.PICKABLE_SHIELD: {

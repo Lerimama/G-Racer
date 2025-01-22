@@ -3,15 +3,19 @@ extends Node2D
 
 signal level_is_set(navigation, spawn_positions, other_)
 
-enum LEVEL_TYPE {RACE, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
-export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE
+enum LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
+var level_type: int # določi glede na pripete elemente = LEVEL_TYPE.RACE_TRACK
+#export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE_TRACK
 
-# navigacija
-var navigation_cells_positions: Array
-var non_navigation_cell_positions: Array # elementi, kjer navigacija ne sme potekati
+export (Array, NodePath) var level_goals_paths: Array = [] # lahko jih tudi ni
+export (NodePath) var level_finish_path: String # lahko ga tudi ni
+export (NodePath) var level_track_path: String # lahko ga tudi ni
 
-onready var checkpoint: Area2D = $Racing/Checkpoint
-onready var level_track: Path2D = $Racing/LevelTrack
+var level_finish: Node2D
+var level_track: Path2D
+var level_goals: Array = []
+var navigation_cells_positions: Array = []
+
 onready var level_navigation: NavigationPolygonInstance = $LevelNavigation
 onready var tilemap_objects: TileMap = $Objects/Objects
 onready var camera_limits_rect: Panel = $CameraLimits
@@ -22,19 +26,12 @@ onready var start_lights: Node2D = $Racing/LevelStart/StartLights
 onready var start_camera_position_node: Position2D = $Racing/LevelStart/CameraPosition
 onready var start_positions_node: Node2D = $Racing/LevelStart/StartPositions
 onready var drive_in_position: Vector2 = $Racing/LevelStart/DriveInPosition.position
-
-# finish
-onready var level_finish: Node2D = $Racing/LevelFinish
-onready var finish_line: Area2D = $Racing/LevelFinish/FinishLine
 onready var finish_camera_position_node: Position2D = $Racing/LevelFinish/CameraPosition
 onready var drive_out_position: Vector2 = $Racing/LevelFinish/DriveOutPosition.position
 
-# neu
-onready var temp_level_goals: Array = [$Racing/Checkpoint, $Racing/LevelFinish]
-
 
 func _ready() -> void:
-	printt("LEVEL", temp_level_goals)
+#	printt("LEVEL")
 
 	$__ScreenSize.hide() # debug
 
@@ -42,53 +39,55 @@ func _ready() -> void:
 	for child in start_positions_node.get_children():
 		child.hide()
 
+	# nodepaths
+	if level_track_path:
+		 level_track = get_node(level_track_path)
+	if level_finish_path:
+		 level_finish = get_node(level_finish_path)
+	for goal_path in level_goals_paths:
+		level_goals.append(get_node(goal_path))
+
+	# level type
+	if level_goals.empty() and not level_finish:
+		level_type = LEVEL_TYPE.BATTLE
+	else:
+		if level_track:
+			level_type = LEVEL_TYPE.RACE_TRACK
+		elif level_finish: # ma cilj in gole
+			level_type = LEVEL_TYPE.RACE_GOAL
+		else:
+			level_type = LEVEL_TYPE.CHASE
+
 	match level_type:
 		LEVEL_TYPE.BATTLE:
 			level_start.hide()
-			checkpoint.hide()
-			level_finish.hide()
-			finish_line.set_deferred("monitoring", false)
-			# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
-			#			finish_line.monitoring = false
-		LEVEL_TYPE.RACE:
+			if level_finish:
+				level_finish.hide()
+				level_finish.get_node("FinishLine").set_deferred("monitoring", false)
+				# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
+		LEVEL_TYPE.RACE_TRACK:
 			level_start.show()
-			checkpoint.hide()
-			level_finish.show()
-			finish_line.set_deferred("monitoring", true)
-		LEVEL_TYPE.RACE_LAPS:
-			level_start.show()
-			checkpoint.show()
-			level_finish.show()
-			finish_line.set_deferred("monitoring", true)
+			if level_finish:
+				level_finish.show()
 		LEVEL_TYPE.RACE_GOAL: # _temp level
 			level_start.show()
-			checkpoint.show()
-			level_finish.show()
-			finish_line.set_deferred("monitoring", true)
+			if level_finish:
+				level_finish.show()
 		LEVEL_TYPE.CHASE:
-			#			level_start.hide()
-			#			level_finish.hide()
-			checkpoint.show()
-			finish_line.set_deferred("monitoring", true)
+			level_start.show()
+			if level_finish:
+				level_finish.show()
 
-	# kar je skrito, ne deluje
-	if checkpoint.visible:
-		#		checkpoint.monitoring = true
-		checkpoint.set_deferred("monitoring", true)
-	else:
-		#		checkpoint.monitoring = false
-		checkpoint.set_deferred("monitoring", false)
 
-	set_level_objects()
+	_set_level_objects()
 	navigation_cells_positions = $LevelNavigation.level_navigation_points.duplicate()
-#	set_level_navigation() # navigacija ... more bit po objects zato, da se prilagodi navigacija ...
 
-	resize_to_level_size()
+	_resize_to_level_size()
 
 	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
 
 
-func set_level_objects():
+func _set_level_objects():
 
 	if tilemap_objects.get_used_cells().empty():
 		return
@@ -109,38 +108,38 @@ func set_level_objects():
 			41: # brick ghost
 				level_object_key = Pfs.LEVEL_OBJECT.BRICK_GHOST
 				spawn_tile_offset = brick_tile_offset
-				non_navigation_cell_positions.append(cell_global_position)
-				for surrounding_cell in get_surrounding_cells(cell, true):
-					if not non_navigation_cell_positions.has(surrounding_cell):
-						non_navigation_cell_positions.append(surrounding_cell)
+#				non_navigation_cell_positions.append(cell_global_position)
+#				for surrounding_cell in get_surrounding_cells(cell, true):
+#					if not non_navigation_cell_positions.has(surrounding_cell):
+#						non_navigation_cell_positions.append(surrounding_cell)
 			42: # brick magnet
 				level_object_key = Pfs.LEVEL_OBJECT.BRICK_MAGNET
 				spawn_tile_offset = brick_tile_offset
-				non_navigation_cell_positions.append(cell_global_position)
-				for surrounding_cell in get_surrounding_cells(cell, true):
-					if not non_navigation_cell_positions.has(surrounding_cell):
-						non_navigation_cell_positions.append(surrounding_cell)
+#				non_navigation_cell_positions.append(cell_global_position)
+#				for surrounding_cell in get_surrounding_cells(cell, true):
+#					if not non_navigation_cell_positions.has(surrounding_cell):
+#						non_navigation_cell_positions.append(surrounding_cell)
 			43: # brick target
 				level_object_key = Pfs.LEVEL_OBJECT.BRICK_TARGET
 				spawn_tile_offset = brick_tile_offset
-				non_navigation_cell_positions.append(cell_global_position)
-				for surrounding_cell in get_surrounding_cells(cell, true):
-					if not non_navigation_cell_positions.has(surrounding_cell):
-						non_navigation_cell_positions.append(surrounding_cell)
+#				non_navigation_cell_positions.append(cell_global_position)
+#				for surrounding_cell in get_surrounding_cells(cell, true):
+#					if not non_navigation_cell_positions.has(surrounding_cell):
+#						non_navigation_cell_positions.append(surrounding_cell)
 			44: # brick bouncer
 				level_object_key = Pfs.LEVEL_OBJECT.BRICK_BOUNCER
 				spawn_tile_offset = brick_tile_offset
-				non_navigation_cell_positions.append(cell_global_position)
-				for surrounding_cell in get_surrounding_cells(cell, true):
-					if not non_navigation_cell_positions.has(surrounding_cell):
-						non_navigation_cell_positions.append(surrounding_cell)
+#				non_navigation_cell_positions.append(cell_global_position)
+#				for surrounding_cell in get_surrounding_cells(cell, true):
+#					if not non_navigation_cell_positions.has(surrounding_cell):
+#						non_navigation_cell_positions.append(surrounding_cell)
 			45: # brick light
 				level_object_key = Pfs.LEVEL_OBJECT.FLATLIGHT
 				spawn_tile_offset = brick_tile_offset
 			6: # goal pillar
 				level_object_key = Pfs.LEVEL_OBJECT.GOAL_PILLAR
 				spawn_tile_offset = pillar_tile_offset
-				non_navigation_cell_positions.append(cell_global_position)
+#				non_navigation_cell_positions.append(cell_global_position)
 
 		if level_object_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)
@@ -150,10 +149,10 @@ func set_level_objects():
 			new_object_scene.level_object_key = level_object_key
 			add_child(new_object_scene)
 
-	set_pickables()
+	_set_pickables()
 
 
-func set_pickables():
+func _set_pickables():
 
 
 	if tilemap_objects.get_used_cells().empty():
@@ -209,7 +208,7 @@ func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, picka
 	add_child(new_pickable_scene)
 
 
-func resize_to_level_size():
+func _resize_to_level_size():
 
 	# naberem rektangle za risajzat
 	var nodes_to_resize: Array = []
@@ -223,7 +222,7 @@ func resize_to_level_size():
 			node.material.set_shader_param("node_size", camera_limits_rect.rect_size)
 
 
-func get_tilemap_cells(tilemap: TileMap):
+func _get_tilemap_cells(tilemap: TileMap):
 	# kadar me zanimajo tudi prazne celice
 
 	var tilemap_cells: Array = [] # celice v gridu
@@ -236,39 +235,24 @@ func get_tilemap_cells(tilemap: TileMap):
 	return tilemap_cells
 
 
-func get_surrounding_cells(surrounded_cell: Vector2, return_global_positions: bool = false):
+#func _get_surrounding_cells(surrounded_cell: Vector2, return_global_positions: bool = false):
+#
+#	var surrounding_cells: Array = []
+#	var surrounding_cells_global_positions: Array = []
+#	var target_cell: Vector2
+#
+#	for y in 3:
+#		for x in 3:
+#			target_cell = surrounded_cell + Vector2(x - 1, y - 1)
+#			if surrounded_cell != target_cell:
+#				surrounding_cells.append(target_cell)
+#
+#	if return_global_positions:
+#		for loc_cell in surrounding_cells:
+#			var cell_loc_position = tilemap_objects.map_to_world(loc_cell)
+#			var cell_glo_position = tilemap_objects.to_global(cell_loc_position)
+#			surrounding_cells_global_positions.append(cell_glo_position)
+#		return surrounding_cells_global_positions
+#	else:
+#		return surrounding_cells
 
-	var surrounding_cells: Array = []
-	var surrounding_cells_global_positions: Array = []
-	var target_cell: Vector2
-
-	for y in 3:
-		for x in 3:
-			target_cell = surrounded_cell + Vector2(x - 1, y - 1)
-			if surrounded_cell != target_cell:
-				surrounding_cells.append(target_cell)
-
-	if return_global_positions:
-		for loc_cell in surrounding_cells:
-			var cell_loc_position = tilemap_objects.map_to_world(loc_cell)
-			var cell_glo_position = tilemap_objects.to_global(cell_loc_position)
-			surrounding_cells_global_positions.append(cell_glo_position)
-		return surrounding_cells_global_positions
-	else:
-		return surrounding_cells
-
-
-# SIGNALI ---------------------------------------------------------------------------------------------------------------------------------------
-
-
-func _on_FinishLine_body_entered(body: Node) -> void:
-
-	if body.is_in_group(Rfs.group_bolts):
-		Rfs.game_manager.bolt_across_finish_line(body)
-
-
-func _on_Checkpoint_body_entered(body: Node) -> void:
-
-	if body.is_in_group(Rfs.group_bolts):
-		if not Rfs.game_manager.bolts_checked.has(body):
-			Rfs.game_manager.bolts_checked.append(body)

@@ -2,12 +2,12 @@ extends Node2D
 
 
 enum WEAPON_AMMO {BULLET, MISILE, MINA} # zaporedje kot v profilih
-export (WEAPON_AMMO) var ammo_key = 0
+export (WEAPON_AMMO) var weapon_ammo = 0 # 0 = AMMO.BULLET
 export var fx_enabled: bool = true
 
 var is_set: bool =  false
 var weapon_reloaded: bool = true
-var ammo_count: int = 0 setget _change_weapon_stats # napolnems strani bolta ali igre
+var ammo_count: int = 0 setget _change_ammo_count # napolnems strani bolta ali igre
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -17,10 +17,10 @@ onready var fire_cover_particles: Particles2D = $WeaponSprite/FireCoverParticles
 onready var smoke_particles: Particles2D = $WeaponSprite/SmokeParticles
 
 # per weapon
-var ammo_count_key: String#  = ammo_profile["ammo_count_key"] # na prvi load
-var ammo_profile: Dictionary# = Pfs.ammo_profiles[weapon_key] # na prvi load
-var AmmoScene: PackedScene# = ammo_profile["scene"]
-var reload_time: float = 0.15 # weapon_profile["reload_time"] # PRO dodaj weapons
+var ammo_stat_key: int
+var ammo_profile: Dictionary
+var AmmoScene: PackedScene
+var reload_time: float = 0.15
 
 # neu
 
@@ -36,29 +36,26 @@ func _ready() -> void:
 
 func set_weapon(): # kliče bolt
 
-	ammo_profile = Pfs.ammo_profiles[ammo_key]
+	ammo_profile = Pfs.ammo_profiles[weapon_ammo]
 
 	reload_time = ammo_profile["reload_time"] # PRO dodaj v nove weapon_profile
 	AmmoScene = ammo_profile["scene"]
-
-	# ammo count
-	ammo_count_key = ammo_profile["ammo_count_key"]
-	ammo_count = owner.driver_stats[ammo_count_key]
-	weapon_stat_key = Pfs.ammo_profiles[ammo_key]["ammo_stat_key"]
+	ammo_stat_key = ammo_profile["ammo_stat_key"]
+	# ammo count stat
+	ammo_count = owner.driver_stats[ammo_stat_key]
 
 	is_set = true
 
 
 func _process(delta: float) -> void:
 
-	if owner.is_shooting and ammo_count > 0 and is_set and owner.bolt_hud.actived_weapon_key == ammo_key:
+	if owner.is_shooting and ammo_count > 0 and is_set and owner.bolt_hud.actived_weapon_key == weapon_ammo:
 		shoot()
 	else:
 		smoke_particles.emitting = false
 		fire_particles.emitting = false
 		fire_cover_particles.emitting = false
 #		animation_player.stop()
-#
 
 func shoot():
 
@@ -77,7 +74,7 @@ func shoot():
 		new_ammo.global_rotation = shooting_position.global_rotation
 		new_ammo.spawner = owner
 		new_ammo.spawner_color = owner.bolt_color
-		if ammo_key == Pfs.AMMO.BULLET:
+		if weapon_ammo == Pfs.AMMO.BULLET:
 			new_ammo.z_index = shooting_position.z_index + 1
 		else:
 			new_ammo.z_index = shooting_position.z_index - 1
@@ -92,11 +89,10 @@ func shoot():
 			reload_timer.start(reload_time)
 
 
-func _change_weapon_stats(ammo_count_delta: int):
+func _change_ammo_count(ammo_count_delta: int):
 
 		ammo_count += ammo_count_delta
-#		owner.update_stat(ammo_count_key, ammo_count_delta)
-		owner.update_stat(weapon_stat_key, ammo_count_delta)
+		owner.update_stat(ammo_stat_key, ammo_count_delta)
 
 
 func _on_ReloadTimer_timeout() -> void:

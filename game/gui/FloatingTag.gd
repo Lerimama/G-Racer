@@ -2,7 +2,7 @@ extends Node2D
 
 enum TAG_TYPE {TEXT, TIME, ICON}
 
-var current_tag_type: int = TAG_TYPE.TEXT
+var tag_type: int = TAG_TYPE.TEXT
 var content_to_show = "any type of content"
 
 var tag_owner: Node
@@ -20,8 +20,8 @@ func _ready() -> void:
 	animation_player.play("float_lap")
 	# KVEFRI je v animaciji
 
-	match current_tag_type:
-		TAG_TYPE.TEXT: 
+	match tag_type:
+		TAG_TYPE.TEXT:
 			label.show()
 			time_label.hide()
 			label.text = content_to_show
@@ -34,10 +34,10 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	
+
 	if tag_owner:
 		global_position = tag_owner.global_position
-	
+
 	# klampanje znotraj ekrana
 	var x_offset: float = (label.rect_size.x + 10) / 2 # širina labele
 	var x_limit_left: float = Rfs.current_camera.get_camera_screen_center().x - get_viewport().size.x/2 + x_offset
