@@ -48,7 +48,6 @@ func update_trail(moving_speed: float = 0, stop_speed_threshold: float = 0.5):
 	elif active_trail and moving_speed > stop_speed_threshold:
 		# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
 		active_trail.add_points(global_position)
-#		active_trail.add_points(bolt_global_position)
 		active_trail.gradient.colors[1] = trail_pseudodecay_color
 		if moving_speed > stop_speed_threshold and active_trail.modulate.a < bolt_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem

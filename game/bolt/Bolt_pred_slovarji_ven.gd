@@ -1,10 +1,11 @@
 extends RigidBody2D
-class_name Bolt
+#class_name Bolt
 
 
 signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
 
 enum MOTION {ENGINES_OFF, IDLE, FWD, REV, DISARRAY, TILT, FREE_ROTATE, DRIFT, GLIDE} # DIZZY, DYING glede na moč motorja
+#enum MOTION {ENGINES_OFF, IDLE, FWD, REV, TILT, FREE_ROTATE, DRIFT, GLIDE, DISARRAY} # DIZZY, DYING glede na moč motorja
 var motion: int = MOTION.IDLE setget _change_motion
 var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
 #var free_motion_type: int = MOTION.FREE_ROTATE # presetan motion, ko imaš samo smerne tipke
@@ -15,7 +16,6 @@ var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
 export (Array, NodePath) var weapon_paths: Array
-export (NodePath) var bolt_engines_path: String  # _temp ... engines
 
 # seta spawner
 var driver_id: int
@@ -55,17 +55,19 @@ onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
 onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
 
-# power
+# engine power
 var engine_power = 0
 var max_engine_power_adon: float = 0 # tole spremija samo kar koli vpliva na moč med igro, ovinek?
 var max_engine_power_factor: float = 1 # tole spremija samo kar koli vpliva na moč med igro, ovinek?
+#onready var max_engine_power: float = bolt_profile["max_engine_power"]
+#onready var accelaration_power: float = bolt_profile["accelaration_power"] # delež engine powerja, ki se sešteva
 onready var fast_start_engine_power: float = bolt_profile["fast_start_engine_power"] # 500
-
-# rotation
+# engine rotation / direction
 var heading_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_rotation_speed: float = 0.1
 onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
 var max_thrust_rotation_deg: float = 15
+export (NodePath) var bolt_engines_path: String  # _temp
 onready var engines: Node2D = get_node(bolt_engines_path)
 
 # battle
@@ -126,139 +128,70 @@ func _ready() -> void:
 
 
 # driving params
-var accelaration_power = 5000  # delta seštevanje moči motorja do največje moči
-var max_engine_power# = 500000 setget _change_max_engine_power
-var def_max_engine_power = 500000 # 1 - 500 konjev
-var masa = 80 # 800 kil, front in rear teža se uporablja bolj za razmerje
-var ang_damp = 16 # regulacija ostrine zavijanja ... tudi driftanja
-var lin_damp = 2 # imam ga za omejitev slajdanja prvega kolesa
-var lin_damp_rear = 20 # regulacija driftanja
+#var bolt_mass
+#var rear_lin_damp
+var accelaration_power = 5000
+var max_engine_power = 500000
+var masa = 80
+var ang_damp = 16
+var lin_damp = 2
+var lin_damp_rear = 20
 var bolt_friction = 0.5
 var bolt_bounce = 0.2
-var acc_lerp = 0.01
+#var ___ = 0
 
-enum TEMP_MODES {NAKED, PO_TIRIH, ORIG, PRVI}
+#		# "all powers"
+#		"accelaration_power": 5000, # delta seštevanje moči motorja do največje moči
+#		"max_engine_power": 500000, # 1 - 500 konjev
+#
+#		# fizika
+#		"mass": 80, # 800 kil, front in rear teža se uporablja bolj za razmerje
+#		# driving
+#		"drive_ang_damp": 16, # regulacija ostrine zavijanja ... tudi driftanja
+#		"drive_lin_damp": 2, # imam ga za omejitev slajdanja prvega kolesa
+#		"drive_lin_damp_rear": 20, # regulacija driftanja
 func _update_driving_params():
+
+	physics_material_override.friction = bolt_friction
+	physics_material_override.bounce = bolt_bounce
+
+	# OPIS (tukaj je najbolj aptudejt
+	# masa je skoraj vsa na boltu
+	# R in F imata vsak 10 ... da je vsaj malo vpliva na razmerje v teži spredaj in zadaj
 
 	# fizika
 	mass = masa
 	linear_damp = lin_damp
 	angular_damp = ang_damp
 	rear_mass.linear_damp = lin_damp_rear
-	physics_material_override.friction = bolt_friction
-	physics_material_override.bounce = bolt_bounce
+
 #	print("BOLT - ", "mass: %s, " % mass, "linear_damp: %s, " % linear_damp, "angular_damp: %s, " % angular_damp)
 #	printt("REAR - ", "mass: %s, " % rear_mass.mass, "linear_damp: %s, " % rear_mass.linear_damp, "angular_damp: %s, " % rear_mass.angular_damp)
 #	printt("FRONT - ", "mass: %s, " % front_mass.mass, "linear_damp: %s, " % front_mass.linear_damp, "angular_damp: %s, " % front_mass.angular_damp)
 
-#	var driving_mode = TEMP_MODES.PO_TIRIH
-#	var driving_mode = TEMP_MODES.NAKED
-	var driving_mode = TEMP_MODES.PRVI
-#	var driving_mode = TEMP_MODES.ORIG
-
-	# CILJ driving mode vplivam samo z:
-	# maso in porazdelitvijo
-	# močjo in porazdelitvijo moči pogonov
-	#
-	match driving_mode:
-		TEMP_MODES.ORIG:
-			# OPIS
-			# mal zanaša rit
-			# mal zanaša kljun
-			# !!! pusti pri miru !!!
-			friction = 0.5
-			bounce = 0.2
-			accelaration_power = 5000
-			max_engine_power# = 500000 setget _change_max_engine_power
-			def_max_engine_power = 500000
-			mass = 80 # 800 kil, front in rear teža se uporablja bolj za razmerje
-			angular_damp = 16 # regulacija ostrine zavijanja ... tudi driftanja
-			linear_damp = 2 # imam ga za omejitev slajdanja prvega kolesa
-			rear_mass.mass = 1
-			rear_mass.linear_damp = 3 # regulacija driftanja
-			rear_mass.angular_damp = -1 # 0 proj def
-			front_mass.mass = 1
-			front_mass.linear_damp = -1 # 0 proj def
-			front_mass.angular_damp = -1 # 0 proj def
-		TEMP_MODES.NAKED:	# brez opreme in stabiliziranja (rač oprema)
-			friction = 0
-			bounce = 0
-			mass = 0 # 800 kil, front in rear teža se uporablja bolj za razmerje
-			front_mass.mass = 50
-			rear_mass.mass = 50
-			# opisi so, če je vse resetirano
-			# ostrina zavijanja ... na koncu začne driftat, ker sila itak kaže drugam
-			angular_damp = 0
-			linear_damp = 0 # imam ga za omejitev slajdanja prvega kolesa
-			front_mass.linear_damp = 0
-			front_mass.angular_damp = 0
-			rear_mass.linear_damp = 0 # regulacija driftanja
-			rear_mass.angular_damp = 0
-		TEMP_MODES.PRVI:	# brez opreme in stabiliziranja (rač oprema)
-			accelaration_power = 32000
-#			max_engine_power = 7000000
-			def_max_engine_power = 700000
-			# vpliv na porazdelitev mase in obnašanje vozila
-
-			# SPREDAJ je vodilni
-			# nižja masa pomeni večji vpliv sile na njo
-			# večja ... vozilo bolje drži smer
-			front_mass.mass = 50
-
-
-			# ZADAJ sledi
-			# nižja masa pomeni hitrejši vpliv sile, ki jo vleče
-			# večja ... rit je vedno bolj statična ... na koncu se samo še front vrti okrog riti
-			# nižja ... rit odnaša
-			rear_mass.mass = 50
-
-			# ostrina zavijanja
-
-			# vpliv na ostrino ovinka (directional STABILITY)
-			# na koncu rotira zmeraj bolj proti centru ovinka in drifta
-			angular_damp = 10
-
-			linear_damp = 0 # imam ga za omejitev slajdanja prvega kolesa
-			front_mass.linear_damp = 1
-			front_mass.angular_damp = 0
-			rear_mass.linear_damp = 10 # regulacija driftanja
-			rear_mass.angular_damp = 0
-
-
-		TEMP_MODES.PO_TIRIH:
-			rear_mass.mass = 1
-			front_mass.mass = 1
+#	var driving_modes: Array = [
+#	"tirnice",
+#	]
+#	var driving_mode = driving_modes[0]
+#
+#
+#	match driving_mode:
+#		"tirnice":
+#		#	rear_mass.linear_damp = 0
+#		#	linear_damp = 0
 #			front_mass.mass = 10
 #			rear_mass.mass = 10
-#			max_engine_power = 700000
-#			engine_power = 700000
+#		#	max_engine_power = 700000
+#		#	engine_power = 700000
 #			max_engine_power_factor = 2
 #			# no drift turning
-#			angular_damp = 10
+#		#	angular_damp = 10
 #			accelaration_power = max_engine_power * 0.05
 #			engine_rotation_speed = 0.01
 
-#	print("BOLT - ", "mass: %s, " % mass, "linear_damp: %s, " % linear_damp, "angular_damp: %s, " % angular_damp)
-#	printt("REAR - ", "mass: %s, " % rear_mass.mass, "linear_damp: %s, " % rear_mass.linear_damp, "angular_damp: %s, " % rear_mass.angular_damp)
-#	printt("FRONT - ", "mass: %s, " % front_mass.mass, "linear_damp: %s, " % front_mass.linear_damp, "angular_damp: %s, " % front_mass.angular_damp)
-
-
-	# OPIS (tukaj je najbolj aptudejt
-	# masa je skoraj vsa na boltu
-	# R in F imata vsak 10 ... da je vsaj malo vpliva na razmerje v teži spredaj in zadaj
-
-	#func _change_max_engine_power(new_max_power: float):
-	#
-	#	if not new_max_power == max_engine_power:
-	#		max_engine_power = new_max_power
-	#
-	#	max_engine_power = (new_max_power + max_engine_power_adon) * max_engine_power_factor
-
-
-
 
 func _process(delta: float) -> void:
-	_update_driving_params()
+#func _physics_process(delta: float) -> void:
 
 #	printt("max_engine_power", max_engine_power)
 
@@ -270,12 +203,13 @@ func _process(delta: float) -> void:
 	else:
 		_motion_state_machine()
 
-		max_engine_power = (def_max_engine_power + max_engine_power_adon) * max_engine_power_factor
-##		engine_power = clamp(engine_power, 0, max_engine_power)
-#		var acc_lerp = 0.1
-#		engine_power = lerp(engine_power, max_engine_power, 0.1)
-		printt("power", round(engine_power), max_engine_power)
+		max_engine_power = (bolt_profile["max_engine_power"] + max_engine_power_adon) * max_engine_power_factor
+		engine_power = clamp(engine_power, 0, max_engine_power)
 		update_stat(Pfs.STATS.GAS_COUNT, gas_usage)
+
+#	_update_driving_params()
+
+
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
@@ -336,7 +270,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 		# printt("rot power", front_mass.get_applied_force().length(), rear_mass.get_applied_force().length())
 		# print("power %s / " % engine_power, "force %s" % force)
 
-var acc_tween: SceneTreeTween = SceneTreeTween.new()
+
 func _motion_state_machine():
 
 
@@ -354,13 +288,7 @@ func _motion_state_machine():
 			for thrust in engines.all_thrusts:
 				thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 		MOTION.FWD:
-#			engine_power = lerp(engine_power, max_engine_power, acc_lerp)
-			if true:
-				var test = get_tree().create_tween()
-				test.tween_property(self, "engine_power", max_engine_power * 2, 1).set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_BOUNCE)
-#				acc_tween = test
-#			engine_power = lerp(engine_power, max_engine_power, acc_lerp)
-#			engine_power += accelaration_power
+			engine_power += accelaration_power
 			if Rfs.game_manager.fast_start_window:
 				engine_power += fast_start_engine_power
 			for thrust in engines.front_thrusts:
@@ -588,6 +516,7 @@ func reset_bolt():
 	rear_mass.set_applied_force(Vector2.ZERO)
 	rear_mass.set_applied_torque(0)
 	rotation_dir = 0
+	engine_power = 0
 	for thrust in engines.all_thrusts:
 		thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 		thrust.stop_fx()

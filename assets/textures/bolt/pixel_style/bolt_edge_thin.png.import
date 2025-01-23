@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt_explosion_sprite.png-7a102363edfda29bcffbe541fd4962df.stex"
+path="res://.import/bolt_edge_thin.png-717f2ea197f11a8c72652714f0077130.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/bolt/fx/bolt_explosion_sprite.png"
-dest_files=[ "res://.import/bolt_explosion_sprite.png-7a102363edfda29bcffbe541fd4962df.stex" ]
+source_file="res://assets/textures/bolt/pixel_style/bolt_edge_thin.png"
+dest_files=[ "res://.import/bolt_edge_thin.png-717f2ea197f11a8c72652714f0077130.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=1
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

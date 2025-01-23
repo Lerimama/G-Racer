@@ -9,7 +9,7 @@ var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
 var controlled_bolt: Bolt
-var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
+var controller_type: int # OPT da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
 
 # navigacija
 var ai_target: Node2D = null
@@ -66,7 +66,7 @@ func _input(event: InputEvent) -> void:
 #		controlled_bolt.using_nitro = true
 
 	elif Input.is_action_just_pressed("left_click"): # follow leader
-		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, level_navigation.get_local_mouse_position())
+		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, level_navigation.get_local_mouse_position())
 		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
 		navigation_agent.set_target_location(nav_path_points[0])
 		ai_state = AI_STATE.MOUSE_CLICK
@@ -107,16 +107,17 @@ func _physics_process(delta: float) -> void:
 		if ai_target and not ai_target.is_queued_for_deletion():
 			force_direction_line.default_color = Color.yellow
 			if ai_state == AI_STATE.RACE_TRACK:
-				vector_to_target = _get_tracking_position(ai_target) - controlled_bolt.bolt_global_position
+				vector_to_target = _get_tracking_position(ai_target) - controlled_bolt.global_position
 			else:
-				vector_to_target = ai_target.global_position - controlled_bolt.bolt_global_position
+				vector_to_target = ai_target.global_position - controlled_bolt.global_position
 		else:
 			force_direction_line.default_color = Color.red
 			if not ai_state == AI_STATE.OFF: # če izgubi tarčo gre v SEARCH
 				self.ai_state = AI_STATE.SEARCH
 		# debug line
 		force_direction_line.set_point_position(0, Vector2.ZERO)
-		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.bolt_global_rotation))
+		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.rotation))
+#		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.bolt_global_rotation))
 
 
 		var roundabout_position = _update_vision()
@@ -124,9 +125,9 @@ func _physics_process(delta: float) -> void:
 			controlled_bolt.set_linear_velocity(braking_velocity)
 			if roundabout_position == Vector2.ZERO:
 				pass
-				controlled_bolt.force_rotation = controlled_bolt.bolt_global_position.angle_to_point(roundabout_position)
+				controlled_bolt.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
 			else:
-				controlled_bolt.force_rotation = controlled_bolt.bolt_global_position.angle_to_point(roundabout_position)
+				controlled_bolt.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
 			navigation_agent.set_target_location(roundabout_position) # _temp?
 		else:
 			controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
@@ -281,7 +282,7 @@ func _change_ai_state(new_ai_state: int):
 			search_target_reached = false
 			scanning_ray.enabled = true
 			ai_target = level_navigation_target_node
-			var nav_position_target: Node2D = _get_nav_position_target(controlled_bolt.bolt_global_position, ai_navigation_target_range)
+			var nav_position_target: Node2D = _get_nav_position_target(controlled_bolt.global_position, ai_navigation_target_range)
 			navigation_agent.set_target_location(ai_target.global_position)
 			controlled_bolt.motion = controlled_bolt.MOTION.FWD
 		AI_STATE.FOLLOW:
@@ -365,7 +366,7 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 			# najprej izbere vse na predpisani dolžini
 			if current_cell_distance > distance_range[0] and current_cell_distance < distance_range[1]:
 				if in_front:
-					var vector_to_position: Vector2 = nav_position - controlled_bolt.bolt_global_position
+					var vector_to_position: Vector2 = nav_position - controlled_bolt.global_position
 					var current_angle_to_bolt_deg: float = rad2deg(controlled_bolt.get_angle_to(nav_position))
 					# najbolj spredaj
 					if current_angle_to_bolt_deg < 30 and current_angle_to_bolt_deg > - 30 :
@@ -524,7 +525,7 @@ func _on_NavigationAgent2D_target_reached() -> void:
 #	print("nav target reached")
 
 		if ai_state == AI_STATE.MOUSE_CLICK:
-			var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.bolt_global_position, current_mouse_follow_point)
+			var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, current_mouse_follow_point)
 			ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
 			navigation_agent.set_target_location(nav_path_points[0])
 			ai_state = AI_STATE.MOUSE_CLICK

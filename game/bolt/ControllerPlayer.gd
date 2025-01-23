@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 
 			# select weapon
 			if Input.is_action_just_pressed(selector_action):
-				controlled_bolt.bolt_hud.actived_weapon_key += 1
+				controlled_bolt.bolt_hud.selected_feature_index += 1
 
 
 func _ready() -> void:

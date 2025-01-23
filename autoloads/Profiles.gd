@@ -163,7 +163,6 @@ var reality_engine_power_factor: float = 1000
 enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
-#		"bolt_texture": preload("res://assets/textures/bolt/bolt_alt.png"),
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
 		"on_hit_disabled_time": 2,
 
@@ -176,29 +175,36 @@ var bolt_profiles: Dictionary = {
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
+
 		# fizika
 		"mass": 80, # 800 kil, front in rear teža se uporablja bolj za razmerje
 		# driving
 		"drive_ang_damp": 16, # regulacija ostrine zavijanja ... tudi driftanja
 		"drive_lin_damp": 2, # imam ga za omejitev slajdanja prvega kolesa
 		"drive_lin_damp_rear": 20, # regulacija driftanja
+
+
 		# idle motion
 		"idle_lin_damp": 0.5,
 		"idle_ang_damp": 0.5,
 
+
 		# "all powers"
 		"free_rotation_power": 14000, # na oba
-		"drift_power": 17000, # na rear
+#		"drift_power": 17000, # na rear
 		"glide_power_F": 46500,
 		"glide_power_R": 50000,
-
 
 
 		"glide_ang_damp": 5, # da se ha rotirat
 		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
 		# material
-		"bounce": 0.5,
-		"friction": 0.2,
+#		"bounce": 0.5,
+#		"friction": 0.2,
+
+		"height": 10,
+		"elevation": 7,
+		"max_free_thrust_rotation_deg": 90,
 		},
 }
 
@@ -238,9 +244,9 @@ var ammo_profiles : Dictionary = {
 		"mass": 0.03, # 300g
 		"direction_start_range": [0, 0] , # natančnost misile
 #		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
+		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
-		"ammo_count_key": "bullet_count", # driver stats name
-		"ammo_stat_key": STATS.BULLET_COUNT,
+		"stat_key": STATS.BULLET_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
 	AMMO.MISILE: {
@@ -251,8 +257,9 @@ var ammo_profiles : Dictionary = {
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/misile/Misile.tscn"),
+		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
 		"ammo_count_key": "misile_count", # znebi se
-		"ammo_stat_key": STATS.MISILE_COUNT,
+		"stat_key": STATS.MISILE_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
 	AMMO.MINA: {
@@ -263,8 +270,9 @@ var ammo_profiles : Dictionary = {
 		"mass": 0.5, # prilagojeno za učinek na tarčo
 		"direction_start_range": [0, 0] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/mina/Mina.tscn"),
+		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
 		"ammo_count_key": "mina_count",
-		"ammo_stat_key": STATS.MINA_COUNT,
+		"stat_key": STATS.MINA_COUNT,
 		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 

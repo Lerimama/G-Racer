@@ -54,6 +54,7 @@ func _ready():
 
 	$TestHud.hide()
 	$SetupPanel.hide()
+#	$SetupPanel.show()
 	$CameraSetupToggle.set_focus_mode(0)
 	$NodeSetupToggle.set_focus_mode(0)
 

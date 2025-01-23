@@ -19,6 +19,7 @@ var change_follow_target_time: float = 2
 
 onready var test_ui = $TestUI
 onready var playing_field: Node2D = $PlayingField
+onready var setup_table: Control = $TestUI/SetupPanel/SetupTable
 
 
 func _ready():
@@ -62,7 +63,7 @@ func _process(delta: float) -> void:
 					var camera_zoom_adon_in_span: float = camera_zoom_span * target_speed_part_in_span
 					zoom.x = lerp(zoom.x, camera_zoom_range[0] + camera_zoom_adon_in_span, camera_zoom_speed_factor)
 			else:
-				zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_speed_factor) # OPT ... zoom podvajanje zaradi načina ifanja
+				zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_speed_factor)
 
 		# default zoom ... lerp za mehkobo prehodov
 		zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_speed_factor)

@@ -2,8 +2,8 @@ extends Node2D
 class_name Mina
 
 
-export var height: float = 0 # PRO
-export var elevation: float = 2 # PRO rabi jo senčka
+export var height: float = 0
+export var elevation: float = 2
 
 var spawner: Node
 var spawner_color: Color

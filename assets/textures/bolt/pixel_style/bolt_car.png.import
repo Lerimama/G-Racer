@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt_alt.png-a12da0b0a661f82e02c47d4a74e83658.stex"
+path="res://.import/bolt_car.png-0abacddaaa797552ba111030d3d53648.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/bolt/tex/bolt_alt.png"
-dest_files=[ "res://.import/bolt_alt.png-a12da0b0a661f82e02c47d4a74e83658.stex" ]
+source_file="res://assets/textures/bolt/pixel_style/bolt_car.png"
+dest_files=[ "res://.import/bolt_car.png-0abacddaaa797552ba111030d3d53648.stex" ]
 
 [params]
 

@@ -1,35 +1,62 @@
 extends Node2D
 
 
-var always_visible_mode: bool = true
-var selector_visibily_time: float = 1
-var available_weapons_icons: Array
-var actived_weapon_key: int = 0 setget _on_activate_selected_weapon # index znotraj aktivnih orožij
-var unselected_weapon_alpha: float = 0.32
-var y_position_offset: float # določi se na glede na pozicijo huda ob ready
+var available_features_keys: Array # = [Pfs.AMMO.BULLET, Pfs.AMMO.MISILE, Pfs.AMMO.MINA]
+var active_features_indexes: Array = [] # array indexov med available_featuresi
+var selected_feature_index: int = 0 setget _change_selected_weapon # index znotraj aktivnih orožij
 
-onready var weapon_selector: Control = $BoltHudLines/WeaponSelector
-onready var weapon_icons: Array = $BoltHudLines/WeaponSelector.get_children()
+# lnf
+var y_position_offset: float # določi se na glede na pozicijo huda ob ready
+var unselected_feature_alpha: float = 0.32
+
+var always_visible_mode: bool = true # če ni uporabljam timer, ki ugasne zadevo po selectanju
+var selector_visibily_time: float = 1
+
+onready var owner_node: Node2D = get_parent()
+onready var selector: Control = $BoltHudLines/Selector
+onready var selector_timer: Timer = $BoltHudLines/SelectorTimer
 onready var health_bar: Control = $BoltHudLines/HealthBar
-onready var selector_timer: Timer = $BoltHudLines/WeaponSelector/SelectorTimer
 onready var health_bar_line: ColorRect = $BoltHudLines/HealthBar/Bar
+
 
 
 func _ready() -> void:
 
 	y_position_offset = position.y
-	weapon_icons.erase(selector_timer) # timer ni ikona
-	call_deferred("set_active_icons")
-	self.set_deferred("actived_weapon_key", 0) # zaporedje je pomembno
+
+	yield(owner_node, "ready")
+
+	# dodam opremo na voljo (malo bolj zapleteno, da se ne podvaja)
+	var unique_feature_nodes: Array = []
+	for feat_node in owner_node.available_weapons:
+		var first_3_letters: String = feat_node.name.left(3)
+		var duplicated: bool = false
+		for uniq in unique_feature_nodes:
+			if uniq.name.left(3) == first_3_letters:
+				duplicated = true
+		if not duplicated:
+			unique_feature_nodes.append(feat_node)
+	for uniq_feat in unique_feature_nodes:
+		if uniq_feat.weapon_is_set:
+			available_features_keys.append(uniq_feat.weapon_ammo)
+
+	_add_features_to_selector()
+
+	for key in available_features_keys:
+		var feat_count_key: int = Pfs.ammo_profiles[key]["stat_key"]
+		var feat_count: float = owner_node.driver_stats[feat_count_key]
+		var feat_index: int = available_features_keys.find(key)
+		_update_feature(feat_index, feat_count)
+
+	self.selected_feature_index = 0
 
 
 func _process(delta: float) -> void:
 
 	# manage positions and rotation
 	if visible: # določi bolt
-		rotation = -owner.rotation # negiramo rotacijo bolta, da je pri miru
-		global_position = owner.global_position + Vector2(0, y_position_offset)
-	#	test_hud.rect_global_position = (owner.global_position + Vector2(0, 8))*4 + Vector2(640, 360)# + Vector2(2560, 1440)*0.5
+		global_rotation = 0 # negiramo rotacijo bolta, da je pri miru
+		global_position = owner_node.global_position + Vector2(0, y_position_offset)
 
 	# manage health bar
 	if health_bar.visible:
@@ -40,79 +67,78 @@ func _process(delta: float) -> void:
 			health_bar_line.color = Rfs.color_blue
 
 	# manage selector
-	if weapon_selector.visible:
-		set_active_icons()
-		for active_icon in available_weapons_icons:
-			active_icon.get_node("CountLabel").text = "%02d" % get_weapon_stat_value(active_icon)
+	if selector.visible:
+		for key in available_features_keys:
+			var feat_count: float = owner_node.driver_stats[Pfs.ammo_profiles[key]["stat_key"]]
+			var feat_index: int = available_features_keys.find(key)
+			_update_feature(feat_index, feat_count)
 
 
-func set_active_icons():
+func _add_features_to_selector():
 
-	# aktiviram in prikažem tiste, ki niso 0 ... in obratno
-	for icon in weapon_icons:
-		var weapon_stat: float = get_weapon_stat_value(icon)
-		# če je stat 0 mora biti skrit in deaktiviran ... in obratno
-		if weapon_stat == 0:
-			if icon.visible:
-				icon.hide()
-				self.set_deferred("actived_weapon_key", 0)
-		else:
-			if not icon.visible:
-				icon.show()
-				self.set_deferred("actived_weapon_key", actived_weapon_key)
+	for key in available_features_keys:
+		var new_feature_box = selector.get_child(0).duplicate()
+		selector.add_child(new_feature_box)
+		new_feature_box.get_node("Icon").texture = Pfs.ammo_profiles[key]["icon"]
 
-	available_weapons_icons = []
-	for icon in weapon_icons:
-		if icon.visible:
-			available_weapons_icons.append(icon)
+	# zbrišem template
+	selector.get_child(0).queue_free()
 
 
-func get_weapon_stat_value(weapon_icon: Control):
+func _update_feature(feature_index: int, new_value):
 
-	var weapon_stat: float
-	var weapon_icon_index: int = weapon_icons.find(weapon_icon)
+	var feature_node: Control = selector.get_child(feature_index)
+	feature_node.get_node("CountLabel").text = "%02d" % new_value
 
-	match weapon_icon_index:
-		0:
-			weapon_stat = owner.driver_stats[Pfs.STATS.BULLET_COUNT]
-		1:
-			weapon_stat = owner.driver_stats[Pfs.STATS.MISILE_COUNT]
-		2:
-			weapon_stat = owner.driver_stats[Pfs.STATS.MINA_COUNT]
-	return weapon_stat
+	# (de)aktiviram
+	if new_value <= 0:
+		feature_node.hide()
+		active_features_indexes.erase(feature_index)
+		self.set_deferred("selected_feature_index", 0)
+	else:
+		feature_node.show()
+		if not active_features_indexes.has(feature_node):
+			active_features_indexes.append(feature_index)
+		self.set_deferred("selected_feature_index", selected_feature_index)
 
 
-func _on_activate_selected_weapon(selected_weapon_key: int):
+func _change_selected_weapon(new_feat_key: int):
+#	print(selected_weapon_key)
 
-	if not available_weapons_icons.empty():
+	if not available_features_keys.size() > 1:
+		selected_feature_index = 0
+	else:
+#	if not new_feat_key == selected_feature_index:
 
 		# če še ni prižgan se samo pokaže, izbrana ostane stara ikona
-		if not weapon_selector.visible:
-			weapon_selector.show()
-			actived_weapon_key = actived_weapon_key
+		if not selector.visible:
+			selector.show()
+			selected_feature_index = selected_feature_index
 
 		# če je že prižgan, preskočim na naslednjo ikono
 		else:
 			# loopanje izbire
-			if selected_weapon_key > available_weapons_icons.size() - 1:
-				selected_weapon_key = 0
-			elif selected_weapon_key < 0:
-				selected_weapon_key = available_weapons_icons.size() - 1
-#			set_deferred("actived_weapon_key", selected_weapon_key)
-			actived_weapon_key = selected_weapon_key
+			if new_feat_key > available_features_keys.size() - 1:
+				new_feat_key = 0
+			elif new_feat_key < 0:
+				new_feat_key = available_features_keys.size() - 1
+			selected_feature_index = new_feat_key
 
 		# setam ikone glede na weapon index
-		for icon in available_weapons_icons:
-			if actived_weapon_key == available_weapons_icons.find(icon):
-				icon.modulate.a = 1
-				icon.get_node("IconEdge").show()
+		for key in available_features_keys:
+			var feature_node: Control = selector.get_child(key)
+			if selected_feature_index == available_features_keys.find(key):
+				feature_node.modulate.a = 1
 			else:
-				icon.modulate.a = unselected_weapon_alpha
-				icon.get_node("IconEdge").hide()
-
-		# konvertam index med aktivnimi orožji v index med vsemi orožji
-		var current_selected_weapon_icon: Control = available_weapons_icons[actived_weapon_key]
-		var selected_weapon_index: int = weapon_icons.find(current_selected_weapon_icon)
+				feature_node.modulate.a = unselected_feature_alpha
+		# old v
+		#		for node_index in selector.get_children().size():
+		#			var feature_node: Control = selector.get_children()[node_index]
+		##			if selected_feature_index == active_features_indexes.find(node_index):
+		#			if selected_feature_index == available_features_keys.find(node_index):
+		#				feature_node.modulate.a = 1
+		#			else:
+		#				feature_node.modulate.a = unselected_weapon_alpha
 
 		# sprožim timer za ugasnit selector
 		selector_timer.start(selector_visibily_time)
@@ -120,7 +146,7 @@ func _on_activate_selected_weapon(selected_weapon_key: int):
 
 func _on_SelectorTimer_timeout() -> void:
 
-	if always_visible_mode:
+	if always_visible_mode: # zazih
 		pass
 	else:
-		weapon_selector.hide()
+		selector.hide()

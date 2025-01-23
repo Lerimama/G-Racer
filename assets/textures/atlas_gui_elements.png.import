@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt_car.png-1a60972f79b4a82ee43c747fa6e3058c.stex"
+path="res://.import/atlas_gui_elements.png-08c837066ac172283de138e8db1d8544.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/bolt/tex/pixel_style/bolt_car.png"
-dest_files=[ "res://.import/bolt_car.png-1a60972f79b4a82ee43c747fa6e3058c.stex" ]
+source_file="res://assets/textures/atlas_gui_elements.png"
+dest_files=[ "res://.import/atlas_gui_elements.png-08c837066ac172283de138e8db1d8544.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

@@ -12,29 +12,15 @@ var mm_per_32_grid_unit: float = 640 # grid enotra je 32px, 1 px je 2 cm
 var m_per_32_grid_unit: float = 0.64 # grid enotra je 32px, 1 px je 2 cm
 var unit_one: float = 32
 
-enum LEVEL {
-	FIRST_DRIVE,
-	STAFF,
-	ROUND, DUEL, NITRO, CITY,
-#	RACE_DIRECT, RACE_ROUND, RACE_8, RACE_CIRCO, RACE_SNAKE, RACE_NITRO,
-#	RACE_TRAINING,
-#	TRAINING,
-#	DEBUG_RACE,
-#	DEBUG_DUEL,
-#	FREE, TESTDRIVE,
-	}
+enum LEVEL {STAFF, FIRST_DRIVE}
 var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
-#		"level_type": "RACING", # ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/LevelFirstDrive.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
 	LEVEL.STAFF: {
-#		"level_type": "BATTLE", # ko bi le lahko level podatki bli tukej
-#		"level_type": "RACING", # _temp ...  ko bi le lahko level podatki bli tukej
-#		"level_type": "RACE_GOAL", # _temp ...  ko bi le lahko level podatki bli tukej
 		"level_name": "",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
@@ -70,7 +56,6 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	# camera
 	"camera_zoom_range": [1, 1.5],
 	"all_bolts_on_screen_mode": true
-
 }
 
 
@@ -82,11 +67,8 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 #var current_game_levels: Array = []
-#var current_game_levels: Array = [LEVEL.ROUND]
 #var current_game_levels: Array = [LEVEL.STAFF]
 var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
-#var current_game_levels: Array = [LEVEL.NITRO]
-#var current_game_levels: Array = [LEVEL.00]
 
 func _ready() -> void:
 
@@ -113,10 +95,7 @@ func get_level_game_settings(selected_level_index: int):
 		# duel
 		LEVEL.STAFF:
 			pass
-#			current_game_settings["start_countdown"] = true
-		LEVEL.DUEL:
-			current_game_settings["start_countdown"] = false
-			current_game_settings["sudden_death_mode"] = true
-#			current_game_settings["stopwatch_mode"] = false
+		LEVEL.FIRST_DRIVE:
+			pass
 
 	return current_game_settings # pobere GM ob setanju igre

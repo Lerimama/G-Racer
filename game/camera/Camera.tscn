@@ -5,7 +5,7 @@
 [ext_resource path="res://game/camera/Camera.gd" type="Script" id=3]
 [ext_resource path="res://game/camera/CameraTestUI.gd" type="Script" id=4]
 [ext_resource path="res://common/debug/SetupPanel.tscn" type="PackedScene" id=5]
-[ext_resource path="res://game/PlayingField.gd" type="Script" id=6]
+[ext_resource path="res://game/camera/PlayingField.gd" type="Script" id=6]
 
 [sub_resource type="RectangleShape2D" id=780]
 extents = Vector2( 1280, 720.5 )
@@ -307,3 +307,5 @@ color = Color( 1, 1, 0, 1 )
 [connection signal="mouse_entered" from="TestUI/NodeSetupToggle" to="TestUI" method="_on_CheckBox_mouse_entered"]
 [connection signal="mouse_exited" from="TestUI/NodeSetupToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
 [connection signal="toggled" from="TestUI/NodeSetupToggle" to="TestUI" method="_on_NodeCheckBox_toggled"]
+
+[editable path="TestUI/SetupPanel"]

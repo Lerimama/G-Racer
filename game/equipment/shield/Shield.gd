@@ -20,7 +20,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 
-	global_position = spawner.bolt_global_position
+	global_position = spawner.global_position
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

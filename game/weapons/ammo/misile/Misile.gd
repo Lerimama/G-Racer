@@ -2,16 +2,15 @@ extends KinematicBody2D
 class_name Misile
 
 
+export var height: float = 0
+export var elevation: float = 3 # elevation se doda elevationu objektu spawnanja
+
 var spawner: Node
 var spawner_color: Color
 var spawner_speed: float
 var in_spawner_area: bool =  true
 
-#export var height: float = 0
-export var elevation: float = 0 # PRO rabi jo senčka
-
 # gibanje
-#export var height: float = 0 # PRO
 export var start_speed: float = 10.0
 var speed: float = 0
 var is_dissarmed: bool = false
@@ -62,7 +61,7 @@ func _ready() -> void:
 	add_to_group(Rfs.group_misiles)
 #	$Sprite.modulate = spawner_color
 	collision_shape.set_deferred("disabled", true) # da ne trka z avtorjem ... ga vključimo, ko raycast zazna izhod
-	elevation = spawner.elevation + 7 # PRO rabi jo senčka
+	elevation = spawner.elevation + elevation
 
 	$Sounds/MisileShoot.play()
 	$Sounds/MisileFlight.play()

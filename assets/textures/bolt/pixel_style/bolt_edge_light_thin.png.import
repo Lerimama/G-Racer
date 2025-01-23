@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt_thrust.png-cc401a9cdf3c365244d713a45d3350f1.stex"
+path="res://.import/bolt_edge_light_thin.png-6f2574ccb2ee445f9086f54232bc92a3.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/bolt/tex/pixel_style/bolt_thrust.png"
-dest_files=[ "res://.import/bolt_thrust.png-cc401a9cdf3c365244d713a45d3350f1.stex" ]
+source_file="res://assets/textures/bolt/pixel_style/bolt_edge_light_thin.png"
+dest_files=[ "res://.import/bolt_edge_light_thin.png-6f2574ccb2ee445f9086f54232bc92a3.stex" ]
 
 [params]
 

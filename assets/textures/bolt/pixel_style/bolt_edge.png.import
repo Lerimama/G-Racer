@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bolt.svg-5c673a9963aac8f15858c59791843d6b.stex"
+path="res://.import/bolt_edge.png-18e32bca1f32837ace31840fe37b584b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/bolt/tex/bolt.svg"
-dest_files=[ "res://.import/bolt.svg-5c673a9963aac8f15858c59791843d6b.stex" ]
+source_file="res://assets/textures/bolt/pixel_style/bolt_edge.png"
+dest_files=[ "res://.import/bolt_edge.png-18e32bca1f32837ace31840fe37b584b.stex" ]
 
 [params]
 

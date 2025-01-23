@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/pickable_icon.png-593edb486da56faf22f70aec091a5e76.stex"
+path="res://.import/bolt_thrust.png-878bebee28902e9e09759f343f9fd12b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://common/app/class_icons/pickable_icon.png"
-dest_files=[ "res://.import/pickable_icon.png-593edb486da56faf22f70aec091a5e76.stex" ]
+source_file="res://assets/textures/bolt/pixel_style/bolt_thrust.png"
+dest_files=[ "res://.import/bolt_thrust.png-878bebee28902e9e09759f343f9fd12b.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=1
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

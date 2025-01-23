@@ -187,14 +187,14 @@ func _set_game():
 	#	printt("DRIVERS", activated_driver_ids)
 
 	# adaptacija količine orožij
-	Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = 0
-	Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = 0
-	Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = 0
+#	Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = 0
+#	Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = 0
+#	Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = 0
 	game_settings["full_equip_mode"] = true # debug
-	if game_settings["full_equip_mode"]:
-		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = 100
-		Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = 100
-		Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = 100
+	if game_settings["full_equip_mode"]:pass
+#		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = 100
+#		Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = 100
+#		Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = 100
 
 	# spawn bolts on positions (po vrsti aktivacije)
 	var spawned_position_index = 0
@@ -486,9 +486,9 @@ func _get_bolt_pull_position(bolt_to_pull: Node2D):
 		var pull_position_distance_from_leader: float = 200 # pull razdalja od vodilnega plejerja
 		var pull_position_distance_from_leader_correction: float = bolt_to_pull.chassis.get_node("BoltScale").rect_size.x * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
 
-		var vector_to_leading_player: Vector2 = camera_leader.bolt_global_position - bolt_to_pull.bolt_global_position
+		var vector_to_leading_player: Vector2 = camera_leader.global_position - bolt_to_pull.global_position
 		var vector_to_pull_position: Vector2 = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
-		var bolt_pull_position: Vector2 = bolt_to_pull.bolt_global_position + vector_to_pull_position
+		var bolt_pull_position: Vector2 = bolt_to_pull.global_position + vector_to_pull_position
 
 		# implementacija omejitev, da ni na steni ali elementu ali drugemu plejerju
 		var navigation_position_as_pull_position: Vector2
@@ -504,12 +504,12 @@ func _get_bolt_pull_position(bolt_to_pull: Node2D):
 				# preverim, če je bližja od trenutno opredeljene ... itak da je
 				if cell_position.distance_to(bolt_pull_position) < navigation_position_as_pull_position.distance_to(bolt_pull_position):
 					# pozicija je dovolj stran od vodilnega
-					if cell_position.distance_to(camera_leader.bolt_global_position) > pull_position_distance_from_leader:
+					if cell_position.distance_to(camera_leader.global_position) > pull_position_distance_from_leader:
 						# če je pozicija zasedena
 						if current_pull_positions.has(cell_position):
 							var pull_pos_index: int = current_pull_positions.find(cell_position)
 							var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index * pull_position_distance_from_leader_correction
-							if cell_position.distance_to(camera_leader.bolt_global_position) > corrected_pull_position:
+							if cell_position.distance_to(camera_leader.global_position) > corrected_pull_position:
 								navigation_position_as_pull_position = cell_position
 						else: # če je poza zasedena dobim njen in dex med zasedenimi dodam korekcijo na zahtevani razdalji od vodilnega
 							navigation_position_as_pull_position = cell_position

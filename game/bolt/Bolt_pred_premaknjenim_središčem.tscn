@@ -80,7 +80,7 @@ tracks/0/keys = {
 [node name="Bolt" type="RigidBody2D"]
 z_index = 1
 collision_layer = 7
-mass = 0.01
+mass = 80.0
 physics_material_override = SubResource( 5260 )
 contacts_reported = 1
 contact_monitor = true
@@ -120,7 +120,6 @@ range_z_min = 0
 range_z_max = 0
 
 [node name="Shadow" type="Sprite" parent="."]
-visible = false
 modulate = Color( 1, 1, 1, 0.243137 )
 script = ExtResource( 12 )
 shadow_owner_shape_path = NodePath("../Chassis/BoltSprite")

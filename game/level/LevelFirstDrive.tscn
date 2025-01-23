@@ -1082,8 +1082,9 @@ position = Vector2( -1997, -1790 )
 [node name="PickableNitro3" parent="Pickables" instance=ExtResource( 30 )]
 position = Vector2( -1826, -2056 )
 
-[node name="PickableNitro4" parent="Pickables" instance=ExtResource( 30 )]
-position = Vector2( -1645, -2322 )
+[node name="PickableMina" parent="Pickables" instance=ExtResource( 30 )]
+position = Vector2( -169, -879 )
+pickable_key = 2
 
 [node name="PickableNitro5" parent="Pickables" instance=ExtResource( 30 )]
 position = Vector2( -7264, 3070 )

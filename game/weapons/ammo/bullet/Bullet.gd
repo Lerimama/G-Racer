@@ -2,8 +2,8 @@ extends RigidBody2D
 class_name Bullet
 
 
-#export var height: float = 0
-export var elevation: float = 0 # v ready
+export var height: float = 0
+export var elevation: float = 5 # elevation se doda elevationu objektu spawnanja
 
 var spawner: Node
 var spawner_color: Color
@@ -26,7 +26,7 @@ onready var ammo_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.BULLET]
 onready var hit_damage: float = ammo_profile["hit_damage"]
 onready var lifetime: float = ammo_profile["lifetime"]
 onready var bullet_mass: float = ammo_profile["mass"]
-onready var speed: float = 320 #ammo_profile["speed"] # PRO
+onready var speed: float = ammo_profile["speed"]
 onready var vision_ray: RayCast2D = $VisionRay
 onready var collision_shape: CollisionShape2D = $BulletCollision
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
@@ -43,8 +43,7 @@ func _ready() -> void:
 	$Sounds/BulletShoot.play()
 
 	mass = bullet_mass
-	elevation = spawner.elevation + 4 # PRO rabi jo senčka
-
+	elevation = spawner.elevation + elevation
 	# set movement vector
 	direction = Vector2.RIGHT.rotated(rotation)
 
@@ -81,6 +80,7 @@ func _physics_process(delta: float) -> void:
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
+	speed = 320 # _
 	set_applied_force(direction * speed)
 
 
