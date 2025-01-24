@@ -21,7 +21,9 @@ func _on_Surface_body_entered(body: Node) -> void:
 
 
 func _on_Surface_body_exited(body: Node) -> void:
-	if "max_engine_power_factor" in body:
-		body.max_engine_power_factor = 1
-		if body.is_in_group(Rfs.group_players):
-			print ("de surf", engine_power_factor, body.max_engine_power_factor)
+
+	if "motion_manager" in body:
+		if "max_engine_power_factor" in body.motion_manager:
+			body.motion_manager.max_engine_power_factor = 1
+#			if body.is_in_group(Rfs.group_players):
+#				print ("de surf", engine_power_factor, body.max_engine_power_factor)

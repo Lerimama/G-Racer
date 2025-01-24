@@ -125,16 +125,16 @@ func _physics_process(delta: float) -> void:
 			controlled_bolt.set_linear_velocity(braking_velocity)
 			if roundabout_position == Vector2.ZERO:
 				pass
-				controlled_bolt.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
+				controlled_bolt.motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
 			else:
-				controlled_bolt.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
+				controlled_bolt.motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
 			navigation_agent.set_target_location(roundabout_position) # _temp?
 		else:
 			controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
 
 
 func _state_machine(delta: float):
-#	printt ("ai_state: ", AI_STATE.keys()[ai_state], controlled_bolt.engine_power)
+#	printt ("ai_state: ", AI_STATE.keys()[ai_state], controlled_bolt.motion_manager.engine_power)
 
 	match ai_state:
 
@@ -147,7 +147,7 @@ func _state_machine(delta: float):
 				navigation_agent.set_target_location(bolt_tracker_position)
 				#			Mts.spawn_indikator(bolt_tracker_position, Color.white, controlled_bolt.rotation, Rfs.node_creation_parent)
 			if not _adjust_power_speed_limit():
-				controlled_bolt.engine_power = controlled_bolt.max_engine_power
+				controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 
 		AI_STATE.SEARCH: # vozi po točkah navigacije in išče novo tarčo, dokler je ne najde
 			var new_ai_target: Node2D = _get_better_targets(ai_target)
@@ -158,14 +158,14 @@ func _state_machine(delta: float):
 			# če ni tarče in je dosegel nav target setam novo random točko
 			elif search_target_reached:
 				self.ai_state = AI_STATE.SEARCH
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power * engine_power_factor_search
+			controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power * engine_power_factor_search
 
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				navigation_agent.set_target_location(ai_target.global_position)
 			_react_to_target(ai_target, true)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 
 		AI_STATE.HUNT: # pobere tarčo, ki jo je videl ... ne izgubi pogleda
 			# preverjam za boljšo tarčo
@@ -173,18 +173,18 @@ func _state_machine(delta: float):
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				navigation_agent.set_target_location(ai_target.global_position)
 			_react_to_target(ai_target)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 
 		AI_STATE.RACE_TO_GOAL: # šiba do cilja po najbližji poti
 			ai_target = goals_to_reach[0]
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				navigation_agent.set_target_location(ai_target.global_position)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 			_react_to_target(ai_target)
 
 		AI_STATE.MOUSE_CLICK:
 			navigation_agent.set_target_location(ai_target.global_position)
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power / 3
+			controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power / 3
 			_react_to_target(ai_target)
 
 
@@ -196,11 +196,11 @@ func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
 		return false
 
 	if wanted_speed == 0:
-		controlled_bolt.engine_power = 0
+		controlled_bolt.motion_manager.engine_power = 0
 	else:
 		var current_speed: float = controlled_bolt.bolt_body_state.get_linear_velocity().length()
 		if current_speed > wanted_speed:
-			controlled_bolt.engine_power = lerp(controlled_bolt.engine_power, 0, speed_change_rate)
+			controlled_bolt.motion_manager.engine_power = lerp(controlled_bolt.motion_manager.engine_power, 0, speed_change_rate)
 
 	return true
 
@@ -433,20 +433,20 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 		if distance_to_target < keep_distance:
 			if keep_on_distance: # ustavi tik pred tarčo
 				target_closeup_breaking_factor = breaking_factor_keep
-				controlled_bolt.engine_power = controlled_bolt.max_engine_power * engine_power_factor_keep
+				controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power * engine_power_factor_keep
 			elif be_aggressive: # fuuul power čez tarčo
-				controlled_bolt.engine_power = controlled_bolt.max_engine_power
+				controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 			else: # spusti gasa čez tarčo
-				controlled_bolt.engine_power = 0
-			controlled_bolt.engine_power = 0
+				controlled_bolt.motion_manager.engine_power = 0
+			controlled_bolt.motion_manager.engine_power = 0
 		elif distance_to_target < near_distance:
 			if be_aggressive: # pospešuje proti tarči
-				controlled_bolt.engine_power = controlled_bolt.max_engine_power
+				controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 				controlled_bolt.use_nitro = true
 			else: # upočasnuje proti tarči
 				target_closeup_breaking_factor = breaking_factor_near
 		else:
-			controlled_bolt.engine_power = controlled_bolt.max_engine_power
+			controlled_bolt.motion_manager.engine_power = controlled_bolt.motion_manager.max_engine_power
 		braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
 		controlled_bolt.set_linear_velocity(braking_velocity)
 	else:
@@ -465,9 +465,9 @@ func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk
 	#	# random disarray direction
 	#	var dissaray_random_direction = randi() % 2
 	#	if dissaray_random_direction == 0:
-	#		rotation_dir = - disarray_rotation_dir
+	#		motion_manager.rotation_dir = - disarray_rotation_dir
 	#	else:
-	#		rotation_dir = disarray_rotation_dir
+	#		motion_manager.rotation_dir = disarray_rotation_dir
 	#	dissaray_tween = get_tree().create_tween()
 	#	dissaray_tween.tween_property(self, "bolt_velocity", Vector2.ZERO, on_hit_disabled_time) # tajmiram pojemek
 	#	dissaray_tween.parallel().tween_property(self, "rotation_dir", 0, on_hit_disabled_time)#.set_ease(Tween.EASE_IN) # tajmiram pojemek

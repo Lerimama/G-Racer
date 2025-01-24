@@ -55,7 +55,10 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
 	# camera
 	"camera_zoom_range": [1, 1.5],
-	"all_bolts_on_screen_mode": true
+	"all_bolts_on_screen_mode": true,
+
+	# WORLD PARAMS ... za poenoetenje fizikalnih interakcij s svetom
+	"reality_engine_power_factor": 1000, # engine power je 300 namesto 300000
 }
 
 

@@ -159,7 +159,6 @@ var controller_profiles : Dictionary = {
 
 #const bolt_engine_power_factor:  =
 
-var reality_engine_power_factor: float = 1000
 enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
@@ -167,18 +166,29 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 
 		# "all powers"
-		"accelaration_power": 5000, # delta seštevanje moči motorja do največje moči
-		"max_engine_power": 500000, # 1 - 500 konjev
-		"fast_start_engine_power": 5000, # pospešek motorja do največje moči (horsepower?)
+		"accelaration_power": 5,#,000, # delta seštevanje moči motorja do največje moči
+		"max_engine_power": 500,#000, # 1 - 500 konjev
+		"fast_start_engine_power": 5,#,000, # pospešek motorja do največje moči (horsepower?)
 
 
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
 
-		# fizika
+		# neu
+		# straight
 		"mass": 80, # 800 kil, front in rear teža se uporablja bolj za razmerje
-		# driving
+		"ang_damp": 16,
+		"front_mass_bias": 0.5,
+		"lin_damp_front": 0,
+		"lin_damp_rear": 0,
+		"max_engine_rotation_deg": 32, # obračanje koles (45 stzopinj je bolj ala avto)
+		"engine_rotation_speed": 0.1,
+
+
+
+
+
 		"drive_ang_damp": 16, # regulacija ostrine zavijanja ... tudi driftanja
 		"drive_lin_damp": 2, # imam ga za omejitev slajdanja prvega kolesa
 		"drive_lin_damp_rear": 20, # regulacija driftanja
@@ -190,14 +200,15 @@ var bolt_profiles: Dictionary = {
 
 
 		# "all powers"
-		"free_rotation_power": 14000, # na oba
+		"free_rotation_power": 14,#000, # na oba
 #		"drift_power": 17000, # na rear
-		"glide_power_F": 46500,
-		"glide_power_R": 50000,
+		"glide_power_F": 465,#00,
+		"glide_power_R": 500,#00,
 
 
 		"glide_ang_damp": 5, # da se ha rotirat
-		"max_engine_rotation_deg": 35, # obračanje koles (45 stzopinj je bolj ala avto)
+
+
 		# material
 #		"bounce": 0.5,
 #		"friction": 0.2,
@@ -216,7 +227,7 @@ var equipment_profiles : Dictionary = {
 	EQUIPMENT.NITRO: {
 		"value": 1,
 		# "all powers"
-		"nitro_power_adon": 300000, # prišteješ moč
+		"nitro_power_adon": 300,#,000, # prišteješ moč
 		"time": 3,
 	},
 	EQUIPMENT.SHIELD: {

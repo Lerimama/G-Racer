@@ -4,7 +4,7 @@
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
 [ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=4]
-[ext_resource path="res://game/bolt/BoltHandler.gd" type="Script" id=5]
+[ext_resource path="res://game/bolt/BoltMotionManager.gd" type="Script" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
@@ -80,7 +80,6 @@ tracks/0/keys = {
 [node name="Bolt" type="RigidBody2D"]
 z_index = 1
 collision_layer = 7
-mass = 0.01
 physics_material_override = SubResource( 5260 )
 contacts_reported = 1
 contact_monitor = true
@@ -99,7 +98,7 @@ shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 
 [node name="BoltController" type="Node" parent="."]
 
-[node name="BoltHandler" type="Node" parent="."]
+[node name="MotionManager" type="Node" parent="."]
 script = ExtResource( 5 )
 
 [node name="TrailSource" type="Position2D" parent="."]
@@ -132,10 +131,13 @@ shadow_color = Color( 0, 0, 0, 0 )
 position = Vector2( 73, 0 )
 
 [node name="FrontPin" type="PinJoint2D" parent="Mass/Front"]
+position = Vector2( 16, 0 )
 node_a = NodePath("../../..")
 node_b = NodePath("../FrontMass")
 
 [node name="FrontMass" type="RigidBody2D" parent="Mass/Front"]
+position = Vector2( 16, 0 )
+mass = 50.0
 gravity_scale = 0.0
 can_sleep = false
 
@@ -158,6 +160,7 @@ node_a = NodePath("../../..")
 node_b = NodePath("../RearMass")
 
 [node name="RearMass" type="RigidBody2D" parent="Mass/Rear"]
+mass = 50.0
 gravity_scale = 0.0
 can_sleep = false
 linear_damp = 3.0

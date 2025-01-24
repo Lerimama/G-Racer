@@ -1,8 +1,16 @@
 extends RigidBody2D
-class_name Bolt
+#class_name Bolt
 
 
 signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
+
+enum MOTION {ENGINES_OFF, IDLE, FWD, REV, DISARRAY, TILT, FREE_ROTATE, DRIFT, GLIDE} # DIZZY, DYING glede na moč motorja
+var motion: int = MOTION.IDLE setget _change_motion
+var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = MOTION.FREE_ROTATE # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = MOTION.DRIFT # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = MOTION.GLIDE # presetan motion, ko imaš samo smerne tipke
+#var free_motion_type: int = v# presetan motion, ko imaš samo smerne tipke
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
@@ -21,44 +29,66 @@ var bolt_color: Color = Color.red
 
 # bolt
 var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
-var using_nitro: bool = false
-var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
-var is_shooting: bool = false # način, ki je boljši za efekte
-var revive_time: float = 2
-var bolt_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju
 var bolt_body_state: Physics2DDirectBodyState
-var race_time_on_previous_lap: float = 0
-var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var revive_timer: Timer = $ReviveTimer
 onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/HUMAN
+
+# fx
 onready var trail_source: Position2D = $TrailSource
+onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
+onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
+
+# driving
+var rotation_dir = 0
+var force_rotation: float = 0 # rotacija v smeri skupne sile motorjev ... določam v _FP (input), apliciram v _IF
+var bolt_velocity: Vector2 = Vector2.ZERO
+var bolt_shift: int = 1 # -1 = rikverc, +1 = naprej, 0 ne obstaja ... za daptacijo, ker je moč motorja zmeraj pozitivna
+
+
+var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
+onready var free_rotation_power: float = bolt_profile["free_rotation_power"]
+onready var glide_power_front: float = bolt_profile["glide_power_F"] # 46500
+onready var glide_power_rear: float = bolt_profile["glide_power_R"] # 50000
+onready var gas_usage: float = bolt_profile["gas_usage"]
+onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
 onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
+
+# power
+var engine_power = 0
+var max_engine_power_adon: float = 0 # tole spremija samo kar koli vpliva na moč med igro, ovinek?
+var max_engine_power_factor: float = 1 # tole spremija samo kar koli vpliva na moč med igro, ovinek?
+onready var fast_start_engine_power: float = bolt_profile["fast_start_engine_power"] # 500
+
+# rotation
+var heading_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
+var engine_rotation_speed: float = 0.1
+onready var max_engine_rotation_deg: float = bolt_profile["max_engine_rotation_deg"]
+var max_thrust_rotation_deg: float = 15
+onready var engines: Node2D = get_node(bolt_engines_path)
+
+# battle
+var revive_time: float = 2
+var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
+var is_shooting: bool = false # način, ki je boljši za efekte
+
+# racing
+var bolt_tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju
+var race_time_on_previous_lap: float = 0
+
+# debug smerna linija
+onready var direction_line: Line2D = $DirectionLine
+
+# neu
+var using_nitro: bool = false
 onready var bolt_hud: Node2D = $BoltHud
 onready var available_weapons: Array
 onready var chassis: Node2D = $Chassis
 onready var terrain_detect: Area2D = $TerrainDetect
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var gas_usage: float = bolt_profile["gas_usage"]
-onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
-onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
-onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
-
-# XXX
-onready var motion_manager: Node = $MotionManager
-onready var engines: Node2D = get_node(bolt_engines_path)
-
-# debug linija
-onready var direction_line: Line2D = $DirectionLine
-
-# premik v handlerja
-var force: Vector2 = Vector2.ZERO
-var bolt_velocity: Vector2 = Vector2.ZERO
-onready var glide_power_front: float = bolt_profile["glide_power_F"] # 46500
-onready var glide_power_rear: float = bolt_profile["glide_power_R"] # 50000
-# funkcije motion v integrate, nitro
+#var current_top_suface_type: int = 0 # preverjam spremembo, da ne setam na vsak frejm
 
 
 func _input(event: InputEvent) -> void:
@@ -89,58 +119,186 @@ func _ready() -> void:
 
 	motion_manager._change_driving_mode()
 	_add_bolt_controller()
+	_set_bolts_debug_panel()
 
-	# debug
-	if driver_id == Pfs.DRIVER.P1:
-		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", self, "B")
-		Rfs.game_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
-		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
+
+## driving params
+var accelaration_power = 5000  # delta seštevanje moči motorja do največje moči
+var max_engine_power# = 500000 setget _change_max_engine_power
+var def_max_engine_power = 500#000 # 1 - 500 konjev
+#var masa = 80 # 800 kil, front in rear teža se uporablja bolj za razmerje
+onready var motion_manager: Node = $BoltHandler
 
 
 func _process(delta: float) -> void:
 
-	motion_manager.driving_mode = motion_manager.DRIVING_MODE.TRACKING
+	motion_manager._change_driving_mode()
+
 #	printt("max_engine_power", max_engine_power)
 
 	trail_source.update_trail(bolt_velocity.length())
 
-	if engines.engines_on: # poraba
+	if not is_active: # resetiram, če ni aktiven
+		engine_power = 0
+		rotation_dir = 0
+	else:
+		_motion_state_machine()
+		max_engine_power = (def_max_engine_power + max_engine_power_adon) * max_engine_power_factor
 		update_stat(Pfs.STATS.GAS_COUNT, gas_usage)
 
 
-func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
-	# OPT tole lahko brez preverjanja stanja
+func _integrate_forces(state: Physics2DDirectBodyState) -> void:
+
 	bolt_body_state = state
 	bolt_velocity = state.get_linear_velocity() # tole je bol prej brez stejta
 
 	if is_active:
-		match motion_manager.motion:
-			motion_manager.MOTION.IDLE:
-				if motion_manager.bolt_shift > 0:
+		var force: Vector2 = Vector2.ZERO
+		match motion:
+			MOTION.IDLE:
+				if bolt_shift > 0:
 					front_mass.set_applied_force(force)
 				else:
 					rear_mass.set_applied_force(force)
-			motion_manager.MOTION.FWD:
+			MOTION.FWD:
+				force = Vector2.RIGHT.rotated(force_rotation) * engine_power * bolt_shift
 				front_mass.set_applied_force(force)
-			motion_manager.MOTION.REV:
+			MOTION.REV:
+				force = Vector2.RIGHT.rotated(force_rotation) * engine_power * bolt_shift
 				rear_mass.set_applied_force(force)
-			motion_manager.MOTION.DISARRAY: pass
-				#				front_mass.set_applied_force(Vector2.ZERO)
-				#				rear_mass.set_applied_force(Vector2.ZERO)
-			motion_manager.MOTION.FREE_ROTATE:
+			MOTION.DISARRAY:
+				pass
+#				front_mass.set_applied_force(Vector2.ZERO)
+#				rear_mass.set_applied_force(Vector2.ZERO)
+			MOTION.FREE_ROTATE:
+				force = Vector2.UP.rotated(rotation) * free_rotation_power * rotation_dir
 				rear_mass.set_applied_force(force)
 				front_mass.set_applied_force(- force)
-			motion_manager.MOTION.DRIFT:
-				#				motion_manager.engine_power = max_engine_power # poskrbi za bolj "tight" obrat
+			MOTION.DRIFT:
+				force = Vector2.RIGHT.rotated(force_rotation) * 100 * engine_power
+				#				engine_power = max_engine_power # poskrbi za bolj "tight" obrat
 				front_mass.set_applied_force(force)
-				#				rear_mass.set_applied_force(Vector2.UP.rotated(rotation) * 1000 * motion_manager.rotation_dir)
-			motion_manager.MOTION.GLIDE:
+				#				rear_mass.set_applied_force(Vector2.UP.rotated(rotation) * 1000 * rotation_dir)
+			MOTION.GLIDE:
+				force = Vector2.DOWN.rotated(rotation) * rotation_dir
 				front_mass.set_applied_force(force * glide_power_front)
 				rear_mass.set_applied_force(force * glide_power_rear)
 
+		# debug
+		if not force == Vector2.ZERO:
+			var vector_to_target = force.normalized() * 100
+			vector_to_target = vector_to_target.rotated(- get_global_rotation())# - get_global_rotation())
+			direction_line.set_point_position(1, vector_to_target)
 
-	# printt("rot power", front_mass.get_applied_force().length(), rear_mass.get_applied_force().length())
-	# print("power %s / " % motion_manager.engine_power, "force %s" % force)
+		# printt("rot power", front_mass.get_applied_force().length(), rear_mass.get_applied_force().length())
+		# print("power %s / " % engine_power, "force %s" % force)
+
+
+func _motion_state_machine():
+
+
+	heading_rotation = lerp_angle(heading_rotation, rotation_dir * deg2rad(max_engine_rotation_deg) * bolt_shift, engine_rotation_speed)
+	# printt("heading", rad2deg(heading_rotation))
+	var max_free_thrust_rotation_deg: float = bolt_profile["max_free_thrust_rotation_deg"]
+	var rotate_to_angle: float = rotation_dir * deg2rad(max_free_thrust_rotation_deg) # 60 je poseben deg2rad(max_engine_rotation_deg)
+
+	# force global rotation ... premaknjena na kotrolerje
+	#	force_rotation = heading_rotation + get_global_rotation() # da ne striže (_FP!!) prestavljeno v kontrolerja
+
+	match motion:
+		MOTION.IDLE:
+			engine_power = 0
+			for thrust in engines.all_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
+		MOTION.FWD:
+#			engine_power = lerp(engine_power, max_engine_power, acc_lerp)
+			if true:
+				var test = get_tree().create_tween()
+				test.tween_property(self, "engine_power", max_engine_power * 2, 1).set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_BOUNCE)
+#				acc_tween = test
+#			engine_power = lerp(engine_power, max_engine_power, acc_lerp)
+#			engine_power += accelaration_power
+			if Rfs.game_manager.fast_start_window:
+				engine_power += fast_start_engine_power
+			for thrust in engines.front_thrusts:
+				thrust.rotation = heading_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+			for thrust in engines.rear_thrusts:
+				thrust.rotation = - heading_rotation
+		MOTION.REV:
+			engine_power += accelaration_power
+			for thrust in engines.front_thrusts:
+				thrust.rotation = - heading_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+			for thrust in engines.rear_thrusts:
+				thrust.rotation = heading_rotation + deg2rad(180)
+			# OPT obrat pogona v rikverc ... smooth rotacija ... dela ok dokler ne vozim naokoli, potem se smeri vrtenja podrejo
+			#				for thrust in engines.all_thrusts:
+			#					var rotation_direction: int = 1
+			#					if thrust.position_on_bolt == thrust.POSITION.LEFT:
+			#						rotation_direction = -1
+			#					var rotate_to: float = (heading_rotation + deg2rad(180)) * rotation_direction
+			#					thrust.rotation = lerp_angle(thrust.rotation, rotate_to, engine_rotation_speed)
+		MOTION.FREE_ROTATE:
+			engine_power = 0
+			for thrust in engines.front_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan
+			for thrust in engines.rear_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle + deg2rad(180), engine_rotation_speed)
+		MOTION.DRIFT: # zadnji pogon v smeri zavoja
+			engine_power = lerp(engine_power, 0, 0.01)
+		MOTION.GLIDE: # oba pogona  v smeri premika
+			engine_power = 0
+			for thrust in engines.all_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed)
+
+
+func _change_motion(new_motion: int):
+
+	# nastavim nov engine
+	if not new_motion == motion:
+		motion = new_motion
+		match motion:
+			MOTION.IDLE:
+				if bolt_shift > 0:
+					rear_mass.set_applied_force(Vector2.ZERO)
+				else:
+					front_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["idle_lin_damp"]
+				angular_damp = bolt_profile["idle_ang_damp"]
+				for thrust in engines.all_thrusts:
+					thrust.stop_fx()
+			MOTION.FWD:
+				rear_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["drive_lin_damp"]
+				angular_damp = bolt_profile["drive_ang_damp"]
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.REV:
+				front_mass.set_applied_force(Vector2.ZERO)
+				linear_damp = bolt_profile["drive_lin_damp"]
+				angular_damp = bolt_profile["drive_ang_damp"]
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.FREE_ROTATE:
+				linear_damp = bolt_profile["idle_lin_damp"]
+				angular_damp = bolt_profile["idle_ang_damp"] # če tega ni moraš prekinit tipko, da se preklopi preko IDLE stanja
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.DRIFT: # ni zrihtano
+				linear_damp = bolt_profile["idle_lin_damp"]
+				#			linear_damp = bolt_profile["drive_lin_damp"]
+				#			angular_damp = bolt_profile["idle_ang_damp"]
+				engine_power = max_engine_power # poskrbi za bolj "tight" obrat
+				for thrust in engines.front_thrusts:
+					thrust.stop_fx()
+				for thrust in engines.rear_thrusts:
+					thrust.start_fx()
+			MOTION.GLIDE:
+				linear_damp = bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
+				angular_damp = bolt_profile["glide_ang_damp"] # da se ne vrti, če zavija
+				for thrust in engines.all_thrusts:
+					thrust.start_fx()
+			MOTION.DISARRAY:
+				pass
 
 
 func _change_activity(new_is_active: bool):
@@ -223,7 +381,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 func _destroy_bolt():
 
 	_explode()
-	motion_manager.motion = motion_manager.MOTION.ENGINES_OFF
+	motion = MOTION.ENGINES_OFF
 	engines.shutdown_engines()
 	self.is_active = false
 	update_stat(Pfs.STATS.LIFE, - 1)
@@ -281,14 +439,14 @@ func _revive_bolt():
 func reset_bolt():
 	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v bolt "v igri"
 
-	motion_manager.motion = motion_manager.MOTION.IDLE
+	motion = MOTION.IDLE
 	front_mass.set_applied_force(Vector2.ZERO)
 	front_mass.set_applied_torque(0)
 	rear_mass.set_applied_force(Vector2.ZERO)
 	rear_mass.set_applied_torque(0)
-	motion_manager.rotation_dir = 0
+	rotation_dir = 0
 	for thrust in engines.all_thrusts:
-		thrust.rotation = lerp_angle(thrust.rotation, 0, 0.1)
+		thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 		thrust.stop_fx()
 
 
@@ -296,7 +454,7 @@ func drive_in(drive_in_time: float = 2):
 
 	collision_shape.set_deferred("disabled", true)
 	modulate.a = 1
-	motion_manager.motion = motion_manager.MOTION.IDLE
+	motion = MOTION.IDLE
 	engines.start_engines()
 
 	#	var drive_in_time: float = 2
@@ -333,22 +491,22 @@ func drive_out():
 	#	set_sleeping(true)
 	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
 	#	set_physics_process(false)
-	#	motion_manager.motion = motion_manager.MOTION.IDLE
+	#	motion = MOTION.IDLE
 
 
 func use_nitro():
 	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
 
 	if not using_nitro:
-		printt ("pred ", motion_manager.max_engine_power_adon, motion_manager.max_engine_power, "-----------------")
+		printt ("pred ", max_engine_power_adon, max_engine_power, "-----------------")
 		Rfs.sound_manager.play_sfx("pickable_nitro")
-		motion_manager.max_engine_power_adon = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		motion_manager.engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		printt ("med ", motion_manager.max_engine_power_adon, motion_manager.max_engine_power,"-----------------")
+		max_engine_power_adon = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
+		engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
+		printt ("med ", max_engine_power_adon, max_engine_power,"-----------------")
 		yield(get_tree().create_timer(Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]),"timeout")
-		motion_manager.max_engine_power_adon = 0
+		max_engine_power_adon = 0
 		using_nitro = false
-		printt ("po ", motion_manager.max_engine_power_adon, motion_manager.max_engine_power,"-----------------")
+		printt ("po ", max_engine_power_adon, max_engine_power,"-----------------")
 
 
 func revup():
@@ -489,3 +647,45 @@ func _exit_tree() -> void:
 	if Rfs.game_camera.follow_target == self:
 		Rfs.game_camera.follow_target = null
 	trail_source.decay()
+
+
+# OBS
+
+
+func _set_bolts_debug_panel():
+
+	# debug ... setup panel
+	var setup_layer_dict: Dictionary = { # imena so enaka kot samo variable
+		"mass": mass, # 800 kil, front in rear teža se uporablja bolj za razmerje
+		"drive_ang_damp": angular_damp, # regulacija ostrine zavijanja ... tudi driftanja
+		"drive_lin_damp": linear_damp, # imam ga za omejitev slajdanja prvega kolesa
+#		"drive_lin_damp_rear": rear_mass.linear_damp, # regulacija driftanja
+#		"drift_power" : drift_power,
+#		"free_rotation_power" : free_rotation_power,
+#		"glide_power_F" : glide_power_front,
+#		"glide_power_R" : glide_power_rear,
+#		"elevation" : elevation,
+	}
+
+#		# fizika
+#		"mass": 80, # 800 kil, front in rear teža se uporablja bolj za razmerje
+#		# driving
+#		"drive_ang_damp": 16, # regulacija ostrine zavijanja ... tudi driftanja
+#		"drive_lin_damp": 2, # imam ga za omejitev slajdanja prvega kolesa
+#		# idle motion
+#		"idle_lin_damp": 0.5,
+#		"idle_ang_damp": 0.5,
+
+
+	if driver_id == Pfs.DRIVER.P1:
+#		print ("Rfs.game_camera.setup_panel", Rfs.game_camera.setup_panel)
+#		Rfs.game_camera.setup_table.add_new_line_to_debug("max_engine_power", self, " krenekik")
+#		Rfs.setup_layer.build_setup_layer(setup_layer_dict, self)
+		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", self, "B")
+		Rfs.game_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
+		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
+#		Rfs.setup_layer.add_new_line_to_setup_layer("drive_lin_damp_rear", "linear_damp", rear_mass.linear_damp, rear_mass)
+#		Rfs.setup_layer.add_new_line_to_setup_layer("drive_lin_damp_rear", "linear_damp", rear_mass.linear_damp, rear_mass)
+#		Rfs.setup_layer.add_new_line_to_setup_layer("drive_lin_damp_rear", "linear_damp", rear_mass.linear_damp, rear_mass)
+#		Rfs.setup_layer.add_new_line_to_setup_layer("drive_lin_damp_rear", "linear_damp", rear_mass.linear_damp, rear_mass)
+

@@ -23,19 +23,19 @@ func _input(event: InputEvent) -> void:
 				controlled_bolt.revup()
 		else:
 			# rotacija
-			controlled_bolt.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
+			controlled_bolt.motion_manager.rotation_dir = Input.get_axis(left_action, right_action) # 1, -1, 0
 			if Input.is_action_pressed(fwd_action):
-				controlled_bolt.bolt_shift = 1
-				controlled_bolt.motion = controlled_bolt.MOTION.FWD
+				controlled_bolt.motion_manager.bolt_shift = 1
+				controlled_bolt.motion_manager.motion = controlled_bolt.motion_manager.MOTION.FWD
 				if Rfs.game_manager.fast_start_window:
 					controlled_bolt.revup()
 			elif Input.is_action_pressed(rev_action):
-				controlled_bolt.bolt_shift = -1
-				controlled_bolt.motion = controlled_bolt.MOTION.REV
-			elif controlled_bolt.rotation_dir == 0:
-				controlled_bolt.motion = controlled_bolt.MOTION.IDLE
-			elif controlled_bolt.rotation_dir == 1 or controlled_bolt.rotation_dir == -1:
-				controlled_bolt.motion = controlled_bolt.free_motion_type
+				controlled_bolt.motion_manager.bolt_shift = -1
+				controlled_bolt.motion_manager.motion = controlled_bolt.motion_manager.MOTION.REV
+			elif controlled_bolt.motion_manager.rotation_dir == 0:
+				controlled_bolt.motion_manager.motion = controlled_bolt.motion_manager.MOTION.IDLE
+			elif controlled_bolt.motion_manager.rotation_dir == 1 or controlled_bolt.motion_manager.rotation_dir == -1:
+				controlled_bolt.motion_manager.motion = controlled_bolt.motion_manager.floating_motion
 
 			# select weapon
 			if Input.is_action_just_pressed(selector_action):
@@ -61,7 +61,8 @@ func _physics_process(delta: float) -> void:
 	# dokler ni igre fizika ne dela
 	if Rfs.game_manager.game_on and controlled_bolt.is_active:
 #		return
-		controlled_bolt.force_rotation = controlled_bolt.heading_rotation + controlled_bolt.get_global_rotation()
+		controlled_bolt.motion_manager.force_rotation = controlled_bolt.motion_manager.heading_rotation + controlled_bolt.global_rotation
+#		controlled_bolt.motion_manager.force_rotation = controlled_bolt.motion_manager.heading_rotation + controlled_bolt.get_global_rotation()
 
 
 
