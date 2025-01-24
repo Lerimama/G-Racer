@@ -4,7 +4,7 @@
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
 [ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=4]
-[ext_resource path="res://game/bolt/BoltMotionManager.gd" type="Script" id=5]
+[ext_resource path="res://game/bolt/MotionManager.gd" type="Script" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
@@ -137,7 +137,6 @@ node_b = NodePath("../FrontMass")
 
 [node name="FrontMass" type="RigidBody2D" parent="Mass/Front"]
 position = Vector2( 16, 0 )
-mass = 50.0
 gravity_scale = 0.0
 can_sleep = false
 
@@ -160,7 +159,6 @@ node_a = NodePath("../../..")
 node_b = NodePath("../RearMass")
 
 [node name="RearMass" type="RigidBody2D" parent="Mass/Rear"]
-mass = 50.0
 gravity_scale = 0.0
 can_sleep = false
 linear_damp = 3.0
@@ -290,6 +288,32 @@ __meta__ = {
 
 [node name="SelectorTimer" type="Timer" parent="BoltHud/BoltHudLines"]
 one_shot = true
+
+[node name="TurningLabel" type="Label" parent="BoltHud/BoltHudLines"]
+margin_top = 147.0
+margin_right = 128.0
+margin_bottom = 186.0
+grow_horizontal = 2
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = ExtResource( 1 )
+text = "TURN"
+align = 1
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="FloatRotationLabel" type="Label" parent="BoltHud/BoltHudLines"]
+margin_top = 202.0
+margin_right = 128.0
+margin_bottom = 241.0
+grow_horizontal = 2
+rect_min_size = Vector2( 48, 0 )
+custom_fonts/font = ExtResource( 1 )
+text = "FLOAT"
+align = 1
+__meta__ = {
+"_editor_description_": ""
+}
 
 [node name="------" type="Node" parent="."]
 

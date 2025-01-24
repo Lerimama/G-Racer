@@ -128,10 +128,10 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 	spawned_driver_statbox.stat_bullet.stat_value = spawned_driver_stats[Pfs.STATS.BULLET_COUNT]
 	spawned_driver_statbox.stat_misile.stat_value = spawned_driver_stats[Pfs.STATS.MISILE_COUNT]
 	spawned_driver_statbox.stat_mina.stat_value = spawned_driver_stats[Pfs.STATS.MINA_COUNT]
-	spawned_driver_statbox.stat_gas.stat_value = spawned_driver_stats[Pfs.STATS.GAS_COUNT]
+	spawned_driver_statbox.stat_gas.stat_value = spawned_driver_stats[Pfs.STATS.GAS]
 	spawned_driver_statbox.stat_life.stat_value = spawned_driver_stats[Pfs.STATS.LIFE]
 	spawned_driver_statbox.stat_points.stat_value = spawned_driver_stats[Pfs.STATS.POINTS]
-	spawned_driver_statbox.stat_cash.stat_value = spawned_driver_stats[Pfs.STATS.CASH_COUNT]
+	spawned_driver_statbox.stat_cash.stat_value = spawned_driver_stats[Pfs.STATS.CASH]
 	spawned_driver_statbox.stat_wins.stat_value = spawned_driver_stats[Pfs.STATS.WINS]
 	#
 	#	spawned_driver_statbox.stat_level_rank.stat_value = spawned_driver_stats[Pfs.STATS.LEVEL_RANK]
@@ -172,13 +172,13 @@ func _on_bolt_stat_changed(driver_id: int, bolt_stat_key: int, stat_value): # st
 			stat_to_change = statbox_to_change.stat_misile
 		Pfs.STATS.MINA_COUNT:
 			stat_to_change = statbox_to_change.stat_mina
-		Pfs.STATS.GAS_COUNT:
+		Pfs.STATS.GAS:
 			stat_to_change = statbox_to_change.stat_gas
 		Pfs.STATS.LIFE:
 			stat_to_change = statbox_to_change.stat_life
 		Pfs.STATS.POINTS:
 			stat_to_change = statbox_to_change.stat_points
-		Pfs.STATS.CASH_COUNT:
+		Pfs.STATS.CASH:
 			stat_to_change = statbox_to_change.stat_cash
 		Pfs.STATS.WINS:
 			stat_to_change = statbox_to_change.stat_wins

@@ -4,7 +4,7 @@ extends RigidBody2D
 
 signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
 
-enum MOTION {ENGINES_OFF, IDLE, FWD, REV, DISARRAY, TILT, FREE_ROTATE, DRIFT, GLIDE} # DIZZY, DYING glede na moč motorja
+enum MOTION {IDLE, FWD, REV, DISARRAY, TILT, FREE_ROTATE, DRIFT, GLIDE} # DIZZY, DYING glede na moč motorja
 var motion: int = MOTION.IDLE setget _change_motion
 var free_motion_type: int = MOTION.IDLE # presetan motion, ko imaš samo smerne tipke
 #var free_motion_type: int = MOTION.FREE_ROTATE # presetan motion, ko imaš samo smerne tipke

@@ -1,43 +1,17 @@
 extends Node
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func z_index(): pass
+# BOLTS so vozila
+# DRIVERS so vozniki vozil (P1, P2, P3, ...)
+# AI je komp kontroler
+# HUMAN je človeški kontroller (ARROWS, WASD, JP1, JP2, AI)
 
-#Z INDEX
-#- background = -10
-#- ground terrain < -1
-#- flat objects and default = 0
-#- not flat or floating object = 1 - 9
-#- sky > 10
-var z_indexes: Dictionary = {
-	# indexi so delno poštimani tudi v nodetih levela
-	# ref "background": -10,
-	"ground": 0, # streets, surfaces
-	"bolts": 1,
-	# TUDU
-	"pickables": 1, # v levelu
-	"breakers": 1,
-	"mounts": 100, # noben objekt levela ni všje
-	"building": 10, # noben objekt levela ni všje
-	"hill": 50, # noben objekt levela ni všje
-	"sky": 1000, # top
-	#	"surface_z_index": 1,
-	#	"SURFACE": 6,
-	#	"PICKABLE": 1,
-	#	"LEVEL_OBJECT": 1,
-}
+func drivers_and_ai(): pass
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func stats(): pass
+# vsi statsi na hudu
+enum STATS {WINS, BULLET_COUNT, MISILE_COUNT, MINA_COUNT, HEALTH, GAS_COUNT, LIFE, CASH_COUNT, POINTS, LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED}
 
-# vsi mogoči statsi
-enum STATS {
-		WINS, LIFE, HEALTH, POINTS, GAS, CASH,
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT,
-		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
-		}
 var default_level_stats: Dictionary = {
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
@@ -45,21 +19,37 @@ var default_level_stats: Dictionary = {
 	STATS.LAPS_FINISHED: [], # časi
 	STATS.GOALS_REACHED: [], # nodeti
 }
+
 var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.WINS : 2,
 	STATS.LIFE : 5,
-	STATS.CASH: 0,
+	STATS.CASH_COUNT: 0,
 	STATS.HEALTH : 1, # health percetnage
 	STATS.BULLET_COUNT : 100,
 	STATS.MISILE_COUNT : 5,
 	STATS.MINA_COUNT : 3,
-	STATS.GAS: 5000,
+	STATS.GAS_COUNT: 5000,
 	STATS.POINTS : 0,
 }
 
-
-# ---------------------------------------------------------------------------------------------------------------------------
-func drivers(): pass
+#var default_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+#	# bolt stats
+#	"wins" : 2,
+#	"life" : 5,
+#	"cash_count": 0,
+##	"health" : 10,
+#	"health" : 1, # health percetnage
+#	"bullet_count" : 100,
+#	"misile_count" : 5,
+#	"mina_count" : 3,
+#	"gas_count": 5000,
+#	# score
+#	"points" : 0,
+#	"level_rank" : 0,
+#	"laps_count" : 0,
+#	"best_lap_time" : 0,
+#	"level_time" : 0, # sekunde ... naj bodo stotinke
+#}
 
 enum DRIVER {P1, P2, P3, P4}
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
@@ -95,23 +85,27 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 }
 
-enum AI_TYPES {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
-	AI_TYPES.DEFAULT: {
-		"controller_type" : CONTROLLER_TYPE.AI,
-		# driving
-		"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
-		"battle_engine_power": 120, # je enaka kot od  bolta
-		# ni še implementiran!!!!!!
-		"ai_brake_distance": 0.8, # množenje s hitrostjo
-		"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
-		# battle
-		"aim_time": 1,
-		#	"seek_rotation_range": 60,
-		#	"seek_rotation_speed": 3,
-		#	"seek_distance": 640 * 0.7,
-		"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo
-	},
+	# za prepis driver profila
+	"controller_type" : CONTROLLER_TYPE.AI,
+	# race
+
+
+	# "all powers"
+	"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
+	# battle
+	"battle_engine_power": 120, # je enaka kot od  bolta
+
+
+
+	"aim_time": 1,
+#	"seek_rotation_range": 60,
+#	"seek_rotation_speed": 3,
+#	"seek_distance": 640 * 0.7,
+	"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo
+	# ni še implementiran!!!!!!
+	"ai_brake_distance": 0.8, # množenje s hitrostjo
+	"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
 }
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2, AI}
@@ -163,68 +157,92 @@ var controller_profiles : Dictionary = {
 	},
 }
 
-
-# ---------------------------------------------------------------------------------------------------------------------------
-func bolt(): pass
+#const bolt_engine_power_factor:  =
 
 enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-		"height": 10,
-		"elevation": 7,
+		"on_hit_disabled_time": 2,
+
+		# "all powers"
+		"accelaration_power": 5,#,000, # delta seštevanje moči motorja do največje moči
+		"max_engine_power": 500,#000, # 1 - 500 konjev
+		"fast_start_engine_power": 5,#,000, # pospešek motorja do največje moči (horsepower?)
+
+
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
-		"on_hit_disabled_time": 2,
 
-		# driving params
-		"accelaration_power": 5, # lerp, seštevanje, mmnoženje ali tween
-		"max_engine_power": 1000, # = konjev
-		"max_engine_rotation_deg": 32,
-		"engine_rotation_speed": 1,
-		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
-		#
-		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
+		# neu
+		# straight
+		"mass": 80, # 800 kil, front in rear teža se uporablja bolj za razmerje
 		"ang_damp": 16,
 		"front_mass_bias": 0.5,
 		"lin_damp_front": 0,
 		"lin_damp_rear": 0,
+		"max_engine_rotation_deg": 32, # obračanje koles (45 stzopinj je bolj ala avto)
+		"engine_rotation_speed": 0.1,
 
-		# floating
-		# ROTATE
-		"ang_damp_float": 0.5,
-		"free_rotation_power": 14, # na oba
-		"max_free_thrust_rotation_deg": 90,
-		# DRIFT
-		"drift_power": 17000, # na rear
-		# GLIDE
+
+
+
+
+		"drive_ang_damp": 16, # regulacija ostrine zavijanja ... tudi driftanja
+		"drive_lin_damp": 2, # imam ga za omejitev slajdanja prvega kolesa
+		"drive_lin_damp_rear": 20, # regulacija driftanja
+
+
+		# idle motion
+		"idle_lin_damp": 0.5,
+		"idle_ang_damp": 0.5,
+
+
+		# "all powers"
+		"free_rotation_power": 14,#000, # na oba
+#		"drift_power": 17000, # na rear
 		"glide_power_F": 465,#00,
 		"glide_power_R": 500,#00,
+
+
 		"glide_ang_damp": 5, # da se ha rotirat
+
+
+		# material
+#		"bounce": 0.5,
+#		"friction": 0.2,
+
+		"height": 10,
+		"elevation": 7,
+		"max_free_thrust_rotation_deg": 90,
 		},
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
 func equipment(): pass
 
 enum EQUIPMENT {NITRO, SHIELD}
 var equipment_profiles : Dictionary = {
 	EQUIPMENT.NITRO: {
 		"value": 1,
-		"nitro_power_adon": 300,
+		# "all powers"
+		"nitro_power_adon": 300,#,000, # prišteješ moč
 		"time": 3,
 	},
 	EQUIPMENT.SHIELD: {
-		"lifetime": 5,
+#		"reload_time": 0.1, #
+#		"hit_damage": 5,
+#		"speed": 50,
+		"lifetime": 5, # cikli animacije
 		"scene": preload("res://game/equipment/shield/Shield.tscn"),
 		"time": 3,
+#		"direction_start_range": [0, 0] , # natančnost misile
+		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
 	},
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
 func ammo(): pass
 
 enum AMMO {BULLET, MISILE, MINA, SHIELD}
@@ -272,8 +290,7 @@ var ammo_profiles : Dictionary = {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func surfaces(): pass
+func levels(): pass
 
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
@@ -307,7 +324,6 @@ var surface_type_profiles: Dictionary = {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
 func level_objects(): pass
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
@@ -360,7 +376,7 @@ var level_object_profiles: Dictionary = {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
+
 func pickables(): pass
 
 enum PICKABLE{
@@ -370,6 +386,7 @@ enum PICKABLE{
 	PICKABLE_POINTS,
 	PICKABLE_RANDOM
 	}
+
 var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_BULLET: {
 		"color": Rfs.color_pickable_ammo,
@@ -411,14 +428,14 @@ var pickable_profiles: Dictionary = {
 		"value": 200,
 		"elevation": 3,
 		"ai_target_rank": 3,
-		"driver_stat": STATS.GAS,
+		"driver_stat": STATS.GAS_COUNT,
 	},
 	PICKABLE.PICKABLE_CASH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
 		"ai_target_rank": 0,
-		"driver_stat": STATS.CASH,
+		"driver_stat": STATS.CASH_COUNT,
 	},
 	PICKABLE.PICKABLE_POINTS: {
 		"color": Rfs.color_pickable_stat,
@@ -448,3 +465,33 @@ var pickable_profiles: Dictionary = {
 	},
 }
 
+
+var arena_tilemap_profiles: Dictionary = { # za generator
+	"default_arena" : Vector2.ONE,
+}
+
+func z_index(): pass
+
+var z_indexes: Dictionary = {
+	# indexi so delno poštimani tudi v nodetih levela
+	# ref "background": -10,
+	"ground": 0, # streets, surfaces
+	"bolts": 1,
+	# TUDU
+	"pickables": 1, # v levelu
+	"breakers": 1,
+	"mounts": 100, # noben objekt levela ni všje
+	"building": 10, # noben objekt levela ni všje
+	"hill": 50, # noben objekt levela ni všje
+	"sky": 1000, # top
+#	"surface_z_index": 1,
+#	"SURFACE": 6,
+#	"PICKABLE": 1,
+#	"LEVEL_OBJECT": 1,
+}
+#Z INDEX
+#- background = -10
+#- ground terrain < -1
+#- flat objects and default = 0
+#- not flat or floating object = 1 - 9
+#- sky > 10

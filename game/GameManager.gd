@@ -182,7 +182,7 @@ func _set_game():
 			# dobim štartni id bolta in umestim ai data
 			var new_driver_index: int = activated_driver_ids.size()
 			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
-			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile["controller_type"]
+			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPES.DEFAULT]["controller_type"]
 			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
 	#	printt("DRIVERS", activated_driver_ids)
 

@@ -73,6 +73,16 @@ margin_top = 40.0
 margin_right = -248.0
 margin_bottom = 352.0
 
+[node name="ResetBtn" parent="TestUI/SetupPanel/SetupTable" index="0"]
+visible = true
+margin_left = 224.0
+margin_right = 347.0
+margin_bottom = 29.0
+
+[node name="SetupLayerLine" parent="TestUI/SetupPanel/SetupTable" index="1"]
+margin_top = 33.0
+margin_bottom = 63.0
+
 [node name="TestHud" type="Control" parent="TestUI"]
 margin_right = 2560.0
 margin_bottom = 1440.0

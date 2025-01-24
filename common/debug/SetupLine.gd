@@ -44,7 +44,8 @@ func reset_line():
 
 func _on_HSlider_value_changed(value: float) -> void:
 
-	node_to_update.set_deferred(variable_name, value)
+#	node_to_update.set_deferred(variable_name, value)
+	node_to_update.set(variable_name, value)
 	value_label.text = str(value)
 
 	if value == default_value:
