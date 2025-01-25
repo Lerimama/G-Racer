@@ -49,7 +49,7 @@ func _on_Item_body_entered(body: Node) -> void:
 				var random_pickable_index = randi() % random_range
 				pickable_key = Pfs.pickable_profiles.keys()[random_pickable_index]
 
-		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
+#		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
 		body.on_item_picked(pickable_key)
 
 #	if body.has_method("item_picked"):
@@ -74,5 +74,5 @@ func _on_Item_body_entered(body: Node) -> void:
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
-	print("new_loop")
+#	print("new_loop")
 	pass # Replace with function body.

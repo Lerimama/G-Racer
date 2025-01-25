@@ -3,137 +3,133 @@ extends Node
 
 onready var bolt = get_parent()
 
-enum MOTION {FLOAT, FWD, REV, DISARRAY}
-var motion: int = MOTION.FLOAT setget _change_motion
+enum MOTION {
+	IDLE,
+	FWD,
+	REV,
+	}
+var motion: int = MOTION.IDLE setget _change_motion
 
-enum FLOATING_ROTATION {FREE, SLIDE, ROTATE, LOCKED}
-export (FLOATING_ROTATION) var floating_rotation: int = FLOATING_ROTATION.FREE
+enum IDLE_ROTATION {
+	FREE,
+	SLIDE,
+	ROTATE,
+	LOCKED,
+	}
+export (IDLE_ROTATION) var idle_rotation: int = IDLE_ROTATION.FREE
 
-enum TURNING_MODE {NO_MASS, AGILE, TRACKING, DRIFTING, BOOSTED}
-export (TURNING_MODE) var turning_mode: int = 0 setget _set_turning_mode
+enum ROTATION_MOTION {
+	STRAIGHT,
+	MASSLESS,
+	SPIN,
+	SLIDE,
+	IDLE_FREE,
+	IDLE_LOCKED,
+#	AGILE,
+#	TRACKING,
+#	DRIFTING,
+#	NITRO, # moč motorja je lahko različna je
+#	NO_CONTROLS,
+	}
+var current_rotation_motion: int = ROTATION_MOTION.STRAIGHT
+export (ROTATION_MOTION) var selected_rotation_motion: int = ROTATION_MOTION.MASSLESS
 
-var force_on_bolt = Vector2.ZERO
+#export (ROTATION_MOTION) var rotation_motion: int = 0 setget _change_rotation_motion
+
+var force_on_bolt: Vector2 = Vector2.ZERO
+var torque_on_bolt: float = 0
 
 # engine
-var engine_power: float = 0
-var max_engine_power: float = 0 # setget _change_max_engine_power
-var def_max_engine_power = 1000
-var max_engine_power_adon: float = 0
-var max_engine_power_factor: float = 1
-var accelaration_power = 0
-var bolt_shift: int = 1 # -1 = rikverc, +1 = naprej, 0 ne obstaja ... za daptacijo, ker je moč motorja zmeraj pozitivna
-onready var free_rotation_power: float = bolt.bolt_profile["free_rotation_power"]
+var current_engine_power: float = 0
+var engine_power_adon: float = 0
+var accelarate_speed = 0.1
+var max_engine_power: float
+var is_boosted = false
+onready var reality_engine_power_factor: float = Rfs.game_manager.game_settings["reality_engine_power_factor"]
+
+# rotation
+var rotation_dir = 0 setget _change_rotation_direction
+var force_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
+var engine_rotation_speed = 0.1
+var max_engine_rotation_deg: float
+
+# idle rotations
 onready var fast_start_engine_power: float = bolt.bolt_profile["fast_start_engine_power"]
-
-# direction
-var force_rotation: float = 0 # rotacija v smeri skupne sile motorjev ... določam v _FP (input), apliciram v _IF
-var force_summ_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
-var rotation_dir = 0
-var engine_rotation_speed: float = 0.1
-onready var max_engine_rotation_deg: float = bolt.bolt_profile["max_engine_rotation_deg"]
-
-# adapt to driving mode
-var lin_damp_engine_power_adapt: float = 0.2 # 0.5 težišče je na sredini
-var lin_damp_acc_adapt: float = 0.2 # 0.5 težišče je na sredini
-
+onready var idle_rotation_torque: float = bolt.bolt_profile["idle_rotation_torque"]
+onready var free_rotation_power: float = bolt.bolt_profile["free_rotation_power"]
 
 func _ready() -> void:
-#
-##	self.turning_mode = turning_mode
-	yield(get_parent(), "ready")
-	self.turning_mode = turning_mode
-	pass
-
+	yield(get_tree(),"idle_frame")
+#	self.rotation_dir = 0
 
 func _process(delta: float) -> void:
-#	printt ("FP", TURNING_MODE.keys()[turning_mode])
-#	printt ("FP", round(engine_power/1000), def_max_engine_power, bolt.front_mass.get_applied_force().length(), bolt.rear_mass.get_applied_force().length())
 
-	if not bolt.is_active:
-		engine_power = 0
-		rotation_dir = 0
-		force_on_bolt = Vector2.ZERO
+
+	if not bolt.is_active: # tole seta tudi na startu
+		current_engine_power = 0 # cela sila je pade na 0
+		#		force_on_bolt = Vector2.ZERO
+		#		force_rotation = 0
+		self.rotation_dir = 0
 	else:
 		_motion_machine()
 
-		max_engine_power = (def_max_engine_power + max_engine_power_adon) * max_engine_power_factor
-		max_engine_power *= Rfs.game_manager.game_settings["reality_engine_power_factor"]
+	# debug
+	bolt.bolt_hud.rotation_label.text = MOTION.find_key(motion) + " > " + ROTATION_MOTION.find_key(current_rotation_motion)
+	var vector_to_target = force_on_bolt.normalized() * 0.5 * current_engine_power
+	vector_to_target = vector_to_target.rotated(- bolt.global_rotation)
+	bolt.direction_line.set_point_position(1, vector_to_target)
+	bolt.direction_line.default_color = Color.green
 
-		# debug
-		var vector_to_target = force_on_bolt.normalized() * engine_power/def_max_engine_power/3
-		vector_to_target = vector_to_target.rotated(- bolt.global_rotation)# - get_global_rotation()
-		bolt.direction_line.set_point_position(1, vector_to_target)
-		if force_on_bolt == Vector2.ZERO:
-			#			bolt.direction_line.set_point_position(1, Vector2.RIGHT * 50)
-			bolt.direction_line.default_color = Color.red
-		else:
-			bolt.direction_line.default_color = Color.green
 
-	bolt.force = force_on_bolt
+func _accelarate_to_engine_power():
+
+	# če je dodatek k moči klempam na max power + dodatek
+	if engine_power_adon == 0:
+		current_engine_power = lerp(current_engine_power, max_engine_power, accelarate_speed)
+	else:
+		current_engine_power = lerp(current_engine_power, max_engine_power + engine_power_adon, accelarate_speed)
+	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
+
+	return current_engine_power * reality_engine_power_factor
 
 
 func _motion_machine():
-#	printt("rotation_dir", rotation_dir)
 
-	force_summ_rotation = lerp_angle(force_summ_rotation, rotation_dir * deg2rad(max_engine_rotation_deg) * bolt_shift, engine_rotation_speed)
-	var rotate_to_angle: float = rotation_dir * deg2rad(bolt.bolt_profile["max_free_thrust_rotation_deg"]) # 60 je poseben deg2rad(max_engine_rotation_deg)
-
-	#	force_on_bolt = Vector2.ZERO
-	bolt.set_applied_torque(0)
 	match motion:
 		MOTION.FWD:
-			force_on_bolt = Vector2.RIGHT.rotated(force_rotation) * engine_power * bolt_shift
-			_accelarate()
-			if Rfs.game_manager.fast_start_window:
-				engine_power += fast_start_engine_power
+			force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+			force_on_bolt =  Vector2.RIGHT.rotated(force_rotation + bolt.global_rotation) * _accelarate_to_engine_power()
 			for thrust in bolt.engines.front_thrusts:
-				thrust.rotation = force_summ_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+				thrust.rotation = force_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
 			for thrust in bolt.engines.rear_thrusts:
-				thrust.rotation = - force_summ_rotation
+				thrust.rotation = - force_rotation
 		MOTION.REV:
-			force_on_bolt = Vector2.RIGHT.rotated(force_rotation) * engine_power * bolt_shift
-			_accelarate()
+			force_rotation = lerp_angle(force_rotation, -rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+			force_on_bolt =  Vector2.LEFT.rotated(force_rotation + bolt.global_rotation) * _accelarate_to_engine_power()
 			for thrust in bolt.engines.front_thrusts:
-				thrust.rotation = - force_summ_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+				thrust.rotation = - force_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
 			for thrust in bolt.engines.rear_thrusts:
-				thrust.rotation = force_summ_rotation + deg2rad(180)
-		MOTION.FLOAT:
+				thrust.rotation = force_rotation + deg2rad(180)
+		MOTION.IDLE:
+			var rotate_to_angle: float = rotation_dir * deg2rad(bolt.bolt_profile["max_free_thrust_rotation_deg"]) # 60 je poseben deg2rad(max_engine_rotation_deg)
+			force_rotation = 0
+			force_on_bolt = Vector2.ZERO
 			if rotate_to_angle == 0:
-				force_on_bolt = Vector2.ZERO
-				engine_power = 0
 				for thrust in bolt.engines.all_thrusts:
 					thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 			else:
-				match floating_rotation:
-					FLOATING_ROTATION.FREE: # poravna se v smer vožnje
-						engine_power = 0
+				match idle_rotation:
+					IDLE_ROTATION.FREE: # poravna se v smer vožnje
 						for thrust in bolt.engines.all_thrusts:
 							thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
-					FLOATING_ROTATION.ROTATE:
-						bolt.set_applied_torque(10000000 * rotation_dir)
-						force_on_bolt = Vector2.ZERO
-						bolt.front_mass.linear_damp = 4
-						bolt.rear_mass.linear_damp = 4
+					IDLE_ROTATION.ROTATE:
 						for thrust in bolt.engines.front_thrusts:
 							thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan
 						for thrust in bolt.engines.rear_thrusts:
 							thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle + deg2rad(180), engine_rotation_speed)
-					FLOATING_ROTATION.SLIDE: # oba pogona  v smeri premika
-						engine_power = 0
+					IDLE_ROTATION.SLIDE: # oba pogona  v smeri premika
 						for thrust in bolt.engines.all_thrusts:
 							thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed)
-
-		#			motion_manager.MOTION.FREE_ROTATE:
-		#				rear_mass.set_applied_force(force)
-		#				front_mass.set_applied_force(- force)
-		#			motion_manager.MOTION.DRIFT:
-		#				#				motion_manager.engine_power = max_engine_power # poskrbi za bolj "tight" obrat
-		#				front_mass.set_applied_force(force)
-		#				#				rear_mass.set_applied_force(Vector2.UP.rotated(rotation) * 1000 * motion_manager.rotation_dir)
-		#			motion_manager.MOTION.SLIDE:
-		#				front_mass.set_applied_force(force * glide_power_front)
-		#				rear_mass.set_applied_force(force * glide_power_rear)
-
 
 func _change_motion(new_motion: int):
 #	printt ("MOTION ",MOTION, motion)
@@ -142,23 +138,13 @@ func _change_motion(new_motion: int):
 		motion = new_motion
 
 		match motion:
-			MOTION.FLOAT:
-				if bolt_shift > 0:
-					bolt.rear_mass.set_applied_force(Vector2.ZERO)
-				else:
-					bolt.front_mass.set_applied_force(Vector2.ZERO)
-				bolt.angular_damp = bolt.bolt_profile["ang_damp_float"]
+			MOTION.IDLE:
 				for thrust in bolt.engines.all_thrusts:
 					thrust.stop_fx()
-				_set_floating_rotation()
 			MOTION.FWD:
-				bolt.rear_mass.set_applied_force(Vector2.ZERO)
-				bolt.angular_damp = bolt.bolt_profile["ang_damp"]
 				for thrust in bolt.engines.all_thrusts:
 					thrust.start_fx()
 			MOTION.REV:
-				bolt.front_mass.set_applied_force(Vector2.ZERO)
-				bolt.angular_damp = bolt.bolt_profile["ang_damp"]
 				for thrust in bolt.engines.all_thrusts:
 					thrust.start_fx()
 			MOTION.DISARRAY:
@@ -166,151 +152,83 @@ func _change_motion(new_motion: int):
 
 
 
-func _set_turning_mode(new_turning_mode: int): # = turning_mode):
+func _change_rotation_direction(new_rotation_direction: float):
+	# za zavijanje lahko vplivam na karkoli, ker se ob vožnji naravnost vse reseta
+	# če ne zavija je fizika celega bolta
+	# če zavija se porazdeli glede na stil
 
-	turning_mode = new_turning_mode
+	rotation_dir = new_rotation_direction
 
-#	printt ("driving", TURNING_MODE.keys()[turning_mode])
-#	if not turning_mode == new_turning_mode:
-
-	var new_front_mass_bias: float
-	var mass_summ: float
-	match turning_mode:
-		TURNING_MODE.NO_MASS: # mid zavijanje + malo drifta
-			mass_summ = bolt.bolt_profile["masa"]
-			engine_rotation_speed = 0.1
-			accelaration_power = 3.2
-			def_max_engine_power = 1000
-			new_front_mass_bias = 0.5
-			bolt.angular_damp = 0
-			bolt.front_mass.linear_damp = 0
-			bolt.rear_mass.linear_damp = 5
-			max_engine_rotation_deg = 25
-
-#		TURNING_MODE.NAKED:
-#			mass_summ = 0
-#			new_front_mass_bias = 0.5
-#			bolt.angular_damp = 0
-#			bolt.linear_damp = 0 # imam ga za omejitev slajdanja prvega kolesa
-#			bolt.front_mass.linear_damp = 0
-#			bolt.rear_mass.linear_damp = 0
-
-		TURNING_MODE.AGILE: # hitro vijuganje, nežno driftanje
-			mass_summ = bolt.bolt_profile["masa"]
-			accelaration_power = 3.2#000
-			def_max_engine_power = 700 * 2#000
-			new_front_mass_bias = 0.5
-			bolt.angular_damp = 5
-			bolt.front_mass.linear_damp = 2
-			bolt.rear_mass.linear_damp = 8
-
-		TURNING_MODE.TRACKING: # dolgo zavijanje, no drift
-			mass_summ = bolt.bolt_profile["masa"]
-			engine_rotation_speed = 0.5
-			accelaration_power = 3.2#000
-			def_max_engine_power = 800 * 2#000
-			new_front_mass_bias = 0.5
-			bolt.angular_damp = 50
-			bolt.front_mass.linear_damp = 3
-			bolt.rear_mass.linear_damp = 5
-			max_engine_rotation_deg = 32
-
-		TURNING_MODE.DRIFTING: # krajše zavijanje + drift
-			engine_rotation_speed = 0.6
-			mass_summ = bolt.bolt_profile["masa"]
-			accelaration_power = 3.2
-			def_max_engine_power = 700
-			new_front_mass_bias = 0.2
-			bolt.angular_damp = 32
-			bolt.front_mass.linear_damp = 4
-			bolt.rear_mass.linear_damp = 0.2
-			max_engine_rotation_deg = 35
-
-
-	# porazdelitev mase
-	if turning_mode == TURNING_MODE.NO_MASS:
-		bolt.mass = 0
-		bolt.front_mass.mass = mass_summ * new_front_mass_bias
-		bolt.rear_mass.mass = mass_summ * (1 - new_front_mass_bias)
+	if rotation_dir == 0:
+		current_rotation_motion = ROTATION_MOTION.STRAIGHT
+	elif motion == MOTION.IDLE:
+			current_rotation_motion = ROTATION_MOTION.SPIN
 	else:
-		bolt.mass = mass_summ
-		var front_rear_mass: float = bolt.front_mass.mass + bolt.rear_mass.mass
-		bolt.front_mass.mass = front_rear_mass * new_front_mass_bias
-		bolt.rear_mass.mass = front_rear_mass * (1 - new_front_mass_bias)
+		current_rotation_motion = selected_rotation_motion
 
+	torque_on_bolt = 0
+	var front_mass_bias: float
+	var all_mass: float = bolt.bolt_profile["masa"]
 
-func _accelarate():
-
-#	var acc_tween = get_tree().create_tween()
-#	acc_tween.tween_property(bolt, "engine_power", max_engine_power * 2, 1).set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_BOUNCE)
-#	engine_power += accelaration_power
-	engine_power = lerp(engine_power, max_engine_power, 0.1)
-
-
-
-func	_set_floating_rotation():
-#	printt("set", FLOATING_ROTATION.keys()[floating_rotation])
-
-	match floating_rotation:
-		FLOATING_ROTATION.FREE:
+	match current_rotation_motion:
+		ROTATION_MOTION.STRAIGHT: # mid zavijanje + malo drifta
+			bolt.mass = all_mass
+			bolt.front_mass.mass = 0
+			bolt.rear_mass.mass = 0
+			bolt.front_mass.linear_damp = 0
+			bolt.rear_mass.linear_damp = 0
+			max_engine_power = bolt.bolt_profile["max_engine_power"]
+			max_engine_rotation_deg = bolt.bolt_profile["max_engine_rotation_deg"]
+			bolt.angular_damp = bolt.bolt_profile["ang_damp"]
+			bolt.linear_damp = bolt.bolt_profile["lin_damp"]
+		ROTATION_MOTION.MASSLESS: # mid zavijanje + malo drifta
+			max_engine_power = bolt.bolt_profile["max_engine_power_massless"]
+			max_engine_rotation_deg = bolt.bolt_profile["max_engine_rotation_deg_massless"]
+			front_mass_bias = bolt.bolt_profile["front_mass_bias_massless"]
+			bolt.angular_damp = bolt.bolt_profile["ang_damp_massless"]
+			bolt.front_mass.linear_damp = bolt.bolt_profile["lin_damp_front_massless"]
+			bolt.rear_mass.linear_damp = bolt.bolt_profile["lin_damp_rear_massless"]
+		ROTATION_MOTION.SPIN: # mid zavijanje + malo drifta
+			torque_on_bolt = idle_rotation_torque * rotation_dir # cca 10000000
+			bolt.mass = all_mass
+			bolt.front_mass.mass = 0
+			bolt.rear_mass.mass = 0
+			bolt.front_mass.linear_damp = 0
+			bolt.rear_mass.linear_damp = 0
+			max_engine_power = bolt.bolt_profile["max_engine_power"]
+			max_engine_rotation_deg = bolt.bolt_profile["max_engine_rotation_deg"]
+			bolt.angular_damp = bolt.bolt_profile["ang_damp"]
+			bolt.linear_damp = bolt.bolt_profile["lin_damp"]
+			for thrust in bolt.engines.all_thrusts:
+				thrust.start_fx()
+		ROTATION_MOTION.IDLE_FREE:
+			for thrust in bolt.engines.all_thrusts:
+				thrust.stop_fx()
+		IDLE_ROTATION.IDLE_LOCKED:
 			pass
-		FLOATING_ROTATION.LOCKED:
-			pass
-		FLOATING_ROTATION.SLIDE:
-			bolt.force = Vector2.DOWN.rotated(bolt.rotation) * rotation_dir
+		IDLE_ROTATION.SLIDE:
+			#						bolt.force = Vector2.DOWN.rotated(bolt.rotation) * rotation_dir
 			#			linear_damp = bolt.bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
 			bolt.angular_damp = bolt.bolt_profile["glide_ang_damp"] # da se ne vrti, če zavija
 			for thrust in bolt.engines.all_thrusts:
 				thrust.start_fx()
-		FLOATING_ROTATION.ROTATE:
-#			bolt.angular_damp = 0 # če tega ni moraš prekinit tipko, da se preklopi preko FLOAT stanja
-			bolt.front_mass.linear_damp = 0
-			bolt.rear_mass.linear_damp = 0
-			for thrust in bolt.engines.all_thrusts:
-				thrust.start_fx()
 
 
-func _zaloga_turningov():
-	pass
-#		TURNING_MODE.SLOW_VOH: # dolgo zavijanje, no drift
-#			bolt.mass = 1
-#			engine_rotation_speed = 0.5
-#			accelaration_power = 32000
-#			def_max_engine_power = 250#800#000
-#			new_front_mass_bias = 0.5
-#			bolt.angular_damp = 0
-#			bolt.front_mass.linear_damp = 0
-#			bolt.rear_mass.linear_damp = 10
-#
-##			bolt.angular_damp = 10
-#			bolt.front_mass.angular_damp = 100
-#			bolt.rear_mass.angular_damp = 10
-#			max_engine_rotation_deg = 32
 
-#		TURNING_MODE.DEFAULT:
-#			mass_summ = bolt.bolt_profile["masa"]
-#			engine_rotation_speed = bolt.bolt_profile["engine_rotation_speed"]
-#			max_engine_rotation_deg = bolt.bolt_profile["max_engine_rotation_deg"]
-#			accelaration_power = bolt.bolt_profile["accelaration_power"]
-#			def_max_engine_power = bolt.bolt_profile["max_engine_power"]
-#			#
-#			new_front_mass_bias = bolt.bolt_profile["front_mass_bias"]
-#			bolt.angular_damp = bolt.bolt_profile["ang_damp"]
-#			bolt.front_mass.linear_damp = bolt.bolt_profile["lin_damp_front"]
-#			bolt.rear_mass.linear_damp = bolt.bolt_profile["lin_damp_rear"]
-#
-#		TURNING_MODE.ORIG:
-#			mass_summ = bolt.bolt_profile["masa"]
-#			engine_rotation_speed = 0.1
-#			max_engine_rotation_deg = 90
-#			accelaration_power = 5#000
-#			def_max_engine_power = 500 * 2#000
-#			bolt.mass = 80 # 800 kil, front in rear teža se uporablja bolj za razmerje
-#			bolt.angular_damp = 16 # regulacija ostrine zavijanja ... tudi driftanja
-#			bolt.linear_damp = 2 # imam ga za omejitev slajdanja prvega kolesa
-#			bolt.rear_mass.mass = 1
-#			bolt.rear_mass.linear_damp = 3 # regulacija driftanja
-#			bolt.rear_mass.angular_damp = -1 # 0 proj def
-#			bolt.front_mass.mass = 1
-#			bolt.front_mass.linear_damp = -1 # 0 proj def
-#			bolt.front_mass.angular_damp = -1 # 0 proj def
+	# porazdelitev mase, če ni STRAIGHT
+	if current_rotation_motion == ROTATION_MOTION.MASSLESS:
+		bolt.mass = 0
+		bolt.linear_damp = 0
+		bolt.front_mass.mass = all_mass * front_mass_bias
+		bolt.rear_mass.mass = all_mass * (1 - front_mass_bias)
+
+
+
+func use_nitro():
+	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
+
+	is_boosted = true
+	Rfs.sound_manager.play_sfx("pickable_nitro")
+	current_engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
+	yield(get_tree().create_timer(Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]),"timeout")
+	is_boosted = false

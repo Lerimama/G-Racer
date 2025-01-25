@@ -65,7 +65,7 @@ enum DRIVER {P1, P2, P3, P4}
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 	DRIVER.P1 : {
 		"driver_name": "P1",
-		"driver_avatar": preload("res://game/gui/avatars/avatar_01.png"),
+		"driver_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
 #		"driver_color": Color.white,
 		"driver_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
@@ -73,7 +73,7 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	DRIVER.P2 : {
 		"driver_name": "P2",
-		"driver_avatar": preload("res://game/gui/avatars/avatar_02.png"),
+		"driver_avatar": preload("res://assets/textures/avatars/avatar_02.png"),
 		"driver_color": Rfs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
@@ -81,14 +81,14 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 	},
 	DRIVER.P3 : {
 		"driver_name" : "P3",
-		"driver_avatar" : preload("res://game/gui/avatars/avatar_03.png"),
+		"driver_avatar" : preload("res://assets/textures/avatars/avatar_03.png"),
 		"driver_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
 	},
 	DRIVER.P4 : {
 		"driver_name" : "P4",
-		"driver_avatar" : preload("res://game/gui/avatars/avatar_04.png"),
+		"driver_avatar" : preload("res://assets/textures/avatars/avatar_04.png"),
 		"driver_color" : Rfs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLT_TYPE.BASIC,
@@ -98,19 +98,19 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 enum AI_TYPES {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
 	AI_TYPES.DEFAULT: {
-		"controller_type" : CONTROLLER_TYPE.AI,
+#		"controller_type" : CONTROLLER_TYPE.AI,
 		# driving
-		"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
-		"battle_engine_power": 120, # je enaka kot od  bolta
+#		"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
+#		"battle_engine_power": 120, # je enaka kot od  bolta
 		# ni še implementiran!!!!!!
-		"ai_brake_distance": 0.8, # množenje s hitrostjo
-		"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
+#		"ai_brake_distance": 0.8, # množenje s hitrostjo
+#		"ai_brake_factor": 150, # distanca do trka ... večja ko je, bolj je pazljiv
 		# battle
-		"aim_time": 1,
+#		"aim_time": 1,
 		#	"seek_rotation_range": 60,
 		#	"seek_rotation_speed": 3,
 		#	"seek_distance": 640 * 0.7,
-		"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo
+#		"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo
 	},
 }
 
@@ -179,20 +179,34 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 
 		# driving params
-		"accelaration_power": 5, # lerp, seštevanje, mmnoženje ali tween
-		"max_engine_power": 1000, # = konjev
-		"max_engine_rotation_deg": 32,
 		"engine_rotation_speed": 1,
 		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
-		#
-		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
-		"ang_damp": 16,
-		"front_mass_bias": 0.5,
-		"lin_damp_front": 0,
-		"lin_damp_rear": 0,
 
-		# floating
+		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
+
+		# DRIVING SETUP
+		# ---
+		# STRAIGHT
+		# masa in damping je na celotnem boltu
+		# ostale vrednosti so vse 0
+		"max_engine_power": 500, # = konjev
+		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
+		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
+		"lin_damp": 1, # vlpiva na pojemek
+		# ---
+		# MASSLESS
+		"max_engine_power_massless": 800,
+		"max_engine_rotation_deg_massless": 25,
+		"ang_damp_massless": 0,
+		"front_mass_bias_massless": 0.5,
+		"lin_damp_front_massless": 0,
+		"lin_damp_rear_massless": 5,
+		# ostale vrednosti ostanejo kot za STRAIGHT
+
+
+		# idle
 		# ROTATE
+		"idle_rotation_torque": 10000000,
 		"ang_damp_float": 0.5,
 		"free_rotation_power": 14, # na oba
 		"max_free_thrust_rotation_deg": 90,
@@ -279,29 +293,30 @@ enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
 	SURFACE.NONE: {
 		# "all powers"
-		"max_engine_power_factor": 1, # koliko original powerja
+		"engine_power_adon": 0,
 		"shake_amount": 0,
 	},
 	SURFACE.CONCRETE: {
 		# "all powers"
-		"max_engine_power_factor": 1.15, # koliko original powerja
+		"engine_power_adon": 0,
 		"shake_amount": 0,
 	},
 	SURFACE.NITRO: {
 		# "all powers"
-		"max_engine_power_factor": 2, # koliko original powerja
+		"engine_power_adon": 700,
 		"shake_amount": 0,
 	},
 	SURFACE.GRAVEL: {
 		# "all powers"
-		"max_engine_power_factor": 0.3,
+		"engine_power_adon": -800,
 		"shake_amount": 0,
 	},
 	SURFACE.HOLE: {
-		"max_engine_power_factor": 0.1,
+		"engine_power_adon": 0,
 		"shake_amount": 0,
 	},
 	SURFACE.TRACKING: {
+		"engine_power_adon": 0,
 		"shake_amount": 0,
 	},
 }

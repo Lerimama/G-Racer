@@ -83,7 +83,6 @@ collision_layer = 7
 physics_material_override = SubResource( 5260 )
 contacts_reported = 1
 contact_monitor = true
-angular_damp = 8.0
 script = ExtResource( 8 )
 __meta__ = {
 "_edit_vertical_guides_": [ -13.0, 13.0 ]
@@ -100,6 +99,7 @@ shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 
 [node name="MotionManager" type="Node" parent="."]
 script = ExtResource( 5 )
+idle_rotation = 2
 
 [node name="TrailSource" type="Position2D" parent="."]
 position = Vector2( -33, 0 )
@@ -289,7 +289,7 @@ __meta__ = {
 [node name="SelectorTimer" type="Timer" parent="BoltHud/BoltHudLines"]
 one_shot = true
 
-[node name="TurningLabel" type="Label" parent="BoltHud/BoltHudLines"]
+[node name="RotationLabel" type="Label" parent="BoltHud/BoltHudLines"]
 margin_top = 147.0
 margin_right = 128.0
 margin_bottom = 186.0
@@ -297,19 +297,6 @@ grow_horizontal = 2
 rect_min_size = Vector2( 48, 0 )
 custom_fonts/font = ExtResource( 1 )
 text = "TURN"
-align = 1
-__meta__ = {
-"_editor_description_": ""
-}
-
-[node name="FloatRotationLabel" type="Label" parent="BoltHud/BoltHudLines"]
-margin_top = 202.0
-margin_right = 128.0
-margin_bottom = 241.0
-grow_horizontal = 2
-rect_min_size = Vector2( 48, 0 )
-custom_fonts/font = ExtResource( 1 )
-text = "FLOAT"
 align = 1
 __meta__ = {
 "_editor_description_": ""

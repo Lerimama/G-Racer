@@ -17,8 +17,7 @@ onready var selector: Control = $BoltHudLines/Selector
 onready var selector_timer: Timer = $BoltHudLines/SelectorTimer
 onready var health_bar: Control = $BoltHudLines/HealthBar
 onready var health_bar_line: ColorRect = $BoltHudLines/HealthBar/Bar
-onready var turning_label: Label = $BoltHudLines/TurningLabel
-onready var float_rotation_label: Label = $BoltHudLines/FloatRotationLabel
+onready var rotation_label: Label = $BoltHudLines/RotationLabel
 
 
 func _ready() -> void:

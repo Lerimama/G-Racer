@@ -77,9 +77,6 @@ func _physics_process(delta: float) -> void:
 		controlled_bolt.is_shooting = true
 	else:
 		controlled_bolt.is_shooting = false
-	# dokler ni igre fizika ne dela
-	if Rfs.game_manager.game_on and controlled_bolt.is_active:
-		bolt_motion_manager.force_rotation = bolt_motion_manager.force_summ_rotation + controlled_bolt.global_rotation
 
 
 func _react_to_driving_input():
@@ -88,16 +85,14 @@ func _react_to_driving_input():
 	# FWD
 	if _driving_input_pressed.has(fwd_action):
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
-		bolt_motion_manager.bolt_shift = 1
 		if Rfs.game_manager.fast_start_window or not Rfs.game_manager.game_on:
 			controlled_bolt.revup()
 	# REV
 	elif _driving_input_pressed.has(rev_action):
-		bolt_motion_manager.bolt_shift = -1
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.REV
-	# FLOAT
+	# IDLE
 	else:
-		bolt_motion_manager.motion = bolt_motion_manager.MOTION.FLOAT
+		bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
 
 	# ROTATION
 	if _driving_input_pressed.has(left_action):

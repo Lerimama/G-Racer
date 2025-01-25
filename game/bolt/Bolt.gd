@@ -47,34 +47,32 @@ onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCo
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
 
 # XXX
-onready var motion_manager: Node = $MotionManager
-onready var engines: Node2D = get_node(bolt_engines_path)
 
 # debug linija
 onready var direction_line: Line2D = $DirectionLine
 
 # premik v handlerja
-var force: Vector2 = Vector2.ZERO
+onready var motion_manager: Node = $MotionManager
+onready var engines: Node2D = get_node(bolt_engines_path)
 var bolt_velocity: Vector2 = Vector2.ZERO
 onready var glide_power_front: float = bolt_profile["glide_power_F"] # 46500
 onready var glide_power_rear: float = bolt_profile["glide_power_R"] # 50000
-# funkcije motion v integrate, nitro
 
 
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"): # idle
-		use_nitro()
+		motion_manager.use_nitro()
 	if Input.is_action_just_pressed("no2"): # idle
-		if motion_manager.turning_mode == motion_manager.TURNING_MODE.keys().size() - 1:
-			motion_manager.turning_mode = 0
+		if motion_manager.selected_rotation_motion == motion_manager.ROTATION_MOTION.keys().size() - 1:
+			motion_manager.selected_rotation_motion = 0
 		else:
-			motion_manager.turning_mode = motion_manager.turning_mode + 1
+			motion_manager.selected_rotation_motion = motion_manager.selected_rotation_motion + 1
 	if Input.is_action_just_pressed("no3"): # idle
-		if motion_manager.floating_rotation == motion_manager.FLOATING_ROTATION.keys().size() - 1:
-			motion_manager.floating_rotation = 0
+		if motion_manager.idle_rotation == motion_manager.IDLE_ROTATION.keys().size() - 1:
+			motion_manager.idle_rotation = 0
 		else:
-			motion_manager.floating_rotation = motion_manager.floating_rotation + 1
+			motion_manager.idle_rotation = motion_manager.idle_rotation + 1
 
 
 func _ready() -> void:
@@ -98,8 +96,6 @@ func _ready() -> void:
 		available_weapons.append(get_node(path))
 
 	_add_bolt_controller()
-#	motion_manager.turning_mode = motion_manager.turning_mode
-
 
 	# debug
 	if driver_id == Pfs.DRIVER.P1:
@@ -108,79 +104,37 @@ func _ready() -> void:
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")
 
 
-onready var turning_label: Label = $BoltHudLines/TurningLabel
-onready var float_rotation_label: Label = $BoltHudLines/FloatRotationLabel
 func _process(delta: float) -> void:
 
 	trail_source.update_trail(bolt_velocity.length())
-
-	bolt_hud.turning_label.text = motion_manager.TURNING_MODE.find_key(motion_manager.turning_mode)
-	bolt_hud.float_rotation_label.text = motion_manager.FLOATING_ROTATION.find_key(motion_manager.floating_rotation)
-
 
 	if engines.engines_on: # poraba
 		update_stat(Pfs.STATS.GAS, gas_usage)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
-	# OPT tole lahko brez preverjanja stanja
+	# print("power %s / " % motion_manager.current_engine_power, "force %s" % force)
+
 	bolt_body_state = state
 	bolt_velocity = state.get_linear_velocity() # tole je bol prej brez stejta
 
 	if is_active:
+		set_applied_torque(motion_manager.torque_on_bolt)
 		match motion_manager.motion:
-			motion_manager.MOTION.FLOAT:
-				if motion_manager.bolt_shift > 0:
-					front_mass.set_applied_force(force)
-				else:
-					rear_mass.set_applied_force(force)
+			motion_manager.MOTION.IDLE:
+				# sila je 0 samo, če ni idle rotacije ali pa ja ROTATION, ker rotiram s torqu
+				front_mass.set_applied_force(motion_manager.force_on_bolt)
+				rear_mass.set_applied_force(-motion_manager.force_on_bolt)
 			motion_manager.MOTION.FWD:
-				front_mass.set_applied_force(force)
+				front_mass.set_applied_force(motion_manager.force_on_bolt)
+				rear_mass.set_applied_force(Vector2.ZERO)
 			motion_manager.MOTION.REV:
-				rear_mass.set_applied_force(force)
-			motion_manager.MOTION.DISARRAY: pass
+				rear_mass.set_applied_force(motion_manager.force_on_bolt)
+				front_mass.set_applied_force(Vector2.ZERO)
+			motion_manager.MOTION.DISARRAY:
 				#				front_mass.set_applied_force(Vector2.ZERO)
 				#				rear_mass.set_applied_force(Vector2.ZERO)
-
-	# printt("rot power", front_mass.get_applied_force().length(), rear_mass.get_applied_force().length())
-	# print("power %s / " % motion_manager.engine_power, "force %s" % force)
-
-
-func _change_activity(new_is_active: bool):
-
-	if not new_is_active == is_active:
-		is_active = new_is_active
-		match is_active:
-			true:
-				bolt_controller.set_process_input(true)
-				call_deferred("set_physics_process", true)
-				call_deferred("set_process", true)
-			false: # ga upočasnim v trenutni smeri
-				reset_bolt()
-				bolt_controller.set_process_input(false)
-				# nočeš ga skos slišat, če je multiplejer
-				engines.shutdown_engines()
-				Rfs.game_manager.check_for_level_finished()
-				call_deferred("set_physics_process", false)
-				call_deferred("set_process", false)
-
-
-func _add_bolt_controller():
-
-	 # zbrišem placeholder
-	bolt_controller.queue_free()
-
-	# opredelim controller sceno
-	var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
-	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
-
-	# spawn na vrh boltovega drevesa
-	bolt_controller = BoltController.instance()
-	bolt_controller.controlled_bolt = self
-	bolt_controller.bolt_motion_manager = motion_manager
-	bolt_controller.controller_type = driver_profile["controller_type"]
-	call_deferred("add_child", bolt_controller)
-	call_deferred("move_child", bolt_controller, 0)
+				pass
 
 
 # LAJF ----------------------------------------------------------------------------
@@ -227,7 +181,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 func _destroy_bolt():
 
 	_explode()
-	motion_manager.motion = motion_manager.MOTION.FLOAT
+	motion_manager.motion = motion_manager.MOTION.IDLE
 	engines.shutdown_engines()
 	self.is_active = false
 	update_stat(Pfs.STATS.LIFE, - 1)
@@ -279,13 +233,10 @@ func _revive_bolt():
 	update_stat(Pfs.STATS.HEALTH, 1)
 
 
-# UTILITI ------------------------------------------------------------------------------------------------
-
-
 func reset_bolt():
 	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v bolt "v igri"
 
-	motion_manager.motion = motion_manager.MOTION.FLOAT
+	motion_manager.motion = motion_manager.MOTION.IDLE
 	front_mass.set_applied_force(Vector2.ZERO)
 	front_mass.set_applied_torque(0)
 	rear_mass.set_applied_force(Vector2.ZERO)
@@ -296,11 +247,14 @@ func reset_bolt():
 		thrust.stop_fx()
 
 
+# UTILITI ------------------------------------------------------------------------------------------------
+
+
 func drive_in(drive_in_time: float = 2):
 
 	collision_shape.set_deferred("disabled", true)
 	modulate.a = 1
-	motion_manager.motion = motion_manager.MOTION.FLOAT
+	motion_manager.motion = motion_manager.MOTION.IDLE
 	engines.start_engines()
 
 	#	var drive_in_time: float = 2
@@ -337,22 +291,7 @@ func drive_out():
 	#	set_sleeping(true)
 	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
 	#	set_physics_process(false)
-	#	motion_manager.motion = motion_manager.MOTION.FLOAT
-
-
-func use_nitro():
-	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
-
-	if not using_nitro:
-		printt ("pred ", motion_manager.max_engine_power_adon, motion_manager.max_engine_power, "-----------------")
-		Rfs.sound_manager.play_sfx("pickable_nitro")
-		motion_manager.max_engine_power_adon = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		motion_manager.engine_power += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		printt ("med ", motion_manager.max_engine_power_adon, motion_manager.max_engine_power,"-----------------")
-		yield(get_tree().create_timer(Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]),"timeout")
-		motion_manager.max_engine_power_adon = 0
-		using_nitro = false
-		printt ("po ", motion_manager.max_engine_power_adon, motion_manager.max_engine_power,"-----------------")
+	#	motion_manager.motion = motion_manager.MOTION.IDLE
 
 
 func revup():
@@ -411,13 +350,49 @@ func screen_wrap(): # ne uporabljam
 	bolt_body_state.set_transform(xform)
 
 
+func _change_activity(new_is_active: bool):
+
+	if not new_is_active == is_active:
+		is_active = new_is_active
+		if is_active:
+			bolt_controller.set_process_input(true)
+			call_deferred("set_physics_process", true)
+			call_deferred("set_process", true)
+		else: # ga upočasnim v trenutni smeri
+			reset_bolt()
+			bolt_controller.set_process_input(false)
+			# nočeš ga skos slišat, če je multiplejer
+			engines.shutdown_engines()
+			Rfs.game_manager.check_for_level_finished()
+			call_deferred("set_physics_process", false)
+			call_deferred("set_process", false)
+
+
+func _add_bolt_controller():
+
+	 # zbrišem placeholder
+	bolt_controller.queue_free()
+
+	# opredelim controller sceno
+	var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
+	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
+
+	# spawn na vrh boltovega drevesa
+	bolt_controller = BoltController.instance()
+	bolt_controller.controlled_bolt = self
+	bolt_controller.bolt_motion_manager = motion_manager
+	bolt_controller.controller_type = driver_profile["controller_type"]
+	call_deferred("add_child", bolt_controller)
+	call_deferred("move_child", bolt_controller, 0)
+
+
 func on_item_picked(pickable_key: int):
 
 	match pickable_key:
 		Pfs.PICKABLE.PICKABLE_SHIELD:
 			_spawn_shield()
 		Pfs.PICKABLE.PICKABLE_NITRO:
-			use_nitro()
+			motion_manager.use_nitro()
 		_:
 			# če spreminja statistiko
 			if Pfs.pickable_profiles[pickable_key].keys().has("driver_stat"):

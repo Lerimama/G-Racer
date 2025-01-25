@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/avatar_05.png-e1a21a77b139088cb6c1a862a454ac06.stex"
+path="res://.import/avatar_06.png-62393eb043c842f0a4d04f346e700d59.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/gui/avatars/avatar_05.png"
-dest_files=[ "res://.import/avatar_05.png-e1a21a77b139088cb6c1a862a454ac06.stex" ]
+source_file="res://assets/textures/avatars/avatar_06.png"
+dest_files=[ "res://.import/avatar_06.png-62393eb043c842f0a4d04f346e700d59.stex" ]
 
 [params]
 
