@@ -12,7 +12,7 @@ var mm_per_32_grid_unit: float = 640 # grid enotra je 32px, 1 px je 2 cm
 var m_per_32_grid_unit: float = 0.64 # grid enotra je 32px, 1 px je 2 cm
 var unit_one: float = 32
 
-enum LEVEL {STAFF, FIRST_DRIVE}
+enum LEVEL {STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
 var level_settings: Dictionary = {
 	LEVEL.FIRST_DRIVE: {
 		"level_name": "",
@@ -24,7 +24,7 @@ var level_settings: Dictionary = {
 		"level_name": "",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
-		"lap_limit": 2,
+		"lap_limit": 1,
 		},
 }
 
@@ -46,7 +46,8 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	# modes
 	"enemies_mode": false,
 	"easy_mode": false,
-	"full_equip_mode": true,
+	"full_equip_mode": false,
+	"full_equip_value": 100,
 	"drifting_mode": true, # drift ali tilt?
 	# shadows
 	"game_shadows_rotation_deg": 45,
@@ -65,24 +66,38 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
 
-var drivers_on_game_start: Array # seta se iz home
+var players_on_game_start: Array# = [0]# samo 1. level ... seta se iz home
 var current_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
-#var current_game_levels: Array = []
-#var current_game_levels: Array = [LEVEL.STAFF]
-var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
+var current_game_levels: Array = []
+#var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
 
 func _ready() -> void:
 
 	if OS.is_debug_build():
-		default_game_settings["camera_zoom_range"] = [2, 2]
+		current_game_levels = [LEVEL.STAFF]
+
+#		default_game_settings["camera_zoom_range"] = [2, 2]
 #		default_game_settings["camera_zoom_range"] = [3, 3]
-#		default_game_settings["camera_zoom_range"] = [5, 5]
+		default_game_settings["camera_zoom_range"] = [5, 5]
 		default_game_settings["start_countdown"] = false
 #		default_game_settings["all_bolts_on_screen_mode"] = false
 		default_game_settings["easy_mode"] = true
+#		default_game_settings["full_equip_mode"] = true
+		default_game_settings["enemies_mode"] = true
 		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)
+
+		players_on_game_start = [
+			Pfs.DRIVER.P1
+#			Pfs.DRIVER.P1, Pfs.DRIVER.P2
+#			Pfs.DRIVER.P1, Pfs.DRIVER.P2, Pfs.DRIVER.P3, Pfs.DRIVER.P4
+			]
+
+	if default_game_settings["full_equip_mode"]:
+		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]
+		Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = default_game_settings["full_equip_value"]
+		Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = default_game_settings["full_equip_value"]
 
 
 func get_level_game_settings(selected_level_index: int):

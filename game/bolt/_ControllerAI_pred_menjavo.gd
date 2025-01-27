@@ -8,8 +8,9 @@ enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
 var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
-var controlled_bolt: Node2D
-var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
+var controlled_bolt: Bolt
+var controller_type: int # OPT da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
+var bolt_motion_manager: Node
 
 # navigacija
 var ai_target: Node2D = null
@@ -48,8 +49,7 @@ var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
 var goals_to_reach: Array = []# lovi jih v zaporedju, ko so ujeti se zbrišejo, če obstaja cilj je na koncu
 var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
-var power_speed_factor: float # delež engine_power, ki manipulira z engine powerjem in imitira hitrost
-var bolt_motion_manager: Node
+var power_speed_factor: float # delež current_engine_power, ki manipulira z engine powerjem in imitira hitrost
 
 
 func _input(event: InputEvent) -> void:
@@ -63,8 +63,8 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed("no3"):
 		wanted_speed = 900
 	if Input.is_action_just_pressed("no4"): # follow leader
-#		wanted_speed = -1
-		bolt_motion_manager.use_nitro()
+		wanted_speed = -1
+#		controlled_bolt.using_nitro = true
 
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, level_navigation.get_local_mouse_position())
@@ -76,16 +76,20 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	bolt_motion_manager.is_ai = true
+	# enemi koližn lejer
+	controlled_bolt.set_collision_layer_bit(6, true)
+	printt("controller", self.name, controlled_bolt.get_collision_layer_bit(0))
+
 	randomize()
-	controlled_bolt = get_parent()
+	controlled_bolt.add_to_group(Rfs.group_ai)
+
+	bolt_motion_manager.is_ai = true
+
 	ai_navigation_line = Line2D.new()
 	Rfs.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
 	ai_navigation_line.default_color = Color.red
 	ai_navigation_line.z_index = 10
-
-	controlled_bolt.add_to_group(Rfs.group_ai)
 
 	# ray exceptions
 	scanning_ray.add_exception(controlled_bolt)
@@ -115,22 +119,28 @@ func _physics_process(delta: float) -> void:
 				self.ai_state = AI_STATE.SEARCH
 		# debug line
 		force_direction_line.set_point_position(0, Vector2.ZERO)
-		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.global_rotation))
+		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.rotation))
 
-		if _update_vision():
-			controlled_bolt.set_linear_velocity(braking_velocity)
-		bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+		# tole NE ŠTIMA pomoje .... dela error pomoje
 
-		#		var roundabout_position = _update_vision()
-		#		if roundabout_position:# is Vector2:
-		#			controlled_bolt.set_linear_velocity(braking_velocity)
-		#			if roundabout_position == Vector2.ZERO:
-		#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
-		#			else:
-		#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
-		#			navigation_agent.set_target_location(roundabout_position) # _temp?
-		#		else:
-		#			bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+
+		# KLJUČ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		# tukaj, ker je za PLAYERJA drugače
+		bolt_motion_manager.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
+
+#		var roundabout_position = _update_vision()
+#		if roundabout_position:# is Vector2:
+#			controlled_bolt.set_linear_velocity(braking_velocity)
+#			if roundabout_position == Vector2.ZERO:
+#				pass
+#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
+#			else:
+#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
+#			navigation_agent.set_target_location(roundabout_position) # _temp?
+#		else:
+#			bolt_motion_manager.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
+#			controlled_bolt.force_rotation = Vector2.ZERO.angle_to_point(- vector_to_target)
+
 
 
 func _state_machine(delta: float):
@@ -158,8 +168,7 @@ func _state_machine(delta: float):
 			# če ni tarče in je dosegel nav target setam novo random točko
 			elif search_target_reached:
 				self.ai_state = AI_STATE.SEARCH
-			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
-#			controlled_bolt.engine_power = controlled_bolt.max_engine_power * engine_power_factor_search
+				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			ai_target = _get_better_targets(ai_target)
@@ -185,7 +194,7 @@ func _state_machine(delta: float):
 
 		AI_STATE.MOUSE_CLICK:
 			navigation_agent.set_target_location(ai_target.global_position)
-			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power / 3
+			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 			_react_to_target(ai_target)
 
 
@@ -197,12 +206,11 @@ func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
 		return false
 
 	if wanted_speed == 0:
-		bolt_motion_manager.current_engine_power = 0
+		bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 	else:
 		var current_speed: float = controlled_bolt.bolt_body_state.get_linear_velocity().length()
 		if current_speed > wanted_speed:
-			bolt_motion_manager.current_engine_power = lerp(bolt_motion_manager.current_engine_power, 0, speed_change_rate)
-
+			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 	return true
 
 
@@ -267,7 +275,7 @@ func _update_vision():
 
 
 func _change_ai_state(new_ai_state: int):
-	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
+#	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
 	scanning_ray.enabled = false
 	target_ray.enabled = false
@@ -434,12 +442,12 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 		if distance_to_target < keep_distance:
 			if keep_on_distance: # ustavi tik pred tarčo
 				target_closeup_breaking_factor = breaking_factor_keep
-				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power * engine_power_factor_keep
+				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 			elif be_aggressive: # fuuul power čez tarčo
 				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 			else: # spusti gasa čez tarčo
-				bolt_motion_manager.current_engine_power = 0
-			bolt_motion_manager.current_engine_power = 0
+				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
+#			bolt_motion_manager.accelarate_to_engine_power(0) # zgleda obs
 		elif distance_to_target < near_distance:
 			if be_aggressive: # pospešuje proti tarči
 				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
@@ -447,7 +455,7 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 			else: # upočasnuje proti tarči
 				target_closeup_breaking_factor = breaking_factor_near
 		else:
-			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
+				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 		braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
 		controlled_bolt.set_linear_velocity(braking_velocity)
 	else:
@@ -456,6 +464,8 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 
 
 func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk
+	# drugačen smisel ... to je stvar, ko težko voziš ... dodaš "čudne" sile
+
 	pass
 
 
@@ -492,7 +502,7 @@ func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # 
 	else:
 		#		printt ("game on SMS", new_game_state)
 		self.ai_state = AI_STATE.OFF
-		bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
+		bolt_motion_manager = bolt_motion_manager.MOTION.IDLE
 
 
 func _on_NavigationAgent2D_path_changed() -> void:
@@ -528,3 +538,10 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 	navigation_agent.set_velocity(controlled_bolt.bolt_velocity)
 
 	print("avoided")
+
+
+
+
+
+# OBS --------------------------------------
+

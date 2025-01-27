@@ -38,7 +38,7 @@ enum STATS {
 		BULLET_COUNT, MISILE_COUNT, MINA_COUNT,
 		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
 		}
-var default_level_stats: Dictionary = {
+var start_bolt_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
 	STATS.BEST_LAP_TIME: 0,
@@ -98,7 +98,7 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 enum AI_TYPES {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
 	AI_TYPES.DEFAULT: {
-#		"controller_type" : CONTROLLER_TYPE.AI,
+		"controller_type" : CONTROLLER_TYPE.AI,
 		# driving
 #		"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 #		"battle_engine_power": 120, # je enaka kot od  bolta
@@ -171,6 +171,8 @@ enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
+		"bolt_scene_ai": load("res://game/bolt/ai/Bolt_AI.tscn"),
+
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
@@ -183,7 +185,6 @@ var bolt_profiles: Dictionary = {
 		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
 
 		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
-
 		# DRIVING SETUP
 		# ---
 		# STRAIGHT
@@ -203,19 +204,33 @@ var bolt_profiles: Dictionary = {
 		"lin_damp_rear_massless": 5,
 		# ostale vrednosti ostanejo kot za STRAIGHT
 
-
 		# idle
 		# ROTATE
 		"idle_rotation_torque": 10000000,
 		"ang_damp_float": 0.5,
-		"free_rotation_power": 14, # na oba
 		"max_free_thrust_rotation_deg": 90,
-		# DRIFT
+#		"free_rotation_power": 14, # na oba
+#		# DRIFT
+#		"drift_power": 17000, # na rear
+#		# GLIDE
+#		"glide_power_F": 465,#00,
+#		"glide_power_R": 500,#00,
+#		"glide_ang_damp": 5, # da se ha rotirat
+		"bounce": 0.5,
+		"friction": 0.2,
+
+		# ai temp
+		"ai_engine_power_fast_start": 5000, # pospešek motorja do največje moči (horsepower?)
+		"idle_lin_damp": 0,
+		"idle_ang_damp": 0,
+		"free_rotation_power": 14000, # na oba
 		"drift_power": 17000, # na rear
-		# GLIDE
-		"glide_power_F": 465,#00,
-		"glide_power_R": 500,#00,
+		"glide_power_F": 46500,
+		"glide_power_R": 50000,
 		"glide_ang_damp": 5, # da se ha rotirat
+#		"ai_max_engine_rotation_deg": 90, # obračanje koles (45 stzopinj je bolj ala avto)
+		# material
+
 		},
 }
 

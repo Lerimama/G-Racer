@@ -49,12 +49,42 @@ var goals_to_reach: Array = []
 func _input(event: InputEvent) -> void:
 
 
+	#	if Input.is_action_just_pressed("m"):
+	#		var bus_index: int = AudioServer.get_bus_index("GameMusic")
+	#		var bus_is_mute: bool = AudioServer.is_bus_mute(bus_index)
+	#		AudioServer.set_bus_mute(bus_index, not bus_is_mute)
+
 	if Input.is_action_just_pressed("no1"):
 		get_tree().set_group(Rfs.group_shadows, "imitate_3d", true)
 	elif Input.is_action_just_pressed("no2"):
 		get_tree().set_group(Rfs.group_shadows, "imitate_3d", false)
 	elif Input.is_action_just_pressed("no3"):
 		_animate_day_night()
+
+#	if Input.is_action_just_pressed("no1"): # idle
+#		Rfs.current_3Dworld.change_follow_target(bolts_in_game[0])
+	#	if Input.is_action_just_pressed("no2"): # race
+	#		for bolt in bolts_in_game:
+	#			if bolt.is_in_group(Rfs.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(bolt.bolt_tracker)
+	#	if Input.is_action_just_pressed("no3"):
+	#		for bolt in bolts_in_game: # search
+	#			if bolt.is_in_group(Rfs.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(Rfs.current_level.tilemap_edge)
+	#	if Input.is_action_just_pressed("no4"): # follow leader
+	#		for bolt in bolts_in_game:
+	#			if bolt.is_in_group(Rfs.group_ai):
+	#				bolt.get_node("AIController").set_ai_target(camera_leader)
+
+
+#	if Input.is_action_just_pressed("no5"):
+#		for bolt in bolts_in_game:
+#			if bolt.is_in_group(Rfs.group_players):
+#				bolt.on_destroy()
+#				#				bolt.driver_stats["gas_count"] = 0
+#				#			if bolt.is_in_group(Rfs.group_ai):
+#				#				bolt.driver_stats["gas_count"] = 0
+	pass
 
 
 func _ready() -> void:
@@ -74,6 +104,7 @@ func _process(delta: float) -> void:
 	bolts_in_game = get_tree().get_nodes_in_group(Rfs.group_bolts)
 	pickables_in_game = get_tree().get_nodes_in_group(Rfs.group_pickables)
 
+	#	if game_on:
 	_update_ranking()
 
 	# camera leader
@@ -82,6 +113,18 @@ func _process(delta: float) -> void:
 			self.camera_leader = bolt
 			break
 		self.camera_leader = null
+	#	var curr_active_players: Array = []
+	#	for bolt in bolts_in_game:
+	#		if bolt.is_in_group(Rfs.group_players) and bolt.is_active:
+	#			curr_active_players.append(bolt)
+	#	if curr_active_players.empty():
+	#		camera_leader = null
+	#	else:
+	#		camera_leader = curr_active_players[0]
+
+#	# premik tarče kamere
+#	if not Rfs.game_camera.follow_target == camera_leader: # da kamera ne reagira, če je že setan isti plejer
+#		Rfs.game_camera.follow_target = camera_leader
 
 
 func _change_camera_leader(new_camera_leader: Node2D):
@@ -95,17 +138,23 @@ func _change_camera_leader(new_camera_leader: Node2D):
 		Rfs.game_camera.follow_target = camera_leader
 
 
+
+
+
+
 func _set_game():
 
 	game_settings = Sts.get_level_game_settings(current_level_index)
+
 	_spawn_level()
+
 	hud.set_hud()
 	self.connect("game_state_changed", hud, "_on_game_state_change") # statistika med boltom in hudom
-	Rfs.game_camera.follow_target = Rfs.current_level.start_camera_position_node
 
 	# playing field
 	var playing_field_node: Node2D = Rfs.game_camera.playing_field
 	playing_field_node.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
+
 	if game_settings["all_bolts_on_screen_mode"]:
 		match Rfs.current_level.level_type:
 			Rfs.current_level.LEVEL_TYPE.BATTLE:
@@ -116,6 +165,9 @@ func _set_game():
 				playing_field_node.enable_playing_field(true)
 	else:
 		playing_field_node.enable_playing_field(false)
+
+
+	Rfs.game_camera.follow_target = Rfs.current_level.start_camera_position_node
 
 	# drivers
 	activated_driver_ids.clear()
@@ -128,21 +180,27 @@ func _set_game():
 		for bolt in players_qualified:
 			activated_driver_ids.append(bolt.driver_id)
 	players_qualified.clear()
-	#	printt("DRIVERS", activated_driver_ids)
 
-	# AI
+	# get enemies
 	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI driver_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
-		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
+		empty_positions_count = 1 # debug
 		for empty_position in empty_positions_count:
 			# dobim štartni id bolta in umestim ai data
 			var new_driver_index: int = activated_driver_ids.size()
 			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
 			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPES.DEFAULT]["controller_type"]
 			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
+		#	printt("DRIVERS", activated_driver_ids)
 
-	# spawn bolts ... po vrsti aktivacije
+	# količine orožij
+	if game_settings["full_equip_mode"]:
+		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = game_settings["full_equip_value"]
+		Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = game_settings["full_equip_value"]
+		Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = game_settings["full_equip_value"]
+
+	# spawn bolts on positions (po vrsti aktivacije)
 	var spawned_position_index = 0
 	for driver_id in activated_driver_ids: # so v ranking zaporedju
 		_spawn_bolt(driver_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
@@ -201,12 +259,25 @@ func _start_game():
 	fast_start_window = false
 
 
+func check_for_level_finished():
+	# preverja, če je še kakšen player aktiven ... za GO
+
+	var current_active_players: Array = []
+
+	for bolt in bolts_in_game:
+		if bolt.is_active and bolt.is_in_group(Rfs.group_players):
+			current_active_players.append(bolt)
+
+	# če so vsi neaktivni, preverim kdo je v cilju
+	if current_active_players.empty():
+		end_level()
+
+
 func end_level():
 
 	Rfs.game_camera.follow_target = Rfs.current_level.finish_camera_position_node
 
-	if game_on:
-
+	if not game_on:
 		game_on = false
 		emit_signal("game_state_changed", game_on, level_settings) #  poslušajo drajverji,  hud3 "signal dobijo"
 
@@ -252,10 +323,8 @@ func end_level():
 				level_finished_ui.open_level_finished(bolts_finished, bolts_in_game)
 			else:
 				game_over_ui.open_gameover(bolts_finished, bolts_in_game)
-				print("bolts_finished", bolts_finished)
 
 		else:
-			print("bolts_finished else ", bolts_finished)
 			game_over_ui.open_gameover(bolts_finished, bolts_in_game)
 			#		var fade_time = 1
 			#		var fade_in_tween = get_tree().create_tween()
@@ -379,7 +448,7 @@ func _bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
 		# last lap
 		var laps_count: int = curr_bolt_level_data[Pfs.STATS.LAPS_FINISHED].size()
 		if laps_count >= level_settings["lap_limit"]:
-			bolts_finished.append(bolt_across)
+			bolts_finished.append(self)
 			var drive_out_time: float = 2
 			var drive_out_vector: Vector2 = Rfs.current_level.drive_out_position.rotated(Rfs.current_level.level_finish.global_rotation)
 			bolt_across.drive_out(drive_out_time, drive_out_vector)
@@ -464,8 +533,7 @@ func _spawn_level():
 
 	# level name (iz seznama levelov v igri)
 	var level_to_load_id: int = Sts.current_game_levels[current_level_index]
-	var level_spawn_parent: Node = game_view.get_node("Viewport") # VP node
-#	var level_spawn_parent: Node = Rfs.game_camera.get_parent()
+	var level_spawn_parent: Node = Rfs.game_camera.get_parent()
 
 	# level settings
 	level_settings = Sts.level_settings[level_to_load_id]
@@ -494,50 +562,54 @@ func _spawn_level():
 	if Rfs.current_level.level_finish_path:
 		Rfs.current_level.get_node(Rfs.current_level.level_finish_path).connect("finish_reached", self, "_bolt_across_finish_line")
 
-	print ("spawned level_stats", level_stats)
+	print (level_stats)
 
 
 func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
 
 	var bolt_type: int = Pfs.driver_profiles[bolt_driver_id]["bolt_type"]
+
 	# debug ... ai spawn
 	var scene_name: String = "bolt_scene"
-#	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
-#		scene_name = "bolt_scene_ai"
+	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
+		scene_name = "bolt_scene_ai"
 	var NewBoltInstance: PackedScene = Pfs.bolt_profiles[bolt_type][scene_name]
+
 
 	var new_bolt = NewBoltInstance.instance()
 	new_bolt.driver_id = bolt_driver_id
 	new_bolt.modulate.a = 0 # za intro
 	new_bolt.rotation_degrees = Rfs.current_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
-
 	# setam mu profile ... iz njih podatke povleče sam na readi
 	new_bolt.driver_profile = Pfs.driver_profiles[bolt_driver_id].duplicate()
 	new_bolt.driver_stats = Pfs.start_bolt_stats.duplicate()
 	new_bolt.bolt_profile = Pfs.bolt_profiles[bolt_type].duplicate()
 	Rfs.node_creation_parent.add_child(new_bolt)
 
-	# AI
+	# setup
 	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
 		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
-
-	# race trackers
+	printt("on spawn", Rfs.current_level.LEVEL_TYPE.keys()[Rfs.current_level.level_type])
 	match Rfs.current_level.level_type:
 		Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
 			new_bolt.bolt_tracker = Rfs.current_level.level_track.set_new_bolt_tracker(new_bolt)
 
-	# signali
-	self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change")
-	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_change")
-	new_bolt.connect("bolt_stat_changed", hud, "_on_bolt_stat_changed")
+	#	drivers_level_data[new_bolt.driver_id] = driver_level_data_template.duplicate() # ta način jih vse poveže???
 
-	# bolts level stats
-	level_stats[bolt_driver_id] = Pfs.start_bolt_level_stats.duplicate()
-	level_stats[bolt_driver_id][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
+	level_stats[bolt_driver_id] = Pfs.default_level_stats.duplicate()
+	# prepišem array v slovarju, ker  če ne ni unique
+	level_stats[bolt_driver_id][Pfs.STATS.LAPS_FINISHED] = []
 	level_stats[bolt_driver_id][Pfs.STATS.GOALS_REACHED] = []
 
-	emit_signal("bolt_spawned", new_bolt, level_stats[bolt_driver_id]) # zaenkrat samo HUD, da prižge in napolne statbox
+	self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change") # statistika med boltom in hudom
+	new_bolt.connect("bolt_stat_changed", hud, "_on_bolt_stat_changed") # statistika med boltom in hudom
+
+#	for stat_key in level_stats.keys():
+	for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]:
+		hud.update_bolt_level_stats(bolt_driver_id, stat_key, level_stats[bolt_driver_id][stat_key])
+
+	emit_signal("bolt_spawned", new_bolt) # pošljem na hud, da prižge stat line in ga napolne
 
 
 func _spawn_random_pickables():
@@ -559,7 +631,6 @@ func _spawn_random_pickables():
 	# random timer reštart
 	var random_pickable_spawn_time: int = [1, 2, 3].pick_random()
 	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # OPT ... uvedi node timer
-
 	_spawn_random_pickables()
 
 
@@ -638,13 +709,3 @@ func _on_body_exited_playing_field(body: Node) -> void:
 		_pull_bolt_on_field(body)
 	elif body is Bullet:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
-
-
-func _on_bolt_activity_change(changed_bolt: Node2D):
-
-	# preverja, če je še kakšen player aktiven ... za GO
-	if changed_bolt.is_active == false:
-		for bolt in bolts_in_game:
-			if bolt.is_active and bolt.is_in_group(Rfs.group_players):
-				return
-		end_level()

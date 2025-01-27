@@ -259,7 +259,7 @@ func _on_PlayBtn_pressed() -> void:
 
 	# setam vrednost v Sts.
 	Sts.current_game_settings["enemies_mode"] = enemies_mode # slovar, ki je duplikat in se ustvari na Sts. ready
-	Sts.drivers_on_game_start = drivers_activated
+	Sts.players_on_game_start = drivers_activated
 
 #	Sts.bolts_activated = drivers_in_game
 	Rfs.main_node.home_out()

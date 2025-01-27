@@ -87,9 +87,15 @@ func _react_to_driving_input():
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
 		if Rfs.game_manager.fast_start_window or not Rfs.game_manager.game_on:
 			controlled_bolt.revup()
+		# tukaj, ker je za AI drugače
+#		var lerp_to_angle: float = bolt_motion_manager.rotation_dir * deg2rad(bolt_motion_manager.max_engine_rotation_deg)
+#		bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, lerp_to_angle, bolt_motion_manager.engine_rotation_speed)
 	# REV
 	elif _driving_input_pressed.has(rev_action):
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.REV
+		# tukaj, ker je za AI drugače
+#		var lerp_to_angle: float = - bolt_motion_manager.rotation_dir * deg2rad(bolt_motion_manager.max_engine_rotation_deg)
+#		bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, lerp_to_angle * deg2rad(bolt_motion_manager.max_engine_rotation_deg), bolt_motion_manager.engine_rotation_speed)
 	# IDLE
 	else:
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
@@ -101,6 +107,9 @@ func _react_to_driving_input():
 		bolt_motion_manager.rotation_dir = 1
 	else:
 		bolt_motion_manager.rotation_dir = 0
+		# tukaj, ker je za AI drugače
+		#bolt_motion_manager.force_rotation = 0 AI dobi še tole ... pa močišotimaj
+
 
 
 func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # od GMja

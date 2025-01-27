@@ -25,8 +25,8 @@ onready var setup_table: Control = $TestUI/SetupPanel/SetupTable
 func _ready():
 #	print("KAMERA")
 
-	if Rfs.game_camera == null:
-		Rfs.game_camera = self
+#	if Rfs.game_camera == null:
+	Rfs.game_camera = self
 	zoom = Vector2.ONE
 
 #	$__screen_size.hide()

@@ -665,6 +665,8 @@ __meta__ = {
 - sky > 10"
 }
 camera_limits_rect_path = NodePath("CameraLimits")
+level_finish_path = NodePath("Racing/LevelFinish")
+level_track_path = NodePath("Racing/LevelTrack")
 
 [node name="LevelOriginPosition" type="Position2D" parent="."]
 rotation = -0.785397
@@ -841,13 +843,13 @@ pickable_key = 2
 position = Vector2( -3660, -606 )
 
 [node name="PickableNitro6" parent="Pickables" instance=ExtResource( 30 )]
-position = Vector2( -3400, -619 )
+position = Vector2( 60, -129 )
 
 [node name="PickableNitro7" parent="Pickables" instance=ExtResource( 30 )]
-position = Vector2( -3182, -613 )
+position = Vector2( 164, -81 )
 
 [node name="PickableNitro8" parent="Pickables" instance=ExtResource( 30 )]
-position = Vector2( -2963, -623 )
+position = Vector2( 80, -14 )
 
 [node name="Buiildings" type="Node2D" parent="."]
 

@@ -26,7 +26,7 @@ func _ready() -> void:
 	for box in statboxes:
 		box.hide()
 
-	Rfs.game_manager.connect("bolt_spawned", self, "_on_bolt_spawned") # signal pride iz GM in pošlje spremenjeno statistiko
+	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
 func set_hud(): # kliče GM
@@ -35,6 +35,8 @@ func set_hud(): # kliče GM
 	match Rfs.current_level.level_type:
 		Rfs.current_level.LEVEL_TYPE.RACE_TRACK, Rfs.current_level.LEVEL_TYPE.RACE_GOAL:
 			game_timer.hunds_mode = true
+#			game_timer.stopwatch_mode = true
+
 	game_timer.show()
 	record_lap_label.hide()
 
@@ -117,7 +119,7 @@ func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool 
 # PRIVAT ------------------------------------------------------------------------------------------------------------
 
 
-func _on_bolt_spawned(spawned_bolt: Node2D):
+func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
 
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
 	var spawned_driver_statbox: Control = statboxes[spawned_bolt.driver_id]
@@ -133,18 +135,14 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 	spawned_driver_statbox.stat_points.stat_value = spawned_driver_stats[Pfs.STATS.POINTS]
 	spawned_driver_statbox.stat_cash.stat_value = spawned_driver_stats[Pfs.STATS.CASH]
 	spawned_driver_statbox.stat_wins.stat_value = spawned_driver_stats[Pfs.STATS.WINS]
-	#
-	#	spawned_driver_statbox.stat_level_rank.stat_value = spawned_driver_stats[Pfs.STATS.LEVEL_RANK]
-	#	spawned_driver_statbox.stat_level_time.stat_value = spawned_driver_stats[Pfs.STATS.LEVEL_TIME]
-	#	spawned_driver_statbox.stat_level_time.stat_value = spawned_driver_stats[Pfs.STATS.LEVEL_TIME]
-	#	if spawned_driver_stats[Pfs.STATS.LAPS_FINISHED] > 0: # na začetku skoraj zmeraj 1. krog, razen če začne s shranjene pozicije
-	#		var stat_value_text: String = str(spawned_driver_stats[Pfs.STATS.LAPS_FINISHED].size() + 1) + "/" + str(level_laps_limit)
-	#		spawned_driver_statbox.stat_laps_count.stat_value = spawned_driver_stats[Pfs.STATS.LAPS_FINISHED]
-	#	if spawned_driver_stats[Pfs.STATS.BEST_LAP_TIME] > 0: # na začetku skoraj zmeraj, razen, če je shranjen in se podira rekord
-	#		spawned_driver_statbox.stat_best_lap.stat_value = spawned_driver_stats[Pfs.STATS.BEST_LAP_TIME]
-	#	if spawned_driver_stats[Pfs.STATS.GOALS_REACHED].size() > 0: # na začetku skoraj zmeraj 1. krog, razen če začne s shranjene pozicije
-	#		# še čaka ... spawned_driver_statbox.stat_laps_count.stat_value = spawned_driver_stats[Pfs.STATS.GOALS_REACHED].size()# + "/" + str(level_laps_limit)
-	#		pass
+
+	for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
+		update_bolt_level_stats(spawned_bolt.driver_id, stat_key, bolts_level_stats[stat_key])
+#	spawned_driver_statbox.stat_level_rank.stat_value = bolts_level_stats[Pfs.STATS.LEVEL_RANK]
+#	spawned_driver_statbox.stat_laps_count.stat_value = bolts_level_stats[Pfs.STATS.LAPS_FINISHED]
+#	spawned_driver_statbox.stat_best_lap.stat_value = bolts_level_stats[Pfs.STATS.BEST_LAP_TIME]
+#	spawned_driver_statbox.stat_level_time.stat_value = bolts_level_stats[Pfs.STATS.LEVEL_TIME]
+	#	spawned_driver_statbox.stat_to_change = bolts_level_stats[Pfs.STATS.GOALS_REACHED]
 
 	# driver line
 	spawned_driver_statbox.driver_name_label.text = spawned_driver_profile["driver_name"]
@@ -157,6 +155,7 @@ func _on_bolt_spawned(spawned_bolt: Node2D):
 
 func _on_GameTimer_gametime_is_up() -> void:
 
+	print("stopwatch_mode " , game_timer.stopwatch_mode)
 	Rfs.game_manager.end_level()
 
 

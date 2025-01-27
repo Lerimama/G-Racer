@@ -22,8 +22,8 @@ func _ready() -> void:
 	Rfs.main_node = self
 
 #	home_in_intro()
-#	home_in_no_intro()
-	game_in()
+	home_in_no_intro()
+#	game_in()
 
 
 func home_in_intro():

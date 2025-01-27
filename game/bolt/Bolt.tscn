@@ -99,7 +99,6 @@ shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 
 [node name="MotionManager" type="Node" parent="."]
 script = ExtResource( 5 )
-idle_rotation = 2
 
 [node name="TrailSource" type="Position2D" parent="."]
 position = Vector2( -33, 0 )

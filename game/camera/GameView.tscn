@@ -21,3 +21,4 @@ current = true
 smoothing_speed = 20.0
 
 [editable path="Viewport/GameCamera"]
+[editable path="Viewport/GameCamera/TestUI/SetupPanel"]

@@ -31,6 +31,11 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 
 	var results: VBoxContainer = $Content/Results
 
+	# zazih
+	for child in results.get_children():
+		if not child.name == "Title":
+			child.queue_free()
+
 	# uvrščeni
 	for bolt in bolts_on_finish_line:
 		# spawn ranking line
@@ -38,9 +43,10 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		# set ranking line
 		var bolt_index = bolts_on_finish_line.find(bolt)
 		new_ranking_line.get_node("Rank").text = str(bolt_index + 1) + ". Place"
+		print(bolt.name)
 		new_ranking_line.get_node("Bolt").text = bolt.driver_profile["driver_name"]
 #		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.driver_stats["level_time"])
-		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.driver_stats[Pfs.STATS.LEVEL_TIME])
+		new_ranking_line.get_node("Result").text = Mts.get_clock_time(Rfs.game_manager.level_stats[bolt.driver_id][Pfs.STATS.LEVEL_TIME])
 		results.add_child(new_ranking_line)
 
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih
@@ -55,7 +61,6 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 			new_ranking_line.get_node("Bolt").text = str(bolt.driver_profile["driver_name"])
 			new_ranking_line.get_node("Result").text = "did no finish"
 			results.add_child(new_ranking_line)
-
 
 func _on_RestartBtn_pressed() -> void:
 	Rfs.main_node.reload_game()

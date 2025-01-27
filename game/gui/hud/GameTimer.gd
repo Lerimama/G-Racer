@@ -12,7 +12,7 @@ var game_time_hunds: int # čas igre v zaokroženih stotinkah
 
 # opredelijo se bo štartu tajmerja
 var hunds_mode: bool
-var stopwatch_mode: bool
+var stopwatch_mode: bool = true
 var sudden_death_mode: bool # dela samo, če ni stopwatch mode
 
 var game_time_limit: float
@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 			hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)
 
 			# game time is up
-			printt(game_time, game_time_limit, game_time - game_time_limit)
+			#			printt(game_time, game_time_limit, game_time - game_time_limit)
 			if game_time_left <= 0:
 				modulate = Rfs.color_red
 				stop_timer()
