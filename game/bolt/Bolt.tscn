@@ -127,28 +127,19 @@ shadow_color = Color( 0, 0, 0, 0 )
 [node name="Mass" type="Node2D" parent="."]
 
 [node name="Front" type="Node2D" parent="Mass"]
-position = Vector2( 73, 0 )
+position = Vector2( 65, 0 )
 
 [node name="FrontPin" type="PinJoint2D" parent="Mass/Front"]
-position = Vector2( 16, 0 )
 node_a = NodePath("../../..")
 node_b = NodePath("../FrontMass")
 
 [node name="FrontMass" type="RigidBody2D" parent="Mass/Front"]
-position = Vector2( 16, 0 )
 gravity_scale = 0.0
 can_sleep = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Mass/Front/FrontMass"]
 shape = SubResource( 5254 )
 disabled = true
-
-[node name="Polygon2D" type="Polygon2D" parent="Mass/Front/FrontMass/CollisionShape2D"]
-visible = false
-show_behind_parent = true
-position = Vector2( 14, 19 )
-offset = Vector2( -20, -19 )
-polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="Rear" type="Node2D" parent="Mass"]
 position = Vector2( -68, 0 )
@@ -165,13 +156,6 @@ linear_damp = 3.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Mass/Rear/RearMass"]
 shape = SubResource( 5254 )
 disabled = true
-
-[node name="Polygon2D" type="Polygon2D" parent="Mass/Rear/RearMass/CollisionShape2D"]
-visible = false
-show_behind_parent = true
-position = Vector2( 14, 19 )
-offset = Vector2( -20, -19 )
-polygon = PoolVector2Array( -19.5, 10, -19.5, -10, 31.5, -10, 31.5, 10 )
 
 [node name="__Z-X" type="Node" parent="."]
 

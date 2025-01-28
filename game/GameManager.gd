@@ -147,7 +147,7 @@ func _set_game():
 	for driver_id in activated_driver_ids: # so v ranking zaporedju
 		_spawn_bolt(driver_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
-
+	Rfs.ultimate_popup.hide()
 	_game_intro()
 
 

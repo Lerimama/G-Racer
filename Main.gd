@@ -1,5 +1,6 @@
 extends Node
 
+
 var fade_time = 0.7
 
 onready var home_scene_path: String = "res://home/Home.tscn"

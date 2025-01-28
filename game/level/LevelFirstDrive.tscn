@@ -818,6 +818,9 @@ __meta__ = {
 [node name="GoalPillar4" parent="Objects" instance=ExtResource( 3 )]
 position = Vector2( -5627, -3514 )
 
+[node name="ShapeShadows" parent="Objects/GoalPillar4" index="2"]
+shadow_owner_path = ""
+
 [node name="GoalPillar2" parent="Objects" instance=ExtResource( 3 )]
 position = Vector2( -6725, -1422 )
 

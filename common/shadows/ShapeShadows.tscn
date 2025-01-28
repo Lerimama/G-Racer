@@ -11,3 +11,4 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
+shadow_owner_path = ""

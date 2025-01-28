@@ -14,10 +14,10 @@ load_path = "res://.import/tile_split_circo.png-25b58d95486209f8ab5bb32c225e59c0
 [node name="ShadowTest" type="KinematicBody2D"]
 rotation = 0.256777
 script = ExtResource( 2 )
+height = 22.0
 elevation = 100
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 1 )]
-shadow_owner_path = ""
 shadow_caster_paths = [ NodePath("../Sprite"), NodePath("../TextureRect"), NodePath("../CollisionPolygon2D"), NodePath("../Polygon2D2") ]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
@@ -54,7 +54,7 @@ polygon = PoolVector2Array( 5, 53, 25, 115, 111, 129, 116, 35 )
 position = Vector2( 294.897, -168.415 )
 rotation = 0.136948
 offset = Vector2( 100, 100 )
-polygon = PoolVector2Array( 242, 79, 77, 240, 189, 250, 222, 181 )
+polygon = PoolVector2Array( 242, 79, 39.713, 241.534, 189, 250, 302.994, 194.968 )
 
 [node name="unmerged" type="Polygon2D" parent="."]
 visible = false
@@ -69,3 +69,8 @@ position = Vector2( 979.891, 194.168 )
 scale = Vector2( 4, 4 )
 frames = ExtResource( 7 )
 frame = 1
+
+[node name="Label" type="Label" parent="."]
+margin_right = 89.0
+margin_bottom = 43.0
+text = "320"

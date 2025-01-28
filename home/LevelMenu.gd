@@ -1,4 +1,8 @@
+tool
 extends HBoxContainer
+
+export var krneki : String = ""
+
 
 
 func _ready() -> void:
@@ -14,6 +18,11 @@ func _ready() -> void:
 			btn.pressed = false
 
 
+func _process(delta: float) -> void:
+
+	$LevelBtn/Label.text = krneki
+
+
 func _on_level_btn_toggled(is_pressed: bool, pressed_btn: Button):
 
 	var btn_index: int = get_children().find(pressed_btn)
@@ -26,9 +35,3 @@ func _on_level_btn_toggled(is_pressed: bool, pressed_btn: Button):
 		Sts.current_game_levels.erase(level_key_index)
 	print(Sts.current_game_levels)
 
-
-
-#	Sts.set_game_settings(Sts.Levels.RACE_DIRECT)
-#	animation_player.play("players_in")
-
-#enum LEVEL {STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov

@@ -10,6 +10,7 @@ var game_manager = null
 var hud = null
 var sound_manager = null
 var data_manager = null
+var ultimate_popup = null
 var main_node = null
 var game_over = null
 var level_completed = null

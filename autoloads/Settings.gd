@@ -12,15 +12,15 @@ var mm_per_32_grid_unit: float = 640 # grid enotra je 32px, 1 px je 2 cm
 var m_per_32_grid_unit: float = 0.64 # grid enotra je 32px, 1 px je 2 cm
 var unit_one: float = 32
 
-enum LEVEL {STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
+enum LEVELS {STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
 var level_settings: Dictionary = {
-	LEVEL.FIRST_DRIVE: {
+	LEVELS.FIRST_DRIVE: {
 		"level_name": "",
 		"level_path": "res://game/level/LevelFirstDrive.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
-	LEVEL.STAFF: {
+	LEVELS.STAFF: {
 		"level_name": "",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
@@ -71,12 +71,12 @@ var current_game_settings: Dictionary # duplikat originala, ki mu spremenim seti
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 var current_game_levels: Array = []
-#var current_game_levels: Array = [LEVEL.FIRST_DRIVE]
+#var current_game_levels: Array = [LEVELS.FIRST_DRIVE]
 
 func _ready() -> void:
 
 	if OS.is_debug_build():
-		current_game_levels = [LEVEL.STAFF]
+		current_game_levels = [LEVELS.STAFF]
 
 #		default_game_settings["camera_zoom_range"] = [2, 2]
 #		default_game_settings["camera_zoom_range"] = [3, 3]
@@ -89,9 +89,9 @@ func _ready() -> void:
 		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)
 
 		players_on_game_start = [
-			Pfs.DRIVER.P1
-#			Pfs.DRIVER.P1, Pfs.DRIVER.P2
-#			Pfs.DRIVER.P1, Pfs.DRIVER.P2, Pfs.DRIVER.P3, Pfs.DRIVER.P4
+			Pfs.DRIVERS.P1
+#			Pfs.DRIVERS.P1, PfsDRIVERSR.P2
+#			Pfs.DRIVERS.P1, Pfs.DRIVERS.P2, Pfs.DRIVERS.P3, Pfs.DRIVERS.P4
 			]
 
 	if default_game_settings["full_equip_mode"]:
@@ -111,9 +111,9 @@ func get_level_game_settings(selected_level_index: int):
 	match current_level:
 		# racing
 		# duel
-		LEVEL.STAFF:
+		LEVELS.STAFF:
 			pass
-		LEVEL.FIRST_DRIVE:
+		LEVELS.FIRST_DRIVE:
 			pass
 
 	return current_game_settings # pobere GM ob setanju igre

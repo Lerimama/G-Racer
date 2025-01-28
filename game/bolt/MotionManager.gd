@@ -46,8 +46,8 @@ var max_engine_rotation_deg: float
 
 # idle rotations
 onready var fast_start_engine_power: float = bolt.bolt_profile["fast_start_engine_power"]
-onready var idle_rotation_torque: float = bolt.bolt_profile["idle_rotation_torque"]
-onready var free_rotation_power: float = bolt.bolt_profile["free_rotation_power"]
+onready var spin_torque: float = bolt.bolt_profile["spin_torque"]
+#onready var free_rotation_power: float = bolt.bolt_profile["free_rotation_power"]
 
 
 func _ready() -> void:
@@ -282,7 +282,7 @@ func _change_rotation_direction(new_rotation_direction: float):
 			bolt.front_mass.linear_damp = bolt.bolt_profile["lin_damp_front_massless"]
 			bolt.rear_mass.linear_damp = bolt.bolt_profile["lin_damp_rear_massless"]
 		ROTATION_MOTION.SPIN: # mid zavijanje + malo drifta
-			torque_on_bolt = idle_rotation_torque * rotation_dir # cca 10000000
+			torque_on_bolt = spin_torque * rotation_dir # cca 10000000
 			bolt.mass = all_mass
 			bolt.front_mass.mass = 0
 			bolt.rear_mass.mass = 0

@@ -1,7 +1,8 @@
-[gd_resource type="Theme" load_steps=10 format=2]
+[gd_resource type="Theme" load_steps=12 format=2]
 
 [ext_resource path="res://assets/theme/fonts/body_small_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=3]
 
 [sub_resource type="StyleBoxEmpty" id=2]
 
@@ -26,6 +27,8 @@ border_width_right = 8
 border_width_bottom = 8
 border_color = Color( 1, 1, 1, 1 )
 
+[sub_resource type="StyleBoxFlat" id=12]
+
 [resource]
 default_font = ExtResource( 1 )
 Button/colors/font_color = Color( 1, 1, 1, 0.470588 )
@@ -47,4 +50,6 @@ Label/colors/font_color_shadow = Color( 0, 0, 0, 0 )
 Label/colors/font_outline_modulate = Color( 1, 1, 1, 1 )
 Label/fonts/font = ExtResource( 2 )
 Label/styles/normal = null
+LineEdit/fonts/font = ExtResource( 3 )
 Panel/styles/panel = SubResource( 7 )
+PopupDialog/styles/panel = SubResource( 12 )

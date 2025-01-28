@@ -87,7 +87,7 @@ func _ready() -> void:
 	_add_bolt_controller()
 
 	# debug
-	if driver_id == Pfs.DRIVER.P1:
+	if driver_id == Pfs.DRIVERS.P1:
 		Rfs.game_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")

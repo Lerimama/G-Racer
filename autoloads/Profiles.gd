@@ -61,37 +61,37 @@ var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 # ---------------------------------------------------------------------------------------------------------------------------
 func drivers(): pass
 
-enum DRIVER {P1, P2, P3, P4}
+enum DRIVERS {P1, P2, P3, P4}
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
-	DRIVER.P1 : {
+	DRIVERS.P1 : {
 		"driver_name": "P1",
 		"driver_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
 #		"driver_color": Color.white,
 		"driver_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
-		"bolt_type": BOLT_TYPE.BASIC,
+		"bolt_type": BOLTS.BASIC,
 	},
-	DRIVER.P2 : {
+	DRIVERS.P2 : {
 		"driver_name": "P2",
 		"driver_avatar": preload("res://assets/textures/avatars/avatar_02.png"),
 		"driver_color": Rfs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 #		"controller_type" : CONTROLLER_TYPE.JP1,
-		"bolt_type": BOLT_TYPE.BASIC,
+		"bolt_type": BOLTS.BASIC,
 	},
-	DRIVER.P3 : {
+	DRIVERS.P3 : {
 		"driver_name" : "P3",
 		"driver_avatar" : preload("res://assets/textures/avatars/avatar_03.png"),
 		"driver_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
-		"bolt_type": BOLT_TYPE.BASIC,
+		"bolt_type": BOLTS.BASIC,
 	},
-	DRIVER.P4 : {
+	DRIVERS.P4 : {
 		"driver_name" : "P4",
 		"driver_avatar" : preload("res://assets/textures/avatars/avatar_04.png"),
 		"driver_color" : Rfs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
-		"bolt_type": BOLT_TYPE.BASIC,
+		"bolt_type": BOLTS.BASIC,
 	},
 }
 
@@ -167,23 +167,64 @@ var controller_profiles : Dictionary = {
 # ---------------------------------------------------------------------------------------------------------------------------
 func bolt(): pass
 
-enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
+enum BOLTS {SMALL, BASIC, BIG, TRUCK}
 var bolt_profiles: Dictionary = {
-	BOLT_TYPE.BASIC: {
+	BOLTS.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-#		"bolt_scene_ai": load("res://game/bolt/ai/Bolt_AI.tscn"),
-
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
 		"idle_motion_gas_usage": -0.05, # per HSP?
 		"ai_target_rank": 5,
 		"on_hit_disabled_time": 2,
+		# driving params
+		"engine_rotation_speed": 1,
+		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
+		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
+		"bounce": 0.5,
+		"friction": 0.2,
+		# STRAIGHT
+		# masa in damping je na celotnem boltu
+		# ostale vrednosti so vse 0
+		"max_engine_power": 500, # = konjev
+		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
+		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
+		"lin_damp": 1, # vlpiva na pojemek
+		# ---
+		# MASSLESS
+		# ostale vrednosti ostanejo kot za STRAIGHT
+		"max_engine_power_massless": 800,
+		"max_engine_rotation_deg_massless": 25,
+		"ang_damp_massless": 0,
+		"front_mass_bias_massless": 0.5,
+		"lin_damp_front_massless": 0,
+		"lin_damp_rear_massless": 5,
+		# SPIN
+		"spin_torque": 10000000,
+		"ang_damp_float": 0.5,
+		"max_free_thrust_rotation_deg": 90,
+		"free_rotation_power": 14, # na oba
+		# DRIFT
+		"drift_power": 17000, # na rear
+		# GLIDE
+		"glide_power_F": 465,#00,
+		"glide_power_R": 500,#00,
+		"glide_ang_damp": 5, # da se ha rotirat
+		},
+	BOLTS.TRUCK: {
+		"bolt_scene": preload("res://game/bolt/Vechicle.tscn"),
+		"height": 30,
+		"elevation": 5,
+		"gas_usage": -0.1,
+		"idle_motion_gas_usage": -0.05,
+		"ai_target_rank": 11,
+		"on_hit_disabled_time": 2,
+		"bounce": 0.5,
+		"friction": 0.2,
 
 		# driving params
 		"engine_rotation_speed": 1,
 		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
-
 		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
 		# DRIVING SETUP
 		# ---
@@ -204,32 +245,11 @@ var bolt_profiles: Dictionary = {
 		"lin_damp_rear_massless": 5,
 		# ostale vrednosti ostanejo kot za STRAIGHT
 
-		# idle
 		# ROTATE
-		"idle_rotation_torque": 10000000,
+		"spin_torque": 10000000,
 		"ang_damp_float": 0.5,
 		"max_free_thrust_rotation_deg": 90,
-#		"free_rotation_power": 14, # na oba
-#		# DRIFT
-#		"drift_power": 17000, # na rear
-#		# GLIDE
-#		"glide_power_F": 465,#00,
-#		"glide_power_R": 500,#00,
-#		"glide_ang_damp": 5, # da se ha rotirat
-		"bounce": 0.5,
-		"friction": 0.2,
 
-		# ai temp
-		"ai_engine_power_fast_start": 5000, # pospešek motorja do največje moči (horsepower?)
-		"idle_lin_damp": 0,
-		"idle_ang_damp": 0,
-		"free_rotation_power": 14000, # na oba
-		"drift_power": 17000, # na rear
-		"glide_power_F": 46500,
-		"glide_power_R": 50000,
-		"glide_ang_damp": 5, # da se ha rotirat
-#		"ai_max_engine_rotation_deg": 90, # obračanje koles (45 stzopinj je bolj ala avto)
-		# material
 
 		},
 }

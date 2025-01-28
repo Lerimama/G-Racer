@@ -2412,6 +2412,9 @@ position = Vector2( -3098, -3107 )
 script = SubResource( 12611 )
 height = 50.0
 
+[node name="ShapeShadows" parent="Terrain/TerrainMountain" index="0"]
+shadow_owner_path = ""
+
 [node name="ObjectShapeSS2D" parent="Terrain/TerrainMountain" index="1"]
 _points = SubResource( 13332 )
 shape_material = SubResource( 1823 )
@@ -2424,6 +2427,9 @@ polygon = PoolVector2Array( -31.7966, 4751.45, -0.102295, -0.103027, 384.007, -0
 position = Vector2( -1280, -4552 )
 script = SubResource( 12611 )
 height = 50.0
+
+[node name="ShapeShadows" parent="Terrain/TerrainMountain2" index="0"]
+shadow_owner_path = ""
 
 [node name="ObjectShapeSS2D" parent="Terrain/TerrainMountain2" index="1"]
 _points = SubResource( 13381 )
@@ -2438,6 +2444,9 @@ position = Vector2( 808, 0 )
 physics_material_override = SubResource( 1 )
 script = SubResource( 11692 )
 transparency = 1.0
+
+[node name="ShapeShadows" parent="Terrain/BreakerClosedSS2D" index="1"]
+shadow_owner_path = ""
 
 [node name="CollisionPolygon2D" parent="Terrain/BreakerClosedSS2D" index="4"]
 polygon = PoolVector2Array( 234.105, 27.7923, 263.998, 20.4001, 296.179, 15.0635, 330.219, 12.0139, 365.688, 11.4827, 402.156, 13.7013, 439.193, 18.9008, 476.369, 27.3128, 513.255, 39.1685, 549.421, 54.6991, 584.437, 74.1361, 617.874, 97.7109, 649.301, 125.655, 678.289, 158.199, 704.407, 195.574, 727.227, 238.013, 746.318, 285.746, 764.724, 332.115, 785.403, 371.001, 807.799, 403.441, 831.358, 430.471, 855.524, 453.13, 879.742, 472.454, 926.113, 505.245, 947.155, 520.786, 966.028, 537.141, 974.477, 545.948, 982.176, 555.347, 989.055, 565.469, 995.044, 576.441, 1000.07, 588.396, 1004.08, 601.461, 1006.98, 615.766, 1008.72, 631.442, 1009.22, 648.618, 1008.42, 667.423, 1002.61, 710.44, 997.732, 732.66, 991.888, 752.513, 985.151, 770.106, 977.594, 785.55, 969.292, 798.952, 960.317, 810.423, 950.743, 820.071, 940.644, 828.005, 930.094, 834.334, 919.165, 839.168, 907.932, 842.615, 896.467, 844.784, 884.845, 845.784, 873.14, 845.725, 861.423, 844.715, 849.77, 842.864, 826.946, 837.074, 805.257, 829.225, 767.636, 810.843, 731.887, 787.82, 341.559, 948.462, 337.811, 949.95, 333.837, 951.157, 329.646, 952.084, 325.245, 952.733, 315.848, 953.2, 305.709, 952.566, 294.891, 950.842, 283.458, 948.037, 259.001, 939.221, 232.848, 926.194, 205.506, 909.032, 177.484, 887.81, 149.291, 862.605, 121.435, 833.491, 94.4246, 800.544, 68.7686, 763.84, 44.9754, 723.455, 23.5537, 679.464, 5.01196, 631.942, -10.1412, 580.966, -21.3973, 526.611, -26.9207, 475.824, -27.134, 454.184, -25.7938, 434.895, -23.0081, 417.844, -18.8856, 402.916, -13.5342, 390, -10.4318, 384.26, -7.06317, 378.98, -3.44177, 374.146, 0.418823, 369.744, 4.50513, 365.759, 8.80353, 362.178, 13.3005, 358.986, 17.9824, 356.168, 22.8356, 353.712, 27.8466, 351.601, 38.2879, 348.363, 49.1978, 346.342, 60.4675, 345.423, 71.9885, 345.492, 95.3502, 348.144, 118.415, 353.389, 160.178, 368.024, 201.724, 388.222, 185.499, 338.356, 171.88, 286.07, 160.803, 224.809, 157.659, 192.966, 156.878, 161.462, 159.038, 131.159, 161.401, 116.727, 164.714, 102.918, 169.05, 89.8398, 174.482, 77.5997, 181.081, 66.3055, 188.919, 56.0653, 193.326, 51.374, 198.069, 46.9863, 203.158, 42.9158, 208.602, 39.176, 214.409, 35.7804, 220.59, 32.7419 )
@@ -2461,6 +2470,9 @@ __meta__ = {
 [node name="GoalPillar4" parent="Objects" instance=ExtResource( 10 )]
 position = Vector2( 696, -1271 )
 
+[node name="ShapeShadows" parent="Objects/GoalPillar4" index="2"]
+shadow_owner_path = ""
+
 [node name="GoalPillar2" parent="Objects" instance=ExtResource( 10 )]
 position = Vector2( 1816, 160 )
 
@@ -2479,6 +2491,9 @@ physics_material_override = SubResource( 1 )
 script = SubResource( 11692 )
 transparency = 1.0
 
+[node name="ShapeShadows" parent="Objects/BreakerOpenSS2D" index="1"]
+shadow_owner_path = ""
+
 [node name="CollisionPolygon2D" parent="Objects/BreakerOpenSS2D" index="4"]
 polygon = PoolVector2Array( 42.1846, 28.4778, 1033.44, 65.0903, 1631.69, 148.737, 1873.08, 199.668, 2104.17, 273.559, 2208.76, 319.017, 2302.14, 370.587, 2343.75, 398.742, 2381.49, 428.491, 2415.01, 459.899, 2443.86, 493.015, 2455.18, 506.04, 2464.5, 520.28, 2472.69, 535.045, 2479.54, 550.526, 2485.05, 566.738, 2489.23, 583.66, 2492.12, 601.259, 2493.78, 619.502, 2493.51, 657.791, 2488.74, 698.254, 2479.84, 740.622, 2467.15, 784.633, 2431.71, 876.484, 2385.13, 971.654, 2269.42, 1163.34, 1902.99, 1631.77, 1852.58, 1592.34, 2216.72, 1127.02, 2328.94, 941.016, 2373.06, 850.872, 2406.49, 764.224, 2417.73, 725.167, 2425.58, 687.934, 2429.64, 653.82, 2429.83, 622.153, 2428.63, 609.336, 2426.53, 596.545, 2423.63, 584.748, 2419.94, 573.893, 2415.46, 563.904, 2410.1, 554.709, 2403.54, 546.399, 2390.91, 539.052, 2358.04, 515.216, 2323.83, 495.824, 2286.12, 477.863, 2246.34, 461.998, 2157.5, 423.297, 2060.01, 390.375, 1838.08, 326.83, 1608.46, 278.858, 1022.68, 170.141, 39.8192, 92.4341 )
 
@@ -2492,9 +2507,6 @@ rotation = 0.0191986
 collision_layer = 1
 physics_material_override = SubResource( 11777 )
 script = SubResource( 12551 )
-
-[node name="ShapeShadows" parent="Objects/BreakerRigidConcrete" index="0"]
-shadow_owner_path = NodePath("")
 
 [node name="BreakerShape" parent="Objects/BreakerRigidConcrete" index="1"]
 color = Color( 0.4, 0.4, 0.4, 1 )
@@ -2583,6 +2595,9 @@ position = Vector2( 708, -853 )
 [node name="ObjectSS2D_Building" parent="Buiildings" instance=ExtResource( 44 )]
 position = Vector2( -3108, -4552 )
 
+[node name="ShapeShadows" parent="Buiildings/ObjectSS2D_Building" index="0"]
+shadow_owner_path = ""
+
 [node name="ObjectShapeSS2D" parent="Buiildings/ObjectSS2D_Building" index="1"]
 _points = SubResource( 13428 )
 
@@ -2592,6 +2607,9 @@ polygon = PoolVector2Array( -0.105469, -0.104492, 383.893, -0.10498, 379.893, -2
 [node name="ObjectSS2D_Building2" parent="Buiildings" instance=ExtResource( 44 )]
 position = Vector2( -3204, 3280 )
 rotation = -1.21787
+
+[node name="ShapeShadows" parent="Buiildings/ObjectSS2D_Building2" index="0"]
+shadow_owner_path = ""
 
 [node name="ObjectShapeSS2D" parent="Buiildings/ObjectSS2D_Building2" index="1"]
 _points = SubResource( 13449 )
