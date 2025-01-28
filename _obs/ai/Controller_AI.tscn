@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://game/bolt/ai/Controller_AI.gd" type="Script" id=1]
+[ext_resource path="res://_obs/ai/Controller_AI.gd" type="Script" id=1]
 
 [sub_resource type="CircleShape2D" id=5261]
 radius = 628.013

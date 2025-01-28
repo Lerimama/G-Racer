@@ -29,7 +29,7 @@ var shadow_owner_scale: Vector2 = Vector2.ONE
 var shadow_owner_elevation: float = 50
 var shadow_owner_height: float = 50
 
-onready var shadow_owner: Node2D
+onready var shadow_owner: Node#2D
 
 
 func _change_enabled(new_enabled):

@@ -3,5 +3,5 @@
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 120
+size = 320
 font_data = ExtResource( 1 )

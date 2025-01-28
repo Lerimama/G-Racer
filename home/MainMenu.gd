@@ -6,7 +6,6 @@ func _ready() -> void:
 
 
 func _on_PlayBtn_pressed() -> void:
-
 	Rfs.main_node.home_out()
 
 
@@ -19,4 +18,4 @@ func _on_AboutBtn_pressed() -> void:
 
 
 func _on_QuitBtn_pressed() -> void:
-	pass # Replace with function body.
+	get_tree().quit()

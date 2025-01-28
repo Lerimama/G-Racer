@@ -171,7 +171,7 @@ enum BOLT_TYPE {SMALL, BASIC, BIG, RIGID}
 var bolt_profiles: Dictionary = {
 	BOLT_TYPE.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-		"bolt_scene_ai": load("res://game/bolt/ai/Bolt_AI.tscn"),
+#		"bolt_scene_ai": load("res://game/bolt/ai/Bolt_AI.tscn"),
 
 		"height": 10,
 		"elevation": 7,

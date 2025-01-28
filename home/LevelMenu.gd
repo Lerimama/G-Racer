@@ -1,7 +1,6 @@
 extends HBoxContainer
 
 
-
 func _ready() -> void:
 
 	for btn in get_children():
