@@ -64,9 +64,9 @@ func drivers(): pass
 enum DRIVER_ID {P1, P2, P3, P4}
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 	DRIVER_ID.P1 : {
-		"driver_name": "P1",
+		"driver_name": "PLAJER",
 		"driver_avatar": preload("res://home/avatar_david.tres"),
-		"driver_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+		"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLTS.BASIC,
 	},
@@ -78,14 +78,14 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 		"bolt_type": BOLTS.BASIC,
 	},
 	DRIVER_ID.P3 : {
-		"driver_name" : "P3",
+		"driver_name" : "JOŽE",
 		"driver_avatar" : preload("res://home/avatar_marty.tres"),
 		"driver_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLTS.BASIC,
 	},
 	DRIVER_ID.P4 : {
-		"driver_name" : "P4",
+		"driver_name" : "Dooooooooolga",
 		"driver_avatar" : preload("res://home/avatar_mrt.tres"),
 		"driver_color" : Rfs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
@@ -170,7 +170,7 @@ enum BOLTS {SMALL, BASIC, BIG, TRUCK}
 var bolt_profiles: Dictionary = {
 	BOLTS.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-		"motion_manager_path": preload("res://game/bolt/MotionManager_Basic.gd"),
+		"motion_manager_path": load("res://game/bolt/MotionManager_Basic.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
@@ -321,39 +321,40 @@ var ammo_profiles : Dictionary = {
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
-func surfaces(): pass
+func levels(): pass
 
-enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
-var surface_type_profiles: Dictionary = {
-	SURFACE.NONE: {
-		"engine_power_adon": 0, # 0 je brez vpliva, do 10 seštevam, naprej množim
-		"shake_amount": 0,
-	},
-	SURFACE.CONCRETE: {
-		"engine_power_adon": 0,
-		"shake_amount": 0,
-	},
-	SURFACE.NITRO: {
-		"engine_power_adon": 700,
-		"shake_amount": 0,
-	},
-	SURFACE.GRAVEL: {
-		"engine_power_adon": 0.2,
-		"shake_amount": 0,
-	},
-	SURFACE.HOLE: {
-		"engine_power_adon": 0.1,
-		"shake_amount": 0,
-	},
-	SURFACE.TRACKING: {
-		"engine_power_adon": 0,
-		"shake_amount": 0,
-	},
+
+enum LEVELS {DEFAULT, FAST, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
+var level_profiles: Dictionary = {
+	LEVELS.DEFAULT: {
+		"level_name": "xxx",
+		"level_desc": "xxx",
+		"level_path": "res://game/levels/Level.tscn",
+		"time_limit": 0,
+		"lap_limit": 0,
+		},
+	LEVELS.FAST: {
+		"level_name": "xxx",
+		"level_desc": "xxx",
+		"level_path": "res://game/levels/LevelFast.tscn",
+		"time_limit": 0,
+		"lap_limit": 0,
+		},
+	LEVELS.FIRST_DRIVE: {
+		"level_name": "xxx",
+		"level_desc": "xxx",
+		"level_path": "res://game/levels/LevelFirstDrive.tscn",
+		"time_limit": 0,
+		"lap_limit": 0,
+		},
+	LEVELS.STAFF: {
+		"level_name": "xxx",
+		"level_desc": "xxx",
+		"level_path": "res://game/levels/LevelStaff.tscn",
+		"time_limit": 0,
+		"lap_limit": 1,
+		},
 }
-
-
-# ---------------------------------------------------------------------------------------------------------------------------
-func level_objects(): pass
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
 var level_object_profiles: Dictionary = {
@@ -404,6 +405,37 @@ var level_object_profiles: Dictionary = {
 	},
 }
 
+
+# ---------------------------------------------------------------------------------------------------------------------------
+func surfaces(): pass
+
+enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
+var surface_type_profiles: Dictionary = {
+	SURFACE.NONE: {
+		"engine_power_adon": 0, # 0 je brez vpliva, do 10 seštevam, naprej množim
+		"shake_amount": 0,
+	},
+	SURFACE.CONCRETE: {
+		"engine_power_adon": 0,
+		"shake_amount": 0,
+	},
+	SURFACE.NITRO: {
+		"engine_power_adon": 700,
+		"shake_amount": 0,
+	},
+	SURFACE.GRAVEL: {
+		"engine_power_adon": 0.2,
+		"shake_amount": 0,
+	},
+	SURFACE.HOLE: {
+		"engine_power_adon": 0.1,
+		"shake_amount": 0,
+	},
+	SURFACE.TRACKING: {
+		"engine_power_adon": 0,
+		"shake_amount": 0,
+	},
+}
 
 # ---------------------------------------------------------------------------------------------------------------------------
 func pickables(): pass
@@ -492,4 +524,3 @@ var pickable_profiles: Dictionary = {
 		"ai_target_rank": 9,
 	},
 }
-

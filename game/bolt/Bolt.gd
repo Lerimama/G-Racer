@@ -10,6 +10,7 @@ export var elevation: float = 0
 export (Array, NodePath) var weapon_paths: Array
 export (NodePath) var bolt_engines_path: String  # _temp ... engines
 
+
 # seta spawner
 var driver_id: int
 var driver_profile: Dictionary

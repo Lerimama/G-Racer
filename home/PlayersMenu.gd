@@ -50,13 +50,15 @@ func _on_name_input_finished(new_name_text: String, player_activated: bool):
 func _set_btn_display(btn: Button, turned_on = null):
 
 	var btn_index: int = get_children().find(btn)
+
 	if turned_on == null:
-		var driver_index_among_drivers: int = btn_index
-		if driver_index_among_drivers in Sts.players_on_game_start:
+		if btn_index in Sts.players_on_game_start:
 			if not btn in selected_player_names:
 				selected_player_names[btn] = btn.text
 			btn.modulate = on_btn_color
+			btn.icon = Pfs.driver_profiles[btn_index]["driver_avatar"]
 		else:
+			btn.icon = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["ai_avatar"]
 			btn.modulate = off_btn_color
 	else:
 		if turned_on == true:
@@ -68,6 +70,7 @@ func _set_btn_display(btn: Button, turned_on = null):
 
 
 func _on_player_btn_pressed(btn: Button):
+	print("PRESS")
 
 	var btn_index: int = get_children().find(btn)
 
@@ -88,6 +91,7 @@ func _on_player_btn_pressed(btn: Button):
 
 func _on_focus_entered(btn: Button):
 
+	print("FOC")
 	btn.modulate = Color.white
 
 

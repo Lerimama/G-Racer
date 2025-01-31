@@ -1,0 +1,463 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://home/avatar_mrt.tres" type="Texture" id=1]
+[ext_resource path="res://home/avatar_marty.tres" type="Texture" id=2]
+[ext_resource path="res://home/avatar_ai.tres" type="Texture" id=3]
+[ext_resource path="res://home/avatar_david.tres" type="Texture" id=4]
+[ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=5]
+[ext_resource path="res://assets/design/truckhunt_kv.png" type="Texture" id=6]
+[ext_resource path="res://home/ExtraMenu.gd" type="Script" id=7]
+[ext_resource path="res://home/PregameSetup.gd" type="Script" id=8]
+[ext_resource path="res://home/PlayersMenu.gd" type="Script" id=9]
+[ext_resource path="res://home/PlayerPopup.gd" type="Script" id=10]
+[ext_resource path="res://assets/theme/fonts/black_80_slanted.tres" type="DynamicFont" id=11]
+[ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=12]
+
+[sub_resource type="ShaderMaterial" id=824]
+shader = ExtResource( 12 )
+shader_param/saturation = 1.0
+
+[sub_resource type="Gradient" id=815]
+colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
+
+[sub_resource type="GradientTexture2D" id=816]
+gradient = SubResource( 815 )
+fill_from = Vector2( 0.4875, 1 )
+fill_to = Vector2( 0.470833, 0 )
+
+[sub_resource type="StyleBoxFlat" id=820]
+bg_color = Color( 1, 1, 1, 1 )
+expand_margin_right = 40.0
+
+[sub_resource type="StyleBoxFlat" id=821]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+expand_margin_left = 24.0
+expand_margin_right = 24.0
+
+[node name="PregameSetup" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+script = ExtResource( 8 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+material = SubResource( 824 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -4056.0
+margin_top = -1960.0
+margin_right = -4056.0
+margin_bottom = -1960.0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 6 )
+expand = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.67451 )
+
+[node name="Grad" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.756863 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 816 )
+expand = true
+flip_v = true
+
+[node name="ExtraMenu" type="HBoxContainer" parent="."]
+visible = false
+margin_left = 1168.0
+margin_top = 968.0
+margin_right = 1815.0
+margin_bottom = 1016.0
+grow_horizontal = 2
+custom_constants/separation = 64
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AiBtn" type="Button" parent="ExtraMenu"]
+margin_right = 297.0
+margin_bottom = 48.0
+mouse_default_cursor_shape = 2
+toggle_mode = true
+text = "ADD ENEMIES"
+
+[node name="Label" type="Label" parent="ExtraMenu/AiBtn"]
+visible = false
+modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
+anchor_right = 1.0
+margin_top = 21.75
+margin_bottom = 69.75
+text = "ADD ENEMIES"
+align = 1
+
+[node name="Txt" type="Label" parent="ExtraMenu/AiBtn/Label"]
+visible = false
+anchor_right = 1.0
+margin_top = 43.0
+margin_bottom = 104.0
+text = "Joypad 2
+Dpad
+Y
+A"
+align = 1
+uppercase = true
+
+[node name="EasyBtn" type="Button" parent="ExtraMenu"]
+margin_left = 361.0
+margin_right = 613.0
+margin_bottom = 48.0
+mouse_default_cursor_shape = 2
+toggle_mode = true
+text = "EASY MODE"
+
+[node name="Label" type="Label" parent="ExtraMenu/EasyBtn"]
+visible = false
+modulate = Color( 0.32549, 0.356863, 0.407843, 1 )
+anchor_right = 1.0
+margin_top = 21.5
+margin_bottom = 69.5
+text = "Easy mode"
+align = 1
+uppercase = true
+
+[node name="Txt" type="Label" parent="ExtraMenu/EasyBtn/Label"]
+visible = false
+anchor_right = 1.0
+margin_top = 43.0
+margin_bottom = 104.0
+text = "Joypad 2
+Dpad
+Y
+A"
+align = 1
+uppercase = true
+
+[node name="Label" type="Label" parent="."]
+modulate = Color( 1, 1, 1, 0.52549 )
+margin_left = 1086.0
+margin_top = 249.0
+margin_right = 1451.0
+margin_bottom = 344.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 11 )
+text = "Drivers"
+uppercase = true
+
+[node name="PlayersMenu" type="VBoxContainer" parent="."]
+margin_left = 1090.0
+margin_top = 392.0
+margin_right = 1618.0
+margin_bottom = 952.0
+custom_constants/separation = 16
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayerBtn" type="Button" parent="PlayersMenu"]
+modulate = Color( 0.976471, 0.172549, 0, 1 )
+margin_right = 424.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 0, 104 )
+focus_neighbour_left = NodePath("../../Menu/ConfirmBtn")
+focus_neighbour_top = NodePath("../PlayerBtn4")
+focus_neighbour_right = NodePath("../../Menu/ConfirmBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_constants/hseparation = 8
+custom_styles/hover = SubResource( 820 )
+custom_styles/pressed = SubResource( 820 )
+custom_styles/focus = SubResource( 820 )
+custom_styles/normal = SubResource( 820 )
+text = "HASSELHOFF"
+icon = ExtResource( 4 )
+align = 0
+
+[node name="PlayerBtn2" type="Button" parent="PlayersMenu"]
+modulate = Color( 0.976471, 0.172549, 0, 1 )
+margin_top = 144.0
+margin_right = 340.0
+margin_bottom = 272.0
+rect_min_size = Vector2( 0, 104 )
+focus_neighbour_left = NodePath("../../Menu/ConfirmBtn")
+focus_neighbour_right = NodePath("../../Menu/ConfirmBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_constants/hseparation = 8
+custom_styles/hover = SubResource( 820 )
+custom_styles/pressed = SubResource( 820 )
+custom_styles/focus = SubResource( 820 )
+custom_styles/normal = SubResource( 820 )
+text = "MAGNUM"
+icon = ExtResource( 3 )
+align = 0
+
+[node name="PlayerBtn3" type="Button" parent="PlayersMenu"]
+modulate = Color( 0.976471, 0.172549, 0, 1 )
+margin_top = 288.0
+margin_right = 288.0
+margin_bottom = 416.0
+rect_min_size = Vector2( 0, 104 )
+focus_neighbour_left = NodePath("../../Menu/ConfirmBtn")
+focus_neighbour_right = NodePath("../../Menu/ConfirmBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_constants/hseparation = 8
+custom_styles/hover = SubResource( 820 )
+custom_styles/pressed = SubResource( 820 )
+custom_styles/focus = SubResource( 820 )
+custom_styles/normal = SubResource( 820 )
+text = "MARTY"
+icon = ExtResource( 2 )
+align = 0
+
+[node name="PlayerBtn4" type="Button" parent="PlayersMenu"]
+modulate = Color( 0.976471, 0.172549, 0, 1 )
+margin_top = 432.0
+margin_right = 250.0
+margin_bottom = 560.0
+rect_min_size = Vector2( 0, 104 )
+focus_neighbour_left = NodePath("../../Menu/ConfirmBtn")
+focus_neighbour_right = NodePath("../../Menu/ConfirmBtn")
+focus_neighbour_bottom = NodePath("../../Menu/ConfirmBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 2
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_constants/hseparation = 8
+custom_styles/hover = SubResource( 820 )
+custom_styles/pressed = SubResource( 820 )
+custom_styles/focus = SubResource( 820 )
+custom_styles/normal = SubResource( 820 )
+text = "MR. T"
+icon = ExtResource( 1 )
+align = 0
+
+[node name="Menu" type="VBoxContainer" parent="."]
+margin_left = 1088.0
+margin_top = 1097.0
+margin_right = 1507.0
+margin_bottom = 1225.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ConfirmBtn" type="Button" parent="Menu"]
+margin_right = 419.0
+margin_bottom = 95.0
+focus_neighbour_left = NodePath("../CancelBtn")
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 11 )
+text = "CONFIRM"
+align = 0
+
+[node name="CancelBtn" type="Button" parent="Menu"]
+margin_top = 127.0
+margin_right = 419.0
+margin_bottom = 175.0
+focus_neighbour_right = NodePath("../ConfirmBtn")
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+text = "CANCEL"
+align = 0
+
+[node name="PlayerPopup" type="PopupDialog" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+popup_exclusive = true
+script = ExtResource( 10 )
+
+[node name="Undi" type="ColorRect" parent="PlayerPopup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.862745 )
+
+[node name="LineEdit" type="LineEdit" parent="PlayerPopup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -22.0
+margin_top = 31.0
+margin_right = 232.0
+margin_bottom = 121.0
+focus_neighbour_bottom = NodePath("../Menu/RemoveBtn")
+custom_styles/normal = SubResource( 821 )
+text = "HASSELHOFF"
+align = 1
+max_length = 10
+virtual_keyboard_type = 1
+
+[node name="Bolt" type="Label" parent="PlayerPopup"]
+margin_left = 1233.0
+margin_top = 494.0
+margin_right = 1417.0
+margin_bottom = 542.0
+custom_fonts/font = ExtResource( 5 )
+text = "Bolt type"
+
+[node name="Bolts" type="HBoxContainer" parent="PlayerPopup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -47.0
+margin_top = -180.0
+margin_right = 513.0
+margin_bottom = -132.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Bolt" type="Label" parent="PlayerPopup/Bolts"]
+margin_right = 88.0
+margin_bottom = 48.0
+text = "YYY"
+
+[node name="Bolt2" type="Label" parent="PlayerPopup/Bolts"]
+margin_left = 120.0
+margin_right = 208.0
+margin_bottom = 48.0
+text = "YYY"
+
+[node name="Bolt3" type="Label" parent="PlayerPopup/Bolts"]
+margin_left = 240.0
+margin_right = 328.0
+margin_bottom = 48.0
+text = "YYY"
+
+[node name="Bolt4" type="Label" parent="PlayerPopup/Bolts"]
+margin_left = 360.0
+margin_right = 448.0
+margin_bottom = 48.0
+text = "YYY"
+
+[node name="Controller" type="Label" parent="PlayerPopup"]
+margin_left = 1236.0
+margin_top = 604.0
+margin_right = 1443.0
+margin_bottom = 652.0
+custom_fonts/font = ExtResource( 5 )
+text = "Controller"
+
+[node name="Controllers" type="HBoxContainer" parent="PlayerPopup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -47.0
+margin_top = -61.0
+margin_right = 513.0
+margin_bottom = -13.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Controller" type="Label" parent="PlayerPopup/Controllers"]
+margin_right = 86.0
+margin_bottom = 48.0
+text = "XXX"
+
+[node name="Controller2" type="Label" parent="PlayerPopup/Controllers"]
+margin_left = 118.0
+margin_right = 204.0
+margin_bottom = 48.0
+text = "XXX"
+
+[node name="Controller3" type="Label" parent="PlayerPopup/Controllers"]
+margin_left = 236.0
+margin_right = 322.0
+margin_bottom = 48.0
+text = "XXX"
+
+[node name="Controller4" type="Label" parent="PlayerPopup/Controllers"]
+margin_left = 354.0
+margin_right = 440.0
+margin_bottom = 48.0
+text = "XXX"
+
+[node name="ColorRect" type="ColorRect" parent="PlayerPopup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -162.0
+margin_top = 30.0
+margin_right = -79.0
+margin_bottom = 118.0
+
+[node name="Avatar" type="TextureRect" parent="PlayerPopup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -397.0
+margin_top = -337.0
+margin_right = -77.0
+margin_bottom = -17.0
+texture = ExtResource( 4 )
+expand = true
+
+[node name="Menu" type="HBoxContainer" parent="PlayerPopup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -349.0
+margin_top = 264.0
+margin_right = 349.0
+margin_bottom = 312.0
+custom_constants/separation = 64
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AddBtn" type="Button" parent="PlayerPopup/Menu"]
+margin_right = 270.0
+margin_bottom = 48.0
+focus_neighbour_top = NodePath("../../LineEdit")
+text = "ADD PLAYER"
+
+[node name="RemoveBtn" type="Button" parent="PlayerPopup/Menu"]
+margin_left = 334.0
+margin_right = 698.0
+margin_bottom = 48.0
+focus_neighbour_top = NodePath("../../LineEdit")
+text = "REMOVE PLAYER"
+
+[connection signal="toggled" from="ExtraMenu/AiBtn" to="ExtraMenu" method="_on_AiBtn_toggled"]
+[connection signal="toggled" from="ExtraMenu/EasyBtn" to="ExtraMenu" method="_on_EasyBtn_toggled"]
+[connection signal="pressed" from="Menu/ConfirmBtn" to="." method="_on_ConfirmBtn_pressed"]
+[connection signal="pressed" from="Menu/CancelBtn" to="." method="_on_CancelBtn_pressed"]
+[connection signal="about_to_show" from="PlayerPopup" to="PlayerPopup" method="_on_PlayerPopup_about_to_show"]
+[connection signal="text_entered" from="PlayerPopup/LineEdit" to="PlayerPopup" method="_on_LineEdit_text_entered"]
+[connection signal="pressed" from="PlayerPopup/Menu/AddBtn" to="PlayerPopup" method="_on_AddBtn_pressed"]
+[connection signal="pressed" from="PlayerPopup/Menu/RemoveBtn" to="PlayerPopup" method="_on_RemoveBtn_pressed"]

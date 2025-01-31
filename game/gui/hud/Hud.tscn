@@ -22,7 +22,7 @@ __meta__ = {
 [node name="StatBox" parent="." instance=ExtResource( 5 )]
 margin_left = 32.0
 margin_top = 22.0
-margin_right = 938.0
+margin_right = 512.0
 margin_bottom = 794.0
 __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
@@ -31,7 +31,7 @@ __meta__ = {
 [node name="StatBox2" parent="." instance=ExtResource( 5 )]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -938.0
+margin_left = -512.0
 margin_top = 22.0
 margin_right = -32.0
 margin_bottom = 794.0
@@ -46,7 +46,7 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 32.0
 margin_top = -790.0
-margin_right = 938.0
+margin_right = 512.0
 margin_bottom = -18.0
 grow_vertical = 0
 alignment = 2
@@ -60,7 +60,7 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -938.0
+margin_left = -512.0
 margin_top = -790.0
 margin_right = -32.0
 margin_bottom = -18.0

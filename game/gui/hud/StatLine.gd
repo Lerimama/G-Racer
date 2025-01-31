@@ -1,3 +1,4 @@
+tool
 extends HBoxContainer
 
 enum STAT_TYPE {COUNT, TIME, ICONS}

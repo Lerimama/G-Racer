@@ -168,7 +168,7 @@ visible = true
 visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PoolVector2Array( -96, -56, 96, -56, 112, -40, 112, 40, 96, 56, -95.9049, 56, -104, 48, -104, -48 )
+polygon = PoolVector2Array( -104, -56, 97, -56, 112, -40, 112, 40, 96, 56, -104, 56 )
 
 [node name="Light2D" type="Light2D" parent="."]
 visible = false

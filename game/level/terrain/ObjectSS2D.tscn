@@ -125,5 +125,8 @@ collision_polygon_node_path = NodePath("../CollisionPolygon2D")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( -0.103552, 384.104, -0.103553, -0.103553, 384.104, -0.103553, 384.104, 384.104 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [connection signal="on_dirty_update" from="ObjectShapeSS2D" to="." method="_on_ObjectShapeSS2D_on_dirty_update"]

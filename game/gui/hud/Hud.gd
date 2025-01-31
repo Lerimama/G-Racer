@@ -46,7 +46,8 @@ func set_hud(): # kliče GM
 		for stat in box.get_children():
 			record_lap_label.hide()
 			stat.hide()
-		box.driver_line.show()
+		box.stat_driver.show()
+#		box.driver_line.show()
 
 		box.stat_cash.show()
 		box.stat_gas.show()

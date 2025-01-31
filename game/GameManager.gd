@@ -135,7 +135,7 @@ func _set_game():
 	if Sts.enemies_mode: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI driver_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
-		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
+#		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
 		for empty_position in empty_positions_count:
 			# dobim štartni id bolta in umestim ai data
 			var new_driver_index: int = activated_driver_ids.size()
@@ -469,7 +469,7 @@ func _spawn_level():
 #	var level_spawn_parent: Node = Rfs.game_camera.get_parent()
 
 	# level settings
-	level_settings = Sts.level_settings[level_to_load_id]
+	level_settings = Pfs.level_profiles[level_to_load_id]
 	var level_to_load_path: String = level_settings["level_path"]
 
 	var level_z_index: int # z index v node drevesu

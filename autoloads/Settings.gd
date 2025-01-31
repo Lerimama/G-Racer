@@ -12,27 +12,8 @@ var mm_per_32_grid_unit: float = 640 # grid enotra je 32px, 1 px je 2 cm
 var m_per_32_grid_unit: float = 0.64 # grid enotra je 32px, 1 px je 2 cm
 var unit_one: float = 32
 
-enum LEVELS {STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
-var level_settings: Dictionary = {
-	LEVELS.FIRST_DRIVE: {
-		"level_name": "xxx",
-		"level_desc": "xxx",
-		"level_path": "res://game/level/LevelFirstDrive.tscn",
-		"time_limit": 0,
-		"lap_limit": 0,
-		},
-	LEVELS.STAFF: {
-		"level_name": "xxx",
-		"level_desc": "xxx",
-		"level_path": "res://game/level/LevelStaff.tscn",
-		"time_limit": 0,
-		"lap_limit": 1,
-		},
-}
-
-enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var default_game_settings: Dictionary = { # setano za dirkanje
-	"muštr": true,
+	"muštr_da_lahko_zaprem": true,
 	#	# time
 	#	#	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
 	#	"game_time_limit": 0, # če je 0 ni omejitve
@@ -64,6 +45,8 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	#	"reality_engine_power_factor": 1000, # engine power je 300 namesto 300000
 }
 
+enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
+var game_mdoe: int = GAME_MODE.SINGLE
 var game_time_limit: int = 0 # če je 0 ni omejitve
 var start_countdown: bool = true
 var countdown_start_limit: int = 5
@@ -96,15 +79,18 @@ var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo
 
 var current_game_levels: Array = []
 
+
 func _ready() -> void:
 
 	if OS.is_debug_build():
-		current_game_levels = [LEVELS.STAFF]
-#		current_game_levels = [LEVELS.FIRST_DRIVE]
+		current_game_levels = [Pfs.LEVELS.FAST]
+#		current_game_levels = [Pfs.LEVELS.DEFAULT]
+#		current_game_levels = [Pfs.LEVELS.STAFF]
+#		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
 
-#		camera_zoom_range = [2, 2]
+		camera_zoom_range = [2, 2]
 #		camera_zoom_range = [3, 3]
-		camera_zoom_range = [5, 5]
+#		camera_zoom_range = [5, 5]
 		start_countdown = false
 #		all_bolts_on_screen_mode = false
 		easy_mode = true
@@ -137,9 +123,9 @@ func set_game_settings_per_level(selected_level_index: int = 0):
 	match current_level:
 		# racing
 		# duel
-		LEVELS.STAFF:
+		Pfs.LEVELS.STAFF:
 			pass
-		LEVELS.FIRST_DRIVE:
+		Pfs.LEVELS.FIRST_DRIVE:
 			pass
 
 	return current_game_settings # pobere GM ob setanju igre

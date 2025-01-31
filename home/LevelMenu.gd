@@ -1,45 +1,86 @@
 extends HBoxContainer
 
 
+var is_open: bool = false
+var closed_position_offset: float = 500
+
+onready var open_position: Vector2 = rect_position
+onready var closed_position: Vector2# = rect_position + Vector2(0, closed_position_offset)
+onready var focused_on_close = $"../MainMenu/PlayBtn"
+
+
 func _ready() -> void:
 
+	#pozicija
+
+	if get_node("../LevelsOpenPosition") and get_node("../LevelsClosedPosition"):
+		open_position = get_node("../LevelsOpenPosition").position
+		closed_position = get_node("../LevelsClosedPosition").position
+		closed_position_offset = closed_position.y - open_position.y
+		var center_position_adapt: float = rect_size.x / 2
+		open_position.x -= center_position_adapt
+		closed_position.x -= center_position_adapt
+	else:
+		closed_position = rect_position + Vector2(0, closed_position_offset)
+
+	rect_position = closed_position
+
 	for btn in get_children():
-#		btn.connect("toggled", self, "_on_level_btn_toggled", [btn])
 		btn.connect("pressed", self, "_on_level_btn_pressed", [btn])
 		# pressed
 		var btn_index: int = get_children().find(btn)
-		var level_index_among_levels: int = btn_index
-		if level_index_among_levels in Sts.current_game_levels:
-			btn.pressed = true
+		if btn_index in Sts.current_game_levels:
+			btn.is_activated = true
 		else:
-			btn.pressed = false
+			btn.is_activated = false
+
+
+func open() -> void:
+
+	if not is_open:
+		is_open = true
+
+		var slide_tween = get_tree().create_tween()
+		slide_tween.tween_property(self, "rect_position", open_position, 0.2). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+		yield(slide_tween, "finished")
+
+		# preverjam , če se je odprlo zaradi direktnega fokusiranja
+		var allready_focused: bool = false
+		for btn in get_children():
+			if btn.has_focus():
+				allready_focused = true
+				break
+		if not allready_focused:
+			get_children()[0].grab_focus()
+
+
+func close() -> void:
+
+	if is_open:
+		var slide_tween = get_tree().create_tween()
+		slide_tween.tween_property(self, "rect_position", closed_position, 0.2). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+		yield(slide_tween, "finished")
+		focused_on_close.grab_focus()
+		is_open = false
 
 
 func _on_level_btn_pressed(btn: Button):
 
-	var btn_index: int = get_children().find(btn)
+	if is_open:
+		var btn_index: int = get_children().find(btn)
 
-	if not Sts.players_on_game_start.empty():
+		# _temp select one level only
 		Sts.current_game_levels = [btn_index]
-		Rfs.ultimate_popup.open_popup(true)
-		yield(get_tree().create_timer(0.1),"timeout")
-		Rfs.main_node.call_deferred("home_out")
+		for other_btn in get_children():
+			if other_btn == btn:
+				other_btn.is_activated = true
+			else:
+				other_btn.is_activated = false
 
-#	if level_key_index in Sts.current_game_levels:
-#		Sts.current_game_levels.erase(level_key_index)
-#	else:
-#		Sts.current_game_levels.append(level_key_index)
+	# turnir mode
+	#	other_btn.is_activated = not other_btn.is_activated
 
-
-#func _on_level_btn_toggled(is_pressed: bool, pressed_btn: Button):
-#
-#	var btn_index: int = get_children().find(pressed_btn)
-#	var level_key_index: int = btn_index # zaporedje v profilih je pomembno
-#
-#	if is_pressed:
-#		if not level_key_index in Sts.current_game_levels:
-#			Sts.current_game_levels.append(level_key_index)
-#	else:
-#		Sts.current_game_levels.erase(level_key_index)
-#	print(Sts.current_game_levels)
-
+	#	if btn_index in Sts.current_game_levels:
+	#		Sts.current_game_levels.erase(btn_index)
+	#	else:
+	#		Sts.current_game_levels.append(btn_index)
