@@ -56,8 +56,6 @@ var debug_trail: Line2D
 onready var motion_manager: Node = $MotionManager
 onready var engines: Node2D = get_node(bolt_engines_path)
 var bolt_velocity: Vector2 = Vector2.ZERO
-onready var glide_power_front: float = bolt_profile["glide_power_F"] # 46500
-onready var glide_power_rear: float = bolt_profile["glide_power_R"] # 50000
 
 
 func _input(event: InputEvent) -> void:
@@ -86,8 +84,9 @@ func _ready() -> void:
 		get_node(path).set_weapon()
 		available_weapons.append(get_node(path))
 
-	_add_bolt_controller()
-#	motion_manager._set_default_parameters()
+	_add_controller()
+	_add_motion_manager()
+	#	motion_manager.set_default_parameters()
 
 	# debug
 	if driver_id == Pfs.DRIVER_ID.P1:
@@ -121,8 +120,6 @@ func _process(delta: float) -> void:
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
 	# print("power %s / " % motion_manager.current_engine_power, "force %s" % force)
-
-#	print(applied_torque)
 
 	bolt_body_state = state
 	bolt_velocity = state.get_linear_velocity() # tole je bol prej brez stejta
@@ -371,7 +368,8 @@ func _change_activity(new_is_active: bool):
 #		Rfs.game_manager._on_bolt_activity_change(is_active)
 		emit_signal("bolt_activity_changed", self)
 
-func _add_bolt_controller():
+
+func _add_controller():
 
 	 # zbrišem placeholder
 	bolt_controller.queue_free()
@@ -387,6 +385,17 @@ func _add_bolt_controller():
 	bolt_controller.controller_type = driver_profile["controller_type"]
 	call_deferred("add_child", bolt_controller)
 	call_deferred("move_child", bolt_controller, 0)
+
+
+func _add_motion_manager():
+
+	var bolts_profile: Dictionary = Pfs.bolt_profiles[driver_profile["bolt_type"]]
+	var bolts_motion_manager_path = bolts_profile["motion_manager_path"]
+	motion_manager.set_script(bolts_motion_manager_path)
+	motion_manager.bolt = self
+#	motion_manager.set_process(false)
+#	yield(motion_manager, "ready")
+	motion_manager.set_deferred("set_process", true)
 
 
 func on_item_picked(pickable_key: int):

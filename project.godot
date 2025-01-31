@@ -45,6 +45,11 @@ _global_script_classes=[ {
 "path": "res://game/weapons/ammo/misile/Misile.gd"
 }, {
 "base": "Node",
+"class": "MotionManager",
+"language": "GDScript",
+"path": "res://game/bolt/MotionManager.gd"
+}, {
+"base": "Node",
 "class": "Operator",
 "language": "GDScript",
 "path": "res://game/level/breakers/breaker/Operator.gd"
@@ -222,6 +227,7 @@ _global_script_class_icons={
 "FlexGridContainer": "res://addons/color-palette/utilities/FlexGridContainerIcon.png",
 "Mina": "",
 "Misile": "",
+"MotionManager": "",
 "Operator": "",
 "Palette": "",
 "PaletteImporter": "",

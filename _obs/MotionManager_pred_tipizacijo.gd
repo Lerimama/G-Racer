@@ -1,8 +1,6 @@
 extends Node
-class_name MotionManager
 
-
-var bolt: Node2D  # = get_parent()
+var bolt: Node2D # = get_parent()
 
 enum MOTION {IDLE, FWD, REV}
 var motion: int = MOTION.IDLE# setget _change_motion
@@ -39,6 +37,7 @@ var current_engine_power: float = 0
 var engine_power_adon: float = 0
 var accelarate_speed = 0.1
 var max_engine_power: float
+onready var reality_engine_power_factor: float = Sts.reality_engine_power_factor
 
 # rotation
 var rotation_dir = 0 setget _change_rotation_direction
@@ -46,7 +45,6 @@ var force_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_rotation_speed: float
 var max_engine_rotation_deg: float
 var driving_gear: int = 0
-
 
 func _ready() -> void:
 	#	yield(get_tree(),"idle_frame")
@@ -64,6 +62,7 @@ func _process(delta: float) -> void:
 		self.rotation_dir = 0
 	else:
 		# PLAYER ima drugače kot AI ...
+
 		_motion_machine()
 		bolt.engines.manage_engines(self)
 
@@ -107,99 +106,98 @@ func _accelarate_to_engine_power():
 
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
-	return current_engine_power * Sts.reality_engine_power_factor
+	return current_engine_power * reality_engine_power_factor
 
 
 func _change_rotation_direction(new_rotation_direction: float):
-	pass # imajo otroci
 	# za zavijanje lahko vplivam na karkoli, ker se ob vožnji naravnost vse reseta
 	# če ne zavija je fizika celega bolta
 	# če zavija se porazdeli glede na stil
 
 
-	#	rotation_dir = new_rotation_direction
-	#	set_default_parameters()
-	#
-	#	if rotation_dir == 0:
-	#		torque_on_bolt = 0
-	#	else:
-	#		if motion == MOTION.IDLE:
-	#			rotation_motion = selected_idle_rotation
-	#		else:
-	#			rotation_motion = selected_rotation_motion
-	#
-	#		#		printt("rotation_change ",rotation_dir, MOTION.keys()[motion], ROTATION_MOTION.keys()[rotation_motion])
-	#
-	#		torque_on_bolt = 0
-	#		bolt.linear_damp = 0
-	#
-	#		var front_mass_bias: float
-	#		var bolt_mass: float = bolt.bolt_profile["masa"]
-	#		match rotation_motion:
-	#			ROTATION_MOTION.DEFAULT: # mid zavijanje + malo drifta
-	#				max_engine_power = 800
-	#				max_engine_rotation_deg = 25
-	#				bolt.angular_damp = 0
-	#				bolt.front_mass.linear_damp = 1
-	#				bolt.rear_mass.linear_damp = 5
-	#				front_mass_bias = 0.5
-	#				bolt.front_mass.mass = bolt_mass * front_mass_bias
-	#				bolt.rear_mass.mass = bolt_mass * (1 - front_mass_bias)
-	#			ROTATION_MOTION.MASSLESS: # mid zavijanje + malo drifta
-	#				max_engine_power = 800
-	#				max_engine_rotation_deg = 25
-	#				bolt.angular_damp = 0
-	#				bolt.front_mass.linear_damp = 0
-	#				bolt.rear_mass.linear_damp = 5
-	#				front_mass_bias = 0.5
-	#				bolt.front_mass.mass = bolt_mass * front_mass_bias
-	#				bolt.rear_mass.mass = bolt_mass * (1 - front_mass_bias)
-	#			ROTATION_MOTION.SPIN: # mid zavijanje + malo drifta
-	#				torque_on_bolt = 10000000 * rotation_dir
-	##				bolt.mass = bolt_mass
-	#				bolt.front_mass.mass = ZERO_MASS
-	#				bolt.rear_mass.mass = ZERO_MASS
-	#				max_engine_rotation_deg = 90
-	#				for thrust in bolt.engines.all_thrusts:
-	#					thrust.start_fx()
-	#			ROTATION_MOTION.FREE:
-	#				for thrust in bolt.engines.all_thrusts:
-	#					thrust.stop_fx()
-	#			ROTATION_MOTION.SLIDE:
-	#				#				force_on_bolt = Vector2.DOWN.rotated(bolt.rotation) * rotation_dir
-	#				#				linear_damp = bolt.bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
-	#				bolt.angular_damp = 5 # da se ne vrti, če zavija
-	#				for thrust in bolt.engines.all_thrusts:
-	#					thrust.start_fx()
-	#
-	#	#	_print_bolt_data()
+	rotation_dir = new_rotation_direction
+	set_default_parameters()
+
+	if rotation_dir == 0:
+		torque_on_bolt = 0
+	else:
+		if motion == MOTION.IDLE:
+			rotation_motion = selected_idle_rotation
+		else:
+			rotation_motion = selected_rotation_motion
+
+		#		printt("rotation_change ",rotation_dir, MOTION.keys()[motion], ROTATION_MOTION.keys()[rotation_motion])
+
+		torque_on_bolt = 0
+		bolt.linear_damp = 0
+
+		var front_mass_bias: float
+		var bolt_mass: float = bolt.bolt_profile["masa"]
+		match rotation_motion:
+			ROTATION_MOTION.DEFAULT: # mid zavijanje + malo drifta
+				max_engine_power = 800
+				max_engine_rotation_deg = 25
+				bolt.angular_damp = 0
+				bolt.front_mass.linear_damp = 1
+				bolt.rear_mass.linear_damp = 5
+				front_mass_bias = 0.5
+				bolt.front_mass.mass = bolt_mass * front_mass_bias
+				bolt.rear_mass.mass = bolt_mass * (1 - front_mass_bias)
+			ROTATION_MOTION.MASSLESS: # mid zavijanje + malo drifta
+				max_engine_power = 800
+				max_engine_rotation_deg = 25
+				bolt.angular_damp = 0
+				bolt.front_mass.linear_damp = 0
+				bolt.rear_mass.linear_damp = 5
+				front_mass_bias = 0.5
+				bolt.front_mass.mass = bolt_mass * front_mass_bias
+				bolt.rear_mass.mass = bolt_mass * (1 - front_mass_bias)
+			ROTATION_MOTION.SPIN: # mid zavijanje + malo drifta
+				torque_on_bolt = 10000000 * rotation_dir
+#				bolt.mass = bolt_mass
+				bolt.front_mass.mass = ZERO_MASS
+				bolt.rear_mass.mass = ZERO_MASS
+				max_engine_rotation_deg = 90
+				for thrust in bolt.engines.all_thrusts:
+					thrust.start_fx()
+			ROTATION_MOTION.FREE:
+				for thrust in bolt.engines.all_thrusts:
+					thrust.stop_fx()
+			ROTATION_MOTION.SLIDE:
+				#				force_on_bolt = Vector2.DOWN.rotated(bolt.rotation) * rotation_dir
+				#				linear_damp = bolt.bolt_profile["idle_lin_damp"] # da ne izgubi hitrosti
+				bolt.angular_damp = 5 # da se ne vrti, če zavija
+				for thrust in bolt.engines.all_thrusts:
+					thrust.start_fx()
+
+	#	_print_bolt_data()
 
 
 func set_default_parameters():
-	pass # imajo otroci
-	#	if is_ai:
-	#	# bolt
-	#		max_engine_power = bolt.bolt_profile["max_engine_power"]
-	#		max_engine_rotation_deg = 45
-	#		engine_rotation_speed = 0.1
-	#		bolt.mass = bolt.bolt_profile["masa"]
-	#		bolt.angular_damp = 5
-	#		bolt.linear_damp = 1 # 1
-	#
-	#	else:
-	#		# bolt
-	#		max_engine_power = bolt.bolt_profile["max_engine_power"]
-	#		max_engine_rotation_deg = 45
-	#		engine_rotation_speed = 0.1
-	#		bolt.mass = bolt.bolt_profile["masa"]
-	#		bolt.angular_damp = 16 # 16
-	#		bolt.linear_damp = 1 # 1
-	#
-	#		# front rear
-	#		bolt.front_mass.mass = ZERO_MASS
-	#		bolt.rear_mass.mass = ZERO_MASS
-	#		bolt.front_mass.linear_damp = 0
-	#		bolt.rear_mass.linear_damp = 0
+
+	if is_ai:
+	# bolt
+		max_engine_power = bolt.bolt_profile["max_engine_power"]
+		max_engine_rotation_deg = 45
+		engine_rotation_speed = 0.1
+		bolt.mass = bolt.bolt_profile["masa"]
+		bolt.angular_damp = 5
+		bolt.linear_damp = 1 # 1
+
+	else:
+		# bolt
+		max_engine_power = bolt.bolt_profile["max_engine_power"]
+		max_engine_rotation_deg = 45
+		engine_rotation_speed = 0.1
+		bolt.mass = bolt.bolt_profile["masa"]
+		bolt.angular_damp = 16 # 16
+		bolt.linear_damp = 1 # 1
+
+		# front rear
+		bolt.front_mass.mass = ZERO_MASS
+		bolt.rear_mass.mass = ZERO_MASS
+		bolt.front_mass.linear_damp = 0
+		bolt.rear_mass.linear_damp = 0
 
 
 func use_nitro():

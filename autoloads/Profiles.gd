@@ -170,6 +170,7 @@ enum BOLTS {SMALL, BASIC, BIG, TRUCK}
 var bolt_profiles: Dictionary = {
 	BOLTS.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
+		"motion_manager_path": preload("res://game/bolt/MotionManager_Basic.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
@@ -201,15 +202,12 @@ var bolt_profiles: Dictionary = {
 		"lin_damp_rear_massless": 5,
 
 		# SPIN
-#		"spin_torque": 10000000,
 		"ang_damp_float": 0.5,
-#		"max_free_thrust_rotation_deg": 90,
-#		"free_rotation_power": 14, # na oba
 		# DRIFT
 		"drift_power": 17000, # na rear
 		# GLIDE
-		"glide_power_F": 465,#00,
-		"glide_power_R": 500,#00,
+#		"glide_power_F": 465,#00,
+#		"glide_power_R": 500,#00,
 #		"glide_ang_damp": 5, # da se ha rotirat
 		},
 	BOLTS.TRUCK: {
@@ -264,7 +262,7 @@ var equipment_profiles : Dictionary = {
 	EQUIPMENT.NITRO: {
 		"value": 1,
 		"nitro_power_adon": 700,
-		"time": 2,
+		"time": 1,
 	},
 	EQUIPMENT.SHIELD: {
 		"lifetime": 5,
@@ -328,27 +326,23 @@ func surfaces(): pass
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
 	SURFACE.NONE: {
-		# "all powers"
-		"engine_power_adon": 0,
+		"engine_power_adon": 0, # 0 je brez vpliva, do 10 seštevam, naprej množim
 		"shake_amount": 0,
 	},
 	SURFACE.CONCRETE: {
-		# "all powers"
 		"engine_power_adon": 0,
 		"shake_amount": 0,
 	},
 	SURFACE.NITRO: {
-		# "all powers"
 		"engine_power_adon": 700,
 		"shake_amount": 0,
 	},
 	SURFACE.GRAVEL: {
-		# "all powers"
-		"engine_power_adon": -800,
+		"engine_power_adon": 0.2,
 		"shake_amount": 0,
 	},
 	SURFACE.HOLE: {
-		"engine_power_adon": 0,
+		"engine_power_adon": 0.1,
 		"shake_amount": 0,
 	},
 	SURFACE.TRACKING: {

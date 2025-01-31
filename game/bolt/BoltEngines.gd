@@ -86,3 +86,7 @@ func manage_engines(bolt_motion_manager: Node):
 					ROTATION_MOTION.SLIDE: # oba pogona  v smeri premika
 						for thrust in all_thrusts:
 							thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed)
+
+
+func boost_engines():
+	pass

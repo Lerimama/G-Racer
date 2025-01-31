@@ -17,9 +17,16 @@ func _ready() -> void:
 func _on_Surface_body_entered(body: Node) -> void:
 
 	if "motion_manager" in body and not bodies_to_influence.has(body):
-		body.motion_manager.engine_power_adon += engine_power_adon
-		#		if body.is_in_group(Rfs.group_players):
-		#			print ("surf", engine_power_adon)
+		var power_to_add: float
+		# če je med 0 in 10 množim z max power, drugače, seštevam
+		if engine_power_adon > 0 and engine_power_adon < 10:
+			power_to_add = - body.motion_manager.max_engine_power * (1 - engine_power_adon)
+		else:
+			power_to_add = engine_power_adon
+
+		body.motion_manager.engine_power_adon += power_to_add
+
+		printt("max", body.motion_manager.max_engine_power, power_to_add)
 
 
 func _on_Surface_body_exited(body: Node) -> void:
@@ -27,4 +34,14 @@ func _on_Surface_body_exited(body: Node) -> void:
 	bodies_to_influence.erase(body)
 
 	if "motion_manager" in body:
-		body.motion_manager.engine_power_adon -= engine_power_adon
+
+		var power_to_add: float
+		# če je med 0 in 10 množim z max power, drugače, seštevam
+		if engine_power_adon > 0 and engine_power_adon < 10:
+			power_to_add = body.motion_manager.max_engine_power * (1 - engine_power_adon)
+		else:
+			power_to_add = - engine_power_adon
+
+		body.motion_manager.engine_power_adon += power_to_add
+
+		printt("max", body.motion_manager.max_engine_power, power_to_add)

@@ -82,7 +82,7 @@ tracks/0/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 1, 0 ), Vector2( 0, 0 ), Vector2( 0, -2 ), Vector2( 0, 0 ), Vector2( 0, 2 ), Vector2( 0, 0 ), Vector2( -1, 0 ), Vector2( 0, 0 ) ]
 }
 
-[node name="BoltTruck" type="RigidBody2D"]
+[node name="Vechile" type="RigidBody2D"]
 z_index = 1
 collision_layer = 7
 physics_material_override = SubResource( 5260 )
