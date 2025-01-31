@@ -11,14 +11,17 @@ var confirm_to_close: bool = false
 
 func _input(event: InputEvent) -> void:
 
-#	if visible and confirm_to_close:
-	if confirm_to_close:
+	if visible and confirm_to_close:
+#	if confirm_to_close:
 		if Input.is_action_just_pressed("ui_cancel"):
 			printt("hide", confirm_to_close)
 #			hide()
-		elif Input.is_action_just_pressed("ui_confirm"):
+		elif Input.is_action_just_pressed("ui_accept"):
 			printt("hide", confirm_to_close)
 #			hide()
+			get_tree().set_input_as_handled()
+		elif Input.is_action_just_pressed("left_click"): # follow leader
+			get_tree().set_input_as_handled()
 
 
 func _ready() -> void:

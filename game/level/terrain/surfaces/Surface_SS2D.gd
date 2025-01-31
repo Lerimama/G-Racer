@@ -17,7 +17,7 @@ func _ready() -> void:
 func _on_Surface_body_entered(body: Node) -> void:
 
 	if "motion_manager" in body and not bodies_to_influence.has(body):
-		body.motion_manager.engine_power_adon = engine_power_adon
+		body.motion_manager.engine_power_adon += engine_power_adon
 		#		if body.is_in_group(Rfs.group_players):
 		#			print ("surf", engine_power_adon)
 
@@ -27,4 +27,4 @@ func _on_Surface_body_exited(body: Node) -> void:
 	bodies_to_influence.erase(body)
 
 	if "motion_manager" in body:
-		body.motion_manager.engine_power_adon = 0
+		body.motion_manager.engine_power_adon -= engine_power_adon

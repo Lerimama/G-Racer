@@ -4,19 +4,10 @@ extends Position2D
 var bolt_trail_alpha = 0.05
 var trail_pseudodecay_color = Color.white
 var active_trail: Line2D
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
 
 
 func spawn_new_trail():
@@ -36,7 +27,6 @@ func spawn_new_trail():
 
 func decay():
 	if active_trail and not active_trail.in_decay:
-#	if active_trail: # ugasni tejl
 		active_trail.start_decay() # trail decay tween start
 
 
@@ -61,7 +51,6 @@ func update_trail(moving_speed: float = 0, stop_speed_threshold: float = 0.5):
 	elif active_trail and moving_speed <= stop_speed_threshold:
 		active_trail.start_decay() # trail decay tween start
 		active_trail = null # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
-
 
 
 func _on_trail_exiting(exiting_trail: Line2D):

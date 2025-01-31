@@ -7,7 +7,7 @@ export var node_elevation: float = 7 # pravo dobi iz parenta ... dvignjenost pom
 export var shadow_color: Color = Color(Color.black, 1)
 
 onready var shadow_owner_shape: Node2D# = get_node(shadow_owner_shape_path)
-onready var shadow_direction: Vector2 = Rfs.game_manager.game_shadows_direction # odvisno od igre
+onready var shadow_direction: Vector2 = Sts.game_shadows_direction # odvisno od igre
 
 # owner
 onready var shadow_owner: Node2D = owner
@@ -40,7 +40,7 @@ func update_shadows():
 		modulate = shadow_color
 		node_height = shadow_owner.height
 		node_elevation = shadow_owner.elevation
-		shadow_direction = Rfs.game_manager.game_shadows_direction
+		shadow_direction = Sts.game_shadows_direction
 		global_position = shadow_owner_shape.global_position - node_elevation * shadow_direction.rotated(deg2rad(180))
 		if not visible:
 			show()

@@ -8,7 +8,7 @@ enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
 var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
-var controlled_bolt: Node2D
+var controlled_bolt: Bolt
 var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
 
 # navigacija
@@ -52,7 +52,7 @@ var power_speed_factor: float # delež engine_power, ki manipulira z engine powe
 var bolt_motion_manager: Node
 
 
-func _input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no0"): # idle
 		self.ai_state = AI_STATE.OFF
@@ -68,7 +68,7 @@ func _input(event: InputEvent) -> void:
 
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, level_navigation.get_local_mouse_position())
-		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
+		ai_target = Mts.spawn_indikator(nav_path_points[0], Color(Color.blue, 0), 0, Rfs.node_creation_parent)
 		navigation_agent.set_target_location(nav_path_points[0])
 		ai_state = AI_STATE.MOUSE_CLICK
 		current_mouse_follow_point = nav_path_points[nav_path_points.size()-1]
@@ -93,6 +93,21 @@ func _ready() -> void:
 	for ray in vision.get_children():
 		ray.add_exception(controlled_bolt)
 
+func _get_target_side(target_position: Vector2):
+
+	var bolt_vector: Vector2 = Vector2.RIGHT.rotated(controlled_bolt.rotation)
+	var vector_to_target: Vector2 = target_position - controlled_bolt.global_position
+	var is_target_in_front: int = bolt_vector.dot(vector_to_target)
+	var is_target_on_right: int =  bolt_vector.cross(vector_to_target) # - 1 ja,
+
+	if is_target_on_right > 1: # RIGHT
+		return 1
+	elif is_target_on_right < 1: # LEFT
+		return -1
+	else: # STREJT
+		return 0
+	printt(is_target_in_front, is_target_on_right)
+
 
 func _physics_process(delta: float) -> void:
 
@@ -103,7 +118,9 @@ func _physics_process(delta: float) -> void:
 
 		# force rotation
 		var vector_to_target: Vector2 = Vector2.ZERO
+
 		if ai_target and not ai_target.is_queued_for_deletion():
+
 			force_direction_line.default_color = Color.yellow
 			if ai_state == AI_STATE.RACE_TRACK:
 				vector_to_target = _get_tracking_position(ai_target) - controlled_bolt.global_position
@@ -119,7 +136,12 @@ func _physics_process(delta: float) -> void:
 
 		if _update_vision():
 			controlled_bolt.set_linear_velocity(braking_velocity)
+
 		bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+		#		if ai_target:
+		#			bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, bolt_motion_manager.driving_gear * _get_target_side(ai_target.global_position) * deg2rad(bolt_motion_manager.max_engine_rotation_deg), bolt_motion_manager.engine_rotation_speed)
+		##			bolt_motion_manager.rotation_dir = _get_target_side(vector_to_target)
+
 
 		#		var roundabout_position = _update_vision()
 		#		if roundabout_position:# is Vector2:
@@ -165,7 +187,8 @@ func _state_machine(delta: float):
 			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				navigation_agent.set_target_location(ai_target.global_position)
-			_react_to_target(ai_target, true)
+#			_react_to_target(ai_target, true)
+			_react_to_target(ai_target)
 			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 
 		AI_STATE.HUNT: # pobere tarčo, ki jo je videl ... ne izgubi pogleda

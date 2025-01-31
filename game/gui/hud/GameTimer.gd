@@ -93,8 +93,8 @@ func reset_timer():
 func start_timer():
 
 	game_time_limit = Rfs.game_manager.level_settings["time_limit"]
-	sudden_death_mode = Rfs.game_manager.game_settings["sudden_death_mode"]
-	countdown_start_limit = Rfs.game_manager.game_settings["countdown_start_limit"] # čas, ko je obarvan in se sliši bip bip
+	sudden_death_mode = Sts.sudden_death_mode
+	countdown_start_limit = Sts.countdown_start_limit # čas, ko je obarvan in se sliši bip bip
 
 	if game_time_limit == 0:
 		stopwatch_mode = true

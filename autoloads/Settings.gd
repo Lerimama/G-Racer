@@ -15,13 +15,15 @@ var unit_one: float = 32
 enum LEVELS {STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
 var level_settings: Dictionary = {
 	LEVELS.FIRST_DRIVE: {
-		"level_name": "",
+		"level_name": "xxx",
+		"level_desc": "xxx",
 		"level_path": "res://game/level/LevelFirstDrive.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
 	LEVELS.STAFF: {
-		"level_name": "",
+		"level_name": "xxx",
+		"level_desc": "xxx",
 		"level_path": "res://game/level/LevelStaff.tscn",
 		"time_limit": 0,
 		"lap_limit": 1,
@@ -30,77 +32,101 @@ var level_settings: Dictionary = {
 
 enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var default_game_settings: Dictionary = { # setano za dirkanje
-
-	# time
-#	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
-	"game_time_limit": 0, # če je 0 ni omejitve
-	# countdown
-	"start_countdown": true,
-	"countdown_start_limit": 5,
-	# race
-	"pull_gas_penalty": -20,
-	"fast_start_window_time": 0.32,
-	# duel
-	"pickables_count_limit": 5,
-	"sudden_death_mode": false, # vklopljen, če čas ni omejen
-	# modes
-	"enemies_mode": false,
-	"easy_mode": false,
-	"full_equip_mode": false,
-	"full_equip_value": 100,
-	"drifting_mode": true, # drift ali tilt?
-	# shadows
-	"game_shadows_rotation_deg": 45,
-	"game_shadows_color": Color.black, # odvisna od višine vira svetlobe
-	"game_shadows_length_factor": 1, # odvisna od višine vira svetlobe
-	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
-	# camera
-	"camera_zoom_range": [1, 1.5],
-	"all_bolts_on_screen_mode": true,
-
-	# WORLD PARAMS ... za poenoetenje fizikalnih interakcij s svetom
-	"reality_engine_power_factor": 1000, # engine power je 300 namesto 300000
+	"muštr": true,
+	#	# time
+	#	#	"stopwatch_mode": true, # uravnavam tudi s skrivanjem lučk ... za quick switch
+	#	"game_time_limit": 0, # če je 0 ni omejitve
+	#	# countdown
+	#	"start_countdown": true,
+	#	"countdown_start_limit": 5,
+	#	# race
+	#	"pull_gas_penalty": -20,
+	#	"fast_start_window_time": 0.32,
+	#	# duel
+	#	"pickables_count_limit": 5,
+	#	"sudden_death_mode": false, # vklopljen, če čas ni omejen
+	#	# modes
+	#	"enemies_mode": false,
+	#	"easy_mode": false,
+	#	"full_equip_mode": false,
+	#	"full_equip_value": 100,
+	#	"drifting_mode": true, # drift ali tilt?
+	#	# shadows
+	#	"game_shadows_rotation_deg": 45,
+	#	"game_shadows_color": Color.black, # odvisna od višine vira svetlobe
+	#	"game_shadows_length_factor": 1, # odvisna od višine vira svetlobe
+	#	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
+	#	# camera
+	#	"camera_zoom_range": [1, 1.5],
+	#	"all_bolts_on_screen_mode": true,
+	#
+	#	# WORLD PARAMS ... za poenoetenje fizikalnih interakcij s svetom
+	#	"reality_engine_power_factor": 1000, # engine power je 300 namesto 300000
 }
+
+var game_time_limit: int = 0 # če je 0 ni omejitve
+var start_countdown: bool = true
+var countdown_start_limit: int = 5
+var fast_start_window_time: float = 0.32
+var pickables_count_limit: int = 5
+var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
+var enemies_mode: bool = false
+var easy_mode: bool = false
+var full_equip_mode: bool = false
+var full_equip_value: int = 100
+var camera_zoom_range: Array = [1, 1.5]
+var all_bolts_on_screen_mode: bool = true
+# driving
+var pull_gas_penalty: float = -20
+var drifting_mode: bool = true # drift ali tilt?
+var reality_engine_power_factor: float = 1000 # engine power je 300 namesto 300000
+# shadows
+var game_shadows_rotation_deg: float = 45
+var game_shadows_color: Color = Color.black # odvisna od višine vira svetlobe
+var game_shadows_length_factor: float = 1 # odvisna od višine vira svetlobe
+var game_shadows_alpha: float = 0.4 # odvisna od moči svetlobe
+var game_shadows_direction: Vector2 = Vector2(800,0) # odvisna od moči svetlobe
 
 
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
-
 
 var players_on_game_start: Array# = [0]# samo 1. level ... seta se iz home
 var current_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 var current_game_levels: Array = []
-#var current_game_levels: Array = [LEVELS.FIRST_DRIVE]
 
 func _ready() -> void:
 
 	if OS.is_debug_build():
 		current_game_levels = [LEVELS.STAFF]
+#		current_game_levels = [LEVELS.FIRST_DRIVE]
 
-#		default_game_settings["camera_zoom_range"] = [2, 2]
-#		default_game_settings["camera_zoom_range"] = [3, 3]
-		default_game_settings["camera_zoom_range"] = [5, 5]
-		default_game_settings["start_countdown"] = false
-#		default_game_settings["all_bolts_on_screen_mode"] = false
-		default_game_settings["easy_mode"] = true
-#		default_game_settings["full_equip_mode"] = true
-		default_game_settings["enemies_mode"] = true
-		default_game_settings["game_shadows_direction"] = Vector2(-800, 0)
+#		camera_zoom_range = [2, 2]
+#		camera_zoom_range = [3, 3]
+		camera_zoom_range = [5, 5]
+		start_countdown = false
+#		all_bolts_on_screen_mode = false
+		easy_mode = true
+#		full_equip_mode = true
+		enemies_mode = true
+		game_shadows_rotation_deg = 45
 
 		players_on_game_start = [
-			Pfs.DRIVERS.P1
-#			Pfs.DRIVERS.P1, PfsDRIVERSR.P2
-#			Pfs.DRIVERS.P1, Pfs.DRIVERS.P2, Pfs.DRIVERS.P3, Pfs.DRIVERS.P4
+			Pfs.DRIVER_ID.P1
+#			Pfs.DRIVER_ID.P1, PfsDRIVERSR.P2
+#			Pfs.DRIVER_ID.P1, Pfs.DRIVER_ID.P2, Pfs.DRIVER_ID.P3, Pfs.DRIVER_ID.P4
 			]
 
-	if default_game_settings["full_equip_mode"]:
+	if full_equip_mode:
 		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]
 		Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = default_game_settings["full_equip_value"]
 		Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = default_game_settings["full_equip_value"]
 
+	set_game_settings_per_level()
 
-func get_level_game_settings(selected_level_index: int):
+
+func set_game_settings_per_level(selected_level_index: int = 0):
 
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level

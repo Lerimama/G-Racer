@@ -27,13 +27,14 @@ var pickables_in_game: Array
 
 onready var level_finished_ui: Control = $"../UI/LevelFinished"
 onready var game_over_ui: Control = $"../UI/GameOver"
-onready var game_settings: Dictionary = Sts.get_level_game_settings(current_level_index) # set_game seta iz profilov
+#onready var game_settings: Dictionary = Sts.get_level_game_settings(current_level_index) # set_game seta iz profilov
+
 # shadows
-onready var game_shadows_direction: Vector2 = game_settings["game_shadows_direction"] # Vector2(1, 1) # set_game seta iz profilov
-onready var game_shadows_length_factor: float = game_settings["game_shadows_length_factor"] # set_game seta iz profilov
-onready var game_shadows_alpha: float = game_settings["game_shadows_alpha"] # set_game seta iz profilov
-onready var game_shadows_color: Color = game_settings["game_shadows_color"] # set_game seta iz profilov
-onready var game_shadows_rotation_deg: float = game_settings["game_shadows_rotation_deg"] # set_game seta iz profilov
+#onready var game_shadows_direction: Vector2 = Sts.game_shadows_direction # Vector2(1, 1) # set_game seta iz profilov
+onready var game_shadows_length_factor: float = Sts.game_shadows_length_factor # set_game seta iz profilov
+onready var game_shadows_alpha: float = Sts.game_shadows_alpha # set_game seta iz profilov
+onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta iz profilov
+onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
 
 # neu
 var games
@@ -97,7 +98,7 @@ func _change_camera_leader(new_camera_leader: Node2D):
 
 func _set_game():
 
-	game_settings = Sts.get_level_game_settings(current_level_index)
+#	game_settings = Sts.get_level_game_settings(current_level_index)
 	_spawn_level()
 	hud.set_hud()
 	self.connect("game_state_changed", hud, "_on_game_state_change") # statistika med boltom in hudom
@@ -106,7 +107,7 @@ func _set_game():
 	# playing field
 	var playing_field_node: Node2D = Rfs.game_camera.playing_field
 	playing_field_node.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
-	if game_settings["all_bolts_on_screen_mode"]:
+	if Sts.all_bolts_on_screen_mode:
 		match Rfs.current_level.level_type:
 			Rfs.current_level.LEVEL_TYPE.BATTLE:
 				playing_field_node.enable_playing_field(false)
@@ -128,10 +129,10 @@ func _set_game():
 		for bolt in players_qualified:
 			activated_driver_ids.append(bolt.driver_id)
 	players_qualified.clear()
-	#	printt("DRIVERS", activated_driver_ids)
+	#	printt("DRIVER_ID", activated_driver_ids)
 
 	# AI
-	if game_settings["enemies_mode"]: # začasno vezano na Set. filet
+	if Sts.enemies_mode: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI driver_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
 		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
@@ -139,7 +140,7 @@ func _set_game():
 			# dobim štartni id bolta in umestim ai data
 			var new_driver_index: int = activated_driver_ids.size()
 			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
-			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPES.DEFAULT]["controller_type"]
+			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["controller_type"]
 			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
 
 	# spawn bolts ... po vrsti aktivacije
@@ -173,7 +174,7 @@ func _game_intro():
 func _start_game():
 
 	# start countdown
-	if Rfs.game_manager.game_settings["start_countdown"]:
+	if Sts.start_countdown:
 		Rfs.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
 		yield(Rfs.current_level.start_lights, "countdown_finished")
 
@@ -197,7 +198,7 @@ func _start_game():
 
 	# fast start
 	fast_start_window = true
-	yield(get_tree().create_timer(game_settings["fast_start_window_time"]), "timeout")
+	yield(get_tree().create_timer(Sts.fast_start_window_time), "timeout")
 	fast_start_window = false
 
 
@@ -244,7 +245,7 @@ func end_level():
 						bolts_finished.append(bolt)
 					elif bolt.is_in_group(Rfs.group_players):
 						# plejer se na Easy_mode uvrsti brez časa
-						if game_settings["easy_mode"]:
+						if Sts.easy_mode:
 							bolts_finished.append(bolt)
 
 			# je level zadnji?
@@ -331,7 +332,7 @@ func _update_ranking():
 			hud.update_bolt_level_stats(bolt.driver_id, Pfs.STATS.LEVEL_RANK, current_bolt_rank) # OPT prepogosto
 
 
-func _on_bolt_reached_goal(level_goal: Node, goal_reaching_bolt: Node2D): # level poveže
+func _on_bolt_reached_goal(level_goal: Node, goal_reaching_bolt: Bolt): # level poveže
 
 	var curr_bolt_level_data: Dictionary = level_stats[goal_reaching_bolt.driver_id]
 
@@ -347,7 +348,7 @@ func _on_bolt_reached_goal(level_goal: Node, goal_reaching_bolt: Node2D): # leve
 			goal_reaching_bolt.bolt_controller.goals_to_reach.erase(level_goal)
 
 
-func _bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
+func _bolt_across_finish_line(bolt_across: Bolt): # sproži finish line
 
 	if not game_on:
 		return
@@ -391,9 +392,9 @@ func _bolt_across_finish_line(bolt_across: Node2D): # sproži finish line
 			hud.update_bolt_level_stats(bolt_across.driver_id, stat_key, curr_bolt_level_data[stat_key])
 
 
-func _pull_bolt_on_field(bolt_to_pull: Node2D):
+func _pull_bolt_on_field(bolt_to_pull: Bolt):
 
-	if game_on and game_settings["all_bolts_on_screen_mode"]:
+	if game_on and Sts.all_bolts_on_screen_mode:
 
 		if bolt_to_pull.is_active:
 
@@ -412,7 +413,7 @@ func _pull_bolt_on_field(bolt_to_pull: Node2D):
 				pulled_bolt_level_stats[Pfs.STATS.GOALS_REACHED] = leader_bolt_level_stats[Pfs.STATS.GOALS_REACHED]
 
 
-func _get_bolt_pull_position(bolt_to_pull: Node2D):
+func _get_bolt_pull_position(bolt_to_pull: Bolt):
 	# na koncu izbrana pull pozicija:
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
@@ -545,7 +546,7 @@ func _spawn_random_pickables():
 	if available_pickable_positions.empty():
 		return
 
-	if pickables_in_game.size() <= Rfs.game_manager.game_settings["pickables_count_limit"] - 1:
+	if pickables_in_game.size() <= Sts.pickables_count_limit - 1:
 
 		# žrebanje tipa
 		var random_pickable_key = Pfs.pickable_profiles.keys().pick_random()
@@ -640,7 +641,7 @@ func _on_body_exited_playing_field(body: Node) -> void:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
 
-func _on_bolt_activity_change(changed_bolt: Node2D):
+func _on_bolt_activity_change(changed_bolt: Bolt):
 
 	# preverja, če je še kakšen player aktiven ... za GO
 	if changed_bolt.is_active == false:

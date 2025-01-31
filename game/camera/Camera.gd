@@ -11,7 +11,7 @@ var bullet_hit_shake = 0.02
 var misile_hit_shake = 0.05
 
 # dinamic zoom
-var camera_zoom_range: Array = Sts.default_game_settings["camera_zoom_range"] # [1, 1.5]
+var camera_zoom_range: Array = Sts.camera_zoom_range # [1, 1.5]
 var camera_zoom_speed_factor: float = 0.01
 var min_zoom_target_speed: float = 1000
 var max_zoom_target_speed: float = 1500

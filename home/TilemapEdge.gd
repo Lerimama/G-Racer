@@ -4,7 +4,7 @@ extends TileMap
 var light_color: Color = Color.white # za barvanje debrisa
 
 onready var edge_shadow: ColorRect = $EdgeShadows
-onready var shadow_direction: Vector2 = Rfs.game_manager.game_shadows_direction setget _on_shadow_direction_change
+onready var shadow_direction: Vector2 = Vector2(1,1) setget _on_shadow_direction_change
 
 func _ready() -> void:
 

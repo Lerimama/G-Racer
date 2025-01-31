@@ -101,7 +101,7 @@ shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 script = ExtResource( 5 )
 
 [node name="TrailSource" type="Position2D" parent="."]
-position = Vector2( -33, 0 )
+position = Vector2( -113, 0 )
 script = ExtResource( 23 )
 __meta__ = {
 "_gizmo_extents_": 2.0

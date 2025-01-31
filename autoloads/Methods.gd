@@ -96,6 +96,32 @@ func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke
 	time_label.get_node("Hunds").text = "%02d" % rounded_hundreds_leftover
 
 
+func get_all_named_collision_layers(in_range: int = 21):
+
+	var layer_names_by_index = {}
+
+	for i in range(1, in_range):
+		var layer_name = ProjectSettings.get_setting("layer_names/2d_physics/layer_" + str(i))
+		if layer_name:
+			layer_names_by_index[i] = layer_name
+#			print("Layer " + str(i) + ": " + layer_name)
+
+	return layer_names_by_index
+
+
+func get_absolute_z_index(target: Node2D) -> int:
+
+	var node = target
+	var z_index = 0
+	while node and node is Node2D:
+		z_index += node.z_index
+		if not node.z_as_relative:
+			break
+		node = node.get_parent()
+
+	return z_index
+
+
 
 signal fade_out_finished
 func sound_fade_out_and_reset(sound: AudioStreamPlayer, fade_time: float):

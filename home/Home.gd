@@ -2,12 +2,12 @@ extends Node
 
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
+onready var focus_btn: Button = $UI/PlayersMenu/PlayerBtn
 
 
 func _ready() -> void:
 
-	$UI/MainMenu/PlayBtn.grab_focus()
-
+	focus_btn.grab_focus()
 
 
 func _on_PlayBtn_pressed() -> void:

@@ -1,7 +1,7 @@
 extends Node
 
 
-var controlled_bolt: RigidBody2D
+var controlled_bolt: Bolt
 var controller_type: int
 var bolt_motion_manager: Node
 
@@ -63,6 +63,18 @@ func _input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed(selector_action):
 			controlled_bolt.bolt_hud.selected_feature_index += 1
 
+	if Input.is_action_just_pressed("left_click"): # follow leader
+#		var vec0 = controlled_bolt.global_position# + Vector2.RIGHT.rotated(controlled_bolt.rotation)
+		var vec0 = Vector2.RIGHT.rotated(controlled_bolt.rotation)
+#		var vec0 = Vector2.UP#.rotated(controlled_bolt.rotation)
+#		var vec = controlled_bolt.global_position + get_viewport().get_mouse_position() - controlled_bolt.global_position
+		var vec = controlled_bolt.get_global_mouse_position() - controlled_bolt.global_position
+#		var ang =  vec.angle_to(vec0)
+		var ang =  vec.angle_to_point(get_viewport().get_mouse_position())
+		var target_side = vec0.dot(vec)
+		var cross_side =  vec0.cross(vec)
+		printt(target_side, cross_side)
+		Mts.spawn_indikator(controlled_bolt.get_global_mouse_position(), Color.red, 0, Rfs.node_creation_parent)
 
 func _ready() -> void:
 

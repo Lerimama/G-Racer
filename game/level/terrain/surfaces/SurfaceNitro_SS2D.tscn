@@ -94,3 +94,6 @@ surface_type = 2
 [node name="SS2D_Shape_Closed" parent="." index="0"]
 _points = SubResource( 11 )
 shape_material = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" parent="." index="1"]
+polygon = PoolVector2Array( 448.104, -0.103551, 448.104, 256.104, -0.103552, 256.104, -0.103552, -0.103552 )

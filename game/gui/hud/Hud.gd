@@ -148,6 +148,7 @@ func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
 	spawned_driver_statbox.driver_name_label.text = spawned_driver_profile["driver_name"]
 	spawned_driver_statbox.driver_name_label.modulate = spawned_driver_profile["driver_color"]
 	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar"])
+#	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar_png"])
 	spawned_driver_statbox.stat_wins.modulate = Color.red
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	spawned_driver_statbox.visible = true

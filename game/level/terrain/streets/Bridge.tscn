@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://game/level/terrain/streets/Bridge.gd" type="Script" id=1]
+
+[node name="Bridge" type="Area2D"]
+z_as_relative = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true,
+"_editor_description_": ""
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PoolVector2Array( 0, 0, 1088, 0, 1088, 960, 0, 960 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+modulate = Color( 1, 1, 1, 0.3 )
+polygon = PoolVector2Array( 0, 0, 1088, 0, 1088, 960, 0, 960 )

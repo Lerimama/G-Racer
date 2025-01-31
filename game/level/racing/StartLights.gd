@@ -12,7 +12,7 @@ onready var light_timer: Timer = $LightTimer
 
 func _ready() -> void:
 
-	visible = Rfs.game_manager.game_settings["start_countdown"]
+	visible = Sts.start_countdown
 	for light in off_lights:
 		light.show()
 	for light in on_lights:

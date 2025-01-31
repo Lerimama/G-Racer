@@ -27,7 +27,7 @@ border_width_right = 8
 border_width_bottom = 8
 border_color = Color( 1, 1, 1, 1 )
 
-[sub_resource type="StyleBoxFlat" id=12]
+[sub_resource type="StyleBoxEmpty" id=12]
 
 [resource]
 default_font = ExtResource( 1 )

@@ -47,8 +47,10 @@ onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
 
-# debug linija
+# debug
 onready var direction_line: Line2D = $DirectionLine
+var debug_trail_time: float = 0
+var debug_trail: Line2D
 
 # neu
 onready var motion_manager: Node = $MotionManager
@@ -85,15 +87,31 @@ func _ready() -> void:
 		available_weapons.append(get_node(path))
 
 	_add_bolt_controller()
+#	motion_manager._set_default_parameters()
 
 	# debug
-	if driver_id == Pfs.DRIVERS.P1:
+	if driver_id == Pfs.DRIVER_ID.P1:
 		Rfs.game_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")
 
 
 func _process(delta: float) -> void:
+
+	# debug trail
+	if Input.is_action_pressed("T"):
+		if not debug_trail:
+			debug_trail = Line2D.new()
+			debug_trail.z_index = 1000
+			Rfs.node_creation_parent.add_child(debug_trail)
+		else:
+			debug_trail_time += delta
+			if debug_trail_time > 0.1:
+				debug_trail.add_point(global_position)
+				debug_trail_time = 0
+	if Input.is_action_just_released("T"):
+		debug_trail_time = 0
+		debug_trail = null
 
 	trail_source.update_trail(bolt_velocity.length())
 
@@ -104,6 +122,8 @@ func _process(delta: float) -> void:
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
 	# print("power %s / " % motion_manager.current_engine_power, "force %s" % force)
 
+#	print(applied_torque)
+
 	bolt_body_state = state
 	bolt_velocity = state.get_linear_velocity() # tole je bol prej brez stejta
 
@@ -113,13 +133,13 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 			motion_manager.MOTION.IDLE:
 				# sila je 0 samo, če ni idle rotacije ali pa ja ROTATION, ker rotiram s torqu
 				front_mass.set_applied_force(motion_manager.force_on_bolt)
-				rear_mass.set_applied_force(- motion_manager.force_on_bolt)
+				rear_mass.set_applied_force(-motion_manager.force_on_bolt)
 			motion_manager.MOTION.FWD:
 				front_mass.set_applied_force(motion_manager.force_on_bolt)
 				rear_mass.set_applied_force(Vector2.ZERO)
 			motion_manager.MOTION.REV:
-				rear_mass.set_applied_force(motion_manager.force_on_bolt)
 				front_mass.set_applied_force(Vector2.ZERO)
+				rear_mass.set_applied_force(motion_manager.force_on_bolt)
 
 
 # LAJF ----------------------------------------------------------------------------
@@ -310,7 +330,7 @@ func pull_bolt_on_screen(pull_position: Vector2): # kliče GM
 	collision_shape.set_deferred("disabled", false)
 	bolt_controller.set_process_input(true)
 
-	update_stat(Pfs.STATS.GAS, Rfs.game_manager.game_settings["pull_gas_penalty"])
+	update_stat(Pfs.STATS.GAS, Sts.pull_gas_penalty)
 
 
 func screen_wrap(): # ne uporabljam

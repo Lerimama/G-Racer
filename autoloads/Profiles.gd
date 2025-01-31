@@ -61,44 +61,43 @@ var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 # ---------------------------------------------------------------------------------------------------------------------------
 func drivers(): pass
 
-enum DRIVERS {P1, P2, P3, P4}
+enum DRIVER_ID {P1, P2, P3, P4}
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
-	DRIVERS.P1 : {
+	DRIVER_ID.P1 : {
 		"driver_name": "P1",
-		"driver_avatar": preload("res://assets/textures/avatars/avatar_01.png"),
-#		"driver_color": Color.white,
+		"driver_avatar": preload("res://home/avatar_david.tres"),
 		"driver_color": Color.black, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 		"controller_type": CONTROLLER_TYPE.ARROWS,
 		"bolt_type": BOLTS.BASIC,
 	},
-	DRIVERS.P2 : {
+	DRIVER_ID.P2 : {
 		"driver_name": "P2",
-		"driver_avatar": preload("res://assets/textures/avatars/avatar_02.png"),
+		"driver_avatar": preload("res://home/avatar_magnum.tres"),
 		"driver_color": Rfs.color_red,
 		"controller_type" : CONTROLLER_TYPE.WASD,
-#		"controller_type" : CONTROLLER_TYPE.JP1,
 		"bolt_type": BOLTS.BASIC,
 	},
-	DRIVERS.P3 : {
+	DRIVER_ID.P3 : {
 		"driver_name" : "P3",
-		"driver_avatar" : preload("res://assets/textures/avatars/avatar_03.png"),
+		"driver_avatar" : preload("res://home/avatar_marty.tres"),
 		"driver_color" : Rfs.color_yellow, # color_yellow, color_green, color_red
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLTS.BASIC,
 	},
-	DRIVERS.P4 : {
+	DRIVER_ID.P4 : {
 		"driver_name" : "P4",
-		"driver_avatar" : preload("res://assets/textures/avatars/avatar_04.png"),
+		"driver_avatar" : preload("res://home/avatar_mrt.tres"),
 		"driver_color" : Rfs.color_green,
 		"controller_type" : CONTROLLER_TYPE.WASD,
 		"bolt_type": BOLTS.BASIC,
 	},
 }
 
-enum AI_TYPES {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
+enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
-	AI_TYPES.DEFAULT: {
+	AI_TYPE.DEFAULT: {
 		"controller_type" : CONTROLLER_TYPE.AI,
+		"ai_avatar" : preload("res://home/avatar_ai.tres")
 		# driving
 #		"max_engine_power": 80, # 80 ima skoraj identično hitrost kot plejer
 #		"battle_engine_power": 120, # je enaka kot od  bolta
@@ -183,33 +182,35 @@ var bolt_profiles: Dictionary = {
 		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
 		"bounce": 0.5,
 		"friction": 0.2,
-		# STRAIGHT
+		# NONE
 		# masa in damping je na celotnem boltu
 		# ostale vrednosti so vse 0
 		"max_engine_power": 500, # = konjev
-		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
-		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
-		"lin_damp": 1, # vlpiva na pojemek
+		#		"lin_damp": 1, # vpliva na pojemek
+		#		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
+		#		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
+
 		# ---
 		# MASSLESS
-		# ostale vrednosti ostanejo kot za STRAIGHT
+		# ostale vrednosti ostanejo kot za NONE
 		"max_engine_power_massless": 800,
 		"max_engine_rotation_deg_massless": 25,
 		"ang_damp_massless": 0,
 		"front_mass_bias_massless": 0.5,
 		"lin_damp_front_massless": 0,
 		"lin_damp_rear_massless": 5,
+
 		# SPIN
-		"spin_torque": 10000000,
+#		"spin_torque": 10000000,
 		"ang_damp_float": 0.5,
-		"max_free_thrust_rotation_deg": 90,
-		"free_rotation_power": 14, # na oba
+#		"max_free_thrust_rotation_deg": 90,
+#		"free_rotation_power": 14, # na oba
 		# DRIFT
 		"drift_power": 17000, # na rear
 		# GLIDE
 		"glide_power_F": 465,#00,
 		"glide_power_R": 500,#00,
-		"glide_ang_damp": 5, # da se ha rotirat
+#		"glide_ang_damp": 5, # da se ha rotirat
 		},
 	BOLTS.TRUCK: {
 		"bolt_scene": preload("res://game/bolt/Vechicle.tscn"),
@@ -228,7 +229,7 @@ var bolt_profiles: Dictionary = {
 		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
 		# DRIVING SETUP
 		# ---
-		# STRAIGHT
+		# NONE
 		# masa in damping je na celotnem boltu
 		# ostale vrednosti so vse 0
 		"max_engine_power": 500, # = konjev
@@ -243,7 +244,7 @@ var bolt_profiles: Dictionary = {
 		"front_mass_bias_massless": 0.5,
 		"lin_damp_front_massless": 0,
 		"lin_damp_rear_massless": 5,
-		# ostale vrednosti ostanejo kot za STRAIGHT
+		# ostale vrednosti ostanejo kot za NONE
 
 		# ROTATE
 		"spin_torque": 10000000,
@@ -262,8 +263,8 @@ enum EQUIPMENT {NITRO, SHIELD}
 var equipment_profiles : Dictionary = {
 	EQUIPMENT.NITRO: {
 		"value": 1,
-		"nitro_power_adon": 300,
-		"time": 3,
+		"nitro_power_adon": 700,
+		"time": 2,
 	},
 	EQUIPMENT.SHIELD: {
 		"lifetime": 5,
