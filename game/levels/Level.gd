@@ -38,6 +38,8 @@ func _ready() -> void:
 	# debug
 	$__ScreenSize.hide()
 	$__Labels.hide()
+	$__WorldMeters.hide()
+
 
 	Rfs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level

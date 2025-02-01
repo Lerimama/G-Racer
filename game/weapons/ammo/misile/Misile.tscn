@@ -75,7 +75,7 @@ color_ramp = SubResource( 5284 )
 [sub_resource type="CanvasItemMaterial" id=5279]
 
 [sub_resource type="CircleShape2D" id=5]
-radius = 144.0
+radius = 1099.58
 
 [node name="Misile" type="KinematicBody2D"]
 collision_layer = 32
@@ -139,7 +139,6 @@ polygon = PoolVector2Array( 0, 0, 0, 9, -24, 9, -24, 0 )
 disabled = true
 
 [node name="HommingArea" type="Area2D" parent="."]
-visible = false
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true

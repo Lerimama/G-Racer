@@ -179,14 +179,15 @@ var bolt_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 		# driving params
 		"engine_rotation_speed": 1,
-		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
+#		"fast_start_power_addon": 200, # pospešek motorja do največje moči (horsepower?)
 		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
 		"bounce": 0.5,
 		"friction": 0.2,
 		# NONE
 		# masa in damping je na celotnem boltu
 		# ostale vrednosti so vse 0
-		"max_engine_power": 500, # = konjev
+		"max_engine_power": 500, # = konjev ... cca 200 kmh
+#		"max_engine_power_ai_addon": 10, # v 1km ga skoraj dohiti
 		#		"lin_damp": 1, # vpliva na pojemek
 		#		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
 		#		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
@@ -261,7 +262,7 @@ enum EQUIPMENT {NITRO, SHIELD}
 var equipment_profiles : Dictionary = {
 	EQUIPMENT.NITRO: {
 		"value": 1,
-		"nitro_power_adon": 700,
+		"nitro_power_addon": 700,
 		"time": 1,
 	},
 	EQUIPMENT.SHIELD: {
@@ -293,7 +294,7 @@ var ammo_profiles : Dictionary = {
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"hit_damage": 0.5, # 10 je max energija
-		"speed": 500,
+		"speed": 1500,
 		"lifetime": 3.2, # domet vedno merim s časom
 		"mass": 1, # 10kg
 		"direction_start_range": [-0.1, 0.1] , # natančnost misile
@@ -324,19 +325,12 @@ var ammo_profiles : Dictionary = {
 func levels(): pass
 
 
-enum LEVELS {DEFAULT, FAST, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
+enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_path": "res://game/levels/Level.tscn",
-		"time_limit": 0,
-		"lap_limit": 0,
-		},
-	LEVELS.FAST: {
-		"level_name": "xxx",
-		"level_desc": "xxx",
-		"level_path": "res://game/levels/LevelFast.tscn",
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
@@ -347,11 +341,18 @@ var level_profiles: Dictionary = {
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
+	LEVELS.TRAINING: {
+		"level_name": "xxx",
+		"level_desc": "xxx",
+		"level_path": "res://game/levels/LevelTraining.tscn",
+		"time_limit": 0,
+		"lap_limit": 0,
+		},
 	LEVELS.STAFF: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_path": "res://game/levels/LevelStaff.tscn",
-		"time_limit": 0,
+		"time_limit": 60,
 		"lap_limit": 1,
 		},
 }
@@ -412,27 +413,27 @@ func surfaces(): pass
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
 	SURFACE.NONE: {
-		"engine_power_adon": 0, # 0 je brez vpliva, do 10 seštevam, naprej množim
+		"engine_power_addon": 0, # 0 je brez vpliva, do 10 seštevam, naprej množim
 		"shake_amount": 0,
 	},
 	SURFACE.CONCRETE: {
-		"engine_power_adon": 0,
+		"engine_power_addon": 0,
 		"shake_amount": 0,
 	},
 	SURFACE.NITRO: {
-		"engine_power_adon": 700,
+		"engine_power_addon": 700,
 		"shake_amount": 0,
 	},
 	SURFACE.GRAVEL: {
-		"engine_power_adon": 0.2,
+		"engine_power_addon": 0.2,
 		"shake_amount": 0,
 	},
 	SURFACE.HOLE: {
-		"engine_power_adon": 0.1,
+		"engine_power_addon": 0.1,
 		"shake_amount": 0,
 	},
 	SURFACE.TRACKING: {
-		"engine_power_adon": 0,
+		"engine_power_addon": 0,
 		"shake_amount": 0,
 	},
 }

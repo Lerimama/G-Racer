@@ -120,71 +120,6 @@ stat_type = 2
 icon_texture = ExtResource( 4 )
 stat_name = "WINS"
 
-[node name="StatWins" parent="." instance=ExtResource( 6 )]
-visible = false
-margin_top = 127.0
-margin_right = 953.0
-margin_bottom = 184.0
-stat_type = 2
-icon_texture = ExtResource( 4 )
-
-[node name="Icon" parent="StatWins" index="0"]
-visible = false
-margin_left = 220.0
-margin_right = 260.0
-texture = ExtResource( 4 )
-
-[node name="Name" parent="StatWins" index="1"]
-visible = false
-margin_left = 276.0
-margin_right = 411.0
-text = " "
-
-[node name="Label" parent="StatWins" index="2"]
-visible = false
-margin_left = 427.0
-margin_right = 484.0
-
-[node name="TimeLabel" parent="StatWins" index="3"]
-visible = false
-margin_left = 500.0
-margin_right = 701.0
-
-[node name="StatIcons" parent="StatWins" index="4"]
-margin_left = 717.0
-margin_right = 953.0
-
-[node name="OffIcon" parent="StatWins/StatIcons/StatIcon" index="0"]
-texture = ExtResource( 4 )
-
-[node name="OnIcon" parent="StatWins/StatIcons/StatIcon" index="1"]
-visible = false
-texture = ExtResource( 4 )
-
-[node name="OffIcon" parent="StatWins/StatIcons/StatIcon2" index="0"]
-texture = ExtResource( 4 )
-
-[node name="OnIcon" parent="StatWins/StatIcons/StatIcon2" index="1"]
-texture = ExtResource( 4 )
-
-[node name="OffIcon" parent="StatWins/StatIcons/StatIcon3" index="0"]
-texture = ExtResource( 4 )
-
-[node name="OnIcon" parent="StatWins/StatIcons/StatIcon3" index="1"]
-texture = ExtResource( 4 )
-
-[node name="OffIcon" parent="StatWins/StatIcons/StatIcon4" index="0"]
-texture = ExtResource( 4 )
-
-[node name="OnIcon" parent="StatWins/StatIcons/StatIcon4" index="1"]
-texture = ExtResource( 4 )
-
-[node name="OffIcon" parent="StatWins/StatIcons/StatIcon5" index="0"]
-texture = ExtResource( 4 )
-
-[node name="OnIcon" parent="StatWins/StatIcons/StatIcon5" index="1"]
-texture = ExtResource( 4 )
-
 [node name="StatCash" parent="." instance=ExtResource( 6 )]
 margin_top = 79.0
 margin_right = 575.0
@@ -255,5 +190,3 @@ margin_right = 575.0
 margin_bottom = 696.0
 stat_type = 1
 stat_name = "LEVEL TIME"
-
-[editable path="StatWins"]

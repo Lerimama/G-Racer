@@ -100,8 +100,8 @@ func _set_game():
 
 #	game_settings = Sts.get_level_game_settings(current_level_index)
 	_spawn_level()
-	hud.set_hud()
-	self.connect("game_state_changed", hud, "_on_game_state_change") # statistika med boltom in hudom
+
+	hud.set_hud(level_settings, Rfs.current_level.level_type, Rfs.current_level.LEVEL_TYPE) # kliče GM
 	Rfs.game_camera.follow_target = Rfs.current_level.start_camera_position_node
 
 	# playing field
@@ -135,7 +135,7 @@ func _set_game():
 	if Sts.enemies_mode: # začasno vezano na Set. filet
 		# za vsako prazno pozicijo dodam AI driver_id
 		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
-#		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
+		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
 		for empty_position in empty_positions_count:
 			# dobim štartni id bolta in umestim ai data
 			var new_driver_index: int = activated_driver_ids.size()
@@ -381,7 +381,7 @@ func _bolt_across_finish_line(bolt_across: Bolt): # sproži finish line
 		var laps_count: int = curr_bolt_level_data[Pfs.STATS.LAPS_FINISHED].size()
 		if laps_count >= level_settings["lap_limit"]:
 			bolts_finished.append(bolt_across)
-			var drive_out_time: float = 2
+			var drive_out_time: float = 1
 			var drive_out_vector: Vector2 = Rfs.current_level.drive_out_position.rotated(Rfs.current_level.level_finish.global_rotation)
 			bolt_across.drive_out(drive_out_time, drive_out_vector)
 			Rfs.sound_manager.play_sfx("finish_horn")
@@ -495,7 +495,7 @@ func _spawn_level():
 	if Rfs.current_level.level_finish_path:
 		Rfs.current_level.get_node(Rfs.current_level.level_finish_path).connect("finish_reached", self, "_bolt_across_finish_line")
 
-	print ("spawned level_stats", level_stats)
+	#	print ("spawned level_stats", level_stats)
 
 
 func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
@@ -522,6 +522,7 @@ func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
 	# AI
 	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
 		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
+		self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
 
 	# race trackers
 	match Rfs.current_level.level_type:
@@ -529,7 +530,6 @@ func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
 			new_bolt.bolt_tracker = Rfs.current_level.level_track.set_new_bolt_tracker(new_bolt)
 
 	# signali
-	self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change")
 	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_change")
 	new_bolt.connect("bolt_stat_changed", hud, "_on_bolt_stat_changed")
 

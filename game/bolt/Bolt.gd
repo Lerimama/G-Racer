@@ -62,7 +62,7 @@ var bolt_velocity: Vector2 = Vector2.ZERO
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"): # idle
-		motion_manager.use_nitro()
+		motion_manager.boost_bolt()
 
 
 func _ready() -> void:
@@ -87,7 +87,7 @@ func _ready() -> void:
 
 	_add_controller()
 	_add_motion_manager()
-	#	motion_manager.set_default_parameters()
+	motion_manager._set_default_parameters()
 
 	# debug
 	if driver_id == Pfs.DRIVER_ID.P1:
@@ -279,6 +279,7 @@ func drive_out(drive_out_time: float, drive_out_vector: Vector2):
 
 	var drive_out_position: Vector2 = global_position + drive_out_vector
 	var angle_to_vector: float = get_angle_to(drive_out_position)
+
 	var drive_out_tween = get_tree().create_tween()
 	# obrnem ga proti cilju in zapeljem do linije
 	#	drive_out_tween.tween_property(bolt_body_state, "transform:rotated", angle_to_vector, drive_out_time/5)
@@ -405,7 +406,7 @@ func on_item_picked(pickable_key: int):
 		Pfs.PICKABLE.PICKABLE_SHIELD:
 			_spawn_shield()
 		Pfs.PICKABLE.PICKABLE_NITRO:
-			motion_manager.use_nitro()
+			motion_manager.boost_bolt()
 		_:
 			# če spreminja statistiko
 			if Pfs.pickable_profiles[pickable_key].keys().has("driver_stat"):

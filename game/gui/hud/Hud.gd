@@ -3,18 +3,14 @@ extends Control
 
 var record_lap_time: int = 0
 var record_level_time: int = 0
+var level_lap_limit: int
 
 onready var statboxes: Array = [$StatBox, $StatBox2, $StatBox3, $StatBox4]
-
 onready var record_lap_label: Label = $RecordLap
-onready var game_timer: Control = $"%GameTimer"
-onready var start_countdown: Control = $"%StartCountdown"
 onready var level_name: Label = $LevelName
-
+onready var game_timer: HBoxContainer = $GameTimer
+onready var start_countdown: Control = $Popups/StartCountdown
 onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
-
-# neu
-var level_laps_limit: int
 
 
 func _ready() -> void:
@@ -29,49 +25,53 @@ func _ready() -> void:
 	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
-func set_hud(): # kliče GM
+func set_hud(level_settings:Dictionary, level_type: int, level_types: Dictionary): # kliče GM
+	# LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
 
-	# game stats
-	match Rfs.current_level.level_type:
-		Rfs.current_level.LEVEL_TYPE.RACE_TRACK, Rfs.current_level.LEVEL_TYPE.RACE_GOAL:
-			game_timer.hunds_mode = true
-#			game_timer.stopwatch_mode = true
-
-	game_timer.show()
-	record_lap_label.hide()
-
-	# driver stats
 	for box in statboxes:
-		# najprej skrijem vse in potem pokažem glede na igro
-		for stat in box.get_children():
-			record_lap_label.hide()
+		for stat in box.all_box_stats:
 			stat.hide()
 		box.stat_driver.show()
-#		box.driver_line.show()
-
-		box.stat_cash.show()
 		box.stat_gas.show()
+
 		box.stat_points.show()
+		box.stat_cash.show()
+
 		# debug .... statistika orožja
 		box.stat_bullet.show()
 		box.stat_misile.show()
 		box.stat_mina.show()
-		match Rfs.current_level.level_type:
-			Rfs.current_level.LEVEL_TYPE.BATTLE:
-				# pokažem: wins, life, gas, points, rank
-				# skrijem: timer stotinke
-				box.stat_wins.show()
-				box.stat_life.show()
-				box.stat_level_rank.show()
-			Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
-				box.stat_wins.show()
-				box.stat_level_rank.show()
-				box.stat_level_time.show()
-				if Rfs.game_manager.level_settings["lap_limit"] > 1:
-					box.stat_laps_count.show()
-					box.stat_best_lap.show()
-			Rfs.current_level.LEVEL_TYPE.CHASE:
-				box.stat_gas.show()
+
+		box.stat_level_rank.show()
+		box.stat_laps_count.show()
+#		box.stat_wins.show()
+		box.stat_life.show()
+
+#	match level_type:
+#		level_types.RACE_TRACK:
+#			game_timer.hunds_mode = true
+#		level_types.RACE_LAPS:
+#			game_timer.hunds_mode = true
+#			for box in statboxes:
+#				box.stat_level_rank.show()
+#				box.stat_laps_count.show()
+#		level_types.RACE_GOAL:
+#			game_timer.hunds_mode = false
+#			for box in statboxes:
+#				box.stat_level_rank.show()
+#		level_types.CHASE:
+#			game_timer.hunds_mode = false
+#		level_types.BATTLE:
+#			game_timer.hunds_mode = false
+#			for box in statboxes:
+#				box.stat_wins.show()
+#				box.stat_life.show()
+
+	# game stats
+	level_lap_limit = level_settings["lap_limit"]
+	game_timer.reset_timer(level_settings["time_limit"])
+	game_timer.show()
+	record_lap_label.hide()
 
 
 func on_game_start():
@@ -87,15 +87,8 @@ func on_level_finished():
 func on_game_over():
 
 	game_timer.stop_timer()
-	hide_stats()
+	_hide_stats()
 
-
-func hide_stats():
-
-	for box in statboxes:
-		box.hide()
-	game_timer.hide()
-	record_lap_label.hide()
 
 
 func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool = false):
@@ -116,8 +109,12 @@ func spawn_bolt_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool 
 		new_floating_tag.modulate = Rfs.color_red
 
 
+func _hide_stats():
 
-# PRIVAT ------------------------------------------------------------------------------------------------------------
+	for box in statboxes:
+		box.hide()
+	game_timer.hide()
+	record_lap_label.hide()
 
 
 func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
@@ -155,13 +152,6 @@ func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
 	spawned_driver_statbox.visible = true
 
 
-func _on_GameTimer_gametime_is_up() -> void:
-
-	print("stopwatch_mode " , game_timer.stopwatch_mode)
-	Rfs.game_manager.end_level()
-
-
-#func _on_bolt_stat_changed(driver_id: int, driver_stats: Dictionary):
 func _on_bolt_stat_changed(driver_id: int, bolt_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
 
 	var statbox_to_change: Control = statboxes[driver_id] # bolt id kot index je enak indexu statboxa v statboxih
@@ -196,7 +186,7 @@ func update_bolt_level_stats(driver_id: int, level_stat_key: int, stat_value): #
 		Pfs.STATS.LEVEL_RANK:
 			stat_to_change = statbox_to_change.stat_level_rank
 		Pfs.STATS.LAPS_FINISHED:
-			stat_value = str(stat_value.size() + 1) + "/" + str(level_laps_limit) # +1 ker kaže trnenutnega, ne končanega
+			stat_value = str(stat_value.size() + 1) + "/" + str(level_lap_limit) # +1 ker kaže trnenutnega, ne končanega
 			stat_to_change = statbox_to_change.stat_laps_count
 		Pfs.STATS.BEST_LAP_TIME:
 			var bolts_best_lap_time: float = stat_value
@@ -217,6 +207,6 @@ func update_bolt_level_stats(driver_id: int, level_stat_key: int, stat_value): #
 	stat_to_change.stat_value = stat_value
 
 
-func _on_game_state_change(new_game_state, level_settings):
-	level_laps_limit = level_settings["lap_limit"]
-	pass
+func _on_GameTimer_gametime_is_up() -> void:
+
+	Rfs.game_manager.end_level()

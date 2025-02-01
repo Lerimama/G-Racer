@@ -4,6 +4,9 @@ extends Control
 signal sudden_death_activated # pošlje se v hud, ki javi game managerju
 signal gametime_is_up # pošlje se v hud, ki javi game managerju
 
+enum TIMER_MODE {COUNT_UP, COUNT_DOWN}
+var timer_mode: int = TIMER_MODE.COUNT_UP
+
 enum TIMER_STATE {COUNTING, STOPPED, PAUSED}
 var timer_state: int = TIMER_STATE.STOPPED
 
@@ -12,7 +15,6 @@ var game_time_hunds: int # čas igre v zaokroženih stotinkah
 
 # opredelijo se bo štartu tajmerja
 var hunds_mode: bool
-var stopwatch_mode: bool = true
 var sudden_death_mode: bool # dela samo, če ni stopwatch mode
 
 var game_time_limit: float
@@ -26,7 +28,8 @@ func _ready() -> void:
 
 	# večino setam ob štartu tajmerja
 	modulate = Rfs.color_hud_base
-	reset_timer()
+#	yield(Rfs.game_manager, "ready")
+#	reset_timer()
 
 
 func _process(delta: float) -> void:
@@ -36,7 +39,7 @@ func _process(delta: float) -> void:
 		game_time_hunds = round(game_time * 100)
 
 		# zapišem
-		if stopwatch_mode:
+		if timer_mode == TIMER_MODE.COUNT_UP:
 			mins_label.text = "%02d" % floor(game_time / 60)
 			secs_label.text = "%02d" % (floor(game_time) - floor(game_time / 60) * 60)
 			hunds_label.text = "%02d" % floor((game_time - floor(game_time)) * 100)
@@ -68,19 +71,28 @@ func _process(delta: float) -> void:
 				modulate = Rfs.color_yellow
 
 
-func reset_timer():
+func reset_timer(timer_limit: float = game_time_limit):
 
-	# skrijem stotinke?
+	# setup
+	game_time_limit = timer_limit
+	sudden_death_mode = Sts.sudden_death_mode
+	countdown_start_limit = Sts.countdown_start_limit # čas, ko je obarvan in se sliši bip bip
+	if game_time_limit == 0:
+		timer_mode = TIMER_MODE.COUNT_UP
+	else:
+		timer_mode = TIMER_MODE.COUNT_DOWN
 	if not hunds_mode:
 		get_node("Dots2").hide()
 		hunds_label.hide()
+	else:
+		get_node("Dots2").show()
+		hunds_label.show()
 
+	# reset
 	modulate = Rfs.color_hud_base
-
 	game_time = 0
 	game_time_hunds = 0
-
-	if stopwatch_mode:
+	if timer_mode == TIMER_MODE.COUNT_UP:
 		mins_label.text = "00"
 		secs_label.text = "00"
 		hunds_label.text = "00"
@@ -91,13 +103,6 @@ func reset_timer():
 
 
 func start_timer():
-
-	game_time_limit = Rfs.game_manager.level_settings["time_limit"]
-	sudden_death_mode = Sts.sudden_death_mode
-	countdown_start_limit = Sts.countdown_start_limit # čas, ko je obarvan in se sliši bip bip
-
-	if game_time_limit == 0:
-		stopwatch_mode = true
 
 	reset_timer()
 	timer_state = TIMER_STATE.COUNTING

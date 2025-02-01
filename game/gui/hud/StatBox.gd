@@ -5,6 +5,8 @@ extends Control
 enum BOX_ALIGN {LT_CORNER, RT_CORNER, LB_CORNER, RB_CORNER}
 export (BOX_ALIGN) var statbox_hor_align: int = BOX_ALIGN.LT_CORNER
 
+var all_box_stats: Array
+
 onready var stat_driver: Control = $StatDriver
 onready var driver_line: HBoxContainer = $StatDriver/DriverLine
 onready var driver_avatar: TextureRect = driver_line.get_node("Avatar")
@@ -28,11 +30,14 @@ onready var stat_level_rank: HBoxContainer = $StatRank
 
 func _ready() -> void:
 
+	all_box_stats = get_children()
+	var driver_stat = all_box_stats.pop_front()
+	all_box_stats.push_front(stat_wins)
+
 	# poravnave po vogalih
 	var nodes_to_align: Array = get_children()
-	var driver_stat = nodes_to_align.pop_front()
+	nodes_to_align.erase(driver_stat)
 	nodes_to_align.append(driver_line)
-
 	match statbox_hor_align:
 		BOX_ALIGN.LT_CORNER:
 			for node in nodes_to_align:

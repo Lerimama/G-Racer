@@ -15,9 +15,9 @@ onready var selector_action: String = controller_actions["selector_action"]
 
 var _driving_input_pressed: Array = []
 
-
 func _input(event: InputEvent) -> void:
-	# ta del inputa je kar razdelan, ampak ko enkrat regidtrira vse možnosti ga lahko "pozabim"
+	# ta del inputa je kar razdelan, ampak ko enkrat registrira vse možnosti ga lahko "pozabim"
+	# ga lahko "pozabim" in pedenam _react_to_driving_input()
 
 	if controlled_bolt.is_active:
 		var input_changed: bool = false
@@ -26,35 +26,35 @@ func _input(event: InputEvent) -> void:
 		if Input.get_axis(left_action, right_action) == 1:
 			if not right_action in _driving_input_pressed:
 				_driving_input_pressed.append(right_action)
-				input_changed = true
+			input_changed = true
 		elif Input.get_axis(left_action, right_action) == -1:
 			if not left_action in _driving_input_pressed:
 				_driving_input_pressed.append(left_action)
-				input_changed = true
+			input_changed = true
 		else:
 			if right_action in _driving_input_pressed:
 				_driving_input_pressed.erase(right_action)
-				input_changed = true
+			input_changed = true
 			if left_action in _driving_input_pressed:
 				_driving_input_pressed.erase(left_action)
-				input_changed = true
+			input_changed = true
 
 		# premikanje
 		if Input.is_action_pressed(fwd_action):
 			if not fwd_action in _driving_input_pressed:
 				_driving_input_pressed.append(fwd_action)
-				input_changed = true
+			input_changed = true
 		elif Input.is_action_pressed(rev_action):
 			if not rev_action in _driving_input_pressed:
 				_driving_input_pressed.append(rev_action)
-				input_changed = true
+			input_changed = true
 		else:
 			if fwd_action in _driving_input_pressed:
 				_driving_input_pressed.erase(fwd_action)
-				input_changed = true
+			input_changed = true
 			if rev_action in _driving_input_pressed:
 				_driving_input_pressed.erase(rev_action)
-				input_changed = true
+			input_changed = true
 
 		if input_changed:
 			_react_to_driving_input()
@@ -63,18 +63,6 @@ func _input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed(selector_action):
 			controlled_bolt.bolt_hud.selected_feature_index += 1
 
-	if Input.is_action_just_pressed("left_click"): # follow leader
-#		var vec0 = controlled_bolt.global_position# + Vector2.RIGHT.rotated(controlled_bolt.rotation)
-		var vec0 = Vector2.RIGHT.rotated(controlled_bolt.rotation)
-#		var vec0 = Vector2.UP#.rotated(controlled_bolt.rotation)
-#		var vec = controlled_bolt.global_position + get_viewport().get_mouse_position() - controlled_bolt.global_position
-		var vec = controlled_bolt.get_global_mouse_position() - controlled_bolt.global_position
-#		var ang =  vec.angle_to(vec0)
-		var ang =  vec.angle_to_point(get_viewport().get_mouse_position())
-		var target_side = vec0.dot(vec)
-		var cross_side =  vec0.cross(vec)
-		printt(target_side, cross_side)
-		Mts.spawn_indikator(controlled_bolt.get_global_mouse_position(), Color.red, 0, Rfs.node_creation_parent)
 
 func _ready() -> void:
 
@@ -92,22 +80,20 @@ func _physics_process(delta: float) -> void:
 
 
 func _react_to_driving_input():
-#	print ("_current_driving_action_pressed", _current_driving_action_pressed)
 
 	# FWD
 	if _driving_input_pressed.has(fwd_action):
-		bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
-		if Rfs.game_manager.fast_start_window or not Rfs.game_manager.game_on:
+		if not Rfs.game_manager.game_on:
 			controlled_bolt.revup()
-		# tukaj, ker je za AI drugače
-#		var lerp_to_angle: float = bolt_motion_manager.rotation_dir * deg2rad(bolt_motion_manager.max_engine_rotation_deg)
-#		bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, lerp_to_angle, bolt_motion_manager.engine_rotation_speed)
+		else:
+			if Rfs.game_manager.fast_start_window:
+				if Input.is_action_just_pressed(fwd_action):
+					controlled_bolt.revup()
+					bolt_motion_manager.boost_bolt(bolt_motion_manager.fast_start_power_addon, Sts.fast_start_time)
+			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
 	# REV
 	elif _driving_input_pressed.has(rev_action):
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.REV
-		# tukaj, ker je za AI drugače
-#		var lerp_to_angle: float = - bolt_motion_manager.rotation_dir * deg2rad(bolt_motion_manager.max_engine_rotation_deg)
-#		bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, lerp_to_angle * deg2rad(bolt_motion_manager.max_engine_rotation_deg), bolt_motion_manager.engine_rotation_speed)
 	# IDLE
 	else:
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
@@ -121,14 +107,3 @@ func _react_to_driving_input():
 		bolt_motion_manager.rotation_dir = 0
 		# tukaj, ker je za AI drugače
 		#bolt_motion_manager.force_rotation = 0 AI dobi še tole ... pa močišotimaj
-
-
-
-func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # od GMja
-
-	if new_game_state == true:
-		#		printt ("game on SMS", new_game_state)
-		pass
-	else:
-		#		printt ("game on SMS", new_game_state)
-		pass

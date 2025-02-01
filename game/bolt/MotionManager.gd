@@ -8,11 +8,12 @@ enum MOTION {IDLE, FWD, REV}
 var motion: int = MOTION.IDLE# setget _change_motion
 
 enum ROTATION_MOTION {
+	NONE,
 	DEFAULT,
 	MASSLESS,
 #	AGILE,
 #	TRACKING,
-#	DRIFTING,
+	DRIFT,
 #	NITRO, # moč motorja je lahko različna je
 #	NO_CONTROLS,
 	# idle
@@ -22,7 +23,7 @@ enum ROTATION_MOTION {
 	}
 var rotation_motion: int = ROTATION_MOTION.DEFAULT
 
-const ZERO_MASS: float = 1.0 # malo vpliva vseeno more met vsaka od mas
+const AKA_ZERO_MASS: float = 1.0 # malo vpliva vseeno more met vsaka od mas
 
 # debug ...
 # lahko zamštraš indexe, kasneje to seta igra
@@ -36,7 +37,7 @@ var is_boosting: bool = false
 
 # engine
 var current_engine_power: float = 0
-var engine_power_adon: float = 0
+var engine_power_addon: float = 0
 var accelarate_speed = 0.1
 var max_engine_power: float
 
@@ -46,6 +47,7 @@ var force_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_rotation_speed: float
 var max_engine_rotation_deg: float
 var driving_gear: int = 0
+var engine_power_percentage: float # neu namesto engine power
 
 
 func _ready() -> void:
@@ -76,19 +78,18 @@ func _process(delta: float) -> void:
 
 
 func _motion_machine():
-
 	match motion:
 		MOTION.FWD:
 			if is_ai:
-				# force_rotation = proti tarči AI ... določa AI
 				force_on_bolt = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
+				# force_rotation = proti tarči AI ... določa AI
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_bolt = Vector2.RIGHT.rotated(force_rotation + bolt.global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV:
 			if is_ai:
-				# force_rotation = proti tarči AI ... določa AI
 				force_on_bolt = Vector2.LEFT.rotated(force_rotation) * _accelarate_to_engine_power()
+				# force_rotation = proti tarči AI ... določa AI
 			else:
 				force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_bolt = Vector2.LEFT.rotated(force_rotation + bolt.global_rotation) * _accelarate_to_engine_power()
@@ -100,18 +101,49 @@ func _motion_machine():
 func _accelarate_to_engine_power():
 
 	# če je dodatek k moči klempam na max power + dodatek
-	if engine_power_adon == 0:
+	if engine_power_addon == 0:
 		current_engine_power = lerp(current_engine_power, max_engine_power, accelarate_speed)
 	else:
-		current_engine_power = lerp(current_engine_power, max_engine_power + engine_power_adon, accelarate_speed)
+		current_engine_power = lerp(current_engine_power, max_engine_power + engine_power_addon, accelarate_speed)
 
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
-	return current_engine_power * Sts.reality_engine_power_factor
+	engine_power_percentage = current_engine_power / max_engine_power
+
+	return current_engine_power * Sts.world_hsp_power_factor
+
+
+func boost_bolt(added_power: float = 0, boosting_time: float = 0):
+	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
+
+	if not is_boosting:
+		is_boosting = true
+		Rfs.sound_manager.play_sfx("pickable_nitro")
+		if added_power == 0:
+			added_power = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_addon"]
+		engine_power_addon += added_power
+		if boosting_time == 0:
+			boosting_time = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]
+		yield(get_tree().create_timer(boosting_time),"timeout")
+
+		engine_power_addon -= added_power
+		is_boosting = false
+
+
+func _print_bolt_data():
+
+	printt("engine", max_engine_power, max_engine_rotation_deg, engine_rotation_speed)
+	printt("_bolt", bolt.mass, bolt.linear_damp, bolt.angular_damp)
+	printt("_front", bolt.front_mass.mass, bolt.front_mass.linear_damp, bolt.front_mass.angular_damp)
+	printt("_rear", bolt.rear_mass.mass, bolt.rear_mass.linear_damp, bolt.rear_mass.angular_damp)
+	printt("_torq", torque_on_bolt)
+
+
+# imajo otroci ------------------------------------------------------------------------------------
 
 
 func _change_rotation_direction(new_rotation_direction: float):
-	pass # imajo otroci
+	pass
 	# za zavijanje lahko vplivam na karkoli, ker se ob vožnji naravnost vse reseta
 	# če ne zavija je fizika celega bolta
 	# če zavija se porazdeli glede na stil
@@ -157,8 +189,8 @@ func _change_rotation_direction(new_rotation_direction: float):
 	#			ROTATION_MOTION.SPIN: # mid zavijanje + malo drifta
 	#				torque_on_bolt = 10000000 * rotation_dir
 	##				bolt.mass = bolt_mass
-	#				bolt.front_mass.mass = ZERO_MASS
-	#				bolt.rear_mass.mass = ZERO_MASS
+	#				bolt.front_mass.mass = AKA_ZERO_MASS
+	#				bolt.rear_mass.mass = AKA_ZERO_MASS
 	#				max_engine_rotation_deg = 90
 	#				for thrust in bolt.engines.all_thrusts:
 	#					thrust.start_fx()
@@ -175,8 +207,8 @@ func _change_rotation_direction(new_rotation_direction: float):
 	#	#	_print_bolt_data()
 
 
-func set_default_parameters():
-	pass # imajo otroci
+func _set_default_parameters():
+	pass
 	#	if is_ai:
 	#	# bolt
 	#		max_engine_power = bolt.bolt_profile["max_engine_power"]
@@ -196,30 +228,8 @@ func set_default_parameters():
 	#		bolt.linear_damp = 1 # 1
 	#
 	#		# front rear
-	#		bolt.front_mass.mass = ZERO_MASS
-	#		bolt.rear_mass.mass = ZERO_MASS
+	#		bolt.front_mass.mass = AKA_ZERO_MASS
+	#		bolt.rear_mass.mass = AKA_ZERO_MASS
 	#		bolt.front_mass.linear_damp = 0
 	#		bolt.rear_mass.linear_damp = 0
-
-
-func use_nitro():
-	# nitro vpliva na trenutno moč, ker ga lahko uporabiš tudi ko greš počasi ... povečaš pa tudi max power, če ima že max hitrost
-
-	if not is_boosting:
-		is_boosting = true
-		Rfs.sound_manager.play_sfx("pickable_nitro")
-		var boosting_time: float = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]
-		engine_power_adon += Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		yield(get_tree().create_timer(boosting_time),"timeout")
-		engine_power_adon -= Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_adon"]
-		is_boosting = false
-
-
-func _print_bolt_data():
-
-	printt("engine", max_engine_power, max_engine_rotation_deg, engine_rotation_speed)
-	printt("_bolt", bolt.mass, bolt.linear_damp, bolt.angular_damp)
-	printt("_front", bolt.front_mass.mass, bolt.front_mass.linear_damp, bolt.front_mass.angular_damp)
-	printt("_rear", bolt.rear_mass.mass, bolt.rear_mass.linear_damp, bolt.rear_mass.angular_damp)
-	printt("_torq", torque_on_bolt)
 

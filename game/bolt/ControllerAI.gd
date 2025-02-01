@@ -64,7 +64,7 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 		wanted_speed = 900
 	if Input.is_action_just_pressed("no4"): # follow leader
 #		wanted_speed = -1
-		bolt_motion_manager.use_nitro()
+		bolt_motion_manager.boost_bolt()
 
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, level_navigation.get_local_mouse_position())
@@ -290,7 +290,7 @@ func _update_vision():
 
 
 func _change_ai_state(new_ai_state: int):
-	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
+#	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
 	scanning_ray.enabled = false
 	target_ray.enabled = false
@@ -466,7 +466,7 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 		elif distance_to_target < near_distance:
 			if be_aggressive: # pospešuje proti tarči
 				bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
-				controlled_bolt.use_nitro = true
+				controlled_bolt.boost_bolt()
 			else: # upočasnuje proti tarči
 				target_closeup_breaking_factor = breaking_factor_near
 		else:

@@ -44,8 +44,8 @@ func _process(delta: float) -> void:
 #					var target_speed_part_in_span: float = (follow_target_speed - min_zoom_target_speed) / max_zoom_velocity_span # %
 #					var camera_zoom_span: float = abs(camera_max_zoom - camera_min_zoom)
 #					# dobljen procent zasedenosti vel span, apliciram na procenz zoom spana
-#					var camera_zoom_adon_in_span: float = camera_zoom_span * target_speed_part_in_span
-#					zoom.x = lerp(zoom.x, camera_min_zoom + camera_zoom_adon_in_span, camera_zoom_speed_factor)
+#					var camera_zoom_addon_in_span: float = camera_zoom_span * target_speed_part_in_span
+#					zoom.x = lerp(zoom.x, camera_min_zoom + camera_zoom_addon_in_span, camera_zoom_speed_factor)
 #				# če je zunaj zoom območja lerpam do minimum zooma
 #				else:
 #					zoom.x = lerp(zoom.x, camera_min_zoom, camera_zoom_speed_factor)

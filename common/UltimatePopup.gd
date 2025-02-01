@@ -23,9 +23,9 @@ func _input(event: InputEvent) -> void:
 #			printt("hide", confirm_to_close)
 #			_on_ConfirmBtn_pressed()
 ##			hide()
-			get_tree().set_input_as_handled()
-		elif Input.is_action_just_pressed("left_click"): # follow leader
-			get_tree().set_input_as_handled()
+#			get_tree().set_input_as_handled()
+#		elif Input.is_action_just_pressed("left_click"): # follow leader
+#			get_tree().set_input_as_handled()
 
 
 func _ready() -> void:

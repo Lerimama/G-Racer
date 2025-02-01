@@ -13,6 +13,7 @@ func hide_helper_nodes(delete_it: bool = false):
 
 	get_all_nodes_in_node(helper_nodes_prefix)
 	for node in _helper_nodes:
+		print("__helper nodes: ", node)
 		if "visible" in node:
 				node.hide()
 

@@ -6,25 +6,18 @@ var fade_time = 0.7
 onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
 
-#func _input(event: InputEvent) -> void:
-#
-#	if Input.is_action_just_pressed("no1"):
-#		var all_nodes = Mts.get_all_nodes_in_node(self)
-#
-#		for node in all_nodes:
-#			if node.name[0] == "_" and node.name[1] == "_":
-#				printt("_NODE",node.name)
-#
-#		print("All nodes in MAIN scene",  all_nodes.size())
+func _input(event: InputEvent) -> void:
+
+	if Input.is_action_just_pressed("no0"):
+		Mts.hide_helper_nodes()
 
 
 func _ready() -> void:
 
 	Rfs.main_node = self
-
 #	home_in_intro()
-	home_in_no_intro()
-#	game_in()
+#	home_in_no_intro()
+	game_in()
 
 
 func home_in_intro():

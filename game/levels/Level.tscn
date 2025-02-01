@@ -205,6 +205,7 @@ __meta__ = {
 [node name="Tracking" type="Node" parent="."]
 
 [node name="LevelNavigation" type="NavigationPolygonInstance" parent="Tracking"]
+visible = false
 z_index = 10
 navpoly = SubResource( 13453 )
 script = ExtResource( 46 )
@@ -341,7 +342,11 @@ bus = "GameMusic"
 [node name="WorldEnvironment" parent="." instance=ExtResource( 48 )]
 
 [node name="__Labels" type="Node2D" parent="."]
+visible = false
 position = Vector2( -4670, 34 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Label4" type="Label" parent="__Labels"]
 margin_left = 3996.0
@@ -408,8 +413,70 @@ scale = Vector2( 0.552754, 0.552754 )
 texture = ExtResource( 49 )
 
 [node name="__ScreenSize" type="Panel" parent="."]
-visible = false
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 margin_right = 2560.0
 margin_bottom = 1440.0
 custom_styles/panel = SubResource( 613 )
+
+[node name="__ScreenSize2" type="Panel" parent="__ScreenSize"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 328.0
+margin_right = -328.0
+custom_styles/panel = SubResource( 613 )
+
+[node name="__WorldMeters" type="Control" parent="."]
+margin_left = -1128.0
+margin_top = -1600.0
+margin_right = -824.0
+margin_bottom = -964.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="Label" type="Label" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = 86.0
+margin_right = 1153.0
+margin_bottom = 768.0
+theme = ExtResource( 3 )
+custom_fonts/font = SubResource( 13452 )
+text = "1m = 64px
+1km = 64000px
+100km/h = 1,67 km/min
+= 106666,67 px/min
+= 1777,78 px/s"
+
+[node name="1m" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 240.0
+margin_top = -64.0
+margin_right = 304.0
+color = Color( 0, 1, 0, 1 )
+
+[node name="10m" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 160.0
+margin_top = -640.0
+margin_right = 224.0
+color = Color( 0, 1, 0, 1 )
+
+[node name="100m" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 80.0
+margin_top = -6400.0
+margin_right = 144.0
+color = Color( 0, 1, 0, 1 )
+
+[node name="1km" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -64000.0
+margin_right = 64.0
+color = Color( 0, 1, 0, 1 )

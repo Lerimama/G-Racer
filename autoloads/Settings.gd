@@ -51,6 +51,7 @@ var game_time_limit: int = 0 # če je 0 ni omejitve
 var start_countdown: bool = true
 var countdown_start_limit: int = 5
 var fast_start_window_time: float = 0.32
+var fast_start_time: float = 0.2
 var pickables_count_limit: int = 5
 var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
 var enemies_mode: bool = false
@@ -62,7 +63,6 @@ var all_bolts_on_screen_mode: bool = true
 # driving
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
-var reality_engine_power_factor: float = 1000 # engine power je 300 namesto 300000
 # shadows
 var game_shadows_rotation_deg: float = 45
 var game_shadows_color: Color = Color.black # odvisna od višine vira svetlobe
@@ -70,10 +70,17 @@ var game_shadows_length_factor: float = 1 # odvisna od višine vira svetlobe
 var game_shadows_alpha: float = 0.4 # odvisna od moči svetlobe
 var game_shadows_direction: Vector2 = Vector2(800,0) # odvisna od moči svetlobe
 
+# WORLD
+var world_100kmh_pxsecond: float = 1778 # 100km/h = 1,67 km/min = 106666,67 px/min = 1777,78 px/s
+var world_1m_pixels: float = 64
+var world_hsp_power_factor: float = 1000 # engine power je 300 namesto 300000
+var world_1kg_mass = 0.1 # masa ... zgolj referenca
+# 500 power ... cca 200 kmh
+
 
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
-var players_on_game_start: Array# = [0]# samo 1. level ... seta se iz home
+var players_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
 var current_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
@@ -83,14 +90,16 @@ var current_game_levels: Array = []
 func _ready() -> void:
 
 	if OS.is_debug_build():
-		current_game_levels = [Pfs.LEVELS.FAST]
+#		current_game_levels = [Pfs.LEVELS.TRAINING]
 #		current_game_levels = [Pfs.LEVELS.DEFAULT]
 #		current_game_levels = [Pfs.LEVELS.STAFF]
-#		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
+		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
 
-		camera_zoom_range = [2, 2]
+		fast_start_window_time = 1
+		camera_zoom_range = [2, 2.3]
+#		camera_zoom_range = [2, 2]
 #		camera_zoom_range = [3, 3]
-#		camera_zoom_range = [5, 5]
+		camera_zoom_range = [5, 5]
 		start_countdown = false
 #		all_bolts_on_screen_mode = false
 		easy_mode = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://game/camera/camera_shake_noise.tres" type="OpenSimplexNoise" id=1]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://game/camera/CameraTestUI.gd" type="Script" id=4]
 [ext_resource path="res://common/debug/SetupPanel.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/camera/PlayingField.gd" type="Script" id=6]
+[ext_resource path="res://game/gui/hud/FpsCounter.gd" type="Script" id=7]
 
 [sub_resource type="RectangleShape2D" id=780]
 extents = Vector2( 1280, 720.5 )
@@ -265,6 +266,14 @@ margin_bottom = 119.0
 rect_scale = Vector2( 2, 2 )
 theme = ExtResource( 2 )
 text = "node setup"
+
+[node name="FpsCounter" type="Label" parent="TestUI"]
+margin_left = 704.0
+margin_top = 168.0
+margin_right = 784.0
+margin_bottom = 216.0
+text = "FPS"
+script = ExtResource( 7 )
 
 [node name="__screen_size" type="ColorRect" parent="."]
 visible = false

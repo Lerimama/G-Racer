@@ -42,12 +42,14 @@ func turn_off_all_lights():
 
 	light_index = 0
 	$CountdownB.play()
-	emit_signal("countdown_finished") # GM yielda za ta signal
 
+	var off_time: float = 0.2
 	for light in on_lights:
 		var turn_off_tween = get_tree().create_tween()
-		turn_off_tween.tween_property(light, "modulate:a", 0, 0.2)
+		turn_off_tween.tween_property(light, "modulate:a", 0, off_time)
 		turn_off_tween.tween_callback(light, "hide")
+	yield(get_tree().create_timer(off_time), "timeout")
+	emit_signal("countdown_finished") # GM yielda za ta signal
 
 
 

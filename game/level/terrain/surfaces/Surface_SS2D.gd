@@ -6,7 +6,7 @@ export var surface_type: int = 0 # preverim, da je isto kot v profilih SURFACE {
 
 var bodies_to_influence: Array = []
 onready var surface_shape: Node2D = $SS2D_Shape_Closed
-onready var engine_power_adon = Pfs.surface_type_profiles[surface_type]["engine_power_adon"]
+onready var engine_power_addon = Pfs.surface_type_profiles[surface_type]["engine_power_addon"]
 
 
 func _ready() -> void:
@@ -19,12 +19,12 @@ func _on_Surface_body_entered(body: Node) -> void:
 	if "motion_manager" in body and not bodies_to_influence.has(body):
 		var power_to_add: float
 		# če je med 0 in 10 množim z max power, drugače, seštevam
-		if engine_power_adon > 0 and engine_power_adon < 10:
-			power_to_add = - body.motion_manager.max_engine_power * (1 - engine_power_adon)
+		if engine_power_addon > 0 and engine_power_addon < 10:
+			power_to_add = - body.motion_manager.max_engine_power * (1 - engine_power_addon)
 		else:
-			power_to_add = engine_power_adon
+			power_to_add = engine_power_addon
 
-		body.motion_manager.engine_power_adon += power_to_add
+		body.motion_manager.engine_power_addon += power_to_add
 
 		printt("max", body.motion_manager.max_engine_power, power_to_add)
 
@@ -37,11 +37,11 @@ func _on_Surface_body_exited(body: Node) -> void:
 
 		var power_to_add: float
 		# če je med 0 in 10 množim z max power, drugače, seštevam
-		if engine_power_adon > 0 and engine_power_adon < 10:
-			power_to_add = body.motion_manager.max_engine_power * (1 - engine_power_adon)
+		if engine_power_addon > 0 and engine_power_addon < 10:
+			power_to_add = body.motion_manager.max_engine_power * (1 - engine_power_addon)
 		else:
-			power_to_add = - engine_power_adon
+			power_to_add = - engine_power_addon
 
-		body.motion_manager.engine_power_adon += power_to_add
+		body.motion_manager.engine_power_addon += power_to_add
 
 		printt("max", body.motion_manager.max_engine_power, power_to_add)
