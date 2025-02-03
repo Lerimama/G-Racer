@@ -6,7 +6,13 @@ var closed_position_offset: float = 500
 
 onready var open_position: Vector2 = rect_position
 onready var closed_position: Vector2# = rect_position + Vector2(0, closed_position_offset)
-onready var focused_on_close = $"../MainMenu/PlayBtn"
+onready var home: Node = $"../.."
+
+
+func _input(event: InputEvent) -> void:
+
+	if is_open and Input.is_action_just_pressed("ui_cancel"):
+		close()
 
 
 func _ready() -> void:
@@ -57,11 +63,13 @@ func open() -> void:
 func close() -> void:
 
 	if is_open:
+
 		var slide_tween = get_tree().create_tween()
 		slide_tween.tween_property(self, "rect_position", closed_position, 0.2). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
 		yield(slide_tween, "finished")
-		focused_on_close.grab_focus()
+#		focused_on_close.grab_focus()
 		is_open = false
+		home.to_main_menu()
 
 
 func _on_level_btn_pressed(btn: Button):

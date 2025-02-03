@@ -1,11 +1,10 @@
-[gd_scene load_steps=32 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://common/tex/cross.png" type="Texture" id=1]
 [ext_resource path="res://game/level/Finish.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/sounds/music/nitro_music.mp3" type="AudioStream" id=4]
 [ext_resource path="res://game/level/terrain/ObjectSS2D_Mountain.tscn" type="PackedScene" id=5]
-[ext_resource path="res://game/level/objects/GoalPillar.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/materials/ground_dirt.material" type="Material" id=11]
 [ext_resource path="res://common/tex/noise/7547.jpg" type="Texture" id=14]
 [ext_resource path="res://common/shader_rect/ShaderCanvasRect.tscn" type="PackedScene" id=16]
@@ -77,14 +76,6 @@ _data = {
 size = 100
 extra_spacing_top = 16
 font_data = ExtResource( 51 )
-
-[sub_resource type="StyleBoxFlat" id=613]
-bg_color = Color( 0.6, 0.6, 0.6, 0.294118 )
-draw_center = false
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
 
 [node name="Level" type="Node2D"]
 script = ExtResource( 27 )
@@ -312,10 +303,6 @@ position = Vector2( 104, 0 )
 [node name="StartPosition4" parent="Tracking/__BattleStartPositions" instance=ExtResource( 21 )]
 position = Vector2( 312, 0 )
 
-[node name="tempGoalPillar" parent="Tracking" instance=ExtResource( 10 )]
-position = Vector2( 1400, 1488 )
-collision_layer = 9
-
 [node name="Checkpoint" parent="Tracking" instance=ExtResource( 45 )]
 position = Vector2( 2851, -1314 )
 rotation = 0.551296
@@ -412,19 +399,25 @@ position = Vector2( 5404.09, 99.3499 )
 scale = Vector2( 0.552754, 0.552754 )
 texture = ExtResource( 49 )
 
-[node name="__ScreenSize" type="Panel" parent="."]
+[node name="__ScreenSize" type="ReferenceRect" parent="."]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 margin_right = 2560.0
 margin_bottom = 1440.0
-custom_styles/panel = SubResource( 613 )
+border_width = 5.0
+__meta__ = {
+"_edit_lock_": true
+}
 
-[node name="__ScreenSize2" type="Panel" parent="__ScreenSize"]
+[node name="__ScreenSize2" type="ReferenceRect" parent="__ScreenSize"]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 328.0
 margin_right = -328.0
-custom_styles/panel = SubResource( 613 )
+border_width = 5.0
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="__WorldMeters" type="Control" parent="."]
 margin_left = -1128.0

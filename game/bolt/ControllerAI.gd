@@ -93,6 +93,7 @@ func _ready() -> void:
 	for ray in vision.get_children():
 		ray.add_exception(controlled_bolt)
 
+
 func _get_target_side(target_position: Vector2):
 
 	var bolt_vector: Vector2 = Vector2.RIGHT.rotated(controlled_bolt.rotation)
@@ -106,7 +107,6 @@ func _get_target_side(target_position: Vector2):
 		return -1
 	else: # STREJT
 		return 0
-	printt(is_target_in_front, is_target_on_right)
 
 
 func _physics_process(delta: float) -> void:

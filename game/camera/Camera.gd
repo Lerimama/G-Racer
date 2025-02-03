@@ -1,8 +1,6 @@
 extends Camera2D
 
 
-signal camera_position_changed
-
 var follow_target: Node setget _on_follow_target_change
 
 # shake izklopljen ... še vedno je v test ui-nodetu"

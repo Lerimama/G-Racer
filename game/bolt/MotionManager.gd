@@ -8,18 +8,12 @@ enum MOTION {IDLE, FWD, REV}
 var motion: int = MOTION.IDLE# setget _change_motion
 
 enum ROTATION_MOTION {
-	NONE,
 	DEFAULT,
-	MASSLESS,
-#	AGILE,
-#	TRACKING,
 	DRIFT,
-#	NITRO, # moč motorja je lahko različna je
-#	NO_CONTROLS,
-	# idle
 	SPIN,
 	SLIDE,
-	FREE,
+#	AGILE,
+#	TRACKING,
 	}
 var rotation_motion: int = ROTATION_MOTION.DEFAULT
 

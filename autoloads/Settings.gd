@@ -99,7 +99,7 @@ func _ready() -> void:
 		camera_zoom_range = [2, 2.3]
 #		camera_zoom_range = [2, 2]
 #		camera_zoom_range = [3, 3]
-		camera_zoom_range = [5, 5]
+#		camera_zoom_range = [5, 5]
 		start_countdown = false
 #		all_bolts_on_screen_mode = false
 		easy_mode = true
@@ -112,6 +112,14 @@ func _ready() -> void:
 #			Pfs.DRIVER_ID.P1, PfsDRIVERSR.P2
 #			Pfs.DRIVER_ID.P1, Pfs.DRIVER_ID.P2, Pfs.DRIVER_ID.P3, Pfs.DRIVER_ID.P4
 			]
+
+
+		Pfs.driver_profiles = {}
+
+		for dr in players_on_game_start:
+			Pfs.driver_profiles[dr] = Pfs.default_driver_profile.duplicate()
+			#		printt("profile", Pfs.driver_profiles[driver_id])
+			#	print("drivers ", Sts.players_on_game_start)
 
 	if full_equip_mode:
 		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]

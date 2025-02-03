@@ -75,9 +75,6 @@ func manage_engines(bolt_motion_manager: Node):
 				for thrust in all_thrusts:
 					thrust.start_fx()
 				match rotation_motion:
-					ROTATION_MOTION.FREE: # poravna se v smer vožnje
-						for thrust in all_thrusts:
-							thrust.rotation = lerp_angle(thrust.rotation, 0, engine_rotation_speed)
 					ROTATION_MOTION.SPIN:
 						for thrust in front_thrusts:
 							thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan

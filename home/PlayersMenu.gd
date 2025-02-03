@@ -58,14 +58,14 @@ func _set_btn_display(btn: Button, turned_on = null):
 			btn.modulate = on_btn_color
 			btn.icon = Pfs.driver_profiles[btn_index]["driver_avatar"]
 		else:
-			btn.icon = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["ai_avatar"]
+			btn.icon = Pfs.ai_profile["ai_avatar"]
 			btn.modulate = off_btn_color
 	else:
 		if turned_on == true:
 			btn.modulate = on_btn_color
 			btn.icon = Pfs.driver_profiles[btn_index]["driver_avatar"]
 		else:
-			btn.icon = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["ai_avatar"]
+			btn.icon = Pfs.ai_profile["ai_avatar"]
 			btn.modulate = off_btn_color
 
 

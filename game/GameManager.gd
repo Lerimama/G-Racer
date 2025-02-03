@@ -122,6 +122,7 @@ func _set_game():
 	activated_driver_ids.clear()
 	if current_level_index == 0:
 		# če je prvi level so aktivirani dodani v meniju
+		printt("GM", Sts.players_on_game_start)
 		activated_driver_ids = Sts.players_on_game_start
 	else: # če ni prvi level dodam kvalificirane driver_id
 		if players_qualified.empty():
@@ -132,19 +133,20 @@ func _set_game():
 	#	printt("DRIVER_ID", activated_driver_ids)
 
 	# AI
-	if Sts.enemies_mode: # začasno vezano na Set. filet
-		# za vsako prazno pozicijo dodam AI driver_id
-		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
-		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
-		for empty_position in empty_positions_count:
-			# dobim štartni id bolta in umestim ai data
-			var new_driver_index: int = activated_driver_ids.size()
-			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
-			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["controller_type"]
-			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
+#	if Sts.enemies_mode: # začasno vezano na Set. filet
+#		# za vsako prazno pozicijo dodam AI driver_id
+#		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
+#		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
+#		for empty_position in empty_positions_count:
+#			# dobim štartni id bolta in umestim ai data
+#			var new_driver_index: int = activated_driver_ids.size()
+#			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
+#			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["controller_type"]
+#			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
 
 	# spawn bolts ... po vrsti aktivacije
 	var spawned_position_index = 0
+	print("activated_driver_ids", activated_driver_ids)
 	for driver_id in activated_driver_ids: # so v ranking zaporedju
 		_spawn_bolt(driver_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
@@ -520,7 +522,10 @@ func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
 	Rfs.node_creation_parent.add_child(new_bolt)
 
 	# AI
-	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
+
+	if Pfs.driver_profiles[bolt_driver_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
+		print("AIIIIII")
+#	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
 		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
 		self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
 

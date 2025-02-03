@@ -57,7 +57,6 @@ func _change_activation(new_is_activated: bool):
 
 
 func _on_LevelBtn_focus_entered() -> void:
-
 	var home_node: Node = get_parent().get_parent().get_parent()
 
 	if not home_node.home_screen == home_node.HOME_SCREEN.LEVELS:
@@ -65,25 +64,12 @@ func _on_LevelBtn_focus_entered() -> void:
 		grab_focus()
 
 	focused_display.show()
-#	deactivated_display
-#	focused_display.modulate.a = 0
-
-
-#	var slide_tween = get_tree().create_tween()
-#	slide_tween.tween_property(self, "rect_position:y", rect_position.y - focus_offset, 0.1). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
-#	slide_tween.parallel().tween_property(unfocused_display, "modulate:a", 0, 0.1)
-#	slide_tween.parallel().tween_property(focused_display, "modulate:a", 1, 0.1).set_delay(0.1)
+	pass
 
 
 func _on_LevelBtn_focus_exited() -> void:
-
 	focused_display.hide()
-
-#	var slide_tween = get_tree().create_tween()
-#	slide_tween.tween_property(self, "rect_position:y", start_position.y, 0.1). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
-#	slide_tween.parallel().tween_property(focused_display, "modulate:a", 0, 0.1)
-#	slide_tween.parallel().tween_property(unfocused_display, "modulate:a", 1, 0.1).set_delay(0.1)
-#	slide_tween.tween_callback(focused_display, "hide")
+	pass
 
 
 func _on_LevelBtn_pressed() -> void:

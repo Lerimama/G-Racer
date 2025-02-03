@@ -122,6 +122,17 @@ func get_absolute_z_index(target: Node2D) -> int:
 
 	return z_index
 
+func remove_chidren_and_get_template(node_with_children: Array):
+
+	# grab template
+#	var template = node_with_children.get_child(0).duplicate()
+	var template = node_with_children[0].duplicate()
+
+	# reset children
+	for child in node_with_children:
+		child.queue_free()
+
+	return template
 
 
 signal fade_out_finished
@@ -346,101 +357,101 @@ func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja 
 # COLORS ------------------------------------------------------------------------------------------------
 
 
-var spectrum_rect: TextureRect
-var game_color_theme_gradient: Gradient
-onready var gradient_texture: Resource = load("res://assets/gradient/color_theme_gradient.tres")
-onready var spectrum_texture_scene: PackedScene = load("res://assets/gradient/color_theme_spectrum.tscn")
-
-
-func get_random_gradient_colors(color_count: int):
-
-	var setting_game_color_theme: bool = false
-
-	# za barvno shemo igre ... pomeni, da se kliče iz settingsov
-	if color_count == 0:
-		setting_game_color_theme = true
-		color_count = 320
-
-	# grebam texturo spectruma
-	spectrum_rect = spectrum_texture_scene.instance()
-	var spectrum_texture: Texture = spectrum_rect.texture
-	var spectrum_image: Image = spectrum_texture.get_data()
-	spectrum_image.lock()
-
-	var spectrum_texture_width: float = spectrum_rect.rect_size.x
-	var new_color_scheme_split_size: float = spectrum_texture_width / color_count
-
-	# PRVA barva
-	var random_split_index_1: int = randi() % int(color_count)
-	var random_color_position_x_1: float = random_split_index_1 * new_color_scheme_split_size # lokacija barve v spektrumu
-	var random_color_1: Color = spectrum_image.get_pixel(random_color_position_x_1, 0) # barva na lokaciji v spektrumu
-
-	# DRUGA barva
-	var random_split_index_2: int = randi() % int(color_count)
-	var random_color_position_x_2: float = random_split_index_2 * new_color_scheme_split_size # lokacija barve v spektrumu
-	var random_color_2: Color = spectrum_image.get_pixel(random_color_position_x_2, 0) # barva na lokaciji v spektrumu
-
-	# TRETJA barva
-	var random_split_index_3: int = randi() % int(color_count)
-	var random_color_position_x_3: float = random_split_index_3 * new_color_scheme_split_size # lokacija barve v spektrumu
-	var random_color_3: Color = spectrum_image.get_pixel(random_color_position_x_3, 0) # barva na lokaciji v spektrumu
-
-	# GRADIENT
-
-	# za barvno shemo igre
-	if setting_game_color_theme:
-
-		# setam gradient barvne sheme (node)
-		game_color_theme_gradient = gradient_texture.get_gradient()
-		game_color_theme_gradient.set_color(0, random_color_1)
-		game_color_theme_gradient.set_color(1, random_color_2)
-		game_color_theme_gradient.set_color(2, random_color_3)
-
-		return	game_color_theme_gradient # settingsi rabijo barvno temo
-
-	# za barvno shemo levela
-	else: # ostali rabijo barve
-
-		# setam gradient barvne sheme (node)
-		var level_scheme_gradient: Gradient = gradient_texture.get_gradient()
-		level_scheme_gradient.set_color(0, random_color_1)
-		level_scheme_gradient.set_color(1, random_color_2)
-		level_scheme_gradient.set_color(2, random_color_3)
-
-		# naberem barve glede na število potrebnih barv
-		var split_colors: Array
-		var color_split_offset: float = 1.0 / color_count
-		for n in color_count:
-			var color_position_x: float = n * color_split_offset # lokacija barve v spektrumu
-			var color = level_scheme_gradient.interpolate(color_position_x) # barva na lokaciji v spektrumu
-			split_colors.append(color)
-
-		return	split_colors # level rabi že izbrane barve
-
-
-func get_spectrum_colors(color_count: int):
-	randomize()
-
-	# grabam texturo spectruma
-	if not spectrum_rect:
-		spectrum_rect = spectrum_texture_scene.instance()
-	var spectrum_texture: Texture = spectrum_rect.texture
-	var spectrum_image: Image = spectrum_texture.get_data()
-	spectrum_image.lock()
-
-	# izžrebam barvi gradienta iz nastavljenega spektruma
-	var spectrum_texture_width: float = spectrum_rect.rect_size.x
-	var new_color_scheme_split_size: float = spectrum_texture_width / color_count
-
-	# naberem barve glede na število potrebnih barv
-	var split_colors: Array
-	var color_split_offset: float = spectrum_texture_width / color_count
-	for n in color_count:
-		var color_position_x: float = n * color_split_offset # lokacija barve v spektrumu
-		var color = spectrum_image.get_pixel(color_position_x, 0) # barva na lokaciji v spektrumu
-		split_colors.append(color)
-
-	return split_colors
+#var spectrum_rect: TextureRect
+#var game_color_theme_gradient: Gradient
+#onready var gradient_texture: Resource = load("res://assets/gradient/color_theme_gradient.tres")
+#onready var spectrum_texture_scene: PackedScene = load("res://assets/gradient/color_theme_spectrum.tscn")
+#
+#
+#func get_random_gradient_colors(color_count: int):
+#
+#	var setting_game_color_theme: bool = false
+#
+#	# za barvno shemo igre ... pomeni, da se kliče iz settingsov
+#	if color_count == 0:
+#		setting_game_color_theme = true
+#		color_count = 320
+#
+#	# grebam texturo spectruma
+#	spectrum_rect = spectrum_texture_scene.instance()
+#	var spectrum_texture: Texture = spectrum_rect.texture
+#	var spectrum_image: Image = spectrum_texture.get_data()
+#	spectrum_image.lock()
+#
+#	var spectrum_texture_width: float = spectrum_rect.rect_size.x
+#	var new_color_scheme_split_size: float = spectrum_texture_width / color_count
+#
+#	# PRVA barva
+#	var random_split_index_1: int = randi() % int(color_count)
+#	var random_color_position_x_1: float = random_split_index_1 * new_color_scheme_split_size # lokacija barve v spektrumu
+#	var random_color_1: Color = spectrum_image.get_pixel(random_color_position_x_1, 0) # barva na lokaciji v spektrumu
+#
+#	# DRUGA barva
+#	var random_split_index_2: int = randi() % int(color_count)
+#	var random_color_position_x_2: float = random_split_index_2 * new_color_scheme_split_size # lokacija barve v spektrumu
+#	var random_color_2: Color = spectrum_image.get_pixel(random_color_position_x_2, 0) # barva na lokaciji v spektrumu
+#
+#	# TRETJA barva
+#	var random_split_index_3: int = randi() % int(color_count)
+#	var random_color_position_x_3: float = random_split_index_3 * new_color_scheme_split_size # lokacija barve v spektrumu
+#	var random_color_3: Color = spectrum_image.get_pixel(random_color_position_x_3, 0) # barva na lokaciji v spektrumu
+#
+#	# GRADIENT
+#
+#	# za barvno shemo igre
+#	if setting_game_color_theme:
+#
+#		# setam gradient barvne sheme (node)
+#		game_color_theme_gradient = gradient_texture.get_gradient()
+#		game_color_theme_gradient.set_color(0, random_color_1)
+#		game_color_theme_gradient.set_color(1, random_color_2)
+#		game_color_theme_gradient.set_color(2, random_color_3)
+#
+#		return	game_color_theme_gradient # settingsi rabijo barvno temo
+#
+#	# za barvno shemo levela
+#	else: # ostali rabijo barve
+#
+#		# setam gradient barvne sheme (node)
+#		var level_scheme_gradient: Gradient = gradient_texture.get_gradient()
+#		level_scheme_gradient.set_color(0, random_color_1)
+#		level_scheme_gradient.set_color(1, random_color_2)
+#		level_scheme_gradient.set_color(2, random_color_3)
+#
+#		# naberem barve glede na število potrebnih barv
+#		var split_colors: Array
+#		var color_split_offset: float = 1.0 / color_count
+#		for n in color_count:
+#			var color_position_x: float = n * color_split_offset # lokacija barve v spektrumu
+#			var color = level_scheme_gradient.interpolate(color_position_x) # barva na lokaciji v spektrumu
+#			split_colors.append(color)
+#
+#		return	split_colors # level rabi že izbrane barve
+#
+#
+#func get_spectrum_colors(color_count: int):
+#	randomize()
+#
+#	# grabam texturo spectruma
+#	if not spectrum_rect:
+#		spectrum_rect = spectrum_texture_scene.instance()
+#	var spectrum_texture: Texture = spectrum_rect.texture
+#	var spectrum_image: Image = spectrum_texture.get_data()
+#	spectrum_image.lock()
+#
+#	# izžrebam barvi gradienta iz nastavljenega spektruma
+#	var spectrum_texture_width: float = spectrum_rect.rect_size.x
+#	var new_color_scheme_split_size: float = spectrum_texture_width / color_count
+#
+#	# naberem barve glede na število potrebnih barv
+#	var split_colors: Array
+#	var color_split_offset: float = spectrum_texture_width / color_count
+#	for n in color_count:
+#		var color_position_x: float = n * color_split_offset # lokacija barve v spektrumu
+#		var color = spectrum_image.get_pixel(color_position_x, 0) # barva na lokaciji v spektrumu
+#		split_colors.append(color)
+#
+#	return split_colors
 
 
 

@@ -50,6 +50,8 @@ func _on_SceneTree_node_added(node: Node): # na ready
 
 	if node is BaseButton or node is HSlider or node is TouchScreenButton:
 		_connect_interactive_control(node)
+	if node is Button:
+		node.set_default_cursor_shape(2) # CURSOR_POINTING_HAND
 
 
 func _connect_interactive_control(node: Node): # and apply start lnf

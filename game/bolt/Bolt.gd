@@ -57,7 +57,7 @@ var debug_trail: Line2D
 onready var motion_manager: Node = $MotionManager
 onready var engines: Node2D = get_node(bolt_engines_path)
 var bolt_velocity: Vector2 = Vector2.ZERO
-
+var gas_tank_size: float
 
 func _input(event: InputEvent) -> void:
 
@@ -79,6 +79,7 @@ func _ready() -> void:
 	chassis.get_node("BoltShape").modulate = bolt_color
 	height = bolt_profile["height"]
 	elevation = bolt_profile["elevation"]
+	gas_tank_size = bolt_profile["gas_tank_size"]
 
 	# weapon settings
 	for path in weapon_paths:
@@ -376,15 +377,24 @@ func _add_controller():
 	 # zbrišem placeholder
 	bolt_controller.queue_free()
 
+	var BoltController: PackedScene# = drivers_controller_profile["controller_scene"]
+	if driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
+#		bolt_controller.controller_type = -1
+		BoltController = Pfs.ai_profile["controller_scene"]
+	else:
+		var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
+		BoltController = drivers_controller_profile["controller_scene"]
+
 	# opredelim controller sceno
-	var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
-	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
+#	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
 
 	# spawn na vrh boltovega drevesa
 	bolt_controller = BoltController.instance()
 	bolt_controller.controlled_bolt = self
 	bolt_controller.bolt_motion_manager = motion_manager
-	bolt_controller.controller_type = driver_profile["controller_type"]
+	if not driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
+		bolt_controller.controller_type = driver_profile["controller_type"]
+
 	call_deferred("add_child", bolt_controller)
 	call_deferred("move_child", bolt_controller, 0)
 
@@ -423,17 +433,21 @@ func update_stat(stat_key: int, change_value):
 	var curr_stat_name: String
 	driver_stats[stat_key] += change_value # change_value je + ali -
 
-	# health management
+	# health
 	if stat_key == Pfs.STATS.HEALTH:
 		driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
 		if driver_stats[Pfs.STATS.HEALTH] == 0:
 			_destroy_bolt()
 		return # poštima ga bolt hud
 
-	# gas management
-	if driver_stats[Pfs.STATS.GAS] <= 0: # če zmanjka bencina je deaktiviran
+	# gas
+	# če zmanjka bencina je deaktiviran
+	if driver_stats[Pfs.STATS.GAS] <= 0:
 		driver_stats[Pfs.STATS.GAS] = 0
 		self.is_active = false
+	# če ga je več kot max, povečam max (max je zaradi hud gas bar
+	elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
+		gas_tank_size = driver_stats[Pfs.STATS.GAS]
 
 	emit_signal("bolt_stat_changed", driver_id, stat_key, driver_stats[stat_key])
 

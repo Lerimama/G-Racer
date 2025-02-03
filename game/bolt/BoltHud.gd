@@ -19,12 +19,21 @@ onready var health_bar: Control = $BoltHudLines/HealthBar
 onready var health_bar_line: ColorRect = $BoltHudLines/HealthBar/Bar
 onready var rotation_label: Label = $BoltHudLines/RotationLabel
 
+onready var gas_bar: Control = $BoltHudLines/GasBar
+onready var gas_bar_line: ColorRect = $BoltHudLines/GasBar/Bar
+onready var gas_on_start: float
+
 
 func _ready() -> void:
 
 	y_position_offset = position.y
 
 	yield(owner_node, "ready")
+	_set_hud()
+
+func _set_hud():
+
+	gas_on_start = owner_node.driver_stats[Pfs.STATS.GAS]
 
 	# dodam opremo na voljo (malo bolj zapleteno, da se ne podvaja)
 	var unique_feature_nodes: Array = []
@@ -60,11 +69,20 @@ func _process(delta: float) -> void:
 
 	# manage health bar
 	if health_bar.visible:
-		health_bar_line.rect_scale.x = owner.driver_stats[Pfs.STATS.HEALTH]
+		health_bar_line.rect_scale.x = owner_node.driver_stats[Pfs.STATS.HEALTH]
 		if health_bar_line.rect_scale.x <= 0.5:
 			health_bar_line.color = Rfs.color_red
 		else:
 			health_bar_line.color = Rfs.color_blue
+
+	# manage gas bar
+	if gas_bar.visible:
+#		gas_bar_line.rect_scale.x = owner.driver_stats[Pfs.STATS.GAS] / gas_on_start
+		gas_bar_line.rect_scale.x = owner_node.driver_stats[Pfs.STATS.GAS] / owner_node.gas_tank_size
+		if gas_bar_line.rect_scale.x <= 0.5:
+			gas_bar_line.color = Rfs.color_red
+		else:
+			gas_bar_line.color = Rfs.color_yellow
 
 	# manage selector
 	if selector.visible:
