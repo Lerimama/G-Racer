@@ -8,25 +8,14 @@ var driver_profile: Dictionary = {}
 var transform_btn_text: String = "MAKE HUMAN"
 var transform_btn_text_alt: String = "MAKE AI"
 
-#onready var transform_btn: Button = $Menu/TransformBtn
-#onready var remove_btn: Button = $Menu/RemoveBtn
-#onready var line_edit: LineEdit = $LineEdit
-#onready var color_rect: ColorRect = $ColorRect
-#onready var bolts_node: HBoxContainer = $Bolts
-#onready var controllers_node: HBoxContainer = $Controllers
-onready var bolts_node: HBoxContainer = $Content/Properties/Bolts/Types
-
-onready var controllers_node: HBoxContainer = $Content/Properties/Controllers/Types
-
-
-onready var line_edit: LineEdit = $Content/Properties/LineEdit
-onready var color_rect: ColorRect = $Content/Properties/ColorRect
-onready var avatar: TextureRect = $Content/Properties/Avatar
-
+onready var controllers_node: VBoxContainer = $Content/Properties/Controllers/Types
+onready var line_edit: LineEdit = $Content/LineEdit
 onready var transform_btn: Button = $Content/Menu/TransformBtn
 onready var remove_btn: Button = $Content/Menu/RemoveBtn
-
-
+onready var bolts_node: VBoxContainer = $Content/Properties/Bolts/Types
+#onready var avatar: TextureRect = $Content/Avatar
+onready var color_rect: ColorRect = $Content/ColorRect
+onready var avatar_btn: TextureButton = $Content/AvatarBtn
 
 
 func _ready() -> void:
@@ -35,6 +24,8 @@ func _ready() -> void:
 	if driver_profile: # debug za tiste, ki so ne spawnani in se na redi spucajo
 		if is_ai:
 			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
+			driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
+			driver_profile["driver_name"] = Pfs.ai_profile["ai_name"]
 		else:
 			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
 			driver_profile["driver_name"] = Pfs.names[driver_index]
@@ -44,27 +35,31 @@ func _ready() -> void:
 		_set_driver_box()
 
 
-
 func _set_driver_box():
 
+	color_rect.color = driver_profile["driver_color"]
+	avatar_btn.texture_normal = driver_profile["driver_avatar"]
+	line_edit.text = driver_profile["driver_name"]
+
 	if is_ai:
-		avatar.texture = Pfs.ai_profile["ai_avatar"]
-		avatar.modulate = Color.red
-		line_edit.text = "AI"
+		avatar_btn.modulate = Color.red
+		avatar_btn.disabled = true
+		avatar_btn.focus_mode = Control.FOCUS_NONE
 		line_edit.editable = false
-		$Undi.color = Color.red
+		line_edit.focus_mode = Control.FOCUS_NONE
+		$Undi.modulate.a = 0.5
 		transform_btn.text = transform_btn_text
 		transform_btn.show()
 	else:
-		line_edit.text = driver_profile["driver_name"]
-		avatar.texture = driver_profile["driver_avatar"]
-		avatar.modulate = Color.white
+		avatar_btn.modulate = Color.white
+		avatar_btn.disabled = false
+		avatar_btn.focus_mode = Control.FOCUS_ALL
 		line_edit.editable = true
-		$Undi.color = Color.black
+		line_edit.focus_mode = Control.FOCUS_ALL
+		$Undi.modulate.a = 1
 		transform_btn.text = transform_btn_text_alt
 		remove_btn.show()
 
-	color_rect.color = driver_profile["driver_color"]
 	_set_driver_controller()
 	_set_driver_bolt()
 
@@ -79,55 +74,66 @@ func _set_driver_controller():
 		new_btn.text = "AI" #Pfs.CONTROLLER_TYPE.keys().back()
 		controllers_node.add_child(new_btn)
 		new_btn.disabled = true
+		new_btn.focus_mode = Control.FOCUS_NONE
 	else:
-		for ctrl_index in Pfs.CONTROLLER_TYPE.size():
+		for ctrl_type in Pfs.CONTROLLER_TYPE.values():
 			var new_btn: Button = btn_template.duplicate()
-			new_btn.text = Pfs.CONTROLLER_TYPE.keys()[ctrl_index]
+			new_btn.text = Pfs.CONTROLLER_TYPE.keys()[ctrl_type]
 			controllers_node.add_child(new_btn)
+			new_btn.disabled = false
+			new_btn.focus_mode = Control.FOCUS_ALL
 			new_btn.modulate = Color.white
-			new_btn.connect("toggled", self, "_on_controller_btn_toggled", [new_btn])
+			new_btn.connect("pressed", self, "_on_controller_btn_pressed", [new_btn])
 
-		yield(get_tree(), "idle_frame")
-		controllers_node.get_children()[driver_profile["controller_type"]].set_deferred("pressed", true)
+			if not driver_profile["controller_type"] == ctrl_type:
+				new_btn.hide()
 
 
 func _set_driver_bolt():
 
 	var btn_template: Button = Mts.remove_chidren_and_get_template(bolts_node.get_children())
 
-	for bolt_type in Pfs.BOLTS:
+	for bolt_type in Pfs.BOLTS.values():
 		var new_btn: Button = btn_template.duplicate()
-		new_btn.text = bolt_type
+		new_btn.text = Pfs.BOLTS.keys()[bolt_type]
 		bolts_node.add_child(new_btn)
-		new_btn.connect("toggled", self, "_on_bolt_btn_toggled", [new_btn])
+		new_btn.connect("pressed", self, "_on_bolt_btn_pressed", [new_btn])
 
-	yield(get_tree(), "idle_frame")
-	bolts_node.get_children()[driver_profile["bolt_type"]].set_deferred("pressed", true)
+		if not driver_profile["bolt_type"] == bolt_type:
+			new_btn.hide()
 
-
-func _on_controller_btn_toggled(is_pressed: bool, btn: Button):
-
-	if is_pressed:
-		for controller_btn in controllers_node.get_children():
-			if not controller_btn == btn:
-				controller_btn.disabled = false
-				controller_btn.pressed = false
-		btn.disabled = true
-
-		driver_profile["controller_type"] = controllers_node.get_children().find(btn)
+		if is_ai:
+			new_btn.disabled = true
+			new_btn.focus_mode = Control.FOCUS_NONE
+		else:
+			new_btn.disabled = false
+			new_btn.focus_mode = Control.FOCUS_ALL
 
 
+func _on_controller_btn_pressed(btn: Button):
 
-func _on_bolt_btn_toggled(is_pressed: bool, btn: Button):
+	var next_btn_index: int = controllers_node.get_children().find(btn) + 1
+	if next_btn_index > controllers_node.get_child_count() - 1:
+		next_btn_index = 0
 
-	if is_pressed:
-		for bolt_btn in bolts_node.get_children():
-			if not bolt_btn == btn:
-				bolt_btn.disabled = false
-				bolt_btn.pressed = false
-		btn.disabled = true
+	driver_profile["controller_type"] = next_btn_index
+	controllers_node.get_child(next_btn_index).show()
+	controllers_node.get_child(next_btn_index).grab_focus()
+	btn.hide()
 
-		driver_profile["bolt_type"] = bolts_node.get_children().find(btn)
+
+
+func _on_bolt_btn_pressed(btn: Button):
+
+	var next_btn_index: int = bolts_node.get_children().find(btn) + 1
+	if next_btn_index > bolts_node.get_child_count() - 1:
+		next_btn_index = 0
+
+	bolts_node.get_child(next_btn_index).show()
+	driver_profile["bolt_type"] = next_btn_index
+	bolts_node.get_child(next_btn_index).grab_focus()
+	btn.hide()
+
 
 
 func _on_TransformBtn_pressed() -> void:
@@ -136,13 +142,37 @@ func _on_TransformBtn_pressed() -> void:
 
 	if is_ai:
 		driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
+		driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
+		driver_profile["driver_name"] = Pfs.ai_profile["ai_name"]
 	else:
 		driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
+		driver_profile["driver_name"] = Pfs.names[driver_index]
 		driver_profile["driver_avatar"] = Pfs.avatars[driver_index]
-
+		driver_profile["driver_color"] = Pfs.colors[driver_index]
 	_set_driver_box()
 
 
 func _on_LineEdit_text_changed(new_text: String) -> void:
 
 	driver_profile["driver_name"] = new_text
+
+
+func _on_AvatarBtn_pressed() -> void:
+
+	var next_avatar_index: int = Pfs.avatars.find(driver_profile["driver_avatar"]) + 1
+	if next_avatar_index > Pfs.avatars.size() - 1:
+		next_avatar_index = 0
+
+	driver_profile["driver_avatar"] = Pfs.avatars[next_avatar_index]
+	avatar_btn.texture_normal = driver_profile["driver_avatar"]
+
+
+func _on_AvatarBtn_focus_exited() -> void:
+
+#	avatar_btn.get_node("Edge").hide()
+	pass
+
+func _on_AvatarBtn_focus_entered() -> void:
+
+#	avatar_btn.get_node("Edge").show()
+	pass

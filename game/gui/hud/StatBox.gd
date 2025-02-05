@@ -7,25 +7,25 @@ export (BOX_ALIGN) var statbox_hor_align: int = BOX_ALIGN.LT_CORNER
 
 var all_box_stats: Array
 
+# driver
 onready var stat_driver: Control = $StatDriver
 onready var driver_line: HBoxContainer = $StatDriver/DriverLine
-onready var driver_avatar: TextureRect = driver_line.get_node("Avatar")
-onready var driver_name_label: Label = driver_line.get_node("Name")
-
-onready var stat_wins: Control = driver_line.get_node("StatWins")
-onready var stat_life: Control = $StatLife
-onready var stat_points: HBoxContainer = $StatPoints
-onready var stat_cash: HBoxContainer = $StatCash
-
-onready var stat_bullet: HBoxContainer = $StatBullet
-onready var stat_misile: HBoxContainer = $StatMisile
-onready var stat_mina: HBoxContainer = $StatMina
-
-onready var stat_gas: HBoxContainer = $StatGas
-onready var stat_laps_count: HBoxContainer = $StatLap
-onready var stat_best_lap: HBoxContainer = $StatBestLap
-onready var stat_level_time: HBoxContainer = $StatLevelTime
-onready var stat_level_rank: HBoxContainer = $StatRank
+onready var driver_avatar: TextureRect = $StatDriver/DriverLine/Avatar
+onready var driver_name: Label = $StatDriver/DriverLine/Name
+onready var stat_cash: HBoxContainer = $StatDriver/DriverLine/StatCash
+onready var stat_points: HBoxContainer = $StatDriver/DriverLine/StatPoints
+onready var stat_gas: HBoxContainer = $StatDriver/DriverLine/StatGas
+# race
+onready var stat_level_rank: HBoxContainer = $StatDriver/DriverLine/StatLevelRank
+onready var stat_lap_count: HBoxContainer = $StatDriver/DriverLine/StatLapCount
+onready var stat_best_lap: HBoxContainer = $RaceStats/HBoxContainer/StatBestLap
+onready var stat_level_time: HBoxContainer = $RaceStats/HBoxContainer/StatLevelTime
+#battler
+onready var stat_life: HBoxContainer = $StatDriver/DriverLine/StatLife
+onready var stat_wins: HBoxContainer = $BattleStats/HBoxContainer/StatWins
+onready var stat_bullet: HBoxContainer = $BattleStats/HBoxContainer/StatBullet
+onready var stat_misile: HBoxContainer = $BattleStats/HBoxContainer/StatMisile
+onready var stat_mina: HBoxContainer = $BattleStats/HBoxContainer/StatMina
 
 
 func _ready() -> void:
@@ -35,32 +35,69 @@ func _ready() -> void:
 	all_box_stats.push_front(stat_wins)
 
 	# poravnave po vogalih
-	var nodes_to_align: Array = get_children()
-	nodes_to_align.erase(driver_stat)
-	nodes_to_align.append(driver_line)
+	var stats_to_align: Array = [$StatDriver, $BattleStats, $RaceStats]
 	match statbox_hor_align:
 		BOX_ALIGN.LT_CORNER:
-			for node in nodes_to_align:
-				node.alignment = BoxContainer.ALIGN_BEGIN
 			self.alignment = BoxContainer.ALIGN_BEGIN
 		BOX_ALIGN.RT_CORNER:
-			for node in nodes_to_align:
-				node.alignment = BoxContainer.ALIGN_END
+			for stat in stats_to_align:
+				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
 			self.alignment = BoxContainer.ALIGN_BEGIN
 		BOX_ALIGN.LB_CORNER:
-			for node in nodes_to_align:
-				node.alignment = BoxContainer.ALIGN_BEGIN
 			self.alignment = BoxContainer.ALIGN_END
 			move_child(stat_driver, get_child_count() - 1)
 		BOX_ALIGN.RB_CORNER:
-			for node in nodes_to_align:
-				node.alignment = BoxContainer.ALIGN_END
+			for stat in stats_to_align:
+				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
 			self.alignment = BoxContainer.ALIGN_END
 			move_child(stat_driver, get_child_count() - 1)
 
-	# setam širino zaradi širine imena
-#	yield(get_tree(), "idle_frame")
-	driver_stat.rect_min_size.x = driver_line.rect_size.x - 32
-	driver_stat.rect_size.x = driver_stat.rect_min_size.x
-#	655
-#	rect_size.x = driver_line.rect_size.x
+
+func set_statbox_for_level(level_type: int, level_types: Dictionary): # kliče HUD
+
+	# all
+	stat_points.show()
+	stat_cash.show()
+	stat_gas.hide()
+	stat_bullet.hide()
+	stat_misile.hide()
+	stat_mina.hide()
+
+	# hide per level
+	stat_level_rank.hide()
+	stat_lap_count.hide()
+	stat_wins.hide()
+	stat_life.hide()
+	$RaceStats.hide()
+	$BattleStats.hide()
+	match level_type:
+		level_types.RACE_TRACK:
+			$RaceStats.show()
+			stat_level_rank.show()
+		level_types.RACE_LAPS:
+			$RaceStats.show()
+			stat_level_rank.show()
+			stat_lap_count.show()
+		level_types.RACE_GOAL:
+			$BattleStats.show()
+			stat_level_rank.show()
+		level_types.CHASE:
+			# ... goal_reached_count
+			$BattleStats.show()
+		level_types.BATTLE:
+			$BattleStats.show()
+			stat_wins.show()
+			stat_life.show()
+
+	# debug .... vsa statistika je vidna
+	#	stat_driver.show()
+	#	stat_gas.show()
+	#	stat_points.show()
+	#	stat_cash.show()
+	#	stat_bullet.show()
+	#	stat_misile.show()
+	#	stat_mina.show()
+	#	stat_level_rank.show()
+	#	stat_lap_count.show()
+	#	stat_wins.show()
+	#	stat_life.show()

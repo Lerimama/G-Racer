@@ -25,47 +25,17 @@ func _ready() -> void:
 	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
-func set_hud(level_settings:Dictionary, level_type: int, level_types: Dictionary): # kliče GM
+func set_hud(level_settings: Dictionary, level_type: int, level_types: Dictionary): # kliče GM
 	# LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
 
 	for box in statboxes:
-		for stat in box.all_box_stats:
-			stat.hide()
-		box.stat_driver.show()
-		box.stat_gas.show()
+		box.set_statbox_for_level(level_type, level_types)
 
-		box.stat_points.show()
-		box.stat_cash.show()
-
-		# debug .... statistika orožja
-		box.stat_bullet.show()
-		box.stat_misile.show()
-		box.stat_mina.show()
-
-		box.stat_level_rank.show()
-		box.stat_laps_count.show()
-#		box.stat_wins.show()
-		box.stat_life.show()
-
-#	match level_type:
-#		level_types.RACE_TRACK:
-#			game_timer.hunds_mode = true
-#		level_types.RACE_LAPS:
-#			game_timer.hunds_mode = true
-#			for box in statboxes:
-#				box.stat_level_rank.show()
-#				box.stat_laps_count.show()
-#		level_types.RACE_GOAL:
-#			game_timer.hunds_mode = false
-#			for box in statboxes:
-#				box.stat_level_rank.show()
-#		level_types.CHASE:
-#			game_timer.hunds_mode = false
-#		level_types.BATTLE:
-#			game_timer.hunds_mode = false
-#			for box in statboxes:
-#				box.stat_wins.show()
-#				box.stat_life.show()
+	match level_type:
+		level_types.RACE_TRACK, level_types.RACE_LAPS:
+			game_timer.hunds_mode = true
+		_:
+			game_timer.hunds_mode = false
 
 	# game stats
 	level_lap_limit = level_settings["lap_limit"]
@@ -120,9 +90,9 @@ func _hide_stats():
 func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
 
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
-	var spawned_driver_statbox: Control = statboxes[spawned_bolt.driver_id]
+	var spawned_driver_statbox: Control = statboxes[spawned_bolt.driver_index]
 	var spawned_driver_stats: Dictionary = spawned_bolt.driver_stats
-	var spawned_driver_profile: Dictionary = Pfs.driver_profiles[spawned_bolt.driver_id]
+	var spawned_driver_profile: Dictionary = Pfs.driver_profiles[spawned_bolt.driver_index]
 
 	# bolt stats
 	spawned_driver_statbox.stat_bullet.stat_value = spawned_driver_stats[Pfs.STATS.BULLET_COUNT]
@@ -135,16 +105,11 @@ func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
 	spawned_driver_statbox.stat_wins.stat_value = spawned_driver_stats[Pfs.STATS.WINS]
 
 	for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
-		update_bolt_level_stats(spawned_bolt.driver_id, stat_key, bolts_level_stats[stat_key])
-#	spawned_driver_statbox.stat_level_rank.stat_value = bolts_level_stats[Pfs.STATS.LEVEL_RANK]
-#	spawned_driver_statbox.stat_laps_count.stat_value = bolts_level_stats[Pfs.STATS.LAPS_FINISHED]
-#	spawned_driver_statbox.stat_best_lap.stat_value = bolts_level_stats[Pfs.STATS.BEST_LAP_TIME]
-#	spawned_driver_statbox.stat_level_time.stat_value = bolts_level_stats[Pfs.STATS.LEVEL_TIME]
-	#	spawned_driver_statbox.stat_to_change = bolts_level_stats[Pfs.STATS.GOALS_REACHED]
+		update_bolt_level_stats(spawned_bolt.driver_index, stat_key, bolts_level_stats[stat_key])
 
 	# driver line
-	spawned_driver_statbox.driver_name_label.text = spawned_driver_profile["driver_name"]
-	spawned_driver_statbox.driver_name_label.modulate = spawned_driver_profile["driver_color"]
+	spawned_driver_statbox.driver_name.text = spawned_driver_profile["driver_name"]
+	spawned_driver_statbox.driver_name.modulate = spawned_driver_profile["driver_color"]
 	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar"])
 #	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar_png"])
 	spawned_driver_statbox.stat_wins.modulate = Color.red
@@ -152,9 +117,9 @@ func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
 	spawned_driver_statbox.visible = true
 
 
-func _on_bolt_stat_changed(driver_id: int, bolt_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+func _on_bolt_stat_changed(driver_index: int, bolt_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
 
-	var statbox_to_change: Control = statboxes[driver_id] # bolt id kot index je enak indexu statboxa v statboxih
+	var statbox_to_change: Control = statboxes[driver_index] # bolt id kot index je enak indexu statboxa v statboxih
 	var stat_to_change: Node
 	match bolt_stat_key:
 		Pfs.STATS.BULLET_COUNT:
@@ -178,16 +143,16 @@ func _on_bolt_stat_changed(driver_id: int, bolt_stat_key: int, stat_value): # st
 	stat_to_change.stat_value = stat_value
 
 
-func update_bolt_level_stats(driver_id: int, level_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+func update_bolt_level_stats(driver_index: int, level_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
 
-	var statbox_to_change: Control = statboxes[driver_id] # bolt id kot index je enak indexu statboxa v statboxih
+	var statbox_to_change: Control = statboxes[driver_index] # bolt id kot index je enak indexu statboxa v statboxih
 	var stat_to_change: Node
 	match level_stat_key:
 		Pfs.STATS.LEVEL_RANK:
 			stat_to_change = statbox_to_change.stat_level_rank
 		Pfs.STATS.LAPS_FINISHED:
 			stat_value = str(stat_value.size() + 1) + "/" + str(level_lap_limit) # +1 ker kaže trnenutnega, ne končanega
-			stat_to_change = statbox_to_change.stat_laps_count
+			stat_to_change = statbox_to_change.stat_lap_count
 		Pfs.STATS.BEST_LAP_TIME:
 			var bolts_best_lap_time: float = stat_value
 			if bolts_best_lap_time > 0:
@@ -200,7 +165,7 @@ func update_bolt_level_stats(driver_id: int, level_stat_key: int, stat_value): #
 		Pfs.STATS.LEVEL_TIME:
 			stat_to_change = statbox_to_change.stat_level_time
 		Pfs.STATS.GOALS_REACHED:
-			# še čaka ... stat_to_change = statbox_to_change.stat_laps_count
+			# še čaka ... stat_to_change = statbox_to_change.stat_lap_count
 			#			stat_value = stat_value.size()
 			return
 

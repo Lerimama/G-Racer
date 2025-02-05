@@ -1,6 +1,7 @@
-[gd_scene load_steps=219 format=2]
+[gd_scene load_steps=220 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/level/pickables/PickableBullet.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=9]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=10]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=11]
@@ -1574,6 +1575,9 @@ margin_bottom = 3.0
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="PickableBullet" parent="." index="16" instance=ExtResource( 2 )]
+position = Vector2( -321, -155 )
 
 [editable path="Terrain/TerrainMountain"]
 [editable path="Terrain/TerrainMountain2"]

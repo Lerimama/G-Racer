@@ -1,89 +1,47 @@
 extends HBoxContainer
 
 
-var is_open: bool = false
-var closed_position_offset: float = 500
-
-onready var open_position: Vector2 = rect_position
-onready var closed_position: Vector2# = rect_position + Vector2(0, closed_position_offset)
-onready var home: Node = $"../.."
-
-
-func _input(event: InputEvent) -> void:
-
-	if is_open and Input.is_action_just_pressed("ui_cancel"):
-		close()
-
-
 func _ready() -> void:
 
-	#pozicija
+	var level_btn_template: Button = Mts.remove_chidren_and_get_template(get_children())
 
-	if get_node("../LevelsOpenPosition") and get_node("../LevelsClosedPosition"):
-		open_position = get_node("../LevelsOpenPosition").position
-		closed_position = get_node("../LevelsClosedPosition").position
-		closed_position_offset = closed_position.y - open_position.y
-		var center_position_adapt: float = rect_size.x / 2
-		open_position.x -= center_position_adapt
-		closed_position.x -= center_position_adapt
-	else:
-		closed_position = rect_position + Vector2(0, closed_position_offset)
+	for level_index in Pfs.LEVELS.values():
 
-	rect_position = closed_position
+		var new_level_btn: Button = level_btn_template.duplicate()
+		new_level_btn.title = Pfs.level_profiles[level_index]["level_name"]
+		new_level_btn.thumb_texture = Pfs.level_profiles[level_index]["level_thumb"]
+		new_level_btn.description = Pfs.level_profiles[level_index]["level_desc"]
+		add_child(new_level_btn)
 
-	for btn in get_children():
-		btn.connect("pressed", self, "_on_level_btn_pressed", [btn])
+		new_level_btn.connect("pressed", self, "_on_level_btn_pressed", [new_level_btn])
+
 		# pressed
-		var btn_index: int = get_children().find(btn)
+		var btn_index: int = get_children().find(new_level_btn)
 		if btn_index in Sts.current_game_levels:
-			btn.is_activated = true
+			new_level_btn.is_activated = true
 		else:
-			btn.is_activated = false
+			new_level_btn.is_activated = false
 
-
-func open() -> void:
-
-	if not is_open:
-		is_open = true
-
-		var slide_tween = get_tree().create_tween()
-		slide_tween.tween_property(self, "rect_position", open_position, 0.2). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
-		yield(slide_tween, "finished")
-
-		# preverjam , če se je odprlo zaradi direktnega fokusiranja
-		var allready_focused: bool = false
-		for btn in get_children():
-			if btn.has_focus():
-				allready_focused = true
-				break
-		if not allready_focused:
-			get_children()[0].grab_focus()
-
-
-func close() -> void:
-
-	if is_open:
-
-		var slide_tween = get_tree().create_tween()
-		slide_tween.tween_property(self, "rect_position", closed_position, 0.2). set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
-		yield(slide_tween, "finished")
-#		focused_on_close.grab_focus()
-		is_open = false
-		home.to_main_menu()
+	yield(get_tree(), "idle_frame")
+	# fokus za ciklanje ... ne dela
+	var first_btn: Button = get_children().front()
+	var last_btn: Button = get_children().back()
+	first_btn.focus_neighbour_left = get_path_to(last_btn)
+	first_btn.set_focus_neighbour(MARGIN_LEFT, get_path_to(last_btn))
+	last_btn.set_focus_neighbour(MARGIN_RIGHT, get_path_to(first_btn))
 
 
 func _on_level_btn_pressed(btn: Button):
 
-	if is_open:
-		var btn_index: int = get_children().find(btn)
+	var btn_index: int = get_children().find(btn)
 
-		# _temp select one level only
-		Sts.current_game_levels = [btn_index]
-		for other_btn in get_children():
-			if other_btn == btn:
-				other_btn.is_activated = true
-			else:
-				other_btn.is_activated = false
+	# _temp select one level only
+	Sts.current_game_levels = [btn_index]
+	for other_btn in get_children():
+		if other_btn == btn:
+			other_btn.is_activated = true
+		else:
+			other_btn.is_activated = false
 
 	# turnir mode
 	#	other_btn.is_activated = not other_btn.is_activated

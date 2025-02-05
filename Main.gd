@@ -6,10 +6,10 @@ var fade_time = 0.7
 onready var home_scene_path: String = "res://home/Home.tscn"
 onready var game_scene_path: String = "res://game/Game.tscn"
 
-func _input(event: InputEvent) -> void:
-
-	if Input.is_action_just_pressed("no0"):
-		Mts.hide_helper_nodes()
+#func _input(event: InputEvent) -> void:
+#
+#	if Input.is_action_just_pressed("no0"):
+#		Mts.hide_helper_nodes()
 
 
 func _ready() -> void:

@@ -39,7 +39,7 @@ func _ready():
 
 	# na ready se povežem z vsemi interaktivnimmi kontorlami, ki že obstajajo
 	for child in get_tree().root.get_children():
-		if child is BaseButton or child is HSlider or child is TouchScreenButton:
+		if child is BaseButton or child is HSlider or child is TouchScreenButton or child is LineEdit:
 			_connect_interactive_control(child)
 
 	# signal iz drevesa na vsak node, ki pride v igro
@@ -48,15 +48,15 @@ func _ready():
 
 func _on_SceneTree_node_added(node: Node): # na ready
 
-	if node is BaseButton or node is HSlider or node is TouchScreenButton:
+	if node is BaseButton or node is HSlider or node is TouchScreenButton or node is LineEdit:
 		_connect_interactive_control(node)
-	if node is Button:
+	if node is Button or node is HSlider:
 		node.set_default_cursor_shape(2) # CURSOR_POINTING_HAND
 
 
 func _connect_interactive_control(node: Node): # and apply start lnf
 
-	if node is Button:
+	if node is BaseButton:
 		# focus
 		node.connect("focus_entered", self, "_on_focus_entered", [node])
 		node.connect("focus_exited", self, "_on_focus_exited", [node])
@@ -69,7 +69,7 @@ func _connect_interactive_control(node: Node): # and apply start lnf
 		else:
 			node.connect("pressed", self, "_on_btn_pressed")
 
-	elif node is HSlider:
+	elif node is HSlider or node is LineEdit:
 		# focus
 		node.connect("mouse_entered", self, "_on_mouse_entered", [node])
 		node.connect("focus_entered", self, "_on_focus_entered", [node])
@@ -98,20 +98,22 @@ func _on_mouse_entered(control: Control):
 #	printt("control hovered", control)
 
 	# imitira fokus
-	control.emit_signal("focus_entered")
-#	if not control.has_focus() and not control.focus_mode == control.FOCUS_NONE: # and not control is ColorRect
+#	control.emit_signal("focus_entered")
+	if not control.has_focus() and not control.focus_mode == control.FOCUS_NONE: # and not control is ColorRect
 #		allow_gui_sfx = true # mouse focus je zmeraj s sonundom
-#		control.grab_focus()
+		control.grab_focus()
 
 
 func _on_mouse_exited(control: Control):
 #	printt("control un-hoverd", control)
 	# imitira fokus
-	control.emit_signal("focus_exited")
+#	control.emit_signal("focus_exited")
+
+	pass
 
 
 func _on_focus_entered(control: Control):
-#	printt("control focused", control)
+	printt("control focused", control)
 
 	if allow_gui_sfx:
 		pass
@@ -123,8 +125,7 @@ func _on_focus_entered(control: Control):
 func _on_focus_exited(control: Control):
 
 	control.release_focus()
-#	printt("control unfocused", control)
-	pass
+
 
 func _on_btn_pressed(button: BaseButton):
 #	printt("btn pressed", button)

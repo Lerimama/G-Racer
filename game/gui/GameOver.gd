@@ -46,7 +46,7 @@ func set_scorelist(bolts_on_finish_line: Array, bolts_on_start: Array):
 		print(bolt.name)
 		new_ranking_line.get_node("Bolt").text = bolt.driver_profile["driver_name"]
 #		new_ranking_line.get_node("Result").text = Mts.get_clock_time(bolt.driver_stats["level_time"])
-		new_ranking_line.get_node("Result").text = Mts.get_clock_time(Rfs.game_manager.level_stats[bolt.driver_id][Pfs.STATS.LEVEL_TIME])
+		new_ranking_line.get_node("Result").text = Mts.get_clock_time(Rfs.game_manager.level_stats[bolt.driver_index][Pfs.STATS.LEVEL_TIME])
 		results.add_child(new_ranking_line)
 
 		# izbrišem iz arraya, da ga ne upoštevam pri pisanju neuvrščenih

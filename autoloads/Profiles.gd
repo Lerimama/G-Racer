@@ -50,10 +50,10 @@ var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.LIFE : 5,
 	STATS.CASH: 0,
 	STATS.HEALTH : 1, # health percetnage
-	STATS.BULLET_COUNT : 100,
+	STATS.BULLET_COUNT : 10,
 	STATS.MISILE_COUNT : 5,
 	STATS.MINA_COUNT : 3,
-	STATS.GAS: 200,
+	STATS.GAS: 2000,
 	STATS.POINTS : 0,
 }
 
@@ -61,41 +61,33 @@ var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 # ---------------------------------------------------------------------------------------------------------------------------
 func drivers(): pass
 
-enum DRIVER_ID {P1, P2, P3, P4}
+
+enum DRIVER_TYPE {PLAYER, AI}
+
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 }
+
 var default_driver_profile: Dictionary = {
 	"driver_name": "PLAJER",
 	"driver_avatar": preload("res://home/avatar_david.tres"),
 	"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"bolt_type": BOLTS.BASIC,
-	"driver_type": DRIVER_TYPE.PLAYER
+	"driver_type": DRIVER_TYPE.PLAYER,
 }
 
-var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres")]
-var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red, ]
-var names: Array = ["Hasselhoff", " Magnum", "Marty", "Mr. T"]
-
-
-enum DRIVER_TYPE {PLAYER, AI}
+var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres"), preload("res://home/avatar_ai.tres")]
+var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red]
+var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
-#	AI_TYPE.DEFAULT: {
-#		"controller_type" : CONTROLLER_TYPE.AI,
-#		"controller_type":  { # _temp
-#			fwd_action = "ai_fwd",
-#			rev_action = "ai_rev",
-#			left_action = "ai_left",
-#			right_action = "ai_right",
-#			shoot_action = "ai_shoot",
-#			selector_action = "ai_selector",
-#			},
-		"controller_scene": preload("res://game/bolt/ControllerAI.tscn"),
-		"ai_avatar" : preload("res://home/avatar_ai.tres"),
-#		"shooting_ability": 0.5, # adaptacija hitrosti streljanja, adaptacija natančnosti ... 1 pomeni, da adaptacij ni - 2 je že zajebano u nulo
+	"controller_scene": preload("res://game/bolt/ControllerAI.tscn"),
+	"ai_avatar": preload("res://home/avatar_ai.tres"),
+	"ai_type": AI_TYPE.DEFAULT,
+	"ai_name": "STEINY",
 }
+
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
 var controller_profiles: Dictionary = {
@@ -135,22 +127,14 @@ var controller_profiles: Dictionary = {
 		selector_action = "jp2_selector",
 		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
 	},
-#	CONTROLLER_TYPE.AI : {
-#		fwd_action = "ai_fwd",
-#		rev_action = "ai_rev",
-#		left_action = "ai_left",
-#		right_action = "ai_right",
-#		shoot_action = "ai_shoot",
-#		selector_action = "ai_selector",
-#		"controller_scene": preload("res://game/bolt/ControllerAI.tscn"),
-#	},
 }
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
 func bolt(): pass
 
-enum BOLTS {SMALL, BASIC, BIG, TRUCK}
+#enum BOLTS {SMALL, BASIC, BIG, TRUCK}
+enum BOLTS {BASIC, TRUCK}
 var bolt_profiles: Dictionary = {
 	BOLTS.BASIC: {
 		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
@@ -162,37 +146,6 @@ var bolt_profiles: Dictionary = {
 		"ai_target_rank": 5,
 		"on_hit_disabled_time": 2,
 		"gas_tank_size": 200, # liters
-		# driving params
-#		"engine_rotation_speed": 1,
-#		"fast_start_power_addon": 200, # pospešek motorja do največje moči (horsepower?)
-
-		# NONE
-		# masa in damping je na celotnem boltu
-		# ostale vrednosti so vse 0
-#		"max_engine_power": 500, # = konjev ... cca 200 kmh
-#		"max_engine_power_ai_addon": 10, # v 1km ga skoraj dohiti
-		#		"lin_damp": 1, # vpliva na pojemek
-		#		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
-		#		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
-
-		# ---
-		# MASSLESS
-		# ostale vrednosti ostanejo kot za NONE
-#		"max_engine_power_massless": 800,
-#		"max_engine_rotation_deg_massless": 25,
-#		"ang_damp_massless": 0,
-#		"front_mass_bias_massless": 0.5,
-#		"lin_damp_front_massless": 0,
-#		"lin_damp_rear_massless": 5,
-#
-#		# SPIN
-#		"ang_damp_float": 0.5,
-#		# DRIFT
-#		"drift_power": 17000, # na rear
-		# GLIDE
-#		"glide_power_F": 465,#00,
-#		"glide_power_R": 500,#00,
-#		"glide_ang_damp": 5, # da se ha rotirat
 		},
 	BOLTS.TRUCK: {
 		"bolt_scene": preload("res://game/bolt/Vechicle.tscn"),
@@ -202,38 +155,6 @@ var bolt_profiles: Dictionary = {
 		"idle_motion_gas_usage": -0.05,
 		"ai_target_rank": 11,
 		"on_hit_disabled_time": 2,
-		"bounce": 0.5,
-		"friction": 0.2,
-
-		# driving params
-		"engine_rotation_speed": 1,
-		"fast_start_engine_power": 5,# pospešek motorja do največje moči (horsepower?)
-		"masa": 100, # kg ... na driving mode set se porazdeli na prvi in drugi pogon
-		# DRIVING SETUP
-		# ---
-		# NONE
-		# masa in damping je na celotnem boltu
-		# ostale vrednosti so vse 0
-		"max_engine_power": 500, # = konjev
-		"max_engine_rotation_deg": 45, # ne vpliva na nič ... tolk da je neka default vredbost
-		"ang_damp": 16, # ne vpliva na vožnjo samo vpliva pa na hitrost poravnave pri prehodu
-		"lin_damp": 1, # vlpiva na pojemek
-		# ---
-		# MASSLESS
-		"max_engine_power_massless": 800,
-		"max_engine_rotation_deg_massless": 25,
-		"ang_damp_massless": 0,
-		"front_mass_bias_massless": 0.5,
-		"lin_damp_front_massless": 0,
-		"lin_damp_rear_massless": 5,
-		# ostale vrednosti ostanejo kot za NONE
-
-		# ROTATE
-		"spin_torque": 10000000,
-		"ang_damp_float": 0.5,
-		"max_free_thrust_rotation_deg": 90,
-
-
 		},
 }
 
@@ -257,9 +178,11 @@ var equipment_profiles : Dictionary = {
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
-func ammo(): pass
+func weapons(): pass
 
-enum AMMO {BULLET, MISILE, MINA, SHIELD}
+#enum WEAPONS {GUN, TURRET, LOUNCHER, MINA}
+enum AMMO {BULLET, MISILE, MINA, LASER}
+
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
@@ -312,8 +235,9 @@ enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE} # to zaporedje upošteva zap
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
 		"level_name": "xxx",
-		"level_desc": "xxx",
+		"level_desc": "jajsjdsjdj",
 		"level_path": "res://game/levels/Level.tscn",
+		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
@@ -321,6 +245,7 @@ var level_profiles: Dictionary = {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_path": "res://game/levels/LevelFirstDrive.tscn",
+		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
@@ -328,6 +253,7 @@ var level_profiles: Dictionary = {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_path": "res://game/levels/LevelTraining.tscn",
+		"level_thumb": preload("res://home/thumb_level_training.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
 		},
@@ -335,6 +261,7 @@ var level_profiles: Dictionary = {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_path": "res://game/levels/LevelStaff.tscn",
+		"level_thumb": preload("res://home/thumb_level_mission.tres"),
 		"time_limit": 60,
 		"lap_limit": 1,
 		},

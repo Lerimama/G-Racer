@@ -1,13 +1,19 @@
 extends Node2D
 
 
+signal weapon_shot
+
+enum WEAPON_TYPE {GUN, TURRET, LOUNCHER, DROPPER}
+export (WEAPON_TYPE) var weapon_type: int = 0
+
 enum WEAPON_AMMO {BULLET, MISILE, MINA} # zaporedje kot v profilih
-export (WEAPON_AMMO) var weapon_ammo = 0 # 0 = AMMO.BULLET
+export (WEAPON_AMMO) var weapon_ammo: int = 0 # 0 = AMMO.BULLET
 export var fx_enabled: bool = true
 
-var weapon_is_set: bool =  false
+export var weapon_ai_path: NodePath
+
 var weapon_reloaded: bool = true
-var ammo_count: int = 0 setget _change_ammo_count # napolnems strani bolta ali igre
+var ammo_count: int = 0 # napolnems strani bolta ali igre
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -18,9 +24,9 @@ onready var smoke_particles: Particles2D = $WeaponSprite/SmokeParticles
 
 # per weapon
 var ammo_stat_key: int
-var ammo_profile: Dictionary
 var AmmoScene: PackedScene
 var reload_time: float
+var weapon_owner_stats: Dictionary
 
 
 func _ready() -> void:
@@ -30,70 +36,64 @@ func _ready() -> void:
 	fire_cover_particles.emitting = false
 
 
-func set_weapon(): # kliče bolt
+func set_weapon(weapon_owner: Node2D): # kliče bolt
 
-	ammo_profile = Pfs.ammo_profiles[weapon_ammo]
+	weapon_owner_stats = weapon_owner.driver_stats
 
-	reload_time = ammo_profile["reload_time"]
-	AmmoScene = ammo_profile["scene"]
-	ammo_stat_key = ammo_profile["stat_key"]
-	# ammo count stat
-	ammo_count = owner.driver_stats[ammo_stat_key]
-	weapon_is_set = true
+	reload_time = Pfs.ammo_profiles[weapon_ammo]["reload_time"]
+	AmmoScene = Pfs.ammo_profiles[weapon_ammo]["scene"]
+	ammo_stat_key = Pfs.ammo_profiles[weapon_ammo]["stat_key"]
+	ammo_count = weapon_owner_stats[ammo_stat_key]
+
+	if weapon_ai_path:
+		get_node(weapon_ai_path).set_weapon_ai(weapon_owner)
 
 
 func _process(delta: float) -> void:
 
-	var shooting_ready: bool = false
-	if owner.is_shooting:
-		if weapon_is_set and owner.bolt_hud.selected_feature_index == weapon_ammo:
-			if ammo_count > 0 and weapon_reloaded:
-				shooting_ready = true
-
-	if shooting_ready:
-		shoot()
-	else:
-		smoke_particles.emitting = false
-		fire_particles.emitting = false
-		fire_cover_particles.emitting = false
-#		animation_player.stop()
+	if weapon_owner_stats:
+		ammo_count = weapon_owner_stats[ammo_stat_key]
 
 
-func shoot():
+func _on_weapon_triggered(trigger_owner: Node2D):
+
+	var shooting_weapon: Node2D = trigger_owner.bolt_hud.selected_weapon
+	if shooting_weapon.weapon_type == weapon_type:
+		if ammo_count > 0 and weapon_reloaded:
+			shoot(trigger_owner)
+
+
+func shoot(weapon_owner: Node2D):
 
 	if fx_enabled:
+		smoke_particles.one_shot = true
+		fire_particles.one_shot = true
 		smoke_particles.emitting = true
 		fire_particles.emitting = true
+		fire_cover_particles.one_shot = true
 		fire_cover_particles.emitting = true
 		var current_weapon_animation: String = animation_player.get_animation_list()[1] # 0 je RESET
 		animation_player.play(current_weapon_animation)
-#			animation_player.play("shooting_motion")
 
-	# spawn
+	# spawn ammo
 	var new_ammo = AmmoScene.instance()
 	new_ammo.global_position = shooting_position.global_position
 	new_ammo.global_rotation = shooting_position.global_rotation
-	new_ammo.spawner = owner
-	new_ammo.spawner_color = owner.bolt_color
+	new_ammo.spawner = weapon_owner
+	new_ammo.spawner_color = weapon_owner.bolt_color
 	if weapon_ammo == Pfs.AMMO.BULLET:
 		new_ammo.z_index = shooting_position.z_index + 1
 	else:
 		new_ammo.z_index = shooting_position.z_index - 1
 	Rfs.node_creation_parent.add_child(new_ammo)
 
-	# stats
-	self.ammo_count = -1
-
 	# reload
 	if reload_time > 0:
 		weapon_reloaded = false
 		reload_timer.start(reload_time)
 
-
-func _change_ammo_count(ammo_count_delta: int):
-
-		ammo_count += ammo_count_delta
-		owner.update_stat(ammo_stat_key, ammo_count_delta)
+	# odštejem samo v glavnem slovarju, ker se tukaj kopira v procesu
+	emit_signal("weapon_shot", ammo_stat_key, -1)
 
 
 func _on_ReloadTimer_timeout() -> void:

@@ -13,7 +13,7 @@ var camera_leader: Node2D setget _change_camera_leader # trenutno vodilni igrale
 
 # game
 #var game_settings: Dictionary # set_game seta iz profilov
-var activated_driver_ids: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
+var activated_drivers: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
 var fast_start_window: bool = false # bolt ga čekira in reagira
 var start_bolt_position_nodes: Array # dobi od tilemapa
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
@@ -119,36 +119,36 @@ func _set_game():
 		playing_field_node.enable_playing_field(false)
 
 	# drivers
-	activated_driver_ids.clear()
+	activated_drivers.clear()
 	if current_level_index == 0:
 		# če je prvi level so aktivirani dodani v meniju
-		printt("GM", Sts.players_on_game_start)
-		activated_driver_ids = Sts.players_on_game_start
+		printt("GM", Sts.drivers_on_game_start)
+		activated_drivers = Sts.drivers_on_game_start
 	else: # če ni prvi level dodam kvalificirane driver_id
 		if players_qualified.empty():
 			print("Error! Ni qvalificiranih boltov, torej igre nebi smelo biti!")
 		for bolt in players_qualified:
-			activated_driver_ids.append(bolt.driver_id)
+			activated_drivers.append(bolt.driver_index)
 	players_qualified.clear()
-	#	printt("DRIVER_ID", activated_driver_ids)
+	#	printt("DRIVER_ID", activated_drivers)
 
 	# AI
 #	if Sts.enemies_mode: # začasno vezano na Set. filet
 #		# za vsako prazno pozicijo dodam AI driver_id
-#		var empty_positions_count = start_bolt_position_nodes.size() - activated_driver_ids.size()
+#		var empty_positions_count = start_bolt_position_nodes.size() - activated_drivers.size()
 #		empty_positions_count = 1 # debug ... omejitev  ai spawna na 1
 #		for empty_position in empty_positions_count:
 #			# dobim štartni id bolta in umestim ai data
-#			var new_driver_index: int = activated_driver_ids.size()
+#			var new_driver_index: int = activated_drivers.size()
 #			var new_driver_id: int = Pfs.driver_profiles.keys()[new_driver_index]
 #			Pfs.driver_profiles[new_driver_id]["controller_type"] = Pfs.ai_profile[Pfs.AI_TYPE.DEFAULT]["controller_type"]
-#			activated_driver_ids.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
+#			activated_drivers.append(new_driver_id) # da prepoznam v spawn funkciji .... trik pač
 
 	# spawn bolts ... po vrsti aktivacije
 	var spawned_position_index = 0
-	print("activated_driver_ids", activated_driver_ids)
-	for driver_id in activated_driver_ids: # so v ranking zaporedju
-		_spawn_bolt(driver_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
+	print("activated_drivers", activated_drivers)
+	for driver_index in activated_drivers: # so v ranking zaporedju
+		_spawn_bolt(driver_index, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 	Rfs.ultimate_popup.hide()
 	_game_intro()
@@ -329,14 +329,14 @@ func _update_ranking():
 
 	for bolt in bolts_in_game:
 		var current_bolt_rank: int = bolts_in_game.find(bolt) + 1
-		if not current_bolt_rank == level_stats[bolt.driver_id][Pfs.STATS.LEVEL_RANK]:
-			level_stats[bolt.driver_id][Pfs.STATS.LEVEL_RANK] = current_bolt_rank
-			hud.update_bolt_level_stats(bolt.driver_id, Pfs.STATS.LEVEL_RANK, current_bolt_rank) # OPT prepogosto
+		if not current_bolt_rank == level_stats[bolt.driver_index][Pfs.STATS.LEVEL_RANK]:
+			level_stats[bolt.driver_index][Pfs.STATS.LEVEL_RANK] = current_bolt_rank
+			hud.update_bolt_level_stats(bolt.driver_index, Pfs.STATS.LEVEL_RANK, current_bolt_rank) # OPT prepogosto
 
 
 func _on_bolt_reached_goal(level_goal: Node, goal_reaching_bolt: Bolt): # level poveže
 
-	var curr_bolt_level_data: Dictionary = level_stats[goal_reaching_bolt.driver_id]
+	var curr_bolt_level_data: Dictionary = level_stats[goal_reaching_bolt.driver_index]
 
 	var reach_in_sequence: bool = false
 	if reach_in_sequence:
@@ -356,7 +356,7 @@ func _bolt_across_finish_line(bolt_across: Bolt): # sproži finish line
 		return
 
 	# najprej preverjam, če je izpolnil cilje za finish line
-	var curr_bolt_level_data: Dictionary = level_stats[bolt_across.driver_id]
+	var curr_bolt_level_data: Dictionary = level_stats[bolt_across.driver_index]
 	#	printt("finished", curr_bolt_level_data)
 
 	var goals_reached: Array = curr_bolt_level_data[Pfs.STATS.GOALS_REACHED]
@@ -391,7 +391,7 @@ func _bolt_across_finish_line(bolt_across: Bolt): # sproži finish line
 			Rfs.sound_manager.play_sfx("finish_horn")
 
 		for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
-			hud.update_bolt_level_stats(bolt_across.driver_id, stat_key, curr_bolt_level_data[stat_key])
+			hud.update_bolt_level_stats(bolt_across.driver_index, stat_key, curr_bolt_level_data[stat_key])
 
 
 func _pull_bolt_on_field(bolt_to_pull: Bolt):
@@ -404,8 +404,8 @@ func _pull_bolt_on_field(bolt_to_pull: Bolt):
 			bolt_to_pull.call_deferred("pull_bolt_on_screen", bolt_pull_position)
 
 			# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
-			var pulled_bolt_level_stats: Dictionary = level_stats[bolt_to_pull.driver_id]
-			var leader_bolt_level_stats: Dictionary = level_stats[camera_leader.driver_id]
+			var pulled_bolt_level_stats: Dictionary = level_stats[bolt_to_pull.driver_index]
+			var leader_bolt_level_stats: Dictionary = level_stats[camera_leader.driver_index]
 
 			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
 			if pulled_bolt_level_stats[Pfs.STATS.LAPS_FINISHED].size() < leader_bolt_level_stats[Pfs.STATS.LAPS_FINISHED].size():
@@ -500,32 +500,29 @@ func _spawn_level():
 	#	print ("spawned level_stats", level_stats)
 
 
-func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
+func _spawn_bolt(bolt_driver_index: int, spawned_position_index: int):
 
-	var bolt_type: int = Pfs.driver_profiles[bolt_driver_id]["bolt_type"]
+	var bolt_type: int = Pfs.driver_profiles[bolt_driver_index]["bolt_type"]
 	# debug ... ai spawn
 	var scene_name: String = "bolt_scene"
-#	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
+#	if Pfs.driver_profiles[bolt_driver_index]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
 #		scene_name = "bolt_scene_ai"
 	var NewBoltInstance: PackedScene = Pfs.bolt_profiles[bolt_type][scene_name]
 
 	var new_bolt = NewBoltInstance.instance()
-	new_bolt.driver_id = bolt_driver_id
+	new_bolt.driver_index = bolt_driver_index
 	new_bolt.modulate.a = 0 # za intro
 	new_bolt.rotation_degrees = Rfs.current_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 
 	# setam mu profile ... iz njih podatke povleče sam na readi
-	new_bolt.driver_profile = Pfs.driver_profiles[bolt_driver_id].duplicate()
+	new_bolt.driver_profile = Pfs.driver_profiles[bolt_driver_index].duplicate()
 	new_bolt.driver_stats = Pfs.start_bolt_stats.duplicate()
 	new_bolt.bolt_profile = Pfs.bolt_profiles[bolt_type].duplicate()
 	Rfs.node_creation_parent.add_child(new_bolt)
 
 	# AI
-
-	if Pfs.driver_profiles[bolt_driver_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		print("AIIIIII")
-#	if Pfs.driver_profiles[bolt_driver_id]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
+	if Pfs.driver_profiles[bolt_driver_index]["driver_type"] == Pfs.DRIVER_TYPE.AI:
 		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
 		self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
 
@@ -539,11 +536,11 @@ func _spawn_bolt(bolt_driver_id: int, spawned_position_index: int):
 	new_bolt.connect("bolt_stat_changed", hud, "_on_bolt_stat_changed")
 
 	# bolts level stats
-	level_stats[bolt_driver_id] = Pfs.start_bolt_level_stats.duplicate()
-	level_stats[bolt_driver_id][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
-	level_stats[bolt_driver_id][Pfs.STATS.GOALS_REACHED] = []
+	level_stats[bolt_driver_index] = Pfs.start_bolt_level_stats.duplicate()
+	level_stats[bolt_driver_index][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
+	level_stats[bolt_driver_index][Pfs.STATS.GOALS_REACHED] = []
 
-	emit_signal("bolt_spawned", new_bolt, level_stats[bolt_driver_id]) # zaenkrat samo HUD, da prižge in napolne statbox
+	emit_signal("bolt_spawned", new_bolt, level_stats[bolt_driver_index]) # zaenkrat samo HUD, da prižge in napolne statbox
 
 
 func _spawn_random_pickables():

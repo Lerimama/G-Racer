@@ -1,4 +1,4 @@
-extends VFlowContainer
+extends HBoxContainer
 
 
 var driver_box_template: Control
@@ -34,4 +34,5 @@ func _on_driver_remove_pressed(driver_box_to_remove: Control):
 
 	activated_driver_boxes.erase(driver_box_to_remove)
 	driver_box_to_remove.queue_free()
+
 

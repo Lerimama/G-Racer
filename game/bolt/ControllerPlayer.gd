@@ -1,6 +1,9 @@
 extends Node
 
 
+signal weapon_triggered
+
+
 var controlled_bolt: Bolt
 var controller_type: int
 var bolt_motion_manager: Node
@@ -61,7 +64,7 @@ func _input(event: InputEvent) -> void:
 
 		# select weapon
 		if Input.is_action_just_pressed(selector_action):
-			controlled_bolt.bolt_hud.selected_feature_index += 1
+			controlled_bolt.bolt_hud.selected_item_index += 1
 
 
 func _ready() -> void:
@@ -73,37 +76,41 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 
-	if Input.is_action_pressed(shoot_action):
-		controlled_bolt.is_shooting = true
-	else:
-		controlled_bolt.is_shooting = false
+	if Rfs.game_manager.game_on:
+		if Input.is_action_pressed(shoot_action):
+			emit_signal("weapon_triggered")
+#		controlled_bolt.is_shooting = true
+#	else:
+#		controlled_bolt.is_shooting = false
 
 
 func _react_to_driving_input():
 
-	# FWD
-	if _driving_input_pressed.has(fwd_action):
-		if not Rfs.game_manager.game_on:
-			controlled_bolt.revup()
-		else:
-			if Rfs.game_manager.fast_start_window:
-				if Input.is_action_just_pressed(fwd_action):
-					controlled_bolt.revup()
-					bolt_motion_manager.boost_bolt(bolt_motion_manager.fast_start_power_addon, Sts.fast_start_time)
-			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
-	# REV
-	elif _driving_input_pressed.has(rev_action):
-		bolt_motion_manager.motion = bolt_motion_manager.MOTION.REV
-	# IDLE
-	else:
-		bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
+	if not bolt_motion_manager.motion == bolt_motion_manager.MOTION.DISSARAY:
 
-	# ROTATION
-	if _driving_input_pressed.has(left_action):
-		bolt_motion_manager.rotation_dir = -1
-	elif _driving_input_pressed.has(right_action):
-		bolt_motion_manager.rotation_dir = 1
-	else:
-		bolt_motion_manager.rotation_dir = 0
-		# tukaj, ker je za AI drugače
-		#bolt_motion_manager.force_rotation = 0 AI dobi še tole ... pa močišotimaj
+		# FWD
+		if _driving_input_pressed.has(fwd_action):
+			if not Rfs.game_manager.game_on:
+				controlled_bolt.revup()
+			else:
+				if Rfs.game_manager.fast_start_window:
+					if Input.is_action_just_pressed(fwd_action):
+						controlled_bolt.revup()
+						bolt_motion_manager.boost_bolt(bolt_motion_manager.fast_start_power_addon, Sts.fast_start_time)
+				bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
+		# REV
+		elif _driving_input_pressed.has(rev_action):
+			bolt_motion_manager.motion = bolt_motion_manager.MOTION.REV
+		# IDLE
+		else:
+			bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
+
+		# ROTATION
+		if _driving_input_pressed.has(left_action):
+			bolt_motion_manager.rotation_dir = -1
+		elif _driving_input_pressed.has(right_action):
+			bolt_motion_manager.rotation_dir = 1
+		else:
+			bolt_motion_manager.rotation_dir = 0
+			# tukaj, ker je za AI drugače
+			#bolt_motion_manager.force_rotation = 0 AI dobi še tole ... pa močišotimaj

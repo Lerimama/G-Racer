@@ -80,13 +80,13 @@ var world_1kg_mass = 0.1 # masa ... zgolj referenca
 
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
-var players_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
+var drivers_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
 var current_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
 
 var current_game_levels: Array = []
 
-
+var drivers_on_game_start_count = 3
 func _ready() -> void:
 
 	if OS.is_debug_build():
@@ -96,8 +96,8 @@ func _ready() -> void:
 		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
 
 		fast_start_window_time = 1
-		camera_zoom_range = [2, 2.3]
-#		camera_zoom_range = [2, 2]
+#		camera_zoom_range = [2, 2.3]
+		camera_zoom_range = [1, 1]
 #		camera_zoom_range = [3, 3]
 #		camera_zoom_range = [5, 5]
 		start_countdown = false
@@ -107,19 +107,21 @@ func _ready() -> void:
 		enemies_mode = true
 		game_shadows_rotation_deg = 45
 
-		players_on_game_start = [
-			Pfs.DRIVER_ID.P1
-#			Pfs.DRIVER_ID.P1, PfsDRIVERSR.P2
-#			Pfs.DRIVER_ID.P1, Pfs.DRIVER_ID.P2, Pfs.DRIVER_ID.P3, Pfs.DRIVER_ID.P4
+#		drivers_on_game_start_count = 2
+		drivers_on_game_start = [
+			0, 1, 2,
 			]
 
 
 		Pfs.driver_profiles = {}
 
-		for dr in players_on_game_start:
+		for dr in drivers_on_game_start:
+#		for dr in drivers_on_game_start_count:
 			Pfs.driver_profiles[dr] = Pfs.default_driver_profile.duplicate()
+			if dr == 2:
+				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			#		printt("profile", Pfs.driver_profiles[driver_id])
-			#	print("drivers ", Sts.players_on_game_start)
+			#	print("drivers ", Sts.drivers_on_game_start)
 
 	if full_equip_mode:
 		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]

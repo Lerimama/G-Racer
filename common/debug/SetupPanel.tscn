@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=1]
 [ext_resource path="res://assets/theme/fonts/body_small_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://common/debug/SetupLine.gd" type="Script" id=3]
 [ext_resource path="res://common/debug/SetupPanel.gd" type="Script" id=4]

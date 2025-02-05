@@ -10,7 +10,7 @@
 [ext_resource path="res://home/PregameSetup_OLD.gd" type="Script" id=8]
 [ext_resource path="res://home/PlayersMenu.gd" type="Script" id=9]
 [ext_resource path="res://home/PlayerPopup.gd" type="Script" id=10]
-[ext_resource path="res://assets/theme/fonts/black_80_slanted.tres" type="DynamicFont" id=11]
+[ext_resource path="res://assets/theme/fonts/button_big.tres" type="DynamicFont" id=11]
 [ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=12]
 
 [sub_resource type="ShaderMaterial" id=824]

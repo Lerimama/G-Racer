@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=2]
 
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=1]
 [ext_resource path="res://breaker_demo/03.jpg" type="Texture" id=2]
 [ext_resource path="res://breaker_demo/Breaker.tscn" type="PackedScene" id=3]
 [ext_resource path="res://breaker_demo/Concrete 3.JPG" type="Texture" id=4]

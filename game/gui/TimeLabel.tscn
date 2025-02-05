@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=1]
 
 [node name="TimeLabel" type="HBoxContainer"]
 margin_left = -112.0
@@ -28,9 +28,9 @@ align = 2
 [node name="Dots" type="Label" parent="."]
 margin_left = 70.0
 margin_right = 81.0
-margin_bottom = 48.0
+margin_bottom = 56.0
+rect_min_size = Vector2( 0, 56 )
 size_flags_horizontal = 4
-size_flags_vertical = 2
 text = ":"
 align = 1
 
@@ -47,9 +47,9 @@ align = 1
 [node name="Dots2" type="Label" parent="."]
 margin_left = 142.0
 margin_right = 153.0
-margin_bottom = 48.0
+margin_bottom = 56.0
+rect_min_size = Vector2( 0, 56 )
 size_flags_horizontal = 4
-size_flags_vertical = 2
 text = ":"
 align = 1
 

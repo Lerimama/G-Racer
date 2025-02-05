@@ -1,6 +1,8 @@
 extends Node
 
 
+signal weapon_triggered
+
 enum AI_STATE {OFF, RACE_TRACK, SEARCH, FOLLOW, HUNT, RACE_TO_GOAL, MOUSE_CLICK} # ai je možgan (controller in ne bolt
 var ai_state: int = AI_STATE.OFF setget _change_ai_state
 
@@ -54,8 +56,8 @@ var bolt_motion_manager: Node
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
-	if Input.is_action_just_pressed("no0"): # idle
-		self.ai_state = AI_STATE.OFF
+#	if Input.is_action_just_pressed("no0"): # idle
+#		self.ai_state = AI_STATE.OFF
 	if Input.is_action_just_pressed("no1"): # idle
 		self.ai_state = AI_STATE.RACE_TRACK
 	if Input.is_action_just_pressed("no2"): # race
@@ -113,14 +115,14 @@ func _physics_process(delta: float) -> void:
 
 	if controlled_bolt.is_active:
 
-		# states
+		if bolt_motion_manager.motion == bolt_motion_manager.MOTION.DISSARAY and not ai_state == AI_STATE.OFF:
+			self.ai_state = AI_STATE.OFF
+
 		_state_machine(delta)
 
 		# force rotation
 		var vector_to_target: Vector2 = Vector2.ZERO
-
 		if ai_target and not ai_target.is_queued_for_deletion():
-
 			force_direction_line.default_color = Color.yellow
 			if ai_state == AI_STATE.RACE_TRACK:
 				vector_to_target = _get_tracking_position(ai_target) - controlled_bolt.global_position
@@ -130,6 +132,8 @@ func _physics_process(delta: float) -> void:
 			force_direction_line.default_color = Color.red
 			if not ai_state == AI_STATE.OFF: # če izgubi tarčo gre v SEARCH
 				self.ai_state = AI_STATE.SEARCH
+		bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+
 		# debug line
 		force_direction_line.set_point_position(0, Vector2.ZERO)
 		force_direction_line.set_point_position(1, vector_to_target.rotated(- controlled_bolt.global_rotation))
@@ -137,22 +141,21 @@ func _physics_process(delta: float) -> void:
 		if _update_vision():
 			controlled_bolt.set_linear_velocity(braking_velocity)
 
-		bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
-		#		if ai_target:
-		#			bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, bolt_motion_manager.driving_gear * _get_target_side(ai_target.global_position) * deg2rad(bolt_motion_manager.max_engine_rotation_deg), bolt_motion_manager.engine_rotation_speed)
-		##			bolt_motion_manager.rotation_dir = _get_target_side(vector_to_target)
 
+			#		if ai_target:
+			#			bolt_motion_manager.force_rotation = lerp_angle(bolt_motion_manager.force_rotation, bolt_motion_manager.driving_gear * _get_target_side(ai_target.global_position) * deg2rad(bolt_motion_manager.max_engine_rotation_deg), bolt_motion_manager.engine_rotation_speed)
+			##			bolt_motion_manager.rotation_dir = _get_target_side(vector_to_target)
 
-		#		var roundabout_position = _update_vision()
-		#		if roundabout_position:# is Vector2:
-		#			controlled_bolt.set_linear_velocity(braking_velocity)
-		#			if roundabout_position == Vector2.ZERO:
-		#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
-		#			else:
-		#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
-		#			navigation_agent.set_target_location(roundabout_position) # _temp?
-		#		else:
-		#			bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+			#		var roundabout_position = _update_vision()
+			#		if roundabout_position:# is Vector2:
+			#			controlled_bolt.set_linear_velocity(braking_velocity)
+			#			if roundabout_position == Vector2.ZERO:
+			#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
+			#			else:
+			#				bolt_motion_manager.force_rotation = controlled_bolt.global_position.angle_to_point(roundabout_position)
+			#			navigation_agent.set_target_location(roundabout_position) # _temp?
+			#		else:
+			#			bolt_motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
 
 
 func _state_machine(delta: float):

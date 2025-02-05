@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=1]
 [ext_resource path="res://game/gui/hud/StartCountdown.gd" type="Script" id=2]
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=3]
 

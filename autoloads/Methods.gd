@@ -269,17 +269,19 @@ func get_raycast_collision_to_position(raycast_node: RayCast2D, check_position: 
 		raycast_node.look_at(check_position)
 		raycast_node.cast_to.x = distance_to_position
 		raycast_node.force_raycast_update()
+
 		return raycast_node.get_collider()
 
 
 
-func detect_and_update_raycast_on_rotation(raycast_node: RayCast2D, ray_direction: Vector2, raycast_length: float = 450):
+func get_raycast_collision_on_rotation(raycast_node: RayCast2D, ray_direction: Vector2, raycast_length: float = 450):
 
 	if raycast_length == 0:
 		return
 	else:
 		raycast_node.cast_to = ray_direction * raycast_length
 		raycast_node.force_raycast_update()
+
 		return raycast_node.get_collider()
 
 

@@ -39,10 +39,10 @@ func _on_name_input_finished(new_name_text: String, player_activated: bool):
 	for btn_index in get_child_count():
 		var btn: Button = get_children()[btn_index]
 		if btn in selected_player_names:
-			if not btn_index in Sts.players_on_game_start:
-				Sts.players_on_game_start.append(btn_index)
+			if not btn_index in Sts.drivers_on_game_start:
+				Sts.drivers_on_game_start.append(btn_index)
 		else:
-			Sts.players_on_game_start.erase(btn_index)
+			Sts.drivers_on_game_start.erase(btn_index)
 
 		Pfs.driver_profiles[btn_index]["driver_name"] = btn.text
 
@@ -52,7 +52,7 @@ func _set_btn_display(btn: Button, turned_on = null):
 	var btn_index: int = get_children().find(btn)
 
 	if turned_on == null:
-		if btn_index in Sts.players_on_game_start:
+		if btn_index in Sts.drivers_on_game_start:
 			if not btn in selected_player_names:
 				selected_player_names[btn] = btn.text
 			btn.modulate = on_btn_color
@@ -74,7 +74,7 @@ func _on_player_btn_pressed(btn: Button):
 
 	var btn_index: int = get_children().find(btn)
 
-	if Sts.players_on_game_start.has(btn_index):
+	if Sts.drivers_on_game_start.has(btn_index):
 		player_popup.is_activated = true
 	else:
 		player_popup.is_activated = false

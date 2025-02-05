@@ -1,14 +1,15 @@
-[gd_scene load_steps=33 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
 [ext_resource path="res://game/bolt/BoltChassis.tscn" type="PackedScene" id=3]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=4]
 [ext_resource path="res://game/bolt/MotionManager.gd" type="Script" id=5]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=6]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=7]
 [ext_resource path="res://game/bolt/Bolt.gd" type="Script" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/last_beat.wav" type="AudioStream" id=9]
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=10]
+[ext_resource path="res://game/weapons/WeaponTurret.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/sounds/_zaloga/hit1___614185__bruhitybruh__car-door-smash-snare-kick.wav" type="AudioStream" id=11]
 [ext_resource path="res://game/bolt/BoltShadow.gd" type="Script" id=12]
 [ext_resource path="res://assets/sounds/sfx/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=13]
@@ -18,18 +19,55 @@
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=17]
 [ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=18]
 [ext_resource path="res://game/bolt/BoltHud.gd" type="Script" id=19]
-[ext_resource path="res://game/weapons/Launcher.tscn" type="PackedScene" id=21]
+[ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-Black.ttf" type="DynamicFontData" id=20]
+[ext_resource path="res://game/weapons/WeaponLauncher.tscn" type="PackedScene" id=21]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=22]
 [ext_resource path="res://game/bolt/TrailHolder.gd" type="Script" id=23]
 [ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=24]
-[ext_resource path="res://game/weapons/Dropper.tscn" type="PackedScene" id=25]
-[ext_resource path="res://game/weapons/Turret.tscn" type="PackedScene" id=33]
+[ext_resource path="res://game/weapons/WeaponDropper.tscn" type="PackedScene" id=25]
+[ext_resource path="res://game/weapons/WeaponGun.tscn" type="PackedScene" id=33]
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
 
 [sub_resource type="RectangleShape2D" id=5254]
 extents = Vector2( 6.5, 6 )
+
+[sub_resource type="CanvasItemMaterial" id=5267]
+
+[sub_resource type="CanvasItemMaterial" id=5277]
+
+[sub_resource type="Animation" id=5276]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("WeaponSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5275]
+length = 0.5
+loop = true
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("WeaponSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.12, 0.18 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -3, -1 ), Vector2( 0, 0 ), Vector2( -3, 1 ) ]
+}
 
 [sub_resource type="AudioStreamRandomPitch" id=5256]
 audio_stream = ExtResource( 18 )
@@ -41,7 +79,7 @@ audio_stream = ExtResource( 11 )
 audio_stream = ExtResource( 16 )
 random_pitch = 1.05
 
-[sub_resource type="RectangleShape2D" id=5276]
+[sub_resource type="RectangleShape2D" id=5287]
 extents = Vector2( 95, 49 )
 
 [sub_resource type="Animation" id=5284]
@@ -77,6 +115,18 @@ tracks/0/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 1, 0 ), Vector2( 0, 0 ), Vector2( 0, -2 ), Vector2( 0, 0 ), Vector2( 0, 2 ), Vector2( 0, 0 ), Vector2( -1, 0 ), Vector2( 0, 0 ) ]
 }
 
+[sub_resource type="DynamicFont" id=5285]
+size = 12
+font_data = ExtResource( 20 )
+
+[sub_resource type="StyleBoxFlat" id=5286]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 1, 1, 1, 1 )
+
 [node name="Bolt" type="RigidBody2D"]
 z_index = 1
 collision_layer = 7
@@ -84,12 +134,9 @@ physics_material_override = SubResource( 5260 )
 contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 8 )
-__meta__ = {
-"_edit_vertical_guides_": [ -13.0, 13.0 ]
-}
 height = 10.0
 elevation = 7.0
-weapon_paths = [ NodePath("Turret"), NodePath("LauncherL") ]
+weapon_paths = [ NodePath("TurretAiming") ]
 bolt_engines_path = NodePath("Chassis/Engines")
 
 [node name="BoltController" type="Node" parent="."]
@@ -157,7 +204,15 @@ linear_damp = 3.0
 shape = SubResource( 5254 )
 disabled = true
 
-[node name="__Z-X" type="Node" parent="."]
+[node name="__Z-under" type="Node" parent="."]
+
+[node name="__Z-btm" type="Node" parent="."]
+
+[node name="__Z-side" type="Node" parent="."]
+
+[node name="__Z-top" type="Node" parent="."]
+
+[node name="__Z-over" type="Node" parent="."]
 
 [node name="Chassis" parent="." instance=ExtResource( 3 )]
 
@@ -187,21 +242,37 @@ range_z_max = 2
 [node name="Turret" parent="." instance=ExtResource( 33 )]
 position = Vector2( -48, 0 )
 
+[node name="TurretAiming" parent="." instance=ExtResource( 10 )]
+position = Vector2( -48, 0 )
+
 [node name="Dropper" parent="." instance=ExtResource( 25 )]
 visible = false
 position = Vector2( -25, 0 )
+weapon_type = 3
 
 [node name="LauncherL" parent="." instance=ExtResource( 21 )]
-position = Vector2( 8, -56 )
+position = Vector2( 8, -72 )
+
+[node name="FireParticles" parent="LauncherL/WeaponSprite" index="0"]
+material = SubResource( 5267 )
+
+[node name="Polygon2D" parent="LauncherL/WeaponSprite" index="1"]
+modulate = Color( 0.239216, 0.239216, 0.239216, 1 )
 
 [node name="FireCoverParticles" parent="LauncherL/WeaponSprite" index="2"]
+material = SubResource( 5267 )
 position = Vector2( 8, -4 )
 
 [node name="SmokeParticles" parent="LauncherL/WeaponSprite" index="3"]
+material = SubResource( 5277 )
 position = Vector2( 8, -4 )
 
+[node name="AnimationPlayer" parent="LauncherL" index="2"]
+anims/RESET = SubResource( 5276 )
+anims/shooting_motion = SubResource( 5275 )
+
 [node name="LauncherR" parent="." instance=ExtResource( 21 )]
-position = Vector2( 8, 64 )
+position = Vector2( 8, 80 )
 
 [node name="BoltHud" type="Node2D" parent="."]
 position = Vector2( 0, 128.04 )
@@ -213,6 +284,7 @@ margin_right = 27.0
 margin_bottom = 22.0
 grow_horizontal = 2
 rect_min_size = Vector2( 6, 0 )
+theme = ExtResource( 6 )
 custom_constants/separation = 16
 
 [node name="HealthBar" type="Control" parent="BoltHud/BoltHudLines"]
@@ -261,7 +333,6 @@ margin_top = 48.0
 margin_right = 128.0
 margin_bottom = 155.0
 grow_horizontal = 2
-theme = ExtResource( 10 )
 custom_constants/separation = 16
 alignment = 1
 
@@ -306,7 +377,7 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="------" type="Node" parent="."]
+[node name="______" type="Node" parent="."]
 
 [node name="DirectionLine" type="Line2D" parent="."]
 position = Vector2( 26, 0 )
@@ -362,15 +433,145 @@ pitch_scale = 1.1
 bus = "GameSfx"
 
 [node name="TerrainDetect" type="Area2D" parent="."]
+visible = false
 collision_layer = 0
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TerrainDetect"]
-shape = SubResource( 5276 )
+shape = SubResource( 5287 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 5284 )
 anims/gravel_shake = SubResource( 5280 )
+
+[node name="Equipment" type="Node2D" parent="."]
+
+[node name="Weapons" type="Node2D" parent="."]
+
+[node name="__Z-side" type="Node" parent="Weapons"]
+
+[node name="WeaponPositionSideL" type="Position2D" parent="Weapons"]
+position = Vector2( -16, 83 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Label" type="Label" parent="Weapons/WeaponPositionSideL"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="WeaponPositionSideR" type="Position2D" parent="Weapons"]
+position = Vector2( -16, -83 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 20.0
+}
+
+[node name="Label" type="Label" parent="Weapons/WeaponPositionSideR"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="WeaponPositionHood" type="Position2D" parent="Weapons"]
+position = Vector2( 45, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 20.0
+}
+
+[node name="Label" type="Label" parent="Weapons/WeaponPositionHood"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="__Z-top" type="Node" parent="Weapons"]
+
+[node name="WeaponPositionTopL" type="Position2D" parent="Weapons"]
+position = Vector2( -16, -65 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 20.0
+}
+
+[node name="Label" type="Label" parent="Weapons/WeaponPositionTopL"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="WeaponPositionTopR" type="Position2D" parent="Weapons"]
+position = Vector2( -16, 65 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 20.0
+}
+
+[node name="Label" type="Label" parent="Weapons/WeaponPositionTopR"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="__Z-over" type="Node" parent="Weapons"]
+
+[node name="WeaponPositionRoof" type="Position2D" parent="Weapons"]
+position = Vector2( -48, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 20.0
+}
+
+[node name="Label" type="Label" parent="Weapons/WeaponPositionRoof"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true
 
 [connection signal="body_entered" from="." to="." method="_on_Bolt_body_entered"]
 [connection signal="timeout" from="BoltHud/BoltHudLines/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]

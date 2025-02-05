@@ -1,6 +1,6 @@
 [gd_scene load_steps=117 format=2]
 
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=1]
 [ext_resource path="res://common/tex/cross.png" type="Texture" id=2]
 [ext_resource path="res://game/level/objects/GoalPillar.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/level/terrain/streets/StreetConcrete_SS2D.tscn" type="PackedScene" id=4]

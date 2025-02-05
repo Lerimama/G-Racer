@@ -4,8 +4,8 @@ class_name MotionManager
 
 var bolt: Node2D  # = get_parent()
 
-enum MOTION {IDLE, FWD, REV}
-var motion: int = MOTION.IDLE# setget _change_motion
+enum MOTION {IDLE, FWD, REV, DISSARAY}
+var motion: int = MOTION.IDLE # setget _change_motion
 
 enum ROTATION_MOTION {
 	DEFAULT,
@@ -44,6 +44,12 @@ var driving_gear: int = 0
 var engine_power_percentage: float # neu namesto engine power
 
 
+func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
+
+	if Input.is_action_just_pressed("no0"): # idle
+		motion = MOTION.DISSARAY
+
+
 func _ready() -> void:
 	#	yield(get_tree(),"idle_frame")
 	#	self.rotation_dir = 0
@@ -51,7 +57,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-
 
 	if not bolt.is_active: # tole seta tudi na startu
 		current_engine_power = 0 # cela sila je pade na 0
@@ -88,6 +93,9 @@ func _motion_machine():
 				force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_bolt = Vector2.LEFT.rotated(force_rotation + bolt.global_rotation) * _accelarate_to_engine_power()
 		MOTION.IDLE:
+			force_rotation = 0
+			force_on_bolt = Vector2.ZERO
+		MOTION.DISSARAY: # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 			force_rotation = 0
 			force_on_bolt = Vector2.ZERO
 

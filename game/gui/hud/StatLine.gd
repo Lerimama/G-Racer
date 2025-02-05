@@ -34,17 +34,17 @@ func _ready() -> void:
 	stat_name_label.text = "%s " % stat_name
 
 	# setup elementov glede na tip
-	if name_is_icon:
+	if name_is_icon or stat_name_label.text == "":
 		stat_icon.show()
 		stat_name_label.hide()
 	else:
 		stat_icon.hide()
 		stat_name_label.show()
 
-	stat_name_label.hide()
 	stat_time_label.hide()
 	stat_count_label.hide()
 	stat_icons.hide()
+
 	match stat_type:
 		STAT_TYPE.COUNT:
 			stat_count_label.show()

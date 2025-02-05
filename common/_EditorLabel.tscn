@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-Black.ttf" type="DynamicFontData" id=1]
+
+[sub_resource type="DynamicFont" id=5285]
+size = 12
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=5286]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 1, 1, 1, 1 )
+
+[node name="Label" type="Label"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "W"
+align = 1
+valign = 1
+uppercase = true

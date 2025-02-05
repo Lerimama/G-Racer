@@ -7,12 +7,13 @@ signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
+export (Array, Resource) var new_weapon_paths: Array
 export (Array, NodePath) var weapon_paths: Array
 export (NodePath) var bolt_engines_path: String  # _temp ... engines
 
 
 # seta spawner
-var driver_id: int
+var driver_index: int
 var driver_profile: Dictionary
 var driver_stats: Dictionary
 var bolt_profile: Dictionary
@@ -38,12 +39,12 @@ onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/PL
 onready var trail_source: Position2D = $TrailSource
 onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
-onready var bolt_hud: Node2D = $BoltHud
-onready var available_weapons: Array
+onready var equiped_weapons: Array
 onready var chassis: Node2D = $Chassis
 onready var terrain_detect: Area2D = $TerrainDetect
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var gas_usage: float = bolt_profile["gas_usage"]
+onready var bolt_hud: Node2D = $BoltHud
 onready var idle_motion_gas_usage: float = bolt_profile["idle_motion_gas_usage"]
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
@@ -58,6 +59,7 @@ onready var motion_manager: Node = $MotionManager
 onready var engines: Node2D = get_node(bolt_engines_path)
 var bolt_velocity: Vector2 = Vector2.ZERO
 var gas_tank_size: float
+
 
 func _input(event: InputEvent) -> void:
 
@@ -81,17 +83,28 @@ func _ready() -> void:
 	elevation = bolt_profile["elevation"]
 	gas_tank_size = bolt_profile["gas_tank_size"]
 
-	# weapon settings
-	for path in weapon_paths:
-		get_node(path).set_weapon()
-		available_weapons.append(get_node(path))
 
 	_add_controller()
 	_add_motion_manager()
 	motion_manager._set_default_parameters()
 
+
+	# weapon settings
+	for path in weapon_paths:
+		var curr_weapon: Node2D = get_node(path)
+		curr_weapon.connect("weapon_shot", self, "_update_weapon_stat")
+		curr_weapon.set_weapon(self)
+		bolt_controller.connect("weapon_triggered", curr_weapon, "_on_weapon_triggered", [self])
+		equiped_weapons.append(get_node(path))
+
+	# AI ima skrit hud ... zaenkrat
+	if driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
+		bolt_hud.hide()
+	else:
+		bolt_hud._set_bolt_hud(self)
+
 	# debug
-	if driver_id == Pfs.DRIVER_ID.P1:
+	if driver_index == 0:
 		Rfs.game_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
 		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")
@@ -425,10 +438,19 @@ func on_item_picked(pickable_key: int):
 				update_stat(change_stat_key, change_value)
 
 
-func update_stat(stat_key: int, change_value):
+func _update_weapon_stat(stat_key: int, change_value):
+#	print ("apdejt")
 
-	if not Rfs.game_manager.game_on:
-		return
+#	var curr_stat_name: String
+#	driver_stats[stat_key] += change_value # change_value je + ali -
+	driver_stats[stat_key] += change_value # change_value je + ali -
+	emit_signal("bolt_stat_changed", driver_index, stat_key, driver_stats[stat_key])
+#	update_stat(stat_key, change_value)
+
+
+func update_stat(stat_key: int, change_value):
+#	if not Rfs.gavme_manager.game_on:
+#		return
 
 	var curr_stat_name: String
 	driver_stats[stat_key] += change_value # change_value je + ali -
@@ -445,11 +467,12 @@ func update_stat(stat_key: int, change_value):
 	if driver_stats[Pfs.STATS.GAS] <= 0:
 		driver_stats[Pfs.STATS.GAS] = 0
 		self.is_active = false
+
 	# če ga je več kot max, povečam max (max je zaradi hud gas bar
 	elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
 		gas_tank_size = driver_stats[Pfs.STATS.GAS]
 
-	emit_signal("bolt_stat_changed", driver_id, stat_key, driver_stats[stat_key])
+	emit_signal("bolt_stat_changed", driver_index, stat_key, driver_stats[stat_key])
 
 
 # SIGNALI ------------------------------------------------------------------------------------------------

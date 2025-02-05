@@ -1,170 +1,147 @@
 extends Node2D
 
 
-var available_features_keys: Array # = [Pfs.AMMO.BULLET, Pfs.AMMO.MISILE, Pfs.AMMO.MINA]
-var active_features_indexes: Array = [] # array indexov med available_featuresi
-var selected_feature_index: int = 0 setget _change_selected_weapon # index znotraj aktivnih orožij
+var the_owner: Node2D
+var y_position_offset: float
 
-# lnf
-var y_position_offset: float # določi se na glede na pozicijo huda ob ready
-var unselected_feature_alpha: float = 0.32
+var selected_item_index: int = 0 setget _change_selected_weapon # index znotraj aktivnih orožij
+var selected_weapon: Node2D # index znotraj aktivnih orožij
+var selector_items: Dictionary = {} # item in njegovo orožja
+var selector_item_template: Control
+var always_open: bool = true
+var selector_open_time: float = 0
 
-var always_visible_mode: bool = true # če ni uporabljam timer, ki ugasne zadevo po selectanju
-var selector_visibily_time: float = 1
-
-onready var owner_node: Node2D = get_parent()
 onready var selector: Control = $BoltHudLines/Selector
 onready var selector_timer: Timer = $BoltHudLines/SelectorTimer
+onready var rotation_label: Label = $BoltHudLines/RotationLabel
 onready var health_bar: Control = $BoltHudLines/HealthBar
 onready var health_bar_line: ColorRect = $BoltHudLines/HealthBar/Bar
-onready var rotation_label: Label = $BoltHudLines/RotationLabel
-
 onready var gas_bar: Control = $BoltHudLines/GasBar
 onready var gas_bar_line: ColorRect = $BoltHudLines/GasBar/Bar
-onready var gas_on_start: float
 
 
 func _ready() -> void:
 
 	y_position_offset = position.y
+	selector_item_template = Mts.remove_chidren_and_get_template(selector.get_children())
 
-	yield(owner_node, "ready")
-	_set_hud()
 
-func _set_hud():
+func _set_bolt_hud(hud_owner: Node2D):
 
-	gas_on_start = owner_node.driver_stats[Pfs.STATS.GAS]
+	the_owner = hud_owner
 
-	# dodam opremo na voljo (malo bolj zapleteno, da se ne podvaja)
-	var unique_feature_nodes: Array = []
-	for feat_node in owner_node.available_weapons:
-		var first_3_letters: String = feat_node.name.left(3)
-		var duplicated: bool = false
-		for uniq in unique_feature_nodes:
-			if uniq.name.left(3) == first_3_letters:
-				duplicated = true
-		if not duplicated:
-			unique_feature_nodes.append(feat_node)
-	for uniq_feat in unique_feature_nodes:
-		if uniq_feat.weapon_is_set:
-			available_features_keys.append(uniq_feat.weapon_ammo)
+	if the_owner.driver_stats[Pfs.STATS.GAS] > the_owner.gas_tank_size:
+		the_owner.gas_tank_size = the_owner.driver_stats[Pfs.STATS.GAS]
 
-	_add_features_to_selector()
+	for weapon in the_owner.equiped_weapons:
+		_add_weapon_selector(weapon)
 
-	for key in available_features_keys:
-		var feat_count_key: int = Pfs.ammo_profiles[key]["stat_key"]
-		var feat_count: float = owner_node.driver_stats[feat_count_key]
-		var feat_index: int = available_features_keys.find(key)
-		_update_feature(feat_index, feat_count)
+	self.selected_item_index = 0
 
-	self.selected_feature_index = 0
+	show()
 
 
 func _process(delta: float) -> void:
 
 	# manage positions and rotation
-	if visible: # določi bolt
+	if visible:
 		global_rotation = 0 # negiramo rotacijo bolta, da je pri miru
-		global_position = owner_node.global_position + Vector2(0, y_position_offset)
+		global_position = the_owner.global_position + Vector2(0, y_position_offset)
 
-	# manage health bar
-	if health_bar.visible:
-		health_bar_line.rect_scale.x = owner_node.driver_stats[Pfs.STATS.HEALTH]
-		if health_bar_line.rect_scale.x <= 0.5:
-			health_bar_line.color = Rfs.color_red
-		else:
-			health_bar_line.color = Rfs.color_blue
-
-	# manage gas bar
-	if gas_bar.visible:
-#		gas_bar_line.rect_scale.x = owner.driver_stats[Pfs.STATS.GAS] / gas_on_start
-		gas_bar_line.rect_scale.x = owner_node.driver_stats[Pfs.STATS.GAS] / owner_node.gas_tank_size
-		if gas_bar_line.rect_scale.x <= 0.5:
-			gas_bar_line.color = Rfs.color_red
-		else:
-			gas_bar_line.color = Rfs.color_yellow
-
-	# manage selector
-	if selector.visible:
-		for key in available_features_keys:
-			var feat_count: float = owner_node.driver_stats[Pfs.ammo_profiles[key]["stat_key"]]
-			var feat_index: int = available_features_keys.find(key)
-			_update_feature(feat_index, feat_count)
-
-
-func _add_features_to_selector():
-
-	for key in available_features_keys:
-		var new_feature_box = selector.get_child(0).duplicate()
-		selector.add_child(new_feature_box)
-		new_feature_box.get_node("Icon").texture = Pfs.ammo_profiles[key]["icon"]
-
-	# zbrišem template
-	selector.get_child(0).queue_free()
-
-
-func _update_feature(feature_index: int, new_value):
-
-	var feature_node: Control = selector.get_child(feature_index)
-	feature_node.get_node("CountLabel").text = "%02d" % new_value
-
-	# (de)aktiviram
-	if new_value <= 0:
-		feature_node.hide()
-		active_features_indexes.erase(feature_index)
-		self.set_deferred("selected_feature_index", 0)
-	else:
-		feature_node.show()
-		if not active_features_indexes.has(feature_node):
-			active_features_indexes.append(feature_index)
-		self.set_deferred("selected_feature_index", selected_feature_index)
-
-
-func _change_selected_weapon(new_feat_key: int):
-#	print(selected_weapon_key)
-
-	if not available_features_keys.size() > 1:
-		selected_feature_index = 0
-	else:
-#	if not new_feat_key == selected_feature_index:
-
-		# če še ni prižgan se samo pokaže, izbrana ostane stara ikona
-		if not selector.visible:
-			selector.show()
-			selected_feature_index = selected_feature_index
-
-		# če je že prižgan, preskočim na naslednjo ikono
-		else:
-			# loopanje izbire
-			if new_feat_key > available_features_keys.size() - 1:
-				new_feat_key = 0
-			elif new_feat_key < 0:
-				new_feat_key = available_features_keys.size() - 1
-			selected_feature_index = new_feat_key
-
-		# setam ikone glede na weapon index
-		for key in available_features_keys:
-			var feature_node: Control = selector.get_child(key)
-			if selected_feature_index == available_features_keys.find(key):
-				feature_node.modulate.a = 1
+	if the_owner:
+		# manage health bar
+		if health_bar.visible:
+			health_bar_line.rect_scale.x = the_owner.driver_stats[Pfs.STATS.HEALTH]
+			if health_bar_line.rect_scale.x <= 0.5:
+				health_bar_line.color = Rfs.color_red
 			else:
-				feature_node.modulate.a = unselected_feature_alpha
-		# old v
-		#		for node_index in selector.get_children().size():
-		#			var feature_node: Control = selector.get_children()[node_index]
-		##			if selected_feature_index == active_features_indexes.find(node_index):
-		#			if selected_feature_index == available_features_keys.find(node_index):
-		#				feature_node.modulate.a = 1
-		#			else:
-		#				feature_node.modulate.a = unselected_weapon_alpha
+				health_bar_line.color = Rfs.color_blue
 
-		# sprožim timer za ugasnit selector
-		selector_timer.start(selector_visibily_time)
+		# manage gas bar
+		if gas_bar.visible:
+			gas_bar_line.rect_scale.x = the_owner.driver_stats[Pfs.STATS.GAS] / the_owner.gas_tank_size
+			if gas_bar_line.rect_scale.x <= 0.5:
+				gas_bar_line.color = Rfs.color_red
+			else:
+				gas_bar_line.color = Rfs.color_yellow
+
+		# weapons
+		for weapon in selector_items.values():
+			var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
+			var ammo_count: float = the_owner.driver_stats[ammo_count_key]
+			var selector_item: Control = selector_items.find_key(weapon)
+			selector_item.get_node("CountLabel").text = "%02d" % ammo_count
+
+			if ammo_count == 0:
+				_remove_weapon_selector(selector_item)
+
+		# pokažem, če ima municijo
+		for weapon in the_owner.equiped_weapons:
+			var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
+			var ammo_count: float = the_owner.driver_stats[ammo_count_key]
+			if ammo_count > 0:
+				_add_weapon_selector(weapon)
+
+
+func _add_weapon_selector(item_weapon: Node2D):
+
+	# preverim če je za isti tip že notri
+	var weapon_item_exists: bool = false
+	for weapon in selector_items.values():
+		if weapon.weapon_type == item_weapon.weapon_type:
+			weapon_item_exists = true
+
+	if not weapon_item_exists:
+		var new_selector_item: Control = selector_item_template.duplicate()
+		selector.add_child(new_selector_item)
+
+		selector_items[new_selector_item] = item_weapon
+
+		new_selector_item.get_node("Icon").texture = Pfs.ammo_profiles[item_weapon.weapon_ammo]["icon"]
+		var weapon_ammo_count_key: int = Pfs.ammo_profiles[item_weapon.weapon_ammo]["stat_key"]
+		new_selector_item.get_node("CountLabel").text = "%02d" % the_owner.driver_stats[weapon_ammo_count_key]
+
+
+func _remove_weapon_selector(selector_item: Control):
+
+	selector_items.erase(selector_item)
+	selector_item.queue_free()
+
+
+func _change_selected_weapon(new_selected_item_index: int):
+
+	if not selector_items.empty():
+
+		# loop select
+		if selector_items.size() == 1:
+			selected_item_index = 0
+		else:
+			if selector.visible:
+				if new_selected_item_index > selector_items.size() - 1:
+					new_selected_item_index = 0
+				elif new_selected_item_index < 0:
+					new_selected_item_index = selector_items.size() - 1
+				selected_item_index = new_selected_item_index
+			else: # če še ni prižgan se samo pokaže, izbrana ostane stara ikona
+				selector.show()
+				selected_item_index = new_selected_item_index
+
+		# izberem orožje
+		var new_selected_item: Control = selector_items.keys()[selected_item_index]
+		selected_weapon = selector_items[new_selected_item]
+
+		# LNF
+		for item in selector_items:
+			if item == new_selected_item:
+				item.modulate.a = 1
+			else:
+				item.modulate.a = 0.32
+
+		# timer
+		if not always_open:
+			selector_timer.start(selector_open_time)
 
 
 func _on_SelectorTimer_timeout() -> void:
 
-	if always_visible_mode: # zazih
-		pass
-	else:
-		selector.hide()
+	selector.hide()

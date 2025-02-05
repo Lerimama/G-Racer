@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://game/camera/camera_shake_noise.tres" type="OpenSimplexNoise" id=1]
-[ext_resource path="res://assets/theme/main_theme.tres" type="Theme" id=2]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/camera/Camera.gd" type="Script" id=3]
 [ext_resource path="res://game/camera/CameraTestUI.gd" type="Script" id=4]
 [ext_resource path="res://common/debug/SetupPanel.tscn" type="PackedScene" id=5]
@@ -250,28 +250,29 @@ theme = ExtResource( 2 )
 text = "in gejm setup"
 
 [node name="CameraSetupToggle" type="CheckBox" parent="TestUI"]
-margin_left = 692.0
-margin_top = 26.0
-margin_right = 855.0
-margin_bottom = 55.0
+margin_left = 1084.0
+margin_top = 178.0
+margin_right = 1247.0
+margin_bottom = 207.0
 rect_scale = Vector2( 2, 2 )
 theme = ExtResource( 2 )
 text = "camera setup"
 
 [node name="NodeSetupToggle" type="CheckBox" parent="TestUI"]
-margin_left = 692.0
-margin_top = 90.0
-margin_right = 831.0
-margin_bottom = 119.0
+margin_left = 1084.0
+margin_top = 242.0
+margin_right = 1223.0
+margin_bottom = 271.0
 rect_scale = Vector2( 2, 2 )
 theme = ExtResource( 2 )
 text = "node setup"
 
 [node name="FpsCounter" type="Label" parent="TestUI"]
-margin_left = 704.0
-margin_top = 168.0
-margin_right = 784.0
-margin_bottom = 216.0
+margin_left = 1096.0
+margin_top = 328.0
+margin_right = 1176.0
+margin_bottom = 376.0
+theme = ExtResource( 2 )
 text = "FPS"
 script = ExtResource( 7 )
 
