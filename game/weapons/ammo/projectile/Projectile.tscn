@@ -1,0 +1,118 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://game/weapons/ammo/projectile/trails/BulletTrail.tscn" type="PackedScene" id=2]
+[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=3]
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/materials/fx/bullet_thrust_particles_material.tres" type="Material" id=6]
+[ext_resource path="res://game/weapons/ammo/projectile/fx/BulletHit.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/weapons/ammo/projectile/Projectile.gd" type="Script" id=8]
+[ext_resource path="res://game/weapons/ammo/projectile/fx/BulletSoundShoot.res" type="PackedScene" id=9]
+
+[sub_resource type="CanvasItemMaterial" id=4]
+
+[sub_resource type="Gradient" id=5283]
+offsets = PoolRealArray( 0, 0.348485, 0.731061 )
+colors = PoolColorArray( 0, 0, 0, 1, 0.886719, 0.886719, 0.886719, 1, 0.914062, 0.914062, 0.914062, 1 )
+
+[sub_resource type="GradientTexture" id=5284]
+gradient = SubResource( 5283 )
+
+[sub_resource type="Curve" id=5288]
+max_value = 2.0
+_data = [ Vector2( 0, 0.981818 ), 0.0, 0.0, 0, 0, Vector2( 0.418251, 1.9 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.309091 ), -0.878293, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5286]
+curve = SubResource( 5288 )
+
+[sub_resource type="ParticlesMaterial" id=5272]
+lifetime_randomness = 0.43
+flag_disable_z = true
+direction = Vector3( -1, 0, 0 )
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 10.0
+angular_velocity = 10.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+radial_accel = 6.03
+scale = 0.3
+scale_curve = SubResource( 5286 )
+color_ramp = SubResource( 5284 )
+
+[sub_resource type="CanvasItemMaterial" id=3]
+blend_mode = 1
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 1.4, 0.3 )
+
+[sub_resource type="CircleShape2D" id=5292]
+radius = 35.0
+
+[node name="Projectile" type="RigidBody2D"]
+collision_layer = 33
+mass = 0.05
+script = ExtResource( 8 )
+trail = ExtResource( 2 )
+shoot_fx = [ ExtResource( 9 ) ]
+hit_fx = [ ExtResource( 7 ) ]
+
+[node name="ShapeShadows" parent="." instance=ExtResource( 4 )]
+shadow_caster_paths = [ NodePath("../ShapePoly") ]
+
+[node name="TrailPosition" type="Position2D" parent="."]
+position = Vector2( -6, 0 )
+
+[node name="DissarmPosition" type="Position2D" parent="."]
+position = Vector2( -2, 0 )
+__meta__ = {
+"_gizmo_extents_": 2.0
+}
+
+[node name="HitPosition" type="Position2D" parent="."]
+position = Vector2( 3, 0 )
+__meta__ = {
+"_gizmo_extents_": 2.0
+}
+
+[node name="SmokeParticles" type="Particles2D" parent="."]
+material = SubResource( 4 )
+position = Vector2( -9, 0 )
+amount = 100
+randomness = 1.0
+local_coords = false
+process_material = SubResource( 5272 )
+texture = ExtResource( 3 )
+
+[node name="ThrustParticles" type="Particles2D" parent="."]
+material = SubResource( 3 )
+position = Vector2( -7, 0 )
+amount = 3
+lifetime = 0.05
+randomness = 1.0
+process_material = ExtResource( 6 )
+texture = ExtResource( 3 )
+
+[node name="ShapePoly" type="Polygon2D" parent="."]
+polygon = PoolVector2Array( 6, -2, 6, 2, -6, 2, -6, -2 )
+
+[node name="ShapePoly" type="Polygon2D" parent="ShapePoly"]
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( 6, -2, 6, 2, 3, 2, 3, -2 )
+
+[node name="BulletCollision" type="CollisionShape2D" parent="."]
+position = Vector2( 2.38419e-07, 8.9407e-08 )
+scale = Vector2( 5, 10 )
+shape = SubResource( 2 )
+disabled = true
+
+[node name="VisionRay" type="RayCast2D" parent="."]
+position = Vector2( -1, 0 )
+enabled = true
+cast_to = Vector2( 48, 0 )
+
+[node name="InfluenceArea" type="Area2D" parent="."]
+position = Vector2( 1.90735e-06, 0 )
+scale = Vector2( 0.2, 0.2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InfluenceArea"]
+shape = SubResource( 5292 )

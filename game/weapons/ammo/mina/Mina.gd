@@ -1,50 +1,44 @@
 extends Node2D
-class_name Mina
 
+
+enum DAMAGE_TYPE {EXPLODE, CUT, HIT, TRAVEL} # enako kot breaker
+export (DAMAGE_TYPE) var damage_type = DAMAGE_TYPE.EXPLODE
 
 export var height: float = 0
 export var elevation: float = 2
+export var hit_damage: float = 0.5
+export var lifetime: float = 0 # 0 = večno
+export var mass: float = 0.5 # fejk, ker je area, on_hit pa preverja .mass
+export var speed: float = 50
+export var trail: PackedScene
+export (Array, PackedScene) var shoot_fx: Array
+export (Array, PackedScene) var travel_fx: Array
+export (Array, PackedScene) var detect_fx: Array
+export (Array, PackedScene) var dissarm_fx: Array
+export (Array, PackedScene) var hit_fx: Array
+
+var is_active = false
+var drop_direction: Vector2 = -transform.x # rikverc na osi x
+var drop_time: float = 1.0 # opredeli dolžino meta
 
 var spawner: Node
 var spawner_color: Color
 
-var drop_direction: Vector2 = -transform.x # rikverc na osi x
-var drop_time: float = 1.0 # opredeli dolžino meta
-
-var shock_time: float = 5
-var is_expanded: bool = false
-var detect_expand_size: float = 3.5 # doseg šoka
-
 onready var detect_area: Area2D = $DetectArea
-onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 onready var smoke_particles: Particles2D = $SmokeParticles
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
-
-onready var weapon_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.MINA]
-onready var reload_time: float = weapon_profile["reload_time"]
-onready var hit_damage: float = weapon_profile["hit_damage"]
-onready var speed: float = weapon_profile["speed"]
-onready var lifetime: float = 0 #weapon_profile["lifetime"]
-onready var mass: float = weapon_profile["mass"]
-onready var direction_start_range: Array = weapon_profile["direction_start_range"] # natančnost misile
-onready var MisileHit = preload("res://game/weapons/ammo/misile/MisileHit.tscn")
-
-# neu
-enum DAMAGE_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
-var damage_type = DAMAGE_TYPE.EXPLODING
 
 
 func _ready() -> void:
 
 	add_to_group(Rfs.group_mine)
-#	modulate = spawner_color
+
+	_spawn_fx(shoot_fx, Rfs.node_creation_parent)
 
 	drop_direction = -transform.x # rikverc na osi x
 
-	$Sounds/MinaShoot.play()
-
-	# drop mine
+	# drop
 	var drop_tween = get_tree().create_tween()
 	drop_tween.tween_property(self, "speed", 0.0, drop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	drop_tween.tween_callback(self, "activate")
@@ -57,42 +51,62 @@ func _physics_process(delta: float) -> void:
 	global_position += drop_direction * speed * delta # motion
 
 
-func activate():
+func _activate():
 
+	detect_area.set_deferred("monitoring", true)
 	# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
-	#	detect_area.monitoring = true
-
-	detect_area. set_deferred("monitoring", true)
 	if lifetime > 0:
 		active_timer.start(lifetime)
+	is_active = true
 
 
-func explode():
+func _explode():
 
-	var new_hit_fx = MisileHit.instance()
-	new_hit_fx.global_position = global_position
-	new_hit_fx.get_node("ExplosionParticles").process_material.color_ramp.gradient.colors[1] = spawner_color
-	new_hit_fx.get_node("ExplosionParticles").process_material.color_ramp.gradient.colors[2] = spawner_color
-	new_hit_fx.get_node("ExplosionParticles").set_emitting(true)
-	new_hit_fx.get_node("SmokeParticles").set_emitting(true)
-	new_hit_fx.get_node("BlastAnimated").play()
-	Rfs.node_creation_parent.add_child(new_hit_fx)
-
-
-#	var new_misile_explosion = MisileExplosion.instance()
-#	new_misile_explosion.global_position = global_position
-#	new_misile_explosion.set_one_shot(true)
-#	new_misile_explosion.process_material.color_ramp.gradient.colors[1] = spawner_color
-#	new_misile_explosion.process_material.color_ramp.gradient.colors[2] = spawner_color
-#	new_misile_explosion.set_emitting(true)
-#	new_misile_explosion.get_node("ExplosionBlast").play()
-#	Rfs.node_creation_parent.add_child(new_misile_explosion)
+	_spawn_fx(hit_fx)
 	queue_free()
+
+
+func _dissarm():
+	pass
+
+
+func _spawn_fx(fx_array: Array, spawn_parent: Node2D = null, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
+	# tale je bolj moderna od funkcije v ostalih orožjih
+
+	var spawned_fx: Array = []
+
+	for fx in fx_array:
+		var new_fx = fx.instance()
+		if new_fx is AudioStreamPlayer:
+			# spawn parent ...  bo drugače, ko bodo efekti pvoezani s signali
+			if spawn_parent:
+				spawn_parent.add_child(new_fx)
+			else:
+				add_child(new_fx)
+		else:
+			new_fx.global_position = fx_pos
+			new_fx.global_rotation = fx_rot
+			# spawn parent
+			if spawn_parent:
+				spawn_parent.add_child(new_fx)
+			else:
+				Rfs.node_creation_parent.add_child(new_fx)
+			# štarta če je kaj za štartat
+			for fx_child in new_fx.get_children():
+				if fx_child is Particles2D or fx_child is CPUParticles2D:
+					fx_child.emitting = true
+				elif fx_child is AnimationPlayer: # prva animacija
+					if "animation_player" in fx: # preverim, da je "vklopljen"
+						fx_child.play(fx_child.get_animation_list()[0])
+				elif fx_child is AnimatedSprite:
+					fx_child.playing = true
+
+		spawned_fx.append(new_fx)
 
 
 func _on_ActiveTimer_timeout() -> void:
 
-	explode()
+	_explode()
 	for body in detect_area.get_overlapping_bodies():
 		if body.has_method("on_hit") and body != spawner:
 			body.on_hit(self, global_position)
@@ -110,9 +124,7 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 	if body != spawner:
 		drop_direction = Vector2.ZERO
 
-	# sproži val in detect_area shape
 		if body.has_method("on_hit"):
-			explode()
-			# animacije
-			#		animation_player.play("shockwave_mina")
+			_spawn_fx(detect_fx, Rfs.node_creation_parent)
+			_explode()
 			body.on_hit(self, global_position)

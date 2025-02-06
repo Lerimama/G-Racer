@@ -7,6 +7,7 @@ export var elevation: float = 20 # PRO
 var hit_count: int = 0
 var def_particle_speed = 5
 var level_object_key: int # poda spawner, uravnava vse ostalo
+var brick_health: int = 1
 
 onready var brick_color: Color = Pfs.level_object_profiles[level_object_key]["color"]
 #onready var elevation: float = Pfs.level_object_profiles[level_object_key]["elevation"]
@@ -24,7 +25,8 @@ func _ready() -> void:
 
 func on_hit(hit_by: Node, hit_global_position: Vector2):
 
-	if hit_by is Bullet:
+	if hit_by.is_in_group(Rfs.group_projectiles):
+		brick_health -= hit_by.hit_damage
 		hit_count += 1
 		match hit_count:
 			1:
@@ -32,11 +34,9 @@ func on_hit(hit_by: Node, hit_global_position: Vector2):
 			2:
 				sprite.modulate = Rfs.color_brick_target_hit_2
 			3:
-				animation_player.play("outro")
 				modulate = Rfs.color_brick_target_hit_3
-				hit_by.update_stat(Pfs.STATS.POINTS, reward_points)
 
-	elif hit_by is Misile:
+	if brick_health < 0:
 		modulate = Rfs.color_red
 		animation_player.play("outro")
 		hit_by.update_stat(Pfs.STATS.POINTS, reward_points)

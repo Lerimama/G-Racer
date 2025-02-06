@@ -29,7 +29,7 @@ damping = 32.49
 scale_random = 1.0
 color_ramp = SubResource( 9 )
 
-[sub_resource type="AudioStreamRandomPitch" id=7]
+[sub_resource type="AudioStreamRandomPitch" id=10]
 audio_stream = ExtResource( 3 )
 
 [node name="BulletHit" type="Node2D"]
@@ -63,7 +63,8 @@ process_material = SubResource( 4 )
 texture = ExtResource( 1 )
 
 [node name="BulletHit" type="AudioStreamPlayer" parent="."]
-stream = SubResource( 7 )
+stream = SubResource( 10 )
 volume_db = -7.0
 pitch_scale = 0.9
+autoplay = true
 bus = "GameSfx"

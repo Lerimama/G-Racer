@@ -13,6 +13,7 @@ onready var decay_tween = $DecayTween
 
 func _ready() -> void:
 
+#	set_as_toplevel(true)
 	clear_points()
 	randomize()
 

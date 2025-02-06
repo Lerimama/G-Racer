@@ -35,7 +35,7 @@ func stats(): pass
 # vsi mogoči statsi
 enum STATS {
 		WINS, LIFE, HEALTH, POINTS, GAS, CASH,
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT,
+		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT,
 		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
 		}
 var start_bolt_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
@@ -52,6 +52,7 @@ var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.HEALTH : 1, # health percetnage
 	STATS.BULLET_COUNT : 10,
 	STATS.MISILE_COUNT : 5,
+	STATS.SMALL_COUNT : 5,
 	STATS.MINA_COUNT : 3,
 	STATS.GAS: 2000,
 	STATS.POINTS : 0,
@@ -181,47 +182,32 @@ var equipment_profiles : Dictionary = {
 func weapons(): pass
 
 #enum WEAPONS {GUN, TURRET, LOUNCHER, MINA}
-enum AMMO {BULLET, MISILE, MINA, LASER}
+enum AMMO {BULLET, MISILE, MINA, SMALL} # kot v orožjih
 
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
-		"hit_damage": 0.2, # z 1 se zavrti pol kroga ... vpliva na hitrost in čas rotacije
-		"speed": 1500,
-		"lifetime": 1.0, # domet vedno merim s časom
-		"mass": 0.03, # 300g
-		"direction_start_range": [0, 0] , # natančnost misile
-#		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"scene": preload("res://game/weapons/ammo/bullet/Bullet.tscn"),
+		"scene": preload("res://game/weapons/ammo/projectile/ProjectileBullet.tscn"),
 		"stat_key": STATS.BULLET_COUNT,
-		#		"icon_scene": preload("res://assets/icons/icon_bullet.tres"), ... trenutno ne rabim
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"hit_damage": 0.5, # 10 je max energija
-		"speed": 1500,
-		"lifetime": 3.2, # domet vedno merim s časom
-		"mass": 1, # 10kg
-		"direction_start_range": [-0.1, 0.1] , # natančnost misile
-		"scene": preload("res://game/weapons/ammo/misile/Misile.tscn"),
+		"scene": preload("res://game/weapons/ammo/homer/HomerMisile.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
-		"ammo_count_key": "misile_count", # znebi se
 		"stat_key": STATS.MISILE_COUNT,
-		#		"icon_scene": preload("res://assets/icons/icon_misile.tres"),
 	},
 	AMMO.MINA: {
 		"reload_time": 0.1, #
-		"hit_damage": 0.5,
-		"speed": 50,
-		"lifetime": 0, # 0 pomeni večno
-		"mass": 0.5, # prilagojeno za učinek na tarčo
-		"direction_start_range": [0, 0] , # natančnost misile
 		"scene": preload("res://game/weapons/ammo/mina/Mina.tscn"),
 		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
-		"ammo_count_key": "mina_count",
 		"stat_key": STATS.MINA_COUNT,
-		#		"icon_scene": preload("res://assets/icons/icon_mina.tres"),
+	},
+	AMMO.SMALL: {
+		"reload_time": 0.1, #
+		"scene": preload("res://game/weapons/ammo/projectile/ProjectileSmall.tscn"),
+		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
+		"stat_key": STATS.SMALL_COUNT,
 	},
 
 }

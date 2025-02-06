@@ -7,10 +7,8 @@ signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
-export (Array, Resource) var new_weapon_paths: Array
 export (Array, NodePath) var weapon_paths: Array
 export (NodePath) var bolt_engines_path: String  # _temp ... engines
-
 
 # seta spawner
 var driver_index: int

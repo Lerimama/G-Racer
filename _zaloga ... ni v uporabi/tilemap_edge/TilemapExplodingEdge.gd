@@ -34,7 +34,7 @@ func on_hit (collision_object):
 	var cell_index: int = get_cellv(cell_position) # index zadete celice na poziciji v grid koordinatah
 
 	if not cell_index == -1: # če ni prazen
-		if collision_object is Bullet: # poškodovana zadeta celica
+		if collision_object is Projectile: # poškodovana zadeta celica
 			var cell_region_position = get_cell_autotile_coord(cell_position.x, cell_position.y) # položaj celice v autotile regiji
 			set_cellv(cell_position, 2, false, false, false, cell_region_position) # namestimo celico iz autotile regije z id = 2
 			release_debris(collision_position, collision_normal)

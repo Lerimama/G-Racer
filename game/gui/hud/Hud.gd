@@ -122,6 +122,8 @@ func _on_bolt_stat_changed(driver_index: int, bolt_stat_key: int, stat_value): #
 	var statbox_to_change: Control = statboxes[driver_index] # bolt id kot index je enak indexu statboxa v statboxih
 	var stat_to_change: Node
 	match bolt_stat_key:
+		Pfs.STATS.SMALL_COUNT:
+			return
 		Pfs.STATS.BULLET_COUNT:
 			stat_to_change = statbox_to_change.stat_bullet
 		Pfs.STATS.MISILE_COUNT:

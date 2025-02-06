@@ -3,4 +3,5 @@
 [ext_resource path="res://game/weapons/Weapon.tscn" type="PackedScene" id=1]
 
 [node name="Dropper" instance=ExtResource( 1 )]
+weapon_type = 3
 weapon_ammo = 2

@@ -639,7 +639,7 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	#	if body.is_in_group(Rfs.group_bolts):
 	if body.is_in_group(Rfs.group_players):
 		_pull_bolt_on_field(body)
-	elif body is Bullet:
+	elif body is Projectile:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
 

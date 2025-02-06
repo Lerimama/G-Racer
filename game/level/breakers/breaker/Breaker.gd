@@ -11,8 +11,8 @@ export (MATERIAL) var current_material: int = MATERIAL.STONE
 enum MOTION {STILL, EXPLODE, FALL, MINIMIZE, DISSAPEAR} # SLIDE, CRACK, SHATTER
 var current_motion: int = MOTION.STILL setget _change_motion
 
-enum HIT_BY_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # _temp ... ujema se z demotom
-var current_hit_by_type: int = HIT_BY_TYPE.KNIFE
+enum HIT_BY_TYPE {CUT, HIT, TRAVEL, EXPLODE} # _temp ... ujema se z demotom
+var current_hit_by_type: int = HIT_BY_TYPE.CUT
 
 enum BREAK_SIZE {XSMALL, SMALL, MEDIUM, LARGE, XLARGE} # za razmerje brejkanja
 var current_break_size: int = BREAK_SIZE.MEDIUM
@@ -100,7 +100,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 		_cut_it(hitting_node)
 		return
 
-	var hit_by_type: int = HIT_BY_TYPE.HAMMER
+	var hit_by_type: int = HIT_BY_TYPE.HIT
 
 	# hitter properties
 	var hit_shape = hitting_node.influence_area.get_child(0)
@@ -215,7 +215,7 @@ func _break_it(slicing_polygon: PoolVector2Array):
 			else:
 				_spawn_new_breaker(poly)
 		# chunks
-		if not current_hit_by_type == HIT_BY_TYPE.PAINT:
+		if not current_hit_by_type == HIT_BY_TYPE.TRAVEL:
 			for poly in interecting_polygons: # zazih ... skoraj ni mogoče, da bi bil notri več kot eden
 				chunks_to_slice.append(poly)
 
@@ -382,14 +382,14 @@ func _split_chunk_to_polygons(chunk_polygon: PoolVector2Array):
 
 	var tool_slice_polygons: Array
 	match current_hit_by_type:
-		HIT_BY_TYPE.KNIFE: # delunay
+		HIT_BY_TYPE.CUT: # delunay
 			tool_slice_polygons = operator.split_delaunay(chunk_polygon, delaunay_add_points_count)
 			pass
-		HIT_BY_TYPE.HAMMER: # delunay
+		HIT_BY_TYPE.HIT: # delunay
 			tool_slice_polygons = operator.split_delaunay(chunk_polygon, delaunay_add_points_count)
-		HIT_BY_TYPE.PAINT:#erase
+		HIT_BY_TYPE.TRAVEL:#erase
 			pass
-		HIT_BY_TYPE.EXPLODING: # daisy / spiderweb
+		HIT_BY_TYPE.EXPLODE: # daisy / spiderweb
 			tool_slice_polygons = operator.split_daisy(polygon_with_origin, origin_edge_index + 1)[0]
 			pass
 
@@ -488,14 +488,14 @@ func _get_slicing_style(sliced_by_type: int = current_hit_by_type):
 	var slice_style: int
 
 	match sliced_by_type:
-		HIT_BY_TYPE.HAMMER:
+		HIT_BY_TYPE.HIT:
 			slice_style = SLICE_STYLE.FRAGMENTS
-		HIT_BY_TYPE.KNIFE:
+		HIT_BY_TYPE.CUT:
 			slice_style = SLICE_STYLE.FRAGMENTS
-		HIT_BY_TYPE.PAINT:
+		HIT_BY_TYPE.TRAVEL:
 			slice_style = SLICE_STYLE.FRAGMENTS
-		HIT_BY_TYPE.ROCKET:
-			pass
+		HIT_BY_TYPE.EXPLODE:
+			slice_style = SLICE_STYLE.FRAGMENTS
 
 	return slice_style
 

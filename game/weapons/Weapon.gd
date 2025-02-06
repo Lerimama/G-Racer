@@ -3,14 +3,13 @@ extends Node2D
 
 signal weapon_shot
 
-enum WEAPON_TYPE {GUN, TURRET, LOUNCHER, DROPPER}
-export (WEAPON_TYPE) var weapon_type: int = 0
+enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER}
+enum WEAPON_AMMO {BULLET, MISILE, MINA, SMALL} # kot v profilih
 
-enum WEAPON_AMMO {BULLET, MISILE, MINA} # zaporedje kot v profilih
+export (WEAPON_TYPE) var weapon_type: int = 0
 export (WEAPON_AMMO) var weapon_ammo: int = 0 # 0 = AMMO.BULLET
 export var fx_enabled: bool = true
-
-export var weapon_ai_path: NodePath
+export var ai_enabled: bool = false # spawner lahko povozi
 
 var weapon_reloaded: bool = true
 var ammo_count: int = 0 # napolnems strani bolta ali igre
@@ -21,12 +20,14 @@ onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var fire_particles: Particles2D = $WeaponSprite/FireParticles
 onready var fire_cover_particles: Particles2D = $WeaponSprite/FireCoverParticles
 onready var smoke_particles: Particles2D = $WeaponSprite/SmokeParticles
+onready var weapon_ai: RayCast2D = $WeaponAI
 
 # per weapon
 var ammo_stat_key: int
 var AmmoScene: PackedScene
 var reload_time: float
 var weapon_owner_stats: Dictionary
+var power_usage: float = 0 # še ni implementirano
 
 
 func _ready() -> void:
@@ -36,7 +37,7 @@ func _ready() -> void:
 	fire_cover_particles.emitting = false
 
 
-func set_weapon(weapon_owner: Node2D): # kliče bolt
+func set_weapon(weapon_owner: Node2D, with_ai: bool = ai_enabled): # kliče bolt
 
 	weapon_owner_stats = weapon_owner.driver_stats
 
@@ -45,8 +46,10 @@ func set_weapon(weapon_owner: Node2D): # kliče bolt
 	ammo_stat_key = Pfs.ammo_profiles[weapon_ammo]["stat_key"]
 	ammo_count = weapon_owner_stats[ammo_stat_key]
 
-	if weapon_ai_path:
-		get_node(weapon_ai_path).set_weapon_ai(weapon_owner)
+	# upošteva setano, razen, če je določena od spawnerja
+	if with_ai:
+		ai_enabled = with_ai
+		weapon_ai.set_weapon_ai(weapon_owner)
 
 
 func _process(delta: float) -> void:

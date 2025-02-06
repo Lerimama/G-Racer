@@ -1,5 +1,5 @@
 extends RigidBody2D
-class_name Bullet
+#class_name Bullet
 
 
 export var height: float = 0
@@ -19,8 +19,8 @@ var collider_momentum: float # je zmnožek hitrosti in teže
 var new_bullet_trail: Object
 
 onready var trail_position: Position2D = $TrailPosition
-onready var BulletTrail: PackedScene = preload("res://game/weapons/ammo/bullet/BulletTrail.tscn")
-onready var BulletHit: PackedScene = preload("res://game/weapons/ammo/bullet/BulletHit.tscn")
+onready var BulletTrail: PackedScene = preload("res://game/weapons/ammo/projectile/BulletTrail.tscn")
+onready var BulletHit: PackedScene = preload("res://game/weapons/ammo/projectile/BulletHit.tscn")
 
 onready var ammo_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.BULLET]
 onready var hit_damage: float = ammo_profile["hit_damage"]
@@ -32,8 +32,8 @@ onready var collision_shape: CollisionShape2D = $BulletCollision
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
 # neu
-enum DAMAGE_TYPE {KNIFE, HAMMER, PAINT, EXPLODING} # enako kot breaker
-var damage_type = DAMAGE_TYPE.EXPLODING
+enum DAMAGE_TYPE {CUT, HIT, TRAVEL, EXPLODE} # enako kot breaker
+var damage_type = DAMAGE_TYPE.EXPLODE
 
 
 func _ready() -> void:

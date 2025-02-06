@@ -25,7 +25,7 @@
 [ext_resource path="res://game/bolt/TrailHolder.gd" type="Script" id=23]
 [ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=24]
 [ext_resource path="res://game/weapons/WeaponDropper.tscn" type="PackedScene" id=25]
-[ext_resource path="res://game/weapons/WeaponGun.tscn" type="PackedScene" id=33]
+[ext_resource path="res://game/weapons/WeapontTurret.tscn" type="PackedScene" id=33]
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
