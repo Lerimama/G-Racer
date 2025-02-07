@@ -38,6 +38,7 @@ enum STATS {
 		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT,
 		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
 		}
+
 var start_bolt_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
@@ -216,7 +217,7 @@ var ammo_profiles : Dictionary = {
 # ---------------------------------------------------------------------------------------------------------------------------
 func levels(): pass
 
-
+enum BASE_TYPE {UNDEFINED, TIMED, UNTIMED}
 enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
@@ -226,6 +227,9 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
+		# določeno ob spawnu
+		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
+		"goals": [],
 		},
 	LEVELS.FIRST_DRIVE: {
 		"level_name": "xxx",
@@ -233,7 +237,10 @@ var level_profiles: Dictionary = {
 		"level_path": "res://game/levels/LevelFirstDrive.tscn",
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"time_limit": 0,
-		"lap_limit": 0,
+		"lap_limit": 0, # če so goalsi delajo isto kot čekpointi
+		# določeno ob spawnu
+		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
+		"goals": [],
 		},
 	LEVELS.TRAINING: {
 		"level_name": "xxx",
@@ -242,6 +249,8 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_training.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
+		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
+		"goals": [],
 		},
 	LEVELS.STAFF: {
 		"level_name": "xxx",
@@ -250,6 +259,8 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_mission.tres"),
 		"time_limit": 60,
 		"lap_limit": 1,
+		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
+		"goals": [],
 		},
 }
 

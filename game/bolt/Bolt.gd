@@ -52,13 +52,12 @@ var debug_trail_time: float = 0
 var debug_trail: Line2D
 
 # neu
-onready var motion_manager: Node = $MotionManager
-onready var engines: Node2D = get_node(bolt_engines_path)
 var bolt_velocity: Vector2 = Vector2.ZERO
 var gas_tank_size: float
+onready var motion_manager: Node = $MotionManager
+onready var engines: Node2D = get_node(bolt_engines_path)
 onready var equip_positions: Node2D = $EquipPositions
 onready var weapons: Node2D = $Weapons
-#onready var weapons_set: Array
 onready var equipment: Node2D = $Equipment
 
 

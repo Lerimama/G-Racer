@@ -1,7 +1,7 @@
 extends StaticBody2D
 
 
-signal goal_reached
+signal reached_by
 
 export var height: float = 100
 export var elevation: float = 10
@@ -23,7 +23,7 @@ func _ready() -> void:
 
 func goal_reached(bolt: Node):
 
-	emit_signal("goal_reached", self, bolt)
+	emit_signal("reached_by", self, bolt)
 
 	if not turned_on:
 		turned_on = true

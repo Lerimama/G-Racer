@@ -4,7 +4,7 @@ class_name Walker
 
 const DIRECTIONS = [Vector2.RIGHT, Vector2.UP, Vector2.LEFT, Vector2.DOWN]
 
-export var turn_chance: float = 0.2
+export var turn_chance: float = 0.2 # PRO
 export var steps_limit: int = 10
 export var room_random_size: Array = [1, 3]
 
@@ -27,7 +27,7 @@ func walk(steps):
 		if randf() <= turn_chance or steps_since_turn >= steps_limit:
 #		if steps_since_turn >= 6:
 			change_direction()
-		
+
 		if step():
 			step_history.append(walker_position)
 		else:
@@ -65,13 +65,13 @@ func place_room(room_position):
 	var room_size = Vector2(randi() % room_random_size[0] + room_random_size[1], randi() % room_random_size[0] + room_random_size[1]) # random integer med 2 in 5 (4 -> 0,1,2,3,4 torej 5 cifr)
 	var current_top_left_corner = (room_position - room_size/2).ceil() # top left corner je naša trenutna pozicija ... ceil zaokroži naš float
 	rooms.append(create_room(room_position, room_size))
-	
+
 	# loopaj po gridu za velikost sobe
 	for y in room_size.y:
 		for x in room_size.x:
 			var new_step = current_top_left_corner + Vector2(x, y)
 			# step dodaj v zgoodovino, če je znotraj meja tilemapa
-			if borders.has_point(new_step): 
+			if borders.has_point(new_step):
 				step_history.append(new_step)
 
 func get_end_room():

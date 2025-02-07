@@ -3,14 +3,13 @@ extends Node2D
 
 signal level_is_set(navigation, spawn_positions, other_)
 
-enum LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
-var level_type: int # določi glede na pripete elemente = LEVEL_TYPE.RACE_TRACK
-#export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE_TRACK
+var level_type: int = 0 # določi glede na pripete elemente = LEVEL_TYPE.RACE_TRACK
 
-export (Array, NodePath) var level_goals_paths: Array = [] # lahko jih tudi ni
 export (NodePath) var camera_limits_rect_path: String # lahko ga tudi ni ... potem ni meja
 export (NodePath) var level_finish_path: String # lahko ga tudi ni
 export (NodePath) var level_track_path: String # lahko ga tudi ni
+export (Array, NodePath) var level_goals_paths: Array = [] # lahko jih tudi ni
+export var reach_goals_in_sequence: bool = false
 
 var level_finish: Node2D
 var level_track: Path2D
@@ -31,6 +30,8 @@ onready var finish_camera_position_node: Position2D = $Tracking/LevelFinish/Came
 onready var drive_out_position: Vector2 = $Tracking/LevelFinish/DriveOutPosition.position
 
 
+var goal_reached_signal: String = "reached_by"
+
 
 func _ready() -> void:
 #	printt("LEVELS")
@@ -40,58 +41,45 @@ func _ready() -> void:
 	$__Labels.hide()
 	$__WorldMeters.hide()
 
-
 	Rfs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
 	for child in start_positions_node.get_children():
 		child.hide()
 
-	# nodepaths
+	# camera limits
 	if camera_limits_rect_path:
 		 camera_limits_rect = get_node(camera_limits_rect_path)
+	# tracking curve
 	if level_track_path:
 		 level_track = get_node(level_track_path)
+	# finish
 	if level_finish_path:
-		 level_finish = get_node(level_finish_path)
+		level_finish = get_node(level_finish_path)
+		level_finish.is_active = true # def je ugasnjen
+	# goals
 	for goal_path in level_goals_paths:
-		level_goals.append(get_node(goal_path))
+		var current_goal: Node2D = get_node(goal_path)
+		if current_goal.has_signal(goal_reached_signal):
+			level_goals.append(get_node(goal_path))
+		get_node(goal_path).show()
 
-	# level type
-	if level_goals.empty() and not level_finish:
-		level_type = LEVEL_TYPE.BATTLE
+	# set type
+	var curr_level_type: int = Pfs.BASE_TYPE.UNDEFINED
+	if level_finish or not level_goals.empty():
+		curr_level_type = Pfs.BASE_TYPE.TIMED
 	else:
-		if level_track:
-			level_type = LEVEL_TYPE.RACE_TRACK
-		elif level_finish: # ma cilj in gole
-			level_type = LEVEL_TYPE.RACE_GOAL
-		else:
-			level_type = LEVEL_TYPE.CHASE
+		curr_level_type = Pfs.BASE_TYPE.UNTIMED
 
-	match level_type:
-		LEVEL_TYPE.BATTLE:
-			level_start.hide()
-			if level_finish:
-				level_finish.hide()
-				level_finish.get_node("FinishLine").set_deferred("monitoring", false)
-				# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
-		LEVEL_TYPE.RACE_TRACK:
-			level_start.show()
-			if level_finish:
-				level_finish.show()
-		LEVEL_TYPE.RACE_GOAL: # _temp level
-			level_start.show()
-			if level_finish:
-				level_finish.show()
-		LEVEL_TYPE.CHASE:
-			level_start.show()
-			if level_finish:
-				level_finish.show()
+	# pošljem
+	if curr_level_type == Pfs.BASE_TYPE.UNDEFINED:
+		printerr("Level stays UNDEFINED on spawn")
+	else:
+		_set_level_objects()
+		navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
+		_resize_to_level_size()
 
-	_set_level_objects()
-	navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
-	_resize_to_level_size()
-
-	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
+		var camera_position_nodes: Array = [start_camera_position_node, finish_camera_position_node]
+		emit_signal("level_is_set", curr_level_type, start_positions_node.get_children(), camera_position_nodes, navigation_cells_positions, level_goals)
 
 
 func _set_level_objects():

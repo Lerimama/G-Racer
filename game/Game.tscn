@@ -228,7 +228,13 @@ pitch_scale = 0.9
 
 [node name="Sfx" type="Node" parent="SoundManager"]
 
-[node name="FinishHorn" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
+[node name="BigHorn" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
+stream = ExtResource( 34 )
+volume_db = 5.0
+pitch_scale = 0.8
+bus = "GameSfx"
+
+[node name="LittleHorn" type="AudioStreamPlayer" parent="SoundManager/Sfx"]
 stream = ExtResource( 34 )
 bus = "GameSfx"
 

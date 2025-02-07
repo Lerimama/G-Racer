@@ -1,9 +1,11 @@
 extends Area2D
 class_name Pickable
 
+
+signal reached_by
+
 export var height: float = 0
 export var elevation: float = 10
-
 export var pickable_key: int = 0 # OPT... določen za primer, če ga dam manualno v level ... zaporedje iz profilov
 #export (Pfs.PICKABLE) var new_pickable_key: int = 0 # ne dela
 #var pickable_key: int = placed_pickable_key # če je spawnan v igro, ga poda spawner
@@ -34,10 +36,7 @@ func _ready() -> void:
 
 func _on_Item_body_entered(body: Node) -> void:
 
-	# če je med soundi kakšen poleg defaultnega, potem zaigraj zadnjega
-	#	var all_sounds: Array = sounds.get_children()
-	#	if all_sounds.size() > 1:
-	#		sound_picked = all_sounds[all_sounds.size() - 1]
+	emit_signal("reached_by", self, body)
 
 	if body.is_in_group(Rfs.group_bolts):
 		if Pfs.pickable_profiles.keys().has("pickable_ammo"):
@@ -52,25 +51,9 @@ func _on_Item_body_entered(body: Node) -> void:
 #		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
 		body.on_item_picked(pickable_key)
 
-#	if body.has_method("item_picked"):
-#		if pickable_key == Pfs.PICKABLE.PICKABLE_BULLET or pickable_key == Pfs.PICKABLE.PICKABLE_MISILE \
-#		or pickable_key == Pfs.PICKABLE.PICKABLE_MINA:
-#			Rfs.sound_manager.play_sfx("pickable_ammo")
-#		elif pickable_key == Pfs.PICKABLE.PICKABLE_NITRO:
-#			Rfs.sound_manager.play_sfx("pickable_nitro")
-#		else:
-#			Rfs.sound_manager.play_sfx("pickable")
-#			pass
-#
-#		body.item_picked(pickable_key)
-#		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
-#		#		body.call_deferred("item_picked", pickable_key)
-##		sound_picked.play()
-##		modulate.a = 0
-##		monitorable = false
-##		monitoring = false
+#		yield(get_tree(), "idle_frame")
+		queue_free()
 
-	queue_free()
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

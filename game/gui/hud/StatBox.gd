@@ -53,7 +53,7 @@ func _ready() -> void:
 			move_child(stat_driver, get_child_count() - 1)
 
 
-func set_statbox_for_level(level_type: int, level_types: Dictionary): # kliče HUD
+func set_statbox_for_level(level_type: int): # kliče HUD
 
 	# all
 	stat_points.show()
@@ -70,24 +70,26 @@ func set_statbox_for_level(level_type: int, level_types: Dictionary): # kliče H
 	stat_life.hide()
 	$RaceStats.hide()
 	$BattleStats.hide()
+
+	var lap_count: = 1 # !!!
+	var goals_count: = 1 # !!!
 	match level_type:
-		level_types.RACE_TRACK:
+		Pfs.BASE_TYPE.TIMED:
 			$RaceStats.show()
 			stat_level_rank.show()
-		level_types.RACE_LAPS:
-			$RaceStats.show()
-			stat_level_rank.show()
-			stat_lap_count.show()
-		level_types.RACE_GOAL:
-			$BattleStats.show()
-			stat_level_rank.show()
-		level_types.CHASE:
+			if lap_count > 1:
+				stat_lap_count.show()
 			# ... goal_reached_count
+			if goals_count > 1:
+				print ("show goal count")
+		Pfs.BASE_TYPE.UNTIMED:
 			$BattleStats.show()
-		level_types.BATTLE:
-			$BattleStats.show()
+			stat_level_rank.show()
 			stat_wins.show()
 			stat_life.show()
+			# ... goal_reached_count
+			if goals_count > 1:
+				print ("show goal count")
 
 	# debug .... vsa statistika je vidna
 	#	stat_driver.show()

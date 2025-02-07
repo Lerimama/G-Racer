@@ -59,7 +59,9 @@ func play_sfx(effect_for: String):
 		"pickable_ammo": $Sfx/PickableAmmo.play()
 		"pickable_nitro": $Sfx/PickableNitro.play()
 		# events
-		"finish_horn": $Sfx/FinishHorn.play()
+		"finish_horn": $Sfx/BigHorn.play()
+		# še ni setano... se pa že kliče na goal ali čekpoint
+		"little_horn": $Sfx/LittleHorn.play()
 
 
 func stop_sfx(effect_for: String):
@@ -115,7 +117,7 @@ func play_music():
 
 	# set track
 	var current_track: AudioStreamPlayer
-#	if Rfs.game_manager.level_settings["level"] == Sts.Levels.RACE_NITRO: # get level name drugače
+#	if Rfs.game_manager.level_profile["level"] == Sts.Levels.RACE_NITRO: # get level name drugače
 #		current_track = game_music.get_node("Nitro")
 #	else:
 #		currently_playing_track_index = 2 # ga ne resetiraš, da ostane v spominu skozi celo igro

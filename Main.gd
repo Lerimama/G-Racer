@@ -88,7 +88,6 @@ func game_in():
 
 #	Sts.get_game_settings(0) # setaš prvi level (ali edini)
 
-#	Sts.get_level_game_settings(0) # setaš prvi level
 #	Mts.spawn_new_scene(game_scene_path, self)
 	spawn_new_scene(game_scene_path, self)
 #	Mts.current_scene.modulate = Color.black

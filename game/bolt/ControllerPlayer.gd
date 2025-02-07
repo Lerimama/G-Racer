@@ -3,7 +3,6 @@ extends Node
 
 signal weapon_triggered
 
-
 var controlled_bolt: Bolt
 var controller_type: int
 var bolt_motion_manager: Node
@@ -17,6 +16,8 @@ onready var shoot_action: String = controller_actions["shoot_action"]
 onready var selector_action: String = controller_actions["selector_action"]
 
 var _driving_input_pressed: Array = []
+var goals_to_reach: Array = [] # lahko v bolta, ker ma tud AI
+
 
 func _input(event: InputEvent) -> void:
 	# ta del inputa je kar razdelan, ampak ko enkrat registrira vse možnosti ga lahko "pozabim"
@@ -114,3 +115,16 @@ func _react_to_driving_input():
 			bolt_motion_manager.rotation_dir = 0
 			# tukaj, ker je za AI drugače
 			#bolt_motion_manager.force_rotation = 0 AI dobi še tole ... pa močišotimaj
+
+
+func on_finish_reached(reaching_goal: Node2D):
+	# kliče GM
+	pass
+
+
+func on_goal_reached(goal_reached: Node2D, next_target: Node2D = null): # next_target je za ai
+
+	goals_to_reach.erase(goal_reached)
+
+#	if goals_to_reach.empty() and not next_target:
+#		on_finish_reached()

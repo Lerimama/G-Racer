@@ -84,7 +84,7 @@ func play_music():
 	# set track
 	var current_track: AudioStreamPlayer
 
-#	if Rfs.game_manager.level_settings["level"] == Sts.Levels.NITRO: # get level name drugače
+#	if Rfs.game_manager.level_profile["level"] == Sts.Levels.NITRO: # get level name drugače
 #		var nitro_track: AudioStreamPlayer = $"../Sounds/NitroMusic"
 #		current_track = game_music.get_node("Nitro")
 #	else:

@@ -2,7 +2,7 @@ extends Node
 
 
 signal bolt_spawned (name, other)
-signal game_state_changed (game_on, level_settings)
+signal game_state_changed (game_on, level_profile)
 
 var game_on: bool
 
@@ -19,7 +19,7 @@ var start_bolt_position_nodes: Array # dobi od tilemapa
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja bolto druga na drugega
 
 # level
-var level_settings: Dictionary # set_level seta iz profilov
+var level_profile: Dictionary # set_level seta iz profilov
 var current_level_index = 0
 var available_pickable_positions: Array # za random spawn
 var navigation_positions: Array # pozicije vseh navigation tiletov
@@ -27,7 +27,6 @@ var pickables_in_game: Array
 
 onready var level_finished_ui: Control = $"../UI/LevelFinished"
 onready var game_over_ui: Control = $"../UI/GameOver"
-#onready var game_settings: Dictionary = Sts.get_level_game_settings(current_level_index) # set_game seta iz profilov
 
 # shadows
 #onready var game_shadows_direction: Vector2 = Sts.game_shadows_direction # Vector2(1, 1) # set_game seta iz profilov
@@ -43,8 +42,9 @@ onready var pause_game: Control = $"../UI/PauseGame"
 onready var level_finished: Control = $"../UI/LevelFinished"
 onready var game_over: Control = $"../UI/GameOver"
 onready var game_view: ViewportContainer = $"../GameViewGrid/GameView"
-var level_stats: Dictionary = {}
+var level_stats: Dictionary = {} # napolnem na spawn bolt
 var goals_to_reach: Array = []
+var current_level_brez_reference: Node2D
 
 
 func _input(event: InputEvent) -> void:
@@ -83,6 +83,7 @@ func _process(delta: float) -> void:
 			self.camera_leader = bolt
 			break
 		self.camera_leader = null
+		printt ("LS", level_stats[bolt.driver_index][Pfs.STATS.GOALS_REACHED])
 
 
 func _change_camera_leader(new_camera_leader: Node2D):
@@ -98,23 +99,20 @@ func _change_camera_leader(new_camera_leader: Node2D):
 
 func _set_game():
 
-#	game_settings = Sts.get_level_game_settings(current_level_index)
 	_spawn_level()
+	yield(get_tree(), "idle_frame") # zazih ... na levelu bazira vse ostalo
 
-	hud.setup(level_settings, Rfs.current_level.level_type, Rfs.current_level.LEVEL_TYPE) # kliče GM
+	hud.setup(level_profile) # kliče GM
 	Rfs.game_camera.follow_target = Rfs.current_level.start_camera_position_node
 
 	# playing field
 	var playing_field_node: Node2D = Rfs.game_camera.playing_field
 	playing_field_node.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
 	if Sts.all_bolts_on_screen_mode:
-		match Rfs.current_level.level_type:
-			Rfs.current_level.LEVEL_TYPE.BATTLE:
-				playing_field_node.enable_playing_field(false)
-			Rfs.current_level.LEVEL_TYPE.CHASE:
-				playing_field_node.enable_playing_field(true, true)
-			_:
-				playing_field_node.enable_playing_field(true)
+		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
+			playing_field_node.enable_playing_field(true)
+		else:
+			playing_field_node.enable_playing_field(true, true) # z edgom
 	else:
 		playing_field_node.enable_playing_field(false)
 
@@ -176,27 +174,19 @@ func _game_intro():
 func _start_game():
 
 	# start countdown
-	if Sts.start_countdown:
+	if Sts.start_countdown and level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
 		Rfs.current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
 		yield(Rfs.current_level.start_lights, "countdown_finished")
 
-	# start
-	#	for bolt in bolts_in_game:
-	#		if bolt.is_in_group(Rfs.group_ai):
-	#			match Rfs.current_level.level_type:
-	#				Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
-	#					bolt.bolt_controller.set_ai_target(bolt.bolt_tracker)
-	#				_:
-	#					pass
 	Rfs.sound_manager.play_music()
 	hud.on_game_start()
 
 	# random pickables spawn
-	if Rfs.current_level.level_type == Rfs.current_level.LEVEL_TYPE.BATTLE:
+	if level_profile["level_type"] == Pfs.BASE_TYPE.UNTIMED:
 		_spawn_random_pickables()
 
 	game_on = true
-	emit_signal("game_state_changed", game_on, level_settings) #  poslušajo drajverji,  hud3 "signal dobijo"
+	emit_signal("game_state_changed", game_on, level_profile) #  poslušajo drajverji,  hud3 "signal dobijo"
 
 	# fast start
 	fast_start_window = true
@@ -211,7 +201,7 @@ func end_level():
 	if game_on:
 
 		game_on = false
-		emit_signal("game_state_changed", game_on, level_settings) #  poslušajo drajverji,  hud3 "signal dobijo"
+		emit_signal("game_state_changed", game_on, level_profile) #  poslušajo drajverji,  hud3 "signal dobijo"
 
 		hud.on_level_finished()
 
@@ -312,86 +302,25 @@ func set_next_level():
 
 func _update_ranking():
 
-	match Rfs.current_level.level_type:
-		Rfs.current_level.LEVEL_TYPE.BATTLE, Rfs.current_level.LEVEL_TYPE.CHASE, Rfs.current_level.LEVEL_TYPE.RACE_GOAL:
-			bolts_in_game.sort_custom(self, "_sort_trackers_by_points")
-		_:
-			# najprej sortirami po poziciji trackerja,
-			# potem naredim array boltov v istem zaporedju
-			# potem razporedim array boltov glede na kroge
-			var bolts_ranked: Array = []
-			var all_bolt_trackers: Array = Rfs.current_level.level_track.get_children()
-			all_bolt_trackers.sort_custom(self, "_sort_trackers_by_offset")
-			for bolt_tracker in all_bolt_trackers:
-				bolts_ranked.append(bolt_tracker.tracking_target)
-			bolts_ranked.sort_custom(self, "_sort_bolts_by_laps")
-			bolts_in_game = bolts_ranked
+	if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED and Rfs.current_level.level_track:
+		# najprej sortirami po poziciji trackerja,
+		# potem naredim array boltov v istem zaporedju
+		# potem razporedim array boltov glede na kroge
+		var bolts_ranked: Array = []
+		var all_bolt_trackers: Array = Rfs.current_level.level_track.get_children()
+		all_bolt_trackers.sort_custom(self, "_sort_trackers_by_offset")
+		for bolt_tracker in all_bolt_trackers:
+			bolts_ranked.append(bolt_tracker.tracking_target)
+		bolts_ranked.sort_custom(self, "_sort_bolts_by_laps")
+		bolts_in_game = bolts_ranked
+	else:
+		bolts_in_game.sort_custom(self, "_sort_trackers_by_points")
 
 	for bolt in bolts_in_game:
 		var current_bolt_rank: int = bolts_in_game.find(bolt) + 1
 		if not current_bolt_rank == level_stats[bolt.driver_index][Pfs.STATS.LEVEL_RANK]:
 			level_stats[bolt.driver_index][Pfs.STATS.LEVEL_RANK] = current_bolt_rank
 			hud.update_bolt_level_stats(bolt.driver_index, Pfs.STATS.LEVEL_RANK, current_bolt_rank) # OPT prepogosto
-
-
-func _on_bolt_reached_goal(level_goal: Node, goal_reaching_bolt: Bolt): # level poveže
-
-	var curr_bolt_level_data: Dictionary = level_stats[goal_reaching_bolt.driver_index]
-
-	var reach_in_sequence: bool = false
-	if reach_in_sequence:
-		if goal_reaching_bolt.goals_to_reach[0] == level_goal:
-			curr_bolt_level_data[Pfs.STATS.GOALS_REACHED].append(level_goal)
-			if "goals_to_reach" in goal_reaching_bolt.bolt_controller:
-				goal_reaching_bolt.bolt_controller.goals_to_reach.pop_front()
-	else:
-		curr_bolt_level_data[Pfs.STATS.GOALS_REACHED].append(level_goal)
-		if "goals_to_reach" in goal_reaching_bolt.bolt_controller:
-			goal_reaching_bolt.bolt_controller.goals_to_reach.erase(level_goal)
-
-
-func _bolt_across_finish_line(bolt_across: Bolt): # sproži finish line
-
-	if not game_on:
-		return
-
-	# najprej preverjam, če je izpolnil cilje za finish line
-	var curr_bolt_level_data: Dictionary = level_stats[bolt_across.driver_index]
-	#	printt("finished", curr_bolt_level_data)
-
-	var goals_reached: Array = curr_bolt_level_data[Pfs.STATS.GOALS_REACHED]
-	if goals_reached.size() >= goals_to_reach.size():
-
-		var prev_level_time: float = curr_bolt_level_data[Pfs.STATS.LEVEL_TIME]
-		var curr_level_time: float = hud.game_timer.game_time_hunds
-		var curr_lap_time: float = curr_level_time - prev_level_time
-
-		curr_bolt_level_data[Pfs.STATS.LAPS_FINISHED].append(curr_lap_time)
-		curr_bolt_level_data[Pfs.STATS.LEVEL_TIME] = curr_level_time
-
-		# best lap
-		if curr_lap_time < curr_bolt_level_data[Pfs.STATS.BEST_LAP_TIME]:
-			curr_bolt_level_data[Pfs.STATS.BEST_LAP_TIME] = curr_lap_time
-			hud.spawn_bolt_floating_tag(bolt_across, curr_lap_time, true)
-		else:
-			# čas prvega kroga je pseudo best lap ... ne tretiram ga kot best lap
-			if curr_bolt_level_data[Pfs.STATS.BEST_LAP_TIME] == 0:
-				curr_bolt_level_data[Pfs.STATS.BEST_LAP_TIME] = curr_lap_time
-			hud.spawn_bolt_floating_tag(bolt_across, curr_lap_time)
-
-		# last lap
-		var laps_count: int = curr_bolt_level_data[Pfs.STATS.LAPS_FINISHED].size()
-		if laps_count >= level_settings["lap_limit"]:
-			bolts_finished.append(bolt_across)
-			var drive_out_time: float = 1
-			var drive_out_vector: Vector2 = Rfs.current_level.drive_out_position.rotated(Rfs.current_level.level_finish.global_rotation)
-			bolt_across.drive_out(drive_out_time, drive_out_vector)
-			Rfs.sound_manager.play_sfx("finish_horn")
-		else:
-			Rfs.sound_manager.play_sfx("finish_horn")
-
-		for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
-			hud.update_bolt_level_stats(bolt_across.driver_index, stat_key, curr_bolt_level_data[stat_key])
 
 
 func _pull_bolt_on_field(bolt_to_pull: Bolt):
@@ -471,8 +400,8 @@ func _spawn_level():
 #	var level_spawn_parent: Node = Rfs.game_camera.get_parent()
 
 	# level settings
-	level_settings = Pfs.level_profiles[level_to_load_id]
-	var level_to_load_path: String = level_settings["level_path"]
+	level_profile = Pfs.level_profiles[level_to_load_id]
+	var level_to_load_path: String = level_profile["level_path"]
 
 	var level_z_index: int # z index v node drevesu
 	if not Rfs.current_level == null: # če level že obstaja, ga najprej moram zbrisat
@@ -488,15 +417,15 @@ func _spawn_level():
 	level_spawn_parent.add_child(new_level)
 	level_spawn_parent.move_child(new_level, 0)
 
-	level_settings["level_type"] = Rfs.current_level.level_type
-
 	# connect elements: start, finish, goals
 	for node_path in Rfs.current_level.level_goals_paths:
-		Rfs.current_level.get_node(node_path).connect("goal_reached", self, "_on_bolt_reached_goal")
+		Rfs.current_level.get_node(node_path).connect("reached_by", self, "_on_bolt_reached_goal")
 		goals_to_reach.append(Rfs.current_level.get_node(node_path))
-	if Rfs.current_level.level_finish_path:
-		Rfs.current_level.get_node(Rfs.current_level.level_finish_path).connect("finish_reached", self, "_bolt_across_finish_line")
 
+	if Rfs.current_level.level_finish_path:
+		Rfs.current_level.get_node(Rfs.current_level.level_finish_path).connect("reached_by", self, "_on_finish_line_crossed")
+
+#	emit_signal()
 	#	print ("spawned level_stats", level_stats)
 
 
@@ -526,10 +455,10 @@ func _spawn_bolt(bolt_driver_index: int, spawned_position_index: int):
 		new_bolt.bolt_controller.level_navigation_positions = Rfs.current_level.level_navigation.level_navigation_points # _temp zakaj tukaj
 		self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
 
-	# race trackers
-	match Rfs.current_level.level_type:
-		Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
-			new_bolt.bolt_tracker = Rfs.current_level.level_track.set_new_bolt_tracker(new_bolt)
+	# race and goals
+	if Rfs.current_level.level_track:
+		new_bolt.bolt_tracker = Rfs.current_level.level_track.set_new_bolt_tracker(new_bolt)
+	new_bolt.bolt_controller.goals_to_reach = level_profile["goals"].duplicate()
 
 	# signali
 	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_change")
@@ -539,6 +468,7 @@ func _spawn_bolt(bolt_driver_index: int, spawned_position_index: int):
 	level_stats[bolt_driver_index] = Pfs.start_bolt_level_stats.duplicate()
 	level_stats[bolt_driver_index][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
 	level_stats[bolt_driver_index][Pfs.STATS.GOALS_REACHED] = []
+
 
 	emit_signal("bolt_spawned", new_bolt, level_stats[bolt_driver_index]) # zaenkrat samo HUD, da prižge in napolne statbox
 
@@ -583,8 +513,8 @@ func _animate_day_night():
 func _sort_bolts_by_laps(bolt_1, bolt_2): # descending ... večji index je boljši
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var bolt_1_lap_count = level_stats[bolt_1.bolt_type][Pfs.STATS.LAPS_FINISHED].size()
-	var bolt_2_lap_count = level_stats[bolt_2.bolt_type][Pfs.STATS.LAPS_FINISHED].size()
+	var bolt_1_lap_count = level_stats[bolt_1.driver_index][Pfs.STATS.LAPS_FINISHED].size()
+	var bolt_2_lap_count = level_stats[bolt_2.driver_index][Pfs.STATS.LAPS_FINISHED].size()
 	if bolt_1_lap_count > bolt_2_lap_count:
 	    return true
 	return false
@@ -618,20 +548,113 @@ func _sort_trackers_by_speed(bolt_1, bolt_2): # temp ...  ne uporabljam# descn .
 # SIGNALI ----------------------------------------------------------------------------------------------------
 
 
-func _on_level_is_set(tilemap_navigation_cells_positions: Array):
+func _on_bolt_reached_goal(goal_reached: Node, bolt_reaching: Bolt): # level poveže
 
+	print ("reached")
+	if game_on:
+		# reagira bolt in vrne, če ima še kakšen cilj (šteje tudi finish)
+		var bolt_level_stats: Dictionary = level_stats[bolt_reaching.driver_index]
+		bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(goal_reached)
+
+		# če je bil na vrsti ga odštejem
+		if Rfs.current_level.reach_goals_in_sequence:
+			if goal_reached == bolt_reaching.goals_to_reach[0]:
+				bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(goal_reached)
+		else:
+			bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(goal_reached)
+
+		# finished?
+		var reached_goals_count: int = bolt_level_stats[Pfs.STATS.GOALS_REACHED].size()
+		# next goal
+		if reached_goals_count < level_profile["goals"].size():
+#			printt("next", Rfs.current_level.level_finish)
+			bolt_reaching.bolt_controller.on_goal_reached(goal_reached)
+			Rfs.sound_manager.play_sfx("little_horn")
+		else:
+			# next target finish
+			if Rfs.current_level.level_finish:
+#				print("to finish")
+				bolt_reaching.bolt_controller.on_goal_reached(goal_reached, Rfs.current_level.level_finish)
+				Rfs.sound_manager.play_sfx("little_horn")
+			# finished
+			else:
+#				print("finished")
+				bolt_reaching.bolt_controller.on_goal_reached(goal_reached)
+				Rfs.sound_manager.play_sfx("finish_horn")
+				bolts_finished.append(bolt_reaching)
+
+
+func _on_finish_line_crossed(bolt_across: Bolt): # sproži finish line
+
+	if not game_on:
+		return
+
+	var bolt_level_data: Dictionary = level_stats[bolt_across.driver_index]
+	var bolt_goals_reached: Array = bolt_level_data[Pfs.STATS.GOALS_REACHED].duplicate()
+
+	# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
+#	printt("stats", bolt_level_data[Pfs.STATS.GOALS_REACHED])
+#	printt("goals", bolt_goals_reached, level_profile["goals"])
+	if level_profile["goals"].size() > 0:
+		if not bolt_goals_reached == level_profile["goals"]:
+			return
+
+
+		# najprej preverjam, če level_finish še edini cilj ali pa ni nobenega
+#		var goals_reached_size: int = bolt_level_data[Pfs.STATS.GOALS_REACHED].size()
+#		printt ("finish_crosed", goals_reached_size)
+
+#		if bolt_level_data[Pfs.STATS.GOALS_REACHED] == level_profile["goals"]:
+
+
+	# stat level time
+	print("SDFSDFDFDFSsdf")
+#	var current_level_time: float = hud.game_timer.game_time_hunds
+	var prev_lap_level_time: float = bolt_level_data[Pfs.STATS.LEVEL_TIME]
+	bolt_level_data[Pfs.STATS.LEVEL_TIME] = hud.game_timer.game_time_hunds
+
+	var has_finished_level: bool = false
+	# WITH LAPS ... lap finished če so vsi čekpointi
+	if level_profile["lap_limit"] > 1:
+		var lap_time: float = bolt_level_data[Pfs.STATS.LEVEL_TIME] - prev_lap_level_time
+		bolt_level_data[Pfs.STATS.LAPS_FINISHED].append(lap_time)
+		if bolt_level_data[Pfs.STATS.LAPS_FINISHED].size() >= level_profile["lap_limit"]:
+			has_finished_level = true
+	else:
+		has_finished_level = true
+
+	if has_finished_level:
+		var drive_out_time: float = 1
+		var drive_out_vector: Vector2 = Rfs.current_level.drive_out_position.rotated(Rfs.current_level.level_finish.global_rotation)
+		bolt_across.drive_out(drive_out_time, drive_out_vector)
+		bolts_finished.append(bolt_across)
+		Rfs.sound_manager.play_sfx("finish_horn")
+	else:
+		Rfs.sound_manager.play_sfx("little_horn")
+
+
+	# hud update
+	for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
+		hud.update_bolt_level_stats(bolt_across.driver_index, stat_key, bolt_level_data[stat_key])
+
+
+
+func _on_level_is_set(level_type: int, start_positions: Array, camera_positions: Array, nav_positions: Array, level_goals: Array):
+
+	level_profile["level_type"] = level_type
+	level_profile["goals"] = level_goals.duplicate()
 	# navigacija za AI
-	navigation_positions = tilemap_navigation_cells_positions
-
+	navigation_positions = nav_positions
 	# random pickable pozicije
-	available_pickable_positions = tilemap_navigation_cells_positions.duplicate()
-
+	available_pickable_positions = nav_positions.duplicate()
 	# spawn poz
-	start_bolt_position_nodes = Rfs.current_level.start_positions_node.get_children()
-
+	start_bolt_position_nodes = start_positions.duplicate()
 	# kamera
-	Rfs.game_camera.position = Rfs.current_level.start_camera_position_node.global_position
+	Rfs.game_camera.position = camera_positions[0].global_position
 	Rfs.game_camera.set_camera_limits() # debug
+
+	printt("level signal", level_profile["goals"])
+	emit_signal("games_level_is_set")
 
 
 func _on_body_exited_playing_field(body: Node) -> void:

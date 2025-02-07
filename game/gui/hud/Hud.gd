@@ -25,21 +25,20 @@ func _ready() -> void:
 	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
-func setup(level_settings: Dictionary, level_type: int, level_types: Dictionary): # kliče GM
+func setup(level_profile: Dictionary): # kliče GM
 	# LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
 
 	for box in statboxes:
-		box.set_statbox_for_level(level_type, level_types)
+		box.set_statbox_for_level(level_profile["level_type"])
 
-	match level_type:
-		level_types.RACE_TRACK, level_types.RACE_LAPS:
-			game_timer.hunds_mode = true
-		_:
-			game_timer.hunds_mode = false
+	if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
+		game_timer.hunds_mode = true
+	else:
+		game_timer.hunds_mode = false
 
 	# game stats
-	level_lap_limit = level_settings["lap_limit"]
-	game_timer.reset_timer(level_settings["time_limit"])
+	level_lap_limit = level_profile["lap_limit"]
+	game_timer.reset_timer(level_profile["time_limit"])
 	game_timer.show()
 	record_lap_label.hide()
 

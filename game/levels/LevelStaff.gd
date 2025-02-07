@@ -5,7 +5,6 @@ signal level_is_set(navigation, spawn_positions, other_)
 
 enum LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
 var level_type: int # določi glede na pripete elemente = LEVEL_TYPE.RACE_TRACK
-#export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.RACE_TRACK
 
 export (Array, NodePath) var level_goals_paths: Array = [] # lahko jih tudi ni
 export (NodePath) var camera_limits_rect_path: String # lahko ga tudi ni ... potem ni meja
@@ -54,6 +53,17 @@ func _ready() -> void:
 	for goal_path in level_goals_paths:
 		level_goals.append(get_node(goal_path))
 
+
+	_set_level_type()
+	_set_level_objects()
+	navigation_cells_positions = $LevelNavigation.level_navigation_points.duplicate()
+	_resize_to_level_size()
+
+	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
+
+func	_set_level_type():
+
+
 	# level type
 	if level_goals.empty() and not level_finish:
 		level_type = LEVEL_TYPE.BATTLE
@@ -85,11 +95,6 @@ func _ready() -> void:
 			if level_finish:
 				level_finish.show()
 
-	_set_level_objects()
-	navigation_cells_positions = $LevelNavigation.level_navigation_points.duplicate()
-	_resize_to_level_size()
-
-	emit_signal("level_is_set", navigation_cells_positions) # pošljem v GM
 
 
 func _set_level_objects():

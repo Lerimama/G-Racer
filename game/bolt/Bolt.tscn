@@ -110,6 +110,12 @@ bolt_engines_path = NodePath("Chassis/Engines")
 [node name="MotionManager" type="Node" parent="."]
 script = ExtResource( 5 )
 
+[node name="DriverData" type="Node" parent="."]
+
+[node name="Label" type="Label" parent="DriverData"]
+margin_right = 40.0
+margin_bottom = 14.0
+
 [node name="ShapeShadows" parent="." instance=ExtResource( 22 )]
 shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
 

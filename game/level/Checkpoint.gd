@@ -1,10 +1,10 @@
 extends Area2D
 
 
-signal goal_reached
+signal reached_by
 
 
 func _on_Checkpoint_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Rfs.group_bolts):
-		emit_signal("goal_reached", self, body)
+		emit_signal("reached_by", self, body)

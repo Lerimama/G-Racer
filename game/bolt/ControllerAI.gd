@@ -203,7 +203,6 @@ func _state_machine(delta: float):
 			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 
 		AI_STATE.RACE_TO_GOAL: # šiba do cilja po najbližji poti
-			ai_target = goals_to_reach[0]
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				navigation_agent.set_target_location(ai_target.global_position)
 			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
@@ -319,6 +318,7 @@ func _change_ai_state(new_ai_state: int):
 			target_ray.enabled = true
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
 		AI_STATE.RACE_TO_GOAL:
+			ai_target = goals_to_reach[0]
 #			if not goals_to_reach.empty():
 #				ai_target = goals_to_reach[0]
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
@@ -497,26 +497,20 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
-func _on_game_state_change(new_game_state: bool, level_settings: Dictionary): # od GMja
+func _on_game_state_change(new_game_state: bool, level_profile: Dictionary): # od GMja
 
 	# level type
-	var level_type: int = level_settings["level_type"]
-
 	if new_game_state == true:
-		match level_type: # enums so v levelu
-			Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
+		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
+			if controlled_bolt.bolt_tracker:
 				self.ai_state = AI_STATE.RACE_TRACK
-			Rfs.current_level.LEVEL_TYPE.BATTLE:
-				self.ai_state = AI_STATE.SEARCH
-			Rfs.current_level.LEVEL_TYPE.CHASE:
-				self.ai_state = AI_STATE.SEARCH
-			Rfs.current_level.LEVEL_TYPE.RACE_GOAL:
-				goals_to_reach = Rfs.current_level.level_goals.duplicate()
-				if Rfs.current_level.level_finish:
-					goals_to_reach.append(Rfs.current_level.level_finish)
+			elif not goals_to_reach.empty():
 				self.ai_state = AI_STATE.RACE_TO_GOAL
+			else:
+				self.ai_state = AI_STATE.SEARCH
+		else:
+			self.ai_state = AI_STATE.SEARCH
 	else:
-		#		printt ("game on SMS", new_game_state)
 		self.ai_state = AI_STATE.OFF
 		bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
 
@@ -532,18 +526,18 @@ func _on_NavigationAgent2D_path_changed() -> void:
 func _on_NavigationAgent2D_target_reached() -> void:
 #	print("nav target reached")
 
-		if ai_state == AI_STATE.MOUSE_CLICK:
-			var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, current_mouse_follow_point)
-			ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
-			navigation_agent.set_target_location(nav_path_points[0])
-			ai_state = AI_STATE.MOUSE_CLICK
+	if ai_state == AI_STATE.MOUSE_CLICK:
+		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(controlled_bolt.global_position, current_mouse_follow_point)
+		ai_target = Mts.spawn_indikator(nav_path_points[0], Color.blue, 0, Rfs.node_creation_parent)
+		navigation_agent.set_target_location(nav_path_points[0])
+		ai_state = AI_STATE.MOUSE_CLICK
 
-		elif ai_state == AI_STATE.SEARCH:
-			search_target_reached = true
+	elif ai_state == AI_STATE.SEARCH:
+		search_target_reached = true
 
 
 func _on_NavigationAgent2D_navigation_finished() -> void:
-#	print("nav finished")
+	print("nav finished")
 	pass
 
 
@@ -554,3 +548,19 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 	navigation_agent.set_velocity(controlled_bolt.bolt_velocity)
 
 	print("avoided")
+
+
+
+func on_goal_reached(goal_reached: Node2D, next_target: Node2D = null):
+#	print("goals_to_reach", goals_to_reach, ai_target)
+
+	goals_to_reach.erase(goal_reached)
+
+	if next_target: # level finish
+		ai_target = next_target
+	else:
+		if goals_to_reach.empty():
+			ai_target = null
+			self.ai_state = AI_STATE.OFF
+		else:
+			ai_target = goals_to_reach.front()

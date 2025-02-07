@@ -1521,6 +1521,8 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
+level_track_path = NodePath("")
+level_goals_paths = [ NodePath("PickableBullet"), NodePath("PickableBullet2"), NodePath("PickableBullet3") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0
@@ -1557,7 +1559,7 @@ position = Vector2( -10, 387 )
 rotation = -1.57057
 
 [node name="LevelFinish" parent="Tracking" index="3"]
-position = Vector2( 258, -64014 )
+position = Vector2( 322, -3534 )
 
 [node name="__ScreenSize" parent="." index="14"]
 visible = false
@@ -1577,7 +1579,13 @@ __meta__ = {
 }
 
 [node name="PickableBullet" parent="." index="16" instance=ExtResource( 2 )]
-position = Vector2( -321, -155 )
+position = Vector2( 219, -438 )
+
+[node name="PickableBullet2" parent="." index="17" instance=ExtResource( 2 )]
+position = Vector2( -378, -443 )
+
+[node name="PickableBullet3" parent="." index="18" instance=ExtResource( 2 )]
+position = Vector2( 906, -150 )
 
 [editable path="Terrain/TerrainMountain"]
 [editable path="Terrain/TerrainMountain2"]
