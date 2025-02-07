@@ -3,3 +3,4 @@
 [ext_resource path="res://game/weapons/ammo/projectile/Projectile.tscn" type="PackedScene" id=1]
 
 [node name="ProjectileBullet" instance=ExtResource( 1 )]
+speed = 1500.0

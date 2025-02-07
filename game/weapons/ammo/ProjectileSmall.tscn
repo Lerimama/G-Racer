@@ -5,6 +5,7 @@
 [node name="ProjectileSmall" instance=ExtResource( 1 )]
 hit_damage = 0.05
 masa = 0.02
+speed = 1500.0
 
 [node name="ShapePoly" parent="." index="6"]
 color = Color( 1, 0, 0, 1 )

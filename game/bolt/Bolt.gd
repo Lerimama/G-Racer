@@ -37,7 +37,6 @@ onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/PL
 onready var trail_source: Position2D = $TrailSource
 onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
-onready var equiped_weapons: Array
 onready var chassis: Node2D = $Chassis
 onready var terrain_detect: Area2D = $TerrainDetect
 onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -57,6 +56,10 @@ onready var motion_manager: Node = $MotionManager
 onready var engines: Node2D = get_node(bolt_engines_path)
 var bolt_velocity: Vector2 = Vector2.ZERO
 var gas_tank_size: float
+onready var equip_positions: Node2D = $EquipPositions
+onready var weapons: Node2D = $Weapons
+#onready var weapons_set: Array
+onready var equipment: Node2D = $Equipment
 
 
 func _input(event: InputEvent) -> void:
@@ -81,25 +84,33 @@ func _ready() -> void:
 	elevation = bolt_profile["elevation"]
 	gas_tank_size = bolt_profile["gas_tank_size"]
 
-
 	_add_controller()
 	_add_motion_manager()
 	motion_manager._set_default_parameters()
 
+	# set weapons
+	for weapon in weapons.get_children():
+		if equip_positions.positions_equiped.values().has(weapon):
+			weapon.connect("weapon_shot", self, "_update_weapon_stat")
+			bolt_controller.connect("weapon_triggered", weapon, "_on_weapon_triggered", [self])
+			weapon.setup(self)
+#			weapons_set.append(weapon)
+		else:
+			weapon.hide()
 
-	# weapon settings
-	for path in weapon_paths:
-		var curr_weapon: Node2D = get_node(path)
-		curr_weapon.connect("weapon_shot", self, "_update_weapon_stat")
-		curr_weapon.set_weapon(self)
-		bolt_controller.connect("weapon_triggered", curr_weapon, "_on_weapon_triggered", [self])
-		equiped_weapons.append(get_node(path))
+	# set equipement
+	for equip in equipment.get_children():
+		if equip_positions.positions_equiped.values().has(equip):
+			print ("equipment")
+		else:
+			print ("hide")
+			equip.hide()
 
 	# AI ima skrit hud ... zaenkrat
 	if driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
 		bolt_hud.hide()
 	else:
-		bolt_hud._set_bolt_hud(self)
+		bolt_hud.setup(self)
 
 	# debug
 	if driver_index == 0:
@@ -191,6 +202,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var hit_by_power: float = inertia_factor
 		apply_torque_impulse(hit_by_power)
 		Rfs.game_camera.shake_camera(Rfs.game_camera.misile_hit_shake)
+
+#	if inertIJA > jadajasdasd >>>> to dissaray
 
 
 func _destroy_bolt():
@@ -437,13 +450,10 @@ func on_item_picked(pickable_key: int):
 
 
 func _update_weapon_stat(stat_key: int, change_value):
-#	print ("apdejt")
 
-#	var curr_stat_name: String
-#	driver_stats[stat_key] += change_value # change_value je + ali -
 	driver_stats[stat_key] += change_value # change_value je + ali -
+	#	update_stat(stat_key, change_value)
 	emit_signal("bolt_stat_changed", driver_index, stat_key, driver_stats[stat_key])
-#	update_stat(stat_key, change_value)
 
 
 func update_stat(stat_key: int, change_value):

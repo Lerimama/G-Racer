@@ -1,12 +1,12 @@
 [gd_scene load_steps=17 format=2]
 
-[ext_resource path="res://game/weapons/ammo/projectile/trails/BulletTrail.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/weapons/ammo/fx/BulletShootSound.res" type="PackedScene" id=1]
+[ext_resource path="res://game/weapons/ammo/trails/BulletTrail.tscn" type="PackedScene" id=2]
 [ext_resource path="res://common/tex/circo_8.png" type="Texture" id=3]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/materials/fx/bullet_thrust_particles_material.tres" type="Material" id=6]
-[ext_resource path="res://game/weapons/ammo/projectile/fx/BulletHit.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/weapons/ammo/fx/BulletHit.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/weapons/ammo/projectile/Projectile.gd" type="Script" id=8]
-[ext_resource path="res://game/weapons/ammo/projectile/fx/BulletSoundShoot.res" type="PackedScene" id=9]
 
 [sub_resource type="CanvasItemMaterial" id=4]
 
@@ -53,7 +53,7 @@ collision_layer = 33
 mass = 0.05
 script = ExtResource( 8 )
 trail = ExtResource( 2 )
-shoot_fx = [ ExtResource( 9 ) ]
+shoot_fx = [ ExtResource( 1 ) ]
 hit_fx = [ ExtResource( 7 ) ]
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 4 )]

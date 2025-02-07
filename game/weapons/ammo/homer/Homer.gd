@@ -11,6 +11,7 @@ export var lifetime: float = 3.2 # 0 = večno
 export var mass: float = 1 # fejk, ker je konematic, on_hit pa preverja .mass
 export var start_speed: float = 10.0
 export var speed: float = 1500
+export var homming_radius: float = 500
 export var direction_start_range: Vector2 = Vector2(-0.1, 0.1)
 export var trail: PackedScene
 export (Array, PackedScene) var shoot_fx: Array
@@ -43,7 +44,7 @@ var new_trail: Line2D
 onready var trail_position: Position2D = $TrailPosition
 onready var dissarm_position: Position2D = $DissarmPosition
 onready var hit_position: Position2D = $HitPosition
-onready var homming_detect: Area2D = $HommingArea
+onready var homming_area: Area2D = $HommingArea
 onready var collision_shape: CollisionShape2D = $MisileCollision
 onready var vision_ray: RayCast2D = $VisionRay
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
@@ -65,6 +66,8 @@ func _ready() -> void:
 	rotation += random_range # rotacija misile
 	direction = Vector2(cos(rotation), sin(rotation))
 	current_speed = start_speed + spawner_speed
+
+	homming_area.get_child(0).shape.radius = homming_radius
 
 	if spawner:
 		vision_ray.add_exception(spawner)
@@ -101,11 +104,11 @@ func _physics_process(delta: float) -> void:
 		direction = lerp(direction, global_position.direction_to(homming_target_position), 0.1)
 		rotation = global_position.direction_to(homming_target_position).angle()
 
-		if homming_detect.monitoring:
-			homming_detect.set_deferred("monitoring", false)
+		if homming_area.monitoring:
+			homming_area.set_deferred("monitoring", false)
 			# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
 		else:
-			homming_detect.set_deferred("monitoring", true)
+			homming_area.set_deferred("monitoring", true)
 
 	velocity = direction * current_speed
 

@@ -118,6 +118,8 @@ func _ready() -> void:
 		for dr in drivers_on_game_start:
 #		for dr in drivers_on_game_start_count:
 			Pfs.driver_profiles[dr] = Pfs.default_driver_profile.duplicate()
+			if dr == 1:
+				Pfs.driver_profiles[dr]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
 			if dr == 2:
 				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			#		printt("profile", Pfs.driver_profiles[driver_id])

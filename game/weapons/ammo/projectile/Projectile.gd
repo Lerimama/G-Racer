@@ -10,7 +10,7 @@ export var elevation: float = 5 # elevation se doda elevationu objektu spawnanja
 export var hit_damage: float = 0.2
 export var lifetime: float = 1 # 0 = večno
 export var masa: float = 0.03 # domet vedno merim s časom
-export var speed: float = 320 # _temp speed 1500
+export var speed: float = 320
 export var direction_start_range: Vector2 = Vector2(0, 0)
 export var trail: PackedScene
 export (Array, PackedScene) var shoot_fx: Array

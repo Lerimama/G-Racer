@@ -3,13 +3,13 @@
 [ext_resource path="res://common/tex/circo_8.png" type="Texture" id=1]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/materials/fx/bullet_thrust_particles_material.tres" type="Material" id=3]
-[ext_resource path="res://game/weapons/ammo/homer/trails/MisileTrail.tscn" type="PackedScene" id=4]
-[ext_resource path="res://game/weapons/ammo/homer/fx/MisileSoundShoot.res" type="PackedScene" id=5]
-[ext_resource path="res://game/weapons/ammo/homer/fx/MisileSoundHomming.res" type="PackedScene" id=6]
-[ext_resource path="res://game/weapons/ammo/homer/fx/MisileHit.tscn" type="PackedScene" id=7]
-[ext_resource path="res://game/weapons/ammo/homer/fx/MisileSoundFlight.res" type="PackedScene" id=8]
+[ext_resource path="res://game/weapons/ammo/trails/MisileTrail.tscn" type="PackedScene" id=4]
+[ext_resource path="res://game/weapons/ammo/fx/MisileHommingSound.res" type="PackedScene" id=5]
+[ext_resource path="res://game/weapons/ammo/fx/MisileSoundFlight.res" type="PackedScene" id=6]
+[ext_resource path="res://game/weapons/ammo/fx/MisileHit.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/weapons/ammo/fx/MisileShootSound.res" type="PackedScene" id=8]
 [ext_resource path="res://game/weapons/ammo/homer/Homer.gd" type="Script" id=9]
-[ext_resource path="res://game/weapons/ammo/homer/fx/MisileDissarm.tscn" type="PackedScene" id=10]
+[ext_resource path="res://game/weapons/ammo/fx/MisileDissarm.tscn" type="PackedScene" id=10]
 
 [sub_resource type="Gradient" id=5283]
 offsets = PoolRealArray( 0, 0.348485, 0.731061 )
@@ -56,7 +56,7 @@ color_ramp = SubResource( 5284 )
 extents = Vector2( 10.5, 5 )
 
 [sub_resource type="CircleShape2D" id=5]
-radius = 1099.58
+radius = 500.0
 
 [sub_resource type="CircleShape2D" id=5295]
 radius = 31.6425
@@ -65,9 +65,9 @@ radius = 31.6425
 collision_layer = 32
 script = ExtResource( 9 )
 trail = ExtResource( 4 )
-shoot_fx = [ ExtResource( 5 ) ]
-flight_fx = [ ExtResource( 8 ) ]
-homming_fx = [ ExtResource( 6 ) ]
+shoot_fx = [ ExtResource( 8 ) ]
+flight_fx = [ ExtResource( 6 ) ]
+homming_fx = [ ExtResource( 5 ) ]
 dissarm_fx = [ ExtResource( 10 ) ]
 hit_fx = [ ExtResource( 7 ) ]
 
@@ -125,7 +125,6 @@ position = Vector2( -7.5, 0 )
 shape = SubResource( 5297 )
 
 [node name="HommingArea" type="Area2D" parent="."]
-visible = false
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
@@ -135,7 +134,6 @@ __meta__ = {
 shape = SubResource( 5 )
 
 [node name="InfluenceArea" type="Area2D" parent="."]
-visible = false
 scale = Vector2( 2, 2 )
 __meta__ = {
 "_edit_group_": true,

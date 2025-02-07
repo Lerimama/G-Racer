@@ -101,7 +101,7 @@ func _set_game():
 #	game_settings = Sts.get_level_game_settings(current_level_index)
 	_spawn_level()
 
-	hud.set_hud(level_settings, Rfs.current_level.level_type, Rfs.current_level.LEVEL_TYPE) # kliče GM
+	hud.setup(level_settings, Rfs.current_level.level_type, Rfs.current_level.LEVEL_TYPE) # kliče GM
 	Rfs.game_camera.follow_target = Rfs.current_level.start_camera_position_node
 
 	# playing field
@@ -181,13 +181,13 @@ func _start_game():
 		yield(Rfs.current_level.start_lights, "countdown_finished")
 
 	# start
-#	for bolt in bolts_in_game:
-#		if bolt.is_in_group(Rfs.group_ai):
-#			match Rfs.current_level.level_type:
-#				Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
-#					bolt.bolt_controller.set_ai_target(bolt.bolt_tracker)
-#				_:
-#					pass
+	#	for bolt in bolts_in_game:
+	#		if bolt.is_in_group(Rfs.group_ai):
+	#			match Rfs.current_level.level_type:
+	#				Rfs.current_level.LEVEL_TYPE.RACE_TRACK:
+	#					bolt.bolt_controller.set_ai_target(bolt.bolt_tracker)
+	#				_:
+	#					pass
 	Rfs.sound_manager.play_music()
 	hud.on_game_start()
 

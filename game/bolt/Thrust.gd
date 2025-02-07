@@ -2,8 +2,7 @@ extends Node2D
 
 enum POSITION {LEFT, RIGHT, FRONT, REAR}
 export (POSITION) var position_on_bolt: int = 0
-#export var owner_node_path: String =
-onready var owner_node: Node2D = owner.owner
+onready var thrust_owner: Node2D = owner.owner
 
 var thrust_active: bool = false
 var bolt_trail_alpha = 0.05
@@ -29,8 +28,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 
-	if owner_node:
-		$Polygon2D.color = owner_node.bolt_color
+	if thrust_owner:
+		$Polygon2D.color = thrust_owner.bolt_color
 		update_trail()
 
 # particles
@@ -77,13 +76,13 @@ func spawn_new_trail():
 func update_trail():
 
 	# spawn trail if not active
-	if not active_trail and owner_node.bolt_velocity.length() > pseudo_stop_speed: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+	if not active_trail and thrust_owner.bolt_velocity.length() > pseudo_stop_speed: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 		active_trail = spawn_new_trail() # aktivira se ob spawnu
-	elif active_trail and owner_node.bolt_velocity.length() > pseudo_stop_speed:
+	elif active_trail and thrust_owner.bolt_velocity.length() > pseudo_stop_speed:
 		# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
 		active_trail.add_points(global_position)
 		active_trail.gradient.colors[1] = trail_pseudodecay_color
-		if owner_node.bolt_velocity.length() > pseudo_stop_speed and active_trail.modulate.a < bolt_trail_alpha:
+		if thrust_owner.bolt_velocity.length() > pseudo_stop_speed and active_trail.modulate.a < bolt_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem
 			var trail_grad = get_tree().create_tween()
 			trail_grad.tween_property(active_trail, "modulate:a", bolt_trail_alpha, 0.5)
@@ -92,7 +91,7 @@ func update_trail():
 			var trail_grad = get_tree().create_tween()
 			trail_grad.tween_property(active_trail, "modulate:a", 0, 0.5)
 	# če sem pri mirua deaktiviram trail ... ob ponovnem premiku se kreira nova
-	elif active_trail and owner_node.bolt_velocity.length() <= pseudo_stop_speed:
+	elif active_trail and thrust_owner.bolt_velocity.length() <= pseudo_stop_speed:
 		active_trail.start_decay() # trail decay tween start
 		active_trail = null # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
 

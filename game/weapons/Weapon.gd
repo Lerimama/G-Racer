@@ -29,15 +29,19 @@ var reload_time: float
 var weapon_owner_stats: Dictionary
 var power_usage: float = 0 # še ni implementirano
 
+var is_set: bool = false
+
 
 func _ready() -> void:
+
+	hide()
 
 	smoke_particles.emitting = false
 	fire_particles.emitting = false
 	fire_cover_particles.emitting = false
 
 
-func set_weapon(weapon_owner: Node2D, with_ai: bool = ai_enabled): # kliče bolt
+func setup(weapon_owner: Node2D, with_ai: bool = ai_enabled): # kliče bolt
 
 	weapon_owner_stats = weapon_owner.driver_stats
 
@@ -49,24 +53,28 @@ func set_weapon(weapon_owner: Node2D, with_ai: bool = ai_enabled): # kliče bolt
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
 		ai_enabled = with_ai
-		weapon_ai.set_weapon_ai(weapon_owner)
+		weapon_ai.setup(weapon_owner)
+
+	show()
+	is_set = true
 
 
 func _process(delta: float) -> void:
 
-	if weapon_owner_stats:
+	if is_set:
 		ammo_count = weapon_owner_stats[ammo_stat_key]
 
 
 func _on_weapon_triggered(trigger_owner: Node2D):
 
-	var shooting_weapon: Node2D = trigger_owner.bolt_hud.selected_weapon
-	if shooting_weapon.weapon_type == weapon_type:
-		if ammo_count > 0 and weapon_reloaded:
-			shoot(trigger_owner)
+	if is_set:
+		var shooting_weapon: Node2D = trigger_owner.bolt_hud.selected_weapon
+		if shooting_weapon.weapon_type == weapon_type:
+			if ammo_count > 0 and weapon_reloaded:
+				_shoot(trigger_owner)
 
 
-func shoot(weapon_owner: Node2D):
+func _shoot(weapon_owner: Node2D):
 
 	if fx_enabled:
 		smoke_particles.one_shot = true

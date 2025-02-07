@@ -188,12 +188,12 @@ var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"scene": preload("res://game/weapons/ammo/projectile/ProjectileBullet.tscn"),
+		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
 		"stat_key": STATS.BULLET_COUNT,
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"scene": preload("res://game/weapons/ammo/homer/HomerMisile.tscn"),
+		"scene": preload("res://game/weapons/ammo/HomerMisile.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
 		"stat_key": STATS.MISILE_COUNT,
 	},
@@ -205,7 +205,7 @@ var ammo_profiles : Dictionary = {
 	},
 	AMMO.SMALL: {
 		"reload_time": 0.1, #
-		"scene": preload("res://game/weapons/ammo/projectile/ProjectileSmall.tscn"),
+		"scene": preload("res://game/weapons/ammo/ProjectileSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"stat_key": STATS.SMALL_COUNT,
 	},

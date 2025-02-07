@@ -29,7 +29,7 @@ func _ready() -> void:
 	pickable_value = Pfs.pickable_profiles[pickable_key]["value"]
 	modulate = pickable_color
 	#	icon.texture = icon_texture
-	#	animation_player.play("edge_rotate") # _temp un-animated
+	#	animation_player.play("edge_rotate")
 
 
 func _on_Item_body_entered(body: Node) -> void:

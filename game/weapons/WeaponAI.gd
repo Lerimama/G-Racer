@@ -22,7 +22,7 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 		self.aim_target = null
 
 
-func set_weapon_ai(weapon_owner: Node2D, turn_on: bool = true):
+func setup(weapon_owner: Node2D, turn_on: bool = true):
 
 	if turn_on:
 		ai_weapon = get_parent()

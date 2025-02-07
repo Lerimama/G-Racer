@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://assets/theme/fonts/bolt_hud_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
@@ -25,6 +25,8 @@
 [ext_resource path="res://game/bolt/TrailHolder.gd" type="Script" id=23]
 [ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=24]
 [ext_resource path="res://game/weapons/WeaponDropper.tscn" type="PackedScene" id=25]
+[ext_resource path="res://game/bolt/EquipPositions.gd" type="Script" id=26]
+[ext_resource path="res://game/weapons/mala/Mala.tscn" type="PackedScene" id=27]
 [ext_resource path="res://game/weapons/WeaponGun.tscn" type="PackedScene" id=33]
 
 [sub_resource type="PhysicsMaterial" id=5260]
@@ -32,6 +34,18 @@ friction = 0.5
 
 [sub_resource type="RectangleShape2D" id=5254]
 extents = Vector2( 6.5, 6 )
+
+[sub_resource type="DynamicFont" id=5285]
+size = 12
+font_data = ExtResource( 20 )
+
+[sub_resource type="StyleBoxFlat" id=5286]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 1, 1, 1, 1 )
 
 [sub_resource type="AudioStreamRandomPitch" id=5256]
 audio_stream = ExtResource( 18 )
@@ -79,18 +93,6 @@ tracks/0/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 1, 0 ), Vector2( 0, 0 ), Vector2( 0, -2 ), Vector2( 0, 0 ), Vector2( 0, 2 ), Vector2( 0, 0 ), Vector2( -1, 0 ), Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="DynamicFont" id=5285]
-size = 12
-font_data = ExtResource( 20 )
-
-[sub_resource type="StyleBoxFlat" id=5286]
-draw_center = false
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 1, 1, 1, 1 )
-
 [node name="Bolt" type="RigidBody2D"]
 z_index = 1
 collision_layer = 7
@@ -100,7 +102,7 @@ contact_monitor = true
 script = ExtResource( 8 )
 height = 10.0
 elevation = 7.0
-weapon_paths = [ NodePath("Turret"), NodePath("LauncherL"), NodePath("Dropper"), NodePath("WeaponGun") ]
+weapon_paths = [ NodePath("Weapons/Turret"), NodePath("Weapons/LauncherL"), NodePath("Weapons/Dropper"), NodePath("Weapons/WeaponGun") ]
 bolt_engines_path = NodePath("Chassis/Engines")
 
 [node name="BoltController" type="Node" parent="."]
@@ -110,6 +112,10 @@ script = ExtResource( 5 )
 
 [node name="ShapeShadows" parent="." instance=ExtResource( 22 )]
 shadow_caster_paths = [ NodePath("../Chassis/BoltShape") ]
+
+[node name="_under_Z0" type="Node" parent="."]
+
+[node name="_btm_Z0" type="Node" parent="."]
 
 [node name="TrailSource" type="Position2D" parent="."]
 position = Vector2( -113, 0 )
@@ -168,16 +174,6 @@ linear_damp = 3.0
 shape = SubResource( 5254 )
 disabled = true
 
-[node name="__Z-under" type="Node" parent="."]
-
-[node name="__Z-btm" type="Node" parent="."]
-
-[node name="__Z-side" type="Node" parent="."]
-
-[node name="__Z-top" type="Node" parent="."]
-
-[node name="__Z-over" type="Node" parent="."]
-
 [node name="Chassis" parent="." instance=ExtResource( 3 )]
 
 [node name="BoltSprite" parent="Chassis" index="0"]
@@ -186,8 +182,13 @@ visible = true
 [node name="Šipa" parent="Chassis" index="4"]
 visible = false
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PoolVector2Array( -104, -56, 97, -56, 112, -40, 112, 40, 96, 56, -104, 56 )
+[node name="_downside_Z1" type="Node" parent="."]
+
+[node name="_topside_Z2" type="Node" parent="."]
+
+[node name="_roof_Z3" type="Node" parent="."]
+
+[node name="_over_Z4" type="Node" parent="."]
 
 [node name="Light2D" type="Light2D" parent="."]
 visible = false
@@ -201,7 +202,297 @@ energy = 0.94
 range_z_min = 0
 range_z_max = 2
 
-[node name="__Z-X2" type="Node" parent="."]
+[node name="--------" type="Node" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -104, -56, 97, -56, 112, -40, 112, 40, 96, 56, -104, 56 )
+
+[node name="EquipPositions" type="Node2D" parent="."]
+script = ExtResource( 26 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+btm_back_eqip_path = NodePath("../Weapons/Dropper")
+downside_front_eqip_path = NodePath("../Weapons/Mala")
+upside_l_eqip_path = NodePath("../Weapons/LauncherL")
+upside_r_eqip_path = NodePath("../Weapons/LauncherR")
+hood_eqip_path = NodePath("../Weapons/WeaponGun")
+roof_eqip_path = NodePath("../Weapons/Turret")
+
+[node name="_under_Z0" type="Node" parent="EquipPositions"]
+
+[node name="_btm_Z0" type="Node" parent="EquipPositions"]
+
+[node name="PositionBtmBack" type="Position2D" parent="EquipPositions"]
+position = Vector2( -80, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 0.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionBtmBack"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "0"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionBtmFront" type="Position2D" parent="EquipPositions"]
+position = Vector2( 88, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 0.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionBtmFront"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "0"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="_downside_Z1" type="Node" parent="EquipPositions"]
+
+[node name="PositionDownSideLeft" type="Position2D" parent="EquipPositions"]
+position = Vector2( 16, -56 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 1.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionDownSideLeft"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "1"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionDownSideRight" type="Position2D" parent="EquipPositions"]
+position = Vector2( 16, 56 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 1.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionDownSideRight"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "1"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionDownSideFront" type="Position2D" parent="EquipPositions"]
+position = Vector2( 112, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 1.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionDownSideFront"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "1"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionDownSideBack" type="Position2D" parent="EquipPositions"]
+position = Vector2( -104, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 1.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionDownSideBack"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "1"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="_topside_Z2" type="Node" parent="EquipPositions"]
+
+[node name="PositionUpsideL" type="Position2D" parent="EquipPositions"]
+position = Vector2( -40, -56 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionUpsideL"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "2"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionUpsideR" type="Position2D" parent="EquipPositions"]
+position = Vector2( -40, 56 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionUpsideR"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "2"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionHood" type="Position2D" parent="EquipPositions"]
+position = Vector2( 48, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 2.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionHood"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "2"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="_roof_Z3" type="Node" parent="EquipPositions"]
+
+[node name="PositionRoofLeft" type="Position2D" parent="EquipPositions"]
+position = Vector2( -24, -32 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 3.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionRoofLeft"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "3"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionRoofRight" type="Position2D" parent="EquipPositions"]
+position = Vector2( -24, 32 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 3.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionRoofRight"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "3"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="PositionRoof" type="Position2D" parent="EquipPositions"]
+position = Vector2( -24, 0 )
+__meta__ = {
+"_edit_group_": true,
+"_gizmo_extents_": 3.0
+}
+
+[node name="Label" type="Label" parent="EquipPositions/PositionRoof"]
+margin_left = -10.0
+margin_top = -9.0
+margin_right = 10.0
+margin_bottom = 9.0
+grow_horizontal = 2
+custom_fonts/font = SubResource( 5285 )
+custom_styles/normal = SubResource( 5286 )
+text = "3"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="_over_Z4" type="Node" parent="EquipPositions"]
+
+[node name="Equipment" type="Node2D" parent="."]
+
+[node name="Weapons" type="Node2D" parent="."]
+
+[node name="Turret" parent="Weapons" instance=ExtResource( 10 )]
+position = Vector2( -109, -108 )
+
+[node name="Dropper" parent="Weapons" instance=ExtResource( 25 )]
+position = Vector2( -64, -142 )
+
+[node name="LauncherL" parent="Weapons" instance=ExtResource( 21 )]
+position = Vector2( 106, -155 )
+
+[node name="LauncherR" parent="Weapons" instance=ExtResource( 21 )]
+position = Vector2( 120, -88 )
+
+[node name="WeaponGun" parent="Weapons" instance=ExtResource( 33 )]
+position = Vector2( 78, -117 )
+
+[node name="Mala" parent="Weapons" instance=ExtResource( 27 )]
+position = Vector2( 160, 0 )
 
 [node name="BoltHud" type="Node2D" parent="."]
 position = Vector2( 0, 128.04 )
@@ -306,7 +597,7 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="______" type="Node" parent="."]
+[node name="_______" type="Node" parent="."]
 
 [node name="DirectionLine" type="Line2D" parent="."]
 position = Vector2( 26, 0 )
@@ -372,267 +663,6 @@ shape = SubResource( 5287 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 5284 )
 anims/gravel_shake = SubResource( 5280 )
-
-[node name="Equipment" type="Node2D" parent="."]
-
-[node name="Weapons" type="Node2D" parent="."]
-
-[node name="WeaponPositionBtmBack" type="Position2D" parent="Weapons"]
-position = Vector2( -95, 0 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionBtmBack"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionBtmFront" type="Position2D" parent="Weapons"]
-position = Vector2( 102, 0 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionBtmFront"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="__Z-side" type="Node" parent="Weapons"]
-
-[node name="WeaponPositionSideLeft" type="Position2D" parent="Weapons"]
-position = Vector2( -16, 83 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionSideLeft"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionSideRight" type="Position2D" parent="Weapons"]
-position = Vector2( -16, -83 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionSideRight"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionSideFront" type="Position2D" parent="Weapons"]
-position = Vector2( -16, 83 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionSideFront"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionSideBack" type="Position2D" parent="Weapons"]
-position = Vector2( -16, -83 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionSideBack"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="__Z-top" type="Node" parent="Weapons"]
-
-[node name="WeaponPositionTopL" type="Position2D" parent="Weapons"]
-position = Vector2( -16, -65 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionTopL"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionTopR" type="Position2D" parent="Weapons"]
-position = Vector2( -16, 65 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionTopR"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionHood" type="Position2D" parent="Weapons"]
-position = Vector2( 45, 0 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionHood"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="__Z-over" type="Node" parent="Weapons"]
-
-[node name="WeaponPositionRoofLeft" type="Position2D" parent="Weapons"]
-position = Vector2( -16, -65 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionRoofLeft"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionRoofRight" type="Position2D" parent="Weapons"]
-position = Vector2( -16, 65 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionRoofRight"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="WeaponPositionRoof" type="Position2D" parent="Weapons"]
-position = Vector2( -48, 0 )
-__meta__ = {
-"_edit_group_": true,
-"_gizmo_extents_": 20.0
-}
-
-[node name="Label" type="Label" parent="Weapons/WeaponPositionRoof"]
-margin_left = -10.0
-margin_top = -9.0
-margin_right = 10.0
-margin_bottom = 9.0
-grow_horizontal = 2
-custom_fonts/font = SubResource( 5285 )
-custom_styles/normal = SubResource( 5286 )
-text = "W"
-align = 1
-valign = 1
-uppercase = true
-
-[node name="Turret" parent="." instance=ExtResource( 10 )]
-position = Vector2( -48, 0 )
-
-[node name="Dropper" parent="." instance=ExtResource( 25 )]
-position = Vector2( -25, 0 )
-
-[node name="LauncherL" parent="." instance=ExtResource( 21 )]
-position = Vector2( 8, -72 )
-
-[node name="LauncherR" parent="." instance=ExtResource( 21 )]
-position = Vector2( 8, 80 )
-
-[node name="WeaponGun" parent="." instance=ExtResource( 33 )]
-position = Vector2( 32, 32 )
 
 [connection signal="body_entered" from="." to="." method="_on_Bolt_body_entered"]
 [connection signal="timeout" from="BoltHud/BoltHudLines/SelectorTimer" to="BoltHud" method="_on_SelectorTimer_timeout"]

@@ -25,7 +25,7 @@ func _ready() -> void:
 	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
-func set_hud(level_settings: Dictionary, level_type: int, level_types: Dictionary): # kliče GM
+func setup(level_settings: Dictionary, level_type: int, level_types: Dictionary): # kliče GM
 	# LEVEL_TYPE {RACE_TRACK, RACE_LAPS, BATTLE, CHASE, RACE_GOAL}
 
 	for box in statboxes:

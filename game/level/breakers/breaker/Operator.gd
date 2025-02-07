@@ -248,7 +248,6 @@ func split_outline_on_part(polygon_outline_points: PoolVector2Array, var split_p
 
 func split_outline_to_length(polygon_outline_points: PoolVector2Array, max_edge_length: float):
 
-	#	max_edge_length = 30 # _temp
 	var split_outline_checked: Array = split_outline_on_length(polygon_outline_points, max_edge_length) # 0 = edge pike, 1 = trua
 
 	var is_outline_correct: bool = split_outline_checked[1]

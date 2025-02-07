@@ -1,7 +1,7 @@
 extends Node2D
 
 
-var the_owner: Node2D
+var hud_owner: Node2D
 var y_position_offset: float
 
 var selected_item_index: int = 0 setget _change_selected_weapon # index znotraj aktivnih orožij
@@ -22,19 +22,21 @@ onready var gas_bar_line: ColorRect = $BoltHudLines/GasBar/Bar
 
 func _ready() -> void:
 
+	hide()
 	y_position_offset = position.y
 	selector_item_template = Mts.remove_chidren_and_get_template(selector.get_children())
 
 
-func _set_bolt_hud(hud_owner: Node2D):
+func setup(owner_node: Node2D):
 
-	the_owner = hud_owner
+	hud_owner = owner_node
 
-	if the_owner.driver_stats[Pfs.STATS.GAS] > the_owner.gas_tank_size:
-		the_owner.gas_tank_size = the_owner.driver_stats[Pfs.STATS.GAS]
+	if hud_owner.driver_stats[Pfs.STATS.GAS] > hud_owner.gas_tank_size:
+		hud_owner.gas_tank_size = hud_owner.driver_stats[Pfs.STATS.GAS]
 
-	for weapon in the_owner.equiped_weapons:
-		_add_weapon_selector(weapon)
+	for weapon in hud_owner.weapons.get_children():
+		if weapon.is_set:
+			_add_weapon_selector(weapon)
 
 	self.selected_item_index = 0
 
@@ -46,12 +48,12 @@ func _process(delta: float) -> void:
 	# manage positions and rotation
 	if visible:
 		global_rotation = 0 # negiramo rotacijo bolta, da je pri miru
-		global_position = the_owner.global_position + Vector2(0, y_position_offset)
+		global_position = hud_owner.global_position + Vector2(0, y_position_offset)
 
-	if the_owner:
+	if hud_owner:
 		# manage health bar
 		if health_bar.visible:
-			health_bar_line.rect_scale.x = the_owner.driver_stats[Pfs.STATS.HEALTH]
+			health_bar_line.rect_scale.x = hud_owner.driver_stats[Pfs.STATS.HEALTH]
 			if health_bar_line.rect_scale.x <= 0.5:
 				health_bar_line.color = Rfs.color_red
 			else:
@@ -59,7 +61,7 @@ func _process(delta: float) -> void:
 
 		# manage gas bar
 		if gas_bar.visible:
-			gas_bar_line.rect_scale.x = the_owner.driver_stats[Pfs.STATS.GAS] / the_owner.gas_tank_size
+			gas_bar_line.rect_scale.x = hud_owner.driver_stats[Pfs.STATS.GAS] / hud_owner.gas_tank_size
 			if gas_bar_line.rect_scale.x <= 0.5:
 				gas_bar_line.color = Rfs.color_red
 			else:
@@ -68,7 +70,7 @@ func _process(delta: float) -> void:
 		# weapons
 		for weapon in selector_items.values():
 			var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
-			var ammo_count: float = the_owner.driver_stats[ammo_count_key]
+			var ammo_count: float = hud_owner.driver_stats[ammo_count_key]
 			var selector_item: Control = selector_items.find_key(weapon)
 			selector_item.get_node("CountLabel").text = "%02d" % ammo_count
 
@@ -76,11 +78,12 @@ func _process(delta: float) -> void:
 				_remove_weapon_selector(selector_item)
 
 		# pokažem, če ima municijo
-		for weapon in the_owner.equiped_weapons:
-			var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
-			var ammo_count: float = the_owner.driver_stats[ammo_count_key]
-			if ammo_count > 0:
-				_add_weapon_selector(weapon)
+		for weapon in hud_owner.weapons.get_children():
+			if weapon.is_set:
+				var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
+				var ammo_count: float = hud_owner.driver_stats[ammo_count_key]
+				if ammo_count > 0:
+					_add_weapon_selector(weapon)
 
 
 func _add_weapon_selector(item_weapon: Node2D):
@@ -99,7 +102,7 @@ func _add_weapon_selector(item_weapon: Node2D):
 
 		new_selector_item.get_node("Icon").texture = Pfs.ammo_profiles[item_weapon.weapon_ammo]["icon"]
 		var weapon_ammo_count_key: int = Pfs.ammo_profiles[item_weapon.weapon_ammo]["stat_key"]
-		new_selector_item.get_node("CountLabel").text = "%02d" % the_owner.driver_stats[weapon_ammo_count_key]
+		new_selector_item.get_node("CountLabel").text = "%02d" % hud_owner.driver_stats[weapon_ammo_count_key]
 
 
 func _remove_weapon_selector(selector_item: Control):
