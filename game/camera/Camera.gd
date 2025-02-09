@@ -51,18 +51,18 @@ func _process(delta: float) -> void:
 
 			# follow
 			var dynamic_offset: Vector2 = Vector2.ZERO
-			if "bolt_velocity" in follow_target:
-				var target_velocity_offset: Vector2 = follow_target.bolt_velocity * target_velocity_offset_factor
+			if "velocity" in follow_target:
+				var target_velocity_offset: Vector2 = follow_target.velocity * target_velocity_offset_factor
 				dynamic_offset = lerp(dynamic_offset, target_velocity_offset, target_velocity_lerp_factor)
 			position = follow_target.global_position + dynamic_offset
 
 			# zoom ... dinamic
-			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.bolt_velocity == Vector2.ZERO:
+			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.velocity == Vector2.ZERO:
 				# samo, če je nad minimumom limit
-				if follow_target.bolt_velocity.length() > min_zoom_target_speed:
+				if follow_target.velocity.length() > min_zoom_target_speed:
 					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
 					 # vel, čez min span limit, nam da procent zasedenosti zoom spanao
-					var target_speed_part_in_span: float = (follow_target.bolt_velocity.length() - min_zoom_target_speed) / max_zoom_velocity_span # %
+					var target_speed_part_in_span: float = (follow_target.velocity.length() - min_zoom_target_speed) / max_zoom_velocity_span # %
 					var camera_zoom_span: float = abs(camera_zoom_range[1] - camera_zoom_range[0])
 					var camera_zoom_addon_in_span: float = camera_zoom_span * target_speed_part_in_span
 					zoom.x = lerp(zoom.x, camera_zoom_range[0] + camera_zoom_addon_in_span, camera_zoom_lerp_factor)

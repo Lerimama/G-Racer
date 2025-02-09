@@ -1,48 +1,59 @@
 extends RigidBody2D
-class_name Bolt
+class_name Vehicle
 
 
-signal bolt_activity_changed
-signal bolt_stat_changed (stats_owner_id, driver_stats) # bolt in damage
+signal activity_changed
+signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
 export (Array, NodePath) var weapon_paths: Array
-export (NodePath) var bolt_engines_path: String  # _temp ... engines
+export (NodePath) var engines_path: String  # _temp ... engines
 
-# seta spawner
+var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
+
+# driver
 var driver_index: int
 var driver_profile: Dictionary
 var driver_stats: Dictionary
-var bolt_profile: Dictionary
-# seta ready
-var bolt_type: int
-var ai_target_rank: int
-var bolt_color: Color = Color.red
 
-# bolt
-var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
-var using_nitro: bool = false
-var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
-var is_shooting: bool = false # način, ki je boljši za efekte
-var revive_time: float = 2
-var tracker: PathFollow2D # napolni se, ko se bolt pripiše trackerju
-var bolt_body_state: Physics2DDirectBodyState
-var race_time_on_previous_lap: float = 0
+# vehicle
+var vehicle_profile: Dictionary
+var vehicle_type: int
+var vehicle_color: Color = Color.red
+var gas_usage: float
+var gas_usage_idle: float
+var gas_tank_size: float
+var vehicle_camera: Camera2D # spawner
+var near_radius: float
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
+var velocity: Vector2 = Vector2.ZERO
+
+# tracking
+var ai_target_rank: int
+var revive_time: float = 2
+var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
+var body_state: Physics2DDirectBodyState
+var tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
+
+onready var controller: Node = $BoltController # zamenja se ob spawnu AI/PLAYER
+onready var motion_manager: Node = $MotionManager
+
+onready var vehicle_hud: Node2D = $BoltHud
+onready var equip_positions: Node2D = $EquipPositions
+onready var weapons: Node2D = $Weapons
+onready var equipment: Node2D = $Equipment
+onready var shape_poly: Polygon2D = $ShapePoly
+onready var engines: Node2D = get_node(engines_path)
 
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
 onready var revive_timer: Timer = $ReviveTimer
-onready var bolt_controller: Node = $BoltController # zamenja se ob spawnu AI/PLAYER
 onready var trail_source: Position2D = $TrailSource
 onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
-onready var chassis: Node2D = $Chassis
 onready var terrain_detect: Area2D = $TerrainDetect
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var gas_usage: float = bolt_profile["gas_usage"]
-onready var bolt_hud: Node2D = $BoltHud
-onready var gas_usage_idle: float = bolt_profile["gas_usage_idle"]
+
 onready var CollisionParticles: PackedScene = preload("res://game/bolt/fx/BoltCollisionParticles.tscn")
 onready var ExplodingBolt: PackedScene = preload("res://game/bolt/fx/ExplodingBolt.tscn")
 
@@ -51,15 +62,8 @@ onready var direction_line: Line2D = $DirectionLine
 var debug_trail_time: float = 0
 var debug_trail: Line2D
 
-# neu
-var velocity: Vector2 = Vector2.ZERO
-var gas_tank_size: float
-onready var motion_manager: Node = $MotionManager
-onready var engines: Node2D = get_node(bolt_engines_path)
-onready var equip_positions: Node2D = $EquipPositions
-onready var weapons: Node2D = $Weapons
-onready var equipment: Node2D = $Equipment
-var bolt_camera: Camera2D # spawner
+
+
 
 func _input(event: InputEvent) -> void:
 
@@ -75,13 +79,17 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = Pfs.z_indexes["bolts"]
 
-	bolt_type = driver_profile["bolt_type"]
-	ai_target_rank = bolt_profile["ai_target_rank"]
-	bolt_color = driver_profile["driver_color"] # bolt se obarva ...
-	chassis.get_node("BoltShape").modulate = bolt_color
-	height = bolt_profile["height"]
-	elevation = bolt_profile["elevation"]
-	gas_tank_size = bolt_profile["gas_tank_size"]
+	equip_positions.hide()
+
+	vehicle_type = driver_profile["bolt_type"]
+	ai_target_rank = vehicle_profile["ai_target_rank"]
+	vehicle_color = driver_profile["driver_color"] # vehicle se obarva ...
+	height = vehicle_profile["height"]
+	elevation = vehicle_profile["elevation"]
+	gas_tank_size = vehicle_profile["gas_tank_size"]
+	gas_usage = vehicle_profile["gas_usage"]
+	gas_usage_idle = vehicle_profile["gas_usage_idle"]
+	near_radius = get_node("NearArea/CollisionShape2D").shape.radius
 
 	_add_controller()
 	_add_motion_manager()
@@ -91,9 +99,8 @@ func _ready() -> void:
 	for weapon in weapons.get_children():
 		if equip_positions.positions_equiped.values().has(weapon):
 			weapon.connect("weapon_shot", self, "_update_weapon_stat")
-			bolt_controller.connect("weapon_triggered", weapon, "_on_weapon_triggered", [self])
+			controller.connect("weapon_triggered", weapon, "_on_weapon_triggered", [self])
 			weapon.setup(self)
-#			weapons_set.append(weapon)
 		else:
 			weapon.hide()
 
@@ -107,15 +114,9 @@ func _ready() -> void:
 
 	# AI ima skrit hud ... zaenkrat
 	if driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		bolt_hud.hide()
+		vehicle_hud.hide()
 	else:
-		bolt_hud.setup(self)
-
-	# debug
-#	if driver_index == 0:
-#		bolt_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
-#		bolt_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
-#		bolt_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")
+		vehicle_hud.setup(self)
 
 
 func _process(delta: float) -> void:
@@ -144,7 +145,7 @@ func _process(delta: float) -> void:
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
 	# print("power %s / " % motion_manager.current_engine_power, "force %s" % force)
 
-	bolt_body_state = state
+	body_state = state
 	velocity = state.get_linear_velocity() # tole je bol prej brez stejta
 
 	if is_active:
@@ -178,8 +179,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia)
-		if bolt_camera:
-			bolt_camera.shake_camera(bolt_camera.bullet_hit_shake)
+		if vehicle_camera:
+			vehicle_camera.shake_camera(vehicle_camera.bullet_hit_shake)
 
 	elif hit_by.is_in_group(Rfs.group_misiles):
 		var inertia_factor: float = 100
@@ -193,8 +194,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
-		if bolt_camera:
-			bolt_camera.shake_camera(bolt_camera.misile_hit_shake)
+		if vehicle_camera:
+			vehicle_camera.shake_camera(vehicle_camera.misile_hit_shake)
 		Rfs.sound_manager.play_sfx("bolt_explode")
 		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
@@ -202,13 +203,13 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var inertia_factor: float = 400000
 		var hit_by_power: float = inertia_factor
 		apply_torque_impulse(hit_by_power)
-		if bolt_camera:
-			bolt_camera.shake_camera(bolt_camera.misile_hit_shake)
+		if vehicle_camera:
+			vehicle_camera.shake_camera(vehicle_camera.misile_hit_shake)
 
 #	if inertIJA > jadajasdasd >>>> to dissaray
 
 
-func _destroy_bolt():
+func _destroy():
 
 	_explode()
 	motion_manager.motion = motion_manager.MOTION.IDLE
@@ -231,32 +232,32 @@ func _explode():
 	trail_source.decay()
 
 	visible = false
-	bolt_controller.set_process_input(false)
+	controller.set_process_input(false)
 	set_physics_process(false)
 	# resetira na revive
 
 	# spawn eksplozije
-	var new_exploding_bolt = ExplodingBolt.instance()
-	new_exploding_bolt.global_position = global_position
-	new_exploding_bolt.global_rotation = chassis.global_rotation
-	new_exploding_bolt.modulate.a = 1
-	new_exploding_bolt.velocity = velocity # podamo hitrost, da se premika s hitrostjo bolta
-	new_exploding_bolt.spawner_color = bolt_color
-	new_exploding_bolt.z_index = z_index + 1
-	Rfs.node_creation_parent.add_child(new_exploding_bolt)
+	var new_exploding_vehicle = ExplodingBolt.instance()
+	new_exploding_vehicle.global_position = global_position
+	new_exploding_vehicle.global_rotation = global_rotation
+	new_exploding_vehicle.modulate.a = 1
+	new_exploding_vehicle.velocity = velocity # podamo hitrost, da se premika s hitrostjo vehiclea
+	new_exploding_vehicle.spawner_color = vehicle_color
+	new_exploding_vehicle.z_index = z_index + 1
+	Rfs.node_creation_parent.add_child(new_exploding_vehicle)
 
-	if bolt_camera:
-		bolt_camera.shake_camera(bolt_camera.bolt_explosion_shake)
+	if vehicle_camera:
+		vehicle_camera.shake_camera(vehicle_camera.bolt_explosion_shake)
 
 
-func _revive_bolt():
+func _revive():
 
 	# reset pred prikazom
 	collision_shape.set_deferred("disabled", false)
 	#	collision_shape.disabled = false
 
 	self.is_active = true
-	bolt_controller.set_process_input(true)
+	controller.set_process_input(true)
 	set_physics_process(true)
 	visible = true
 
@@ -265,7 +266,7 @@ func _revive_bolt():
 
 
 func _reset():
-	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v bolt "v igri"
+	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v vehicle "v igri"
 
 	motion_manager.motion = motion_manager.MOTION.IDLE
 	front_mass.set_applied_force(Vector2.ZERO)
@@ -291,9 +292,9 @@ func drive_in(drive_in_time: float, drive_in_vector: Vector2):
 	var drive_in_finished_position: Vector2 = global_position
 	var drive_in_start_position: Vector2 = global_position + drive_in_vector
 	# premaknem ga nazaj in zapeljem do linije
-	bolt_body_state.transform.origin = drive_in_start_position
+	body_state.transform.origin = drive_in_start_position
 	var drive_in_tween = get_tree().create_tween()
-	drive_in_tween.tween_property(bolt_body_state, "transform:origin", drive_in_finished_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	drive_in_tween.tween_property(body_state, "transform:origin", drive_in_finished_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	yield(drive_in_tween, "finished")
 
 	collision_shape.set_deferred("disabled", false)
@@ -310,14 +311,14 @@ func drive_out(drive_out_time: float, drive_out_vector: Vector2):
 
 	var drive_out_tween = get_tree().create_tween()
 	# obrnem ga proti cilju in zapeljem do linije
-	#	drive_out_tween.tween_property(bolt_body_state, "transform:rotated", angle_to_vector, drive_out_time/5)
-	drive_out_tween.tween_property(bolt_body_state, "transform:origin", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
+	#	drive_out_tween.tween_property(body_state, "transform:rotated", angle_to_vector, drive_out_time/5)
+	drive_out_tween.tween_property(body_state, "transform:origin", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
 	yield(drive_out_tween, "finished")
 
 	engines.shutdown_engines()
 	modulate.a = 0
 	#	set_sleeping(true)
-	#	printt("drive out", is_sleeping(), bolt_controller.ai_target)
+	#	printt("drive out", is_sleeping(), controller.ai_target)
 	#	set_physics_process(false)
 	#	motion_manager.motion = motion_manager.MOTION.IDLE
 
@@ -344,7 +345,7 @@ func _spawn_shield():
 func pull_on_screen(pull_position: Vector2): # kliče GM
 
 	# disejblam koližne
-	bolt_controller.set_process_input(false)
+	controller.set_process_input(false)
 	collision_shape.set_deferred("disabled", true)
 
 	# reštartam trail
@@ -352,10 +353,10 @@ func pull_on_screen(pull_position: Vector2): # kliče GM
 
 	var pull_time: float = 0.2
 	var pull_tween = get_tree().create_tween()
-	pull_tween.tween_property(bolt_body_state, "transform:origin", pull_position, pull_time)#.set_ease(Tween.EASE_OUT)
+	pull_tween.tween_property(body_state, "transform:origin", pull_position, pull_time)#.set_ease(Tween.EASE_OUT)
 	yield(pull_tween, "finished")
 	collision_shape.set_deferred("disabled", false)
-	bolt_controller.set_process_input(true)
+	controller.set_process_input(true)
 
 	update_stat(Pfs.STATS.GAS, Sts.pull_gas_penalty)
 
@@ -363,7 +364,7 @@ func pull_on_screen(pull_position: Vector2): # kliče GM
 func screen_wrap(): # ne uporabljam
 
 	# kopirano iz tutoriala ---> https://www.youtube.com/watch?v=xsAyx2r1bQU
-	var xform = bolt_body_state.get_transform()
+	var xform = body_state.get_transform()
 	var screensize: Vector2 = get_viewport_rect().size
 	if xform.origin.x > screensize.x:
 		xform.origin.x = 0
@@ -375,7 +376,7 @@ func screen_wrap(): # ne uporabljam
 		xform.origin.y = screensize.y
 	if not is_active:
 		return
-	bolt_body_state.set_transform(xform)
+	body_state.set_transform(xform)
 
 
 func _change_activity(new_is_active: bool):
@@ -383,30 +384,28 @@ func _change_activity(new_is_active: bool):
 	if not new_is_active == is_active:
 		is_active = new_is_active
 		if is_active == true:
-			bolt_controller.set_process_input(true)
+			controller.set_process_input(true)
 			call_deferred("set_physics_process", true)
 			call_deferred("set_process", true)
 		else: # ga upočasnim v trenutni smeri
 			_reset()
-			bolt_controller.set_process_input(false)
+			controller.set_process_input(false)
 			# nočeš ga skos slišat, če je multiplejer
 			engines.shutdown_engines()
-#			Rfs.game_manager.on_bolt_activity_change()
 			call_deferred("set_physics_process", false)
 			call_deferred("set_process", false)
 
-#		Rfs.game_manager._on_bolt_activity_change(is_active)
-		emit_signal("bolt_activity_changed", self)
+		emit_signal("activity_changed", self)
 
 
 func _add_controller():
 
 	 # zbrišem placeholder
-	bolt_controller.queue_free()
+	controller.queue_free()
 
 	var BoltController: PackedScene# = drivers_controller_profile["controller_scene"]
 	if driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-#		bolt_controller.controller_type = -1
+#		controller.controller_type = -1
 		BoltController = Pfs.ai_profile["controller_scene"]
 	else:
 		var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
@@ -415,22 +414,22 @@ func _add_controller():
 	# opredelim controller sceno
 #	var BoltController: PackedScene = drivers_controller_profile["controller_scene"]
 
-	# spawn na vrh boltovega drevesa
-	bolt_controller = BoltController.instance()
-	bolt_controller.controlled_bolt = self
-	bolt_controller.bolt_motion_manager = motion_manager
+	# spawn na vrh vehicleovega drevesa
+	controller = BoltController.instance()
+	controller.controlled_bolt = self
+	controller.bolt_motion_manager = motion_manager
 	if not driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		bolt_controller.controller_type = driver_profile["controller_type"]
+		controller.controller_type = driver_profile["controller_type"]
 
-	call_deferred("add_child", bolt_controller)
-	call_deferred("move_child", bolt_controller, 0)
+	call_deferred("add_child", controller)
+	call_deferred("move_child", controller, 0)
 
 
 func _add_motion_manager():
 
-	var bolts_profile: Dictionary = Pfs.bolt_profiles[driver_profile["bolt_type"]]
-	var bolts_motion_manager_path = bolts_profile["motion_manager_path"]
-	motion_manager.set_script(bolts_motion_manager_path)
+	var vehicle_profile: Dictionary = Pfs.vechicle_profiles[driver_profile["bolt_type"]]
+	var motion_manager_path = vehicle_profile["motion_manager_path"]
+	motion_manager.set_script(motion_manager_path)
 	motion_manager.bolt = self
 #	motion_manager.set_process(false)
 #	yield(motion_manager, "ready")
@@ -456,7 +455,7 @@ func _update_weapon_stat(stat_key: int, change_value):
 
 	driver_stats[stat_key] += change_value # change_value je + ali -
 	#	update_stat(stat_key, change_value)
-	emit_signal("bolt_stat_changed", driver_index, stat_key, driver_stats[stat_key])
+	emit_signal("stat_changed", driver_index, stat_key, driver_stats[stat_key])
 
 
 func update_stat(stat_key: int, change_value):
@@ -470,8 +469,8 @@ func update_stat(stat_key: int, change_value):
 	if stat_key == Pfs.STATS.HEALTH:
 		driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
 		if driver_stats[Pfs.STATS.HEALTH] == 0:
-			_destroy_bolt()
-		return # poštima ga bolt hud
+			_destroy()
+		return # poštima ga vehicle hud
 
 	# gas
 	# če zmanjka bencina je deaktiviran
@@ -483,7 +482,7 @@ func update_stat(stat_key: int, change_value):
 	elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
 		gas_tank_size = driver_stats[Pfs.STATS.GAS]
 
-	emit_signal("bolt_stat_changed", driver_index, stat_key, driver_stats[stat_key])
+	emit_signal("stat_changed", driver_index, stat_key, driver_stats[stat_key])
 
 
 # SIGNALI ------------------------------------------------------------------------------------------------
@@ -491,10 +490,10 @@ func update_stat(stat_key: int, change_value):
 
 func _on_ReviveTimer_timeout() -> void:
 
-	_revive_bolt()
+	_revive()
 
 
-func _on_Bolt_body_entered(body: Node2D) -> void:
+func _on_Vehicle_body_entered(body: Node2D) -> void:
 
 	if not $Sounds/HitWall2.is_playing():
 		$Sounds/HitWall.play()
@@ -503,10 +502,10 @@ func _on_Bolt_body_entered(body: Node2D) -> void:
 	# odbojni partikli
 	if velocity.length() > pseudo_stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno
 		var new_collision_particles = CollisionParticles.instance()
-		new_collision_particles.position = bolt_body_state.get_contact_local_position(0)
-		new_collision_particles.rotation = bolt_body_state.get_contact_local_normal(0).angle() # rotacija partiklov glede na normalo površine
+		new_collision_particles.position = body_state.get_contact_local_position(0)
+		new_collision_particles.rotation = body_state.get_contact_local_normal(0).angle() # rotacija partiklov glede na normalo površine
 		new_collision_particles.amount = (velocity.length() + 15)/15 # količnik je korektor ... 15 dodam zato da amount ni nikoli nič
-		new_collision_particles.color = bolt_color
+		new_collision_particles.color = vehicle_color
 		new_collision_particles.set_emitting(true)
 		Rfs.node_creation_parent.add_child(new_collision_particles)
 
@@ -527,7 +526,7 @@ func _exit_tree() -> void:
 	##	active_trail.start_decay() # trail decay tween start
 
 	self.is_active = false # zazih
-	if bolt_camera:
-		if bolt_camera.follow_target == self:
-			bolt_camera.follow_target = null
+	if vehicle_camera:
+		if vehicle_camera.follow_target == self:
+			vehicle_camera.follow_target = null
 	trail_source.decay()

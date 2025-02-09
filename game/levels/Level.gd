@@ -46,6 +46,8 @@ func _ready() -> void:
 	for child in start_positions_node.get_children():
 		child.hide()
 
+func setup():
+
 	# camera limits
 	if camera_limits_rect_path:
 		 camera_limits_rect = get_node(camera_limits_rect_path)
@@ -79,6 +81,7 @@ func _ready() -> void:
 		_resize_to_level_size()
 
 		var camera_nodes: Array = [camera_limits_rect, start_camera_position_node, finish_camera_position_node]
+
 		emit_signal("level_is_set", curr_level_type, start_positions_node.get_children(), camera_nodes, navigation_cells_positions, level_goals)
 
 

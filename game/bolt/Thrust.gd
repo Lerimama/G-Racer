@@ -76,13 +76,13 @@ func spawn_new_trail():
 func update_trail():
 
 	# spawn trail if not active
-	if not active_trail and thrust_owner.bolt_velocity.length() > pseudo_stop_speed: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
+	if not active_trail and thrust_owner.velocity.length() > pseudo_stop_speed: # če ne dodam hitrosti, se mi v primeru trka ob steno začnejo noro množiti
 		active_trail = spawn_new_trail() # aktivira se ob spawnu
-	elif active_trail and thrust_owner.bolt_velocity.length() > pseudo_stop_speed:
+	elif active_trail and thrust_owner.velocity.length() > pseudo_stop_speed:
 		# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
 		active_trail.add_points(global_position)
 		active_trail.gradient.colors[1] = trail_pseudodecay_color
-		if thrust_owner.bolt_velocity.length() > pseudo_stop_speed and active_trail.modulate.a < bolt_trail_alpha:
+		if thrust_owner.velocity.length() > pseudo_stop_speed and active_trail.modulate.a < bolt_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem
 			var trail_grad = get_tree().create_tween()
 			trail_grad.tween_property(active_trail, "modulate:a", bolt_trail_alpha, 0.5)
@@ -91,7 +91,7 @@ func update_trail():
 			var trail_grad = get_tree().create_tween()
 			trail_grad.tween_property(active_trail, "modulate:a", 0, 0.5)
 	# če sem pri mirua deaktiviram trail ... ob ponovnem premiku se kreira nova
-	elif active_trail and thrust_owner.bolt_velocity.length() <= pseudo_stop_speed:
+	elif active_trail and thrust_owner.velocity.length() <= pseudo_stop_speed:
 		active_trail.start_decay() # trail decay tween start
 		active_trail = null # postane neaktivna, a je še vedno prisotna ... queue_free je šele na koncu decay tweena
 

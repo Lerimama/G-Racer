@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 		bolt.engines.manage_engines(self)
 
 	# debu3g
-	bolt.bolt_hud.rotation_label.text = MOTION.find_key(motion) + " > " + ROTATION_MOTION.find_key(rotation_motion)
+	bolt.vehicle_hud.rotation_label.text = MOTION.find_key(motion) + " > " + ROTATION_MOTION.find_key(rotation_motion)
 	var vector_to_target = force_on_bolt.normalized() * 0.5 * current_engine_power
 	vector_to_target = vector_to_target.rotated(- bolt.global_rotation)
 	bolt.direction_line.set_point_position(1, vector_to_target)

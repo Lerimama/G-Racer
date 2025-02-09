@@ -543,7 +543,7 @@ extends Node
 #
 #func _sort_trackers_by_speed(bolt_1, bolt_2): # temp ...  ne uporabljam# descn ... večji index je boljši
 #
-#	if bolt_1.bolt_velocity.length() > bolt_2.bolt_velocity.length():
+#	if bolt_1.velocity.length() > bolt_2.velocity.length():
 #	    return true
 #	return false
 #

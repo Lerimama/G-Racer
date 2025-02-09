@@ -68,7 +68,7 @@ func _process(delta: float) -> void:
 func _on_weapon_triggered(trigger_owner: Node2D):
 
 	if is_set:
-		var shooting_weapon: Node2D = trigger_owner.bolt_hud.selected_weapon
+		var shooting_weapon: Node2D = trigger_owner.vehicle_hud.selected_weapon
 		if shooting_weapon.weapon_type == weapon_type:
 			if ammo_count > 0 and weapon_reloaded:
 				_shoot(trigger_owner)
@@ -91,7 +91,7 @@ func _shoot(weapon_owner: Node2D):
 	new_ammo.global_position = shooting_position.global_position
 	new_ammo.global_rotation = shooting_position.global_rotation
 	new_ammo.spawner = weapon_owner
-	new_ammo.spawner_color = weapon_owner.bolt_color
+#	new_ammo.spawner_color = weapon_owner.bolt_color
 	if weapon_ammo == Pfs.AMMO.BULLET:
 		new_ammo.z_index = shooting_position.z_index + 1
 	else:

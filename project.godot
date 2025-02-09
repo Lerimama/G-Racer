@@ -209,6 +209,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://_zaloga ... ni v uporabi/Shocker.gd"
 }, {
+"base": "RigidBody2D",
+"class": "Vehicle",
+"language": "GDScript",
+"path": "res://game/vechicle/Vehicle.gd"
+}, {
 "base": "ImageTexture",
 "class": "VersatileAtlasTexture",
 "language": "GDScript",
@@ -260,6 +265,7 @@ _global_script_class_icons={
 "SS2D_Strings": "",
 "SS2D_VertexProperties": "",
 "Shocker": "",
+"Vehicle": "",
 "VersatileAtlasTexture": "res://addons/versatile_atlas/icon_x.svg",
 "Walker": ""
 }

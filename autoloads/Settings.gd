@@ -116,18 +116,15 @@ func _ready() -> void:
 		Pfs.driver_profiles = {}
 		all_bolts_on_screen_mode = false
 
-		for dr in drivers_on_game_start:
-#		for dr in drivers_on_game_start_count:
-			Pfs.driver_profiles[dr] = Pfs.default_driver_profile.duplicate()
-#			if dr == 0:
-#				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			if dr == 1:
-				Pfs.driver_profiles[dr]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-			if dr == 2:
-#				Pfs.driver_profiles[dr]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
-				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			#		printt("profile", Pfs.driver_profiles[driver_id])
-			#	print("drivers ", Sts.drivers_on_game_start)
+		for driver in drivers_on_game_start:
+			Pfs.driver_profiles[driver] = Pfs.default_driver_profile.duplicate()
+#			if driver == 0:
+#				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			if driver == 1:
+				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
+			if driver == 2:
+#				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
+				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 
 	if full_equip_mode:
 		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]

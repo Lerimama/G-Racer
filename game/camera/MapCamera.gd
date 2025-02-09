@@ -35,8 +35,8 @@ func _process(delta: float) -> void:
 #			position = follow_target.global_position
 #
 #			# zoom
-#			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.bolt_velocity == null:
-#				var follow_target_speed: float = abs(follow_target.bolt_velocity.length())
+#			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.velocity == null:
+#				var follow_target_speed: float = abs(follow_target.velocity.length())
 #				# če je nad min limit
 #				if follow_target_speed > min_zoom_target_speed:
 #					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)

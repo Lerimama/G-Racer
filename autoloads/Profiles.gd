@@ -136,15 +136,33 @@ var controller_profiles: Dictionary = {
 func bolt(): pass
 
 #enum BOLTS {SMALL, BASIC, BIG, TRUCK}
-enum BOLTS {BASIC, TRUCK}
-var bolt_profiles: Dictionary = {
-	BOLTS.BASIC: {
-		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
+enum VECHICLE {BOLT_BASIC, TRUCK}
+var vechicle_profiles: Dictionary = {
+	VECHICLE.BOLT_BASIC: {
+		"bolt_scene": preload("res://game/vechicle/Vechicle.tscn"),
 		"motion_manager_path": load("res://game/bolt/MotionManager_Basic.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
-		"idle_motion_gas_usage": -0.05, # per HSP?
+		"gas_usage_idle": -0.05, # per HSP?
+		"ai_target_rank": 5,
+		"on_hit_disabled_time": 2,
+		"gas_tank_size": 200, # liters
+		},
+	}
+
+
+enum BOLTS {BASIC, TRUCK}
+var bolt_profiles: Dictionary = {
+	BOLTS.BASIC: {
+		"bolt_scene": preload("res://game/vechicle/Vechicle.tscn"),
+#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
+#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
+		"motion_manager_path": load("res://game/bolt/MotionManager_Basic.gd"),
+		"height": 10,
+		"elevation": 7,
+		"gas_usage": -0.1, # per HSP?
+		"gas_usage_idle": -0.05, # per HSP?
 		"ai_target_rank": 5,
 		"on_hit_disabled_time": 2,
 		"gas_tank_size": 200, # liters
@@ -154,7 +172,7 @@ var bolt_profiles: Dictionary = {
 		"height": 30,
 		"elevation": 5,
 		"gas_usage": -0.1,
-		"idle_motion_gas_usage": -0.05,
+		"gas_usage_idle": -0.05,
 		"ai_target_rank": 11,
 		"on_hit_disabled_time": 2,
 		},
@@ -223,7 +241,7 @@ var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
 		"level_name": "xxx",
 		"level_desc": "jajsjdsjdj",
-		"level_path": "res://game/levels/Level.tscn",
+		"level_scene": preload("res://game/levels/Level.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
@@ -234,7 +252,7 @@ var level_profiles: Dictionary = {
 	LEVELS.FIRST_DRIVE: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
-		"level_path": "res://game/levels/LevelFirstDrive.tscn",
+		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"time_limit": 0,
 		"lap_limit": 0, # če so goalsi delajo isto kot čekpointi
@@ -245,7 +263,8 @@ var level_profiles: Dictionary = {
 	LEVELS.TRAINING: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
-		"level_path": "res://game/levels/LevelTraining.tscn",
+#		"level_path": "res://game/levels/LevelTraining.tscn",
+		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		"level_thumb": preload("res://home/thumb_level_training.tres"),
 		"time_limit": 0,
 		"lap_limit": 0,
@@ -255,7 +274,7 @@ var level_profiles: Dictionary = {
 	LEVELS.STAFF: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
-		"level_path": "res://game/levels/LevelStaff.tscn",
+		"level_scene": preload("res://game/levels/LevelStaff.tscn"),
 		"level_thumb": preload("res://home/thumb_level_mission.tres"),
 		"time_limit": 60,
 		"lap_limit": 1,

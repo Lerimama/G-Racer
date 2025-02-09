@@ -10,7 +10,7 @@ enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
 var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
-var controlled_bolt: Bolt
+var controlled_bolt: Node2D # temp ... Vechile class
 var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
 
 # navigacija
@@ -201,6 +201,7 @@ func _state_machine(delta: float):
 			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
 
 		AI_STATE.RACE_TO_GOAL: # šiba do cilja po najbližji poti
+			# _temp ... se zgodi manjko tarče ... setaj goal tarčo drugje kot zdaj
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				navigation_agent.set_target_location(ai_target.global_position)
 			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
@@ -222,7 +223,7 @@ func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
 	if wanted_speed == 0:
 		bolt_motion_manager.current_engine_power = 0
 	else:
-		var current_speed: float = controlled_bolt.bolt_body_state.get_linear_velocity().length()
+		var current_speed: float = controlled_bolt.body_state.get_linear_velocity().length()
 		if current_speed > wanted_speed:
 			bolt_motion_manager.current_engine_power = lerp(bolt_motion_manager.current_engine_power, 0, speed_change_rate)
 
@@ -243,9 +244,7 @@ func _update_vision():
 	var collision_distances: Array = []
 	var nowhere_to_go: bool = false
 
-
-	#	printt("---------")
-	vision_ray_center.cast_to.x = controlled_bolt.bolt_velocity.length() * breaking_distance_factor # zmeraj dolg kot je dolga hitrost
+	vision_ray_center.cast_to.x = controlled_bolt.velocity.length() * breaking_distance_factor # zmeraj dolg kot je dolga hitrost
 	if vision_ray_center.is_colliding():
 		# center preverja distanco
 		var distance_to_collision: float = vision_ray_center.global_position.distance_to(vision_ray_center.get_collision_point())
@@ -265,21 +264,21 @@ func _update_vision():
 		var rotation_adapt: float = 0
 		match max_collision_distance_index:
 			0: # center
-#				printt("going nowhere")
 				nowhere_to_go = true
-				braking_velocity = controlled_bolt.bolt_velocity * breaking_factor_keep
+				braking_velocity = controlled_bolt.velocity * breaking_factor_keep
 				# ... dodaš rikverc
 				#				max_collision_distance_position = vision_ray_left.get_collision_point()
 				max_collision_distance_position = controlled_bolt.global_position
+				#				printt("going nowhere")
 			1: # left
 				max_collision_distance_position = vision_ray_left.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
 				Mts.spawn_indikator(max_collision_distance_position, Color.pink)
-				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
+				braking_velocity = controlled_bolt.velocity * braking_power_factor
 				rotation_adapt = -1
 				#				printt("turning left")
 			2: # right
 				max_collision_distance_position = vision_ray_right.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
-				braking_velocity = controlled_bolt.bolt_velocity * braking_power_factor
+				braking_velocity = controlled_bolt.velocity * braking_power_factor
 				rotation_adapt = 1
 				Mts.spawn_indikator(max_collision_distance_position, Color.orange)
 				#				printerr("turning right")
@@ -300,7 +299,7 @@ func _change_ai_state(new_ai_state: int):
 			ai_target = null
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.IDLE
 		AI_STATE.RACE_TRACK:
-			ai_target = controlled_bolt.bolt_tracker
+			ai_target = controlled_bolt.tracker
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
 		AI_STATE.SEARCH:
 			search_target_reached = false
@@ -317,14 +316,24 @@ func _change_ai_state(new_ai_state: int):
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
 		AI_STATE.RACE_TO_GOAL:
 			ai_target = goals_to_reach[0]
-#			if not goals_to_reach.empty():
-#				ai_target = goals_to_reach[0]
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
-
 		AI_STATE.MOUSE_CLICK:
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
 
 	ai_state = new_ai_state
+
+
+func goal_reached(goal_reached: Node2D, extra_target: Node2D = null):
+
+	goals_to_reach.erase(goal_reached)
+
+	if extra_target: # level finish, ...
+		ai_target = extra_target
+	elif not goals_to_reach.empty():
+		ai_target = goals_to_reach.front()
+	else:
+		ai_target = null
+		self.ai_state = AI_STATE.OFF
 
 
 # HELPERS ----------------------------------------------------------------------------------------------
@@ -474,7 +483,7 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 				target_closeup_breaking_factor = breaking_factor_near
 		else:
 			bolt_motion_manager.current_engine_power = bolt_motion_manager.max_engine_power
-		braking_velocity = controlled_bolt.bolt_velocity * target_closeup_breaking_factor
+		braking_velocity = controlled_bolt.velocity * target_closeup_breaking_factor
 		controlled_bolt.set_linear_velocity(braking_velocity)
 	else:
 		# če izgubi pogled na tarčo, še zmeraj v tistem trenutku videl
@@ -502,7 +511,7 @@ func _on_game_state_change(new_game_state: bool, level_profile: Dictionary): # o
 	# level type
 	if new_game_state == true:
 		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
-			if controlled_bolt.bolt_tracker:
+			if controlled_bolt.tracker:
 				self.ai_state = AI_STATE.RACE_TRACK
 			elif not goals_to_reach.empty():
 				self.ai_state = AI_STATE.RACE_TO_GOAL
@@ -545,22 +554,8 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 
 	var new_position: Vector2= navigation_agent.get_next_location()
 	navigation_agent.set_target_location(new_position)
-	navigation_agent.set_velocity(controlled_bolt.bolt_velocity)
+	navigation_agent.set_velocity(controlled_bolt.velocity)
 
 	print("avoided")
 
 
-
-func on_goal_reached(goal_reached: Node2D, next_target: Node2D = null):
-#	print("goals_to_reach", goals_to_reach, ai_target)
-
-	goals_to_reach.erase(goal_reached)
-
-	if next_target: # level finish
-		ai_target = next_target
-	else:
-		if goals_to_reach.empty():
-			ai_target = null
-			self.ai_state = AI_STATE.OFF
-		else:
-			ai_target = goals_to_reach.front()

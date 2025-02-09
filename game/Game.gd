@@ -105,7 +105,7 @@ func _set_game():
 			playing_field_node.enable_playing_field(true, true) # z edgom
 	else:
 		for bolt in bolts_in_game:
-			bolt.bolt_camera.playing_field.enable_playing_field(false)
+			bolt.vehicle_camera.playing_field.enable_playing_field(false)
 
 	get_tree().set_group(Rfs.group_player_cameras, "follow_target", current_level.start_camera_position_node)
 
@@ -168,11 +168,10 @@ func _start_game():
 
 	game_on = true
 
-	emit_signal("game_state_changed", game_on, level_profile) #  poslušajo drajverji,  hud3 "signal dobijo"
-
+	for ai_bolt in get_tree().get_nodes_in_group(Rfs.group_ai):
+		ai_bolt.controller._on_game_state_change(game_on, level_profile)
 	for player_bolt in get_tree().get_nodes_in_group(Rfs.group_players):
-		player_bolt.bolt_camera.follow_target = bolts_in_game[bolts_in_game.find(player_bolt)]
-		printt("PLAYER", player_bolt.bolt_camera, player_bolt.bolt_camera.follow_target.name)
+		player_bolt.vehicle_camera.follow_target = bolts_in_game[bolts_in_game.find(player_bolt)]
 
 	# fast start
 	fast_start_window = true
@@ -308,14 +307,14 @@ func _update_ranking():
 			hud.update_bolt_level_stats(bolt.driver_index, Pfs.STATS.LEVEL_RANK, current_bolt_rank) # OPT prepogosto
 
 
-func _pull_bolt_on_field(bolt_to_pull: Bolt):
+func _pull_bolt_on_field(bolt_to_pull: Node2D): # temp ... Vechile class
 
 	if game_on and Sts.all_bolts_on_screen_mode:
 
 		if bolt_to_pull.is_active:
 
 			var bolt_pull_position: Vector2 = _get_bolt_pull_position(bolt_to_pull)
-			bolt_to_pull.call_deferred("pull_bolt_on_screen", bolt_pull_position)
+			bolt_to_pull.call_deferred("pull_on_screen", bolt_pull_position)
 
 			# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
 			var pulled_bolt_level_stats: Dictionary = level_stats[bolt_to_pull.driver_index]
@@ -329,7 +328,7 @@ func _pull_bolt_on_field(bolt_to_pull: Bolt):
 				pulled_bolt_level_stats[Pfs.STATS.GOALS_REACHED] = leader_bolt_level_stats[Pfs.STATS.GOALS_REACHED]
 
 
-func _get_bolt_pull_position(bolt_to_pull: Bolt):
+func _get_bolt_pull_position(bolt_to_pull: Node2D): # temp ... Vechile class
 	# na koncu izbrana pull pozicija:
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
@@ -338,8 +337,9 @@ func _get_bolt_pull_position(bolt_to_pull: Bolt):
 	if game_on:
 
 		# pull pozicija brez omejitev
-		var pull_position_distance_from_leader: float = 200 # pull razdalja od vodilnega plejerja
-		var pull_position_distance_from_leader_correction: float = bolt_to_pull.chassis.get_node("BoltScale").rect_size.x * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
+		var pull_position_distance_from_leader: float = bolt_to_pull.near_radius # pull razdalja od vodilnega plejerja
+#		var pull_position_distance_from_leader_correction: float = bolt_to_pull.near_area_radius.get_node("BoltScale").rect_size.x * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
+#		var pull_position_distance_from_leader_correction: float = bolt_to_pull.chassis.get_node("BoltScale").rect_size.x * 2 # 18 ... 20 # pull razdalja od vodilnega plejerja glede na index med trenutno pulanimi
 
 		var vector_to_leading_player: Vector2 = camera_leader.global_position - bolt_to_pull.global_position
 		var vector_to_pull_position: Vector2 = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
@@ -363,7 +363,7 @@ func _get_bolt_pull_position(bolt_to_pull: Bolt):
 						# če je pozicija zasedena
 						if current_pull_positions.has(cell_position):
 							var pull_pos_index: int = current_pull_positions.find(cell_position)
-							var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index * pull_position_distance_from_leader_correction
+							var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index
 							if cell_position.distance_to(camera_leader.global_position) > corrected_pull_position:
 								navigation_position_as_pull_position = cell_position
 						else: # če je poza zasedena dobim njen in dex med zasedenimi dodam korekcijo na zahtevani razdalji od vodilnega
@@ -379,11 +379,16 @@ func _get_bolt_pull_position(bolt_to_pull: Bolt):
 
 func _spawn_game_views():
 
+	# debug ... ai solo postane plejer
+	if get_tree().get_nodes_in_group(Rfs.group_players).empty():
+		get_tree().get_nodes_in_group(Rfs.group_ai)[0].add_to_group(Rfs.group_players)
+
 	# prvi view
 	active_game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
+
 	# prva kamera za vse plejerje
 	for player_bolt in get_tree().get_nodes_in_group(Rfs.group_players):
-		player_bolt.bolt_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
+		player_bolt.vehicle_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
 
 	if not Sts.all_bolts_on_screen_mode:
 
@@ -393,7 +398,7 @@ func _spawn_game_views():
 				var new_game_view: ViewportContainer = GameView.instance()
 				game_views_holder.add_child(new_game_view)
 				active_game_views[new_game_view] = player_bolt
-				player_bolt.bolt_camera = new_game_view.get_node("Viewport/GameCamera")
+				player_bolt.vehicle_camera = new_game_view.get_node("Viewport/GameCamera")
 
 		# viewport world
 		var world_to_inherit: World2D = active_game_views.keys()[0].get_node("Viewport").world_2d
@@ -449,49 +454,48 @@ func _spawn_game_views():
 				active_game_views.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
 
 
-func _spawn_level():
+func _spawn_level(scene = preload("res://game/levels/LevelFirstDrive.tscn")):
 
-	# level name (iz seznama levelov v igri)
-	var level_to_load_id: int = Sts.current_game_levels[current_level_index]
-#	var level_spawn_parent: Node = active_game_views.keys()[0].get_node("Viewport") # VP node
-	var level_spawn_parent: Node = game_views_holder.get_child(0).get_node("Viewport") # VP node
-
-	# level settings
-	level_profile = Pfs.level_profiles[level_to_load_id]
-	var level_to_load_path: String = level_profile["level_path"]
-
-	var level_z_index: int # z index v node drevesu
-	if not current_level == null: # če level že obstaja, ga najprej moram zbrisat
-		level_z_index = current_level.z_index
+	if current_level: # če level že obstaja, ga najprej moram zbrisat
 		current_level.set_physics_process(false)
-		current_level.free()
+		current_level.queue_free()
 
-	# spawn level
-	var NewLevel: PackedScene = ResourceLoader.load(level_to_load_path)
+	var new_level_key: int = Sts.current_game_levels[current_level_index]
+	level_profile = Pfs.level_profiles[new_level_key]
+
+	# spawn
+	var level_spawn_parent: Node = game_views_holder.get_child(0).get_node("Viewport") # VP node
+	var NewLevel: PackedScene = level_profile["level_scene"]
 	var new_level = NewLevel.instance()
-	new_level.z_index = level_z_index
-	new_level.connect( "level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	level_spawn_parent.add_child(new_level)
 	level_spawn_parent.move_child(new_level, 0)
 
-	current_level = new_level
-	# connect elements: start, finish, goals
-	for node_path in current_level.level_goals_paths:
-		current_level.get_node(node_path).connect("reached_by", self, "_on_bolt_reached_goal")
-		goals_to_reach.append(current_level.get_node(node_path))
+	# setup
+	new_level.connect("level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
+	for node_path in new_level.level_goals_paths:
+		new_level.get_node(node_path).connect("reached_by", self, "_on_bolt_reached_goal")
+		goals_to_reach.append(new_level.get_node(node_path))
+	if new_level.level_finish_path:
+		new_level.get_node(new_level.level_finish_path).connect("reached_by", self, "_on_finish_line_crossed")
 
-	if current_level.level_finish_path:
-		current_level.get_node(current_level.level_finish_path).connect("reached_by", self, "_on_finish_line_crossed")
+	new_level.setup()
+
+	current_level = new_level
 
 
 func _spawn_bolt(bolt_driver_index: int, spawned_position_index: int):
 
-	var bolt_type: int = Pfs.driver_profiles[bolt_driver_index]["bolt_type"]
+#	var bolt_type: int = Pfs.driver_profiles[bolt_driver_index]["bolt_type"]
+	var bolt_type: int = Pfs.VECHICLE.values()[0]
+
+
 	# debug ... ai spawn
 	var scene_name: String = "bolt_scene"
 #	if Pfs.driver_profiles[bolt_driver_index]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
 #		scene_name = "bolt_scene_ai"
 	var NewBoltInstance: PackedScene = Pfs.bolt_profiles[bolt_type][scene_name]
+#	if bolt_driver_index == 0:
+	NewBoltInstance = Pfs.vechicle_profiles[bolt_type][scene_name]
 
 	var new_bolt = NewBoltInstance.instance()
 	new_bolt.driver_index = bolt_driver_index
@@ -499,29 +503,29 @@ func _spawn_bolt(bolt_driver_index: int, spawned_position_index: int):
 	new_bolt.rotation_degrees = current_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_bolt.global_position = start_bolt_position_nodes[spawned_position_index].global_position
 
-	# profili ... iz njih podatke povleče sam na readi
+	# profili ... iz njih podatke povleče sam na ready
 	new_bolt.driver_profile = Pfs.driver_profiles[bolt_driver_index].duplicate()
 	new_bolt.driver_stats = Pfs.start_bolt_stats.duplicate()
-	new_bolt.bolt_profile = Pfs.bolt_profiles[bolt_type].duplicate()
-	# camera
-#	if Pfs.driver_profiles[bolt_driver_index]["driver_type"] == Pfs.DRIVER_TYPE.PLAYER:
-#	new_bolt.bolt_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[bolt_driver_index]
+#	if bolt_driver_index == 0:
+#		new_bolt.vehicle_profile = Pfs.vechicle_profiles[Pfs.VECHICLE.values()[0]].duplicate()
+#	else:
+	new_bolt.vehicle_profile = Pfs.vechicle_profiles[bolt_type].duplicate()
 
 	Rfs.node_creation_parent.add_child(new_bolt)
 
-	# AI
+	# ai navigation
 	if Pfs.driver_profiles[bolt_driver_index]["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		new_bolt.bolt_controller.level_navigation = current_level.level_navigation
-		self.connect("game_state_changed", new_bolt.bolt_controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
-
-	# race and goals
+		new_bolt.controller.level_navigation = current_level.level_navigation
+		self.connect("game_state_changed", new_bolt.controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
+	# trackers
 	if current_level.level_track:
-		new_bolt.bolt_tracker = current_level.level_track.set_new_bolt_tracker(new_bolt)
-	new_bolt.bolt_controller.goals_to_reach = level_profile["level_goals"].duplicate()
+		new_bolt.tracker = current_level.level_track.set_new_bolt_tracker(new_bolt)
+	# goals
+	new_bolt.controller.goals_to_reach = level_profile["level_goals"].duplicate()
 
 	# signali
-	new_bolt.connect("bolt_activity_changed", self, "_on_bolt_activity_change")
-	new_bolt.connect("bolt_stat_changed", hud, "_on_bolt_stat_changed")
+	new_bolt.connect("activity_changed", self, "_on_bolt_activity_change")
+	new_bolt.connect("stat_changed", hud, "_on_bolt_stat_changed")
 
 	# level stats
 	level_stats[bolt_driver_index] = Pfs.start_bolt_level_stats.duplicate()
@@ -599,7 +603,7 @@ func _sort_trackers_by_points(bolt_1, bolt_2):# desc
 
 func _sort_trackers_by_speed(bolt_1, bolt_2): # desc ... ne uporabljam
 
-	if bolt_1.bolt_velocity.length() > bolt_2.bolt_velocity.length():
+	if bolt_1.velocity.length() > bolt_2.velocity.length():
 	    return true
 	return false
 
@@ -620,43 +624,33 @@ func _change_camera_leader(new_camera_leader: Node2D):
 # SIGNALI ----------------------------------------------------------------------------------------------------
 
 
-func _on_bolt_reached_goal(goal_reached: Node, bolt_reaching: Bolt): # level poveže
+func _on_bolt_reached_goal(current_goal: Node, bolt_reaching: Node2D): # level poveže  # temp ... Vechile class
+	# reagirata bolt in igra
 
-	print ("reached")
 	if game_on:
-		# reagira bolt in vrne, če ima še kakšen cilj (šteje tudi finish)
-		var bolt_level_stats: Dictionary = level_stats[bolt_reaching.driver_index]
-		bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(goal_reached)
 
-		# če je bil na vrsti ga odštejem
-		if current_level.reach_goals_in_sequence:
-			if goal_reached == bolt_reaching.goals_to_reach[0]:
-				bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(goal_reached)
-		else:
-			bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(goal_reached)
+		# če je zaporedje, more bit goal enak prvemu v vrsti
+		if not current_level.reach_goals_in_sequence or current_goal == bolt_reaching.goals_to_reach[0]:
 
-		# finished?
-		var reached_goals_count: int = bolt_level_stats[Pfs.STATS.GOALS_REACHED].size()
-		# next goal
-		if reached_goals_count < level_profile["level_goals"].size():
-#			printt("next", current_level.level_finish)
-			bolt_reaching.bolt_controller.on_goal_reached(goal_reached)
-			Rfs.sound_manager.play_sfx("little_horn")
-		else:
-			# next target finish
-			if current_level.level_finish:
-#				print("to finish")
-				bolt_reaching.bolt_controller.on_goal_reached(goal_reached, current_level.level_finish)
+			# dodam med dosežene
+			var bolt_level_stats: Dictionary = level_stats[bolt_reaching.driver_index]
+			bolt_level_stats[Pfs.STATS.GOALS_REACHED].append(current_goal)
+
+			# next ...
+			var reached_goals_count: int = bolt_level_stats[Pfs.STATS.GOALS_REACHED].size()
+			if reached_goals_count < level_profile["level_goals"].size():
+				bolt_reaching.controller.goal_reached(current_goal)
 				Rfs.sound_manager.play_sfx("little_horn")
-			# finished
+			elif current_level.level_finish:
+				bolt_reaching.controller.goal_reached(current_goal, current_level.level_finish)
+				Rfs.sound_manager.play_sfx("little_horn")
 			else:
-#				print("finished")
-				bolt_reaching.bolt_controller.on_goal_reached(goal_reached)
+				bolt_reaching.controller.goal_reached(current_goal)
 				Rfs.sound_manager.play_sfx("finish_horn")
 				bolts_finished.append(bolt_reaching)
 
 
-func _on_finish_line_crossed(bolt_across: Bolt): # sproži finish line
+func _on_finish_line_crossed(bolt_across: Node2D): # sproži finish line  # temp ... Vechile class
 
 	if not game_on:
 		return
@@ -737,7 +731,7 @@ func _on_body_exited_playing_field(body: Node) -> void:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
 
-func _on_bolt_activity_change(changed_bolt: Bolt):
+func _on_bolt_activity_change(changed_bolt: Node2D): # temp ... Vechile class
 
 	# preverja, če je še kakšen player aktiven ... za GO
 	if changed_bolt.is_active == false:

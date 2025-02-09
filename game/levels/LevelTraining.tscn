@@ -14,7 +14,7 @@
 [ext_resource path="res://common/shader_rect/ShaderTextureRect.tscn" type="PackedScene" id=12]
 [ext_resource path="res://game/level/racing/BoltTracker.gd" type="Script" id=13]
 [ext_resource path="res://game/level/Checkpoint.tscn" type="PackedScene" id=14]
-[ext_resource path="res://game/levels/LevelStaff.gd" type="Script" id=15]
+[ext_resource path="res://game/levels/Level.gd" type="Script" id=15]
 [ext_resource path="res://game/level/racing/LevelTrack.gd" type="Script" id=16]
 [ext_resource path="res://game/level/terrain/surfaces/SurfaceGravel_SS2D.tscn" type="PackedScene" id=17]
 [ext_resource path="res://game/level/pickables/PickableNitro.tscn" type="PackedScene" id=18]
@@ -653,7 +653,7 @@ border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 
-[node name="LevelFirstDrive" type="Node2D"]
+[node name="LevelTraining" type="Node2D"]
 script = ExtResource( 15 )
 __meta__ = {
 "_edit_vertical_guides_": [ 4078.0 ],

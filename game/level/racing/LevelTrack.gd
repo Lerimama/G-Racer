@@ -8,7 +8,7 @@ onready var orig_bolt_tracker: PathFollow2D = $BoltTracker
 
 func set_new_bolt_tracker(bolt_to_follow: RigidBody2D):
 
-	var tracker_new_color: Color = bolt_to_follow.bolt_color
+	var tracker_new_color: Color = bolt_to_follow.vehicle_color
 	var new_tracker: PathFollow2D
 
 	if bolts_to_follow_count == 0: # pomeni, da je notri samo original in ni bil še dupliciran
