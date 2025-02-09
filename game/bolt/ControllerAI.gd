@@ -16,10 +16,8 @@ var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob sp
 # navigacija
 var ai_target: Node2D = null
 var ai_navigation_line: Line2D
-var level_navigation_positions: Array # poda GM ob spawnu
 onready var navigation_agent = $NavigationAgent2D
-onready var level_navigation_target_node: Position2D = Rfs.current_level.level_navigation.nav_position_target
-onready var level_navigation: NavigationPolygonInstance = Rfs.current_level.level_navigation
+var level_navigation: NavigationPolygonInstance # poda spawner
 
 # motion
 var ai_navigation_target_range: Array = [600, 800] # min dist 0 pomeni iskanje najbližja možna
@@ -307,7 +305,7 @@ func _change_ai_state(new_ai_state: int):
 		AI_STATE.SEARCH:
 			search_target_reached = false
 			scanning_ray.enabled = true
-			ai_target = level_navigation_target_node
+			ai_target = level_navigation.nav_position_target
 			var nav_position_target: Node2D = _get_nav_position_target(controlled_bolt.global_position, ai_navigation_target_range)
 			navigation_agent.set_target_location(ai_target.global_position)
 			bolt_motion_manager.motion = bolt_motion_manager.MOTION.FWD
@@ -370,7 +368,9 @@ func _get_better_targets(current_target: Node2D):
 
 func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
 
-	if level_navigation_positions.empty():
+	var level_navigation_points: Array = level_navigation.level_navigation_points
+
+	if level_navigation_points.empty():
 		return null
 
 	var selected_nav_position: Vector2 = Vector2.ZERO
@@ -387,7 +387,7 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 		var current_min_cell_distance: float = 0
 		var current_min_cell_angle: float = 0
 
-		for nav_position in level_navigation_positions:
+		for nav_position in level_navigation_points:
 			var current_cell_distance: float = nav_position.distance_to(from_position)
 			all_nav_pos_distances.append(current_cell_distance) # zaloga, če je ne najde na distanci
 			# najprej izbere vse na predpisani dolžini
@@ -419,12 +419,12 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 	# če ni našel primerne točke (ali je ni iskal, če je min_distance = 0)
 	if selected_nav_position == Vector2.ZERO:
 		var closest_position_index: int = all_nav_pos_distances.find_last(all_nav_pos_distances.min())
-		selected_nav_position = level_navigation_positions[closest_position_index]
+		selected_nav_position = level_navigation_points[closest_position_index]
 
-	# premik position nodeta
-	level_navigation_target_node.global_position = selected_nav_position
+	# nav target premaknem na željeno pozicijo
+	level_navigation.nav_position_target.global_position = selected_nav_position
 
-	return level_navigation_target_node
+	return level_navigation.nav_position_target
 
 
 func _get_tracking_position(position_tracker: PathFollow2D):

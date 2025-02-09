@@ -10,9 +10,8 @@ onready var field_area: Area2D = $FieldArea
 onready var field_edge_collision: CollisionPolygon2D = $FieldEdge/CollisionPolygon2D
 
 
-func _ready() -> void:
-
-	enable_playing_field(playing_field_enabled)
+#func _ready() -> void:
+#	enable_playing_field(playing_field_enabled)
 
 
 func _process(delta: float) -> void:

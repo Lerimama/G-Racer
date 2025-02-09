@@ -80,6 +80,12 @@ func _process(delta: float) -> void:
 #	pass
 #
 #
+
+#func setup():
+#
+#	_set_camera_limits()
+#
+
 func set_camera_limits():
 
 	var corner_TL: float

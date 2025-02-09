@@ -3,11 +3,11 @@ extends Node
 # global nodes
 var _debug_node = null  # za debug točno določenega nodeta
 var setup_layer = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
-var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
+#var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
 var node_creation_parent = null # NCP ... ven?
 var game_camera = null
 var game_manager = null
-var hud = null
+#var hud = null
 var sound_manager = null
 var data_manager = null
 var ultimate_popup = null
@@ -16,16 +16,17 @@ var game_over = null
 var level_completed = null
 
 # groups
-var group_players = "Players"
-var group_ai = "Ais"
-var group_bolts = "Bolts"
-var group_pickables = "Pickables"
-var group_shadows = "Shadows"
-var group_projectiles = "Projectiles"
-var group_misiles = "Misiles"
-var group_bullets = "Bullets"
-var group_mine = "Mine"
-var group_male = "Male"
+var group_players = "players"
+var group_ai = "ais"
+var group_bolts = "bolts"
+var group_pickables = "pickables"
+var group_shadows = "shadows"
+var group_projectiles = "projectiles"
+var group_misiles = "misiles"
+var group_bullets = "bullets"
+var group_mine = "mine"
+var group_male = "male"
+var group_player_cameras = "player_cameras"
 #var group_arena =  "Arena"
 #var group_tilemap = "Tilemap" # defender in patterns
 #var group_menu_confirm_btns = "Menu confirm btns"

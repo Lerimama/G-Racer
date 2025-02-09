@@ -1,6 +1,6 @@
 extends Camera2D
 
-
+var camera_player: Node2D
 var follow_target: Node setget _on_follow_target_change
 
 # shake izklopljen ... še vedno je v test ui-nodetu"
@@ -24,6 +24,7 @@ onready var setup_table: Control = $TestUI/SetupPanel/SetupTable
 
 func _ready():
 
+	add_to_group(Rfs.group_player_cameras)
 #	if Rfs.game_camera == null:
 	Rfs.game_camera = self
 	zoom = Vector2.ONE
@@ -38,7 +39,8 @@ func _ready():
 func _process(delta: float) -> void:
 
 
-	if Rfs.game_camera == self and not test_ui.test_view_on:
+#	if Rfs.game_camera == self and not test_ui.test_view_on:
+	if not test_ui.test_view_on:
 
 		# trojček, ki more bit, če ne je kamera zrcalna ... posledica implementacije šejka (dokler šejk ne bo v tem skriptu)
 		offset.x = 0
@@ -94,26 +96,36 @@ func shake_camera(shake_power: float):
 	pass
 
 
-func set_camera_limits():
+func setup(limits_rect: Control, camera_position: Vector2):
 
-	var corner_TL: float
-	var corner_TR: float
-	var corner_BL: float
-	var corner_BR: float
+	position = camera_position
+	if limits_rect:
+		_set_camera_limits(limits_rect)
+	else:
+		_release_camera_limits()
 
-	if Rfs.current_level.camera_limits_rect:
 
-		var limits_rectangle: Control = Rfs.current_level.camera_limits_rect
-		var limits_rectangle_position: Vector2 = limits_rectangle.rect_position
-		corner_TL = limits_rectangle.rect_position.x
-		corner_TR = limits_rectangle.rect_size.x
-		corner_BL = limits_rectangle.rect_position.y
-		corner_BR = limits_rectangle.rect_size.y
+func _set_camera_limits(limits_rectangle: Control):
 
-		if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR: # če so meje manjše od kamere
-			return
+	var corner_TL: float = limits_rectangle.rect_position.x
+	var corner_TR: float = limits_rectangle.rect_size.x
+	var corner_BL: float = limits_rectangle.rect_position.y
+	var corner_BR: float = limits_rectangle.rect_size.y
 
+	# če so meje manjše od kamere
+	if limit_left <= corner_TL and limit_right <= corner_TR and limit_top <= corner_BL and limit_bottom <= corner_BR:
+		pass
+	else:
 		limit_left = corner_TL
 		limit_right = corner_TR
 		limit_top = corner_BL
 		limit_bottom = corner_BR
+
+
+func _release_camera_limits():
+
+	limit_left = -10000000
+	limit_right = 10000000
+	limit_top = -10000000
+	limit_bottom = 10000000
+

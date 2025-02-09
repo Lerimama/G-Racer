@@ -59,7 +59,7 @@ onready var engines: Node2D = get_node(bolt_engines_path)
 onready var equip_positions: Node2D = $EquipPositions
 onready var weapons: Node2D = $Weapons
 onready var equipment: Node2D = $Equipment
-
+var bolt_camera: Camera2D # spawner
 
 func _input(event: InputEvent) -> void:
 
@@ -112,10 +112,10 @@ func _ready() -> void:
 		bolt_hud.setup(self)
 
 	# debug
-	if driver_index == 0:
-		Rfs.game_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
-		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
-		Rfs.game_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")
+#	if driver_index == 0:
+#		bolt_camera.setup_table.add_new_line_to_debug("angular_damp", self, "B")
+#		bolt_camera.setup_table.add_new_line_to_debug("linear_damp", rear_mass, "R")
+#		bolt_camera.setup_table.add_new_line_to_debug("linear_damp", front_mass, "R")
 
 
 func _process(delta: float) -> void:
@@ -178,7 +178,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia)
-		Rfs.game_camera.shake_camera(Rfs.game_camera.bullet_hit_shake)
+		if bolt_camera:
+			bolt_camera.shake_camera(bolt_camera.bullet_hit_shake)
 
 	elif hit_by.is_in_group(Rfs.group_misiles):
 		var inertia_factor: float = 100
@@ -192,7 +193,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
-		Rfs.game_camera.shake_camera(Rfs.game_camera.misile_hit_shake)
+		if bolt_camera:
+			bolt_camera.shake_camera(bolt_camera.misile_hit_shake)
 		Rfs.sound_manager.play_sfx("bolt_explode")
 		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
@@ -200,7 +202,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var inertia_factor: float = 400000
 		var hit_by_power: float = inertia_factor
 		apply_torque_impulse(hit_by_power)
-		Rfs.game_camera.shake_camera(Rfs.game_camera.misile_hit_shake)
+		if bolt_camera:
+			bolt_camera.shake_camera(bolt_camera.misile_hit_shake)
 
 #	if inertIJA > jadajasdasd >>>> to dissaray
 
@@ -242,7 +245,8 @@ func _explode():
 	new_exploding_bolt.z_index = z_index + 1
 	Rfs.node_creation_parent.add_child(new_exploding_bolt)
 
-	Rfs.game_camera.shake_camera(Rfs.game_camera.bolt_explosion_shake)
+	if bolt_camera:
+		bolt_camera.shake_camera(bolt_camera.bolt_explosion_shake)
 
 
 func _revive_bolt():
@@ -523,6 +527,7 @@ func _exit_tree() -> void:
 	##	active_trail.start_decay() # trail decay tween start
 
 	self.is_active = false # zazih
-	if Rfs.game_camera.follow_target == self:
-		Rfs.game_camera.follow_target = null
+	if bolt_camera:
+		if bolt_camera.follow_target == self:
+			bolt_camera.follow_target = null
 	trail_source.decay()

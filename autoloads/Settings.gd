@@ -96,10 +96,10 @@ func _ready() -> void:
 		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
 
 		fast_start_window_time = 1
-#		camera_zoom_range = [2, 2.3]
+		camera_zoom_range = [2, 2.3]
 #		camera_zoom_range = [1, 1]
 #		camera_zoom_range = [3, 3]
-		camera_zoom_range = [5, 5]
+#		camera_zoom_range = [5, 5]
 		start_countdown = false
 #		all_bolts_on_screen_mode = false
 		easy_mode = true
@@ -109,21 +109,23 @@ func _ready() -> void:
 
 #		drivers_on_game_start_count = 2
 		drivers_on_game_start = [
-			0#, 1, 2,
+			0, 1, 2,# 3,
 			]
 
 
 		Pfs.driver_profiles = {}
+		all_bolts_on_screen_mode = false
 
 		for dr in drivers_on_game_start:
 #		for dr in drivers_on_game_start_count:
 			Pfs.driver_profiles[dr] = Pfs.default_driver_profile.duplicate()
-			if dr == 0:
-				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
-#			if dr == 1:
-#				Pfs.driver_profiles[dr]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-#			if dr == 2:
+#			if dr == 0:
 #				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			if dr == 1:
+				Pfs.driver_profiles[dr]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
+			if dr == 2:
+#				Pfs.driver_profiles[dr]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
+				Pfs.driver_profiles[dr]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			#		printt("profile", Pfs.driver_profiles[driver_id])
 			#	print("drivers ", Sts.drivers_on_game_start)
 

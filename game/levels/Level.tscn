@@ -88,6 +88,7 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
+camera_limits_rect_path = NodePath("CameraLimits")
 level_finish_path = NodePath("Tracking/LevelFinish")
 level_track_path = NodePath("Tracking/LevelTrack")
 

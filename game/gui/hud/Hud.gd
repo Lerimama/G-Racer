@@ -16,13 +16,11 @@ onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn"
 func _ready() -> void:
 #	print("HUD")
 
-	Rfs.hud = self
-
 	# skrij vse statboxe, ki se prikažejo, če je spawnan bolt
 	for box in statboxes:
 		box.hide()
 
-	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
+#	Rfs.game_manager.connect("bolt_spawned", self, "_set_bolt_statbox") # signal pride iz GM in pošlje spremenjeno statistiko
 
 
 func setup(level_profile: Dictionary): # kliče GM
@@ -86,7 +84,7 @@ func _hide_stats():
 	record_lap_label.hide()
 
 
-func _set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary):
+func set_bolt_statbox(spawned_bolt: Node2D, bolts_level_stats: Dictionary): # kliče GM
 
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
 	var spawned_driver_statbox: Control = statboxes[spawned_bolt.driver_index]

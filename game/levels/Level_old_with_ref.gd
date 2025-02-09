@@ -1,5 +1,5 @@
 extends Node2D
-class_name Level
+#class_name Level
 
 signal level_is_set(navigation, spawn_positions, other_)
 
@@ -41,8 +41,8 @@ func _ready() -> void:
 	$__Labels.hide()
 	$__WorldMeters.hide()
 
+	Rfs.current_level = self # zaenkrat samo zaradi pozicij ... lahko bi bolje
 	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
-
 	for child in start_positions_node.get_children():
 		child.hide()
 
@@ -78,8 +78,8 @@ func _ready() -> void:
 		navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
 		_resize_to_level_size()
 
-		var camera_nodes: Array = [camera_limits_rect, start_camera_position_node, finish_camera_position_node]
-		emit_signal("level_is_set", curr_level_type, start_positions_node.get_children(), camera_nodes, navigation_cells_positions, level_goals)
+		var camera_position_nodes: Array = [start_camera_position_node, finish_camera_position_node]
+		emit_signal("level_is_set", curr_level_type, start_positions_node.get_children(), camera_position_nodes, navigation_cells_positions, level_goals)
 
 
 func _set_level_objects():

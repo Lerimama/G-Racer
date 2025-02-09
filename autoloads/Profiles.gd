@@ -229,7 +229,7 @@ var level_profiles: Dictionary = {
 		"lap_limit": 0,
 		# določeno ob spawnu
 		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"goals": [],
+		"level_goals": [],
 		},
 	LEVELS.FIRST_DRIVE: {
 		"level_name": "xxx",
@@ -240,7 +240,7 @@ var level_profiles: Dictionary = {
 		"lap_limit": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
 		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"goals": [],
+		"level_goals": [],
 		},
 	LEVELS.TRAINING: {
 		"level_name": "xxx",
@@ -250,7 +250,7 @@ var level_profiles: Dictionary = {
 		"time_limit": 0,
 		"lap_limit": 0,
 		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"goals": [],
+		"level_goals": [],
 		},
 	LEVELS.STAFF: {
 		"level_name": "xxx",
@@ -260,7 +260,7 @@ var level_profiles: Dictionary = {
 		"time_limit": 60,
 		"lap_limit": 1,
 		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"goals": [],
+		"level_goals": [],
 		},
 }
 
