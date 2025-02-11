@@ -1,5 +1,6 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
+[ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=1]
 [ext_resource path="res://common/tex/circo_8.png" type="Texture" id=2]
 
 [sub_resource type="CanvasItemMaterial" id=126]
@@ -103,6 +104,8 @@ format = 1
 stereo = true
 
 [node name="MisileHit" type="Node2D"]
+script = ExtResource( 1 )
+fx_timing_nodepath = NodePath("MisileExplode")
 
 [node name="SmokeParticles" type="Particles2D" parent="."]
 material = SubResource( 126 )

@@ -1,0 +1,103 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://assets/materials/fx/weapon_smoke_particles_material.tres" type="Material" id=1]
+[ext_resource path="res://game/weapons/WeaponAI.gd" type="Script" id=2]
+[ext_resource path="res://game/equipment/Equipment.gd" type="Script" id=3]
+[ext_resource path="res://assets/materials/fx/weapon_fire_particles_material.tres" type="Material" id=4]
+[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=6]
+
+[sub_resource type="CanvasItemMaterial" id=5267]
+
+[sub_resource type="CanvasItemMaterial" id=5277]
+
+[sub_resource type="Animation" id=5276]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("WeaponSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5275]
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("WeaponSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.06, 0.12, 0.18 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -3, -1 ), Vector2( 0, 0 ), Vector2( -3, 1 ) ]
+}
+
+[node name="Equipment" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="ShapePoly" type="Polygon2D" parent="."]
+modulate = Color( 1, 0.411765, 0.411765, 1 )
+polygon = PoolVector2Array( 16, -8, -16, -8, -16, 8, 16, 8 )
+
+[node name="FxPosition" type="Position2D" parent="."]
+position = Vector2( -16, 0 )
+__meta__ = {
+"_gizmo_extents_": 6.0
+}
+
+[node name="WeaponSprite" type="Node2D" parent="."]
+
+[node name="FireParticles" type="Particles2D" parent="WeaponSprite"]
+show_behind_parent = true
+material = SubResource( 5267 )
+position = Vector2( -16, 0 )
+rotation = -3.14159
+emitting = false
+amount = 5
+lifetime = 0.1
+randomness = 1.0
+process_material = ExtResource( 4 )
+texture = ExtResource( 6 )
+
+[node name="FireCoverParticles" type="Particles2D" parent="WeaponSprite"]
+modulate = Color( 1, 1, 1, 0.427451 )
+material = SubResource( 5267 )
+position = Vector2( 32, 0 )
+rotation = -3.14159
+emitting = false
+amount = 5
+lifetime = 0.1
+randomness = 1.0
+process_material = ExtResource( 4 )
+texture = ExtResource( 6 )
+
+[node name="SmokeParticles" type="Particles2D" parent="WeaponSprite"]
+material = SubResource( 5277 )
+position = Vector2( 33, -1 )
+emitting = false
+amount = 20
+lifetime = 2.0
+randomness = 1.0
+process_material = ExtResource( 1 )
+texture = ExtResource( 6 )
+
+[node name="ReloadTimer" type="Timer" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 5276 )
+anims/shooting_motion = SubResource( 5275 )
+
+[node name="WeaponAI" type="RayCast2D" parent="."]
+cast_to = Vector2( 100, 0 )
+script = ExtResource( 2 )
+
+[connection signal="timeout" from="ReloadTimer" to="." method="_on_ReloadTimer_timeout"]

@@ -4,7 +4,7 @@ var camera_player: Node2D
 var follow_target: Node setget _on_follow_target_change
 
 # shake izklopljen ... še vedno je v test ui-nodetu"
-var bolt_explosion_shake = 0
+var agent_explosion_shake = 0
 var bullet_hit_shake = 0.02
 var misile_hit_shake = 0.05
 
@@ -21,11 +21,13 @@ onready var test_ui = $TestUI
 onready var playing_field: Node2D = $PlayingField
 onready var setup_table: Control = $TestUI/SetupPanel/SetupTable
 
+onready var indikator: Sprite = $indikator
 
 func _ready():
 
 	add_to_group(Rfs.group_player_cameras)
 #	if Rfs.game_camera == null:
+
 	Rfs.game_camera = self
 	zoom = Vector2.ONE
 
@@ -38,14 +40,15 @@ func _ready():
 
 func _process(delta: float) -> void:
 
-
-#	if Rfs.game_camera == self and not test_ui.test_view_on:
 	if not test_ui.test_view_on:
 
 		# trojček, ki more bit, če ne je kamera zrcalna ... posledica implementacije šejka (dokler šejk ne bo v tem skriptu)
 		offset.x = 0
 		offset.y = 0
 		rotation_degrees = 0
+
+		if not is_instance_valid(follow_target):
+			follow_target = null
 
 		if follow_target:
 
@@ -57,7 +60,7 @@ func _process(delta: float) -> void:
 			position = follow_target.global_position + dynamic_offset
 
 			# zoom ... dinamic
-			if follow_target.is_in_group(Rfs.group_bolts) and not follow_target.velocity == Vector2.ZERO:
+			if follow_target.is_in_group(Rfs.group_agents) and not follow_target.velocity == Vector2.ZERO:
 				# samo, če je nad minimumom limit
 				if follow_target.velocity.length() > min_zoom_target_speed:
 					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
@@ -69,18 +72,18 @@ func _process(delta: float) -> void:
 			else:
 				zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
 
-		# default zoom ... lerp za mehkobo prehodov
-		zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
-		zoom.x = clamp(zoom.x, camera_zoom_range[0], camera_zoom_range[1])
-		zoom.y = zoom.x
+			# default zoom ... lerp za mehkobo prehodov
+			zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
+			zoom.x = clamp(zoom.x, camera_zoom_range[0], camera_zoom_range[1])
+			zoom.y = zoom.x
 
 
 func _on_follow_target_change(new_follow_target: Node):
 
-	if new_follow_target and not new_follow_target == follow_target:
+	if not new_follow_target == follow_target:
 		#		print ("change camera target")
 		#		smoothing_enabled = false
-		##		if new_follow_target.is_in_group(Rfs.group_bolts):# or Rfs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
+		##		if new_follow_target.is_in_group(Rfs.group_agents):# or Rfs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
 		#		var transition_tween = get_tree().create_tween()
 		##			transition_tween.tween_property(self, "position", new_follow_target.position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 		#		transition_tween.tween_property(self, "position", follow_target.global_position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)

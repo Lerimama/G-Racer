@@ -14,7 +14,7 @@ var z_indexes: Dictionary = {
 	# indexi so delno poštimani tudi v nodetih levela
 	# ref "background": -10,
 	"ground": 0, # streets, surfaces
-	"bolts": 1,
+	"agents": 1,
 	# TUDU
 	"pickables": 1, # v levelu
 	"breakers": 1,
@@ -39,14 +39,14 @@ enum STATS {
 		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
 		}
 
-var start_bolt_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
+var start_gent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
 	STATS.BEST_LAP_TIME: 0,
 	STATS.LAPS_FINISHED: [], # časi
 	STATS.GOALS_REACHED: [], # nodeti
 }
-var start_bolt_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+var start_agent_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.WINS : 2,
 	STATS.LIFE : 5,
 	STATS.CASH: 0,
@@ -74,7 +74,7 @@ var default_driver_profile: Dictionary = {
 	"driver_avatar": preload("res://home/avatar_david.tres"),
 	"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
-	"bolt_type": BOLTS.BASIC,
+	"agent_type": AGENT.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
 }
 
@@ -84,10 +84,11 @@ var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
-	"controller_scene": preload("res://game/bolt/ControllerAI.tscn"),
+	"controller_scene": preload("res://game/agent/ControllerAI.tscn"),
 	"ai_avatar": preload("res://home/avatar_ai.tres"),
 	"ai_type": AI_TYPE.DEFAULT,
 	"ai_name": "STEINY",
+	"random_start_range": "", # še na nodu
 }
 
 
@@ -100,7 +101,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p1_right",
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
-		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
+		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
 		},
 	CONTROLLER_TYPE.WASD : {
 		fwd_action = "p2_fwd",
@@ -109,7 +110,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p2_right",
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
-		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
+		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP1 : {
 		fwd_action = "jp1_fwd",
@@ -118,7 +119,7 @@ var controller_profiles: Dictionary = {
 		right_action = "jp1_right",
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
-		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
+		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP2 : {
 		fwd_action = "jp2_fwd",
@@ -127,20 +128,19 @@ var controller_profiles: Dictionary = {
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
-		"controller_scene": preload("res://game/bolt/ControllerPlayer.tscn"),
+		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
 	},
 }
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
-func bolt(): pass
+func agents(): pass
 
-#enum BOLTS {SMALL, BASIC, BIG, TRUCK}
-enum VECHICLE {BOLT_BASIC, TRUCK}
-var vechicle_profiles: Dictionary = {
-	VECHICLE.BOLT_BASIC: {
-		"bolt_scene": preload("res://game/vechicle/Vechicle.tscn"),
-		"motion_manager_path": load("res://game/bolt/MotionManager_Basic.gd"),
+enum AGENT {BASIC, TRUCK}
+var agent_profiles: Dictionary = {
+	AGENT.BASIC: {
+		"agent_scene": preload("res://game/agent/Agent.tscn"),
+		"motion_manager_path": load("res://game/agent/MotionManager_Basic.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
@@ -148,36 +148,9 @@ var vechicle_profiles: Dictionary = {
 		"ai_target_rank": 5,
 		"on_hit_disabled_time": 2,
 		"gas_tank_size": 200, # liters
+		"group_weapons_by_type": "",
 		},
 	}
-
-
-enum BOLTS {BASIC, TRUCK}
-var bolt_profiles: Dictionary = {
-	BOLTS.BASIC: {
-		"bolt_scene": preload("res://game/vechicle/Vechicle.tscn"),
-#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-#		"bolt_scene": preload("res://game/bolt/Bolt.tscn"),
-		"motion_manager_path": load("res://game/bolt/MotionManager_Basic.gd"),
-		"height": 10,
-		"elevation": 7,
-		"gas_usage": -0.1, # per HSP?
-		"gas_usage_idle": -0.05, # per HSP?
-		"ai_target_rank": 5,
-		"on_hit_disabled_time": 2,
-		"gas_tank_size": 200, # liters
-		},
-	BOLTS.TRUCK: {
-		"bolt_scene": preload("res://game/bolt/Vechicle.tscn"),
-		"height": 30,
-		"elevation": 5,
-		"gas_usage": -0.1,
-		"gas_usage_idle": -0.05,
-		"ai_target_rank": 11,
-		"on_hit_disabled_time": 2,
-		},
-}
-
 
 # ---------------------------------------------------------------------------------------------------------------------------
 func equipment(): pass
@@ -200,7 +173,9 @@ var equipment_profiles : Dictionary = {
 # ---------------------------------------------------------------------------------------------------------------------------
 func weapons(): pass
 
-#enum WEAPONS {GUN, TURRET, LOUNCHER, MINA}
+var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
+
+
 enum AMMO {BULLET, MISILE, MINA, SMALL} # kot v orožjih
 
 var ammo_profiles : Dictionary = {

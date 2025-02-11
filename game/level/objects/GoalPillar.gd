@@ -7,7 +7,7 @@ export var height: float = 100
 export var elevation: float = 10
 
 var turned_on: bool = false
-var bolts_in_goal_area: Array = []
+var agents_in_goal_area: Array = []
 
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
@@ -21,25 +21,25 @@ func _ready() -> void:
 	light_poly.color = Rfs.color_red
 
 
-func goal_reached(bolt: Node):
+func goal_reached(agent: Node):
 
-	emit_signal("reached_by", self, bolt)
+	emit_signal("reached_by", self, agent)
 
 	if not turned_on:
 		turned_on = true
 		light_poly.color = Rfs.color_green
-		bolt.update_stat(Pfs.STATS.POINTS, reward_points)
+		agent.update_stat(Pfs.STATS.POINTS, reward_points)
 		$AnimationPlayer.play("edge_rotate")
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_bolts):
-		bolts_in_goal_area.append(body)
+	if body.is_in_group(Rfs.group_agents):
+		agents_in_goal_area.append(body)
 
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
-	if bolts_in_goal_area.has(body):
-		bolts_in_goal_area.erase(body)
+	if agents_in_goal_area.has(body):
+		agents_in_goal_area.erase(body)
 		goal_reached(body)

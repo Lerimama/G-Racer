@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://game/camera/camera_shake_noise.tres" type="OpenSimplexNoise" id=1]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://common/debug/SetupPanel.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/camera/PlayingField.gd" type="Script" id=6]
 [ext_resource path="res://game/gui/hud/FpsCounter.gd" type="Script" id=7]
+[ext_resource path="res://common/debug/DebugIndikator.tscn" type="PackedScene" id=8]
 
 [sub_resource type="RectangleShape2D" id=780]
 extents = Vector2( 1280, 720.5 )
@@ -19,6 +20,7 @@ noise = ExtResource( 1 )
 [node name="Camera" type="Camera2D"]
 rotation = 3.14159
 rotating = true
+current = true
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 smoothing_enabled = true
@@ -34,6 +36,11 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 1440.0 ],
 "_edit_vertical_guides_": [ 2560.0 ]
 }
+
+[node name="__indikator" parent="." instance=ExtResource( 8 )]
+visible = false
+position = Vector2( 0, 0 )
+scale = Vector2( 100, 100 )
 
 [node name="PlayingField" type="Node2D" parent="."]
 z_index = 11

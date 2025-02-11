@@ -6,7 +6,7 @@ export var icon_texture: AtlasTexture  # ta se uporabi na vseh ikona
 var stat_value: int setget _on_stat_change
 var previous_stat_value: int # preverjam smer spremembe lajfa
 
-var def_stat_color: Color = Rfs.color_hud_base setget _on_bolt_color_set
+var def_stat_color: Color = Rfs.color_hud_base setget _on_agent_color_set
 
 onready var stat_icon: Control = $StatIcon
 onready var stat_icons: Array = get_children()
@@ -57,7 +57,7 @@ func set_icons_state():
 			icon.get_node("OffIcon").hide()
 
 
-func _on_bolt_color_set(bolt_color):
+func _on_agent_color_set(agent_color):
 
-	def_stat_color = bolt_color
+	def_stat_color = agent_color
 	modulate = def_stat_color

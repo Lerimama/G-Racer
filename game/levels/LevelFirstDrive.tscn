@@ -1522,7 +1522,6 @@ __meta__ = {
 - sky > 10"
 }
 level_track_path = NodePath("")
-level_goals_paths = [ NodePath("PickableBullet"), NodePath("PickableBullet2"), NodePath("PickableBullet3") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0

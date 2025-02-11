@@ -50,7 +50,8 @@ func split_spiderweb(polygon_points: PoolVector2Array, origin_point_index: int =
 
 	# vzamem najdaljšega od outline robov, ki prestavlja kratek rob
 	var polygon_edges: Array = get_outline_segments_by_length(polygon_points)
-	var shortest_edge: Vector2 = polygon_edges[polygon_edges.size() - 1]
+#	var shortest_edge: Vector2 = polygon_edges[polygon_edges.size() - 1]
+	var shortest_edge: Vector2 = polygon_edges[- 1]
 	var shortest_edge_length: float = shortest_edge.length()
 
 	# potem ga primerjam z najdaljšim robom cvetov
@@ -665,12 +666,14 @@ func get_polygon_far_points(polygon_points: PoolVector2Array):
 	# x
 	points_to_sort.sort_custom(self, "sort_vectors_by_x")
 	var far_right_point: Vector2 = points_to_sort[0]
-	var far_left_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
+#	var far_left_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
+	var far_left_point: Vector2 = points_to_sort[- 1]
 
 	# Y
 	points_to_sort.sort_custom(self, "sort_vectors_by_y")
 	var far_down_point: Vector2 = points_to_sort[0]
-	var far_up_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
+#	var far_up_point: Vector2 = points_to_sort[points_to_sort.size() - 1]
+	var far_up_point: Vector2 = points_to_sort[- 1]
 
 	var far_points: Array = [far_left_point, far_up_point, far_right_point, far_down_point]
 

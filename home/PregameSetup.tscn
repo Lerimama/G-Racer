@@ -210,20 +210,20 @@ size_flags_horizontal = 3
 custom_constants/separation = 40
 alignment = 1
 
-[node name="Bolts" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties"]
+[node name="Agents" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties"]
 margin_left = 923.0
 margin_right = 1057.0
 margin_bottom = 82.0
 size_flags_horizontal = 4
 
-[node name="Label" type="Label" parent="BoxContainer/PlayerBox/Content/Properties/Bolts"]
+[node name="Label" type="Label" parent="BoxContainer/PlayerBox/Content/Properties/Agents"]
 margin_right = 134.0
 margin_bottom = 39.0
 custom_fonts/font = ExtResource( 5 )
 text = "Bolt type"
 align = 1
 
-[node name="Types" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties/Bolts"]
+[node name="Types" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties/Agents"]
 margin_top = 43.0
 margin_right = 134.0
 margin_bottom = 82.0
@@ -232,7 +232,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Bolt" type="Button" parent="BoxContainer/PlayerBox/Content/Properties/Bolts/Types"]
+[node name="Bolt" type="Button" parent="BoxContainer/PlayerBox/Content/Properties/Agents/Types"]
 margin_right = 134.0
 margin_bottom = 39.0
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )

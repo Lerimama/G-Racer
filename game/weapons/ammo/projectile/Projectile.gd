@@ -45,8 +45,8 @@ func _ready() -> void:
 	if spawner:
 		vision_ray.add_exception(spawner)
 
-	_spawn_fx(shoot_fx, Rfs.node_creation_parent)
-	_spawn_fx(flight_fx, Rfs.node_creation_parent)
+	_spawn_fx(shoot_fx, true, Rfs.node_creation_parent)
+	_spawn_fx(flight_fx, false, Rfs.node_creation_parent)
 
 	elevation = spawner.elevation + elevation
 
@@ -81,7 +81,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 func _explode(collision_position: Vector2, collision_normal: Vector2):
 
-	_spawn_fx(hit_fx, Rfs.node_creation_parent, collision_position, deg2rad(180) + collision_normal.angle()) # 180 dodatek omogča, da ni na vertikalah naroben kot
+	_spawn_fx(hit_fx, true, Rfs.node_creation_parent, collision_position, deg2rad(180) + collision_normal.angle()) # 180 dodatek omogča, da ni na vertikalah naroben kot
 
 	if new_trail and not new_trail.in_decay:
 		new_trail.start_decay(collision_position)
@@ -100,7 +100,7 @@ func _dissarm():
 		new_drop_tween.tween_property(self, "scale", scale * 0.5, 0.7).set_ease(Tween.EASE_IN)#.set_trans(Tween.TRANS_CIRC)
 		yield(new_drop_tween, "finished")
 
-		_spawn_fx(dissarm_fx, Rfs.node_creation_parent, dissarm_position.global_position)
+		_spawn_fx(dissarm_fx, true, Rfs.node_creation_parent, dissarm_position.global_position)
 
 		queue_free()
 
@@ -108,28 +108,28 @@ func _dissarm():
 			new_trail.start_decay()
 
 
-func _spawn_fx(fx_array: Array, spawn_parent: Node2D = self, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
+func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D = self, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
 
 	var spawned_fx: Array = []
 
 	for fx in fx_array:
 		var new_fx = fx.instance()
+
 		if new_fx is AudioStreamPlayer:
+			# spawn
 			add_child(new_fx)
+			# connect
+			if not self_destruct:
+				new_fx.connect("finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
 		else:
+			# spawn
 			new_fx.global_position = fx_pos
 			new_fx.global_rotation = fx_rot
 			spawn_parent.add_child(new_fx)
-
-			# štarta če je kaj za štartat
-			for fx_child in new_fx.get_children():
-				if fx_child is Particles2D or fx_child is CPUParticles2D:
-					fx_child.emitting = true
-				if fx_child is AnimationPlayer: # prva animacija
-					if "animation_player" in fx: # preverim, da je "vklopljen"
-						fx_child.play(fx_child.get_animation_list()[0])
-				if fx_child is AnimatedSprite:
-					fx_child.playing = true
+			new_fx.start(self_destruct) # znotraj urejeno
+			# connect
+			if not self_destruct:
+				new_fx.connect("fx_finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
 
 		spawned_fx.append(new_fx)
 

@@ -6,15 +6,18 @@
 monitoring = false
 monitorable = false
 script = ExtResource( 1 )
+hit_damage = 0.002
 
 [node name="ShapePoly" type="Polygon2D" parent="."]
-position = Vector2( -112, 0 )
+position = Vector2( -108, 0 )
 color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 120, -40, 128, -48, 120, -56, 80, -56, 80, 56, 120, 56, 128, 48, 120, 40, 128, 32, 120, 24, 128, 16, 120, 8, 128, 0, 120, -8, 128, -16, 120, -24, 128, -32 )
+polygon = PoolVector2Array( 112, -40, 120, -48, 112, -56, 80, -56, 80, 56, 112, 56, 120, 48, 112, 40, 120, 32, 112, 24, 120, 16, 112, 8, 120, 0, 112, -8, 120, -16, 112, -24, 120, -32 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-position = Vector2( 5, 0 )
-polygon = PoolVector2Array( 11, -48, 11, 48, 3, 56, -37, 56, -37, -56, 3, -56 )
+visible = false
+position = Vector2( 9, 0 )
+polygon = PoolVector2Array( 3, -48, 3, 48, -5, 56, -37, 56, -37, -56, -5, -56 )
 disabled = true
 
 [connection signal="body_entered" from="." to="." method="_on_Mala_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_Mala_body_exited"]

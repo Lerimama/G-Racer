@@ -12,8 +12,7 @@ onready var controllers_node: VBoxContainer = $Content/Properties/Controllers/Ty
 onready var line_edit: LineEdit = $Content/LineEdit
 onready var transform_btn: Button = $Content/Menu/TransformBtn
 onready var remove_btn: Button = $Content/Menu/RemoveBtn
-onready var bolts_node: VBoxContainer = $Content/Properties/Bolts/Types
-#onready var avatar: TextureRect = $Content/Avatar
+onready var agents_node: VBoxContainer = $Content/Properties/Agents/Types
 onready var color_rect: ColorRect = $Content/ColorRect
 onready var avatar_btn: TextureButton = $Content/AvatarBtn
 
@@ -61,7 +60,7 @@ func _set_driver_box():
 		remove_btn.show()
 
 	_set_driver_controller()
-	_set_driver_bolt()
+	_set_driver_agent()
 
 
 func _set_driver_controller():
@@ -89,17 +88,17 @@ func _set_driver_controller():
 				new_btn.hide()
 
 
-func _set_driver_bolt():
+func _set_driver_agent():
 
-	var btn_template: Button = Mts.remove_chidren_and_get_template(bolts_node.get_children())
+	var btn_template: Button = Mts.remove_chidren_and_get_template(agents_node.get_children())
 
-	for bolt_type in Pfs.BOLTS.values():
+	for agent_type in Pfs.AGENT.values():
 		var new_btn: Button = btn_template.duplicate()
-		new_btn.text = Pfs.BOLTS.keys()[bolt_type]
-		bolts_node.add_child(new_btn)
-		new_btn.connect("pressed", self, "_on_bolt_btn_pressed", [new_btn])
+		new_btn.text = Pfs.AGENT.keys()[agent_type]
+		agents_node.add_child(new_btn)
+		new_btn.connect("pressed", self, "_on_agent_btn_pressed", [new_btn])
 
-		if not driver_profile["bolt_type"] == bolt_type:
+		if not driver_profile["agent_type"] == agent_type:
 			new_btn.hide()
 
 		if is_ai:
@@ -123,15 +122,15 @@ func _on_controller_btn_pressed(btn: Button):
 
 
 
-func _on_bolt_btn_pressed(btn: Button):
+func _on_agent_btn_pressed(btn: Button):
 
-	var next_btn_index: int = bolts_node.get_children().find(btn) + 1
-	if next_btn_index > bolts_node.get_child_count() - 1:
+	var next_btn_index: int = agents_node.get_children().find(btn) + 1
+	if next_btn_index > agents_node.get_child_count() - 1:
 		next_btn_index = 0
 
-	bolts_node.get_child(next_btn_index).show()
-	driver_profile["bolt_type"] = next_btn_index
-	bolts_node.get_child(next_btn_index).grab_focus()
+	agents_node.get_child(next_btn_index).show()
+	driver_profile["agent_type"] = next_btn_index
+	agents_node.get_child(next_btn_index).grab_focus()
 	btn.hide()
 
 

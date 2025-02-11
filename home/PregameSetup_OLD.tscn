@@ -8,8 +8,8 @@
 [ext_resource path="res://assets/design/truckhunt_kv.png" type="Texture" id=6]
 [ext_resource path="res://home/ExtraMenu.gd" type="Script" id=7]
 [ext_resource path="res://home/PregameSetup_OLD.gd" type="Script" id=8]
-[ext_resource path="res://home/PlayersMenu.gd" type="Script" id=9]
-[ext_resource path="res://home/PlayerPopup.gd" type="Script" id=10]
+[ext_resource path="res://_obs/PlayersMenu.gd" type="Script" id=9]
+[ext_resource path="res://_obs/PlayerPopup.gd" type="Script" id=10]
 [ext_resource path="res://assets/theme/fonts/button_big.tres" type="DynamicFont" id=11]
 [ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=12]
 

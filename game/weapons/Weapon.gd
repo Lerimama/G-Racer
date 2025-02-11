@@ -3,7 +3,7 @@ extends Node2D
 
 signal weapon_shot
 
-enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER}
+enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER, MALA}
 enum WEAPON_AMMO {BULLET, MISILE, MINA, SMALL} # kot v profilih
 
 export (WEAPON_TYPE) var weapon_type: int = 0
@@ -11,8 +11,9 @@ export (WEAPON_AMMO) var weapon_ammo: int = 0 # 0 = AMMO.BULLET
 export var fx_enabled: bool = true
 export var ai_enabled: bool = false # spawner lahko povozi
 
+var is_set: bool = false
 var weapon_reloaded: bool = true
-var ammo_count: int = 0 # napolnems strani bolta ali igre
+var ammo_count: int = 0 # napolnems strani agenta ali igre
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -26,10 +27,8 @@ onready var weapon_ai: RayCast2D = $WeaponAI
 var ammo_stat_key: int
 var AmmoScene: PackedScene
 var reload_time: float
-var weapon_owner_stats: Dictionary
+var weapon_owner: Node2D
 var power_usage: float = 0 # še ni implementirano
-
-var is_set: bool = false
 
 
 func _ready() -> void:
@@ -41,14 +40,14 @@ func _ready() -> void:
 	fire_cover_particles.emitting = false
 
 
-func setup(weapon_owner: Node2D, with_ai: bool = ai_enabled): # kliče bolt
+func setup(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče agent
 
-	weapon_owner_stats = weapon_owner.driver_stats
+	weapon_owner = owner_node
 
 	reload_time = Pfs.ammo_profiles[weapon_ammo]["reload_time"]
 	AmmoScene = Pfs.ammo_profiles[weapon_ammo]["scene"]
 	ammo_stat_key = Pfs.ammo_profiles[weapon_ammo]["stat_key"]
-	ammo_count = weapon_owner_stats[ammo_stat_key]
+	ammo_count = weapon_owner.driver_stats[ammo_stat_key]
 
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
@@ -62,19 +61,17 @@ func setup(weapon_owner: Node2D, with_ai: bool = ai_enabled): # kliče bolt
 func _process(delta: float) -> void:
 
 	if is_set:
-		ammo_count = weapon_owner_stats[ammo_stat_key]
+		ammo_count = weapon_owner.driver_stats[ammo_stat_key]
 
 
-func _on_weapon_triggered(trigger_owner: Node2D):
+func _on_weapon_triggered():
 
 	if is_set:
-		var shooting_weapon: Node2D = trigger_owner.vehicle_hud.selected_weapon
-		if shooting_weapon.weapon_type == weapon_type:
-			if ammo_count > 0 and weapon_reloaded:
-				_shoot(trigger_owner)
+		if ammo_count > 0 and weapon_reloaded:
+			_shoot()
 
 
-func _shoot(weapon_owner: Node2D):
+func _shoot():
 
 	if fx_enabled:
 		smoke_particles.one_shot = true
@@ -91,7 +88,6 @@ func _shoot(weapon_owner: Node2D):
 	new_ammo.global_position = shooting_position.global_position
 	new_ammo.global_rotation = shooting_position.global_rotation
 	new_ammo.spawner = weapon_owner
-#	new_ammo.spawner_color = weapon_owner.bolt_color
 	if weapon_ammo == Pfs.AMMO.BULLET:
 		new_ammo.z_index = shooting_position.z_index + 1
 	else:

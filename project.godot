@@ -10,9 +10,9 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "RigidBody2D",
-"class": "Bolt",
+"class": "Agent",
 "language": "GDScript",
-"path": "res://game/bolt/Bolt.gd"
+"path": "res://game/agent/Agent.gd"
 }, {
 "base": "ColorRect",
 "class": "ColorTile",
@@ -30,6 +30,16 @@ _global_script_classes=[ {
 "path": "res://addons/color-palette/utilities/FlexGridContainer.gd"
 }, {
 "base": "Node2D",
+"class": "Game",
+"language": "GDScript",
+"path": "res://game/Game.gd"
+}, {
+"base": "Control",
+"class": "Hud",
+"language": "GDScript",
+"path": "res://game/gui/hud/Hud.gd"
+}, {
+"base": "Node2D",
 "class": "Level",
 "language": "GDScript",
 "path": "res://game/levels/Level.gd"
@@ -37,7 +47,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "MotionManager",
 "language": "GDScript",
-"path": "res://game/bolt/MotionManager.gd"
+"path": "res://game/agent/MotionManager.gd"
 }, {
 "base": "Node",
 "class": "Operator",
@@ -62,7 +72,7 @@ _global_script_classes=[ {
 "base": "Resource",
 "class": "PlayerData",
 "language": "GDScript",
-"path": "res://PlayerData.gd"
+"path": "res://_data/PlayerData.gd"
 }, {
 "base": "RigidBody2D",
 "class": "Projectile",
@@ -209,11 +219,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://_zaloga ... ni v uporabi/Shocker.gd"
 }, {
-"base": "RigidBody2D",
-"class": "Vehicle",
-"language": "GDScript",
-"path": "res://game/vechicle/Vehicle.gd"
-}, {
 "base": "ImageTexture",
 "class": "VersatileAtlasTexture",
 "language": "GDScript",
@@ -225,10 +230,12 @@ _global_script_classes=[ {
 "path": "res://_zaloga ... ni v uporabi/Walker.gd"
 } ]
 _global_script_class_icons={
-"Bolt": "",
+"Agent": "",
 "ColorTile": "",
 "Colorblindness": "res://addons/paulloz.colorblindness/colorblindness.svg",
 "FlexGridContainer": "res://addons/color-palette/utilities/FlexGridContainerIcon.png",
+"Game": "",
+"Hud": "",
 "Level": "",
 "MotionManager": "",
 "Operator": "",
@@ -265,7 +272,6 @@ _global_script_class_icons={
 "SS2D_Strings": "",
 "SS2D_VertexProperties": "",
 "Shocker": "",
-"Vehicle": "",
 "VersatileAtlasTexture": "res://addons/versatile_atlas/icon_x.svg",
 "Walker": ""
 }

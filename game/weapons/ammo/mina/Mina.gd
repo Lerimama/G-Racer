@@ -34,7 +34,7 @@ func _ready() -> void:
 
 	add_to_group(Rfs.group_mine)
 
-	_spawn_fx(shoot_fx, Rfs.node_creation_parent)
+	_spawn_fx(shoot_fx, true, Rfs.node_creation_parent)
 
 	drop_direction = -transform.x # rikverc na osi x
 
@@ -62,7 +62,7 @@ func _activate():
 
 func _explode():
 
-	_spawn_fx(hit_fx)
+	_spawn_fx(hit_fx, true, Rfs.node_creation_parent)
 	queue_free()
 
 
@@ -70,36 +70,28 @@ func _dissarm():
 	pass
 
 
-func _spawn_fx(fx_array: Array, spawn_parent: Node2D = null, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
-	# tale je bolj moderna od funkcije v ostalih orožjih
+func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D = self, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
 
 	var spawned_fx: Array = []
 
 	for fx in fx_array:
 		var new_fx = fx.instance()
+
 		if new_fx is AudioStreamPlayer:
-			# spawn parent ...  bo drugače, ko bodo efekti pvoezani s signali
-			if spawn_parent:
-				spawn_parent.add_child(new_fx)
-			else:
-				add_child(new_fx)
+			# spawn
+			add_child(new_fx)
+			# connect
+			if not self_destruct:
+				new_fx.connect("finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
 		else:
+			# spawn
 			new_fx.global_position = fx_pos
 			new_fx.global_rotation = fx_rot
-			# spawn parent
-			if spawn_parent:
-				spawn_parent.add_child(new_fx)
-			else:
-				Rfs.node_creation_parent.add_child(new_fx)
-			# štarta če je kaj za štartat
-			for fx_child in new_fx.get_children():
-				if fx_child is Particles2D or fx_child is CPUParticles2D:
-					fx_child.emitting = true
-				elif fx_child is AnimationPlayer: # prva animacija
-					if "animation_player" in fx: # preverim, da je "vklopljen"
-						fx_child.play(fx_child.get_animation_list()[0])
-				elif fx_child is AnimatedSprite:
-					fx_child.playing = true
+			spawn_parent.add_child(new_fx)
+			new_fx.start(self_destruct) # znotraj urejeno
+			# connect
+			if not self_destruct:
+				new_fx.connect("fx_finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
 
 		spawned_fx.append(new_fx)
 
@@ -125,6 +117,6 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 		drop_direction = Vector2.ZERO
 
 		if body.has_method("on_hit"):
-			_spawn_fx(detect_fx, Rfs.node_creation_parent)
+			_spawn_fx(detect_fx, true, Rfs.node_creation_parent)
 			_explode()
 			body.on_hit(self, global_position)

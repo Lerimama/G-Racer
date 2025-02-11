@@ -25,7 +25,7 @@ func _ready() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_bolts):
+	if body.is_in_group(Rfs.group_agents):
 		animation_player.play("outro")
 		body.update_stat(Pfs.STATS.POINTS, reward_points)
 		#		print("ghost - manipulate eng power")

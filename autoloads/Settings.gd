@@ -5,7 +5,7 @@ var game_camera_zoom_factor: float = 0.25 # resolucija igre je 4 krat manjša 25
 var camera_shake_on: bool =  true
 var get_it_time: float = 2
 
-# game units ... ferrari je 4500 mm bolt pa 225px
+# game units ... ferrari je 4500 mm agent pa 225px
 var kg_per_unit_mass = 10
 var px_per_unit_meter = 50
 var mm_per_32_grid_unit: float = 640 # grid enotra je 32px, 1 px je 2 cm
@@ -39,7 +39,7 @@ var default_game_settings: Dictionary = { # setano za dirkanje
 	#	"game_shadows_alpha": 0.4, # odvisna od moči svetlobe
 	#	# camera
 	#	"camera_zoom_range": [1, 1.5],
-	#	"all_bolts_on_screen_mode": true,
+	#	"all_agents_on_screen_mode": true,
 	#
 	#	# WORLD PARAMS ... za poenoetenje fizikalnih interakcij s svetom
 	#	"reality_engine_power_factor": 1000, # engine power je 300 namesto 300000
@@ -59,7 +59,7 @@ var easy_mode: bool = false
 var full_equip_mode: bool = false
 var full_equip_value: int = 100
 var camera_zoom_range: Array = [1, 1.5]
-var all_bolts_on_screen_mode: bool = true
+var all_agents_on_screen_mode: bool = true
 # driving
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
@@ -97,11 +97,12 @@ func _ready() -> void:
 
 		fast_start_window_time = 1
 		camera_zoom_range = [2, 2.3]
+		camera_zoom_range = [1, 5]
 #		camera_zoom_range = [1, 1]
 #		camera_zoom_range = [3, 3]
 #		camera_zoom_range = [5, 5]
 		start_countdown = false
-#		all_bolts_on_screen_mode = false
+#		all_agents_on_screen_mode = false
 		easy_mode = true
 #		full_equip_mode = true
 		enemies_mode = true
@@ -114,7 +115,7 @@ func _ready() -> void:
 
 
 		Pfs.driver_profiles = {}
-		all_bolts_on_screen_mode = false
+		all_agents_on_screen_mode = false
 
 		for driver in drivers_on_game_start:
 			Pfs.driver_profiles[driver] = Pfs.default_driver_profile.duplicate()
@@ -127,9 +128,9 @@ func _ready() -> void:
 				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 
 	if full_equip_mode:
-		Pfs.start_bolt_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]
-		Pfs.start_bolt_stats[Pfs.STATS.MISILE_COUNT] = default_game_settings["full_equip_value"]
-		Pfs.start_bolt_stats[Pfs.STATS.MINA_COUNT] = default_game_settings["full_equip_value"]
+		Pfs.start_agent_stats[Pfs.STATS.BULLET_COUNT] = default_game_settings["full_equip_value"]
+		Pfs.start_agent_stats[Pfs.STATS.MISILE_COUNT] = default_game_settings["full_equip_value"]
+		Pfs.start_agent_stats[Pfs.STATS.MINA_COUNT] = default_game_settings["full_equip_value"]
 
 	set_game_settings_per_level()
 

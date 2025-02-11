@@ -18,7 +18,7 @@ var level_completed = null
 # groups
 var group_players = "players"
 var group_ai = "ais"
-var group_bolts = "bolts"
+var group_agents = "agents"
 var group_pickables = "pickables"
 var group_shadows = "shadows"
 var group_projectiles = "projectiles"

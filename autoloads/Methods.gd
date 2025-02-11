@@ -316,14 +316,14 @@ func detect_collision_in_direction(direction_to_check: Vector2, raycast_node: Ra
 
 
 
-func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja biltin funkcija
-
-	if str(object_to_check) == "[Deleted Object]": # anti home_out nek toggle btn
-		print ("Object in deletion: ", object_to_check, " > [Deleted Object]")
-		return true
-	else:
-		printt ("Object OK ... not in deletion: ", object_to_check)
-		return false
+#func check_object_for_deletion(object_to_check: Node): # za tole pomoje obstaja biltin funkcija
+#
+#	if str(object_to_check) == "[Deleted Object]": # anti home_out nek toggle btn
+#		print ("Object in deletion: ", object_to_check, " > [Deleted Object]")
+#		return true
+#	else:
+#		printt ("Object OK ... not in deletion: ", object_to_check)
+#		return false
 
 
 

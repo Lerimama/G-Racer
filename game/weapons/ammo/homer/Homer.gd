@@ -35,7 +35,6 @@ var wiggle_freq: float = 0.6
 var dissarm_speed_drop: float = 3 # notri je to v kvadratni funkciji
 
 var is_active: bool = false
-var homming_target_position: Vector2
 var collision: KinematicCollision2D
 var misile_time: float = 0 # čas za domet
 var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
@@ -49,6 +48,10 @@ onready var collision_shape: CollisionShape2D = $MisileCollision
 onready var vision_ray: RayCast2D = $VisionRay
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
+# neu homer
+var homming_target_position: Vector2
+var homming_target: Node2D = null
+
 
 func _ready() -> void:
 
@@ -58,8 +61,8 @@ func _ready() -> void:
 
 	elevation = spawner.elevation + elevation
 
-	_spawn_fx(shoot_fx, Rfs.node_creation_parent)
-	_spawn_fx(flight_fx, Rfs.node_creation_parent)
+	_spawn_fx(shoot_fx, true, Rfs.node_creation_parent)
+	_spawn_fx(flight_fx, false, Rfs.node_creation_parent)
 
 	# set movement
 	var random_range = rand_range(direction_start_range.x,direction_start_range.y) # oblika variable zato, da isto rotiramo tudi misilo
@@ -100,13 +103,18 @@ func _physics_process(delta: float) -> void:
 			_dissarm()
 
 	# sledenje
-	if is_homming == true:
-		direction = lerp(direction, global_position.direction_to(homming_target_position), 0.1)
-		rotation = global_position.direction_to(homming_target_position).angle()
+	if not is_instance_valid(homming_target):
+		homming_target = null
+
+	if homming_target:
+		direction = lerp(direction, global_position.direction_to(homming_target.global_position), 0.1)
+		rotation = global_position.direction_to(homming_target.global_position).angle()
+		#	if is_homming == true:
+		#		direction = lerp(direction, global_position.direction_to(homming_target_position), 0.1)
+		#		rotation = global_position.direction_to(homming_target_position).angle()
 
 		if homming_area.monitoring:
-			homming_area.set_deferred("monitoring", false)
-			# Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
+			homming_area.set_deferred("monitoring", false) # Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
 		else:
 			homming_area.set_deferred("monitoring", true)
 
@@ -144,7 +152,7 @@ func _dissarm():
 		#		$Sounds/MisileFlight.stop()
 
 		# drop particles
-		_spawn_fx(dissarm_fx, Rfs.node_creation_parent, dissarm_position.global_position)
+		_spawn_fx(dissarm_fx, true, Rfs.node_creation_parent, dissarm_position.global_position)
 
 		queue_free()
 
@@ -157,45 +165,49 @@ func _explode():
 	if new_trail and not new_trail.in_decay:
 		new_trail.start_decay()
 
-	_spawn_fx(hit_fx, Rfs.node_creation_parent, hit_position.global_position)
+	_spawn_fx(hit_fx, true, Rfs.node_creation_parent, hit_position.global_position)
 
 	queue_free()
 
 
-func _spawn_fx(fx_array: Array, spawn_parent: Node2D = self, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
+func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D = self, fx_pos: Vector2 = global_position, fx_rot: float = global_rotation):
 
 	var spawned_fx: Array = []
 
 	for fx in fx_array:
 		var new_fx = fx.instance()
+
 		if new_fx is AudioStreamPlayer:
+			# spawn
 			add_child(new_fx)
+			# connect
+			if not self_destruct:
+				new_fx.connect("finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
 		else:
+			# spawn
 			new_fx.global_position = fx_pos
 			new_fx.global_rotation = fx_rot
 			spawn_parent.add_child(new_fx)
-
-			# štarta če je kaj za štartat
-			for fx_child in new_fx.get_children():
-				if fx_child is Particles2D or fx_child is CPUParticles2D:
-					fx_child.emitting = true
-				if fx_child is AnimationPlayer: # prva animacija
-					if "animation_player" in fx: # preverim, da je "vklopljen"
-						fx_child.play(fx_child.get_animation_list()[0])
-				if fx_child is AnimatedSprite:
-					fx_child.playing = true
+			new_fx.start(self_destruct) # znotraj urejeno
+			# connect
+			if not self_destruct:
+				new_fx.connect("fx_finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
 
 		spawned_fx.append(new_fx)
 
 
+
 func _on_HommingArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_bolts) and body != spawner:
+	if body.is_in_group(Rfs.group_agents) and body != spawner:
 
-		if not is_homming:
-			_spawn_fx(homming_fx, Rfs.node_creation_parent)
-		is_homming = true
-		homming_target_position = body.global_position
+		if homming_target == null:
+			_spawn_fx(homming_fx, false, Rfs.node_creation_parent)
+			homming_target = body
+			#		if not is_homming:
+			#			_spawn_fx(homming_fx, Rfs.node_creation_parent)
+			#		is_homming = true
+			#		homming_target_position = body.global_position
 
 
 func _exit_tree() -> void:

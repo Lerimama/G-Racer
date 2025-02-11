@@ -46,7 +46,7 @@ func _process(delta: float) -> void:
 			ray_angle += delta * ray_rotating_speed
 			var target_in_reach: Node2D = Mts.get_raycast_collision_on_rotation(self, Vector2.RIGHT.rotated(ray_angle), aim_distance)
 			if target_in_reach:
-				if target_in_reach.is_in_group(Rfs.group_bolts) or target_in_reach.is_in_group(Rfs.group_ai):
+				if target_in_reach.is_in_group(Rfs.group_agents) or target_in_reach.is_in_group(Rfs.group_ai):
 					available_targets[target_in_reach] = global_position.distance_to(target_in_reach.global_position)
 			# nov krog
 			if ray_angle >= deg2rad(360):
@@ -58,7 +58,7 @@ func _process(delta: float) -> void:
 
 		# sledenje izbrani tarči
 		if aiming_on_target:
-			if aim_target:
+			if aim_target and is_instance_valid(aim_target):
 				var angle_to_target: float = global_position.angle_to_point(aim_target.global_position) - deg2rad(180)
 				ai_weapon.global_rotation = lerp_angle(ai_weapon.global_rotation, angle_to_target, turret_rotating_speed * delta)
 			else:

@@ -8,7 +8,7 @@ export var off_color: Color = Color.yellow
 export var on_color: Color = Color.green
 
 var turned_on: bool = false
-var bolts_in_light_area: Array = []
+var agents_in_light_area: Array = []
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var reward_points: float = Pfs.level_object_profiles[level_object_key]["value"]
@@ -23,18 +23,18 @@ func _ready() -> void:
 	sprite.modulate = off_color
 
 
-func light_reached(bolt: Node2D):
+func light_reached(agent: Node2D):
 
 	if not turned_on:
 		turned_on = true
 		light_2d.color = on_color
 		sprite.modulate = Color.white
-		bolt.update_stat(Pfs.STATS.POINTS, reward_points)
+		agent.update_stat(Pfs.STATS.POINTS, reward_points)
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_bolts):
+	if body.is_in_group(Rfs.group_agents):
 		light_reached(body)
 
 

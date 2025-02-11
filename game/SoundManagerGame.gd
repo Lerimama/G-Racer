@@ -66,11 +66,8 @@ func play_sfx(effect_for: String):
 
 func stop_sfx(effect_for: String):
 
-	match effect_for:
-		"bolt_engine":
-			pass
-			if $Sfx/BoltEngine.is_playing():
-				$Sfx/BoltEngine.stop()
+	pass
+#	match effect_for:
 
 
 func play_gui_sfx(effect_for: String):
