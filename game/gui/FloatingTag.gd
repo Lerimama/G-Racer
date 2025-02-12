@@ -35,15 +35,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 
+	var owners_camera: Camera2D = tag_owner.agent_camera
+
 	if tag_owner:
 		global_position = tag_owner.global_position
 
 	# klampanje znotraj ekrana
 	var x_offset: float = (label.rect_size.x + 10) / 2 # širina labele
-	var x_limit_left: float = Rfs.game_camera.get_camera_screen_center().x - get_viewport().size.x/2 + x_offset
-	var x_limit_right: float = Rfs.game_camera.get_camera_screen_center().x + get_viewport().size.x/2 - x_offset
+	var x_limit_left: float = owners_camera.get_camera_screen_center().x - get_viewport().size.x/2 + x_offset
+	var x_limit_right: float = owners_camera.get_camera_screen_center().x + get_viewport().size.x/2 - x_offset
 	var y_offset: float = 20 # razlika v višini po animaciji
-	var y_limit_left: float = Rfs.game_camera.get_camera_screen_center().y - get_viewport().size.y/2 + y_offset
-	var y_limit_right: float = Rfs.game_camera.get_camera_screen_center().y + get_viewport().size.y/2 - y_offset
+	var y_limit_left: float = owners_camera.get_camera_screen_center().y - get_viewport().size.y/2 + y_offset
+	var y_limit_right: float = owners_camera.get_camera_screen_center().y + get_viewport().size.y/2 - y_offset
 	global_position.x = clamp(global_position.x, x_limit_left, x_limit_right)
 	global_position.y = clamp(global_position.y, y_limit_left, y_limit_right)

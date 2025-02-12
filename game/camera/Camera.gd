@@ -26,9 +26,7 @@ onready var indikator: Sprite = $indikator
 func _ready():
 
 	add_to_group(Rfs.group_player_cameras)
-#	if Rfs.game_camera == null:
 
-	Rfs.game_camera = self
 	zoom = Vector2.ONE
 
 	playing_field.hide()

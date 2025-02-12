@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://game/weapons/ammo/fx/BulletShootSound.res" type="PackedScene" id=1]
 [ext_resource path="res://game/weapons/ammo/trails/BulletTrail.tscn" type="PackedScene" id=2]
@@ -48,9 +48,14 @@ extents = Vector2( 1.4, 0.3 )
 [sub_resource type="CircleShape2D" id=5292]
 radius = 35.0
 
+[sub_resource type="RectangleShape2D" id=5293]
+extents = Vector2( 7, 3 )
+
 [node name="Projectile" type="RigidBody2D"]
-collision_layer = 33
+collision_layer = 32
 mass = 0.05
+contacts_reported = 1
+contact_monitor = true
 script = ExtResource( 8 )
 trail = ExtResource( 2 )
 shoot_fx = [ ExtResource( 1 ) ]
@@ -105,14 +110,33 @@ scale = Vector2( 5, 10 )
 shape = SubResource( 2 )
 disabled = true
 
-[node name="VisionRay" type="RayCast2D" parent="."]
-position = Vector2( -1, 0 )
-enabled = true
-cast_to = Vector2( 48, 0 )
-
 [node name="InfluenceArea" type="Area2D" parent="."]
 position = Vector2( 1.90735e-06, 0 )
 scale = Vector2( 0.2, 0.2 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InfluenceArea"]
 shape = SubResource( 5292 )
+
+[node name="DetectArea" type="Area2D" parent="."]
+monitorable = false
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource( 5293 )
+
+[node name="VisionRay" type="RayCast2D" parent="."]
+position = Vector2( -1, 0 )
+enabled = true
+cast_to = Vector2( 86, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]

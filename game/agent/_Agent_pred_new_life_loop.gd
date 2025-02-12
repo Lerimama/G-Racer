@@ -1,5 +1,5 @@
 extends RigidBody2D
-class_name Agent
+#class_name Agent
 
 
 signal activity_changed
@@ -179,14 +179,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 	if is_shielded:
 		return
 
-#	update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
-
-	if "hit_inertia" in hit_by:
-		print("hit_inertia", hit_by.inertia)
-		var local_hit_position: Vector2 = hit_global_position - position
-		var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
-		apply_impulse(local_hit_position, hitter_rot_vector * hit_by.inertia * 100) # OPT misile impulse knockback ... ne deluje?
-
+	update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
 
 	if hit_by.is_in_group(Rfs.group_bullets):
 		var inertia_factor: float = 100
@@ -198,21 +191,21 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 			agent_camera.shake_camera(agent_camera.bullet_hit_shake)
 
 	elif hit_by.is_in_group(Rfs.group_misiles):
-#		var inertia_factor: float = 100
-#		var hit_by_inertia: Vector2 = hit_by.velocity * hit_by.mass * inertia_factor
+		var inertia_factor: float = 100
+		var hit_by_inertia: Vector2 = hit_by.velocity * hit_by.mass * inertia_factor
 		#		apply_central_impulse(hit_by_inertia)
 		# get_contact_collider_position(contact_idx: int) # ... Returns the contact position in the collider.
 		# get_contact_collider_velocity_at_position(contact_idx: int) # Returns the linear velocity vector at the collider's contact point.
 		# get_contact_impulse(contact_idx: int) # Impulse created by the contact. Only implemented for Bullet physics.
 		#		var hit_position: Vector2 =
 		#		var global_hit_position: Vector2 = to_global(hit_position)
-#		var global_hit_position: Vector2 = hit_by.global_position
-#		var local_hit_position: Vector2 = global_hit_position - position
-#		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
+		var global_hit_position: Vector2 = hit_by.global_position
+		var local_hit_position: Vector2 = global_hit_position - position
+		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
 		if agent_camera:
 			agent_camera.shake_camera(agent_camera.misile_hit_shake)
 		Rfs.sound_manager.play_sfx("agent_explode")
-#		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
+		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
 	elif hit_by.is_in_group(Rfs.group_mine):
 		var inertia_factor: float = 400000

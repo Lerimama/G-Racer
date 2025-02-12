@@ -282,6 +282,7 @@ config/name="G Racer"
 run/main_scene="res://Main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="user_data"
+run/delta_sync_after_draw=true
 config/icon="res://assets/icon.png"
 <<<<<<<HEADconfig/name="G-Racer"
 
@@ -559,6 +560,10 @@ T={
  ]
 }
 
+[input_devices]
+
+buffering/agile_event_flushing=true
+
 [layer_names]
 
 2d_physics/layer_1="all"
@@ -573,6 +578,10 @@ T={
 [logging]
 
 file_logging/enable_file_logging=true
+
+[node]
+
+name_num_separator=2
 
 [physics]
 
@@ -589,3 +598,7 @@ quality/intended_usage/framebuffer_allocation=0
 limits/buffers/canvas_polygon_buffer_size_kb=512
 limits/buffers/canvas_polygon_index_buffer_size_kb=512
 environment/default_clear_color=Color( 0.223529, 0.223529, 0.223529, 1 )
+
+[world]
+
+2d/cell_size=64

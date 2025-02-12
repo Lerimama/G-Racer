@@ -1,19 +1,10 @@
 extends Node
 
 # global nodes
-var _debug_node = null  # za debug točno določenega nodeta
-var setup_layer = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
-#var current_level = null  # zaenkrat samo zaradi pozicij ... lahko bi bolje
-var node_creation_parent = null # NCP ... ven?
-var game_camera = null
 var game_manager = null
-#var hud = null
 var sound_manager = null
-var data_manager = null
+var node_creation_parent = null # NCP ... ven?
 var ultimate_popup = null
-var main_node = null
-var game_over = null
-var level_completed = null
 
 # groups
 var group_players = "players"
@@ -27,11 +18,8 @@ var group_bullets = "bullets"
 var group_mine = "mine"
 var group_male = "male"
 var group_player_cameras = "player_cameras"
-#var group_arena =  "Arena"
-#var group_tilemap = "Tilemap" # defender in patterns
 #var group_menu_confirm_btns = "Menu confirm btns"
 #var group_menu_cancel_btns = "Menu cancel btns"
-
 
 # game colors
 var color_gray0 = Color("#535b68") # najsvetlejša
@@ -48,7 +36,6 @@ var color_yellow = Color("#fef98b")
 
 # --- specs
 var color_hud_base = Color("#ffffff")
-
 var color_brick_ghost = Color.white
 var color_brick_magnet_off = Color.white
 var color_brick_magnet_on = Color.red
@@ -59,7 +46,6 @@ var color_brick_target_hit_3 = Color.black
 var color_brick_bouncer = Color.red
 var color_brick_light_off = Color.white
 var color_brick_light_on = Color.red
-
 var color_pickable_random = Color.red
 var color_pickable_stat = Color.red
 var color_pickable_feature = Color.yellow

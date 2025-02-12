@@ -65,8 +65,8 @@ func _on_RestartBtn_pressed() -> void:
 
 #	Rfs.game_manager.stop_game_elements()
 	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
-
-	Rfs.main_node.reload_game()
+	get_tree().root.reload_game()
+#	Rfs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
@@ -75,7 +75,9 @@ func _on_QuitBtn_pressed() -> void:
 	Rfs.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
 	Rfs.game_manager.game_on = false
-	Rfs.main_node.game_out()
+	get_tree().root.game_out()
+#	Rfs.main_node.game_out()
+
 
 
 # SETTINGS BTNZ ---------------------------------------------------------------------------------------------

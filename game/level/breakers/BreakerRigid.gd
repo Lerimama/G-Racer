@@ -7,11 +7,6 @@ export var test: bool = false
 
 onready var navigation_obstacle_2d: NavigationObstacle2D = $NavigationObstacle2D
 
-#func _ready() -> void:
-#
-#	if test:
-#		Rfs._debug_node == self
-
 
 func on_hit(hitting_node: Node2D, hit_global_position: Vector2):
 

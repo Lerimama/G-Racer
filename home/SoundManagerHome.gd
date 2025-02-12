@@ -99,8 +99,22 @@ func stop_music():
 
 	for music in game_music.get_children():
 		if music.is_playing():
-			Mts.sound_fade_out_and_reset(music, 2)
+			_sound_fade_out_and_reset(music, 2)
 
+
+func _sound_fade_out_and_reset(sound: AudioStreamPlayer, fade_time: float):
+	print("sound_fade_out_and_reset je off")
+	return
+	var pre_sound_volume = sound.volume_db
+
+	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_out.tween_property(sound, "volume_db", -80, fade_time)
+	fade_out.tween_callback(sound, "stop")
+	yield(fade_out, "finished")
+
+
+	sound.volume_db = pre_sound_volume
+	emit_signal("fade_out_finished")
 #	match stop_reason:
 #		"game_music":
 #			for music in game_music.get_children():
@@ -115,6 +129,14 @@ func stop_music():
 #					fade_out.tween_callback(music, "stop")
 #					# volume reset
 #					fade_out.tween_callback(music, "set_volume_db", [current_music_volume]) # reset glasnosti
+
+
+func sound_play_fade_in(sound, new_volume: int, fade_time: float): # uporabljam ?
+
+	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_out.tween_callback(sound, "play")
+	fade_out.tween_property(sound, "volume_db", new_volume, fade_time)
+
 
 
 func set_game_music_volume(value_on_slider: float): # kliče se iz settingsov

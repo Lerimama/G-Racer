@@ -187,7 +187,8 @@ var ammo_profiles : Dictionary = {
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-		"scene": preload("res://game/weapons/ammo/HomerMisile.tscn"),
+#		"scene": preload("res://game/weapons/ammo/HomerMisile.tscn"),
+		"scene": preload("res://game/weapons/ammo/homer/HomerRigid.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
 		"stat_key": STATS.MISILE_COUNT,
 	},

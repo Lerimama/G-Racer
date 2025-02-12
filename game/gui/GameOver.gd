@@ -6,7 +6,7 @@ onready var content: Control = $Content
 
 func _ready() -> void:
 
-	Rfs.game_over = self
+	#	Rfs.game_over = self
 	visible = false
 
 
@@ -63,12 +63,15 @@ func set_scorelist(agents_on_finish_line: Array, agents_on_start: Array):
 			results.add_child(new_ranking_line)
 
 func _on_RestartBtn_pressed() -> void:
-	Rfs.main_node.reload_game()
+
+	get_tree().root.reload_game()
+#	Rfs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
 	$Menu/QuitBtn.set_disabled(true)
-	Rfs.main_node.game_out()
+	get_tree().root.game_out()
+#	Rfs.main_node.game_out()
 
 
 func _on_QuitGameBtn_pressed() -> void:

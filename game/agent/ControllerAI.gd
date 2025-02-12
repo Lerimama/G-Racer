@@ -99,14 +99,12 @@ func _ready() -> void:
 
 func _get_target_side(target_position: Vector2):
 
-	var agent_vector: Vector2 = Vector2.RIGHT.rotated(controlled_agent.rotation)
-	var vector_to_target: Vector2 = target_position - controlled_agent.global_position
-	var is_target_in_front: int = agent_vector.dot(vector_to_target)
-	var is_target_on_right: int =  agent_vector.cross(vector_to_target) # - 1 ja,
+	var target_is_on_side: Vector2 = Mts.check_left_right(controlled_agent, target_position)
 
-	if is_target_on_right > 1: # RIGHT
+	# vrnem rot_direction
+	if target_is_on_side == Vector2.RIGHT: # RIGHT
 		return 1
-	elif is_target_on_right < 1: # LEFT
+	elif target_is_on_side == Vector2.LEFT: # LEFT
 		return -1
 	else: # STREJT
 		return 0
@@ -227,7 +225,7 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 	#	keep_on_distance = true
 	#	be_aggressive = false
 
-	var any_collider = Mts.get_raycast_collision_to_position(target_ray, react_target.global_position)
+	var any_collider = Mts.get_directed_raycast_collision(target_ray, react_target.global_position)
 
 	var target_in_sight: bool = false
 	if any_collider and any_collider == react_target and is_instance_valid(react_target):
@@ -406,7 +404,7 @@ func _get_better_targets(current_target: Node2D):
 	# naberem samo vidne
 	var targets_in_sight: Array = []
 	for legit_target in legit_targets:
-		if not Mts.get_raycast_collision_to_position(scanning_ray, legit_target.global_position):
+		if not Mts.get_directed_raycast_collision(scanning_ray, legit_target.global_position):
 			targets_in_sight.append(legit_target)
 
 	# dobim top rangirano tarčo

@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 			ray_angle = deg2rad(0) + 0.5 # kr neki da bi se ray poravnal ...  ne rabim
 		else:
 			ray_angle += delta * ray_rotating_speed
-			var target_in_reach: Node2D = Mts.get_raycast_collision_on_rotation(self, Vector2.RIGHT.rotated(ray_angle), aim_distance)
+			var target_in_reach: Node2D = Mts.get_rotating_raycast_collision(self, Vector2.RIGHT.rotated(ray_angle), aim_distance)
 			if target_in_reach:
 				if target_in_reach.is_in_group(Rfs.group_agents) or target_in_reach.is_in_group(Rfs.group_ai):
 					available_targets[target_in_reach] = global_position.distance_to(target_in_reach.global_position)
