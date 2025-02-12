@@ -8,7 +8,7 @@ onready var orig_agent_tracker: PathFollow2D = $AgentTracker
 
 func set_new_tracker(agent_to_follow: RigidBody2D):
 
-	var tracker_new_color: Color = agent_to_follow.vehicle_color
+	var tracker_new_color: Color = agent_to_follow.agent_color
 	var new_tracker: PathFollow2D
 
 	if agents_to_follow_count == 0: # pomeni, da je notri samo original in ni bil še dupliciran

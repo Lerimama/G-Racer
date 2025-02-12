@@ -8,13 +8,10 @@ var agent_is_ai: bool = false
 var selected_weapon: Node2D # index znotraj aktivnih orožij
 var selector_items: Dictionary = {} # item in njegovo orožja
 var selector_item_template: Control
+var agents_viewport: Viewport
 var always_open: bool = true
 var selector_open_time: float = 0
 var hide_no_ammo: bool = false
-
-# position
-var agents_viewport: Viewport
-var agents_view_offset: Vector2
 
 onready var selector: Control = $Selector
 onready var local_offset: Vector2 = Vector2(- selector.rect_size.x, 100)
@@ -26,71 +23,57 @@ onready var gas_bar: Control = $GasBar
 onready var gas_bar_line: ColorRect = $GasBar/Bar
 
 
-onready var start_pos_if_ai: Vector2# = rect_position
-
 func _ready() -> void:
 
 	selector_item_template = Mts.remove_chidren_and_get_template(selector.get_children())
 	hide()
 
 
-func setup(agent_node: Agent, view: ViewportContainer, for_ai: bool = false):
+func set_agent_hud(agent_node: Agent, view: ViewportContainer, for_ai: bool = false):
 
 
 	hud_agent = agent_node
-	agents_view_offset = view.rect_position
 	agents_viewport = view.get_node("Viewport")
 
 	if hud_agent.driver_stats[Pfs.STATS.GAS] > hud_agent.gas_tank_size:
 		hud_agent.gas_tank_size = hud_agent.driver_stats[Pfs.STATS.GAS]
 
+	_update_hud_position()
+
 	if for_ai:
 		agent_is_ai = true
-		agents_view_offset = agents_viewport.size / 2
-		rect_position = hud_agent.global_position + agents_view_offset
-		rect_position.x += local_offset.x - 30
-		rect_position.y += local_offset.y / agents_viewport.get_node("GameCamera").zoom.y + 50
 		is_set = true
 	else:
 		# weapons
 		hud_agent.controller.connect("next_weapon_selected", self, "_on_next_weapon_selected")
 		for weapon in hud_agent.triggering_weapons:
 			_add_weapon_selector(weapon)
-		agents_view_offset = view.rect_position
-		var on_screen_position: Vector2 = agents_viewport.canvas_transform * hud_agent.global_position
-		rect_position = on_screen_position + agents_view_offset
-		rect_position.x += local_offset.x - 30
-		rect_position.y += local_offset.y / agents_viewport.get_node("GameCamera").zoom.y + 50
-
 		is_set = true
 		_on_next_weapon_selected(0)
 
 	show()
-#
+
+
+func _update_hud_position():
+
+	rect_position = agents_viewport.canvas_transform * hud_agent.global_position
+	rect_position.x += local_offset.x
+	rect_position.y += local_offset.y / agents_viewport.get_node("GameCamera").zoom.y + 50
+	if agent_is_ai:
+		rect_position.x += 160
+	else:
+		rect_position.x -= 30
+
+
 func _process(delta: float) -> void:
 
 	# manage positions and rotation
 	if not is_instance_valid(hud_agent):
-		is_set = false
 		hide()
 
-	if is_set:
-		visible = hud_agent.visible
-		if agent_is_ai:
-			printt(get_parent().name, get_parent().get_parent().rect_global_position, agents_viewport.get_node("GameCamera").get_camera_position())
-		if visible:
-			var on_screen_position: Vector2
-			if agent_is_ai:
-				#				on_screen_position = hud_agent.global_position + agents_viewport.canvas_transform * hud_agent.global_position
-				#				on_screen_position = agents_viewport.get_parent().rect_global_position + (hud_agent.global_position - agents_viewport.get_node("GameCamera").get_camera_position())
-				#				on_screen_position = agents_viewport.get_node("GameCamera").get_camera_position() / agents_viewport.get_node("GameCamera").zoom.y - hud_agent.global_position
-				on_screen_position = hud_agent.global_position # - get_parent().rect_global_position
-				rect_position = on_screen_position + agents_view_offset
-			else:
-				on_screen_position = agents_viewport.canvas_transform * hud_agent.global_position
-				rect_position = on_screen_position + agents_view_offset
-				rect_position.x += local_offset.x - 30
-				rect_position.y += local_offset.y / agents_viewport.get_node("GameCamera").zoom.y + 50
+	if is_set and visible:
+
+		_update_hud_position()
 
 		# manage health bar
 		if health_bar.visible:
@@ -183,3 +166,12 @@ func _on_next_weapon_selected(selected_index: int):
 func _on_SelectorTimer_timeout() -> void:
 
 	selector.hide()
+
+#func _on_VisibilityNotifier2D_screen_entered() -> void:
+##	show()
+#	pass
+#
+#
+#func _on_VisibilityNotifier2D_screen_exited() -> void:
+##	hide()
+#	pass

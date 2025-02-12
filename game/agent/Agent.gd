@@ -3,7 +3,7 @@ class_name Agent
 
 
 signal activity_changed
-signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
+signal stat_changed (stats_owner_id, driver_stats) # agent in damage
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
@@ -17,14 +17,14 @@ var driver_index: int
 var driver_profile: Dictionary
 var driver_stats: Dictionary
 
-# vehicle
-var vehicle_profile: Dictionary
-var vehicle_type: int
-var vehicle_color: Color = Color.red
+# agent
+var agent_profile: Dictionary
+var agent_type: int
+var agent_color: Color = Color.red
 var gas_usage: float
 var gas_usage_idle: float
 var gas_tank_size: float
-var vehicle_camera: Camera2D # spawner
+var agent_camera: Camera2D # spawner
 var near_radius: float
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 var velocity: Vector2 = Vector2.ZERO
@@ -34,7 +34,7 @@ var ai_target_rank: int
 var revive_time: float = 2
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 var body_state: Physics2DDirectBodyState
-var tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
+var tracker: PathFollow2D # napolni se, ko se agent pripiše trackerju
 
 # weapons
 var triggering_weapons: Array = []
@@ -81,14 +81,14 @@ func _ready() -> void:
 
 	equip_positions.hide()
 
-	vehicle_type = driver_profile["agent_type"]
-	ai_target_rank = vehicle_profile["ai_target_rank"]
-	vehicle_color = driver_profile["driver_color"] # vehicle se obarva ...
-	height = vehicle_profile["height"]
-	elevation = vehicle_profile["elevation"]
-	gas_tank_size = vehicle_profile["gas_tank_size"]
-	gas_usage = vehicle_profile["gas_usage"]
-	gas_usage_idle = vehicle_profile["gas_usage_idle"]
+	agent_type = driver_profile["agent_type"]
+	ai_target_rank = agent_profile["ai_target_rank"]
+	agent_color = driver_profile["driver_color"] # agagentobarva ...
+	height = agent_profile["height"]
+	elevation = agent_profile["elevation"]
+	gas_tank_size = agent_profile["gas_tank_size"]
+	gas_usage = agent_profile["gas_usage"]
+	gas_usage_idle = agent_profile["gas_usage_idle"]
 	near_radius = get_node("NearArea/CollisionShape2D").shape.radius
 
 	_add_controller()
@@ -187,8 +187,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia)
-		if vehicle_camera:
-			vehicle_camera.shake_camera(vehicle_camera.bullet_hit_shake)
+		if agent_camera:
+			agent_camera.shake_camera(agent_camera.bullet_hit_shake)
 
 	elif hit_by.is_in_group(Rfs.group_misiles):
 		var inertia_factor: float = 100
@@ -202,8 +202,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var global_hit_position: Vector2 = hit_by.global_position
 		var local_hit_position: Vector2 = global_hit_position - position
 		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
-		if vehicle_camera:
-			vehicle_camera.shake_camera(vehicle_camera.misile_hit_shake)
+		if agent_camera:
+			agent_camera.shake_camera(agent_camera.misile_hit_shake)
 		Rfs.sound_manager.play_sfx("agent_explode")
 		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
 
@@ -211,8 +211,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		var inertia_factor: float = 400000
 		var hit_by_power: float = inertia_factor
 		apply_torque_impulse(hit_by_power)
-		if vehicle_camera:
-			vehicle_camera.shake_camera(vehicle_camera.misile_hit_shake)
+		if agent_camera:
+			agent_camera.shake_camera(agent_camera.misile_hit_shake)
 
 #	if inertIJA > jadajasdasd >>>> to dissaray
 
@@ -245,17 +245,17 @@ func _explode():
 	# resetira na revive
 
 	# spawn eksplozije
-	var new_exploding_vehicle = ExplodingAgent.instance()
-	new_exploding_vehicle.global_position = global_position
-	new_exploding_vehicle.global_rotation = global_rotation
-	new_exploding_vehicle.modulate.a = 1
-	new_exploding_vehicle.velocity = velocity # podamo hitrost, da se premika s hitrostjo vehiclea
-	new_exploding_vehicle.spawner_color = vehicle_color
-	new_exploding_vehicle.z_index = z_index + 1
-	Rfs.node_creation_parent.add_child(new_exploding_vehicle)
+	var new_exploding_agent = ExplodingAgent.instance()
+	new_exploding_agent.global_position = global_position
+	new_exploding_agent.global_rotation = global_rotation
+	new_exploding_agent.modulate.a = 1
+	new_exploding_agent.velocity = velocity # podamo hitrost, da se premika s hitrostjo agenta
+	new_exploding_agent.spawner_color = agent_color
+	new_exploding_agent.z_index = z_index + 1
+	Rfs.node_creation_parent.add_child(new_exploding_agent)
 
-	if vehicle_camera:
-		vehicle_camera.shake_camera(vehicle_camera.agent_explosion_shake)
+	if agent_camera:
+		agent_camera.shake_camera(agent_camera.agent_explosion_shake)
 	queue_free()
 
 
@@ -275,7 +275,7 @@ func _revive():
 
 
 func _reset_motion():
-	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v vehicle "v igri"
+	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v agent "v igri"
 
 	motion_manager.motion = motion_manager.MOTION.IDLE
 	front_mass.set_applied_force(Vector2.ZERO)
@@ -421,7 +421,7 @@ func _add_controller():
 		var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
 		AgentController = drivers_controller_profile["controller_scene"]
 
-	# spawn na vrh vehicleovega drevesa
+	# spawn na vrh agentovega drevesa
 	controller = AgentController.instance()
 	controller.controlled_agent = self
 	controller.agent_manager = motion_manager
@@ -434,8 +434,8 @@ func _add_controller():
 
 func _add_motion_manager():
 
-	var vehicle_profile: Dictionary = Pfs.agent_profiles[driver_profile["agent_type"]]
-	var motion_manager_path = vehicle_profile["motion_manager_path"]
+	var agent_profile: Dictionary = Pfs.agent_profiles[driver_profile["agent_type"]]
+	var motion_manager_path = agent_profile["motion_manager_path"]
 	motion_manager.set_script(motion_manager_path)
 	motion_manager.managed_agent = self
 #	motion_manager.set_process(false)
@@ -478,7 +478,7 @@ func update_stat(stat_key: int, change_value):
 		driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
 		if driver_stats[Pfs.STATS.HEALTH] == 0:
 			_destroy()
-		return # poštima ga vehicle hud
+		return # poštima ga agent hud
 
 	# gas
 	# če zmanjka bencina je deaktiviran
@@ -513,7 +513,7 @@ func _on_Agent_body_entered(body: Node2D) -> void:
 		new_collision_particles.position = body_state.get_contact_local_position(0)
 		new_collision_particles.rotation = body_state.get_contact_local_normal(0).angle() # rotacija partiklov glede na normalo površine
 		new_collision_particles.amount = (velocity.length() + 15)/15 # količnik je korektor ... 15 dodam zato da amount ni nikoli nič
-		new_collision_particles.color = vehicle_color
+		new_collision_particles.color = agent_color
 		new_collision_particles.set_emitting(true)
 		Rfs.node_creation_parent.add_child(new_collision_particles)
 
@@ -534,9 +534,9 @@ func _exit_tree() -> void:
 	##	active_trail.start_decay() # trail decay tween start
 
 	self.is_active = false # zazih
-	if vehicle_camera:
-		if vehicle_camera.follow_target == self:
-			vehicle_camera.follow_target = null
+	if agent_camera:
+		if agent_camera.follow_target == self:
+			agent_camera.follow_target = null
 	trail_source.decay()
 
 

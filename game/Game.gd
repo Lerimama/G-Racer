@@ -43,7 +43,7 @@ onready var current_level: Level
 onready var GameView: PackedScene = preload("res://game/GameView.tscn")
 enum VIEW_TILE {ONE, TWO_VER, THREE_LEFT, THREE_RIGHT, FOUR }
 onready var game_views_holder: VFlowContainer = $GameViewFlow
-var active_game_views: Dictionary = {}
+var game_views: Dictionary = {}
 
 
 func _input(event: InputEvent) -> void:
@@ -91,17 +91,6 @@ func _set_game():
 
 	yield(get_tree(), "idle_frame") # zazih ... na levelu bazira vse ostalo
 
-	# camera
-	if Sts.all_agents_on_screen_mode:
-		var playing_field_node: Node2D = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0].playing_field
-		playing_field_node.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
-		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
-			playing_field_node.enable_playing_field(true)
-		else:
-			playing_field_node.enable_playing_field(true, true) # z edgom
-	else:
-		for agent in agents_in_game:
-			agent.vehicle_camera.playing_field.enable_playing_field(false)
 	# camera start positions
 	get_tree().set_group(Rfs.group_player_cameras, "follow_target", current_level.start_camera_position_node)
 
@@ -112,25 +101,53 @@ func _set_game():
 		for agent in players_qualified:
 			activated_drivers.append(agent.driver_index)
 	players_qualified.clear()
-
-	# spawn agents ... po vrsti aktivacije
+	# spawn drivers ... po vrsti aktivacije
 	var spawned_position_index = 0
 	for driver_index in activated_drivers: # so v ranking zaporedju
 		_spawn_agent(driver_index, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 
+
+	yield(get_tree(), "idle_frame")
+
+	# camera
+	if Sts.all_agents_on_screen_mode:
+		var main_camera: Camera2D = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
+		# prižgem playing field
+		main_camera.playing_field.connect( "body_exited_playing_field", self, "_on_body_exited_playing_field")
+		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
+			main_camera.playing_field.enable_playing_field(true)
+		else:
+			main_camera.playing_field.enable_playing_field(true, true) # z edgom
+		# pripišem plejer kamere
+		for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
+			player_agent.agent_camera = main_camera
+		# set default view dodam med game viewe
+		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
+		_set_game_views(1)
+	else:
+		# debug ... ai solo postane plejer
+		if get_tree().get_nodes_in_group(Rfs.group_players).empty():
+			get_tree().get_nodes_in_group(Rfs.group_ai)[0].add_to_group(Rfs.group_players)
+
+		# default view dodam med game viewe
+		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
+		# pripišem default kamero
+		var player_agent_in_first_view: Agent = game_views.values().front()
+		player_agent_in_first_view.agent_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
+		# ugasnem playing field
+		get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0].get_node("PlayingField").enable_playing_field(false)
+		# spawnam viewe še za preostale plejerje
+		_spawn_new_game_views()
+		# set views
+		var players_count: int = get_tree().get_nodes_in_group(Rfs.group_players).size()
+		_set_game_views(players_count)
+
+#		yield(get_tree(), "idle_frame") # ker je tudi znotraj _set_game_views
+
+	hud.set_hud(level_profile, game_views) # kliče GM
+
 	Rfs.ultimate_popup.hide() # skrijem pregame
-
-	yield(get_tree(), "idle_frame")
-
-	_spawn_game_views()
-
-	#	for view in active_game_views:
-	#		if active_game_views.keys()[0] == view:
-	#			hud._spawn_agent_hud(view, active_game_views[view])
-	yield(get_tree(), "idle_frame")
-
-	hud.setup(level_profile, active_game_views) # kliče GM
 
 	_game_intro()
 
@@ -151,7 +168,7 @@ func _game_intro():
 		var drive_in_vector: Vector2 = Vector2.ZERO
 		if current_level.drive_in_position:
 			drive_in_vector = current_level.drive_in_position.rotated(current_level.level_start.global_rotation)
-		agent.drive_in(drive_in_time, drive_in_vector)
+		agent.drive_in(drive_in_vector, drive_in_time)
 
 	# počakam, da odpelje
 	yield(get_tree().create_timer(drive_in_time),"timeout")
@@ -179,7 +196,7 @@ func _start_game():
 #	for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
 #		ai_agent.controller.on_game_state_change(game_on, level_profile, current_level)
 #	for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-#		player_agent.vehicle_camera.follow_target = agents_in_game[agents_in_game.find(player_agent)]
+#		player_agent.agent_camera.follow_target = agents_in_game[agents_in_game.find(player_agent)]
 
 	# fast start
 	fast_start_window_on = true
@@ -293,6 +310,57 @@ func set_next_level():
 	call_deferred("_set_game")
 
 
+func _set_game_views(players_count: int = 1):
+
+	# flow separation
+	var v_sep: float = game_views_holder.get_constant("vseparation")
+	var h_sep: float = game_views_holder.get_constant("hseparation")
+
+	# view size
+	var full_size: Vector2 = get_viewport_rect().size
+	var view_tile: int = VIEW_TILE.ONE
+	match players_count:
+		1:
+			view_tile = VIEW_TILE.ONE
+			game_views.keys()[0].get_node("Viewport").size = full_size
+		2:
+			view_tile = VIEW_TILE.TWO_VER
+			if view_tile == VIEW_TILE.TWO_VER:
+				# view size
+				game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				# adapt for separation
+				game_views.keys()[0].get_node("Viewport").size.x -= h_sep/2
+				game_views.keys()[1].get_node("Viewport").size.x -= h_sep/2
+		3:
+			view_tile = VIEW_TILE.THREE_LEFT
+			if view_tile == VIEW_TILE.THREE_LEFT:
+				game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views.keys()[0].get_node("Viewport").size.y -= v_sep/2
+				game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			elif view_tile == VIEW_TILE.THREE_RIGHT:
+				game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views.keys()[2].get_node("Viewport").size.y -= v_sep/2
+			game_views.keys()[2].get_node("Viewport").size.y -= v_sep/2
+		4:
+			view_tile = VIEW_TILE.FOUR
+			game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views.keys()[3].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+
+
 # TRACKING ---------------------------------------------------------------------------------------------
 
 
@@ -385,94 +453,22 @@ func _get_agent_pull_position(agent_to_pull: Node2D): # temp ... Vechile class
 # SPAWNING ---------------------------------------------------------------------------------------------
 
 
-func _spawn_game_views():
+func _spawn_new_game_views():
 
-	# debug ... ai solo postane plejer
-	if get_tree().get_nodes_in_group(Rfs.group_players).empty():
-		get_tree().get_nodes_in_group(Rfs.group_ai)[0].add_to_group(Rfs.group_players)
-
-	# prvi view
-	active_game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
-
-	# prva kamera za vse plejerje
 	for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-		player_agent.vehicle_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
+		# def view je že setan
+		if not player_agent == get_tree().get_nodes_in_group(Rfs.group_players)[0]:
+			var new_game_view: ViewportContainer = GameView.instance()
+			game_views_holder.add_child(new_game_view)
+			game_views[new_game_view] = player_agent
+			player_agent.agent_camera = new_game_view.get_node("Viewport/GameCamera")
 
-	if not Sts.all_agents_on_screen_mode:
-
-		# spawn xtra views
-		for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-			if not player_agent == get_tree().get_nodes_in_group(Rfs.group_players)[0]:
-				var new_game_view: ViewportContainer = GameView.instance()
-				game_views_holder.add_child(new_game_view)
-				active_game_views[new_game_view] = player_agent
-				player_agent.vehicle_camera = new_game_view.get_node("Viewport/GameCamera")
-
-		# viewport world
-		var world_to_inherit: World2D = active_game_views.keys()[0].get_node("Viewport").world_2d
-		var current_game_views: Dictionary = active_game_views
-		for view_index in active_game_views.size():
-			if view_index > 0:
-				active_game_views.keys()[view_index].get_node("Viewport").world_2d = world_to_inherit
-
-		_set_game_views(get_tree().get_nodes_in_group(Rfs.group_players).size())
-
-
-func _set_game_views(players_count: int = 1):
-
-		# flow separation
-		var v_sep: float = game_views_holder.get_constant("vseparation")
-		var h_sep: float = game_views_holder.get_constant("hseparation")
-
-		# view size
-		var full_size: Vector2 = get_viewport_rect().size
-		var view_tile: int = VIEW_TILE.ONE
-		match players_count:
-			1:
-				view_tile = VIEW_TILE.ONE
-				active_game_views.keys()[0].get_node("Viewport").size = full_size
-			2:
-				view_tile = VIEW_TILE.TWO_VER
-				if view_tile == VIEW_TILE.TWO_VER:
-					# view size
-					var pl = active_game_views[active_game_views.keys()[0]]
-					var pl2 = active_game_views[active_game_views.keys()[1]]
-					active_game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-					# adapt for separation
-					active_game_views.keys()[0].get_node("Viewport").size.x -= h_sep/2
-					active_game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-					active_game_views.keys()[1].get_node("Viewport").size.x -= h_sep/2
-					print ("pred ", pl, pl2)
-					yield(get_tree(), "idle_frame")
-					active_game_views[active_game_views.keys()[0]] = pl
-					active_game_views[active_game_views.keys()[1]] = pl2
-					print ("pol ", active_game_views.keys()[0].rect_position, active_game_views.keys()[1].rect_position)
-			3:
-				view_tile = VIEW_TILE.THREE_LEFT
-				if view_tile == VIEW_TILE.THREE_LEFT:
-					active_game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-					active_game_views.keys()[0].get_node("Viewport").size.y -= v_sep/2
-					active_game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-					active_game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-					active_game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-					active_game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				elif view_tile == VIEW_TILE.THREE_RIGHT:
-					active_game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-					active_game_views.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-					active_game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-					active_game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-					active_game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-					active_game_views.keys()[2].get_node("Viewport").size.y -= v_sep/2
-			4:
-				view_tile = VIEW_TILE.FOUR
-				active_game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				active_game_views.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				active_game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				active_game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				active_game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				active_game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				active_game_views.keys()[3].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				active_game_views.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+	# viewport world
+	var world_to_inherit: World2D = game_views.keys()[0].get_node("Viewport").world_2d
+	var current_game_views: Dictionary = game_views
+	for view_index in game_views.size():
+		if view_index > 0:
+			game_views.keys()[view_index].get_node("Viewport").world_2d = world_to_inherit
 
 
 func _spawn_level(scene = preload("res://game/levels/LevelFirstDrive.tscn")):
@@ -506,12 +502,8 @@ func _spawn_level(scene = preload("res://game/levels/LevelFirstDrive.tscn")):
 
 func _spawn_agent(agent_driver_index: int, spawned_position_index: int):
 
-	var agent_type: int = Pfs.AGENT.values()[0]
-
-	# debug ... ai spawn
 	var scene_name: String = "agent_scene"
-#	if Pfs.driver_profiles[agent_driver_index]["controller_type"] == Pfs.CONTROLLER_TYPE.AI:
-#		scene_name = "agent_scene_ai"
+	var agent_type: int = Pfs.AGENT.values()[0]
 	var NewAgentInstance: PackedScene = Pfs.agent_profiles[agent_type][scene_name]
 
 	var new_agent = NewAgentInstance.instance()
@@ -523,14 +515,13 @@ func _spawn_agent(agent_driver_index: int, spawned_position_index: int):
 	# profili ... iz njih podatke povleče sam na rea dy
 	new_agent.driver_profile = Pfs.driver_profiles[agent_driver_index].duplicate()
 	new_agent.driver_stats = Pfs.start_agent_stats.duplicate()
-	new_agent.vehicle_profile = Pfs.agent_profiles[agent_type].duplicate()
+	new_agent.agent_profile = Pfs.agent_profiles[agent_type].duplicate()
 
 	Rfs.node_creation_parent.add_child(new_agent)
 
 	# ai navigation
 	if Pfs.driver_profiles[agent_driver_index]["driver_type"] == Pfs.DRIVER_TYPE.AI:
 		new_agent.controller.level_navigation = current_level.level_navigation
-#		self.connect("game_state_changed", new_agent.controller, "_on_game_state_change") # _temp _on_game_state_change signal na ai
 	# trackers
 	if current_level.level_track:
 		new_agent.tracker = current_level.level_track.set_new_tracker(new_agent)
@@ -702,7 +693,7 @@ func _on_finish_line_crossed(agent_across: Node2D): # sproži finish line  # tem
 			var drive_out_vector: Vector2 = Vector2.ZERO
 			if current_level.drive_out_position:
 				drive_out_vector = current_level.drive_out_position.rotated(current_level.level_finish.global_rotation)
-			agent_across.drive_out(drive_out_time, drive_out_vector)
+			agent_across.drive_out(drive_out_vector, drive_out_time)
 			agents_finished.append(agent_across)
 			Rfs.sound_manager.play_sfx("finish_horn")
 		else:
@@ -732,6 +723,32 @@ func _on_level_is_set(level_type: int, start_positions: Array, camera_nodes: Arr
 	printt("GM level goals", level_profile["level_goals"])
 
 
+func _on_agent_activity_change(changed_agent: Node2D): # temp ... Vechile class
+
+	# preverja, če je še kakšen player aktiven ... za GO
+	if changed_agent.is_active == false:
+
+		if Sts.hide_view_on_player_deactivated and not Sts.all_agents_on_screen_mode:
+			# skrijem view
+			var hide_view_time: float
+			yield(get_tree().create_timer(1), "timeout")
+			var removed_game_view: ViewportContainer = game_views.find_key(changed_agent)
+			# odstranim, če ni zadnji view
+			if removed_game_view and game_views.size() > 1:
+				removed_game_view.queue_free()
+				game_views.erase(removed_game_view)
+				# setam preostale
+				_set_game_views(game_views.size())
+				# odstranim imitatorja ... more bit za setanje game_views
+				hud.agent_huds_holder.remove_view_imitator(game_views)
+
+		# preverim, če je bil zadnji plejer da končam igro
+		for players_agent in get_tree().get_nodes_in_group(Rfs.group_players):
+			if players_agent.is_active:
+				break
+			end_level()
+
+
 func _on_body_exited_playing_field(body: Node) -> void:
 
 	#	if body.is_in_group(Rfs.group_agents):
@@ -740,19 +757,3 @@ func _on_body_exited_playing_field(body: Node) -> void:
 	elif body is Projectile:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
-
-func _on_agent_activity_change(changed_agent: Node2D): # temp ... Vechile class
-
-	# preverja, če je še kakšen player aktiven ... za GO
-	if changed_agent.is_active == false:
-		# skrijem view
-		var players_game_view: ViewportContainer = active_game_views.find_key(changed_agent)
-		if players_game_view and active_game_views.size() > 1:
-			players_game_view.hide()
-			active_game_views.erase(players_game_view)
-			_set_game_views(active_game_views.size())
-
-		for players_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-			if players_agent.is_active:
-				break
-			end_level()

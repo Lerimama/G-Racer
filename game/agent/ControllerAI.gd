@@ -524,7 +524,6 @@ func _on_game_state_change(game_manager: Game): # od GMja
 
 	# level type
 	if game_is_on == true:
-		printt ("ai start") # zaenkrat je edibna stvar preminjanje stejta, ostalo zna sam
 		yield(get_tree().create_timer(random_start_delay), "timeout")
 		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
 			if controlled_agent.tracker:
@@ -539,11 +538,8 @@ func _on_game_state_change(game_manager: Game): # od GMja
 		else:
 			self.ai_state = AI_STATE.SEARCH
 	else:
-		print ("ai game if off")
 		self.ai_state = AI_STATE.OFF
 		agent_manager.motion = agent_manager.MOTION.IDLE
-
-
 
 
 func _on_NavigationAgent2D_path_changed() -> void:

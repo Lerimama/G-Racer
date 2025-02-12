@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=2]
+[gd_scene load_steps=56 format=2]
 
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/Game.gd" type="Script" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://game/gui/PauseGame.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/gui/hud/Hud.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/key_3.wav" type="AudioStream" id=9]
+[ext_resource path="res://game/gui/AgentHuds.gd" type="Script" id=10]
 [ext_resource path="res://assets/sounds/music/moose.mp3" type="AudioStream" id=11]
 [ext_resource path="res://game/gui/AgentHud.tscn" type="PackedScene" id=12]
 [ext_resource path="res://game/gui/LevelFinished.tscn" type="PackedScene" id=13]
@@ -838,23 +839,23 @@ __meta__ = {
 [node name="AgentHuds" type="Control" parent="UI"]
 margin_right = 2560.0
 margin_bottom = 1440.0
+script = ExtResource( 10 )
 
-[node name="AgentHud" parent="UI/AgentHuds" instance=ExtResource( 12 )]
-margin_left = 424.0
-margin_top = 512.0
-margin_right = 552.0
-margin_bottom = 722.0
-
-[node name="AiHudHolder" type="Control" parent="UI/AgentHuds"]
+[node name="ViewImitator" type="Control" parent="UI/AgentHuds"]
 margin_right = 928.0
 margin_bottom = 912.0
 rect_clip_content = true
 
-[node name="ColorRect" type="Panel" parent="UI/AgentHuds/AiHudHolder"]
-visible = false
+[node name="__ColorRect" type="Panel" parent="UI/AgentHuds/ViewImitator"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_styles/panel = SubResource( 19 )
+
+[node name="AgentHud" parent="UI/AgentHuds/ViewImitator" instance=ExtResource( 12 )]
+margin_left = 424.0
+margin_top = 512.0
+margin_right = 552.0
+margin_bottom = 722.0
 
 [node name="_debug" type="Control" parent="UI"]
 visible = false

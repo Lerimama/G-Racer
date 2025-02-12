@@ -59,7 +59,6 @@ var easy_mode: bool = false
 var full_equip_mode: bool = false
 var full_equip_value: int = 100
 var camera_zoom_range: Array = [1, 1.5]
-var all_agents_on_screen_mode: bool = true
 # driving
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
@@ -76,6 +75,10 @@ var world_1m_pixels: float = 64
 var world_hsp_power_factor: float = 1000 # engine power je 300 namesto 300000
 var world_1kg_mass = 0.1 # masa ... zgolj referenca
 # 500 power ... cca 200 kmh
+
+# neu
+var all_agents_on_screen_mode: bool = true
+var hide_view_on_player_deactivated: = false
 
 
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
@@ -102,11 +105,12 @@ func _ready() -> void:
 #		camera_zoom_range = [3, 3]
 #		camera_zoom_range = [5, 5]
 		start_countdown = false
-#		all_agents_on_screen_mode = false
 		easy_mode = true
 #		full_equip_mode = true
 		enemies_mode = true
 		game_shadows_rotation_deg = 45
+#		all_agents_on_screen_mode = false
+		hide_view_on_player_deactivated = true
 
 #		drivers_on_game_start_count = 2
 		drivers_on_game_start = [
@@ -115,7 +119,7 @@ func _ready() -> void:
 
 
 		Pfs.driver_profiles = {}
-		all_agents_on_screen_mode = false
+#		all_agents_on_screen_mode = false
 
 		for driver in drivers_on_game_start:
 			Pfs.driver_profiles[driver] = Pfs.default_driver_profile.duplicate()

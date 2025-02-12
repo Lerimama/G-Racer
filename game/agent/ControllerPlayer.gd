@@ -140,7 +140,7 @@ func _on_game_state_change(game_manager: Game): # od GMja
 
 	if game_is_on and fast_start_window_is_open: # na štartu
 		print ("fast start open")
-		controlled_agent.vehicle_camera.follow_target = controlled_agent
+		controlled_agent.agent_camera.follow_target = controlled_agent
 	elif game_is_on:
 		print ("fast start closed")
 	else:
@@ -151,4 +151,4 @@ func _on_game_state_change(game_manager: Game): # od GMja
 
 	# ne vem če hočem vedno ... ponavadi naj bo kar na boltu
 	#	elif not game_is_on:
-	#		controlled_agent.vehicle_camera.follow_target = controlled_agent
+	#		controlled_agent.agent_camera.follow_target = controlled_agent

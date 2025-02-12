@@ -11,9 +11,9 @@ onready var record_lap_label: Label = $RecordLap
 onready var level_name: Label = $LevelName
 onready var game_timer: HBoxContainer = $GameTimer
 onready var start_countdown: Control = $Popups/StartCountdown
-onready var agent_huds_holder: Control = $"../AgentHuds"
 onready var AgentHud = preload("res://game/gui/AgentHud.tscn")
 onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
+onready var agent_huds_holder: Control = $"../AgentHuds"
 
 
 func _ready() -> void:
@@ -23,7 +23,7 @@ func _ready() -> void:
 		box.hide()
 
 
-func setup(level_profile: Dictionary, game_views: Dictionary):
+func set_hud(level_profile: Dictionary, game_views: Dictionary):
 
 	for box in statboxes:
 		box.set_statbox_for_level(level_profile["level_type"])
@@ -39,31 +39,7 @@ func setup(level_profile: Dictionary, game_views: Dictionary):
 	game_timer.show()
 	record_lap_label.hide()
 
-	# agent huds
-	for ag_hud in agent_huds_holder.get_children():
-		ag_hud.queue_free()
-
-	for view in game_views:
-
-		# player huds
-		var new_player_agent_hud = AgentHud.instance()
-		agent_huds_holder.add_child(new_player_agent_hud)
-		new_player_agent_hud.setup(game_views[view], view)
-
-		# ai huds
-		# _temp dokler ne spedenam ai pozicije glede na kamero
-		#		# naredim control node, ki je dimenzijska kopija pripadajočega viewa
-		#		$"../AgentHuds/AiHudHolder".queue_free()
-		#		var new_pseudo_view: Control = Control.new()
-		#		# test line var new_pseudo_view: Control = ai_agent_hud.duplicate()
-		#		new_pseudo_view.rect_size = view.rect_size
-		#		new_pseudo_view.rect_position = view.rect_position
-		#		agent_huds_holder.add_child(new_pseudo_view)
-		#		for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
-		#			var new_ai_agent_hud = AgentHud.instance()
-		#			new_ai_agent_hud.name = "AiHudHolder"
-		#			new_pseudo_view.add_child(new_ai_agent_hud)
-		#			new_ai_agent_hud.setup(ai_agent, view, true)
+	agent_huds_holder.set_agent_huds(game_views, Sts.all_agents_on_screen_mode)
 
 
 func set_agent_statbox(spawned_agent: Node2D, agents_level_stats: Dictionary): # kliče GM
@@ -91,7 +67,6 @@ func set_agent_statbox(spawned_agent: Node2D, agents_level_stats: Dictionary): #
 	spawned_driver_statbox.driver_name.text = spawned_driver_profile["driver_name"]
 	spawned_driver_statbox.driver_name.modulate = spawned_driver_profile["driver_color"]
 	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar"])
-#	spawned_driver_statbox.driver_avatar.set_texture(spawned_driver_profile["driver_avatar_png"])
 	spawned_driver_statbox.stat_wins.modulate = Color.red
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	spawned_driver_statbox.visible = true
