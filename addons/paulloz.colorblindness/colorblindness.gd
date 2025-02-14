@@ -11,9 +11,9 @@ var rect = ColorRect.new()
 
 func set_type(value):
     if rect.material:
-        rect.material.set_shader_param("type", value)
+	  rect.material.set_shader_param("type", value)
     else:
-        temp = value
+	  temp = value
     Type = value
 
 func _ready():
@@ -23,8 +23,8 @@ func _ready():
     self.rect.material = load("res://addons/paulloz.colorblindness/colorblindness.material")
     self.rect.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
     if self.temp:
-        self.Type = self.temp
-        self.temp = null
+	  self.Type = self.temp
+	  self.temp = null
 
     self.get_tree().root.connect('size_changed', self, '_on_viewport_size_changed')
 

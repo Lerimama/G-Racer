@@ -1,27 +1,41 @@
 extends Node2D
 class_name Game
 
-#signal agent_spawned (name, other)
-signal game_state_changed (game_on, level_profile)
+
+signal game_stage_changed (game_manager)
+
+
+enum GAME_STAGE {LOADING, SETUP, READY, INTRO, FAST_START, PLAYING, PAUSED, END_SUCCESS, END_FAIL}
+var game_stage: int = GAME_STAGE.LOADING setget _change_game_stage
+
+export (Array, NodePath) var main_signal_connecting_paths: Array = []
+var main_signal_connecting_nodes: Array = []
+
+enum VIEW_TILE {ONE, TWO_VER, THREE_LEFT, THREE_RIGHT, FOUR }
 
 var game_on: bool
+var fast_start_window_on: bool = false # agent ga čekira in reagira
+var goals_to_reach: Array = []
+var game_views: Dictionary = {}
 
+# agents
+var activated_drivers: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
 var agents_in_game: Array # live data ... tekom igre so v ranked zaporedju (glede na distanco)
+var players_in_game: Array # live data ... tekom igre so v ranked zaporedju (glede na distanco)
+var ais_in_game: Array # live data ... tekom igre so v ranked zaporedju (glede na distanco)
 var agents_finished: Array # agenti v cilju
 var players_qualified: Array # obstaja za prenos med leveloma
 var camera_leader: Node2D setget _change_camera_leader # trenutno vodilni igralec ... lahko tudi kakšen drug pogoj
 
-# game
-var activated_drivers: Array # naslednji leveli se tole adaptira, glede na to kdo je še v igri
-var fast_start_window_on: bool = false # agent ga čekira in reagira
-var start_position_nodes: Array # dobi od tilemapa
-var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja agento druga na drugega
-
 # level
+var current_level: Level
+var level_stats: Dictionary = {} # napolnem na spawn agent
 var level_profile: Dictionary # set_level seta iz profilov
 var current_level_index = 0
 var available_pickable_positions: Array # za random spawn
 var navigation_positions: Array # pozicije vseh navigation tiletov
+var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja agento druga na drugega
+var start_position_nodes: Array # dobi od levela
 
 # shadows
 onready var game_shadows_length_factor: float = Sts.game_shadows_length_factor # set_game seta iz profilov
@@ -29,21 +43,9 @@ onready var game_shadows_alpha: float = Sts.game_shadows_alpha # set_game seta i
 onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta iz profilov
 onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
 
-# neu
-onready var level_finished_ui: Control = $"UI/LevelFinished"
-onready var game_over_ui: Control = $"UI/GameOver"
-onready var hud: Hud = $"UI/Hud"
-onready var pause_game: Control = $"UI/PauseGame"
-onready var level_finished: Control = $"UI/LevelFinished"
-onready var game_over: Control = $"UI/GameOver"
-onready var game_view: ViewportContainer = $"GameViewFlow/GameView"
-var level_stats: Dictionary = {} # napolnem na spawn agent
-var goals_to_reach: Array = []
-onready var current_level: Level
-onready var GameView: PackedScene = preload("res://game/GameView.tscn")
-enum VIEW_TILE {ONE, TWO_VER, THREE_LEFT, THREE_RIGHT, FOUR }
 onready var game_views_holder: VFlowContainer = $GameViewFlow
-var game_views: Dictionary = {}
+onready var GameView: PackedScene = preload("res://game/GameView.tscn")
+onready var hud: Hud = $Gui/Hud
 
 
 func _input(event: InputEvent) -> void:
@@ -68,12 +70,26 @@ func _ready() -> void:
 		if not view == game_views_holder.get_child(0):
 			view.queue_free()
 
+	for path in main_signal_connecting_paths:
+		main_signal_connecting_nodes.append(get_node(path))
+
 	call_deferred("_set_game")
 
 
 func _process(delta: float) -> void:
 
+	# beleženje prisotnosti
 	agents_in_game = get_tree().get_nodes_in_group(Rfs.group_agents)
+	for agent in get_tree().get_nodes_in_group(Rfs.group_agents):
+		if is_instance_valid(agent):
+			if get_tree().get_nodes_in_group(Rfs.group_players).has(agent):
+				if not players_in_game.has(agent):
+					players_in_game.append(agent)
+			if get_tree().get_nodes_in_group(Rfs.group_ai).has(agent):
+				if not ais_in_game.has(agent):
+					ais_in_game.append(agent)
+		else:
+			agents_in_game.erase(agent)
 
 	_update_ranking()
 
@@ -86,6 +102,8 @@ func _process(delta: float) -> void:
 
 
 func _set_game():
+
+	self.game_stage = GAME_STAGE.SETUP
 
 	_spawn_level()
 
@@ -145,7 +163,9 @@ func _set_game():
 
 #		yield(get_tree(), "idle_frame") # ker je tudi znotraj _set_game_views
 
-	hud.set_hud(level_profile, game_views) # kliče GM
+	self.game_stage = GAME_STAGE.READY
+
+#	hud.set_hud(level_profile, game_views) # kliče GM
 
 	Rfs.ultimate_popup.hide() # skrijem pregame
 
@@ -153,6 +173,8 @@ func _set_game():
 
 
 func _game_intro():
+
+	self.game_stage = GAME_STAGE.INTRO
 
 	# pokažem sceno
 	var fade_time: float = 1
@@ -178,114 +200,62 @@ func _game_intro():
 
 func _start_game():
 
-
 	# start countdown
 	if Sts.start_countdown and level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
 		current_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
 		yield(current_level.start_lights, "countdown_finished")
 
-	Rfs.sound_manager.play_music()
-	hud.on_game_start()
-
-	# random pickables spawn
-	if level_profile["level_type"] == Pfs.BASE_TYPE.UNTIMED:
-		_spawn_random_pickables()
-
-	game_on = true
-
-#	for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
-#		ai_agent.controller.on_game_state_change(game_on, level_profile, current_level)
-#	for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-#		player_agent.agent_camera.follow_target = agents_in_game[agents_in_game.find(player_agent)]
-
 	# fast start
-	fast_start_window_on = true
-	emit_signal("game_state_changed", self)
+	game_on = true
+	self.game_stage = GAME_STAGE.FAST_START
 	yield(get_tree().create_timer(Sts.fast_start_window_time), "timeout")
-	fast_start_window_on = false
-	emit_signal("game_state_changed", self)
+	self.game_stage = GAME_STAGE.PLAYING
+
+	Rfs.sound_manager.play_music()
 
 
-func end_level():
+func _change_game_stage(new_game_stage: int):
+	print("GAME_STAGE: ", GAME_STAGE.keys()[new_game_stage])
 
-	# kamera
-	get_tree().set_group(Rfs.group_player_cameras, "follow_target", null)
-
-	if game_on:
-
-		game_on = false
-		emit_signal("game_state_changed", self) #  poslušajo drajverji,  hud3 "signal dobijo"
-
-		hud.on_level_finished()
-
-		yield(get_tree().create_timer(Sts.get_it_time), "timeout")
-
-		# preverim, če je kakšen človek kvalificiran
-		if agents_finished.empty():
-			pass
-		else:
-			# SUCCESS če je vsaj en plejer bil čez ciljno črto
-			for agent in agents_finished:
-				if agent.is_in_group(Rfs.group_players):
-					players_qualified.append(agent)
-			# FAIL, če ni nobenega plejerja v cilju
-
-		var level_goal_reached: bool
-		if players_qualified.empty():
-			level_goal_reached = false
-
-		if level_goal_reached:
-			# ranking ob koncu levela
-			var agents_ranked_on_level_finished: Array = []
-			# najprej dodam agents finished, ki je že pravilno rangiran
-			agents_ranked_on_level_finished.append_array(agents_finished)
-			# potem dodam še not finished ... po vrsti gre čez array in upošteva pogoje > vrstni red je po prevoženi distanci
-			for agent in agents_in_game:
-				if not agents_finished.has(agent):
-					agents_ranked_on_level_finished.append(agent)
-					if agent.is_in_group(Rfs.group_ai):
-						# AI se vedno uvrsti in dobi nekaj časa glede na zadnjega v cilju
-						var worst_time_among_finished: float = agents_finished[- 1].driver_stats[Pfs.STATS.LEVEL_TIME]
-						agent.driver_stats[Pfs.STATS.LEVEL_TIME] = worst_time_among_finished + worst_time_among_finished / 5
-						agents_finished.append(agent)
-					elif agent.is_in_group(Rfs.group_players):
-						# plejer se na Easy_mode uvrsti brez časa
-						if Sts.easy_mode:
-							agents_finished.append(agent)
-
-			# je level zadnji?
-			if current_level_index < (Sts.current_game_levels.size() - 1):
-				level_finished_ui.open_level_finished(agents_finished, agents_in_game)
-			else:
-				game_over_ui.open_gameover(agents_finished, agents_in_game)
-				#				print("agents_finished", agents_finished)
-
-		else:
-			print("agents_finished else ", agents_finished)
-			game_over_ui.open_gameover(agents_finished, agents_in_game)
-			#		var fade_time = 1
-			#		var fade_in_tween = get_tree().create_tween()
-			#		fade_in_tween.tween_property(get_parent(), "modulate", Color.black, fade_time)
-			#		yield(fade_in_tween, "finished")
+#	if not new_game_stage == game_stage:
+	game_stage = new_game_stage
+#	call_deferred("_rect_to_change")
+	_rect_to_change()
 
 
-#		for agent in agents_in_game: # zazih
-#			# driver se deaktivira, ko mu zmanjka bencina (in ko gre čez cilj)
-#			# AI se deaktivira, ko gre čez cilj
-#			if agent.is_active: # zazih
-#				agent.is_active = false
-#			agent.set_physics_process(false)
+func _rect_to_change():
 
-		# music stop
-		Rfs.sound_manager.stop_music()
-		# sfx mute
-		var bus_index: int = AudioServer.get_bus_index("GameSfx")
-		AudioServer.set_bus_mute(bus_index, true)
-
-		# best lap stats reset
-		# looping sounds stop
-		# navigacija AI
-		# kvefri elementov, ki so v areni
+	match game_stage:
+		# najprej povežem s s signalom
+		GAME_STAGE.SETUP:
+			for connecting_node in main_signal_connecting_nodes:
+				if not self.is_connected("game_stage_changed", connecting_node, "_on_game_stage_changed"):
+					self.connect("game_stage_changed", connecting_node, "_on_game_stage_changed")
+		GAME_STAGE.READY:
+			emit_signal("game_stage_changed", self)
+		GAME_STAGE.FAST_START: # samo kar ni samo na štartu
+			emit_signal("game_stage_changed", self)
+		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
+			if level_profile["level_type"] == Pfs.BASE_TYPE.UNTIMED: # zaženem vsakič, tudi po pavzi
+				_spawn_random_pickables()
+			emit_signal("game_stage_changed", self)
+		GAME_STAGE.PAUSED:
+			emit_signal("game_stage_changed", self)
+		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
+			game_on = false
+			get_tree().set_group(Rfs.group_player_cameras, "follow_target", null)
+			emit_signal("game_stage_changed", self)
+#			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
+#			# ustavi elemente
+#				# best lap stats reset
+#				# looping sounds stop
+#				# navigacija AI
+#				# kvefri elementov, ki so v areni
+			Rfs.sound_manager.stop_music()
+			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+			AudioServer.set_bus_mute(bus_index, true)
+		_:
+			emit_signal("game_stage_changed", self)
 
 
 func set_next_level():
@@ -373,10 +343,12 @@ func _update_ranking():
 		all_agent_trackers.sort_custom(self, "_sort_trackers_by_offset")
 		for agent_tracker in all_agent_trackers:
 			agents_ranked.append(agent_tracker.tracking_target)
-		agents_ranked.sort_custom(self, "_sort_agents_by_laps")
+		if agents_in_game.size() > 1:
+			agents_ranked.sort_custom(self, "_sort_agents_by_laps")
 		agents_in_game = agents_ranked
 	else:
-		agents_in_game.sort_custom(self, "_sort_trackers_by_points")
+		if agents_in_game.size() > 1:
+			agents_in_game.sort_custom(self, "_sort_trackers_by_points")
 
 	for agent in agents_in_game:
 		var current_agent_rank: int = agents_in_game.find(agent) + 1
@@ -527,42 +499,40 @@ func _spawn_agent(agent_driver_index: int, spawned_position_index: int):
 		new_agent.tracker = current_level.level_track.set_new_tracker(new_agent)
 	# goals
 	new_agent.controller.goals_to_reach = level_profile["level_goals"].duplicate()
-
-	# signali
-	self.connect("game_state_changed", new_agent.controller, "_on_game_state_change")
-	new_agent.connect("activity_changed", self, "_on_agent_activity_change")
-	new_agent.connect("stat_changed", hud, "_on_agent_stat_changed")
-
 	# level stats
 	level_stats[agent_driver_index] = Pfs.start_gent_level_stats.duplicate()
 	level_stats[agent_driver_index][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
 	level_stats[agent_driver_index][Pfs.STATS.GOALS_REACHED] = []
 
-	# hud stats
-	hud.set_agent_statbox(new_agent, level_stats[agent_driver_index])
+	# connect
+	self.connect("game_stage_changed", new_agent.controller, "_on_game_stage_change")
+	new_agent.connect("activity_changed", self, "_on_agent_activity_change")
+	new_agent.connect("stat_changed", hud, "_on_agent_stat_changed")
 
 
 func _spawn_random_pickables():
 
-	if available_pickable_positions.empty():
-		return
+	if game_stage == GAME_STAGE.PLAYING:
 
-	if get_tree().get_nodes_in_group(Rfs.group_pickables).size() <= Sts.pickables_count_limit - 1:
+		if available_pickable_positions.empty():
+			return
 
-		# žrebanje tipa
-		var random_pickable_key = Pfs.pickable_profiles.keys().pick_random()
-		var random_cell_position: Vector2 = navigation_positions.pick_random()
-		current_level.spawn_pickable(random_cell_position, "random_pickable_key", random_pickable_key)
+		if get_tree().get_nodes_in_group(Rfs.group_pickables).size() <= Sts.pickables_count_limit - 1:
 
-		# odstranim celico iz arraya tistih na voljo
-		var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
-		available_pickable_positions.remove(random_cell_position_index)
+			# žrebanje tipa
+			var random_pickable_key = Pfs.pickable_profiles.keys().pick_random()
+			var random_cell_position: Vector2 = navigation_positions.pick_random()
+			current_level.spawn_pickable(random_cell_position, "random_pickable_key", random_pickable_key)
 
-	# random timer reštart
-	var random_pickable_spawn_time: int = [1, 2, 3].pick_random()
-	yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # OPT ... uvedi node timer
+			# odstranim celico iz arraya tistih na voljo
+			var random_cell_position_index: int = available_pickable_positions.find(random_cell_position)
+			available_pickable_positions.remove(random_cell_position_index)
 
-	_spawn_random_pickables()
+		# random timer reštart
+		var random_pickable_spawn_time: int = [1, 2, 3].pick_random()
+		yield(get_tree().create_timer(random_pickable_spawn_time), "timeout") # OPT ... uvedi node timer
+
+		_spawn_random_pickables()
 
 
 # UTILITI ---------------------------------------------------------------------------------------------
@@ -661,6 +631,8 @@ func _on_agent_reached_goal(current_goal: Node, agent_reaching: Node2D): # level
 				Rfs.sound_manager.play_sfx("finish_horn")
 				agents_finished.append(agent_reaching)
 
+		_check_for_game_end()
+
 
 func _on_finish_line_crossed(agent_across: Node2D): # sproži finish line  # temp ... Vechile class
 
@@ -670,39 +642,69 @@ func _on_finish_line_crossed(agent_across: Node2D): # sproži finish line  # tem
 		var agent_goals_reached: Array = agent_level_data[Pfs.STATS.GOALS_REACHED].duplicate()
 
 		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
-		if level_profile["level_goals"].size() > 0:
-			if not agent_goals_reached == level_profile["level_goals"]:
-				return
+		if level_profile["level_goals"].empty() or agent_goals_reached == level_profile["level_goals"]:
+#		if level_profile["level_goals"].size() > 0:
+#			if not agent_goals_reached == level_profile["level_goals"]:
+#				return
 
-		# stat level time
-		var prev_lap_level_time: float = agent_level_data[Pfs.STATS.LEVEL_TIME]
-		agent_level_data[Pfs.STATS.LEVEL_TIME] = hud.game_timer.game_time_hunds
+			# stat level time
+			var prev_lap_level_time: float = agent_level_data[Pfs.STATS.LEVEL_TIME]
+			agent_level_data[Pfs.STATS.LEVEL_TIME] = hud.game_timer.game_time_hunds
 
-		var has_finished_level: bool = false
-		# WITH LAPS ... lap finished če so vsi čekpointi
-		if level_profile["lap_limit"] > 1:
-			var lap_time: float = agent_level_data[Pfs.STATS.LEVEL_TIME] - prev_lap_level_time
-			agent_level_data[Pfs.STATS.LAPS_FINISHED].append(lap_time)
-			if agent_level_data[Pfs.STATS.LAPS_FINISHED].size() >= level_profile["lap_limit"]:
+			var has_finished_level: bool = false
+			# WITH LAPS ... lap finished če so vsi čekpointi
+			if level_profile["lap_limit"] > 1:
+				var lap_time: float = agent_level_data[Pfs.STATS.LEVEL_TIME] - prev_lap_level_time
+				agent_level_data[Pfs.STATS.LAPS_FINISHED].append(lap_time)
+				if agent_level_data[Pfs.STATS.LAPS_FINISHED].size() >= level_profile["lap_limit"]:
+					has_finished_level = true
+			else:
 				has_finished_level = true
+
+			if has_finished_level:
+				var drive_out_time: float = 1
+				var drive_out_vector: Vector2 = Vector2.ZERO
+				if current_level.drive_out_position:
+					drive_out_vector = current_level.drive_out_position.rotated(current_level.level_finish.global_rotation)
+				agent_across.drive_out(drive_out_vector, drive_out_time)
+				agents_finished.append(agent_across)
+				Rfs.sound_manager.play_sfx("finish_horn")
+			else:
+				Rfs.sound_manager.play_sfx("little_horn")
+
+
+			# hud update
+			for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
+				hud.update_agent_level_stats(agent_across.driver_index, stat_key, agent_level_data[stat_key])
+
+			_check_for_game_end()
+
+
+func _check_for_game_end():
+	# igre je konec, ko so v cilju vsi plejerji, ki so še aktivni
+	# SUCCES je, če je vsaj en plejer v cilju
+	# FAIL je če ni nobenega
+
+	var all_players_finished_or_deactivated: bool = true
+
+	# preverim, če kakšen plejer še dirka
+	for player in players_in_game:
+		if player.is_active and not agents_finished.has(player):
+			all_players_finished_or_deactivated = false
+			break
+
+	# če je konec, preverim succes
+	var is_success: bool = false
+	if all_players_finished_or_deactivated:
+		for player in players_in_game:
+			if agents_finished.has(player):
+				players_qualified.append(player) # temp qualif
+				is_success = true
+		# apliciram stage ... pošlje signal
+		if is_success:
+			self.game_stage = GAME_STAGE.END_SUCCESS
 		else:
-			has_finished_level = true
-
-		if has_finished_level:
-			var drive_out_time: float = 1
-			var drive_out_vector: Vector2 = Vector2.ZERO
-			if current_level.drive_out_position:
-				drive_out_vector = current_level.drive_out_position.rotated(current_level.level_finish.global_rotation)
-			agent_across.drive_out(drive_out_vector, drive_out_time)
-			agents_finished.append(agent_across)
-			Rfs.sound_manager.play_sfx("finish_horn")
-		else:
-			Rfs.sound_manager.play_sfx("little_horn")
-
-
-		# hud update
-		for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
-			hud.update_agent_level_stats(agent_across.driver_index, stat_key, agent_level_data[stat_key])
+			self.game_stage = GAME_STAGE.END_FAIL
 
 
 func _on_level_is_set(level_type: int, start_positions: Array, camera_nodes: Array, nav_positions: Array, level_goals: Array):
@@ -718,9 +720,9 @@ func _on_level_is_set(level_type: int, start_positions: Array, camera_nodes: Arr
 	# kamera
 	var camera_limits: Control = camera_nodes[0]
 	var camera_start_position: Vector2 = camera_nodes[1].global_position
-	get_tree().call_group(Rfs.group_player_cameras, "setup", camera_limits, camera_start_position)
+	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position)
 
-	printt("GM level goals", level_profile["level_goals"])
+	#	printt("GM level goals", level_profile["level_goals"])
 
 
 func _on_agent_activity_change(changed_agent: Node2D): # temp ... Vechile class
@@ -728,10 +730,10 @@ func _on_agent_activity_change(changed_agent: Node2D): # temp ... Vechile class
 	# preverja, če je še kakšen player aktiven ... za GO
 	if changed_agent.is_active == false:
 
-		if Sts.hide_view_on_player_deactivated and not Sts.all_agents_on_screen_mode:
+		if Sts.hide_view_on_player_deactivated and not Sts.all_agents_on_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
 			# skrijem view
 			var hide_view_time: float
-			yield(get_tree().create_timer(1), "timeout")
+			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
 			var removed_game_view: ViewportContainer = game_views.find_key(changed_agent)
 			# odstranim, če ni zadnji view
 			if removed_game_view and game_views.size() > 1:
@@ -742,11 +744,15 @@ func _on_agent_activity_change(changed_agent: Node2D): # temp ... Vechile class
 				# odstranim imitatorja ... more bit za setanje game_views
 				hud.agent_huds_holder.remove_view_imitator(game_views)
 
-		# preverim, če je bil zadnji plejer da končam igro
-		for players_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-			if players_agent.is_active:
-				break
-			end_level()
+		# preverim, če je bil zadnji plejer da končam igro ... za primer, če ni nobe
+		if game_stage == GAME_STAGE.PLAYING:
+			var still_playing: bool = false
+			for player in players_in_game:
+				if player.is_active:
+					still_playing = true
+			if not still_playing:
+				self.game_stage = GAME_STAGE.END_FAIL
+				# _on_change preverja, če je igra že končana (tole ne poveozi morebitnega uspeha
 
 
 func _on_body_exited_playing_field(body: Node) -> void:

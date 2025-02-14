@@ -1,0 +1,21 @@
+[gd_resource type="NoiseTexture" load_steps=3 format=2]
+
+[ext_resource path="res://common/shaker/shake_profile_default.gd" type="Script" id=1]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+seed = 14
+period = 102.1
+persistence = 0.085
+lacunarity = 2.15
+
+[resource]
+noise = SubResource( 1 )
+script = ExtResource( 1 )
+add_trauma = 0.5
+trauma_time = 0.1
+decay_factor = 0.5
+max_horizontal = 150.0
+max_vertical = 150.0
+max_rotation = 25.0
+time_scale = 150.0
+max_trauma = 1.0

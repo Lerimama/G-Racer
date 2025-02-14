@@ -50,7 +50,6 @@ var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
 var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
 var power_speed_factor: float # delež engine_power, ki manipulira z engine powerjem in imitira hitrost
 var agent_manager: Node
-var game_is_on: bool = false
 var fast_start_window_is_open: bool = false
 var random_start_range: Array = [0.1, 1]
 
@@ -510,34 +509,37 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
-func _on_game_state_change(game_manager: Game): # od GMja
+func _on_game_stage_change(game_manager: Game): # od GMja
 
-	game_is_on = game_manager.game_on
-	fast_start_window_is_open = game_manager.fast_start_window_on
-	var level_profile: Dictionary = game_manager.level_profile
-	var curr_level: Level = game_manager.current_level
+	var game_is_on: bool = false
 
-	randomize()
-	var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
-
-	# level type
-	if game_is_on == true:
-		yield(get_tree().create_timer(random_start_delay), "timeout")
-		if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
-			if controlled_agent.tracker:
-				self.ai_state = AI_STATE.RACE_TRACK
-			elif not goals_to_reach.empty(): # po domače
-				self.ai_state = AI_STATE.RACE_TO_GOAL # po domače
-			elif curr_level.level_finish: # po domače
-				self.ai_state = AI_STATE.RACE_TO_GOAL # po domače
-				ai_target = curr_level.level_finish  # po domače
+	match game_manager.game_stage:
+		game_manager.GAME_STAGE.FAST_START:
+			fast_start_window_is_open = true
+			# random start
+			randomize()
+			var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
+			yield(get_tree().create_timer(random_start_delay), "timeout")
+			# level type
+			var level_profile: Dictionary = game_manager.level_profile
+			var curr_level: Level = game_manager.current_level
+			if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
+				if controlled_agent.tracker:
+					self.ai_state = AI_STATE.RACE_TRACK
+				elif not goals_to_reach.empty(): # po domače
+					self.ai_state = AI_STATE.RACE_TO_GOAL # po domače
+				elif curr_level.level_finish: # po domače
+					self.ai_state = AI_STATE.RACE_TO_GOAL # po domače
+					ai_target = curr_level.level_finish  # po domače
+				else:
+					self.ai_state = AI_STATE.SEARCH
 			else:
 				self.ai_state = AI_STATE.SEARCH
-		else:
-			self.ai_state = AI_STATE.SEARCH
-	else:
-		self.ai_state = AI_STATE.OFF
-		agent_manager.motion = agent_manager.MOTION.IDLE
+		game_manager.GAME_STAGE.PLAYING:
+			fast_start_window_is_open = false
+		game_manager.GAME_STAGE.END_SUCCESS, game_manager.GAME_STAGE.END_FAIL:
+			self.ai_state = AI_STATE.OFF
+			agent_manager.motion = agent_manager.MOTION.IDLE
 
 
 func _on_NavigationAgent2D_path_changed() -> void:

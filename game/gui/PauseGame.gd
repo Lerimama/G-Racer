@@ -1,14 +1,14 @@
 extends Control
 
 
-func _input(event: InputEvent) -> void:
-
-	#	if Rfs.game_manager.game_on:
-	if Input.is_action_just_pressed("ui_cancel"):
-		if not visible:
-			pause_game()
-		else:
-			_on_PlayBtn_pressed()
+#func _input(event: InputEvent) -> void:
+#
+#	#	if Rfs.game_manager.game_on:
+#	if Input.is_action_just_pressed("ui_cancel"):
+#		if not visible:
+#			pause_game()
+#		else:
+#			_on_PlayBtn_pressed()
 
 
 func _ready() -> void:
@@ -21,16 +21,14 @@ func pause_game():
 
 	get_viewport().set_disable_input(true) # anti dablklik
 
-	#	Rfs.game_manager.game_on = false ... striže s signalom iz GM, ki game on razume kot začetekin game off kot konec
-
 	visible = true
 #	Global.sound_manager.play_gui_sfx("screen_slide")
 	$Menu/PlayBtn.grab_focus()
 
 	var pause_in_time: float = 0.5
-	var fade_in_tween = get_tree().create_tween()
-	fade_in_tween.tween_property(self, "modulate:a", 1, pause_in_time)
+	var fade_in_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_in_tween.tween_callback(get_tree(), "set_pause", [true])
+	fade_in_tween.tween_property(self, "modulate:a", 1, pause_in_time)
 	fade_in_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
 
 
@@ -47,14 +45,12 @@ func play_on():
 	fade_out_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
 	yield(fade_out_tween, "finished")
 
-	#	Rfs.game_manager.game_on = true ... striže s signalom iz GM, ki game on razume kot začetekin game off kot konec
-
 
 # MENU ---------------------------------------------------------------------------------------------
 
 
 func _on_PlayBtn_pressed() -> void:
-
+	print ("gumb ni povezan")
 	play_on()
 
 
@@ -65,7 +61,7 @@ func _on_RestartBtn_pressed() -> void:
 
 #	Rfs.game_manager.stop_game_elements()
 	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
-	get_tree().root.reload_game()
+	Rfs.main_node.reload_game()
 #	Rfs.main_node.reload_game()
 
 
@@ -74,50 +70,4 @@ func _on_QuitBtn_pressed() -> void:
 #	Global.game_manager.stop_game_elements()
 	Rfs.sound_manager.stop_music()
 	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
-	Rfs.game_manager.game_on = false
-	get_tree().root.game_out()
-#	Rfs.main_node.game_out()
-
-
-
-# SETTINGS BTNZ ---------------------------------------------------------------------------------------------
-
-
-#func _on_GameMusicBtn_toggled(button_pressed: bool) -> void:
-#
-#	if button_pressed:
-#		Global.sound_manager.play_gui_sfx("btn_confirm")
-#		Global.sound_manager.game_music_set_to_off = false
-#		Global.sound_manager.play_music("game_music")
-#	else:
-#		Global.sound_manager.play_gui_sfx("btn_cancel")
-#		Global.sound_manager.game_music_set_to_off = true
-#		Global.sound_manager.stop_music("game_music")
-#		Rfs.sound_manager.stop_music()
-
-
-
-#func _on_GameMusicSlider_value_changed(value: float) -> void:
-#
-#	Global.sound_manager.set_game_music_volume(value)
-#
-#
-#func _on_GameSfxBtn_toggled(button_pressed: bool) -> void:
-#
-#	if button_pressed:
-#		Global.sound_manager.play_gui_sfx("btn_confirm")
-#		Global.sound_manager.game_sfx_set_to_off = false
-#	else:
-#		Global.sound_manager.play_gui_sfx("btn_cancel")
-#		Global.sound_manager.game_sfx_set_to_off = true
-#
-#
-#func _on_CameraShakeBtn_toggled(button_pressed: bool) -> void:
-#
-#	if button_pressed:
-#		Global.sound_manager.play_gui_sfx("btn_confirm")
-#		Global.main_node.camera_shake_on = true
-#	else:
-#		Global.sound_manager.play_gui_sfx("btn_cancel")
-#		Global.main_node.camera_shake_on = false
-
+	Rfs.main_node.game_out()

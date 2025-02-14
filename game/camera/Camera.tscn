@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=17 format=2]
 
-[ext_resource path="res://game/camera/camera_shake_noise.tres" type="OpenSimplexNoise" id=1]
+[ext_resource path="res://game/camera/noise_simplex_camera_shake_def.tres" type="OpenSimplexNoise" id=1]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/camera/Camera.gd" type="Script" id=3]
 [ext_resource path="res://game/camera/CameraTestUI.gd" type="Script" id=4]
@@ -8,6 +8,19 @@
 [ext_resource path="res://game/camera/PlayingField.gd" type="Script" id=6]
 [ext_resource path="res://game/gui/hud/FpsCounter.gd" type="Script" id=7]
 [ext_resource path="res://common/debug/DebugIndikator.tscn" type="PackedScene" id=8]
+[ext_resource path="res://common/shaker/Shaker.tscn" type="PackedScene" id=9]
+[ext_resource path="res://game/camera/shake_profile_game.tres" type="Texture" id=10]
+[ext_resource path="res://game/camera/shake_profile_projectile.tres" type="Texture" id=11]
+[ext_resource path="res://game/camera/shake_profile_agent.tres" type="Texture" id=12]
+
+[sub_resource type="OpenSimplexNoise" id=785]
+seed = 14
+period = 102.1
+persistence = 0.085
+lacunarity = 2.15
+
+[sub_resource type="NoiseTexture" id=784]
+noise = SubResource( 785 )
 
 [sub_resource type="RectangleShape2D" id=780]
 extents = Vector2( 1280, 720.5 )
@@ -36,6 +49,15 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 1440.0 ],
 "_edit_vertical_guides_": [ 2560.0 ]
 }
+shake_profile_game = ExtResource( 10 )
+shake_profile_projectile = ExtResource( 11 )
+shake_profile_agent = ExtResource( 12 )
+
+[node name="Shaker" parent="." instance=ExtResource( 9 )]
+shake_profile = ExtResource( 11 )
+
+[node name="TextureButton" parent="Shaker/VisualizerLayer/VBoxContainer" index="0"]
+texture_normal = SubResource( 784 )
 
 [node name="__indikator" parent="." instance=ExtResource( 8 )]
 visible = false
@@ -68,7 +90,8 @@ polygon = PoolVector2Array( -1600, -1072.01, -1600, -720.007, 1280, -720, 1280, 
 disabled = true
 
 [node name="TestUI" type="CanvasLayer" parent="."]
-layer = 3
+layer = 128
+visible = false
 script = ExtResource( 4 )
 noise = ExtResource( 1 )
 
@@ -94,7 +117,7 @@ margin_bottom = 63.0
 margin_right = 2560.0
 margin_bottom = 1440.0
 
-[node name="AddTraumaBtn" type="Button" parent="TestUI/TestHud"]
+[node name="ShakeBtn" type="Button" parent="TestUI/TestHud"]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 80.0
@@ -245,16 +268,6 @@ max_value = 4.0
 step = 0.01
 value = 2.0
 
-[node name="ShakeToggle" type="CheckBox" parent="TestUI/TestHud"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 88.0
-margin_top = -680.0
-margin_right = 252.0
-margin_bottom = -651.0
-theme = ExtResource( 2 )
-text = "in gejm setup"
-
 [node name="CameraSetupToggle" type="CheckBox" parent="TestUI"]
 margin_left = 1084.0
 margin_top = 178.0
@@ -295,9 +308,9 @@ margin_bottom = 720.0
 color = Color( 1, 1, 0, 1 )
 
 [connection signal="body_exited" from="PlayingField/FieldArea" to="PlayingField" method="_on_ScreenArea_body_exited"]
-[connection signal="mouse_entered" from="TestUI/TestHud/AddTraumaBtn" to="TestUI" method="_on_AddTraumaBtn_mouse_entered"]
-[connection signal="mouse_exited" from="TestUI/TestHud/AddTraumaBtn" to="TestUI" method="_on_AddTraumaBtn_mouse_exited"]
-[connection signal="pressed" from="TestUI/TestHud/AddTraumaBtn" to="TestUI" method="_on_AddTraumaBtn_pressed"]
+[connection signal="mouse_entered" from="TestUI/TestHud/ShakeBtn" to="TestUI" method="_on_AddTraumaBtn_mouse_entered"]
+[connection signal="mouse_exited" from="TestUI/TestHud/ShakeBtn" to="TestUI" method="_on_AddTraumaBtn_mouse_exited"]
+[connection signal="pressed" from="TestUI/TestHud/ShakeBtn" to="TestUI" method="_on_ShakeBtn_pressed"]
 [connection signal="mouse_entered" from="TestUI/TestHud/ResetViewBtn" to="TestUI" method="_on_ResetView_mouse_entered"]
 [connection signal="mouse_exited" from="TestUI/TestHud/ResetViewBtn" to="TestUI" method="_on_ResetView_mouse_exited"]
 [connection signal="pressed" from="TestUI/TestHud/ResetViewBtn" to="TestUI" method="_on_ResetView_pressed"]
@@ -324,9 +337,6 @@ color = Color( 1, 1, 0, 1 )
 [connection signal="mouse_entered" from="TestUI/TestHud/NoiseControl/Lacunarity" to="TestUI" method="_on_Lacunarity_mouse_entered"]
 [connection signal="mouse_exited" from="TestUI/TestHud/NoiseControl/Lacunarity" to="TestUI" method="_on_Lacunarity_mouse_exited"]
 [connection signal="value_changed" from="TestUI/TestHud/NoiseControl/Lacunarity" to="TestUI" method="_on_Lacunarity_value_changed"]
-[connection signal="mouse_entered" from="TestUI/TestHud/ShakeToggle" to="TestUI" method="_on_CheckBox_mouse_entered"]
-[connection signal="mouse_exited" from="TestUI/TestHud/ShakeToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
-[connection signal="toggled" from="TestUI/TestHud/ShakeToggle" to="TestUI" method="_on_ShakeToggle_toggled"]
 [connection signal="mouse_entered" from="TestUI/CameraSetupToggle" to="TestUI" method="_on_CheckBox_mouse_entered"]
 [connection signal="mouse_exited" from="TestUI/CameraSetupToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
 [connection signal="toggled" from="TestUI/CameraSetupToggle" to="TestUI" method="_on_CheckBox_toggled"]
@@ -334,4 +344,5 @@ color = Color( 1, 1, 0, 1 )
 [connection signal="mouse_exited" from="TestUI/NodeSetupToggle" to="TestUI" method="_on_CheckBox_mouse_exited"]
 [connection signal="toggled" from="TestUI/NodeSetupToggle" to="TestUI" method="_on_NodeCheckBox_toggled"]
 
+[editable path="Shaker"]
 [editable path="TestUI/SetupPanel"]

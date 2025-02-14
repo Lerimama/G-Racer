@@ -21,6 +21,7 @@ var pressed_driving_actions: Array = []
 var goals_to_reach: Array = [] # lahko v agenta, ker ma tud AI
 var selected_item_index = 0
 var game_is_on: bool = false
+var game_manager: Game
 var fast_start_window_is_open: bool = false
 
 
@@ -99,6 +100,7 @@ func _ready() -> void:
 
 func _react_to_driving_input(pressed_actions: Array):
 
+
 	if not game_is_on and pressed_actions.has(fwd_action):
 		controlled_agent.revup()
 
@@ -133,22 +135,20 @@ func goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_tar
 	goals_to_reach.erase(goal_reached)
 
 
-func _on_game_state_change(game_manager: Game): # od GMja
+func _on_game_stage_change(game_manager: Game): # od GMja
 
-	game_is_on = game_manager.game_on
-	fast_start_window_is_open = game_manager.fast_start_window_on
+	match game_manager.game_stage:
+		game_manager.GAME_STAGE.FAST_START:
+			#			print ("fast start open")
+			fast_start_window_is_open = true
+			game_is_on = true
+		game_manager.GAME_STAGE.PLAYING:
+			#			print ("fast start closed")
+			fast_start_window_is_open = false
+		game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
+			#		print ("game if off")
+			game_is_on = false
+			if controlled_agent.is_active:
+				#				set_physics_process(false)
+				controlled_agent.is_active = false
 
-	if game_is_on and fast_start_window_is_open: # na štartu
-		print ("fast start open")
-		controlled_agent.agent_camera.follow_target = controlled_agent
-	elif game_is_on:
-		print ("fast start closed")
-	else:
-		print ("game if off")
-		if controlled_agent.is_active: # zazih
-			controlled_agent.is_active = false
-#			set_physics_process(false)
-
-	# ne vem če hočem vedno ... ponavadi naj bo kar na boltu
-	#	elif not game_is_on:
-	#		controlled_agent.agent_camera.follow_target = controlled_agent

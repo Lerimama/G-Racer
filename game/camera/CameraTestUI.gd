@@ -1,25 +1,41 @@
 extends CanvasLayer
 
 
+onready var shaker: Node = $"../Shaker"
+
 export (OpenSimplexNoise) var noise # tekstura za vizualizacijo ma kopijo tega noisa
 
+#var trauma
+#var time_scale
+#var max_horizontal
+#var shake
+#var max_vertical
+#var decay
+#var max_rotation
+#var trauma_time
 
-export(float, 0, 1) var trauma = 0.0
-export var trauma_time = 0 # decay delay
-export var max_horizontal = 150
-export var max_vertical = 150
-export var max_rotation = 25
-export(float, 0, 1) var decay = 0.5
+export(float, 0, 1) var trauma: float = 0.5
+export var trauma_time: float = 0 # decay delay
+export var max_horizontal: float = 150
+export var max_vertical: float = 150
+export var max_rotation: float = 25
+export(float, 0, 1) var decay: float = 0.5
 export var time_scale: float = 150
 
 # traume
-export(float, 0, 1) var add_trauma = 0.2
+export(float, 0, 1) var add_trauma: float = 0.2
 
 # battle shake
+
+
 var shake_on: bool = false
-export (float, 0, 1) var agent_explosion_shake = 0.5 # explosion add_trauma
-export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
-export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
+export (float, 0, 1) var added_shake_trauma: float = 0.5
+#export (float, 0, 1) var agent_explosion_shake = 0.5 # explosion add_trauma
+#export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
+#export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
+
+
+
 
 var time: float = 0
 var test_view_on = false
@@ -30,11 +46,15 @@ var camera_center = Vector2(320, 180)
 var mouse_position_on_drag_start: Vector2 # zamik pozicije miške ob kliku
 var drag_on: bool = false
 
-onready var parent_camera = get_parent()
+var testing_start_camera_zoom: Vector2
+var testing_start_camera_position: Vector2
+var reset_camera_target: Node2D # ne dela
+var mouse_exited_reset_btns: Array = [] # precej bedna začetinška rešitev
 
+onready var parent_camera = get_parent()
 onready var trauma_bar = $TestHud/TraumaBar
 onready var shake_bar = $TestHud/ShakeBar
-onready var trauma_btn = $TestHud/AddTraumaBtn
+onready var shake_btn = $TestHud/ShakeBtn
 onready var reset_view_btn = $TestHud/ResetViewBtn
 onready var zoom_slider = $TestHud/ZoomSlider
 onready var time_slider = $TestHud/TimeSlider
@@ -43,22 +63,25 @@ onready var octaves_slider = $TestHud/NoiseControl/Octaves
 onready var period_slider = $TestHud/NoiseControl/Period
 onready var persistence_slider = $TestHud/NoiseControl/Persistence
 onready var lacunarity_slider = $TestHud/NoiseControl/Lacunarity
-onready var shake_toggle: CheckBox = $TestHud/ShakeToggle
 
-var testing_start_camera_zoom: Vector2
-var testing_start_camera_position: Vector2
-var reset_camera_target: Node2D # ne dela
 
 
 func _ready():
 
+	mouse_exited_reset_btns = [$TestHud/ShakeBtn, $TestHud/ResetViewBtn, $TestHud/ZoomSlider, $TestHud/TimeSlider]
+	mouse_exited_reset_btns.append($TestHud/NoiseControl)
+	mouse_exited_reset_btns.append_array([$TestHud/NoiseControl/Seed, $TestHud/NoiseControl/Octaves, $TestHud/NoiseControl/Period, $TestHud/NoiseControl/Persistence, $TestHud/NoiseControl/Lacunarity])
+
+	for btn in mouse_exited_reset_btns:
+		btn.connect("mouse_exited", self, "_on_interactive_control_mouse_exited")
+		btn.connect("mouse_entered", self, "_on_interactive_control_mouse_entered")
+
 	$TestHud.hide()
 	$SetupPanel.hide()
-#	$SetupPanel.show()
 	$CameraSetupToggle.set_focus_mode(0)
 	$NodeSetupToggle.set_focus_mode(0)
 
-	trauma_btn.set_focus_mode(0)
+	shake_btn.set_focus_mode(0)
 	reset_view_btn.set_focus_mode(0)
 	zoom_slider.set_focus_mode(0)
 	time_slider.set_focus_mode(0)
@@ -155,22 +178,9 @@ func _on_NodeCheckBox_toggled(button_pressed: bool) -> void:
 # SHAKE NOISE ------------------------------------------------------------
 
 
-func _on_ShakeToggle_toggled(button_pressed: bool) -> void:
-
-	if shake_on:
-		agent_explosion_shake = 0
-		bullet_hit_shake = 0
-		misile_hit_shake = 0
-		shake_on = false
-	else:
-		agent_explosion_shake = 0.5
-		bullet_hit_shake = 0.2
-		misile_hit_shake = 0.4
-		shake_on = true
-
-func _on_AddTraumaBtn_pressed() -> void:
+func _on_ShakeBtn_pressed() -> void:
 	mouse_used = true
-	shake_camera(add_trauma)
+	$"../Shaker".shake_camera(add_trauma)
 
 func _on_TimeSlider_value_changed(value: float) -> void:
 	Engine.time_scale = value
@@ -200,58 +210,67 @@ func _on_Lacunarity_value_changed(value: float) -> void:
 
 # UI MOUSE FOKUS ------------------------------------------------------------
 
-func _on_AddTraumaBtn_mouse_entered() -> void:
+func _on_interactive_control_mouse_entered():
 	mouse_used = true
-func _on_AddTraumaBtn_mouse_exited() -> void:
-	mouse_used = false
 
-func _on_ResetView_mouse_entered() -> void:
+func _on_interactive_control_mouse_exited():
 	mouse_used = true
-func _on_ResetView_mouse_exited() -> void:
-	mouse_used = false
 
-func _on_ZoomSlider_mouse_entered() -> void:
-	mouse_used = true
-func _on_ZoomSlider_mouse_exited() -> void:
-	mouse_used = false
 
-func _on_TimeSlider_mouse_entered() -> void:
-	mouse_used = true
-func _on_TimeSlider_mouse_exited() -> void:
-	mouse_used = false
+#func _on_AddTraumaBtn_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_AddTraumaBtn_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_ResetView_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_ResetView_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_ZoomSlider_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_ZoomSlider_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_TimeSlider_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_TimeSlider_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_Control_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_Control_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_Lacunarity_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_Lacunarity_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_Persistance_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_Persistance_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_Period_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_Period_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_Octaves_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_Octaves_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_SeedSlider_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_SeedSlider_mouse_exited() -> void:
+#	mouse_used = false
+#
+#func _on_CheckBox_mouse_entered() -> void:
+#	mouse_used = true
+#func _on_CheckBox_mouse_exited() -> void:
+#	mouse_used = false
 
-func _on_Control_mouse_entered() -> void:
-	mouse_used = true
-func _on_Control_mouse_exited() -> void:
-	mouse_used = false
 
-func _on_Lacunarity_mouse_entered() -> void:
-	mouse_used = true
-func _on_Lacunarity_mouse_exited() -> void:
-	mouse_used = false
-
-func _on_Persistance_mouse_entered() -> void:
-	mouse_used = true
-func _on_Persistance_mouse_exited() -> void:
-	mouse_used = false
-
-func _on_Period_mouse_entered() -> void:
-	mouse_used = true
-func _on_Period_mouse_exited() -> void:
-	mouse_used = false
-
-func _on_Octaves_mouse_entered() -> void:
-	mouse_used = true
-func _on_Octaves_mouse_exited() -> void:
-	mouse_used = false
-
-func _on_SeedSlider_mouse_entered() -> void:
-	mouse_used = true
-func _on_SeedSlider_mouse_exited() -> void:
-	mouse_used = false
-
-func _on_CheckBox_mouse_entered() -> void:
-	mouse_used = true
-func _on_CheckBox_mouse_exited() -> void:
-	mouse_used = false
 

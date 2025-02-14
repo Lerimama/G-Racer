@@ -1,0 +1,25 @@
+[gd_resource type="Resource" load_steps=5 format=2]
+
+[ext_resource path="res://game/weapons/ammo/profiles/ammo_profile_def.gd" type="Script" id=1]
+[ext_resource path="res://game/weapons/ammo/fx/BulletHit.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/weapons/ammo/fx/BulletShootSound.res" type="PackedScene" id=3]
+[ext_resource path="res://game/weapons/ammo/trails/BulletTrailAlt.tscn" type="PackedScene" id=4]
+
+[resource]
+script = ExtResource( 1 )
+damage_type = 0
+height = 0.0
+elevation = 5.0
+masa = 0.03
+lifetime = 0.0
+hit_damage = 0.2
+hit_inertia = 10000.0
+start_thrust_power = 30.0
+max_thrust_power = 30.0
+direction_start_range = Vector2( 0, 0 )
+trail = ExtResource( 4 )
+shoot_fx = [ ExtResource( 3 ) ]
+hit_fx = [ ExtResource( 2 ) ]
+dissarm_fx = [  ]
+homming_mode = false
+use_vision = true

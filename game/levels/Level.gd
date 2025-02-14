@@ -46,6 +46,7 @@ func _ready() -> void:
 	for child in start_positions_node.get_children():
 		child.hide()
 
+
 func setup():
 
 	# camera limits
@@ -169,3 +170,8 @@ func _get_tilemap_cells(tilemap: TileMap):
 			tilemap_cells.append(cell)
 
 	return tilemap_cells
+
+
+func _exit_tree() -> void:
+	#	print ("LEVEL GRE")
+	pass

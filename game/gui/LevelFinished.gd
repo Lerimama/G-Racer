@@ -62,7 +62,7 @@ func set_scorelist(agents_on_finish_line: Array, agents_on_start: Array):
 
 func _on_QuitBtn_pressed() -> void:
 
-	get_tree().root.game_out()
+	Rfs.main_node.game_out()
 #	Rfs.main_node.game_out()
 	$Menu/QuitBtn.set_disabled(true)
 

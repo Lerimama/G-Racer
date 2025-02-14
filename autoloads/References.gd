@@ -1,10 +1,11 @@
 extends Node
 
 # global nodes
-var game_manager = null
-var sound_manager = null
-var node_creation_parent = null # NCP ... ven?
-var ultimate_popup = null
+var main_node: Main = null
+var game_manager: Game = null
+var sound_manager: Node = null
+var node_creation_parent: Node2D = null # NCP ... ven?
+var ultimate_popup: Popup = null
 
 # groups
 var group_players = "players"
@@ -13,11 +14,11 @@ var group_agents = "agents"
 var group_pickables = "pickables"
 var group_shadows = "shadows"
 var group_projectiles = "projectiles"
-var group_misiles = "misiles"
-var group_bullets = "bullets"
 var group_mine = "mine"
 var group_male = "male"
 var group_player_cameras = "player_cameras"
+#var group_misiles = "misiles"
+#var group_bullets = "bullets"
 #var group_menu_confirm_btns = "Menu confirm btns"
 #var group_menu_cancel_btns = "Menu cancel btns"
 

@@ -85,11 +85,8 @@ func on_level_finished():
 func on_game_over():
 
 	game_timer.stop_timer()
-	_hide_stats()
 
-
-func _hide_stats():
-
+	# hide stats
 	for box in statboxes:
 		box.hide()
 	game_timer.hide()
@@ -173,4 +170,4 @@ func spawn_agent_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool
 
 func _on_GameTimer_gametime_is_up() -> void:
 
-	Rfs.game_manager.end_level()
+	Rfs.game_manager.game_stage = Rfs.game_manager.GAME_STAGE.END_FAIL

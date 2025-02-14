@@ -15,9 +15,6 @@ export var max_thrust_power: float = 150
 export var direction_start_range: Vector2 = Vector2(-0.1, 0.1)
 export var trail: PackedScene
 export (Array, PackedScene) var shoot_fx: Array
-export (Array, PackedScene) var flight_fx: Array
-export (Array, PackedScene) var homming_fx: Array
-export (Array, PackedScene) var dissarm_fx: Array
 export (Array, PackedScene) var hit_fx: Array
 
 var spawner: Node
@@ -26,9 +23,7 @@ var spawner: Node
 var thrust_power: float = 0
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
 var acceleration_time = 1.0
-var wiggle_direction_range: Array = [-24, 24] # uporaba ob deaktivaciji
-var wiggle_freq: float = 0.6
-var dissarm_thrust_power_drop: float = 3 # notri je to v kvadratni funkciji
+var dissarm_thrust_power_drop: float = 3 # v kvadratno funkcijo
 
 var is_active: bool = false
 var misile_time: float = 0 # čas za domet
@@ -36,16 +31,19 @@ var is_homming: bool = false # sledilka mode (ko zagleda tarčo v dometu)
 var new_trail: Line2D
 
 onready var trail_position: Position2D = $TrailPosition
-onready var homming_area: Area2D = $HommingArea
+onready var detect_area: Area2D = $DetectArea
 onready var collision_shape: CollisionShape2D = $MisileCollision
 onready var vision_ray: RayCast2D = $VisionRay
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
+onready var shape_area: Area2D = $ShapeArea
 
 # neu homer
-var homming_target: Node2D = null
-var out_of_spawner: bool = false
+var detect_target: Node2D = null
 var thrust_power_to_spawner_factor: float = 100 # na ready pomnoi vse power elemente
 var spawner_speed_factor: float = 10
+onready var flight_fx: Node2D = $Fx/Flight
+onready var dissarm_fx: Node2D = $Fx/Dissarm
+onready var detect_fx: Node2D = $Fx/Detect
 
 
 func _ready() -> void:
@@ -59,7 +57,7 @@ func _ready() -> void:
 	collision_shape.disabled = true
 
 	_spawn_fx(shoot_fx, true, Rfs.node_creation_parent)
-	_spawn_fx(flight_fx, false, Rfs.node_creation_parent)
+	$Fx/Flight.start(false)
 
 	# rotation
 	var random_range = rand_range(direction_start_range.x,direction_start_range.y) # oblika variable zato, da isto rotiramo tudi misilo
@@ -92,28 +90,27 @@ func _physics_process(delta: float) -> void:
 		new_trail.add_points(trail_position.global_position)
 
 	# pospeševanje
-	if misile_time < lifetime:
+	if misile_time < lifetime or lifetime == 0:
 		var accelaration_tween = get_tree().create_tween()
 		accelaration_tween.tween_property(self ,"thrust_power", max_thrust_power, acceleration_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-	# bremzanje
-	elif misile_time > lifetime:
+	# bremzanje, če life ni nič
+	elif not lifetime == 0:
 		thrust_power -= pow(dissarm_thrust_power_drop / thrust_power_to_spawner_factor, 1.0) # deactivated_thrust_power_drop na kvadrat
 		thrust_power = clamp(thrust_power, 0, thrust_power)
 		if thrust_power <= 5:
 			_dissarm()
 
 	# sledenje
-	if not is_instance_valid(homming_target):
-		homming_target = null
+	if not is_instance_valid(detect_target):
+		detect_target = null
 
-	if homming_target:
-		direction = lerp(direction, global_position.direction_to(homming_target.global_position), 0.1)
-		rotation = global_position.direction_to(homming_target.global_position).angle()
-		if homming_area.monitoring:
-			homming_area.set_deferred("monitoring", false) # Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
+	if detect_target:
+		direction = lerp(direction, global_position.direction_to(detect_target.global_position), 0.1)
+		rotation = global_position.direction_to(detect_target.global_position).angle()
+		if detect_area.monitoring:
+			detect_area.set_deferred("monitoring", false) # Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.
 		else:
-			homming_area.set_deferred("monitoring", true)
+			detect_area.set_deferred("monitoring", true)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void:
@@ -142,10 +139,6 @@ func _on_collision_contact(colliding_object: Object, collision_local_position: V
 func _dissarm():
 
 	if is_active:
-		#	var wiggle: Vector2
-		#	wiggle = transform.x.rotated(rand_range(wiggle_direction_range[0],wiggle_direction_range[1]))
-		#	transform.x = lerp(wiggle, global_position.direction_to(position), wiggle_freq)
-
 		is_active = false
 
 		# misile drop
@@ -154,7 +147,7 @@ func _dissarm():
 		yield(new_drop_tween, "finished")
 
 		# drop particles
-		_spawn_fx(dissarm_fx, true, Rfs.node_creation_parent, global_position)
+		dissarm_fx.start(false)
 
 		#		$Sounds/MisileDetect.stop()
 		#		$Sounds/MisileFlight.stop()
@@ -207,16 +200,24 @@ func _exit_tree() -> void:
 		new_trail.start_decay()
 
 
-func _on_HommingArea_body_entered(body: Node) -> void:
+func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Rfs.group_agents) and body != spawner:
-
-		if homming_target == null:
-			_spawn_fx(homming_fx, false, Rfs.node_creation_parent)
-			homming_target = body
+		if not detect_target or not is_instance_valid(detect_target):
+			detect_fx.start(false)
+			detect_target = body
 
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
+	if body == detect_target:
+		detect_fx.fx_stop()
+		detect_target == null
+
+
+func _on_ShapeArea_body_exited(body: Node) -> void:
+
 	if body == spawner:
 		collision_shape.set_deferred("disabled", false)
+		shape_area.set_deferred("monitoring", false)
+

@@ -113,7 +113,7 @@ func _on_mouse_exited(control: Control):
 
 
 func _on_focus_entered(control: Control):
-	printt("control focused", control)
+#	printt("control focused", control)
 
 	if allow_gui_sfx:
 		pass

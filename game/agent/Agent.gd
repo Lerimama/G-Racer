@@ -80,51 +80,50 @@ func _ready() -> void:
 	z_index = Pfs.z_indexes["agents"]
 
 	equip_positions.hide()
+	near_radius = get_node("NearArea/CollisionShape2D").shape.radius # za pullanje
 
-	agent_type = driver_profile["agent_type"]
-	ai_target_rank = agent_profile["ai_target_rank"]
-	agent_color = driver_profile["driver_color"] # agagentobarva ...
-	height = agent_profile["height"]
-	elevation = agent_profile["elevation"]
-	gas_tank_size = agent_profile["gas_tank_size"]
-	gas_usage = agent_profile["gas_usage"]
-	gas_usage_idle = agent_profile["gas_usage_idle"]
-	near_radius = get_node("NearArea/CollisionShape2D").shape.radius
+	if driver_profile:
+		agent_type = driver_profile["agent_type"]
+		ai_target_rank = agent_profile["ai_target_rank"]
+		agent_color = driver_profile["driver_color"] # agagentobarva ...
+		height = agent_profile["height"]
+		elevation = agent_profile["elevation"]
+		gas_tank_size = agent_profile["gas_tank_size"]
+		gas_usage = agent_profile["gas_usage"]
+		gas_usage_idle = agent_profile["gas_usage_idle"]
 
-	_add_controller()
-	_add_motion_manager()
-	motion_manager._set_default_parameters()
+		_add_controller()
+		_add_motion_manager()
+		motion_manager._set_default_parameters()
 
-	group_weapons_by_type = true
+		# set weapons
+		# če je opremljeno na pozicijo
+		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
+		for weapon in weapons.get_children():
+			var legit: bool = true
+			if equip_positions.positions_equiped.values().has(weapon):
+				weapon.setup(self)
+				var used_for_triggering: bool = true
+				if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
+					used_for_triggering = false
+				if group_weapons_by_type:
+					for trigg_weapon in triggering_weapons:
+						if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
+							used_for_triggering = false
+				if used_for_triggering:
+					if weapon.has_method("_on_weapon_triggered"):
+							weapon.connect("weapon_shot", self, "_update_weapon_stat")
+							triggering_weapons.append(weapon)
+			else:
+				weapon.hide()
 
-	# set weapons
-	# če je opremljeno na pozicijo
-	# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
-	for weapon in weapons.get_children():
-		var legit: bool = true
-		if equip_positions.positions_equiped.values().has(weapon):
-			weapon.setup(self)
-			var used_for_triggering: bool = true
-			if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
-				used_for_triggering = false
-			if group_weapons_by_type:
-				for trigg_weapon in triggering_weapons:
-					if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
-						used_for_triggering = false
-			if used_for_triggering:
-				if weapon.has_method("_on_weapon_triggered"):
-						weapon.connect("weapon_shot", self, "_update_weapon_stat")
-						triggering_weapons.append(weapon)
-		else:
-			weapon.hide()
-
-	# set equipement
-	for equip in equipment.get_children():
-		if equip_positions.positions_equiped.values().has(equip):
-			print ("equipment")
-		else:
-			print ("hide")
-			equip.hide()
+		# set equipement
+		for equip in equipment.get_children():
+			if equip_positions.positions_equiped.values().has(equip):
+				print ("equipment")
+			else:
+				print ("hide")
+				equip.hide()
 
 
 func _process(delta: float) -> void:
@@ -176,52 +175,17 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
-	if is_shielded:
-		return
+	if not is_shielded:
 
-#	update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
+		update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
 
-	if "hit_inertia" in hit_by:
-		print("hit_inertia", hit_by.inertia)
-		var local_hit_position: Vector2 = hit_global_position - position
-		var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
-		apply_impulse(local_hit_position, hitter_rot_vector * hit_by.inertia * 100) # OPT misile impulse knockback ... ne deluje?
+		if "hit_inertia" in hit_by:
+			var local_hit_position: Vector2 = hit_global_position - position
+			var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
+			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
 
-
-	if hit_by.is_in_group(Rfs.group_bullets):
-		var inertia_factor: float = 100
-		var hit_by_inertia: Vector2 = hit_by.velocity * hit_by.mass * inertia_factor
-		var global_hit_position: Vector2 = hit_by.global_position
-		var local_hit_position: Vector2 = global_hit_position - position
-		apply_impulse(local_hit_position, hit_by_inertia)
-		if agent_camera:
-			agent_camera.shake_camera(agent_camera.bullet_hit_shake)
-
-	elif hit_by.is_in_group(Rfs.group_misiles):
-#		var inertia_factor: float = 100
-#		var hit_by_inertia: Vector2 = hit_by.velocity * hit_by.mass * inertia_factor
-		#		apply_central_impulse(hit_by_inertia)
-		# get_contact_collider_position(contact_idx: int) # ... Returns the contact position in the collider.
-		# get_contact_collider_velocity_at_position(contact_idx: int) # Returns the linear velocity vector at the collider's contact point.
-		# get_contact_impulse(contact_idx: int) # Impulse created by the contact. Only implemented for Bullet physics.
-		#		var hit_position: Vector2 =
-		#		var global_hit_position: Vector2 = to_global(hit_position)
-#		var global_hit_position: Vector2 = hit_by.global_position
-#		var local_hit_position: Vector2 = global_hit_position - position
-#		apply_impulse(local_hit_position, hit_by_inertia) # OPT misile impulse knockback ... ne deluje?
-		if agent_camera:
-			agent_camera.shake_camera(agent_camera.misile_hit_shake)
-		Rfs.sound_manager.play_sfx("agent_explode")
-#		_explode() # race ima vsak zadetek misile eksplozijo, drugače je samo na izgubi lajfa
-
-	elif hit_by.is_in_group(Rfs.group_mine):
-		var inertia_factor: float = 400000
-		var hit_by_power: float = inertia_factor
-		apply_torque_impulse(hit_by_power)
-		if agent_camera:
-			agent_camera.shake_camera(agent_camera.misile_hit_shake)
-
-	#	if inertIJA > jadajasdasd >>>> to dissaray
+	if agent_camera:
+		agent_camera.shake_camera(hit_by)
 
 
 func _destroy():
@@ -262,7 +226,7 @@ func _explode():
 	Rfs.node_creation_parent.add_child(new_exploding_agent)
 
 	if agent_camera:
-		agent_camera.shake_camera(agent_camera.agent_explosion_shake)
+		agent_camera.shake_camera(self)
 	queue_free()
 
 
@@ -441,7 +405,7 @@ func _add_controller():
 
 func _add_motion_manager():
 
-	var agent_profile: Dictionary = Pfs.agent_profiles[driver_profile["agent_type"]]
+	agent_profile = Pfs.agent_profiles[driver_profile["agent_type"]]
 	var motion_manager_path = agent_profile["motion_manager_path"]
 	motion_manager.set_script(motion_manager_path)
 	motion_manager.managed_agent = self
@@ -474,8 +438,8 @@ func _update_weapon_stat(stat_key: int, change_value):
 
 func update_stat(stat_key: int, change_value):
 
-#	if not motion_manager.game_is_on: # _temp neodločen sem
-#		return
+	#	if not motion_manager.game_is_on: # _temp neodločen sem
+	#		return
 
 	var curr_stat_name: String
 	driver_stats[stat_key] += change_value # change_value je + ali -
@@ -529,16 +493,6 @@ func _on_Agent_body_entered(body: Node2D) -> void:
 
 func _exit_tree() -> void:
 	# pospravljanje morebitnih smeti
-
-	#	for sound in sounds.get_children():
-	#		sound.stop()
-	#	if engine_particles_rear:
-	#		engine_particles_rear.queue_free()
-	#	if engine_particles_front_left:
-	#		engine_particles_front_left.queue_free()
-	#	if engine_particles_front_right:
-	#		engine_particles_front_right.queue_free()
-	##	active_trail.start_decay() # trail decay tween start
 
 	self.is_active = false # zazih
 	if agent_camera:

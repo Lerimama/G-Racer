@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 		tick += delta
 
 
-func start_decay():
+func start_decay(current_bullet_position = null, at_pos: =  -1): # v oklepaj je da se ujema s klicem kompleksnejšega trejla
 
 	if not in_decay:
 		in_decay = true

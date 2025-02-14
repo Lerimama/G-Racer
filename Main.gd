@@ -1,5 +1,5 @@
 extends Node
-
+class_name Main
 
 var fade_time = 0.7
 var current_scene = null
@@ -16,28 +16,17 @@ onready var game_scene_path: String = "res://game/Game.tscn"
 
 func _ready() -> void:
 
-	#	Rfs.main_node = self
-#	_home_in_intro()
-#	_home_in_no_intro()
+	Rfs.main_node = self
+#	_home_in()
 	_game_in()
 
 
 # SCENE IN ---------------------------------------------------------------------
 
 
-func _home_in_intro():
-
-	spawn_new_scene(home_scene_path, self)
-	current_scene.open_with_intro()
-
-	var fade_in = get_tree().create_tween()
-	fade_in.tween_property(current_scene, "modulate", Color.white, fade_time)
-
-
-func _home_in_no_intro(): # debug
+func _home_in(): # debug
 
 	get_tree().set_pause(false)
-
 	spawn_new_scene(home_scene_path, self)
 
 
@@ -84,7 +73,7 @@ func game_out():
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(current_scene, "modulate", Color.black, fade_time)
 	fade_out.tween_callback(self, "release_scene", [current_scene])
-	fade_out.tween_callback(self, "home_in_no_intro").set_delay(1) # fajn delay ker se release zgodi šele v naslednjem frejmu
+	fade_out.tween_callback(self, "_home_in_from_game").set_delay(1) # fajn delay ker se release zgodi šele v naslednjem frejmu
 
 
 func reload_game():

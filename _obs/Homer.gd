@@ -57,7 +57,7 @@ func _ready() -> void:
 
 	randomize()
 
-	add_to_group(Rfs.group_misiles)
+	add_to_group(Rfs.group_projectiles)
 
 	elevation = spawner.elevation + elevation
 

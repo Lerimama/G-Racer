@@ -73,7 +73,7 @@ func _ready() -> void:
 		enemies_mode = true
 		game_shadows_rotation_deg = 45
 #		all_agents_on_screen_mode = false
-		hide_view_on_player_deactivated = true
+#		hide_view_on_player_deactivated = true
 #		drivers_on_game_start_count = 2
 		drivers_on_game_start = [
 			0, 1, 2,# 3,

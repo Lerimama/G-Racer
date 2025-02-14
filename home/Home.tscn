@@ -5,7 +5,7 @@
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/design/truckhunt_kv.png" type="Texture" id=4]
 [ext_resource path="res://home/Home.gd" type="Script" id=6]
-[ext_resource path="res://assets/theme/fonts/large_font.tres" type="DynamicFont" id=7]
+[ext_resource path="res://assets/theme/fonts/black_slanted_XXL.tres" type="DynamicFont" id=7]
 [ext_resource path="res://assets/design/truck.png" type="Texture" id=9]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/key_2.wav" type="AudioStream" id=10]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/key_3.wav" type="AudioStream" id=11]
@@ -217,7 +217,7 @@ text = "NITRO"
 position = Vector2( 1301, 496 )
 texture = ExtResource( 9 )
 
-[node name="UI" type="Control" parent="."]
+[node name="Gui" type="Control" parent="."]
 margin_right = 2560.0
 margin_bottom = 1440.0
 theme = ExtResource( 3 )
@@ -225,7 +225,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="MainMenu" type="VBoxContainer" parent="UI"]
+[node name="MainMenu" type="VBoxContainer" parent="Gui"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -241,7 +241,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="PlayBtn" type="Button" parent="UI/MainMenu"]
+[node name="PlayBtn" type="Button" parent="Gui/MainMenu"]
 margin_left = 173.0
 margin_top = 12.0
 margin_right = 365.0
@@ -253,7 +253,7 @@ size_flags_horizontal = 4
 custom_fonts/font = ExtResource( 44 )
 text = "PLAY"
 
-[node name="LevelsBtn" type="Button" parent="UI/MainMenu"]
+[node name="LevelsBtn" type="Button" parent="Gui/MainMenu"]
 margin_left = 4.0
 margin_top = 106.0
 margin_right = 534.0
@@ -265,7 +265,7 @@ size_flags_horizontal = 4
 custom_fonts/font = ExtResource( 44 )
 text = "SELECT GAME"
 
-[node name="QuitBtn" type="Button" parent="UI/MainMenu"]
+[node name="QuitBtn" type="Button" parent="Gui/MainMenu"]
 margin_left = 206.0
 margin_top = 200.0
 margin_right = 333.0
@@ -276,9 +276,10 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 4
 text = "QUIT"
 
-[node name="PregameSetup" parent="UI" instance=ExtResource( 2 )]
+[node name="PregameSetup" parent="Gui" instance=ExtResource( 2 )]
+visible = false
 
-[node name="SelectGames" type="Control" parent="UI"]
+[node name="SelectGames" type="Control" parent="Gui"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -286,7 +287,7 @@ rect_clip_content = true
 theme = ExtResource( 3 )
 script = ExtResource( 35 )
 
-[node name="TextureRect" type="TextureRect" parent="UI/SelectGames"]
+[node name="TextureRect" type="TextureRect" parent="Gui/SelectGames"]
 visible = false
 material = SubResource( 824 )
 anchor_right = 1.0
@@ -299,12 +300,12 @@ rect_scale = Vector2( 4, 4 )
 texture = ExtResource( 4 )
 expand = true
 
-[node name="ColorRect" type="ColorRect" parent="UI/SelectGames"]
+[node name="ColorRect" type="ColorRect" parent="Gui/SelectGames"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0, 0, 0, 0.439216 )
 
-[node name="Grad" type="TextureRect" parent="UI/SelectGames"]
+[node name="Grad" type="TextureRect" parent="Gui/SelectGames"]
 modulate = Color( 1, 1, 1, 0.756863 )
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -312,7 +313,7 @@ texture = SubResource( 816 )
 expand = true
 flip_v = true
 
-[node name="Label" type="Label" parent="UI/SelectGames"]
+[node name="Label" type="Label" parent="Gui/SelectGames"]
 modulate = Color( 1, 1, 1, 0.52549 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -326,7 +327,7 @@ text = "Games"
 align = 1
 uppercase = true
 
-[node name="LevelMenu" type="HBoxContainer" parent="UI/SelectGames"]
+[node name="LevelMenu" type="HBoxContainer" parent="Gui/SelectGames"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -343,16 +344,16 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="LevelBtn" parent="UI/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+[node name="LevelBtn" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
 margin_bottom = 560.0
 focus_mode = 2
 toggle_mode = false
 enabled_focus_mode = 2
 
-[node name="TextureRect" parent="UI/SelectGames/LevelMenu/LevelBtn" index="2"]
+[node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn" index="2"]
 texture = ExtResource( 37 )
 
-[node name="LevelBtn2" parent="UI/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+[node name="LevelBtn2" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
 margin_left = 464.0
 margin_right = 904.0
 margin_bottom = 560.0
@@ -360,18 +361,18 @@ focus_mode = 2
 toggle_mode = false
 enabled_focus_mode = 2
 
-[node name="TextureRect" parent="UI/SelectGames/LevelMenu/LevelBtn2" index="2"]
+[node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn2" index="2"]
 texture = ExtResource( 38 )
 
-[node name="Title" parent="UI/SelectGames/LevelMenu/LevelBtn2/Focused" index="3"]
+[node name="Title" parent="Gui/SelectGames/LevelMenu/LevelBtn2/Focused" index="3"]
 text = "Earn
 to race"
 
-[node name="Desc" parent="UI/SelectGames/LevelMenu/LevelBtn2/Focused" index="4"]
+[node name="Desc" parent="Gui/SelectGames/LevelMenu/LevelBtn2/Focused" index="4"]
 margin_top = -53.0
 margin_bottom = 70.0
 
-[node name="LevelBtn3" parent="UI/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+[node name="LevelBtn3" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
 margin_left = 928.0
 margin_right = 1368.0
 margin_bottom = 560.0
@@ -379,13 +380,13 @@ focus_mode = 2
 toggle_mode = false
 enabled_focus_mode = 2
 
-[node name="TextureRect" parent="UI/SelectGames/LevelMenu/LevelBtn3" index="2"]
+[node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn3" index="2"]
 texture = ExtResource( 14 )
 
-[node name="Title" parent="UI/SelectGames/LevelMenu/LevelBtn3/Focused" index="3"]
+[node name="Title" parent="Gui/SelectGames/LevelMenu/LevelBtn3/Focused" index="3"]
 text = "MISSION"
 
-[node name="Menu" type="VBoxContainer" parent="UI/SelectGames"]
+[node name="Menu" type="VBoxContainer" parent="Gui/SelectGames"]
 margin_left = 1053.0
 margin_top = 1082.0
 margin_right = 1506.0
@@ -395,7 +396,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="PlayBtn" type="Button" parent="UI/SelectGames/Menu"]
+[node name="PlayBtn" type="Button" parent="Gui/SelectGames/Menu"]
 margin_right = 453.0
 margin_bottom = 86.0
 grow_horizontal = 2
@@ -404,7 +405,7 @@ custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
 custom_fonts/font = ExtResource( 44 )
 text = "PLAY"
 
-[node name="BackBtn" type="Button" parent="UI/SelectGames/Menu"]
+[node name="BackBtn" type="Button" parent="Gui/SelectGames/Menu"]
 margin_top = 118.0
 margin_right = 453.0
 margin_bottom = 176.0
@@ -413,7 +414,7 @@ focus_neighbour_right = NodePath("../PlayBtn")
 text = "BACK"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../UI")
+root_node = NodePath("../Gui")
 
 [node name="Sounds" type="Node" parent="."]
 pause_mode = 2
@@ -500,13 +501,13 @@ stream = ExtResource( 22 )
 volume_db = -13.0
 pitch_scale = 1.1
 
-[connection signal="pressed" from="UI/MainMenu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
-[connection signal="pressed" from="UI/MainMenu/LevelsBtn" to="." method="_on_LevelsBtn_pressed"]
-[connection signal="pressed" from="UI/MainMenu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
-[connection signal="pressed" from="UI/SelectGames/Menu/PlayBtn" to="UI/SelectGames" method="_on_PlayBtn_pressed"]
-[connection signal="pressed" from="UI/SelectGames/Menu/BackBtn" to="UI/SelectGames" method="_on_BackBtn_pressed"]
+[connection signal="pressed" from="Gui/MainMenu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Gui/MainMenu/LevelsBtn" to="." method="_on_LevelsBtn_pressed"]
+[connection signal="pressed" from="Gui/MainMenu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="Gui/SelectGames/Menu/PlayBtn" to="Gui/SelectGames" method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Gui/SelectGames/Menu/BackBtn" to="Gui/SelectGames" method="_on_BackBtn_pressed"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 
-[editable path="UI/SelectGames/LevelMenu/LevelBtn"]
-[editable path="UI/SelectGames/LevelMenu/LevelBtn2"]
-[editable path="UI/SelectGames/LevelMenu/LevelBtn3"]
+[editable path="Gui/SelectGames/LevelMenu/LevelBtn"]
+[editable path="Gui/SelectGames/LevelMenu/LevelBtn2"]
+[editable path="Gui/SelectGames/LevelMenu/LevelBtn3"]

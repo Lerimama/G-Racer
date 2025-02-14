@@ -54,7 +54,6 @@ func _get_navigation_points(): # density ...  na koliko
 			navigation_nav_points.append(point)
 
 	# inner poligon points delete
-	print("get_polygon_count", navigation_polygon.get_outline_count())
 	for outline_count in navigation_polygon.get_outline_count():
 		if outline_count > 0: # preskočim prvega, ki je zunanji
 			var current_poly = navigation_polygon.get_outline(outline_count)

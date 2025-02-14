@@ -57,6 +57,7 @@ func remove_view_imitator(game_views: Dictionary): # GM na activity change
 
 
 func _set_imitators_size(game_views: Dictionary):
+
 	# počakam na apdejt active_view dimenzij
 	yield(get_tree(), "idle_frame")
 

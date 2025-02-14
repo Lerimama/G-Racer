@@ -5,10 +5,10 @@ enum HOME_SCREEN{MAIN, LEVELS, PREGAME}
 var home_screen: int = HOME_SCREEN.MAIN
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
-onready var main_menu: VBoxContainer = $UI/MainMenu
-onready var pregame_setup: Control = $UI/PregameSetup
-onready var select_games: Control = $UI/SelectGames
-onready var play_btn: Button = $UI/MainMenu/PlayBtn
+onready var main_menu: VBoxContainer = $Gui/MainMenu
+onready var pregame_setup: Control = $Gui/PregameSetup
+onready var select_games: Control = $Gui/SelectGames
+onready var play_btn: Button = $Gui/MainMenu/PlayBtn
 onready var focus_btn: Button = play_btn
 
 
@@ -30,6 +30,7 @@ func to_main_menu():
 
 
 func _on_PlayBtn_pressed() -> void:
+
 
 	home_screen = HOME_SCREEN.PREGAME
 	pregame_setup.open()

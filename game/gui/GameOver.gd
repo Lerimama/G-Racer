@@ -64,13 +64,13 @@ func set_scorelist(agents_on_finish_line: Array, agents_on_start: Array):
 
 func _on_RestartBtn_pressed() -> void:
 
-	get_tree().root.reload_game()
+	Rfs.main_node.reload_game()
 #	Rfs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
 	$Menu/QuitBtn.set_disabled(true)
-	get_tree().root.game_out()
+	Rfs.main_node.game_out()
 #	Rfs.main_node.game_out()
 
 

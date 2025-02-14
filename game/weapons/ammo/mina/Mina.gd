@@ -6,9 +6,10 @@ export (DAMAGE_TYPE) var damage_type = DAMAGE_TYPE.EXPLODE
 
 export var height: float = 0
 export var elevation: float = 2
-export var hit_damage: float = 0.5
-export var lifetime: float = 0 # 0 = večno
 export var mass: float = 0.5 # fejk, ker je area, on_hit pa preverja .mass
+export var lifetime: float = 0 # 0 = večno
+export var hit_damage: float = 0.5
+export var hit_inertia: float = 100 # fejk, ker je konematic, on_hit pa preverja .mass
 export var speed: float = 50
 export var trail: PackedScene
 export (Array, PackedScene) var shoot_fx: Array
@@ -23,7 +24,6 @@ var drop_time: float = 1.0 # opredeli dolžino meta
 
 var spawner: Node
 var spawner_color: Color
-
 onready var detect_area: Area2D = $DetectArea
 onready var active_timer: Timer = $ActiveTimer
 onready var smoke_particles: Particles2D = $SmokeParticles

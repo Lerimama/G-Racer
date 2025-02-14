@@ -50,12 +50,6 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 		motion = MOTION.DISSARAY
 
 
-func _ready() -> void:
-	#	yield(get_tree(),"idle_frame")
-	#	self.rotation_dir = 0
-	pass
-
-
 func _process(delta: float) -> void:
 
 	if not managed_agent.is_active: # tole seta tudi na startu
@@ -144,13 +138,16 @@ func _print_agent_data():
 
 
 func _change_rotation_direction(new_rotation_direction: float):
-	pass
 	# za zavijanje lahko vplivam na karkoli, ker se ob vožnji naravnost vse reseta
 	# če ne zavija je fizika celega agenta
 	# če zavija se porazdeli glede na stil
 
+	# v podedovanem
+	pass
+
 
 func _set_default_parameters():
+	# v podedovanem
 	pass
 
 

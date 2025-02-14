@@ -181,20 +181,19 @@ enum AMMO {BULLET, MISILE, MINA, SMALL} # kot v orožjih
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
-		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
+		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"stat_key": STATS.BULLET_COUNT,
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
-#		"scene": preload("res://game/weapons/ammo/HomerMisile.tscn"),
-		"scene": preload("res://game/weapons/ammo/homer/HomerRigid.tscn"),
+		"scene": preload("res://game/weapons/ammo/ProjectileHomer.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
 		"stat_key": STATS.MISILE_COUNT,
 	},
 	AMMO.MINA: {
 		"reload_time": 0.1, #
-		"scene": preload("res://game/weapons/ammo/mina/Mina.tscn"),
+		"scene": preload("res://game/weapons/ammo/MinaExplode.tscn"),
 		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
 		"stat_key": STATS.MINA_COUNT,
 	},
@@ -204,7 +203,6 @@ var ammo_profiles : Dictionary = {
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"stat_key": STATS.SMALL_COUNT,
 	},
-
 }
 
 

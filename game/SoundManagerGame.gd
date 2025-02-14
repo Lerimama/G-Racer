@@ -12,8 +12,11 @@ onready var game_music: Node2D = $GameMusic
 #onready var menu_music_volume_on_node = menu_music.volume_db # za reset po fejdoutu (game over)
 
 onready var music_bus_index: int = AudioServer.get_bus_index("GameMusic")
-onready	var sfx_bus_index: int = AudioServer.get_bus_index("GameSfx")
+onready var sfx_bus_index: int = AudioServer.get_bus_index("GameSfx")
 
+
+func _on_game_stage_changed(game_manager: Game):
+	pass
 
 func _input(event: InputEvent) -> void:
 
