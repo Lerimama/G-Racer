@@ -15,9 +15,17 @@ export var max_thrust_power: float = 100
 export var direction_start_range: Vector2 = Vector2.ZERO
 
 export var trail: PackedScene
-export (Array, PackedScene) var shoot_fx: Array
-export (Array, PackedScene) var hit_fx: Array
-export (Array, PackedScene) var dissarm_fx: Array
+#export (Array, PackedScene) var shoot_fx: Array
+#export (Array, PackedScene) var flight_fx: Array
+#export (Array, PackedScene) var detect_fx: Array
+#export (Array, PackedScene) var hit_fx: Array
+#export (Array, PackedScene) var dissarm_fx: Array
+export var shoot_fx: PackedScene
+export var flight_fx: PackedScene
+export var detect_fx: PackedScene
+export var hit_fx: PackedScene
+export var dissarm_fx: PackedScene
 
 export var homming_mode: bool = false # sledilka mode (ko zagleda tarčo v dometu)
-export var use_vision: bool = false
+export var use_vision_for_collision: bool = false
+export var delete_on_out_of_screen: bool = false

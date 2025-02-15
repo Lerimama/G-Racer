@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=1]
+[ext_resource path="res://assets/sounds/sfx/misile_shoot_short.wav" type="AudioStream" id=2]
+
+[node name="FxHomerShoot" type="Node2D"]
+script = ExtResource( 1 )
+fx_timing_nodepath = NodePath("MisileShoot")
+
+[node name="MisileShoot" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+pitch_scale = 0.8
+bus = "GameSfx"

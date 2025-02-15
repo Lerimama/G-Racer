@@ -8,6 +8,7 @@ export (Resource) var shake_profile_agent
 var camera_player: Node2D
 var follow_target: Node setget _change_follow_target
 var shake_camera_on: bool = true
+var dynamic_zoom_on: bool = true
 
 # dinamic zoom in offset
 var camera_zoom_range: Array = Sts.camera_zoom_range # [1, 1.5]
@@ -23,8 +24,6 @@ onready var playing_field: Node2D = $PlayingField
 onready var setup_table: Control = $TestUI/SetupPanel/SetupTable
 onready var shaker: Node = $Shaker
 
-# neu šejk ... temp
-
 
 func _input(event: InputEvent) -> void:
 
@@ -36,6 +35,7 @@ func _ready():
 
 	add_to_group(Rfs.group_player_cameras)
 
+	shake_camera_on = Sts.camera_shake_on
 	zoom = Vector2.ONE
 
 	playing_field.hide()
@@ -68,17 +68,18 @@ func _process(delta: float) -> void:
 		position = follow_target.global_position + dynamic_offset
 
 		# zoom ... dinamic
-		if follow_target.is_in_group(Rfs.group_agents) and not follow_target.velocity == Vector2.ZERO:
-			# samo, če je nad minimumom limit
-			if follow_target.velocity.length() > min_zoom_target_speed:
-				var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
-				 # vel, čez min span limit, nam da procent zasedenosti zoom spanao
-				var target_speed_part_in_span: float = (follow_target.velocity.length() - min_zoom_target_speed) / max_zoom_velocity_span # %
-				var camera_zoom_span: float = abs(camera_zoom_range[1] - camera_zoom_range[0])
-				var camera_zoom_addon_in_span: float = camera_zoom_span * target_speed_part_in_span
-				zoom.x = lerp(zoom.x, camera_zoom_range[0] + camera_zoom_addon_in_span, camera_zoom_lerp_factor)
-		else:
-			zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
+		if dynamic_zoom_on:
+			if follow_target.is_in_group(Rfs.group_agents) and not follow_target.velocity == Vector2.ZERO:
+				# samo, če je nad minimumom limit
+				if follow_target.velocity.length() > min_zoom_target_speed:
+					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
+					 # vel, čez min span limit, nam da procent zasedenosti zoom spanao
+					var target_speed_part_in_span: float = (follow_target.velocity.length() - min_zoom_target_speed) / max_zoom_velocity_span # %
+					var camera_zoom_span: float = abs(camera_zoom_range[1] - camera_zoom_range[0])
+					var camera_zoom_addon_in_span: float = camera_zoom_span * target_speed_part_in_span
+					zoom.x = lerp(zoom.x, camera_zoom_range[0] + camera_zoom_addon_in_span, camera_zoom_lerp_factor)
+			else:
+				zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
 
 		# default zoom ... lerp za mehkobo prehodov
 		zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)

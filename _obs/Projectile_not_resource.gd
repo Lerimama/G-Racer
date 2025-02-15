@@ -204,7 +204,7 @@ func _dissarm():
 	#	yield(new_drop_tween, "finished")
 
 	# drop particles
-	flight_fx.stop()
+	flight_fx.stop_fx()
 	_spawn_and_start_fx(dissarm_fx, true, Rfs.node_creation_parent)
 	queue_free()
 
@@ -259,7 +259,7 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if body == detect_target:
-		detect_fx.stop()
+		detect_fx.stop_fx()
 		detect_target == null
 
 

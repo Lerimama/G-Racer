@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
+[ext_resource path="res://game/weapons/ammo/fx/FxHommerFlight.tscn" type="PackedScene" id=1]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/weapons/ammo/fx/FxHommerDetect.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/weapons/ammo/projectile/Projectile.gd" type="Script" id=9]
-[ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=11]
 
 [sub_resource type="RectangleShape2D" id=5299]
 extents = Vector2( 11.5, 5 )
@@ -39,15 +40,15 @@ polygon = PoolVector2Array( -13, -5, -13, 5, -10, 5, -7, 2, -4, 2, -3, 5, 10, 5,
 color = Color( 0, 0, 0, 1 )
 polygon = PoolVector2Array( 6, -5, 10, -5, 10, 5, 6, 5 )
 
-[node name="Fx" type="Node2D" parent="."]
+[node name="InsideFx" type="Node2D" parent="."]
 
-[node name="Flight" type="Node2D" parent="Fx"]
-script = ExtResource( 11 )
+[node name="FxHommerDetect" parent="InsideFx" instance=ExtResource( 3 )]
+visible = false
 
-[node name="Detect" type="Node2D" parent="Fx"]
-script = ExtResource( 11 )
+[node name="FxHommerFlight" parent="InsideFx" instance=ExtResource( 1 )]
+visible = false
 
-[node name="MisileCollision" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( -1.5, 0 )
 shape = SubResource( 5299 )
 disabled = true
@@ -92,6 +93,12 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+position = Vector2( -0.5, 1.19209e-07 )
+scale = Vector2( 1.45, 0.7 )
+
 [connection signal="body_exited" from="ShapeArea" to="." method="_on_ShapeArea_body_exited"]
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]
+[connection signal="screen_entered" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

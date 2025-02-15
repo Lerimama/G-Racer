@@ -199,7 +199,7 @@ var ammo_profiles : Dictionary = {
 	},
 	AMMO.SMALL: {
 		"reload_time": 0.1, #
-		"scene": preload("res://game/weapons/ammo/ProjectileSmall.tscn"),
+		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"stat_key": STATS.SMALL_COUNT,
 	},

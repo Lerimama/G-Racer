@@ -47,6 +47,40 @@ onready var game_views_holder: VFlowContainer = $GameViewFlow
 onready var GameView: PackedScene = preload("res://game/GameView.tscn")
 onready var hud: Hud = $Gui/Hud
 
+var slomo_in_progress: bool = false
+func apply_slomo(affector: Node2D, affectee: Node2D ):
+	# tukaj je odločeno ali slomo ali ne
+	# manjka ...da se čas slomo povečuje ob multuplih klicih
+
+	if Sts.slomo_fx_on and not slomo_in_progress:
+		var apply_slomo: bool = false
+		# če je driver pošlje driverja in se odloči glede na zdravje
+		if "driver_stats" in affectee:
+			print ("slow")
+			if not affectee.driver_stats[Pfs.STATS.HEALTH] - affector.hit_damage > 0:
+				apply_slomo = true
+		# drugače se odloča glede na vrsto
+		elif affectee.has_method("on_hit"):
+			apply_slomo = true
+		if apply_slomo:
+			get_tree().set_group(Rfs.group_player_cameras, "dynamic_zoom_on", false)
+			get_tree().set_group(Rfs.group_player_cameras, "shake_camera_on", false)
+			slomo_in_progress = true
+			var new_time_scale: float = Sts.slomo_time_scale
+			var slomo_fx_time: float = 2 * Sts.slomo_time_scale # prilagotim, ker v slomo je čas počasnejši
+			var slomo_transition_time: float = 0.1
+			var slomo_tween = get_tree().create_tween()
+			slomo_tween.tween_property(Engine, "time_scale", new_time_scale, slomo_transition_time)
+			#			Engine.time_scale = new_time_scale
+			yield(get_tree().create_timer(slomo_fx_time), "timeout")
+			#			Engine.time_scale = 1
+			var back_to_normal_tween = get_tree().create_tween()
+			back_to_normal_tween.tween_property(Engine, "time_scale", 1, slomo_transition_time * 2)
+			yield(back_to_normal_tween, "finished")
+			get_tree().set_group(Rfs.group_player_cameras, "shake_camera_on", true) # _temp ... kaj pa če noče?
+			get_tree().set_group(Rfs.group_player_cameras, "dynamic_zoom_on", true) # _temp ... kaj pa če noče?
+			slomo_in_progress = false
+
 
 func _input(event: InputEvent) -> void:
 
@@ -762,4 +796,3 @@ func _on_body_exited_playing_field(body: Node) -> void:
 		_pull_agent_on_field(body)
 	elif body is Projectile:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
-

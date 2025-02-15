@@ -25,7 +25,7 @@ var easy_mode: bool = false
 var full_equip_mode: bool = false
 var full_equip_value: int = 100
 var camera_zoom_range: Array = [1, 1.5]
-var camera_shake_on: bool =  true
+var camera_shake_on: bool = true
 # driving
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
@@ -35,16 +35,15 @@ var game_shadows_color: Color = Color.black # odvisna od višine vira svetlobe
 var game_shadows_length_factor: float = 1 # odvisna od višine vira svetlobe
 var game_shadows_alpha: float = 0.4 # odvisna od moči svetlobe
 var game_shadows_direction: Vector2 = Vector2(800,0) # odvisna od moči svetlobe
-
 # helpers
 var get_it_time: float = 2
 
-# neu
+# neu ... nis še optimalno nastavvljene
+var fx_zero_intensity_distance: float = 100000
 var all_agents_on_screen_mode: bool = true
 var hide_view_on_player_deactivated: = false
-var drivers_on_game_start_count = 3
-
-
+var slomo_time_scale: float = 0.1
+var slomo_fx_on: bool = true
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
 var drivers_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
@@ -61,34 +60,37 @@ func _ready() -> void:
 #		current_game_levels = [Pfs.LEVELS.STAFF]
 		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
 
-		fast_start_window_time = 1
 		camera_zoom_range = [2, 2.3]
 		camera_zoom_range = [1, 5]
-#		camera_zoom_range = [1, 1]
-#		camera_zoom_range = [3, 3]
-#		camera_zoom_range = [5, 5]
+		fast_start_window_time = 1
+		game_shadows_rotation_deg = 45
+
+		# obratne vrednosti
 		start_countdown = false
 		easy_mode = true
 #		full_equip_mode = true
 		enemies_mode = true
-		game_shadows_rotation_deg = 45
+		camera_shake_on = false
+#		slomo_fx_on = false
 #		all_agents_on_screen_mode = false
 #		hide_view_on_player_deactivated = true
-#		drivers_on_game_start_count = 2
-		drivers_on_game_start = [
-			0, 1, 2,# 3,
-			]
 
-
+		drivers_on_game_start = [ 0, 1, 2,# 3,
+		]
 		Pfs.driver_profiles = {}
 		for driver in drivers_on_game_start:
 			Pfs.driver_profiles[driver] = Pfs.default_driver_profile.duplicate()
-#			if driver == 0:
+			if driver == 0:
+				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 #				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			if driver == 1:
+			elif driver == 1:
 				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-			if driver == 2:
+#				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			elif driver == 2:
 #				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
+				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			elif driver == 4:
+#				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP2
 				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 
 	set_game_settings_per_level()

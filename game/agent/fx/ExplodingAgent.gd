@@ -37,4 +37,5 @@ func _process(delta: float) -> void:
 
 
 func _on_Timer_timeout() -> void:
+	Engine.time_scale = 1
 	queue_free()

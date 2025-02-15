@@ -203,6 +203,7 @@ func _destroy():
 
 
 func _explode():
+	# hide inside shapes and explode main
 
 	# disable staf
 	collision_shape.set_deferred("disabled", true)

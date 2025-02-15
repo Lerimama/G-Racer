@@ -87,7 +87,7 @@ func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D
 			new_fx.global_position = fx_pos
 			new_fx.global_rotation = fx_rot
 			spawn_parent.add_child(new_fx)
-			new_fx.start(self_destruct) # znotraj urejeno
+			new_fx.start_fx(self_destruct) # znotraj urejeno
 			# connect
 			if not self_destruct:
 				new_fx.connect("fx_finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
