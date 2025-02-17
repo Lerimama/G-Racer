@@ -344,7 +344,7 @@ func _change_ai_state(new_ai_state: int):
 			ai_target = null
 			agent_manager.motion = agent_manager.MOTION.IDLE
 		AI_STATE.RACE_TRACK:
-			ai_target = controlled_agent.tracker
+			ai_target = controlled_agent.agent_tracker
 			agent_manager.motion = agent_manager.MOTION.FWD
 		AI_STATE.SEARCH:
 			search_target_reached = false
@@ -521,10 +521,9 @@ func _on_game_stage_change(game_manager: Game): # od GMja
 			var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
 			yield(get_tree().create_timer(random_start_delay), "timeout")
 			# level type
-			var level_profile: Dictionary = game_manager.level_profile
-			var curr_level: Level = game_manager.current_level
-			if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
-				if controlled_agent.tracker:
+			var curr_level: Level = game_manager.game_level
+			if game_manager.game_level.level_type == Pfs.BASE_TYPE.RACING:
+				if controlled_agent.agent_tracker:
 					self.ai_state = AI_STATE.RACE_TRACK
 				elif not goals_to_reach.empty(): # po domače
 					self.ai_state = AI_STATE.RACE_TO_GOAL # po domače

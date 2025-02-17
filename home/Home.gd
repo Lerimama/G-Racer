@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 
 
 enum HOME_SCREEN{MAIN, LEVELS, PREGAME}
@@ -16,6 +16,9 @@ func _ready() -> void:
 
 	focus_btn.grab_focus()
 
+func open_from_game():
+
+	modulate = Color.black
 
 func to_main_menu():
 

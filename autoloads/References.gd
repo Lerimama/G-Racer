@@ -3,6 +3,7 @@ extends Node
 # global nodes
 var main_node: Main = null
 var game_manager: Game = null
+var game_reactor: Node = null
 var sound_manager: Node = null
 var node_creation_parent: Node2D = null # NCP ... ven?
 var ultimate_popup: Popup = null

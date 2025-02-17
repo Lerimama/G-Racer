@@ -209,7 +209,7 @@ var ammo_profiles : Dictionary = {
 # ---------------------------------------------------------------------------------------------------------------------------
 func levels(): pass
 
-enum BASE_TYPE {UNDEFINED, TIMED, UNTIMED}
+enum BASE_TYPE {BATTLE, RACING} # BATTLE JE PRVI ALI NEDEFINED
 enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
@@ -217,22 +217,22 @@ var level_profiles: Dictionary = {
 		"level_desc": "jajsjdsjdj",
 		"level_scene": preload("res://game/levels/Level.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"time_limit": 0,
-		"lap_limit": 0,
+		"level_time": 0,
+		"level_laps": 0,
 		# določeno ob spawnu
-		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"level_goals": [],
+#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"level_goals": [],
 		},
 	LEVELS.FIRST_DRIVE: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"time_limit": 0,
-		"lap_limit": 0, # če so goalsi delajo isto kot čekpointi
+		"level_time_limit": 15,
+		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
-		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"level_goals": [],
+#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"level_goals": [],
 		},
 	LEVELS.TRAINING: {
 		"level_name": "xxx",
@@ -240,20 +240,20 @@ var level_profiles: Dictionary = {
 #		"level_path": "res://game/levels/LevelTraining.tscn",
 		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		"level_thumb": preload("res://home/thumb_level_training.tres"),
-		"time_limit": 0,
-		"lap_limit": 0,
-		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"level_goals": [],
+		"level_time_limit": 0,
+		"level_laps": 0,
+#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"level_goals": [],
 		},
 	LEVELS.STAFF: {
 		"level_name": "xxx",
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelStaff.tscn"),
 		"level_thumb": preload("res://home/thumb_level_mission.tres"),
-		"time_limit": 60,
-		"lap_limit": 1,
-		"level_type": BASE_TYPE.UNDEFINED, # tole povozi level na spawn glede na njegove elemente
-		"level_goals": [],
+		"level_time_limit": 60,
+		"level_laps": 1,
+#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"level_goals": [],
 		},
 }
 

@@ -34,7 +34,7 @@ var ai_target_rank: int
 var revive_time: float = 2
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 var body_state: Physics2DDirectBodyState
-var tracker: PathFollow2D # napolni se, ko se agent pripiše trackerju
+var agent_tracker: PathFollow2D # napolni se, ko se agent pripiše trackerju
 
 # weapons
 var triggering_weapons: Array = []
@@ -494,7 +494,7 @@ func _on_Agent_body_entered(body: Node2D) -> void:
 
 func _exit_tree() -> void:
 	# pospravljanje morebitnih smeti
-
+	printt("smeti", name, is_active)
 	self.is_active = false # zazih
 	if agent_camera:
 		if agent_camera.follow_target == self:

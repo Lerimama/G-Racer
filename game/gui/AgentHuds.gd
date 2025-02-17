@@ -2,19 +2,32 @@ extends Control
 
 
 var view_imitators: Dictionary = {}
+
 onready var view_imitator: Control = $ViewImitator
 onready var first_agent_hud: VBoxContainer = $ViewImitator/AgentHud
+onready var AgentHud: PackedScene = preload("res://game/gui/AgentHud.tscn")
 
 
-func set_agent_huds(game_views: Dictionary, all_on_one_screen: bool):
+func set_agent_huds(game_views: Dictionary, one_screen_mode: bool):
 
-	if all_on_one_screen:
-		var player_agent_hud_template: Control = Mts.remove_chidren_and_get_template([first_agent_hud])
+	# debug reset
+	if first_agent_hud:
+		first_agent_hud.queue_free()
+		first_agent_hud = null
+
+	if one_screen_mode:
+		var imitated_view: ViewportContainer = game_views.keys()[0]
 		for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-			var new_player_agent_hud: Control = player_agent_hud_template.duplicate()
+			var new_player_agent_hud: Control = AgentHud.instance()
 			view_imitator.add_child(new_player_agent_hud)
-			new_player_agent_hud.set_agent_hud(player_agent, game_views.keys()[0])
+			new_player_agent_hud.set_agent_hud(player_agent, imitated_view)
+		# view predstavnik je prvik plejer
 		view_imitators[view_imitator] = game_views.values()[0]
+		# ai huds
+		for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
+			var new_ai_agent_hud: Control = AgentHud.instance()
+			view_imitator.add_child(new_ai_agent_hud)
+			new_ai_agent_hud.set_agent_hud(ai_agent, imitated_view, true)
 	else:
 		# agent huds and view imitators
 		for view in game_views:
@@ -26,10 +39,11 @@ func set_agent_huds(game_views: Dictionary, all_on_one_screen: bool):
 			var player_agent: Agent = game_views[view]
 			var new_player_agent_hud = new_view_imitator.get_node("AgentHud")
 			new_player_agent_hud.set_agent_hud(player_agent, view)
+			# view predstavnik je pripadajoči plejer
 			view_imitators[new_view_imitator] = player_agent
 			# ai huds
 			for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
-				var new_ai_agent_hud = new_player_agent_hud.duplicate()
+				var new_ai_agent_hud: Control = AgentHud.instance()
 				new_view_imitator.add_child(new_ai_agent_hud)
 				new_ai_agent_hud.set_agent_hud(ai_agent, view, true)
 
@@ -68,4 +82,3 @@ func _set_imitators_size(game_views: Dictionary):
 			var view_imitator_to_set: Control = view_imitators.find_key(view_player)
 			view_imitator_to_set.rect_size = view.rect_size
 			view_imitator_to_set.rect_position = view.rect_position
-			printt("setam", view_imitator_to_set.rect_size, view.rect_size)

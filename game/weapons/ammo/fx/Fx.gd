@@ -38,7 +38,6 @@ func start_fx(does_self_destruct: bool = true):
 		for child_fx in get_children():
 			match child_fx.get_class():
 				"AudioStreamPlayer":
-					print ("FX ", name)
 					child_fx.play()
 				"Particles2D", "CPUParticles2D":
 					child_fx.emitting = true

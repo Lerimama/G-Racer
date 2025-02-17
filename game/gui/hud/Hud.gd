@@ -23,23 +23,24 @@ func _ready() -> void:
 		box.hide()
 
 
-func set_hud(level_profile: Dictionary, game_views: Dictionary):
+func set_hud(level_type: int, level_profile: Dictionary, game_views: Dictionary):
+
+	var level_lap_count: int = level_profile["level_laps"]
+	var level_time_limit: int = level_profile["level_time_limit"]
 
 	for box in statboxes:
-		box.set_statbox_for_level(level_profile["level_type"])
+		box.set_statbox_for_level(level_type)
 
-	if level_profile["level_type"] == Pfs.BASE_TYPE.TIMED:
+	if level_type == Pfs.BASE_TYPE.RACING:
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
 
 	# game stats
-	level_lap_limit = level_profile["lap_limit"]
-	game_timer.reset_timer(level_profile["time_limit"])
+	level_lap_limit = level_lap_count
+	game_timer.reset_timer(level_time_limit)
 	game_timer.show()
 	record_lap_label.hide()
-
-	agent_huds_holder.set_agent_huds(game_views, Sts.all_agents_on_screen_mode)
 
 
 func set_agent_statbox(spawned_agent: Node2D, agents_level_stats: Dictionary): # kliče GM
@@ -77,7 +78,7 @@ func on_game_start():
 	game_timer.start_timer()
 
 
-func on_level_finished():
+func on_level_over():
 
 	game_timer.stop_timer()
 
@@ -166,8 +167,3 @@ func spawn_agent_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool
 		new_floating_tag.modulate = Rfs.color_green
 	else:
 		new_floating_tag.modulate = Rfs.color_red
-
-
-func _on_GameTimer_gametime_is_up() -> void:
-
-	Rfs.game_manager.game_stage = Rfs.game_manager.GAME_STAGE.END_FAIL

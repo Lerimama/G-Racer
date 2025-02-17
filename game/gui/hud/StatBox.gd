@@ -74,7 +74,7 @@ func set_statbox_for_level(level_type: int): # kliče HUD
 	var lap_count: = 1 # !!!
 	var goals_count: = 1 # !!!
 	match level_type:
-		Pfs.BASE_TYPE.TIMED:
+		Pfs.BASE_TYPE.RACING:
 			$RaceStats.show()
 			stat_level_rank.show()
 			if lap_count > 1:
@@ -82,7 +82,7 @@ func set_statbox_for_level(level_type: int): # kliče HUD
 			# ... goal_reached_count
 			if goals_count > 1:
 				print ("show goal count")
-		Pfs.BASE_TYPE.UNTIMED:
+		Pfs.BASE_TYPE.BATTLE:
 			$BattleStats.show()
 			stat_level_rank.show()
 			stat_wins.show()

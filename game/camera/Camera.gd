@@ -140,7 +140,7 @@ func _change_follow_target(new_follow_target: Node):
 	if not new_follow_target == follow_target:
 		#		print ("change camera target")
 		#		smoothing_enabled = false
-		##		if new_follow_target.is_in_group(Rfs.group_agents):# or Rfs.game_manager.game_on: # RFK ... kamera - hitrost setanja poizicije
+		##		if new_follow_target.is_in_group(Rfs.group_agents):# or Rfs.game_manager game_on: # RFK ... kamera - hitrost setanja poizicije
 		#		var transition_tween = get_tree().create_tween()
 		##			transition_tween.tween_property(self, "position", new_follow_target.position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 		#		transition_tween.tween_property(self, "position", follow_target.global_position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)

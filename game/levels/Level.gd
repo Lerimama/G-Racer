@@ -3,8 +3,6 @@ class_name Level
 
 signal level_is_set(navigation, spawn_positions, other_)
 
-var level_type: int = 0 # določi glede na pripete elemente = LEVEL_TYPE.RACE_TRACK
-
 export (NodePath) var camera_limits_rect_path: String # lahko ga tudi ni ... potem ni meja
 export (NodePath) var level_finish_path: String # lahko ga tudi ni
 export (NodePath) var level_track_path: String # lahko ga tudi ni
@@ -14,11 +12,16 @@ export var reach_goals_in_sequence: bool = false
 var level_finish: Node2D
 var level_track: Path2D
 var level_goals: Array = []
+
+var level_type: int = 0 # določi glede na pripete elemente ...def = LEVEL_TYPE.BATTLE
 var navigation_cells_positions: Array = []
+var goal_reached_signal: String = "reached_by" # vsak goal more met to
 
 onready var level_navigation: NavigationPolygonInstance = $Tracking/LevelNavigation
 onready var tilemap_objects: TileMap = $Objects/Objects
 onready var camera_limits_rect: Panel # = $CameraLimits
+onready var finish_camera_position_node: Position2D = $Tracking/LevelFinish/CameraPosition
+onready var drive_out_position: Vector2 = $Tracking/LevelFinish/DriveOutPosition.position
 
 # start
 onready var level_start: Node2D = $Tracking/LevelStart
@@ -26,15 +29,10 @@ onready var start_lights: Node2D = $Tracking/LevelStart/StartLights
 onready var start_camera_position_node: Position2D = $Tracking/LevelStart/CameraPosition
 onready var start_positions_node: Node2D = $Tracking/LevelStart/StartPositions
 onready var drive_in_position: Vector2 = $Tracking/LevelStart/DriveInPosition.position
-onready var finish_camera_position_node: Position2D = $Tracking/LevelFinish/CameraPosition
-onready var drive_out_position: Vector2 = $Tracking/LevelFinish/DriveOutPosition.position
-
-
-var goal_reached_signal: String = "reached_by"
 
 
 func _ready() -> void:
-#	printt("LEVELS")
+#	printt("LEVEL")
 
 	# debug
 	$__ScreenSize.hide()
@@ -47,7 +45,7 @@ func _ready() -> void:
 		child.hide()
 
 
-func setup():
+func set_level():
 
 	# camera limits
 	if camera_limits_rect_path:
@@ -60,30 +58,27 @@ func setup():
 		level_finish = get_node(level_finish_path)
 		level_finish.is_active = true # def je ugasnjen
 	# goals
-	for goal_path in level_goals_paths:
-		var current_goal: Node2D = get_node(goal_path)
-		if current_goal.has_signal(goal_reached_signal):
-			level_goals.append(get_node(goal_path))
-		get_node(goal_path).show()
+	if not level_track_path:
+		for goal_path in level_goals_paths:
+			var current_goal: Node2D = get_node(goal_path)
+			if current_goal.has_signal(goal_reached_signal):
+				level_goals.append(get_node(goal_path))
+			get_node(goal_path).show()
 
 	# set type
-	var curr_level_type: int = Pfs.BASE_TYPE.UNDEFINED
 	if level_finish or not level_goals.empty():
-		curr_level_type = Pfs.BASE_TYPE.TIMED
+		level_type = Pfs.BASE_TYPE.RACING
 	else:
-		curr_level_type = Pfs.BASE_TYPE.UNTIMED
+		level_type = Pfs.BASE_TYPE.BATTLE
 
 	# pošljem
-	if curr_level_type == Pfs.BASE_TYPE.UNDEFINED:
-		printerr("Level stays UNDEFINED on spawn")
-	else:
-		_set_level_objects()
-		navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
-		_resize_to_level_size()
+	_set_level_objects()
+	navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
+	_resize_to_level_size()
 
-		var camera_nodes: Array = [camera_limits_rect, start_camera_position_node, finish_camera_position_node]
+	var camera_nodes: Array = [camera_limits_rect, start_camera_position_node, finish_camera_position_node]
 
-		emit_signal("level_is_set", curr_level_type, start_positions_node.get_children(), camera_nodes, navigation_cells_positions, level_goals)
+	emit_signal("level_is_set", start_positions_node.get_children(), camera_nodes, navigation_cells_positions)
 
 
 func _set_level_objects():

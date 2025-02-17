@@ -70,7 +70,7 @@ func _get_best_target(): # po distanci
 	var current_min_distance_to_target: float = available_targets.values().min()
 	var closest_target: Node2D = available_targets.find_key(current_min_distance_to_target)
 
-	if aim_target:
+	if aim_target and is_instance_valid(aim_target):
 		if current_min_distance_to_target > global_position.distance_to(aim_target.global_position):
 			closest_target = aim_target
 

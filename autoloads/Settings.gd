@@ -13,7 +13,7 @@ var kg_per_unit_mass = 10
 # GAME
 enum GAME_MODE {SINGLE, CAMPAIGN, TOURNAMENT, PRACTICE, BATTLE, SKILLS} # ... ni še
 var game_mdoe: int = GAME_MODE.SINGLE
-var game_time_limit: int = 0 # če je 0 ni omejitve
+var game_time_limit: int = 5 # če je 0 ni omejitve
 var start_countdown: bool = true
 var countdown_start_limit: int = 5
 var fast_start_window_time: float = 0.32
@@ -40,7 +40,7 @@ var get_it_time: float = 2
 
 # neu ... nis še optimalno nastavvljene
 var fx_zero_intensity_distance: float = 100000
-var all_agents_on_screen_mode: bool = true
+var one_screen_mode: bool = true
 var hide_view_on_player_deactivated: = false
 var slomo_time_scale: float = 0.1
 var slomo_fx_on: bool = true
@@ -58,7 +58,7 @@ func _ready() -> void:
 #		current_game_levels = [Pfs.LEVELS.TRAINING]
 #		current_game_levels = [Pfs.LEVELS.DEFAULT]
 #		current_game_levels = [Pfs.LEVELS.STAFF]
-		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE]
+		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
 
 		camera_zoom_range = [2, 2.3]
 		camera_zoom_range = [1, 5]
@@ -71,8 +71,8 @@ func _ready() -> void:
 #		full_equip_mode = true
 		enemies_mode = true
 		camera_shake_on = false
-#		slomo_fx_on = false
-#		all_agents_on_screen_mode = false
+		slomo_fx_on = false
+#		one_screen_mode = false
 #		hide_view_on_player_deactivated = true
 
 		drivers_on_game_start = [ 0, 1, 2,# 3,
@@ -81,15 +81,19 @@ func _ready() -> void:
 		for driver in drivers_on_game_start:
 			Pfs.driver_profiles[driver] = Pfs.default_driver_profile.duplicate()
 			if driver == 0:
+				Pfs.driver_profiles[driver]["driver_name"] = "P1"
 				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 #				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			elif driver == 1:
+				Pfs.driver_profiles[driver]["driver_name"] = "P2"
 				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
 #				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			elif driver == 2:
+				Pfs.driver_profiles[driver]["driver_name"] = "P3"
 #				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
 				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			elif driver == 4:
+				Pfs.driver_profiles[driver]["driver_name"] = "P4"
 #				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP2
 				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
 
@@ -101,6 +105,8 @@ func set_game_settings_per_level(selected_level_index: int = 0):
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
 	var current_level: int = current_game_levels[selected_level_index]
+
+	game_time_limit = Pfs.level_profiles[current_level]["level_time_limit"]
 
 	# debug
 	match current_level:

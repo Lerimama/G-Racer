@@ -2,7 +2,7 @@ extends Control
 
 
 signal sudden_death_activated # pošlje se v hud, ki javi game managerju
-signal gametime_is_up # pošlje se v hud, ki javi game managerju
+signal time_is_up # pošlje se v hud, ki javi game managerju
 
 enum TIMER_MODE {COUNT_UP, COUNT_DOWN}
 var timer_mode: int = TIMER_MODE.COUNT_UP
@@ -17,7 +17,7 @@ var game_time_hunds: int # čas igre v zaokroženih stotinkah
 var hunds_mode: bool
 var sudden_death_mode: bool # dela samo, če ni stopwatch mode
 
-var game_time_limit: float
+var game_time_limit: float # določi na reset
 var countdown_start_limit: int
 onready var mins_label: Label = $Mins
 onready var secs_label: Label = $Secs
@@ -62,7 +62,7 @@ func _process(delta: float) -> void:
 				if sudden_death_mode:
 					emit_signal("sudden_death_activated") # pošlje se v hud, ki javi game managerju
 				else:
-					emit_signal("gametime_is_up") # pošlje se v hud, ki javi GM
+					emit_signal("time_is_up") # pošlje se v hud, ki javi GM
 			# GO countdown
 			elif game_time_left < countdown_start_limit: # če je countdown limit 0, ta pogoj nikoli ne velja
 				# za vsakič, ko mine sekunda
@@ -104,7 +104,6 @@ func reset_timer(timer_limit: float = game_time_limit):
 
 func start_timer():
 
-	reset_timer()
 	timer_state = TIMER_STATE.COUNTING
 
 

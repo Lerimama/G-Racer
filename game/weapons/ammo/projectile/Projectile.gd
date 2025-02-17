@@ -175,7 +175,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 func _on_vision_collision():
 
 	vision_ray.force_raycast_update() # mogoče deluje, ker je drugič v parih korakih
-	Rfs.game_manager.apply_slomo(self, vision_ray.get_collider())
+	Rfs.game_reactor.apply_slomo(self, vision_ray.get_collider())
 
 	if use_vision_for_collision:
 		var pseudo_close_distance: float = max_thrust_power# / 3
@@ -250,7 +250,7 @@ func _spawn_and_start_fx(EventFx: PackedScene, self_destruct: bool = true, spawn
 		new_fx.global_rotation = fx_rot
 		spawn_parent.add_child(new_fx)
 		new_fx.start_fx(self_destruct)
-		new_fx.connect("fx_finished", Rfs.game_manager, "_on_fx_finished", [], CONNECT_ONESHOT)
+		new_fx.connect("fx_finished", Rfs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
 		return new_fx
 	else:
 		return null

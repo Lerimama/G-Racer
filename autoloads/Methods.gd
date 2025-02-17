@@ -116,17 +116,20 @@ func get_absolute_z_index(target: Node2D) -> int:
 	return z_index
 
 
-func remove_chidren_and_get_template(node_with_children: Array):
+func remove_chidren_and_get_template(node_with_children: Array, delete_all: bool = false):
 
 	# grab template
 #	var template = node_with_children.get_child(0).duplicate()
-	var template = node_with_children[0].duplicate()
+	var template
+	if not delete_all:
+		template = node_with_children[0].duplicate()
 
 	# reset children
 	for child in node_with_children:
 		child.queue_free()
 
-	return template
+	if not delete_all:
+		return template
 
 
 func spawn_polygon_2d(poylgon_points: PoolVector2Array, spawn_parent = get_tree().root, col: Color = Color.blue):

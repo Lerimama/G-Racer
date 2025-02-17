@@ -151,4 +151,5 @@ func _on_game_stage_change(game_manager: Game): # od GMja
 			if controlled_agent.is_active:
 				#				set_physics_process(false)
 				controlled_agent.is_active = false
+				print ("disejblam", " _prepozno")
 

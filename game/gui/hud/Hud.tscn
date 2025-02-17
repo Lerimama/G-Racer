@@ -152,6 +152,4 @@ margin_right = 122.5
 text = "DEAD!!!"
 align = 1
 
-[connection signal="gametime_is_up" from="GameTimer" to="." method="_on_GameTimer_gametime_is_up"]
-
 [editable path="StatBox"]
