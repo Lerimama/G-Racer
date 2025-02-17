@@ -1,9 +1,9 @@
 tool
-extends Control
+extends VBoxContainer
 
 
 enum BOX_ALIGN {LT_CORNER, RT_CORNER, LB_CORNER, RB_CORNER}
-export (BOX_ALIGN) var statbox_hor_align: int = BOX_ALIGN.LT_CORNER
+export (BOX_ALIGN) var statbox_hor_align: int = BOX_ALIGN.LT_CORNER setget _change_screen_align
 
 var all_box_stats: Array
 
@@ -34,23 +34,25 @@ func _ready() -> void:
 	var driver_stat = all_box_stats.pop_front()
 	all_box_stats.push_front(stat_wins)
 
+#	self.statbox_hor_align = statbox_hor_align
+
 	# poravnave po vogalih
-	var stats_to_align: Array = [$StatDriver, $BattleStats, $RaceStats]
-	match statbox_hor_align:
-		BOX_ALIGN.LT_CORNER:
-			self.alignment = BoxContainer.ALIGN_BEGIN
-		BOX_ALIGN.RT_CORNER:
-			for stat in stats_to_align:
-				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
-			self.alignment = BoxContainer.ALIGN_BEGIN
-		BOX_ALIGN.LB_CORNER:
-			self.alignment = BoxContainer.ALIGN_END
-			move_child(stat_driver, get_child_count() - 1)
-		BOX_ALIGN.RB_CORNER:
-			for stat in stats_to_align:
-				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
-			self.alignment = BoxContainer.ALIGN_END
-			move_child(stat_driver, get_child_count() - 1)
+#	var stats_to_align: Array = [$StatDriver, $BattleStats, $RaceStats]
+#	match statbox_hor_align:
+#		BOX_ALIGN.LT_CORNER:
+#			self.alignment = BoxContainer.ALIGN_BEGIN
+#		BOX_ALIGN.RT_CORNER:
+#			for stat in stats_to_align:
+#				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
+#			self.alignment = BoxContainer.ALIGN_BEGIN
+#		BOX_ALIGN.LB_CORNER:
+#			self.alignment = BoxContainer.ALIGN_END
+#			move_child(stat_driver, get_child_count() - 1)
+#		BOX_ALIGN.RB_CORNER:
+#			for stat in stats_to_align:
+#				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
+#			self.alignment = BoxContainer.ALIGN_END
+#			move_child(stat_driver, get_child_count() - 1)
 
 
 func set_statbox_for_level(level_type: int): # kliče HUD
@@ -99,3 +101,57 @@ func set_statbox_for_level(level_type: int): # kliče HUD
 	$RaceStats.show()
 	stat_level_rank.show()
 	stat_lap_count.show()
+
+
+
+func _change_screen_align(new_screen_align: int):
+
+	if not get_parent():
+		return
+#	if statbox_hor_align == new_screen_align:
+#		return
+
+	statbox_hor_align = new_screen_align
+	printt("change", statbox_hor_align, new_screen_align)
+	# poravnave po vogalih
+	var stats_to_align: Array = [$StatDriver, $BattleStats, $RaceStats]
+	match statbox_hor_align:
+		BOX_ALIGN.LT_CORNER:
+			alignment = BoxContainer.ALIGN_BEGIN
+			anchor_left = 0
+			anchor_top = 0
+			anchor_right = 0
+			anchor_bottom = 0
+
+		BOX_ALIGN.RT_CORNER:
+			for stat in stats_to_align:
+				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
+			alignment = BoxContainer.ALIGN_BEGIN
+			anchor_left = 1
+			anchor_top = 0
+			anchor_right = 1
+			anchor_bottom = 0
+#			rect_position.x = get_parent().rect_size.x - rect_size.x
+			rect_position.x -= rect_size.x
+		BOX_ALIGN.LB_CORNER:
+			alignment = BoxContainer.ALIGN_END
+			anchor_left = 0
+			anchor_top = 1
+			anchor_right = 0
+			anchor_bottom = 1
+			move_child(stat_driver, get_child_count() - 1)
+#			rect_position.y = get_parent().rect_size.y - rect_size.y
+			rect_position.y -= rect_size.y
+		BOX_ALIGN.RB_CORNER:
+			for stat in stats_to_align:
+				stat.size_flags_horizontal = MarginContainer.SIZE_SHRINK_END
+			alignment = BoxContainer.ALIGN_END
+			anchor_left = 1
+			anchor_top = 1
+			anchor_right = 1
+			anchor_bottom = 1
+			move_child(stat_driver, get_child_count() - 1)
+			rect_position.x -= rect_size.x
+			rect_position.y -= rect_size.y
+#			rect_position.y = get_parent().rect_size.y - rect_size.y
+#			rect_position.x = get_parent().rect_size.x - rect_size.x

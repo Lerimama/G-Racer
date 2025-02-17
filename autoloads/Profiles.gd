@@ -39,7 +39,7 @@ enum STATS {
 		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
 		}
 
-var start_gent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
+var start_agent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
 	STATS.BEST_LAP_TIME: 0,
@@ -68,7 +68,7 @@ enum DRIVER_TYPE {PLAYER, AI}
 
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 }
-
+var available_driver_names: Array = ["Prvi", "Drugi", "Tretji", "sdfsg", "sdfwsgfsdf"]
 var default_driver_profile: Dictionary = {
 	"driver_name": "PLAJER",
 	"driver_avatar": preload("res://home/avatar_david.tres"),
@@ -90,7 +90,6 @@ var ai_profile: Dictionary = {
 	"ai_name": "STEINY",
 	"random_start_range": "", # še na nodu
 }
-
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
 var controller_profiles: Dictionary = {
@@ -175,9 +174,7 @@ func weapons(): pass
 
 var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
 
-
 enum AMMO {BULLET, MISILE, MINA, SMALL} # kot v orožjih
-
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
@@ -228,7 +225,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 15,
+		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
 #		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente

@@ -9,8 +9,11 @@
 [ext_resource path="res://game/gui/hud/StartCountdown.tscn" type="PackedScene" id=9]
 
 [node name="Hud" type="Control"]
+anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
+margin_left = -2560.0
+margin_bottom = 1440.0
+rect_min_size = Vector2( 2560, 1440 )
 theme = ExtResource( 2 )
 script = ExtResource( 3 )
 __meta__ = {
@@ -19,21 +22,37 @@ __meta__ = {
 }
 
 [node name="StatBox" parent="." instance=ExtResource( 5 )]
-margin_left = 32.0
-margin_top = 22.0
-margin_right = 512.0
-margin_bottom = 794.0
+margin_top = 0.0
+margin_right = 899.0
+margin_bottom = 772.0
 __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
+[node name="StatDriver" parent="StatBox" index="0"]
+size_flags_horizontal = 8
+
+[node name="BattleStats" parent="StatBox" index="1"]
+size_flags_horizontal = 8
+
+[node name="ColorRect" parent="StatBox/BattleStats" index="0"]
+margin_right = 624.0
+
+[node name="HBoxContainer" parent="StatBox/BattleStats" index="1"]
+margin_right = 624.0
+
+[node name="RaceStats" parent="StatBox" index="2"]
+margin_left = 320.0
+margin_right = 899.0
+size_flags_horizontal = 8
+
 [node name="StatBox2" parent="." instance=ExtResource( 5 )]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -512.0
-margin_top = 22.0
-margin_right = -32.0
-margin_bottom = 794.0
+margin_left = -899.0
+margin_top = 0.0
+margin_right = 0.0
+margin_bottom = 772.0
 grow_horizontal = 0
 __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
@@ -43,10 +62,9 @@ statbox_hor_align = 1
 [node name="StatBox3" parent="." instance=ExtResource( 5 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 32.0
-margin_top = -790.0
-margin_right = 512.0
-margin_bottom = -18.0
+margin_top = -772.0
+margin_right = 899.0
+margin_bottom = 0.0
 grow_vertical = 0
 alignment = 2
 __meta__ = {
@@ -59,10 +77,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -512.0
-margin_top = -790.0
-margin_right = -32.0
-margin_bottom = -18.0
+margin_left = -899.0
+margin_top = -772.0
+margin_right = 0.0
+margin_bottom = 0.0
 grow_horizontal = 0
 grow_vertical = 0
 alignment = 2

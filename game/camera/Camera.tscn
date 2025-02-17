@@ -56,6 +56,9 @@ shake_profile_agent = ExtResource( 12 )
 [node name="Shaker" parent="." instance=ExtResource( 9 )]
 shake_profile = ExtResource( 11 )
 
+[node name="VBoxContainer" parent="Shaker/VisualizerLayer" index="0"]
+visible = false
+
 [node name="TextureButton" parent="Shaker/VisualizerLayer/VBoxContainer" index="0"]
 texture_normal = SubResource( 784 )
 

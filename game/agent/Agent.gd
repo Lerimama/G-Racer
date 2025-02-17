@@ -13,7 +13,8 @@ export var group_weapons_by_type: bool = true
 var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
 
 # driver
-var driver_index: int
+#var driver_index: int
+var driver_index
 var driver_profile: Dictionary
 var driver_stats: Dictionary
 

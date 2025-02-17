@@ -91,9 +91,11 @@ func _set_game():
 
 	# drivers on level start
 	var drivers_in_start_indexes: Array = []
+	var drivers_in_start_names: Array = []
 
 	if finale_game_data.empty():
 		drivers_in_start_indexes = Sts.drivers_on_game_start
+		drivers_in_start_names = Sts.names_on_game_start
 	else:
 		for driver_index_data in finale_game_data:
 			# hard mode
@@ -104,7 +106,8 @@ func _set_game():
 	# spawn drivers ... po zaporedji v arrayu indexov
 	var spawned_position_index = 0
 	for driver_index in drivers_in_start_indexes:
-		_spawn_agent(driver_index, spawned_position_index) # scena, pozicija, profile id (barva, ...)
+		var driver_name = drivers_in_start_names[drivers_in_start_indexes.find(driver_index)]
+		_spawn_agent(driver_name, driver_index, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 
 	yield(get_tree(), "idle_frame")
@@ -148,6 +151,7 @@ func _set_game():
 	Rfs.ultimate_popup.hide() # skrijem pregame
 
 	_game_intro()
+
 
 func _set_game_level():
 
@@ -369,7 +373,8 @@ func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions
 	#	printt("GM level goals", level_profile["level_goals"])
 
 
-func _spawn_agent(agent_driver_index: int, spawned_position_index: int):
+#func _spawn_agent(agent_name: String, agent_driver_index: int, spawned_position_index: int):
+func _spawn_agent(agent_name: String, agent_driver_index, spawned_position_index: int):
 
 	var scene_name: String = "agent_scene"
 	var agent_type: int = Pfs.AGENT.values()[0]
@@ -397,7 +402,7 @@ func _spawn_agent(agent_driver_index: int, spawned_position_index: int):
 	# goals
 	new_agent.controller.goals_to_reach = game_level.level_goals.duplicate()
 	# level stats
-	level_stats[agent_driver_index] = Pfs.start_gent_level_stats.duplicate()
+	level_stats[agent_driver_index] = Pfs.start_agent_level_stats.duplicate()
 	level_stats[agent_driver_index][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
 	level_stats[agent_driver_index][Pfs.STATS.GOALS_REACHED] = []
 

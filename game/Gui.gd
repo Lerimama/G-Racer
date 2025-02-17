@@ -36,9 +36,7 @@ func _on_game_stage_changed(current_game_manager: Game):
 	match game_manager.game_stage:
 
 		game_manager.GAME_STAGE.READY:
-			hud.set_hud(game_manager.game_level.level_type, game_manager.level_profile, game_manager.game_views)
-			for agent in game_manager.game_tracker.agents_in_game:
-				hud.set_agent_statbox(agent, game_manager.level_stats[game_manager.game_tracker.agents_in_game.find(agent)])
+			hud.set_hud(game_manager.game_tracker.agents_in_game, game_manager.game_level.level_type, game_manager.level_profile, game_manager.game_views)
 			if game_manager.level_profile["level_time_limit"] > 0:
 				if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
 					hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")

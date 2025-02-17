@@ -11,25 +11,30 @@ onready var record_lap_label: Label = $RecordLap
 onready var level_name: Label = $LevelName
 onready var game_timer: HBoxContainer = $GameTimer
 onready var start_countdown: Control = $Popups/StartCountdown
-onready var AgentHud = preload("res://game/gui/AgentHud.tscn")
-onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
 onready var agent_huds_holder: Control = $"../AgentHuds"
+
+onready var AgentHud: PackedScene = preload("res://game/gui/AgentHud.tscn")
+onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
+onready var StatBox: PackedScene = preload("res://game/gui/hud/StatBox.tscn")
 
 
 func _ready() -> void:
 #	print("HUD")
 
+	# debug reset
 	for box in statboxes:
-		box.hide()
+		box.queue_free()
+	statboxes.clear()
+#		box.hide()
 
 
-func set_hud(level_type: int, level_profile: Dictionary, game_views: Dictionary):
+func set_hud(agents_starting: Array, level_type: int, level_profile: Dictionary, game_views: Dictionary):
 
 	var level_lap_count: int = level_profile["level_laps"]
 	var level_time_limit: int = level_profile["level_time_limit"]
 
-	for box in statboxes:
-		box.set_statbox_for_level(level_type)
+#	for box in statboxes:
+#		box.set_statbox_for_level(level_type)
 
 	if level_type == Pfs.BASE_TYPE.RACING:
 		game_timer.hunds_mode = true
@@ -42,11 +47,25 @@ func set_hud(level_type: int, level_profile: Dictionary, game_views: Dictionary)
 	game_timer.show()
 	record_lap_label.hide()
 
+	for agent in agents_starting:
+		var agent_level_stats = Rfs.game_manager.level_stats[agent.driver_index]
+		set_agent_statbox(agent, agent_level_stats)
+
+
 
 func set_agent_statbox(spawned_agent: Node2D, agents_level_stats: Dictionary): # kliče GM
 
+	var new_statbox: VBoxContainer = StatBox.instance()
+	add_child(new_statbox)
+	statboxes.append(new_statbox)
+#	var statbox_with_driver: Dictionary = {new_statbox: spawned_agent}
+#	yield(get_tree(), "idle_frame")
+	print("set", new_statbox.statbox_hor_align, statboxes.find(new_statbox))
+	statboxes_with_drivers[new_statbox] = spawned_agent
+
 	var loading_time: float = 0.5 # pred prikazom naj se v miru postavi
-	var spawned_driver_statbox: Control = statboxes[spawned_agent.driver_index]
+#	var spawned_driver_statbox: Control = statboxes[spawned_agent.driver_index]
+	var spawned_driver_statbox: Control = new_statbox
 	var spawned_driver_stats: Dictionary = spawned_agent.driver_stats
 	var spawned_driver_profile: Dictionary = Pfs.driver_profiles[spawned_agent.driver_index]
 
@@ -72,6 +91,11 @@ func set_agent_statbox(spawned_agent: Node2D, agents_level_stats: Dictionary): #
 	yield(get_tree().create_timer(loading_time), "timeout") # dam cajt, da se vse razbarva iz zelene
 	spawned_driver_statbox.visible = true
 
+	new_statbox.statbox_hor_align = statboxes.find(new_statbox)
+
+onready var statboxes_with_drivers: Dictionary = {}
+
+
 
 func on_game_start():
 
@@ -94,9 +118,17 @@ func on_game_over():
 	record_lap_label.hide()
 
 
-func _on_agent_stat_changed(driver_index: int, agent_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+#func _on_agent_stat_changed(driver_index: int, agent_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+func _on_agent_stat_changed(driver_index, agent_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+	return
 
-	var statbox_to_change: Control = statboxes[driver_index] # agent id kot index je enak indexu statboxa v statboxih
+	var statbox_to_change: Control# = statboxes[driver_index] # agent id kot index je enak indexu statboxa v statboxih
+
+	for statbox in statboxes_with_drivers:
+		if statboxes_with_drivers[statbox].driver_index == driver_index:
+			statbox_to_change = statboxes[statboxes_with_drivers.keys().find(statbox)]
+
+
 	var stat_to_change: Node
 	match agent_stat_key:
 		Pfs.STATS.SMALL_COUNT:
@@ -122,9 +154,18 @@ func _on_agent_stat_changed(driver_index: int, agent_stat_key: int, stat_value):
 	stat_to_change.stat_value = stat_value
 
 
-func update_agent_level_stats(driver_index: int, level_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+func update_agent_level_stats(driver_index, level_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+#func update_agent_level_stats(driver_index: int, level_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+	return
+	var statbox_to_change: Control# = statboxes[driver_index] # agent id kot index je enak indexu statboxa v statboxih
 
-	var statbox_to_change: Control = statboxes[driver_index] # agent id kot index je enak indexu statboxa v statboxih
+	for statbox in statboxes_with_drivers:
+		print("statbox_to_change", statboxes_with_drivers[statbox].driver_index, driver_index)
+		if statboxes_with_drivers[statbox].driver_index == driver_index:
+			statbox_to_change = statboxes[statboxes_with_drivers.keys().find(statbox)]
+
+#	var statbox_to_change: Control = statboxes[driver_index] # agent id kot index je enak indexu statboxa v statboxih
+
 	var stat_to_change: Node
 	match level_stat_key:
 		Pfs.STATS.LEVEL_RANK:

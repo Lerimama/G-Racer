@@ -38,7 +38,8 @@ func close():
 func _on_AddBtn_pressed() -> void:
 
 	if box_container.activated_driver_boxes.size() < drivers_limit:
-		var added_driver_index: int = box_container.activated_driver_boxes.size()
+#		var added_driver_index: int = box_container.activated_driver_boxes.size()
+		var added_driver_index = box_container.activated_driver_boxes.size()
 		box_container.add_new_driver_box(added_driver_index)
 
 

@@ -13,7 +13,8 @@ func _ready() -> void:
 	driver_box_template = Mts.remove_chidren_and_get_template(get_children())
 
 
-func add_new_driver_box(driver_index: int):
+#func add_new_driver_box(driver_index: int):
+func add_new_driver_box(driver_index):
 
 	var new_driver_box: Control = driver_box_template.duplicate()
 	new_driver_box.driver_index = driver_index
