@@ -13,13 +13,13 @@ onready var stat_icons: Array = get_children()
 
 
 func _ready() -> void:
-
-	set_icons_state() # preveri lajf na začetku in seta pravilno stanje ikon
+	pass
+#	set_icons_state() # preveri lajf na začetku in seta pravilno stanje ikon
 
 	# setam ikono na vse ikone
-	for icon in stat_icons:
-		icon.get_node("OnIcon").texture = icon_texture
-		icon.get_node("OffIcon").texture = icon_texture
+#	for icon in stat_icons:
+#		icon.get_node("OnIcon").texture = icon_texture
+#		icon.get_node("OffIcon").texture = icon_texture
 
 
 func _on_stat_change(new_value: int): # ne rabim parametra

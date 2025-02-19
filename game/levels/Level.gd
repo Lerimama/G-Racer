@@ -13,7 +13,7 @@ var level_finish: Node2D
 var level_track: Path2D
 var level_goals: Array = []
 
-var level_type: int = 0 # določi glede na pripete elemente ...def = LEVEL_TYPE.BATTLE
+#var level_type: int = 0 # določi glede na pripete elemente ...def = LEVEL_TYPE.BATTLE
 var navigation_cells_positions: Array = []
 var goal_reached_signal: String = "reached_by" # vsak goal more met to
 
@@ -66,6 +66,7 @@ func set_level():
 			get_node(goal_path).show()
 
 	# set type
+	var level_type: int = 0
 	if level_finish or not level_goals.empty():
 		level_type = Pfs.BASE_TYPE.RACING
 	else:
@@ -78,7 +79,7 @@ func set_level():
 
 	var camera_nodes: Array = [camera_limits_rect, start_camera_position_node, finish_camera_position_node]
 
-	emit_signal("level_is_set", start_positions_node.get_children(), camera_nodes, navigation_cells_positions)
+	emit_signal("level_is_set", start_positions_node.get_children(), camera_nodes, navigation_cells_positions, level_type)
 
 
 func _set_level_objects():

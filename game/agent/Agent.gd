@@ -370,6 +370,8 @@ func _change_activity(new_is_active: bool):
 			controller.set_process_input(true)
 			call_deferred("set_physics_process", true)
 			call_deferred("set_process", true)
+			update_stat(Pfs.STATS.WINS, driver_stats[Pfs.STATS.WINS])
+
 		else: # ga upočasnim v trenutni smeri
 			_reset_motion()
 			controller.set_process_input(false)
@@ -447,21 +449,44 @@ func update_stat(stat_key: int, change_value):
 	driver_stats[stat_key] += change_value # change_value je + ali -
 
 	# health
-	if stat_key == Pfs.STATS.HEALTH:
-		driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
-		if driver_stats[Pfs.STATS.HEALTH] == 0:
-			_destroy()
-		return # poštima ga agent hud
+	match stat_key:
+		Pfs.STATS.GAS:
+			# manjka becina
+			if driver_stats[Pfs.STATS.GAS] <= 0:
+				driver_stats[Pfs.STATS.GAS] = 0
+				self.is_active = false
+			# povečam max ... obstaja zaradi hud gas bar
+			elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
+				gas_tank_size = driver_stats[Pfs.STATS.GAS]
+		Pfs.STATS.HEALTH:
+			driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
+			if driver_stats[Pfs.STATS.HEALTH] == 0:
+				_destroy()
+			return # poštima ga agent hud
+		Pfs.STATS.GOALS_REACHED, Pfs.STATS.WINS: # arrays
+			driver_stats[stat_key].append(change_value)
+		Pfs.STATS.LAP_COUNT:
+			driver_stats[stat_key].append(change_value)
+			# preverjam best lap
+			var curr_lap_time: float = change_value
+			var is_best_lap: bool = true
+			for lap_time in Pfs.STATS.LAP_COUNT:
+				if curr_lap_time > lap_time:
+					is_best_lap = false
+					break
+			if is_best_lap:
+				Pfs.STATS.BEST_LAP_TIME = curr_lap_time
+				emit_signal("stat_changed", driver_index, Pfs.STATS.BEST_LAP_TIME, curr_lap_time)
 
 	# gas
 	# če zmanjka bencina je deaktiviran
-	if driver_stats[Pfs.STATS.GAS] <= 0:
-		driver_stats[Pfs.STATS.GAS] = 0
-		self.is_active = false
+#	if driver_stats[Pfs.STATS.GAS] <= 0:
+#		driver_stats[Pfs.STATS.GAS] = 0
+#		self.is_active = false
+#	# če ga je več kot max, povečam max (max je zaradi hud gas bar
+#	elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
+#		gas_tank_size = driver_stats[Pfs.STATS.GAS]
 
-	# če ga je več kot max, povečam max (max je zaradi hud gas bar
-	elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
-		gas_tank_size = driver_stats[Pfs.STATS.GAS]
 
 	emit_signal("stat_changed", driver_index, stat_key, driver_stats[stat_key])
 

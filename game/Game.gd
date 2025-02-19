@@ -17,7 +17,6 @@ var game_views: Dictionary = {}
 
 # level
 var game_level: Level
-var level_stats: Dictionary = {} # napolnem na spawn agent
 var level_profile: Dictionary # set_level seta iz profilov
 var level_index = 0
 var start_position_nodes: Array # dobi od levela
@@ -33,13 +32,14 @@ onready var hud: Hud = $Gui/Hud
 onready var game_tracker: Node = $GameTracker
 onready var game_reactor: Node = $GameReactor
 
+var game_levels: Array = []
 var finale_game_data: Dictionary = {
+	# 	"levels_count"
 	#	"podatki o igri": 1,
 	#	"podatki o vseh agentih, ki so začeli": 1,
 	#	"agent_index": {
 	#		"driver_stats": {},
 	#		"driver_profile": {},
-	#		"driver_level_stats": {},
 	#	},
 }
 
@@ -72,6 +72,7 @@ func _ready() -> void:
 	for path in main_signal_connecting_paths:
 		main_signal_connecting_nodes.append(get_node(path))
 
+	game_levels = Sts.game_levels
 	call_deferred("_set_game")
 
 
@@ -99,7 +100,7 @@ func _set_game():
 	else:
 		for driver_index_data in finale_game_data:
 			# hard mode
-			if not finale_game_data[driver_index_data]["driver_level_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+			if not finale_game_data[driver_index_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 				drivers_in_start_indexes.append(driver_index_data)
 		game_reactor.agents_finished.clear()
 
@@ -117,7 +118,7 @@ func _set_game():
 		var main_camera: Camera2D = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
 		# prižgem playing field
 		main_camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
-		if game_level.level_type == Pfs.BASE_TYPE.RACING:
+		if level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
 			main_camera.playing_field.enable_playing_field(true)
 		else:
 			main_camera.playing_field.enable_playing_field(true, true) # z edgom
@@ -165,7 +166,14 @@ func _set_game_level():
 #		for child in Rfs.node_creation_parent.get_children():
 #			child.queue_free()
 
-	_spawn_level()
+
+	if game_level: # če level že obstaja, ga najprej moram zbrisat
+		game_level.set_physics_process(false)
+		game_level.queue_free()
+
+	var new_level_key: int = Sts.game_levels[level_index]
+	level_profile = Pfs.level_profiles[new_level_key]
+	_spawn_level(level_profile)
 
 
 
@@ -197,7 +205,7 @@ func _game_intro():
 func _start_game():
 
 	# start countdown
-	if Sts.start_countdown and game_level.level_type == Pfs.BASE_TYPE.RACING:
+	if Sts.start_countdown and level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
 		game_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
 		yield(game_level.start_lights, "countdown_finished")
 
@@ -235,7 +243,7 @@ func _change_game_stage(new_game_stage: int):
 			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
-			if game_level.level_type == Pfs.BASE_TYPE.BATTLE: # zaženem vsakič, tudi po pavzi
+			if not level_profile["level_type"] == Pfs.BASE_TYPE.RACING: # zaženem vsakič, tudi po pavzi
 				game_reactor.spawn_random_pickables()
 			emit_signal("game_stage_changed", self)
 
@@ -329,18 +337,12 @@ func _spawn_new_game_views():
 			game_views.keys()[view_index].get_node("Viewport").world_2d = world_to_inherit
 
 
-func _spawn_level(scene = preload("res://game/levels/LevelFirstDrive.tscn")):
-
-	if game_level: # če level že obstaja, ga najprej moram zbrisat
-		game_level.set_physics_process(false)
-		game_level.queue_free()
-
-	var new_level_key: int = Sts.current_game_levels[level_index]
-	level_profile = Pfs.level_profiles[new_level_key]
+func _spawn_level(spawn_level_profile: Dictionary):
 
 	# spawn
 	var level_spawn_parent: Node = game_views_holder.get_child(0).get_node("Viewport") # VP node
-	var NewLevel: PackedScene = level_profile["level_scene"]
+	var NewLevel: PackedScene = spawn_level_profile["level_scene"]
+#	var NewLevel: PackedScene = level_scene
 	var new_level = NewLevel.instance()
 	level_spawn_parent.add_child(new_level)
 	level_spawn_parent.move_child(new_level, 0)
@@ -357,8 +359,9 @@ func _spawn_level(scene = preload("res://game/levels/LevelFirstDrive.tscn")):
 	game_level = new_level
 
 
-func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions: Array):
+func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions: Array, level_type: int):
 
+	level_profile["level_type"] = level_type # do tukaj ga ni v slovarju
 	# navigacija za AI
 	game_reactor.navigation_positions = nav_positions
 	# random pickable pozicije
@@ -378,8 +381,13 @@ func _spawn_agent(agent_name: String, agent_driver_index, spawned_position_index
 
 	var scene_name: String = "agent_scene"
 	var agent_type: int = Pfs.AGENT.values()[0]
-	var NewAgentInstance: PackedScene = Pfs.agent_profiles[agent_type][scene_name]
 
+	var new_driver_stats: Dictionary = Pfs.start_agent_stats.duplicate()
+	new_driver_stats[Pfs.STATS.LAP_COUNT] = [] # prepišem array v slovarju, da je tudi ta unique
+	new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
+	new_driver_stats[Pfs.STATS.WINS] = []
+
+	var NewAgentInstance: PackedScene = Pfs.agent_profiles[agent_type][scene_name]
 	var new_agent = NewAgentInstance.instance()
 	new_agent.driver_index = agent_driver_index
 	new_agent.modulate.a = 0 # za intro
@@ -388,7 +396,7 @@ func _spawn_agent(agent_name: String, agent_driver_index, spawned_position_index
 
 	# profili ... iz njih podatke povleče sam na rea dy
 	new_agent.driver_profile = Pfs.driver_profiles[agent_driver_index].duplicate()
-	new_agent.driver_stats = Pfs.start_agent_stats.duplicate()
+	new_agent.driver_stats = new_driver_stats
 	new_agent.agent_profile = Pfs.agent_profiles[agent_type].duplicate()
 
 	Rfs.node_creation_parent.add_child(new_agent)
@@ -401,10 +409,6 @@ func _spawn_agent(agent_name: String, agent_driver_index, spawned_position_index
 		new_agent.agent_tracker = game_level.level_track.set_new_tracker(new_agent)
 	# goals
 	new_agent.controller.goals_to_reach = game_level.level_goals.duplicate()
-	# level stats
-	level_stats[agent_driver_index] = Pfs.start_agent_level_stats.duplicate()
-	level_stats[agent_driver_index][Pfs.STATS.LAPS_FINISHED] = [] # prepišem array v slovarju, da je tudi ta unique
-	level_stats[agent_driver_index][Pfs.STATS.GOALS_REACHED] = []
 
 	# connect
 	self.connect("game_stage_changed", new_agent.controller, "_on_game_stage_change")

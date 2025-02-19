@@ -36,24 +36,24 @@ func _set_scorelist(final_game_data):
 	# uvrščeni
 	var drivers_ranked: Array = []
 	for driver_data in final_game_data:
-		if not final_game_data[driver_data]["driver_level_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+		if not final_game_data[driver_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 			drivers_ranked.append(final_game_data[driver_data])
 	# sortiram
 	drivers_ranked.sort_custom(self, "_sort_driver_data_by_rank")
 	# dodam neurvščene ... brezzaporedno
 	for driver_data in final_game_data:
-		if final_game_data[driver_data]["driver_level_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+		if final_game_data[driver_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 			drivers_ranked.append(final_game_data[driver_data])
 
 	# spawnam scoreline
 	for ranked_driver_data in drivers_ranked:
 		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
-		if ranked_driver_data["driver_level_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+		if ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 			new_ranking_line.get_node("Rank").text = "NN"
 		else:
-			new_ranking_line.get_node("Rank").text = str(ranked_driver_data["driver_level_stats"][Pfs.STATS.LEVEL_RANK]) + ". Place"
+			new_ranking_line.get_node("Rank").text = str(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK]) + ". Place"
 		new_ranking_line.get_node("Agent").text = ranked_driver_data["driver_profile"]["driver_name"]
-		new_ranking_line.get_node("Result").text = Mts.get_clock_time(ranked_driver_data["driver_level_stats"][Pfs.STATS.LEVEL_TIME])
+		new_ranking_line.get_node("Result").text = Mts.get_clock_time(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_TIME])
 		results.add_child(new_ranking_line)
 
 

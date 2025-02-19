@@ -49,17 +49,17 @@ var slomo_fx_on: bool = true
 var drivers_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
 var current_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var current_level_settings: Dictionary # ob štartu igre se vrednosti injicirajo v "current_game_data"
-var current_game_levels: Array = []
+var game_levels: Array = []
 
 var names_on_game_start: Array
 
 func _ready() -> void:
 
 	if OS.is_debug_build():
-#		current_game_levels = [Pfs.LEVELS.TRAINING]
-#		current_game_levels = [Pfs.LEVELS.DEFAULT]
-#		current_game_levels = [Pfs.LEVELS.STAFF]
-		current_game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
+#		game_levels = [Pfs.LEVELS.TRAINING]
+#		game_levels = [Pfs.LEVELS.DEFAULT]
+#		game_levels = [Pfs.LEVELS.STAFF]
+		game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
 
 		camera_zoom_range = [2, 2.3]
 		camera_zoom_range = [1, 5]
@@ -76,8 +76,7 @@ func _ready() -> void:
 #		one_screen_mode = false
 #		hide_view_on_player_deactivated = true
 
-		drivers_on_game_start = [ "0", 1, 2,# 3,
-		]
+		drivers_on_game_start = [ "JOU", "MOU", "ROU"]
 
 		names_on_game_start = ["Prvi", "Drugi","sdfwsgfsdf"]
 
@@ -108,7 +107,7 @@ func set_game_settings_per_level(selected_level_index: int = 0):
 
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
-	var current_level: int = current_game_levels[selected_level_index]
+	var current_level: int = game_levels[selected_level_index]
 
 	game_time_limit = Pfs.level_profiles[current_level]["level_time_limit"]
 

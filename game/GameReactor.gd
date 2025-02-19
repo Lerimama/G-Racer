@@ -18,7 +18,7 @@ func _ready() -> void:
 	Rfs.game_reactor = self
 
 
-func _pull_agent_on_field(agent_to_pull: Node2D): # temp ... Vechile class
+func _pull_agent_on_field(agent_to_pull: Agent): # temp ... Vechile class
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING and Sts.one_screen_mode:
 
@@ -28,15 +28,12 @@ func _pull_agent_on_field(agent_to_pull: Node2D): # temp ... Vechile class
 			agent_to_pull.call_deferred("pull_on_screen", agent_pull_position)
 
 			# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
-			var pulled_agent_level_stats: Dictionary = game_parent.level_stats[agent_to_pull.driver_index]
-			var leader_agent_level_stats: Dictionary = game_parent.level_stats[camera_leader.driver_index]
-
 			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
-			if pulled_agent_level_stats[Pfs.STATS.LAPS_FINISHED].size() < leader_agent_level_stats[Pfs.STATS.LAPS_FINISHED].size():
-				pulled_agent_level_stats[Pfs.STATS.LAPS_FINISHED] = leader_agent_level_stats[Pfs.STATS.LAPS_FINISHED]
+			if agent_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size() < camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size():
+				agent_to_pull.update_stat(Pfs.STATS.LAP_COUNT, camera_leader.driver_stats[Pfs.STATS.LAP_COUNT])
 			# mogoče tega spodej nebi mel ... bomo videlo po testu
-			if pulled_agent_level_stats[Pfs.STATS.GOALS_REACHED].size() < leader_agent_level_stats[Pfs.STATS.GOALS_REACHED].size():
-				pulled_agent_level_stats[Pfs.STATS.GOALS_REACHED] = leader_agent_level_stats[Pfs.STATS.GOALS_REACHED]
+			if agent_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED].size() < camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].size():
+				agent_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED])
 
 
 func _get_agent_pull_position(agent_to_pull: Node2D): # temp ... Vechile class
@@ -204,54 +201,53 @@ func _on_fx_finished(finished_fx: Node): # Node, ker je lahko audio
 		finished_fx.queue_free()
 
 
-func _on_agent_reached_goal(current_goal: Node, agent_reaching: Node2D): # level poveže  # temp ... Vechile class
+func _on_agent_reached_goal(reached_goal: Node, reaching_agent: Agent): # level poveže  # temp ... Vechile class
 	# reagirata agent in igra
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
 
 		# če je zaporedje, more bit goal enak prvemu v vrsti
-		if not game_level.reach_goals_in_sequence or current_goal == agent_reaching.goals_to_reach[0]:
+		if not game_level.reach_goals_in_sequence or reached_goal == reaching_agent.goals_to_reach[0]:
 
 			# dodam med dosežene
-			var agent_level_stats: Dictionary = game_parent.level_stats[agent_reaching.driver_index]
-			agent_level_stats[Pfs.STATS.GOALS_REACHED].append(current_goal)
+			reaching_agent.update_stat(Pfs.STATS.GOALS_REACHED, reached_goal)
 
 			# next ...
-			var reached_goals_count: int = agent_level_stats[Pfs.STATS.GOALS_REACHED].size()
+			var reached_goals_count: int = reaching_agent.driver_stats[Pfs.STATS.GOALS_REACHED].size()
 			if reached_goals_count < game_level.level_goals.size():
-				agent_reaching.controller.goal_reached(current_goal)
+				reaching_agent.controller.goal_reached(reached_goal)
 				Rfs.sound_manager.play_sfx("little_horn")
 			elif game_level.level_finish:
-				agent_reaching.controller.goal_reached(current_goal, game_level.level_finish)
+				reaching_agent.controller.goal_reached(reached_goal, game_level.level_finish)
 				Rfs.sound_manager.play_sfx("little_horn")
 			else:
-				agent_reaching.controller.goal_reached(current_goal)
+				reaching_agent.controller.goal_reached(reached_goal)
 				Rfs.sound_manager.play_sfx("finish_horn")
-				agents_finished.append(agent_reaching)
+				agents_finished.append(reaching_agent)
 
 		_check_for_game_end()
 
 
-func _on_finish_line_crossed(agent_across: Node2D): # sproži finish line  # temp ... Vechile class
+func _on_finish_line_crossed(agent_across: Agent): # sproži finish line  # temp ... Vechile class
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
 
-		var agent_level_data: Dictionary = game_parent.level_stats[agent_across.driver_index]
-		var agent_goals_reached: Array = agent_level_data[Pfs.STATS.GOALS_REACHED].duplicate()
+		var agent_goals_reached: Array = agent_across.driver_stats[Pfs.STATS.GOALS_REACHED].duplicate()
 
 		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
 		if game_level.level_goals.empty() or agent_goals_reached == game_level.level_goals:
 
 			# stat level time
-			var prev_lap_level_time: float = agent_level_data[Pfs.STATS.LEVEL_TIME]
-			agent_level_data[Pfs.STATS.LEVEL_TIME] = game_parent.hud.game_timer.game_time_hunds
+			var prev_lap_level_time: float = agent_across.driver_stats[Pfs.STATS.LEVEL_TIME]
+			agent_across.update_stat(Pfs.STATS.LEVEL_TIME, game_parent.hud.game_timer.game_time_hunds)
 
 			var has_finished_level: bool = false
 			# WITH LAPS ... lap finished če so vsi čekpointi
 			if game_parent.level_profile["level_laps"] > 1:
-				var lap_time: float = agent_level_data[Pfs.STATS.LEVEL_TIME] - prev_lap_level_time
-				agent_level_data[Pfs.STATS.LAPS_FINISHED].append(lap_time)
-				if agent_level_data[Pfs.STATS.LAPS_FINISHED].size() >= game_parent.level_profile["level_laps"]:
+				var lap_time: float = agent_across.driver_stats[Pfs.STATS.LEVEL_TIME] - prev_lap_level_time
+				agent_across.update_stat(Pfs.STATS.LAP_COUNT, lap_time)
+
+				if agent_across.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game_parent.level_profile["level_laps"]:
 					has_finished_level = true
 			else:
 				has_finished_level = true
@@ -267,11 +263,6 @@ func _on_finish_line_crossed(agent_across: Node2D): # sproži finish line  # tem
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 
-
-			# hud update
-			for stat_key in [Pfs.STATS.LAPS_FINISHED, Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LEVEL_TIME, Pfs.STATS.GOALS_REACHED]:
-				game_parent.hud.update_agent_level_stats(agent_across.driver_index, stat_key, agent_level_data[stat_key])
-
 			_check_for_game_end()
 
 
@@ -284,29 +275,27 @@ func _on_body_exited_playing_field(body: Node) -> void:
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
 
-func _on_agent_activity_change(changed_agent: Node2D): # temp ... Vechile class
+func _on_agent_activity_change(changed_agent: Agent): # temp ... Vechile class
 #	printt("acitvity", changed_agent.name, changed_agent.is_active)
 
 	# preverja, če je še kakšen player aktiven ... za GO
 	if changed_agent.is_active:
 		pass
 	else:
-#		game_parent.game_tracker.players_in_game.erase(changed_agent)
-#		game_parent.game_tracker.agents_in_game.erase(changed_agent)
-#		game_parent.game_tracker.ais_in_game.erase(changed_agent)
+		#		game_parent.game_tracker.players_in_game.erase(changed_agent)
+		#		game_parent.game_tracker.agents_in_game.erase(changed_agent)
+		#		game_parent.game_tracker.ais_in_game.erase(changed_agent)
 
 		# pripnem končne podatke o agentu
 		var agent_has_finished: bool = agents_finished.has(changed_agent)
 		# če ni deaktiviran v finišu izgubi ranking
 		if not agent_has_finished:
-			game_parent.level_stats[changed_agent.driver_index][Pfs.STATS.LEVEL_RANK] = -1
+			# samo za GO ... ni za statistiko
+			changed_agent.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
 		game_parent.finale_game_data[changed_agent.driver_index] = {
 			"driver_profile": changed_agent.driver_profile,
 			"driver_stats": changed_agent.driver_stats,
-			"driver_level_stats": game_parent.level_stats[changed_agent.driver_index],
 			}
-
-		#		print("act off ----  ", game_parent.finale_game_data[changed_agent.driver_index]["driver_level_stats"][Pfs.STATS.LEVEL_RANK])
 
 		if Sts.hide_view_on_player_deactivated and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
 			# skrijem view

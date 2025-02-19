@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/atlas_hud_icons.png-da372e4a516d2fa8e25397e394e4bacc.stex"
+path="res://.import/atlas_hud_icons.png-2152ed79d9b281d96eb3b23f8cbaa172.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/gui/atlas_hud_icons.png"
-dest_files=[ "res://.import/atlas_hud_icons.png-da372e4a516d2fa8e25397e394e4bacc.stex" ]
+source_file="res://assets/textures/atlas_hud_icons.png"
+dest_files=[ "res://.import/atlas_hud_icons.png-2152ed79d9b281d96eb3b23f8cbaa172.stex" ]
 
 [params]
 

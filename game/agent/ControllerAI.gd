@@ -521,17 +521,13 @@ func _on_game_stage_change(game_manager: Game): # od GMja
 			var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
 			yield(get_tree().create_timer(random_start_delay), "timeout")
 			# level type
-			var curr_level: Level = game_manager.game_level
-			if game_manager.game_level.level_type == Pfs.BASE_TYPE.RACING:
-				if controlled_agent.agent_tracker:
-					self.ai_state = AI_STATE.RACE_TRACK
-				elif not goals_to_reach.empty(): # po domače
-					self.ai_state = AI_STATE.RACE_TO_GOAL # po domače
-				elif curr_level.level_finish: # po domače
-					self.ai_state = AI_STATE.RACE_TO_GOAL # po domače
-					ai_target = curr_level.level_finish  # po domače
-				else:
-					self.ai_state = AI_STATE.SEARCH
+			if controlled_agent.agent_tracker:
+				self.ai_state = AI_STATE.RACE_TRACK
+			elif not goals_to_reach.empty():
+				self.ai_state = AI_STATE.RACE_TO_GOAL
+			elif game_manager.game_level.level_finish:
+				ai_target = game_manager.game_level.level_finish
+				self.ai_state = AI_STATE.RACE_TO_GOAL
 			else:
 				self.ai_state = AI_STATE.SEARCH
 		game_manager.GAME_STAGE.PLAYING:

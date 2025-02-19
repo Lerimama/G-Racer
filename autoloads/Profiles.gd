@@ -36,27 +36,35 @@ func stats(): pass
 enum STATS {
 		WINS, LIFE, HEALTH, POINTS, GAS, CASH,
 		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT,
-		LEVEL_RANK, LAPS_FINISHED, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
+		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
 		}
 
-var start_agent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
+#var start_agent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
+#	STATS.LEVEL_RANK: 0,
+#	STATS.LEVEL_TIME: 0, # hunds
+#	STATS.BEST_LAP_TIME: 0,
+#	STATS.LAP_COUNT: [], # časi
+#	STATS.GOALS_REACHED: [], # nodeti
+#}
+
+var start_agent_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+	STATS.WINS: [], # zmagani leveli
+	STATS.LIFE: 3,
+	STATS.HEALTH: 1, # health percetnage
+	STATS.GAS: 2000,
+	STATS.CASH: 0,
+	STATS.POINTS :0,
+	#
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
 	STATS.BEST_LAP_TIME: 0,
-	STATS.LAPS_FINISHED: [], # časi
+	STATS.LAP_COUNT: [], # časi
 	STATS.GOALS_REACHED: [], # nodeti
-}
-var start_agent_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-	STATS.WINS : 2,
-	STATS.LIFE : 5,
-	STATS.CASH: 0,
-	STATS.HEALTH : 1, # health percetnage
-	STATS.BULLET_COUNT : 10,
-	STATS.MISILE_COUNT : 5,
-	STATS.SMALL_COUNT : 5,
-	STATS.MINA_COUNT : 3,
-	STATS.GAS: 2000,
-	STATS.POINTS : 0,
+	# weapons
+	STATS.BULLET_COUNT: 10,
+	STATS.MISILE_COUNT: 5,
+	STATS.SMALL_COUNT: 5,
+	STATS.MINA_COUNT: 3,
 }
 
 
@@ -175,30 +183,35 @@ func weapons(): pass
 var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
 
 enum AMMO {BULLET, MISILE, MINA, SMALL} # kot v orožjih
+
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
 		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"stat_key": STATS.BULLET_COUNT,
+		"mag_size": 10,
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"scene": preload("res://game/weapons/ammo/ProjectileHomer.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
 		"stat_key": STATS.MISILE_COUNT,
+		"mag_size": 1,
 	},
 	AMMO.MINA: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/MinaExplode.tscn"),
 		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
 		"stat_key": STATS.MINA_COUNT,
+		"mag_size": 3,
 	},
 	AMMO.SMALL: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
 		"stat_key": STATS.SMALL_COUNT,
+		"mag_size": 100,
 	},
 }
 
@@ -225,7 +238,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 0,
+		"level_time_limit": 5,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
 #		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
