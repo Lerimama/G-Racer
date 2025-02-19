@@ -137,7 +137,7 @@ func stop_music():
 
 func _sound_fade_out_and_reset(sound: AudioStreamPlayer, fade_time: float):
 	print("sound_fade_out_and_reset je off")
-	return
+#	return
 	var pre_sound_volume = sound.volume_db
 
 	var fade_out = get_tree().create_tween().set_ease(Tween.EASE_IN).set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)

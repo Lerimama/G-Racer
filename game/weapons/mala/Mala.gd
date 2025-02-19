@@ -61,8 +61,10 @@ func _on_weapon_triggered(trigger_owner: Node2D):
 
 
 func _shoot(weapon_owner: Node2D):
-	#	emit_signal("weapon_shot", ammo_stat_key, -1)
-	pass
+
+	var no_use_disabled = true
+	if not no_use_disabled:
+		emit_signal("weapon_shot")#, ammo_stat_key, -1)
 
 
 func _dissarm():

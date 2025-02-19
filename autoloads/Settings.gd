@@ -81,24 +81,20 @@ func _ready() -> void:
 		names_on_game_start = ["Prvi", "Drugi","sdfwsgfsdf"]
 
 		Pfs.driver_profiles = {}
-		for driver_index in drivers_on_game_start:
-			Pfs.driver_profiles[driver_index] = Pfs.default_driver_profile.duplicate()
-			if drivers_on_game_start.find(driver_index) == 0:
-				Pfs.driver_profiles[driver_index]["driver_name"] = "P1"
-				Pfs.driver_profiles[driver_index]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
-#				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			elif drivers_on_game_start.find(driver_index) == 1:
-				Pfs.driver_profiles[driver_index]["driver_name"] = "P2"
-				Pfs.driver_profiles[driver_index]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-#				Pfs.driver_profiles[driver]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			elif drivers_on_game_start.find(driver_index) == 2:
-				Pfs.driver_profiles[driver_index]["driver_name"] = "P3"
-#				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
-				Pfs.driver_profiles[driver_index]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			elif drivers_on_game_start.find(driver_index) == 4:
-				Pfs.driver_profiles[driver_index]["driver_name"] = "P4"
-#				Pfs.driver_profiles[driver]["controller_type"] = Pfs.CONTROLLER_TYPE.JP2
-				Pfs.driver_profiles[driver_index]["driver_type"] = Pfs.DRIVER_TYPE.AI
+		for driver_name_id in drivers_on_game_start:
+			Pfs.driver_profiles[driver_name_id] = Pfs.default_driver_profile.duplicate()
+			if drivers_on_game_start.find(driver_name_id) == 0:
+				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
+#				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			elif drivers_on_game_start.find(driver_name_id) == 1:
+				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
+#				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			elif drivers_on_game_start.find(driver_name_id) == 2:
+#				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
+				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			elif drivers_on_game_start.find(driver_name_id) == 4:
+#				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP2
+				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 
 	set_game_settings_per_level()
 

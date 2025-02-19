@@ -98,17 +98,16 @@ func _set_game():
 		drivers_in_start_indexes = Sts.drivers_on_game_start
 		drivers_in_start_names = Sts.names_on_game_start
 	else:
-		for driver_index_data in finale_game_data:
+		for driver_name_id_data in finale_game_data:
 			# hard mode
-			if not finale_game_data[driver_index_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
-				drivers_in_start_indexes.append(driver_index_data)
+			if not finale_game_data[driver_name_id_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+				drivers_in_start_indexes.append(driver_name_id_data)
 		game_reactor.agents_finished.clear()
 
 	# spawn drivers ... po zaporedji v arrayu indexov
 	var spawned_position_index = 0
-	for driver_index in drivers_in_start_indexes:
-		var driver_name = drivers_in_start_names[drivers_in_start_indexes.find(driver_index)]
-		_spawn_agent(driver_name, driver_index, spawned_position_index) # scena, pozicija, profile id (barva, ...)
+	for driver_name_id in drivers_in_start_indexes:
+		_spawn_agent(driver_name_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 
 	yield(get_tree(), "idle_frame")
@@ -359,6 +358,55 @@ func _spawn_level(spawn_level_profile: Dictionary):
 	game_level = new_level
 
 
+func _spawn_agent(agent_driver_name_id, spawned_position_index: int):
+
+	var scene_name: String = "agent_scene"
+	var agent_type: int = Pfs.AGENT.values()[0]
+
+	var new_driver_stats: Dictionary = Pfs.start_driver_stats.duplicate()
+	new_driver_stats[Pfs.STATS.LAP_COUNT] = [] # prepišem array v slovarju, da je tudi ta unique
+	new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
+	new_driver_stats[Pfs.STATS.WINS] = []
+
+	# debug stats
+	new_driver_stats[Pfs.STATS.LAP_COUNT] = ["time", 3] # prepišem array v slovarju, da je tudi ta unique
+	new_driver_stats[Pfs.STATS.GOALS_REACHED] = ["krneki", 5]
+	new_driver_stats[Pfs.STATS.WINS] = ["joda", 5]
+	new_driver_stats[Pfs.STATS.LAP_TIME] = 50
+	new_driver_stats[Pfs.STATS.LEVEL_TIME] = 1000
+	new_driver_stats[Pfs.STATS.BEST_LAP_TIME] = 500
+#	var new_int_array: PoolIntArray = [1,5]
+#	new_driver_stats[Pfs.STATS.LIFE] = new_int_array
+
+	var NewAgentInstance: PackedScene = Pfs.agent_profiles[agent_type][scene_name]
+	var new_agent = NewAgentInstance.instance()
+	new_agent.driver_name_id = agent_driver_name_id
+	new_agent.modulate.a = 0 # za intro
+	new_agent.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_agent.global_position = start_position_nodes[spawned_position_index].global_position
+
+	# profili ... iz njih podatke povleče sam na rea dy
+	new_agent.driver_profile = Pfs.driver_profiles[agent_driver_name_id].duplicate()
+	new_agent.driver_stats = new_driver_stats
+	new_agent.agent_profile = Pfs.agent_profiles[agent_type].duplicate()
+
+	Rfs.node_creation_parent.add_child(new_agent)
+
+	# ai navigation
+	if Pfs.driver_profiles[agent_driver_name_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
+		new_agent.controller.level_navigation = game_level.level_navigation
+	# trackers
+	if game_level.level_track:
+		new_agent.agent_tracker = game_level.level_track.set_new_tracker(new_agent)
+	# goals
+	new_agent.controller.goals_to_reach = game_level.level_goals.duplicate()
+
+	# connect
+	self.connect("game_stage_changed", new_agent.controller, "_on_game_stage_change")
+	new_agent.connect("activity_changed", game_reactor, "_on_agent_activity_change")
+	new_agent.connect("stat_changed", hud, "_on_agent_stat_changed")
+
+
 func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions: Array, level_type: int):
 
 	level_profile["level_type"] = level_type # do tukaj ga ni v slovarju
@@ -374,43 +422,3 @@ func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions
 	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position)
 
 	#	printt("GM level goals", level_profile["level_goals"])
-
-
-#func _spawn_agent(agent_name: String, agent_driver_index: int, spawned_position_index: int):
-func _spawn_agent(agent_name: String, agent_driver_index, spawned_position_index: int):
-
-	var scene_name: String = "agent_scene"
-	var agent_type: int = Pfs.AGENT.values()[0]
-
-	var new_driver_stats: Dictionary = Pfs.start_agent_stats.duplicate()
-	new_driver_stats[Pfs.STATS.LAP_COUNT] = [] # prepišem array v slovarju, da je tudi ta unique
-	new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
-	new_driver_stats[Pfs.STATS.WINS] = []
-
-	var NewAgentInstance: PackedScene = Pfs.agent_profiles[agent_type][scene_name]
-	var new_agent = NewAgentInstance.instance()
-	new_agent.driver_index = agent_driver_index
-	new_agent.modulate.a = 0 # za intro
-	new_agent.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
-	new_agent.global_position = start_position_nodes[spawned_position_index].global_position
-
-	# profili ... iz njih podatke povleče sam na rea dy
-	new_agent.driver_profile = Pfs.driver_profiles[agent_driver_index].duplicate()
-	new_agent.driver_stats = new_driver_stats
-	new_agent.agent_profile = Pfs.agent_profiles[agent_type].duplicate()
-
-	Rfs.node_creation_parent.add_child(new_agent)
-
-	# ai navigation
-	if Pfs.driver_profiles[agent_driver_index]["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		new_agent.controller.level_navigation = game_level.level_navigation
-	# trackers
-	if game_level.level_track:
-		new_agent.agent_tracker = game_level.level_track.set_new_tracker(new_agent)
-	# goals
-	new_agent.controller.goals_to_reach = game_level.level_goals.duplicate()
-
-	# connect
-	self.connect("game_stage_changed", new_agent.controller, "_on_game_stage_change")
-	new_agent.connect("activity_changed", game_reactor, "_on_agent_activity_change")
-	new_agent.connect("stat_changed", hud, "_on_agent_stat_changed")

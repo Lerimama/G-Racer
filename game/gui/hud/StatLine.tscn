@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://game/gui/TimeLabel.tscn" type="PackedScene" id=2]
+[ext_resource path="res://common/TimeLabel.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=3]
 [ext_resource path="res://game/gui/hud/StatLine.gd" type="Script" id=4]
 [ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=6]

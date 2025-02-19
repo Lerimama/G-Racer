@@ -238,13 +238,15 @@ func _on_finish_line_crossed(agent_across: Agent): # sproži finish line  # temp
 		if game_level.level_goals.empty() or agent_goals_reached == game_level.level_goals:
 
 			# stat level time
-			var prev_lap_level_time: float = agent_across.driver_stats[Pfs.STATS.LEVEL_TIME]
+			agent_across.prev_lap_level_time = game_parent.hud.game_timer.game_time_hunds
+
 			agent_across.update_stat(Pfs.STATS.LEVEL_TIME, game_parent.hud.game_timer.game_time_hunds)
 
 			var has_finished_level: bool = false
+
 			# WITH LAPS ... lap finished če so vsi čekpointi
 			if game_parent.level_profile["level_laps"] > 1:
-				var lap_time: float = agent_across.driver_stats[Pfs.STATS.LEVEL_TIME] - prev_lap_level_time
+				var lap_time: float = agent_across.driver_stats[Pfs.STATS.LAP_TIME]
 				agent_across.update_stat(Pfs.STATS.LAP_COUNT, lap_time)
 
 				if agent_across.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game_parent.level_profile["level_laps"]:
@@ -292,7 +294,7 @@ func _on_agent_activity_change(changed_agent: Agent): # temp ... Vechile class
 		if not agent_has_finished:
 			# samo za GO ... ni za statistiko
 			changed_agent.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
-		game_parent.finale_game_data[changed_agent.driver_index] = {
+		game_parent.finale_game_data[changed_agent.driver_name_id] = {
 			"driver_profile": changed_agent.driver_profile,
 			"driver_stats": changed_agent.driver_stats,
 			}

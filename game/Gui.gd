@@ -25,6 +25,9 @@ func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
 
 func _ready() -> void:
 
+	pause_game.hide()
+	level_over.hide()
+	game_over.hide()
 	pass
 
 

@@ -32,11 +32,19 @@ func _ready() -> void:
 #	reset_timer()
 
 
+var start_timer_os_msecs: int = -1
+
 func _process(delta: float) -> void:
 
 	if timer_state == TIMER_STATE.COUNTING:
-		game_time += delta
-		game_time_hunds = round(game_time * 100)
+		if start_timer_os_msecs == -1:
+			start_timer_os_msecs = Time.get_ticks_msec()
+
+		# samo zapis v timerju .. OPT
+#		game_time_hunds = game_time(Time.get_ticks_msec() - start_timer_os_msecs) * 10
+#		game_time_hunds = (Time.get_ticks_msec() - start_timer_os_msecs) * 10
+		game_time = float(Time.get_ticks_msec() - start_timer_os_msecs) / 1000
+		game_time_hunds = game_time * 100 # - (Time.get_ticks_msec() - start_timer_os_msecs) * 10
 
 		# zapišem
 		if timer_mode == TIMER_MODE.COUNT_UP:
@@ -48,6 +56,15 @@ func _process(delta: float) -> void:
 			mins_label.text = "%02d" % (floor(game_time_left / 60))
 			secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60) * 60)
 			hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)
+#		if timer_mode == TIMER_MODE.COUNT_UP:
+#			mins_label.text = "%02d" % floor(game_time / 60)
+#			secs_label.text = "%02d" % (floor(game_time) - floor(game_time / 60) * 60)
+#			hunds_label.text = "%02d" % floor((game_time - floor(game_time)) * 100)
+#		else:
+#			var game_time_left: float = game_time_limit - game_time
+#			mins_label.text = "%02d" % (floor(game_time_left / 60))
+#			secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60) * 60)
+#			hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)
 
 			# game time is up
 			#			printt(game_time, game_time_limit, game_time - game_time_limit)

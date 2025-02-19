@@ -62,8 +62,8 @@ func set_agent_statbox(statbox_agent: Node2D, driver_level_stats: Dictionary, le
 	var driver_profile: Dictionary = Pfs.driver_profiles[statbox_agent.driver_index]
 
 	# driver line
-	new_statbox.driver_name.text = driver_profile["driver_name"]
-	new_statbox.driver_name.modulate = driver_profile["driver_color"]
+	new_statbox.driver_name_label.text = driver_profile["driver_name"]
+	new_statbox.driver_name_label.modulate = driver_profile["driver_color"]
 	new_statbox.driver_avatar.set_texture(driver_profile["driver_avatar"])
 	new_statbox.stat_wins.modulate = Color.red
 

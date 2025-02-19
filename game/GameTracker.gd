@@ -34,6 +34,12 @@ func _process(delta: float) -> void:
 		else:
 			agents_in_game_ranked = agents_in_game
 
+	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
+		for agent in agents_in_game:
+			if agent.is_active:
+				var curent_lap_time: int = game_parent.hud.game_timer.game_time_hunds - agent.prev_lap_level_time
+				agent.update_stat(Pfs.STATS.LAP_TIME, curent_lap_time)
+
 
 func _update_ranking(unranked_agents: Array):
 	# najprej po poziciji znotraj kroga, potem po številu krogov

@@ -6,7 +6,7 @@ export (STAT_TYPE) var stat_type: int = STAT_TYPE.COUNT
 
 export var icon_texture: Texture = null
 export var stat_name: String = ""
-export var name_is_icon: bool = false
+export var name_as_icon: bool = true
 
 var stat_value = 0 setget _on_stat_change # : razno
 var color_blink_time: float = 0.5
@@ -38,29 +38,18 @@ func _ready() -> void:
 		child.queue_free()
 
 	# name or icon
-	if name_is_icon and icon_texture:
+	if name_as_icon and icon_texture:
 		stat_icon.show()
 		stat_name_label.hide()
 	elif not stat_name.empty():
 		stat_icon.hide()
 		stat_name_label.show()
+	else:
+		stat_name_label.hide()
+		stat_icon.hide()
 
-	match stat_type:
-		STAT_TYPE.COUNT:
-			stat_count_label.show()
-			stat_time_label.hide()
-			count_icons_holder.hide()
-		STAT_TYPE.TIME:
-			stat_count_label.hide()
-			stat_time_label.show()
-			count_icons_holder.hide()
-		STAT_TYPE.ICONS:
-			stat_count_label.hide()
-			stat_time_label.hide()
-			count_icons_holder.show()
-			# name lebel, icon
-			stat_icon.hide()
-			stat_name_label.hide()
+
+	_set_visibility_per_stat_type(stat_type)
 
 
 func _on_stat_change(new_stat_value):
@@ -72,14 +61,15 @@ func _on_stat_change(new_stat_value):
 		count_icons_holder.hide()
 
 	# če je array je ponavadi količina in max količina
-	elif new_stat_value is Array:
+	elif new_stat_value is Array or new_stat_value is PoolIntArray:
 		match stat_type:
 			STAT_TYPE.COUNT:
 				stat_count_label.text = str(new_stat_value[0]) + "/" + str(new_stat_value[1]) # +1 ker kaže trnenutnega, ne končanega
 			STAT_TYPE.TIME:
+				_write_clock_time(new_stat_value[0], stat_time_label)
 				pass
 			STAT_TYPE.ICONS:
-				_set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
+				_set_icons_state(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
 
 	# če je številka ga primerjam
 	elif new_stat_value is float or new_stat_value is int :
@@ -87,23 +77,28 @@ func _on_stat_change(new_stat_value):
 			STAT_TYPE.COUNT:
 				stat_count_label.text = "%02d" % new_stat_value
 			STAT_TYPE.TIME:
-				write_clock_time(stat_value, stat_time_label)
+				_write_clock_time(new_stat_value, stat_time_label)
 			STAT_TYPE.ICONS:
-				_set_icons_state(stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
+				if new_stat_value is float: # ponavadi procent
+					var stat_value_percent: int = round(new_stat_value * 10)
+					var max_percent_value: int = 10
+					new_stat_value = [stat_value_percent, max_percent_value]
+				_set_icons_state(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
 
+	# aplciram novi value
 	stat_value = new_stat_value
 
 
 func _set_icons_state(count_value):
 
-	# count_value + max_count_value?
+	yield(get_tree(), "idle_frame") # predvsem zaradi debug reset
+
+	# current / max ?
 	var max_count_value: int = 0
-	if count_value is Array:
+	if count_value is Array or count_value is PoolIntArray:
 		max_count_value = count_value[1]
 		var current_count_value: int = count_value[0]
 		count_value = current_count_value
-#	max_count_value = 5
-#	count_value = 2
 
 	# stat value icons
 	if max_count_value == 0:
@@ -118,6 +113,7 @@ func _set_icons_state(count_value):
 			for count in abs(count_difference):
 				#				count_icons_holder.get_child(count).queue_free()
 				count_icons_holder.get_children().back().queue_free() # testni način
+
 	# stat value / max value icons
 	else:
 		# če je max manjši od count_value
@@ -143,12 +139,34 @@ func _set_icons_state(count_value):
 				count_icons_holder.get_child(icon_index).modulate = icon_off_color
 
 
-func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde
+func _set_visibility_per_stat_type(current_stat_type: int):
 
+	match current_stat_type:
+		STAT_TYPE.COUNT:
+			stat_count_label.show()
+			stat_time_label.hide()
+			count_icons_holder.hide()
+		STAT_TYPE.TIME:
+			stat_count_label.hide()
+			stat_time_label.show()
+			count_icons_holder.hide()
+		STAT_TYPE.ICONS:
+			stat_count_label.hide()
+			stat_time_label.hide()
+			count_icons_holder.show()
+			# name lebel, icon
+			stat_icon.hide()
+			stat_name_label.hide()
+
+
+func _write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde
+
+#	printt ("delam clock", hundreds)
 	var seconds: float = hundreds / 100.0
 	var rounded_minutes: int = floor(seconds / 60) # vse cele sekunde delim s 60
 	var rounded_seconds_leftover: int = floor(seconds) - rounded_minutes * 60 # vse sekunde minus sekunde v celih minutah
 	var rounded_hundreds_leftover: int = round((seconds - floor(seconds)) * 100) # decimalke množim x 100 in zaokrožim na celo
+
 	# če je točno 100 stotink doda 1 sekundo da stotinke na 0
 	if rounded_hundreds_leftover == 100:
 		rounded_seconds_leftover += 1

@@ -25,10 +25,10 @@ func _ready() -> void:
 		if is_ai:
 			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
 			driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
-			driver_profile["driver_name"] = Pfs.ai_profile["ai_name"]
+			driver_profile["driver_name_obs"] = Pfs.ai_profile["ai_name"]
 		else:
 			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
-			driver_profile["driver_name"] = Pfs.names[driver_index]
+			driver_profile["driver_name_obs"] = Pfs.names[driver_index]
 			driver_profile["driver_avatar"] = Pfs.avatars[driver_index]
 		driver_profile["driver_color"] = Pfs.colors[driver_index]
 
@@ -39,7 +39,7 @@ func _set_driver_box():
 
 	color_rect.color = driver_profile["driver_color"]
 	avatar_btn.texture_normal = driver_profile["driver_avatar"]
-	line_edit.text = driver_profile["driver_name"]
+	line_edit.text = driver_profile["driver_name_obs"]
 
 	if is_ai:
 		avatar_btn.modulate = Color.red
@@ -143,10 +143,10 @@ func _on_TransformBtn_pressed() -> void:
 	if is_ai:
 		driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
 		driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
-		driver_profile["driver_name"] = Pfs.ai_profile["ai_name"]
+		driver_profile["driver_name_obs"] = Pfs.ai_profile["ai_name"]
 	else:
 		driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
-		driver_profile["driver_name"] = Pfs.names[driver_index]
+		driver_profile["driver_name_obs"] = Pfs.names[driver_index]
 		driver_profile["driver_avatar"] = Pfs.avatars[driver_index]
 		driver_profile["driver_color"] = Pfs.colors[driver_index]
 	_set_driver_box()
@@ -154,7 +154,7 @@ func _on_TransformBtn_pressed() -> void:
 
 func _on_LineEdit_text_changed(new_text: String) -> void:
 
-	driver_profile["driver_name"] = new_text
+	driver_profile["driver_name_obs"] = new_text
 
 
 func _on_AvatarBtn_pressed() -> void:

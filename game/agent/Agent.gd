@@ -14,9 +14,11 @@ var is_active: bool = false setget _change_activity # predvsem za pošiljanje si
 
 # driver
 #var driver_index: int
-var driver_index
+#var driver_index
+var driver_name_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
+var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
 # agent
 var agent_profile: Dictionary
@@ -197,7 +199,7 @@ func _destroy():
 	self.is_active = false
 	update_stat(Pfs.STATS.LIFE, - 1)
 
-	if driver_stats[Pfs.STATS.LIFE] > 0:
+	if driver_stats[Pfs.STATS.LIFE][0] > 0:
 		revive_timer.start(revive_time)
 	else:
 		queue_free()
@@ -436,21 +438,20 @@ func on_item_picked(pickable_key: int):
 func _update_weapon_stat(stat_key: int, change_value):
 
 	driver_stats[stat_key] += change_value # change_value je + ali -
-	#	update_stat(stat_key, change_value)
-	emit_signal("stat_changed", driver_index, stat_key, driver_stats[stat_key])
+	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
 
 
 func update_stat(stat_key: int, change_value):
-
-	#	if not motion_manager.game_is_on: # _temp neodločen sem
-	#		return
-
-	var curr_stat_name: String
-	driver_stats[stat_key] += change_value # change_value je + ali -
+	# statistika se preračuna in pošlje naprej nova vrednost
 
 	# health
 	match stat_key:
+		Pfs.STATS.LEVEL_TIME,Pfs.STATS.LAP_TIME,Pfs.STATS.LAP_TIME:
+			driver_stats[stat_key] = change_value # change_value je + ali -
+		Pfs.STATS.LEVEL_RANK:
+			driver_stats[stat_key] = change_value # change_value je + ali -
 		Pfs.STATS.GAS:
+			driver_stats[stat_key] += change_value # change_value je + ali -
 			# manjka becina
 			if driver_stats[Pfs.STATS.GAS] <= 0:
 				driver_stats[Pfs.STATS.GAS] = 0
@@ -459,10 +460,10 @@ func update_stat(stat_key: int, change_value):
 			elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
 				gas_tank_size = driver_stats[Pfs.STATS.GAS]
 		Pfs.STATS.HEALTH:
+			driver_stats[stat_key] += change_value # change_value je + ali -
 			driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
 			if driver_stats[Pfs.STATS.HEALTH] == 0:
 				_destroy()
-			return # poštima ga agent hud
 		Pfs.STATS.GOALS_REACHED, Pfs.STATS.WINS: # arrays
 			driver_stats[stat_key].append(change_value)
 		Pfs.STATS.LAP_COUNT:
@@ -476,19 +477,16 @@ func update_stat(stat_key: int, change_value):
 					break
 			if is_best_lap:
 				Pfs.STATS.BEST_LAP_TIME = curr_lap_time
-				emit_signal("stat_changed", driver_index, Pfs.STATS.BEST_LAP_TIME, curr_lap_time)
+				emit_signal("stat_changed", driver_name_id, Pfs.STATS.BEST_LAP_TIME, curr_lap_time)
+		Pfs.STATS.LIFE:
+			var new_life_count: int = driver_stats[stat_key] + change_value
+			var max_life_count: int = Pfs.start_driver_stats[stat_key]
+			driver_stats[stat_key] = [new_life_count, max_life_count]
+		_:
+			#			print(driver_stats.keys()[stat_key])
+			driver_stats[stat_key] += change_value # change_value je + ali -
 
-	# gas
-	# če zmanjka bencina je deaktiviran
-#	if driver_stats[Pfs.STATS.GAS] <= 0:
-#		driver_stats[Pfs.STATS.GAS] = 0
-#		self.is_active = false
-#	# če ga je več kot max, povečam max (max je zaradi hud gas bar
-#	elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
-#		gas_tank_size = driver_stats[Pfs.STATS.GAS]
-
-
-	emit_signal("stat_changed", driver_index, stat_key, driver_stats[stat_key])
+	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
 
 
 # SIGNALI ------------------------------------------------------------------------------------------------
@@ -520,7 +518,8 @@ func _on_Agent_body_entered(body: Node2D) -> void:
 
 func _exit_tree() -> void:
 	# pospravljanje morebitnih smeti
-	printt("smeti", name, is_active)
+	#	printt("smeti", name, is_active)
+
 	self.is_active = false # zazih
 	if agent_camera:
 		if agent_camera.follow_target == self:

@@ -41,7 +41,7 @@ func _ready() -> void:
 
 		if shake_profile:
 			self.shake_profile = shake_profile
-			yield(get_tree(), "idle_frame")
+			#			yield(get_tree(), "idle_frame")
 
 		# če ni določene, se uporabi tekstura iz gumba
 		if not used_noise:

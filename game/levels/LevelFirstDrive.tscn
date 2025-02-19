@@ -1,10 +1,17 @@
-[gd_scene load_steps=220 format=2]
+[gd_scene load_steps=227 format=2]
 
 [ext_resource path="res://game/levels/Level.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/level/pickables/PickableBullet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/level/pickables/PickableLife.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/level/pickables/PickableMina.tscn" type="PackedScene" id=4]
+[ext_resource path="res://game/level/pickables/PickableShield.tscn" type="PackedScene" id=5]
+[ext_resource path="res://game/level/pickables/PickableCash.tscn" type="PackedScene" id=6]
+[ext_resource path="res://game/level/pickables/PickableHealth.tscn" type="PackedScene" id=7]
+[ext_resource path="res://game/level/pickables/PickableMisile.tscn" type="PackedScene" id=8]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=9]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=10]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=11]
+[ext_resource path="res://game/level/pickables/PickableGas.tscn" type="PackedScene" id=12]
 
 [sub_resource type="Resource" id=95]
 script = ExtResource( 11 )
@@ -1580,11 +1587,32 @@ __meta__ = {
 [node name="PickableBullet" parent="." index="16" instance=ExtResource( 2 )]
 position = Vector2( 219, -438 )
 
-[node name="PickableBullet2" parent="." index="17" instance=ExtResource( 2 )]
+[node name="PickableCash" parent="." index="17" instance=ExtResource( 6 )]
+position = Vector2( -582, -667 )
+
+[node name="PickableGas" parent="." index="18" instance=ExtResource( 12 )]
+position = Vector2( -657, -467 )
+
+[node name="PickableBullet2" parent="." index="19" instance=ExtResource( 2 )]
 position = Vector2( -378, -443 )
 
-[node name="PickableBullet3" parent="." index="18" instance=ExtResource( 2 )]
+[node name="PickableBullet3" parent="." index="20" instance=ExtResource( 2 )]
 position = Vector2( 906, -150 )
+
+[node name="PickableHealth" parent="." index="21" instance=ExtResource( 7 )]
+position = Vector2( -930, -254 )
+
+[node name="PickableLife" parent="." index="22" instance=ExtResource( 3 )]
+position = Vector2( -1115, -596 )
+
+[node name="PickableMina" parent="." index="23" instance=ExtResource( 4 )]
+position = Vector2( -212, -822 )
+
+[node name="PickableMisile" parent="." index="24" instance=ExtResource( 8 )]
+position = Vector2( -702, -979 )
+
+[node name="PickableShield" parent="." index="25" instance=ExtResource( 5 )]
+position = Vector2( -1151, -377 )
 
 [editable path="Terrain/TerrainMountain"]
 [editable path="Terrain/TerrainMountain2"]

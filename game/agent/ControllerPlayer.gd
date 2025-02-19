@@ -1,7 +1,7 @@
 extends Node
 
 
-signal weapon_triggered
+#signal weapon_triggered
 signal next_weapon_selected
 
 var controlled_agent: Node2D # temp ... Vechile class
@@ -21,7 +21,6 @@ var pressed_driving_actions: Array = []
 var goals_to_reach: Array = [] # lahko v agenta, ker ma tud AI
 var selected_item_index = 0
 var game_is_on: bool = false
-var game_manager: Game
 var fast_start_window_is_open: bool = false
 
 

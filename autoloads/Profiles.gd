@@ -36,7 +36,7 @@ func stats(): pass
 enum STATS {
 		WINS, LIFE, HEALTH, POINTS, GAS, CASH,
 		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT,
-		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED
+		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED, LAP_TIME
 		}
 
 #var start_agent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
@@ -47,10 +47,15 @@ enum STATS {
 #	STATS.GOALS_REACHED: [], # nodeti
 #}
 
-var start_agent_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+	# tipi:
+	#	Int ... je samo vrednost
+	#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v agenta
+	#	Array ... lahko se računa current in max value
+	#	PoolIntArray ... vedno
 	STATS.WINS: [], # zmagani leveli
 	STATS.LIFE: 3,
-	STATS.HEALTH: 1, # health percetnage
+	STATS.HEALTH: 0.5, # health percetnage
 	STATS.GAS: 2000,
 	STATS.CASH: 0,
 	STATS.POINTS :0,
@@ -65,6 +70,7 @@ var start_agent_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.MISILE_COUNT: 5,
 	STATS.SMALL_COUNT: 5,
 	STATS.MINA_COUNT: 3,
+	STATS.LAP_TIME: 0, # hunds
 }
 
 
@@ -78,7 +84,7 @@ var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAP
 }
 var available_driver_names: Array = ["Prvi", "Drugi", "Tretji", "sdfsg", "sdfwsgfsdf"]
 var default_driver_profile: Dictionary = {
-	"driver_name": "PLAJER",
+	"driver_name_obs": "PLAJER", # samo še home
 	"driver_avatar": preload("res://home/avatar_david.tres"),
 	"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
@@ -238,7 +244,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 5,
+		"level_time_limit": 4,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
 #		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente

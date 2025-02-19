@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/gui/FloatingTag.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=2]
-[ext_resource path="res://game/gui/TimeLabel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://common/TimeLabel.tscn" type="PackedScene" id=3]
 
 [sub_resource type="Animation" id=140]
 length = 0.001

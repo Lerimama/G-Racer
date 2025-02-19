@@ -55,7 +55,7 @@ func set_hud(game_manager):
 		set_agent_statbox(agent, game_manager.level_profile["level_type"], game_manager.game_tracker.agents_in_game.size())
 
 
-func set_agent_statbox(statbox_agent: Node2D, level_type: int, all_statboxes_count: int): # kliče GM
+func set_agent_statbox(statbox_agent: Agent, level_type: int, all_statboxes_count: int): # kliče GM
 
 	statbox_count += 1
 
@@ -69,16 +69,20 @@ func set_agent_statbox(statbox_agent: Node2D, level_type: int, all_statboxes_cou
 	statboxes_with_drivers[new_statbox] = statbox_agent
 
 	var driver_stats: Dictionary = statbox_agent.driver_stats
-	var driver_profile: Dictionary = Pfs.driver_profiles[statbox_agent.driver_index]
+	var driver_profile: Dictionary = Pfs.driver_profiles[statbox_agent.driver_name_id]
 
 	# driver line
-	new_statbox.driver_name.text = driver_profile["driver_name"]
-	new_statbox.driver_name.modulate = driver_profile["driver_color"]
+	new_statbox.driver_name_label.text = str(statbox_agent.driver_name_id)
+	new_statbox.driver_name_label.modulate = driver_profile["driver_color"]
 	new_statbox.driver_avatar.set_texture(driver_profile["driver_avatar"])
 
 	# driver stats
 	for stat in driver_stats:
-		_on_agent_stat_changed(statbox_agent.driver_index, stat, driver_stats[stat])
+		_on_agent_stat_changed(statbox_agent.driver_name_id, stat, driver_stats[stat])
+
+#		if statbox_agent.driver_name_id == "JOU":# and not Pfs.STATS.keys()[agent_stat_key] == "GAS":
+#			printt("stat changed", Pfs.STATS.keys()[Pfs.STATS.values().find(stat)], driver_stats[stat])
+
 
 	if all_statboxes_count == 1: # single player
 		new_statbox.set_statbox_elements(level_type, true)
@@ -114,12 +118,13 @@ func on_game_over():
 		statbox.hide()
 
 
-func _on_agent_stat_changed(driver_index, agent_stat_key: int, stat_value): # stat value je že preračunana, hud samo zapisuje
+func _on_agent_stat_changed(driver_name_id, agent_stat_key: int, stat_value):
+	# stat value je že preračunana, hud samo zapisuje
 
 	# opredelim drive statbox
 	var statbox_to_change: Control
 	for statbox in statboxes_with_drivers:
-		if statboxes_with_drivers[statbox].driver_index == driver_index:
+		if statboxes_with_drivers[statbox].driver_name_id == driver_name_id:
 			statbox_to_change = statbox
 			break
 
@@ -128,19 +133,32 @@ func _on_agent_stat_changed(driver_index, agent_stat_key: int, stat_value): # st
 	var current_key: String = Pfs.STATS.keys()[current_key_index]
 	var stat_to_change: Control = statbox_to_change.get(current_key)
 
+#	print("agent_stat_key",agent_stat_key)
 	# če je podan array elementov (laps finished, goals, wins, ...
-	var stat_value_as_array: Array = []
 	if stat_value is Array:
-		stat_value_as_array = [stat_value.size(), game_levels_count]
-		stat_value = stat_value_as_array
+		# preverjam, če hočem current/max ... zadnja količina je int, ostale pa karkoli drugega
+		var non_int_present: bool = false
+		for value in stat_value:
+			if not value is int:
+				non_int_present = true
+		# zadnja količina je int, ostale pa karkoli drugega
+		if stat_value.back() is int and non_int_present:
+			var real_value_count: int = stat_value.size() - 1 # ker je zadnji int
+			var stat_value_max_count: int = stat_value.back()
+			stat_value = [real_value_count, stat_value_max_count]
+		else:
+		# ni podatka o max value
+			stat_value = stat_value.size()
 
-	match agent_stat_key:
-		Pfs.STATS.SMALL_COUNT:
-			return
-		Pfs.STATS.HEALTH:
-			return
-		Pfs.STATS.GOALS_REACHED:
-			return
+	elif stat_value is PoolIntArray:
+		#		print("int array")
+		pass
+
+	# če stat ni v hudu, ampak drugje
+	#	match agent_stat_key:
+	##		Pfs.STATS.HEALTH:
+	#		Pfs.STATS.LEVEL_TIME:
+	#			return
 
 	stat_to_change.stat_value = stat_value
 

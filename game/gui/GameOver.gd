@@ -55,7 +55,7 @@ func _set_scorelist(final_game_data):
 			new_ranking_line.get_node("Rank").text = "NN"
 		else:
 			new_ranking_line.get_node("Rank").text = str(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK]) + ". Place"
-		new_ranking_line.get_node("Agent").text = ranked_driver_data["driver_profile"]["driver_name"]
+		new_ranking_line.get_node("Agent").text = final_game_data.find_key(ranked_driver_data)
 		new_ranking_line.get_node("Result").text = Mts.get_clock_time(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_TIME])
 		results.add_child(new_ranking_line)
 
