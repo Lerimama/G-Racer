@@ -66,7 +66,7 @@ func _get_agent_pull_position(agent_to_pull: Node2D): # temp ... Vechile class
 				# pozicija je dovolj stran od vodilnega
 				if cell_position.distance_to(camera_leader.global_position) > pull_position_distance_from_leader:
 					# če je pozicija zasedena
-					if current_pull_positions.has(cell_position):
+					if cell_position in current_pull_positions:
 						var pull_pos_index: int = current_pull_positions.find(cell_position)
 						var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index
 						if cell_position.distance_to(camera_leader.global_position) > corrected_pull_position:
@@ -157,7 +157,7 @@ func _check_for_game_end():
 
 	# preverim, če kakšen plejer še dirka
 	for player in game_parent.game_tracker.players_in_game:
-		if player.is_active and not agents_finished.has(player):
+		if player.is_active and not player in agents_finished:
 			all_players_finished_or_deactivated = false
 			break
 
@@ -165,7 +165,7 @@ func _check_for_game_end():
 	var is_success: bool = false
 	if all_players_finished_or_deactivated:
 		for player in game_parent.game_tracker.players_in_game:
-			if agents_finished.has(player):
+			if player in agents_finished:
 				is_success = true
 		# apliciram stage ... pošlje signal
 		if is_success:

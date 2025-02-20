@@ -73,7 +73,7 @@ func _ready() -> void:
 		enemies_mode = true
 		camera_shake_on = false
 		slomo_fx_on = false
-#		one_screen_mode = false
+		one_screen_mode = false
 #		hide_view_on_player_deactivated = true
 
 		drivers_on_game_start = [ "JOU", "MOU", "ROU"]

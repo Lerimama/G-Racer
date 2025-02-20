@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://game/agent/Engines.gd" type="Script" id=1]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=2]
@@ -26,6 +26,7 @@
 [ext_resource path="res://game/weapons/mala/Mala.tscn" type="PackedScene" id=24]
 [ext_resource path="res://game/agent/Agent.gd" type="Script" id=25]
 [ext_resource path="res://game/agent/MotionManager.gd" type="Script" id=26]
+[ext_resource path="res://game/agent/profiles/agent_profile_def.tres" type="Resource" id=27]
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5
@@ -100,6 +101,7 @@ contact_monitor = true
 script = ExtResource( 25 )
 engines_path = NodePath("Engines")
 group_weapons_by_type = false
+agent_motion_profile = ExtResource( 27 )
 
 [node name="AgentController" type="Node" parent="."]
 

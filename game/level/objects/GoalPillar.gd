@@ -40,6 +40,6 @@ func _on_DetectArea_body_entered(body: Node) -> void:
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
-	if agents_in_goal_area.has(body):
+	if body in agents_in_goal_area:
 		agents_in_goal_area.erase(body)
 		goal_reached(body)

@@ -11,26 +11,23 @@ export (NodePath) var engines_path: String  # _temp ... engines
 export var group_weapons_by_type: bool = true
 
 var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
+var velocity: Vector2 = Vector2.ZERO
 
-# driver
-#var driver_index: int
-#var driver_index
+# driver (poda spawner)
 var driver_name_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
-var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
-
-# agent
 var agent_profile: Dictionary
-var agent_type: int
+var agent_camera: Camera2D # spawner
+
+# iz agent profila
+#var agent_type: int
 var agent_color: Color = Color.red
 var gas_usage: float
 var gas_usage_idle: float
 var gas_tank_size: float
-var agent_camera: Camera2D # spawner
 var near_radius: float
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
-var velocity: Vector2 = Vector2.ZERO
 
 # tracking
 var ai_target_rank: int
@@ -39,11 +36,12 @@ var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ..
 var body_state: Physics2DDirectBodyState
 var agent_tracker: PathFollow2D # napolni se, ko se agent pripiše trackerju
 
-# weapons
+# drugo ...
 var triggering_weapons: Array = []
+var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
 onready var controller: Node = $AgentController # zamenja se ob spawnu AI/PLAYER
-onready var motion_manager: Node = $MotionManager
+onready var motion_manager: MotionManager = $MotionManager
 
 onready var equip_positions: Node2D = $EquipPositions
 onready var weapons: Node2D = $Weapons
@@ -67,6 +65,9 @@ onready var direction_line: Line2D = $DirectionLine
 var debug_trail_time: float = 0
 var debug_trail: Line2D
 
+# neu
+export var agent_motion_profile: Resource = null
+
 
 func _input(event: InputEvent) -> void:
 
@@ -86,25 +87,39 @@ func _ready() -> void:
 	near_radius = get_node("NearArea/CollisionShape2D").shape.radius # za pullanje
 
 	if driver_profile:
-		agent_type = driver_profile["agent_type"]
-		ai_target_rank = agent_profile["ai_target_rank"]
 		agent_color = driver_profile["driver_color"] # agagentobarva ...
-		height = agent_profile["height"]
-		elevation = agent_profile["elevation"]
-		gas_tank_size = agent_profile["gas_tank_size"]
-		gas_usage = agent_profile["gas_usage"]
-		gas_usage_idle = agent_profile["gas_usage_idle"]
+#		agent_type = driver_profile["agent_type"]
+
+		if agent_motion_profile:
+			ai_target_rank = agent_motion_profile.ai_target_rank
+			height = agent_motion_profile.height
+			elevation = agent_motion_profile.elevation
+			gas_tank_size = agent_motion_profile.gas_tank_size
+			gas_usage = agent_motion_profile.gas_usage
+			gas_usage_idle = agent_motion_profile.gas_usage_idle
+		elif agent_profile:
+			ai_target_rank = agent_profile["ai_target_rank"]
+			height = agent_profile["height"]
+			elevation = agent_profile["elevation"]
+			gas_tank_size = agent_profile["gas_tank_size"]
+			gas_usage = agent_profile["gas_usage"]
+			gas_usage_idle = agent_profile["gas_usage_idle"]
 
 		_add_controller()
 		_add_motion_manager()
-		motion_manager._set_default_parameters()
+
+		if agent_motion_profile:
+			agent_motion_profile._set_default_parameters(self)
+		else:
+			motion_manager._set_default_parameters()
+#
 
 		# set weapons
 		# če je opremljeno na pozicijo
 		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
 		for weapon in weapons.get_children():
 			var legit: bool = true
-			if equip_positions.positions_equiped.values().has(weapon):
+			if weapon in equip_positions.positions_equiped.values():
 				weapon.setup(self)
 				var used_for_triggering: bool = true
 				if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
@@ -122,7 +137,7 @@ func _ready() -> void:
 
 		# set equipement
 		for equip in equipment.get_children():
-			if equip_positions.positions_equiped.values().has(equip):
+			if equip in equip_positions.positions_equiped.values():
 				print ("equipment")
 			else:
 				print ("hide")
@@ -131,6 +146,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 
+#	print ("max ", motion_manager.max_engine_power)
 	# debug trail
 	if Input.is_action_pressed("T"):
 		if not debug_trail:
@@ -151,6 +167,8 @@ func _process(delta: float) -> void:
 	if engines.engines_on: # poraba
 		update_stat(Pfs.STATS.GAS, gas_usage)
 
+	if driver_name_id == "MOU":
+		print ("max P ", motion_manager.max_engine_power)
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
 	# print("power %s / " % motion_manager.current_engine_power, "force %s" % force)
@@ -161,14 +179,14 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 	if is_active:
 		set_applied_torque(motion_manager.torque_on_agent)
 		match motion_manager.motion:
-			motion_manager.MOTION.IDLE:
+			motion_manager.MOTION.IDLE, motion_manager.MOTION.IDLE_LEFT, motion_manager.MOTION.IDLE_RIGHT:
 				# sila je 0 samo, če ni idle rotacije ali pa ja ROTATION, ker rotiram s torqu
 				front_mass.set_applied_force(motion_manager.force_on_agent)
 				rear_mass.set_applied_force(-motion_manager.force_on_agent)
-			motion_manager.MOTION.FWD:
+			motion_manager.MOTION.FWD, motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
 				front_mass.set_applied_force(motion_manager.force_on_agent)
 				rear_mass.set_applied_force(Vector2.ZERO)
-			motion_manager.MOTION.REV:
+			motion_manager.MOTION.REV, motion_manager.MOTION.REV_LEFT, motion_manager.MOTION.REV_RIGHT:
 				front_mass.set_applied_force(Vector2.ZERO)
 				rear_mass.set_applied_force(motion_manager.force_on_agent)
 
@@ -176,19 +194,44 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 # LAJF ----------------------------------------------------------------------------
 
 
+var ranking_mode: int = 0
+var damage_engine_power_factor: float = 1
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):
+	if driver_name_id == "JOU":
+		print ("max pred ", motion_manager.max_engine_power)
 
 	if not is_shielded:
 
-		update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
+		match ranking_mode:
+			Pfs.RANKING_MODE.TIME:
+				update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
+			Pfs.RANKING_MODE.POINTS:
+				pass
+
 
 		if "hit_inertia" in hit_by:
 			var local_hit_position: Vector2 = hit_global_position - position
 			var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
 			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
+	print ("max ", motion_manager.max_engine_power)
 
 	if agent_camera:
 		agent_camera.shake_camera(hit_by)
+
+
+func on_item_picked(pickable_key: int):
+
+	match pickable_key:
+		Pfs.PICKABLE.PICKABLE_SHIELD:
+			_spawn_shield()
+		Pfs.PICKABLE.PICKABLE_NITRO:
+			motion_manager.boost_agent()
+		_:
+			# če spreminja statistiko
+			if "driver_stat" in Pfs.pickable_profiles[pickable_key].keys():
+				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
+				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
+				update_stat(change_stat_key, change_value)
 
 
 func _destroy():
@@ -248,19 +291,18 @@ func _revive():
 	# reset energije
 	update_stat(Pfs.STATS.HEALTH, 1)
 
-
-func _reset_motion():
-	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v agent "v igri"
-
-	motion_manager.motion = motion_manager.MOTION.IDLE
-	front_mass.set_applied_force(Vector2.ZERO)
-	front_mass.set_applied_torque(0)
-	rear_mass.set_applied_force(Vector2.ZERO)
-	rear_mass.set_applied_torque(0)
-	motion_manager.rotation_dir = 0
-	for thrust in engines.all_thrusts:
-		thrust.rotation = lerp_angle(thrust.rotation, 0, 0.1)
-		thrust.stop_fx()
+#
+#func _reset_motion():
+#	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v agent "v igri"
+#
+#	motion_manager.motion = motion_manager.MOTION.IDLE
+#	front_mass.set_applied_force(Vector2.ZERO)
+#	front_mass.set_applied_torque(0)
+#	rear_mass.set_applied_force(Vector2.ZERO)
+#	rear_mass.set_applied_torque(0)
+#	for thrust in engines.all_thrusts:
+#		thrust.rotation = lerp_angle(thrust.rotation, 0, 0.1)
+#		thrust.stop_fx()
 
 
 # UTILITI ------------------------------------------------------------------------------------------------
@@ -375,7 +417,8 @@ func _change_activity(new_is_active: bool):
 			update_stat(Pfs.STATS.WINS, driver_stats[Pfs.STATS.WINS])
 
 		else: # ga upočasnim v trenutni smeri
-			_reset_motion()
+#			_reset_motion()
+			motion_manager.motion = motion_manager.MOTION.IDLE
 			controller.set_process_input(false)
 			# nočeš ga skos slišat, če je multiplejer
 			engines.shutdown_engines()
@@ -411,28 +454,19 @@ func _add_controller():
 
 func _add_motion_manager():
 
-	agent_profile = Pfs.agent_profiles[driver_profile["agent_type"]]
+#	agent_profile = Pfs.agent_profiles[driver_profile["agent_type"]]
 	var motion_manager_path = agent_profile["motion_manager_path"]
 	motion_manager.set_script(motion_manager_path)
 	motion_manager.managed_agent = self
+	if agent_motion_profile:
+		motion_manager.agent_motion_profile = agent_motion_profile
+
+
 #	motion_manager.set_process(false)
 #	yield(motion_manager, "ready")
 	motion_manager.set_deferred("set_process", true)
 
 
-func on_item_picked(pickable_key: int):
-
-	match pickable_key:
-		Pfs.PICKABLE.PICKABLE_SHIELD:
-			_spawn_shield()
-		Pfs.PICKABLE.PICKABLE_NITRO:
-			motion_manager.boost_agent()
-		_:
-			# če spreminja statistiko
-			if Pfs.pickable_profiles[pickable_key].keys().has("driver_stat"):
-				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
-				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
-				update_stat(change_stat_key, change_value)
 
 
 func _update_weapon_stat(stat_key: int, change_value):
@@ -462,6 +496,12 @@ func update_stat(stat_key: int, change_value):
 		Pfs.STATS.HEALTH:
 			driver_stats[stat_key] += change_value # change_value je + ali -
 			driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # more bigt , ker max heath zmeri dodam 1
+			var mx = motion_manager.max_engine_power
+			printt ("mx ", mx, motion_manager.max_engine_power)
+			mx = mx * 0.9
+			motion_manager.max_engine_power = mx
+#			motion_manager.max_engine_power *= driver_stats[Pfs.STATS.HEALTH] #hit_by.hit_damage * damage_engine_power_factor
+			printt ("mx pol ", mx, motion_manager.max_engine_power)
 			if driver_stats[Pfs.STATS.HEALTH] == 0:
 				_destroy()
 		Pfs.STATS.GOALS_REACHED, Pfs.STATS.WINS: # arrays

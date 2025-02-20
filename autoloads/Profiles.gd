@@ -46,6 +46,7 @@ enum STATS {
 #	STATS.LAP_COUNT: [], # časi
 #	STATS.GOALS_REACHED: [], # nodeti
 #}
+enum RANKING_MODE {TIME, POINTS}
 
 var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# tipi:
@@ -55,7 +56,7 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	#	PoolIntArray ... vedno
 	STATS.WINS: [], # zmagani leveli
 	STATS.LIFE: 3,
-	STATS.HEALTH: 0.5, # health percetnage
+	STATS.HEALTH: 1.0, # health percetnage
 	STATS.GAS: 2000,
 	STATS.CASH: 0,
 	STATS.POINTS :0,
@@ -153,7 +154,8 @@ enum AGENT {BASIC, TRUCK}
 var agent_profiles: Dictionary = {
 	AGENT.BASIC: {
 		"agent_scene": preload("res://game/agent/Agent.tscn"),
-		"motion_manager_path": load("res://game/agent/MotionManager_Basic.gd"),
+		"agent_profile_path": load("res://game/agent/profiles/agent_profile_def.tres"),
+		"motion_manager_path": load("res://game/agent/MotionManager.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
@@ -162,6 +164,7 @@ var agent_profiles: Dictionary = {
 		"on_hit_disabled_time": 2,
 		"gas_tank_size": 200, # liters
 		"group_weapons_by_type": "",
+		"damage_engine_power_factor": 1, # v kolikšnem razmerju vpliva na mol, 0 pomeni, da ne vpliva
 		},
 	}
 
@@ -244,7 +247,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 4,
+		"level_time_limit": 10,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
 #		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
@@ -388,7 +391,7 @@ var pickable_profiles: Dictionary = {
 	},
 	PICKABLE.PICKABLE_HEALTH: {
 		"color": Rfs.color_pickable_stat,
-		"value": 0,
+		"value": 0.3,
 		"elevation": 3,
 		"ai_target_rank": 3,
 		"driver_stat": STATS.HEALTH,

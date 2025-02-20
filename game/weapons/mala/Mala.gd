@@ -50,7 +50,7 @@ func setup(owner_node: Node2D):
 func _on_detect_collision(body):
 
 	if body.has_method("on_hit") and not body == mala_owner:
-		if not influenced_bodies.has(body):
+		if not body in influenced_bodies:
 			influenced_bodies.append(body)
 
 		_spawn_fx(hit_fx, true, Rfs.node_creation_parent)

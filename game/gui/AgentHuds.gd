@@ -58,7 +58,7 @@ func remove_view_imitator(game_views: Dictionary): # GM na activity change
 	# preverim kateri player je removed ... views in imitatorji imajo skupnega plejerja
 	var view_imitator_to_remove: Control
 	for player in view_imitators.values():
-		if not game_views.values().has(player):
+		if not player in game_views.values():
 			view_imitator_to_remove = view_imitators.find_key(player)
 			break
 
@@ -78,7 +78,7 @@ func _set_imitators_size(game_views: Dictionary):
 	# setam novo velikost ... views in imitatorji imajo skupnega plejerja
 	for view in game_views:
 		var view_player: Agent = game_views[view]
-		if view_imitators.values().has(view_player):
+		if view_player in view_imitators.values():
 			var view_imitator_to_set: Control = view_imitators.find_key(view_player)
 			view_imitator_to_set.rect_size = view.rect_size
 			view_imitator_to_set.rect_position = view.rect_position

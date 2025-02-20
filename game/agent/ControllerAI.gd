@@ -10,7 +10,7 @@ enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALE}
 var battle_state: int = BATTLE_STATE.NONE
 
 # seta spawner
-var controlled_agent: Node2D # temp ... Vechile class
+var controlled_agent: Agent # temp ... Vechile class
 var controller_type: int # _temp da drugi vejo? ... ne vem zakaj ... se pa ob spawnu seta
 
 # navigacija
@@ -211,7 +211,6 @@ func _state_machine(delta: float):
 			navigation_agent.set_target_location(ai_target.global_position)
 			agent_manager.current_engine_power = agent_manager.max_engine_power / 3
 			_react_to_target(ai_target)
-
 
 
 func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):

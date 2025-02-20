@@ -16,7 +16,7 @@ func _ready() -> void:
 
 func _on_Surface_body_entered(body: Node) -> void:
 
-	if "motion_manager" in body and not bodies_to_influence.has(body):
+	if "motion_manager" in body and not body in bodies_to_influence:
 		var power_to_add: float
 		# če je med 0 in 10 množim z max power, drugače, seštevam
 		if engine_power_addon > 0 and engine_power_addon < 10:

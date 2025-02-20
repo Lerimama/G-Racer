@@ -4,8 +4,8 @@ class_name MotionManager
 
 var managed_agent: Node2D  # = get_parent()
 
-enum MOTION {IDLE, FWD, REV, DISSARAY}
-var motion: int = MOTION.IDLE # setget _change_motion
+enum MOTION {IDLE, IDLE_LEFT, IDLE_RIGHT, FWD, FWD_LEFT, FWD_RIGHT, REV, REV_LEFT, REV_RIGHT, DISSARAY}
+var motion: int = MOTION.IDLE setget _change_motion
 
 enum ROTATION_MOTION {
 	DEFAULT,
@@ -33,15 +33,23 @@ var is_boosting: bool = false
 var current_engine_power: float = 0
 var engine_power_addon: float = 0
 var accelarate_speed = 0.1
-var max_engine_power: float
+var max_engine_power: float setget _change_max_power
 
 # rotation
-var rotation_dir = 0 setget _change_rotation_direction
+var rotation_dir = 0
 var force_rotation: float = 0 # rotacija smeri kamor je usmerjen skupen pogon
 var engine_rotation_speed: float
 var max_engine_rotation_deg: float
 var driving_gear: int = 0
 var engine_power_percentage: float # neu namesto engine power
+
+# neu
+var agent_motion_profile: Resource
+var agent_max_engine_power: float = 500
+var agent_mass: float = 100
+var ai_power_equlizer_addon: float = -10
+var fast_start_power_addon: float = 200
+var max_engine_power_rotation_adapt: float = 1.1
 
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
@@ -50,13 +58,18 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 		motion = MOTION.DISSARAY
 
 
+func _ready() -> void:
+
+	pass
+
+
 func _process(delta: float) -> void:
 
 	if not managed_agent.is_active: # tole seta tudi na startu
 		current_engine_power = 0 # cela sila je pade na 0
 		#		force_on_agent = Vector2.ZERO
 		#		force_rotation = 0
-		self.rotation_dir = 0
+		rotation_dir = 0
 	else:
 		# PLAYER ima drugače kot AI ...
 		_motion_machine()
@@ -71,21 +84,21 @@ func _process(delta: float) -> void:
 
 func _motion_machine():
 	match motion:
-		MOTION.FWD:
+		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
 			if is_ai:
 				force_on_agent = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
 				# force_rotation = proti tarči AI ... določa AI
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_agent = Vector2.RIGHT.rotated(force_rotation + managed_agent.global_rotation) * _accelarate_to_engine_power()
-		MOTION.REV:
+		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
 			if is_ai:
 				force_on_agent = Vector2.LEFT.rotated(force_rotation) * _accelarate_to_engine_power()
 				# force_rotation = proti tarči AI ... določa AI
 			else:
 				force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_agent = Vector2.LEFT.rotated(force_rotation + managed_agent.global_rotation) * _accelarate_to_engine_power()
-		MOTION.IDLE:
+		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT:
 			force_rotation = 0
 			force_on_agent = Vector2.ZERO
 		MOTION.DISSARAY: # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
@@ -96,16 +109,155 @@ func _motion_machine():
 func _accelarate_to_engine_power():
 
 	# če je dodatek k moči klempam na max power + dodatek
-	if engine_power_addon == 0:
-		current_engine_power = lerp(current_engine_power, max_engine_power, accelarate_speed)
-	else:
-		current_engine_power = lerp(current_engine_power, max_engine_power + engine_power_addon, accelarate_speed)
+
+#	if engine_power_addon == 0:
+#		current_engine_power = lerp(current_engine_power, max_engine_power, accelarate_speed)
+#	else:
+	current_engine_power = lerp(current_engine_power, max_engine_power + engine_power_addon, accelarate_speed)
 
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
-	engine_power_percentage = current_engine_power / max_engine_power
+	if max_engine_power > 0:
+		engine_power_percentage = current_engine_power / max_engine_power
+	else:
+		engine_power_percentage = 0
 
 	return current_engine_power * Sts.world_hsp_power_factor
+
+
+func _change_motion(new_motion):
+#	printt("motion", MOTION.keys()[motion])
+
+	if not motion == new_motion:
+		motion = new_motion
+
+		if agent_motion_profile:
+			agent_motion_profile._set_motion_parameters(managed_agent, motion)
+		else:
+			torque_on_agent = 0
+
+			match motion:
+				MOTION.FWD:
+					rotation_dir = 0
+				MOTION.FWD_LEFT:
+					rotation_dir = -1
+					rotation_motion = selected_rotation_motion
+					managed_agent.angular_damp = 14
+					managed_agent.front_mass.linear_damp = 0
+					managed_agent.rear_mass.linear_damp = 4
+				MOTION.FWD_RIGHT:
+					rotation_dir = 1
+					rotation_motion = selected_rotation_motion
+					managed_agent.angular_damp = 14
+					managed_agent.front_mass.linear_damp = 0
+					managed_agent.rear_mass.linear_damp = 4
+				MOTION.REV:
+					rotation_dir = 0
+				MOTION.REV_LEFT:
+					rotation_dir = -1
+					rotation_motion = selected_rotation_motion
+					managed_agent.angular_damp = 14
+					managed_agent.front_mass.linear_damp = 4
+					managed_agent.rear_mass.linear_damp = 0
+				MOTION.REV_RIGHT:
+					rotation_dir = 1
+					rotation_motion = selected_rotation_motion
+					managed_agent.angular_damp = 14
+					managed_agent.front_mass.linear_damp = 4
+					managed_agent.rear_mass.linear_damp = 0
+				MOTION.IDLE:
+					rotation_dir = 0
+					managed_agent.angular_damp = 3
+					# _temp tole spodaj je pomoje oveč... testiraj
+					# func _reset_motion():
+					# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v agent "v igri"
+					#				managed_agent.front_mass.set_applied_force(Vector2.ZERO)
+					#				managed_agent.front_mass.set_applied_torque(0)
+					#				managed_agent.rear_mass.set_applied_force(Vector2.ZERO)
+					#				managed_agent.rear_mass.set_applied_torque(0)
+				MOTION.IDLE_LEFT:
+					rotation_dir = -1
+					rotation_motion = selected_idle_rotation
+					managed_agent.angular_damp = 3
+				MOTION.IDLE_RIGHT:
+					rotation_dir = 1
+					rotation_motion = selected_idle_rotation
+					managed_agent.angular_damp = 3
+				MOTION.DISSARAY:
+					pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
+
+			if rotation_dir == 0:
+				_set_default_parameters()
+			else:
+				_set_rotation_parameters(rotation_dir)
+
+
+func _change_max_power(new_max_power):
+
+	max_engine_power = new_max_power
+	print ("new_max_power", max_engine_power)
+
+
+func _set_rotation_parameters(new_rotation_direction: float, is_reverse: bool = false):
+
+	if agent_motion_profile:
+		agent_motion_profile._set_rotation_parameters(managed_agent)
+	else:
+		var front_mass_bias: float = 0.5
+		match rotation_motion:
+			ROTATION_MOTION.DEFAULT:
+				max_engine_rotation_deg = 35
+				managed_agent.angular_damp = 10
+				var split_agent_mass = agent_mass / 2
+				managed_agent.mass = split_agent_mass
+				managed_agent.front_mass.mass = split_agent_mass * front_mass_bias
+				managed_agent.rear_mass.mass = split_agent_mass * (1 - front_mass_bias)
+				#			if is_reverse:
+				#				managed_agent.front_mass.linear_damp = 0
+				#				managed_agent.rear_mass.linear_damp = 4
+				#			else:
+				#			managed_agent.front_mass.linear_damp = 0
+				#			managed_agent.rear_mass.linear_damp = 4
+			ROTATION_MOTION.DRIFT:
+				max_engine_rotation_deg = 32
+				managed_agent.front_mass.linear_damp = 1
+				managed_agent.rear_mass.linear_damp = 6
+				var split_agent_mass = agent_mass / 2
+				managed_agent.mass = split_agent_mass
+				managed_agent.front_mass.mass = split_agent_mass * front_mass_bias
+				managed_agent.rear_mass.mass = split_agent_mass * (1 - front_mass_bias)
+			ROTATION_MOTION.SPIN:
+				managed_agent.angular_damp = 4 # 16
+				torque_on_agent = 9300000 * rotation_dir
+				max_engine_rotation_deg = 90
+			ROTATION_MOTION.SLIDE:
+				#				force_on_agent = Vector2.DOWN.rotated(managed_agent.rotation) * rotation_dir
+				#				linear_damp = managed_agent.agent_profile["idle_lin_damp"] # da ne izgubi hitrosti
+				managed_agent.angular_damp = 5 # da se ne vrti, če zavija
+
+
+func _set_default_parameters():
+
+	if managed_agent:
+
+		if agent_motion_profile:
+			agent_motion_profile._set_default_parameters(managed_agent)
+		else:
+			max_engine_rotation_deg = 45
+			engine_rotation_speed = 0.1
+			managed_agent.mass = agent_mass
+			if is_ai:
+				max_engine_power = agent_max_engine_power + ai_power_equlizer_addon
+				managed_agent.angular_damp = 16
+				managed_agent.linear_damp = 1
+			else:
+				max_engine_power = agent_max_engine_power
+				managed_agent.angular_damp = 1
+				managed_agent.linear_damp = 1
+				managed_agent.front_mass.mass = AKA_ZERO_MASS
+				managed_agent.rear_mass.mass = AKA_ZERO_MASS
+				managed_agent.front_mass.linear_damp = 0
+				managed_agent.rear_mass.linear_damp = 0
 
 
 func boost_agent(added_power: float = 0, boosting_time: float = 0):
@@ -132,22 +284,4 @@ func _print_agent_data():
 	printt("_front", managed_agent.front_mass.mass, managed_agent.front_mass.linear_damp, managed_agent.front_mass.angular_damp)
 	printt("_rear", managed_agent.rear_mass.mass, managed_agent.rear_mass.linear_damp, managed_agent.rear_mass.angular_damp)
 	printt("_torq", torque_on_agent)
-
-
-# imajo otroci ------------------------------------------------------------------------------------
-
-
-func _change_rotation_direction(new_rotation_direction: float):
-	# za zavijanje lahko vplivam na karkoli, ker se ob vožnji naravnost vse reseta
-	# če ne zavija je fizika celega agenta
-	# če zavija se porazdeli glede na stil
-
-	# v podedovanem
-	pass
-
-
-func _set_default_parameters():
-	# v podedovanem
-	pass
-
 

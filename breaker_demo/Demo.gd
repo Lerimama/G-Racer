@@ -261,7 +261,7 @@ func _on_MouseArea_body_entered(body: Node) -> void:
 
 	if "is_breakable" in body:
 		if body.is_breakable:
-			if not bodies_to_slice.has(body):
+			if not body in bodies_to_slice:
 				bodies_to_slice.append(body)
 			if current_tool == TOOL.HAMMER and swipe_in_progress:
 				finish_swipe(true)

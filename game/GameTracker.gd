@@ -22,9 +22,8 @@ func _process(delta: float) -> void:
 		for agent in agents_in_game:
 			if is_instance_valid(agent) and agent.is_active:
 				agents_in_game_active.append(agent)
-				if get_tree().get_nodes_in_group(Rfs.group_players).has(agent): players_in_game.append(agent)
-				if get_tree().get_nodes_in_group(Rfs.group_ai).has(agent): ais_in_game.append(agent)
-
+				if agent.is_in_group(Rfs.group_players): players_in_game.append(agent)
+				if agent.is_in_group(Rfs.group_ai): ais_in_game.append(agent)
 			if not is_instance_valid(agent):
 				agents_in_game.erase(agent)
 
@@ -70,7 +69,6 @@ func _update_ranking(unranked_agents: Array):
 		# rangiram po točkah
 		agents_ranked = unranked_agents.duplicate()
 		agents_ranked.sort_custom(self, "_sort_agents_by_points")
-
 
 	# ranking stats
 	var players_ranked: Array = []

@@ -4,9 +4,9 @@ extends Node
 #signal weapon_triggered
 signal next_weapon_selected
 
-var controlled_agent: Node2D # temp ... Vechile class
+var controlled_agent: Agent # temp ... Vechile class
 var controller_type: int
-var agent_manager: Node
+var agent_manager: MotionManager
 
 onready var controller_actions: Dictionary = Pfs.controller_profiles[controller_type]
 onready var fwd_action: String = controller_actions["fwd_action"]
@@ -26,7 +26,7 @@ var fast_start_window_is_open: bool = false
 
 func _input(event: InputEvent) -> void:
 	# ta del inputa je kar razdelan, ampak ko enkrat registrira vse možnosti ga lahko "pozabim"
-	# ga lahko "pozabim" in pedenam _react_to_driving_input()
+	# ga lahko "pozabim" in pedenam _set_driving_motion()
 
 	if controlled_agent.is_active:
 
@@ -50,44 +50,25 @@ func _input(event: InputEvent) -> void:
 					if weapon.weapon_type == selected_weapon.weapon_type:
 						weapon._on_weapon_triggered()
 
-
-		var motion_input_changed: bool = false
-
-		# premikanje
+		# motion
+		var prev_actions: Array = pressed_driving_actions.duplicate()
 		if Input.is_action_pressed(fwd_action):
-			if not fwd_action in pressed_driving_actions:
-				pressed_driving_actions.append(fwd_action)
-			motion_input_changed = true
+			if not fwd_action in pressed_driving_actions: pressed_driving_actions.append(fwd_action)
 		elif Input.is_action_pressed(rev_action):
-			if not rev_action in pressed_driving_actions:
-				pressed_driving_actions.append(rev_action)
-			motion_input_changed = true
+			if not rev_action in pressed_driving_actions: pressed_driving_actions.append(rev_action)
 		else:
-			if fwd_action in pressed_driving_actions:
-				pressed_driving_actions.erase(fwd_action)
-			if rev_action in pressed_driving_actions:
-				pressed_driving_actions.erase(rev_action)
-			motion_input_changed = true
-
-		# rotacija
+			if fwd_action in pressed_driving_actions: pressed_driving_actions.erase(fwd_action)
+			if rev_action in pressed_driving_actions: pressed_driving_actions.erase(rev_action)
 		if Input.get_axis(left_action, right_action) == 1:
-			if not right_action in pressed_driving_actions:
-				pressed_driving_actions.append(right_action)
-			motion_input_changed = true
+			if not right_action in pressed_driving_actions: pressed_driving_actions.append(right_action)
 		elif Input.get_axis(left_action, right_action) == -1:
-			if not left_action in pressed_driving_actions:
-				pressed_driving_actions.append(left_action)
-			motion_input_changed = true
+			if not left_action in pressed_driving_actions: pressed_driving_actions.append(left_action)
 		else:
-			if right_action in pressed_driving_actions:
-				pressed_driving_actions.erase(right_action)
-			if left_action in pressed_driving_actions:
-				pressed_driving_actions.erase(left_action)
-			motion_input_changed = true
+			if right_action in pressed_driving_actions: pressed_driving_actions.erase(right_action)
+			if left_action in pressed_driving_actions: pressed_driving_actions.erase(left_action)
 
-
-		if motion_input_changed:
-			_react_to_driving_input(pressed_driving_actions)
+		if not prev_actions == pressed_driving_actions:
+			_set_driving_motion(pressed_driving_actions)
 
 
 func _ready() -> void:
@@ -97,36 +78,36 @@ func _ready() -> void:
 	controlled_agent.set_collision_layer_bit(4, true)
 
 
-func _react_to_driving_input(pressed_actions: Array):
-
+func _set_driving_motion(pressed_actions: Array):
 
 	if not game_is_on and pressed_actions.has(fwd_action):
 		controlled_agent.revup()
 
-	if game_is_on:
-		if not agent_manager.motion == agent_manager.MOTION.DISSARAY:
-
-			# FWD
-			if pressed_actions.has(fwd_action):
-				if fast_start_window_is_open:
-					if Input.is_action_just_pressed(fwd_action):
-						controlled_agent.revup()
-						agent_manager.boost_agent(agent_manager.fast_start_power_addon, Sts.fast_start_time)
+	if game_is_on and not agent_manager.motion == agent_manager.MOTION.DISSARAY:
+		if fwd_action in pressed_actions:
+			if pressed_actions.has(left_action):
+				agent_manager.motion = agent_manager.MOTION.FWD_LEFT
+			elif pressed_actions.has(right_action):
+				agent_manager.motion = agent_manager.MOTION.FWD_RIGHT
+			else:
 				agent_manager.motion = agent_manager.MOTION.FWD
-			# REV
-			elif pressed_actions.has(rev_action):
+			if fast_start_window_is_open:
+				controlled_agent.revup()
+				agent_manager.boost_agent(agent_manager.fast_start_power_addon, Sts.fast_start_time)
+		elif rev_action in pressed_actions:
+			if left_action in pressed_actions:
+				agent_manager.motion = agent_manager.MOTION.REV_LEFT
+			elif right_action in pressed_actions:
+				agent_manager.motion = agent_manager.MOTION.REV_RIGHT
+			else:
 				agent_manager.motion = agent_manager.MOTION.REV
-			# IDLE
+		else:
+			if left_action in pressed_actions:
+				agent_manager.motion = agent_manager.MOTION.IDLE_LEFT
+			elif right_action in pressed_actions:
+				agent_manager.motion = agent_manager.MOTION.IDLE_RIGHT
 			else:
 				agent_manager.motion = agent_manager.MOTION.IDLE
-
-			# ROTATION
-			if pressed_actions.has(left_action):
-				agent_manager.rotation_dir = -1
-			elif pressed_actions.has(right_action):
-				agent_manager.rotation_dir = 1
-			else:
-				agent_manager.rotation_dir = 0
 
 
 func goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_target je za ai zaenkrat
