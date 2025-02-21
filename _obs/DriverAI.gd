@@ -78,16 +78,18 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	motion_manager.is_ai = true
 	randomize()
 	controlled_vehicle = get_parent()
+
+	controlled_vehicle.add_to_group(Rfs.group_ai)
+
+	motion_manager.is_ai = true
+
 	ai_navigation_line = Line2D.new()
 	Rfs.node_creation_parent.add_child(ai_navigation_line)
 	ai_navigation_line.width = 2
 	ai_navigation_line.default_color = Color.red
 	ai_navigation_line.z_index = 10
-
-	controlled_vehicle.add_to_group(Rfs.group_ai)
 
 	# ray exceptions
 	scanning_ray.add_exception(controlled_vehicle)
@@ -395,8 +397,8 @@ func _get_better_targets(current_target: Node2D):
 	# naberem ai tarče
 	var legit_targets: Array = []
 	for possible_target in possible_targets:
-		if "ai_target_rank" in possible_target: # zazih ... scen se odvija samo na področju ai_targets
-			if possible_target.ai_target_rank > 0:
+		if "target_rank" in possible_target: # zazih ... scen se odvija samo na področju ai_targets
+			if possible_target.target_rank > 0:
 				legit_targets.append(possible_target)
 
 	# naberem samo vidne
@@ -408,7 +410,7 @@ func _get_better_targets(current_target: Node2D):
 	# dobim top rangirano tarčo
 	var target_ranks: Array = []
 	for target_in_sight in targets_in_sight:
-		target_ranks.append(target_in_sight.ai_target_rank)
+		target_ranks.append(target_in_sight.target_rank)
 	var top_ranked_target_index: int = target_ranks.find(target_ranks.max())
 
 	# ... manjka razvrščanje po distanci poleg ranga
@@ -500,7 +502,7 @@ func in_disarray(damage_amount: float): # dmg 5 raketa, 1 metk
 func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index je boljši
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	if stuff_1.ai_target_rank > stuff_2.ai_target_rank:
+	if stuff_1.target_rank > stuff_2.target_rank:
 	    return true
 	return false
 

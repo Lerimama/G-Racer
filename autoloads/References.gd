@@ -1,14 +1,18 @@
 extends Node
 
-# global nodes
-var main_node: Main = null
+
+func global_nodes(): pass # ------------------------------------------------------------
+
+var main_node: Node = null
 var game_manager: Node2D = null
 var game_reactor: Node = null
 var sound_manager: Node = null
 var node_creation_parent: Node2D = null # NCP ... ven?
 var ultimate_popup: Popup = null
 
-# groups
+
+func groups(): pass # ------------------------------------------------------------
+
 var group_agents = "agents"
 var group_vehicles = "vehicles"
 var group_players = "players"
@@ -26,7 +30,9 @@ var group_player_cameras = "player_cameras"
 #var group_menu_confirm_btns = "Menu confirm btns"
 #var group_menu_cancel_btns = "Menu cancel btns"
 
-# game colors
+
+func colors(): pass # ------------------------------------------------------------
+
 var color_gray0 = Color("#535b68") # najsvetlejša
 var color_gray1 = Color("#404954")
 var color_gray2 = Color("#2f3649")

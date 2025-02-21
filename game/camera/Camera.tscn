@@ -9,9 +9,9 @@
 [ext_resource path="res://game/gui/hud/FpsCounter.gd" type="Script" id=7]
 [ext_resource path="res://common/debug/DebugIndikator.tscn" type="PackedScene" id=8]
 [ext_resource path="res://common/shaker/Shaker.tscn" type="PackedScene" id=9]
-[ext_resource path="res://game/camera/shake_profile_game.tres" type="Texture" id=10]
-[ext_resource path="res://game/camera/shake_profile_projectile.tres" type="Texture" id=11]
-[ext_resource path="res://game/camera/shake_profile_vehicle.tres" type="Texture" id=12]
+[ext_resource path="res://game/camera/profile_shake_game.tres" type="Texture" id=10]
+[ext_resource path="res://game/camera/profile_shake_projectile.tres" type="Texture" id=11]
+[ext_resource path="res://game/camera/profile_shake_vehicle.tres" type="Texture" id=12]
 
 [sub_resource type="OpenSimplexNoise" id=785]
 seed = 14

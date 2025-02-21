@@ -20,7 +20,7 @@ func start_engines():
 	engines_on = true
 
 
-func shutdown_engines():
+func stop_engines():
 
 	engines_on = false
 	if $Sounds/Engine.is_playing():

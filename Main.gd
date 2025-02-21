@@ -1,5 +1,4 @@
 extends Node
-class_name Main
 
 var fade_time = 0.7
 var current_scene = null

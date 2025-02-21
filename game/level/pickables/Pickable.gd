@@ -10,7 +10,7 @@ export var pickable_key: int = 0 # OPT... določen za primer, če ga dam manualn
 #export (Pfs.PICKABLE) var new_pickable_key: int = 0 # ne dela
 #var pickable_key: int = placed_pickable_key # če je spawnan v igro, ga poda spawner
 
-var ai_target_rank: int = 3
+var target_rank: int = 3
 var pickable_value: float = 0
 var pickable_color: Color = Color.white
 
@@ -26,7 +26,7 @@ func _ready() -> void:
 
 	add_to_group(Rfs.group_pickables)
 
-	ai_target_rank = Pfs.pickable_profiles[pickable_key]["ai_target_rank"]
+	target_rank = Pfs.pickable_profiles[pickable_key]["target_rank"]
 	pickable_color = Pfs.pickable_profiles[pickable_key]["color"]
 	pickable_value = Pfs.pickable_profiles[pickable_key]["value"]
 	modulate = pickable_color

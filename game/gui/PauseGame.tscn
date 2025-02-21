@@ -45,7 +45,7 @@ __meta__ = {
 
 [node name="PlayBtn" type="Button" parent="Menu"]
 margin_right = 620.0
-margin_bottom = 48.0
+margin_bottom = 58.0
 focus_neighbour_left = NodePath("../RestartBtn")
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 5
@@ -53,9 +53,9 @@ size_flags_vertical = 8
 text = "RESUME"
 
 [node name="QuitBtn" type="Button" parent="Menu"]
-margin_top = 104.0
+margin_top = 114.0
 margin_right = 620.0
-margin_bottom = 152.0
+margin_bottom = 172.0
 focus_neighbour_right = NodePath("../RestartBtn")
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 5
@@ -63,9 +63,9 @@ size_flags_vertical = 8
 text = "QUIT"
 
 [node name="RestartBtn" type="Button" parent="Menu"]
-margin_top = 208.0
+margin_top = 228.0
 margin_right = 620.0
-margin_bottom = 256.0
+margin_bottom = 286.0
 focus_neighbour_left = NodePath("../QuitBtn")
 focus_neighbour_right = NodePath("../PlayBtn")
 mouse_default_cursor_shape = 2

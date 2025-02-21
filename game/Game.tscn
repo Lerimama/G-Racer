@@ -82,10 +82,10 @@ random_pitch = 1.05
 script = ExtResource( 2 )
 main_signal_connecting_paths = [ NodePath("Gui") ]
 
-[node name="GameTracker" type="Node" parent="."]
+[node name="Tracker" type="Node" parent="."]
 script = ExtResource( 26 )
 
-[node name="GameReactor" type="Node" parent="."]
+[node name="Reactor" type="Node" parent="."]
 script = ExtResource( 30 )
 
 [node name="GameViewFlow" type="VFlowContainer" parent="."]

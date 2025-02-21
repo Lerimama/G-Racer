@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://game/weapons/ammo/projectile/Projectile.tscn" type="PackedScene" id=1]
-[ext_resource path="res://game/weapons/ammo/profiles/ammo_profile_bullet_small.tres" type="Resource" id=5]
+[ext_resource path="res://game/weapons/ammo/profiles/profile_ammo_bullet_small.tres" type="Resource" id=5]
 
 [sub_resource type="RectangleShape2D" id=8]
 extents = Vector2( 5, 3 )

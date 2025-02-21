@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://game/weapons/ammo/projectile/Projectile.tscn" type="PackedScene" id=3]
-[ext_resource path="res://game/weapons/ammo/profiles/ammo_profile_homer.tres" type="Resource" id=4]
+[ext_resource path="res://game/weapons/ammo/profiles/profile_ammo_homer.tres" type="Resource" id=4]
 
 [sub_resource type="RectangleShape2D" id=5308]
 extents = Vector2( 13.5, 7 )

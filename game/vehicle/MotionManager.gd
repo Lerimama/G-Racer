@@ -32,7 +32,7 @@ var is_boosting: bool = false
 var current_engine_power: float = 0
 var engine_power_addon: float = 0
 var accelarate_speed = 0.1
-var max_engine_power: float setget _change_max_power
+var max_engine_power: float
 
 # rotation
 var rotation_dir = 0
@@ -45,7 +45,6 @@ var engine_power_percentage: float # neu namesto engine power
 # neu
 var vehicle_motion_profile: Resource
 var start_max_engine_power: float = 500
-var masa: float = 100
 var ai_power_equlizer_addon: float = -10
 var fast_start_power_addon: float = 200
 var max_engine_power_rotation_adapt: float = 1.1
@@ -59,7 +58,16 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	pass
+	managed_vehicle = get_parent()
+
+	if managed_vehicle.vehicle_motion_profile:
+		vehicle_motion_profile = managed_vehicle.vehicle_motion_profile
+		yield(managed_vehicle, "ready")
+#		vehicle_motion_profile._set_default_parameters(managed_vehicle, self)
+		vehicle_motion_profile._set_default_parameters(managed_vehicle)
+	else:
+		yield(managed_vehicle, "ready")
+		_set_default_parameters()
 
 
 func _process(delta: float) -> void:
@@ -107,19 +115,16 @@ func _motion_machine():
 
 func _accelarate_to_engine_power():
 
-	# če je dodatek k moči klempam na max power + dodatek
-
-#	if engine_power_addon == 0:
-#		current_engine_power = lerp(current_engine_power, max_engine_power, accelarate_speed)
-#	else:
 	current_engine_power = lerp(current_engine_power, max_engine_power + engine_power_addon, accelarate_speed)
-
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
 	if max_engine_power > 0:
 		engine_power_percentage = current_engine_power / max_engine_power
 	else:
 		engine_power_percentage = 0
+
+	# upoštevam damage
+	current_engine_power -= current_engine_power * managed_vehicle.vehicle_damage * 0.5# managed_vehicle.damage_engine_power_factor
 
 	return current_engine_power * Sts.world_hsp_power_factor
 
@@ -191,12 +196,6 @@ func _change_motion(new_motion):
 				_set_rotation_parameters(rotation_dir)
 
 
-func _change_max_power(new_max_power):
-
-	max_engine_power = new_max_power
-	print ("new_max_power", max_engine_power)
-
-
 func _set_rotation_parameters(new_rotation_direction: float, is_reverse: bool = false):
 
 	if vehicle_motion_profile:
@@ -207,7 +206,7 @@ func _set_rotation_parameters(new_rotation_direction: float, is_reverse: bool = 
 			ROTATION_MOTION.DEFAULT:
 				max_engine_rotation_deg = 35
 				managed_vehicle.angular_damp = 10
-				var split_vehicle_mass = masa / 2
+				var split_vehicle_mass = managed_vehicle.masa / 2
 				managed_vehicle.mass = split_vehicle_mass
 				managed_vehicle.front_mass.mass = split_vehicle_mass * front_mass_bias
 				managed_vehicle.rear_mass.mass = split_vehicle_mass * (1 - front_mass_bias)
@@ -221,7 +220,7 @@ func _set_rotation_parameters(new_rotation_direction: float, is_reverse: bool = 
 				max_engine_rotation_deg = 32
 				managed_vehicle.front_mass.linear_damp = 1
 				managed_vehicle.rear_mass.linear_damp = 6
-				var split_vehicle_mass = masa / 2
+				var split_vehicle_mass = managed_vehicle.masa / 2
 				managed_vehicle.mass = split_vehicle_mass
 				managed_vehicle.front_mass.mass = split_vehicle_mass * front_mass_bias
 				managed_vehicle.rear_mass.mass = split_vehicle_mass * (1 - front_mass_bias)
@@ -231,11 +230,11 @@ func _set_rotation_parameters(new_rotation_direction: float, is_reverse: bool = 
 				max_engine_rotation_deg = 90
 			ROTATION_MOTION.SLIDE:
 				#				force_on_vehicle = Vector2.DOWN.rotated(managed_vehicle.rotation) * rotation_dir
-				#				linear_damp = managed_vehicle.vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
+				#				linear_damp = managed_vehicle.default_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
 				managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
 
-func _set_default_parameters():
+func _set_default_parameters(): # fizični, ne vsebinski22
 
 	if managed_vehicle:
 
@@ -244,7 +243,7 @@ func _set_default_parameters():
 		else:
 			max_engine_rotation_deg = 45
 			engine_rotation_speed = 0.1
-			managed_vehicle.mass = masa
+			managed_vehicle.mass = managed_vehicle.masa
 			if is_ai:
 				max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 				managed_vehicle.angular_damp = 16

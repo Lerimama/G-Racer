@@ -1,6 +1,6 @@
 [gd_scene load_steps=41 format=2]
 
-[ext_resource path="res://game/vehicle/profiles/vehicle_profile_def.tres" type="Resource" id=1]
+[ext_resource path="res://game/vehicle/profiles/profile_vehicle_def.tres" type="Resource" id=1]
 [ext_resource path="res://game/vehicle/Thrust.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/weapons/WeapontTurret.tscn" type="PackedScene" id=3]
 [ext_resource path="res://game/weapons/WeaponGun.tscn" type="PackedScene" id=4]

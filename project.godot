@@ -45,11 +45,6 @@ _global_script_classes=[ {
 "path": "res://game/levels/Level.gd"
 }, {
 "base": "Node",
-"class": "Main",
-"language": "GDScript",
-"path": "res://Main.gd"
-}, {
-"base": "Node",
 "class": "Operator",
 "language": "GDScript",
 "path": "res://game/level/breakers/breaker/Operator.gd"
@@ -257,7 +252,6 @@ _global_script_class_icons={
 "Game": "",
 "Gui": "",
 "Level": "",
-"Main": "",
 "Operator": "",
 "Palette": "",
 "PaletteImporter": "",

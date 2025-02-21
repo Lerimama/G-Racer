@@ -12,7 +12,7 @@ onready var brick_color: Color = Pfs.level_object_profiles[level_object_key]["co
 onready var reward_points: float = Pfs.level_object_profiles[level_object_key]["value"]
 onready var speed_brake_div: float = Pfs.level_object_profiles[level_object_key]["speed_brake_div"]
 
-onready var ai_target_rank: int = Pfs.level_object_profiles[level_object_key]["ai_target_rank"]
+onready var target_rank: int = Pfs.level_object_profiles[level_object_key]["target_rank"]
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer

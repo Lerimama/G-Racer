@@ -30,8 +30,8 @@ onready var game_views_holder: VFlowContainer = $GameViewFlow
 onready var GameView: PackedScene = preload("res://game/GameView.tscn")
 #onready var hud: Hud = $Gui/Hud
 onready var hud: Control = $Gui/Hud
-onready var game_tracker: Node = $GameTracker
-onready var game_reactor: Node = $GameReactor
+onready var game_tracker: Node = $Tracker
+onready var game_reactor: Node = $Reactor
 
 var game_levels: Array = []
 var finale_game_data: Dictionary = {
@@ -176,7 +176,6 @@ func _set_game_level():
 	_spawn_level(level_profile)
 
 
-
 func _game_intro():
 
 	self.game_stage = GAME_STAGE.INTRO
@@ -241,6 +240,8 @@ func _change_game_stage(new_game_stage: int):
 			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
+			#			print("finale_game_data")
+			#			print(finale_game_data)
 			#			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
 			emit_signal("game_stage_changed", self)
 			# ustavi elemente
@@ -355,19 +356,19 @@ func _spawn_vehicle(driver_name_id, spawned_position_index: int):
 	var vehicle_type: int = Pfs.VEHICLE.values()[0]
 
 	var new_driver_stats: Dictionary = Pfs.start_driver_stats.duplicate()
-	new_driver_stats[Pfs.STATS.LAP_COUNT] = [] # prepišem array v slovarju, da je tudi ta unique
+		# debug stats
+		#	new_driver_stats[Pfs.STATS.LAP_COUNT] = ["time", 3] # prepišem array v slovarju, da je tudi ta unique
+		#	new_driver_stats[Pfs.STATS.GOALS_REACHED] = ["krneki", 5]
+		#	new_driver_stats[Pfs.STATS.WINS] = ["joda", 5]
+		#	new_driver_stats[Pfs.STATS.LAP_TIME] = 50
+		#	new_driver_stats[Pfs.STATS.LEVEL_TIME] = 1000
+		#	new_driver_stats[Pfs.STATS.BEST_LAP_TIME] = 500
+		##	var new_int_array: PoolIntArray = [1,5]
+		##	new_driver_stats[Pfs.STATS.LIFE] = new_int_array
+	# reset notranji arrayev ... da so unique
+	new_driver_stats[Pfs.STATS.LAP_COUNT] = []
 	new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
 	new_driver_stats[Pfs.STATS.WINS] = []
-
-	# debug stats
-	new_driver_stats[Pfs.STATS.LAP_COUNT] = ["time", 3] # prepišem array v slovarju, da je tudi ta unique
-	new_driver_stats[Pfs.STATS.GOALS_REACHED] = ["krneki", 5]
-	new_driver_stats[Pfs.STATS.WINS] = ["joda", 5]
-	new_driver_stats[Pfs.STATS.LAP_TIME] = 50
-	new_driver_stats[Pfs.STATS.LEVEL_TIME] = 1000
-	new_driver_stats[Pfs.STATS.BEST_LAP_TIME] = 500
-#	var new_int_array: PoolIntArray = [1,5]
-#	new_driver_stats[Pfs.STATS.LIFE] = new_int_array
 
 	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
@@ -379,7 +380,10 @@ func _spawn_vehicle(driver_name_id, spawned_position_index: int):
 	# profili ... iz njih podatke povleče sam na rea dy
 	new_vehicle.driver_profile = Pfs.driver_profiles[driver_name_id].duplicate()
 	new_vehicle.driver_stats = new_driver_stats
-	new_vehicle.vehicle_profile = Pfs.vehicle_profiles[vehicle_type].duplicate()
+	new_vehicle.default_vehicle_profile = Pfs.vehicle_profiles[vehicle_type].duplicate()
+
+	# tip level je njegov namen obstoja, edino kar ve o levelu ... zaenkrat
+	new_vehicle.level_type = level_profile["level_type"] # se ga napolnil ob spawnu levela
 
 	Rfs.node_creation_parent.add_child(new_vehicle)
 
@@ -394,7 +398,7 @@ func _spawn_vehicle(driver_name_id, spawned_position_index: int):
 
 	# connect
 	self.connect("game_stage_changed", new_vehicle.control_manager, "_on_game_stage_change")
-	new_vehicle.connect("activity_changed", game_reactor, "_on_driver_activity_change")
+	new_vehicle.connect("driver_terminated", game_reactor, "_on_driver_terminated")
 	new_vehicle.connect("stat_changed", hud, "_on_driver_stat_changed")
 
 

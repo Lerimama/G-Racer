@@ -9,7 +9,7 @@ var level_object_key: int # poda spawner, uravnava vse ostalo
 onready var brick_color: Color = Pfs.level_object_profiles[level_object_key]["color"]
 #onready var elevation: float = Pfs.level_object_profiles[level_object_key]["elevation"] # PRO elevation profiles
 onready var reward_points: float = Pfs.level_object_profiles[level_object_key]["value"]
-onready var ai_target_rank: int = Pfs.level_object_profiles[level_object_key]["ai_target_rank"]
+onready var target_rank: int = Pfs.level_object_profiles[level_object_key]["target_rank"]
 onready var bounce_strength: float = Pfs.level_object_profiles[level_object_key]["bounce_strength"]
 onready var sprite: Sprite = $Sprite
 

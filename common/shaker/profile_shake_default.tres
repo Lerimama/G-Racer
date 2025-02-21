@@ -1,6 +1,6 @@
 [gd_resource type="NoiseTexture" load_steps=3 format=2]
 
-[ext_resource path="res://common/shaker/shake_profile_default.gd" type="Script" id=1]
+[ext_resource path="res://common/shaker/profile_shake_default.gd" type="Script" id=1]
 
 [sub_resource type="OpenSimplexNoise" id=1]
 seed = 14

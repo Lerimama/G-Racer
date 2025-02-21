@@ -3,10 +3,10 @@ extends Node
 
 var game_level: Level
 
-var agents_in_game: Array # all controlled and interacting
-var drivers_in_game: Array # all with ranking
-var players_in_game: Array # tudi agents, drivers
-var ais_in_game: Array # tudi agents, drivers
+var agents_in_game: Array # all valid controlled and interacting, tud non-actve
+var drivers_in_game: Array # all valid with ranking, all ranked, tud non-actve
+var players_in_game: Array # tudi valid agents, drivers, tud non-actve
+var ais_in_game: Array # tudi valid agents, drivers, tud non-actve
 #var drivers_in_game_ranked: Array = []
 #var drivers_in_game_active: Array = []
 
@@ -15,23 +15,22 @@ onready var game_parent: Node2D = get_parent()
 
 func _process(delta: float) -> void:
 
-	if game_level:
+	#	if game_level:
+	# beleženje prisotnosti
+	drivers_in_game = get_tree().get_nodes_in_group(Rfs.group_drivers)
+	players_in_game = []
+	ais_in_game = []
+	for driver in drivers_in_game:
+		if is_instance_valid(driver):
+			#		if is_instance_valid(driver) and driver.is_active:
+			if driver.is_in_group(Rfs.group_players): players_in_game.append(driver)
+			if driver.is_in_group(Rfs.group_ai): ais_in_game.append(driver)
+		if not is_instance_valid(driver):# and not driver.is_active:
+			drivers_in_game.erase(driver)
 
-		# beleženje prisotnosti
-		drivers_in_game = get_tree().get_nodes_in_group(Rfs.group_drivers)
-		players_in_game = []
-		ais_in_game = []
-		for driver in drivers_in_game:
-			if is_instance_valid(driver):# and driver.is_active:
-#				drivers_in_game_active.append(driver)
-				if driver.is_in_group(Rfs.group_players): players_in_game.append(driver)
-				if driver.is_in_group(Rfs.group_ai): ais_in_game.append(driver)
-			if not is_instance_valid(driver):# and not driver.is_active:
-				drivers_in_game.erase(driver)
-
-		# ranking
-		if drivers_in_game.size() > 1 and game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
-			_update_ranking()
+	# ranking
+	if drivers_in_game.size() > 1 and game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
+		_update_ranking()
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
 
@@ -71,13 +70,11 @@ func _update_ranking():
 		drivers_ranked = unranked_drivers
 		drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
 
-	drivers_in_game = drivers_ranked
-
 	# ranking stats
 	var players_ranked: Array = []
-	for ranked_driver in drivers_in_game:
+	for ranked_driver in drivers_ranked:
 		var prev_rank: int = ranked_driver.driver_stats[Pfs.STATS.LEVEL_RANK]
-		var new_rank: int = drivers_in_game.find(ranked_driver) + 1
+		var new_rank: int = drivers_ranked.find(ranked_driver) + 1
 		if not new_rank == prev_rank:
 			ranked_driver.update_stat(Pfs.STATS.LEVEL_RANK, new_rank)
 		if ranked_driver.is_in_group(Rfs.group_players):
@@ -85,6 +82,8 @@ func _update_ranking():
 
 	if not players_ranked[0] == game_parent.game_reactor.camera_leader:
 		game_parent.game_reactor.camera_leader = players_ranked[0]
+
+	drivers_in_game = drivers_ranked
 
 
 # SORING ------------------------------------------------------------------------------------------------------------

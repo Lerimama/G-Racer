@@ -43,6 +43,9 @@ var one_screen_mode: bool = true
 var hide_view_on_player_deactivated: = false
 var slomo_time_scale: float = 0.1
 var slomo_fx_on: bool = true
+var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damega da ma vehicle lahko med 0 in 1
+var points_game_heal_rate_factor: float = 0
+
 # UPDATE GAME SETTINGS -----------------------------------------------------------------------------------
 
 var drivers_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
@@ -61,7 +64,7 @@ func _ready() -> void:
 		game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
 
 		camera_zoom_range = [2, 2.3]
-		camera_zoom_range = [1, 5]
+		camera_zoom_range = [1, 1.4]
 		fast_start_time = 1
 		game_shadows_rotation_deg = 45
 

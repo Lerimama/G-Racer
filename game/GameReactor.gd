@@ -162,16 +162,13 @@ func _check_for_game_end():
 			break
 
 	# če je konec, preverim succes
-	var is_success: bool = false
 	if all_players_finished_or_deactivated:
+		var is_success: bool = false
 		for player in game_parent.game_tracker.players_in_game:
-			if player in drivers_finished:
-				is_success = true
+			if player in drivers_finished: is_success = true
 		# apliciram stage ... pošlje signal
-		if is_success:
-			game_parent.game_stage = game_parent.GAME_STAGE.END_SUCCESS
-		else:
-			game_parent.game_stage = game_parent.GAME_STAGE.END_FAIL
+		if is_success: game_parent.game_stage = game_parent.GAME_STAGE.END_SUCCESS
+		else: game_parent.game_stage = game_parent.GAME_STAGE.END_FAIL
 
 
 func _change_camera_leader(new_camera_leader: Node2D):
@@ -189,10 +186,10 @@ func _change_camera_leader(new_camera_leader: Node2D):
 func _on_game_time_is_up():
 		# če je potekel čas je verjetno še kdo v igri
 	get_tree().set_group(Rfs.group_drivers, "is_active", false)
-#	for driver in game_parent.game_tracker.drivers_in_game:
-#		# če se disejbla sam na GO signal je prepozno za final game data
-#		if driver.is_active:
-#			driver.is_active = false
+	#	for driver in game_parent.game_tracker.drivers_in_game:
+	#		# če se disejbla sam na GO signal je prepozno za final game data
+	#		if driver.is_active:
+	#			driver.is_active = false
 
 
 func _on_fx_finished(finished_fx: Node): # Node, ker je lahko audio
@@ -215,15 +212,20 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 			# next ...
 			var reached_goals_count: int = reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED].size()
 			if reached_goals_count < game_level.level_goals.size():
-				reaching_driver.control_manager.goal_reached(reached_goal)
 				Rfs.sound_manager.play_sfx("little_horn")
+				reaching_driver.control_manager.goal_reached(reached_goal)
 			elif game_level.level_finish:
-				reaching_driver.control_manager.goal_reached(reached_goal, game_level.level_finish)
 				Rfs.sound_manager.play_sfx("little_horn")
+				reaching_driver.control_manager.goal_reached(reached_goal, game_level.level_finish)
 			else:
-				reaching_driver.control_manager.goal_reached(reached_goal)
 				Rfs.sound_manager.play_sfx("finish_horn")
+				reaching_driver.control_manager.goal_reached(reached_goal)
 				drivers_finished.append(reaching_driver)
+
+				game_parent.finale_game_data[reaching_driver.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
+					"driver_profile": reaching_driver.driver_profile,
+					"driver_stats": reaching_driver.driver_stats,
+					}
 
 		_check_for_game_end()
 
@@ -255,13 +257,19 @@ func _on_finish_line_crossed(drivers_across: Vehicle): # sproži finish line  # 
 				has_finished_level = true
 
 			if has_finished_level:
+				Rfs.sound_manager.play_sfx("finish_horn")
 				drivers_finished.append(drivers_across) # pred drive out, ker se tam deaktivira
 				var drive_out_time: float = 1
 				var drive_out_vector: Vector2 = Vector2.ZERO
 				if game_level.drive_out_position:
 					drive_out_vector = game_level.drive_out_position.rotated(game_level.level_finish.global_rotation)
 				drivers_across.drive_out(drive_out_vector, drive_out_time)
-				Rfs.sound_manager.play_sfx("finish_horn")
+
+				game_parent.finale_game_data[drivers_across.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
+					"driver_profile": drivers_across.driver_profile,
+					"driver_stats": drivers_across.driver_stats,
+					}
+
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 
@@ -271,56 +279,43 @@ func _on_finish_line_crossed(drivers_across: Vehicle): # sproži finish line  # 
 func _on_body_exited_playing_field(body: Node) -> void:
 
 	#	if body.is_in_group(Rfs.group_drivers):
-	if body.is_in_group(Rfs.group_players):
+	if body.is_in_group(Rfs.group_players) and body.is_active:
 		_pull_driver_on_field(body)
 	elif body.has_method("on_out_of_playing_field"):
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
 
-func _on_driver_activity_change(changed_driver: Vehicle): # temp ... Vehicle class
-#	printt("acitvity", changed_driver.name, changed_driver.is_active)
+func _on_driver_terminated(driver_vehicle: Vehicle): # temp ... Vehicle class
 
-	# preverja, če je še kakšen player aktiven ... za GO
-	if changed_driver.is_active:
-		pass
-	else:
-		#		game_parent.game_tracker.players_in_game.erase(changed_driver)
-		#		game_parent.game_tracker.drivers_in_game.erase(changed_driver)
-		#		game_parent.game_tracker.ais_in_game.erase(changed_driver)
+	printt("terminated", driver_vehicle, game_parent.game_tracker.drivers_in_game.has(driver_vehicle))
+	game_parent.game_tracker.players_in_game.erase(driver_vehicle)
+	game_parent.game_tracker.drivers_in_game.erase(driver_vehicle)
+	game_parent.game_tracker.ais_in_game.erase(driver_vehicle)
+	printt("terminated", driver_vehicle, game_parent.game_tracker.drivers_in_game.has(driver_vehicle))
 
-		# pripnem končne podatke o driverju
-		var driver_has_finished: bool = drivers_finished.has(changed_driver)
-		# če ni deaktiviran v finišu izgubi ranking
-		if not driver_has_finished:
-			# samo za GO ... ni za statistiko
-			changed_driver.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
-		game_parent.finale_game_data[changed_driver.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
-			"driver_profile": changed_driver.driver_profile,
-			"driver_stats": changed_driver.driver_stats,
+	set_deferred("camera_leader", game_parent.game_tracker.players_in_game[0])
+
+	if driver_vehicle.vehicle_camera:
+		driver_vehicle.vehicle_camera = null
+
+	# terminiran je lahko samo med igro ... zazih
+	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
+
+		# preverja, če je še kakšen player aktiven ... za GO
+		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
+		game_parent.finale_game_data[driver_vehicle.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
+			"driver_profile": driver_vehicle.driver_profile,
+			"driver_stats": driver_vehicle.driver_stats,
 			}
 
+		# hide view
 		if Sts.hide_view_on_player_deactivated and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
-			# skrijem view
 			var hide_view_time: float
-			var removed_game_view: ViewportContainer = game_parent.game_views.find_key(changed_driver)
-			# odstranim, če ni zadnji view
-			if removed_game_view and game_parent.game_views.size() > 1:
+			var removed_game_view: ViewportContainer = game_parent.game_views.find_key(driver_vehicle)
+			if removed_game_view and game_parent.game_views.size() > 1: # preverim, da ni zadnji view
 				removed_game_view.queue_free()
 				game_parent.game_views.erase(removed_game_view)
-				# setam preostale
-				game_parent._set_game_views(game_parent.game_views.size())
-				# odstranim imitatorja ... more bit za setanje game_views
-				game_parent.hud.driver_huds_holder.remove_view_imitator(game_parent.game_views)
+				game_parent._set_game_views(game_parent.game_views.size()) # setam preostale
+				game_parent.hud.driver_huds_holder.remove_view_imitator(game_parent.game_views) # odstranim imitatorja ... more bit za setanje game_views
 
-		# preverim, če je bil zadnji plejer da končam igro ... za primer, če ni nobe
-		if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
-			var still_playing: bool = false
-			for player in game_parent.game_tracker.players_in_game:
-#				if not is_instance_valid(player):
-#					still_playing = false
-#				elif player.is_active:
-				if player.is_active:
-					still_playing = true
-			if not still_playing:
-				game_parent.game_stage = game_parent.GAME_STAGE.END_FAIL
-				# _on_change preverja, če je igra že končana (tole ne poveozi morebitnega uspeha
+		_check_for_game_end()

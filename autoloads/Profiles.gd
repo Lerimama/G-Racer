@@ -1,8 +1,7 @@
 extends Node
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func z_index(): pass
+func z_index(): pass # ------------------------------------------------------------
 
 #Z INDEX
 #- background = -10
@@ -29,14 +28,14 @@ var z_indexes: Dictionary = {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func stats(): pass
+func stats(): pass # ------------------------------------------------------------
 
 # vsi mogoči statsi
 enum STATS {
 		WINS, LIFE, HEALTH, POINTS, GAS, CASH,
 		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT,
-		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED, LAP_TIME
+		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED, LAP_TIME,
+		DAMAGE # obratno od health
 		}
 
 #var start_vehicle_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
@@ -75,8 +74,7 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func drivers(): pass
+func drivers(): pass # ------------------------------------------------------------
 
 
 enum DRIVER_TYPE {PLAYER, AI}
@@ -97,11 +95,13 @@ var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://ho
 var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red]
 var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
+
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
-	"driver_scene": preload("res://game/vehicle/DriverAI.tscn"),
+	"driver_scene": preload("res://game/vehicle/ControlAI.tscn"),
 	"ai_avatar": preload("res://home/avatar_ai.tres"),
-	"ai_type": AI_TYPE.DEFAULT,
+	"controller_type": AI_TYPE.DEFAULT,
+	"ai_type": AI_TYPE.DEFAULT, # obs
 	"ai_name": "STEINY",
 	"random_start_range": "", # še na nodu
 }
@@ -115,7 +115,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p1_right",
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
-		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"), # more bit scena, ker ma ai stvari notri
 		},
 	CONTROLLER_TYPE.WASD : {
 		fwd_action = "p2_fwd",
@@ -124,7 +124,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p2_right",
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
-		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP1 : {
 		fwd_action = "jp1_fwd",
@@ -133,7 +133,7 @@ var controller_profiles: Dictionary = {
 		right_action = "jp1_right",
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
-		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP2 : {
 		fwd_action = "jp2_fwd",
@@ -142,34 +142,36 @@ var controller_profiles: Dictionary = {
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
-		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func vehicles(): pass
+func vehicles(): pass # ------------------------------------------------------------
 
 enum VEHICLE {BASIC, TRUCK}
 var vehicle_profiles: Dictionary = {
 	VEHICLE.BASIC: {
 		"vehicle_scene": preload("res://game/vehicle/Vehicle.tscn"),
-		"vehicle_profile_path": load("res://game/vehicle/profiles/vehicle_profile_def.tres"),
+		"vehicle_profile_path": load("res://game/vehicle/profiles/profile_vehicle_def.tres"),
 		"motion_manager_path": load("res://game/vehicle/MotionManager.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
 		"gas_usage_idle": -0.05, # per HSP?
-		"ai_target_rank": 5,
-		"on_hit_disabled_time": 2,
+		"target_rank": 5,
 		"gas_tank_size": 200, # liters
-		"group_weapons_by_type": "",
-		"damage_engine_power_factor": 1, # v kolikšnem razmerju vpliva na mol, 0 pomeni, da ne vpliva
+
+		# neu
+		"group_weapons_by_type": "", # < zakaj string? kako da ni nč? ... grdo
+		"damage_effect_factor": 1, # vpliva na to koliko škode od planirane naredi neka zadeva
+		"damage_engine_power_factor": 1, # kako aplicirana škoda vpliva na moč motorja ... to je že mal v detajle
+		"on_hit_disabled_time": 1,
+		"heal_rate": 0.01, # lerp rate
 		},
 	}
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func equipment(): pass
+func equipment(): pass # ------------------------------------------------------------
 
 enum EQUIPMENT {NITRO, SHIELD}
 var equipment_profiles : Dictionary = {
@@ -186,8 +188,8 @@ var equipment_profiles : Dictionary = {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func weapons(): pass
+
+func weapons(): pass # ------------------------------------------------------------
 
 var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
 
@@ -225,8 +227,7 @@ var ammo_profiles : Dictionary = {
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func levels(): pass
+func levels(): pass # ------------------------------------------------------------
 
 enum BASE_TYPE {BATTLE, RACING} # BATTLE JE PRVI ALI NEDEFINED
 enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
@@ -285,7 +286,7 @@ var level_object_profiles: Dictionary = {
 		"speed_brake_div": 10,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickGhost.tscn"),
-		"ai_target_rank": 0,
+		"target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
 		"color": Rfs.color_brick_bouncer,
@@ -293,7 +294,7 @@ var level_object_profiles: Dictionary = {
 		"bounce_strength": 2,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickBouncer.tscn"),
-		"ai_target_rank": 0,
+		"target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
 		"color": Rfs.color_brick_magnet_off,
@@ -301,33 +302,32 @@ var level_object_profiles: Dictionary = {
 		"gravity_force": 300.0,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickMagnet.tscn"),
-		"ai_target_rank": 0, # 0 pomeni, da se izogneš
+		"target_rank": 0, # 0 pomeni, da se izogneš
 	},
 	LEVEL_OBJECT.BRICK_TARGET: {
 		"color": Rfs.color_brick_target,
 		"value": 100,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickTarget.tscn"),
-		"ai_target_rank": 0,
+		"target_rank": 0,
 	},
 	LEVEL_OBJECT.FLATLIGHT: {
 		"color": Rfs.color_brick_light_off,
 		"value": 10,
 		"elevation": 0,
 		"object_scene": preload("res://game/level/objects/FlatLight.tscn"),
-		"ai_target_rank": 3,
+		"target_rank": 3,
 	},
 	LEVEL_OBJECT.GOAL_PILLAR: {
 		"value": 1000,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/GoalPillar.tscn"),
-		"ai_target_rank": 5,
+		"target_rank": 5,
 	},
 }
 
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func surfaces(): pass
+func surfaces(): pass # ------------------------------------------------------------
 
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
@@ -357,8 +357,7 @@ var surface_type_profiles: Dictionary = {
 	},
 }
 
-# ---------------------------------------------------------------------------------------------------------------------------
-func pickables(): pass
+func pickables(): pass # ------------------------------------------------------------
 
 enum PICKABLE{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA,
@@ -372,56 +371,56 @@ var pickable_profiles: Dictionary = {
 		"color": Rfs.color_pickable_ammo,
 		"value": 20,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 		"driver_stat": STATS.BULLET_COUNT,
 	},
 	PICKABLE.PICKABLE_MISILE: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 2,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 		"driver_stat": STATS.MISILE_COUNT,
 	},
 	PICKABLE.PICKABLE_MINA: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 		"driver_stat": STATS.MINA_COUNT,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 0.3,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 		"driver_stat": STATS.HEALTH,
 	},
 	PICKABLE.PICKABLE_LIFE: {
 		"color": Rfs.color_pickable_stat,
 		"value": 1,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 		"driver_stat": STATS.LIFE,
 	},
 	PICKABLE.PICKABLE_GAS: {
 		"color": Rfs.color_pickable_stat,
 		"value": 200,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 		"driver_stat": STATS.GAS,
 	},
 	PICKABLE.PICKABLE_CASH: {
 		"color": Rfs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
-		"ai_target_rank": 0,
+		"target_rank": 0,
 		"driver_stat": STATS.CASH,
 	},
 	PICKABLE.PICKABLE_POINTS: {
 		"color": Rfs.color_pickable_stat,
 		"value": 100,
 		"elevation": 3,
-		"ai_target_rank": 2,
+		"target_rank": 2,
 		"driver_stat": STATS.POINTS,
 	},
 	# NO STATS ...instants
@@ -429,18 +428,18 @@ var pickable_profiles: Dictionary = {
 		"color": Rfs.color_pickable_ammo,
 		"value": 1,
 		"elevation": 3,
-		"ai_target_rank": 3,
+		"target_rank": 3,
 	},
 	PICKABLE.PICKABLE_NITRO: {
 		"color": Rfs.color_pickable_feature,
 		"value": 2, # factor
 		"elevation": 3,
-		"ai_target_rank": 10,
+		"target_rank": 10,
 	},
 	PICKABLE.PICKABLE_RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
 		"color": Rfs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"elevation": 3,
-		"ai_target_rank": 9,
+		"target_rank": 9,
 	},
 }
