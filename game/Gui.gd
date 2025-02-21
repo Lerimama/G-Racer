@@ -2,8 +2,9 @@ extends CanvasLayer
 class_name Gui
 
 
-onready var hud: Hud = $Hud
-onready var agent_huds_holder: Control = $AgentHuds
+#onready var hud: Hud = $Hud
+onready var hud: Control = $Hud
+onready var driver_huds_holder: Control = $DriverHuds
 onready var pause_game: Control = $PauseGame
 onready var game_over: Control = $GameOver
 onready var level_over: Control = $LevelOver
@@ -42,7 +43,7 @@ func _on_game_stage_changed(current_game_manager: Game):
 			if game_manager.level_profile["level_time_limit"] > 0:
 				if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
 					hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")
-			agent_huds_holder.set_agent_huds(game_manager.game_views, Sts.one_screen_mode)
+			driver_huds_holder.set_driver_huds(game_manager.game_views, Sts.one_screen_mode)
 
 		game_manager.GAME_STAGE.PLAYING:
 			if not is_set:

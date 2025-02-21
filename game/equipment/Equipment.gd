@@ -1,5 +1,5 @@
 extends Node2D
-
+class_name Equipment
 
 signal equipment_used
 
@@ -11,7 +11,7 @@ export var ai_enabled: bool = false # spawner lahko povozi
 
 var is_set: bool = false
 var equipment_reloaded: bool = true
-var equipment_count: int = 0 # napolnems strani agenta ali igre
+var equipment_count: int = 0 # napolnems strani vehila ali igre
 
 onready var fx_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -37,7 +37,7 @@ func _ready() -> void:
 	#	fire_cover_particles.emitting = false
 
 
-func setup(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče agent
+func set_equipment(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče vehicle
 
 ## še ne uporabljam kode
 
@@ -51,7 +51,7 @@ func setup(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče agent
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
 		ai_enabled = with_ai
-		equipment_ai.setup(equipment_owner)
+		equipment_ai.set_ai(equipment_owner)
 
 	show()
 	is_set = true

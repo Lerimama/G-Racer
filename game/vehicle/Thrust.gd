@@ -2,11 +2,11 @@ extends Node2D
 
 
 enum POSITION {LEFT, RIGHT, FRONT, REAR}
-export (POSITION) var position_on_agent: int = 0
+export (POSITION) var position_on_vehicle: int = 0
 onready var thrust_owner: Node2D = owner.owner
 
 var thrust_active: bool = false
-var agent_trail_alpha = 0.05
+var thrust_trail_alpha = 0.05
 var trail_pseudodecay_color = Color.white
 var pseudo_stop_speed: = 15.0
 var active_trail: Line2D
@@ -20,7 +20,7 @@ onready var disp: Node2D = self
 
 func _ready() -> void:
 
-	match position_on_agent:
+	match position_on_vehicle:
 		POSITION.LEFT:
 			scale.y = 1
 		POSITION.RIGHT:
@@ -59,11 +59,11 @@ func stop_fx():
 
 func spawn_new_trail():
 
-	var ThrustTrail: PackedScene = preload("res://game/agent/trails/ThrustTrail.tscn")
+	var ThrustTrail: PackedScene = preload("res://game/vehicle/trails/ThrustTrail.tscn")
 	var new_trail: Line2D = ThrustTrail.instance()
 	# na poziciji partiklov na trenutno izbrani strani
 	new_trail.global_position = disp.get_node(thrust_particles_name).global_position
-	new_trail.modulate.a = agent_trail_alpha
+	new_trail.modulate.a = thrust_trail_alpha
 	new_trail.width = 5
 	Rfs.node_creation_parent.add_child(new_trail)
 
@@ -82,10 +82,10 @@ func update_trail():
 		# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
 		active_trail.add_points(global_position)
 		active_trail.gradient.colors[1] = trail_pseudodecay_color
-		if thrust_owner.velocity.length() > pseudo_stop_speed and active_trail.modulate.a < agent_trail_alpha:
+		if thrust_owner.velocity.length() > pseudo_stop_speed and active_trail.modulate.a < thrust_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem
 			var trail_grad = get_tree().create_tween()
-			trail_grad.tween_property(active_trail, "modulate:a", agent_trail_alpha, 0.5)
+			trail_grad.tween_property(active_trail, "modulate:a", thrust_trail_alpha, 0.5)
 		else:
 			# če grem počasi ga skrijem
 			var trail_grad = get_tree().create_tween()

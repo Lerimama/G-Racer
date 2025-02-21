@@ -14,7 +14,7 @@ var z_indexes: Dictionary = {
 	# indexi so delno poštimani tudi v nodetih levela
 	# ref "background": -10,
 	"ground": 0, # streets, surfaces
-	"agents": 1,
+	"vehicles": 1,
 	# TUDU
 	"pickables": 1, # v levelu
 	"breakers": 1,
@@ -39,7 +39,7 @@ enum STATS {
 		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED, LAP_TIME
 		}
 
-#var start_agent_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
+#var start_vehicle_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
 #	STATS.LEVEL_RANK: 0,
 #	STATS.LEVEL_TIME: 0, # hunds
 #	STATS.BEST_LAP_TIME: 0,
@@ -51,7 +51,7 @@ enum RANKING_MODE {TIME, POINTS}
 var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	# tipi:
 	#	Int ... je samo vrednost
-	#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v agenta
+	#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v driverja
 	#	Array ... lahko se računa current in max value
 	#	PoolIntArray ... vedno
 	STATS.WINS: [], # zmagani leveli
@@ -89,7 +89,7 @@ var default_driver_profile: Dictionary = {
 	"driver_avatar": preload("res://home/avatar_david.tres"),
 	"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
-	"agent_type": AGENT.BASIC,
+	"vehicle_type": VEHICLE.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
 }
 
@@ -99,7 +99,7 @@ var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var ai_profile: Dictionary = {
-	"controller_scene": preload("res://game/agent/ControllerAI.tscn"),
+	"driver_scene": preload("res://game/vehicle/DriverAI.tscn"),
 	"ai_avatar": preload("res://home/avatar_ai.tres"),
 	"ai_type": AI_TYPE.DEFAULT,
 	"ai_name": "STEINY",
@@ -115,7 +115,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p1_right",
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
-		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
 		},
 	CONTROLLER_TYPE.WASD : {
 		fwd_action = "p2_fwd",
@@ -124,7 +124,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p2_right",
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
-		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP1 : {
 		fwd_action = "jp1_fwd",
@@ -133,7 +133,7 @@ var controller_profiles: Dictionary = {
 		right_action = "jp1_right",
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
-		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP2 : {
 		fwd_action = "jp2_fwd",
@@ -142,20 +142,20 @@ var controller_profiles: Dictionary = {
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
-		"controller_scene": preload("res://game/agent/ControllerPlayer.tscn"),
+		"driver_scene": preload("res://game/vehicle/DriverPlayer.tscn"),
 	},
 }
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
-func agents(): pass
+func vehicles(): pass
 
-enum AGENT {BASIC, TRUCK}
-var agent_profiles: Dictionary = {
-	AGENT.BASIC: {
-		"agent_scene": preload("res://game/agent/Agent.tscn"),
-		"agent_profile_path": load("res://game/agent/profiles/agent_profile_def.tres"),
-		"motion_manager_path": load("res://game/agent/MotionManager.gd"),
+enum VEHICLE {BASIC, TRUCK}
+var vehicle_profiles: Dictionary = {
+	VEHICLE.BASIC: {
+		"vehicle_scene": preload("res://game/vehicle/Vehicle.tscn"),
+		"vehicle_profile_path": load("res://game/vehicle/profiles/vehicle_profile_def.tres"),
+		"motion_manager_path": load("res://game/vehicle/MotionManager.gd"),
 		"height": 10,
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
@@ -247,7 +247,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 10,
+		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
 #		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente

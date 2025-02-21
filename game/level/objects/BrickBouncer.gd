@@ -21,11 +21,11 @@ func _ready() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_agents):
+	if body.is_in_group(Rfs.group_drivers):
 		body.modulate = Color.yellow
 
 
 func _on_DetectArea_body_exited(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_agents):
+	if body.is_in_group(Rfs.group_drivers):
 		body.modulate = Color.white

@@ -37,7 +37,7 @@ func _ready() -> void:
 func _on_Item_body_entered(body: Node) -> void:
 
 
-	if body.is_in_group(Rfs.group_agents):
+	if body.is_in_group(Rfs.group_drivers):
 		emit_signal("reached_by", self, body)
 		if "pickable_ammo" in Pfs.pickable_profiles.keys():
 			Rfs.sound_manager.play_sfx("pickable_ammo")

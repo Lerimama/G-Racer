@@ -3,133 +3,133 @@ extends Node
 
 var game_level: Level
 
-var agents_in_game: Array # live data ... tekom igre so v ranked zaporedju (glede na distanco)
-var players_in_game: Array # live data ... tekom igre so v ranked zaporedju (glede na distanco)
-var ais_in_game: Array # live data ... tekom igre so v ranked zaporedju (glede na distanco)
-var agents_in_game_ranked: Array = []
-var agents_in_game_active: Array = []
+var agents_in_game: Array # all controlled and interacting
+var drivers_in_game: Array # all with ranking
+var players_in_game: Array # tudi agents, drivers
+var ais_in_game: Array # tudi agents, drivers
+#var drivers_in_game_ranked: Array = []
+#var drivers_in_game_active: Array = []
 
-onready var game_parent: Game = get_parent()
+onready var game_parent: Node2D = get_parent()
 
 
 func _process(delta: float) -> void:
 
 	if game_level:
+
 		# beleženje prisotnosti
-		agents_in_game = get_tree().get_nodes_in_group(Rfs.group_agents)
+		drivers_in_game = get_tree().get_nodes_in_group(Rfs.group_drivers)
 		players_in_game = []
 		ais_in_game = []
-		for agent in agents_in_game:
-			if is_instance_valid(agent) and agent.is_active:
-				agents_in_game_active.append(agent)
-				if agent.is_in_group(Rfs.group_players): players_in_game.append(agent)
-				if agent.is_in_group(Rfs.group_ai): ais_in_game.append(agent)
-			if not is_instance_valid(agent):
-				agents_in_game.erase(agent)
+		for driver in drivers_in_game:
+			if is_instance_valid(driver):# and driver.is_active:
+#				drivers_in_game_active.append(driver)
+				if driver.is_in_group(Rfs.group_players): players_in_game.append(driver)
+				if driver.is_in_group(Rfs.group_ai): ais_in_game.append(driver)
+			if not is_instance_valid(driver):# and not driver.is_active:
+				drivers_in_game.erase(driver)
 
 		# ranking
-		if agents_in_game.size() > 1 and game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
-			agents_in_game_ranked = _update_ranking(agents_in_game)
-		else:
-			agents_in_game_ranked = agents_in_game
+		if drivers_in_game.size() > 1 and game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
+			_update_ranking()
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
-		for agent in agents_in_game:
-			if agent.is_active:
-				var curent_lap_time: int = game_parent.hud.game_timer.game_time_hunds - agent.prev_lap_level_time
-				agent.update_stat(Pfs.STATS.LAP_TIME, curent_lap_time)
+
+		for driver in drivers_in_game:
+			if driver.is_active:
+				var curent_lap_time: int = game_parent.hud.game_timer.game_time_hunds - driver.prev_lap_level_time
+				driver.update_stat(Pfs.STATS.LAP_TIME, curent_lap_time)
 
 
-func _update_ranking(unranked_agents: Array):
+func _update_ranking():
 	# najprej po poziciji znotraj kroga, potem po številu krogov
 
-	var agents_ranked: Array = []
+	var unranked_drivers: Array = drivers_in_game.duplicate()
+	var drivers_ranked: Array = []
 
 	# RACING
 	if game_parent.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
 		# tracking
 		if game_level.level_track:
 			# najprej rangiram trackerje
-			var all_agent_trackers: Array = []
-			for unranked_agent in unranked_agents: all_agent_trackers.append(unranked_agent.agent_tracker)
-			all_agent_trackers.sort_custom(self, "_sort_trackers_by_offset")
-			# pol napolnim agents_ranked glede na rankg trackerja
-			for agent_tracker in all_agent_trackers: agents_ranked.append(agent_tracker.tracking_target)
+			var all_driver_trackers: Array = []
+			for unranked_driver in unranked_drivers: all_driver_trackers.append(unranked_driver.driver_tracker)
+			all_driver_trackers.sort_custom(self, "_sort_trackers_by_offset")
+			# pol napolnim drivers_ranked glede na rankg trackerja
+			for driver_tracker in all_driver_trackers: drivers_ranked.append(driver_tracker.tracking_target)
 		# goals
 		elif not game_level.level_goals.empty():
-			agents_ranked = unranked_agents.duplicate()
-			agents_ranked.sort_custom(self, "_sort_agents_by_goals_reached")
-			pass
+			drivers_ranked = unranked_drivers
+			drivers_ranked.sort_custom(self, "_sort_drivers_by_goals_reached")
 		# pol rangirane po trackerju rangiram po prevoženih krogih
-		if game_parent.level_profile["level_laps"] > 1: agents_ranked.sort_custom(self, "_sort_agents_by_laps")
-		agents_in_game = agents_ranked
+		if game_parent.level_profile["level_laps"] > 1:
+			drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
 
 	# BATTLE
 	else:
 		# rangiram po točkah
-		agents_ranked = unranked_agents.duplicate()
-		agents_ranked.sort_custom(self, "_sort_agents_by_points")
+		drivers_ranked = unranked_drivers
+		drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
+
+	drivers_in_game = drivers_ranked
 
 	# ranking stats
 	var players_ranked: Array = []
-	for ranked_agent in agents_ranked:
-		var prev_rank: int = ranked_agent.driver_stats[Pfs.STATS.LEVEL_RANK]
-		var new_rank: int = agents_ranked.find(ranked_agent) + 1
+	for ranked_driver in drivers_in_game:
+		var prev_rank: int = ranked_driver.driver_stats[Pfs.STATS.LEVEL_RANK]
+		var new_rank: int = drivers_in_game.find(ranked_driver) + 1
 		if not new_rank == prev_rank:
-			ranked_agent.update_stat(Pfs.STATS.LEVEL_RANK, new_rank)
-		if ranked_agent.is_in_group(Rfs.group_players):
-			players_ranked.append(ranked_agent)
+			ranked_driver.update_stat(Pfs.STATS.LEVEL_RANK, new_rank)
+		if ranked_driver.is_in_group(Rfs.group_players):
+			players_ranked.append(ranked_driver)
 
 	if not players_ranked[0] == game_parent.game_reactor.camera_leader:
 		game_parent.game_reactor.camera_leader = players_ranked[0]
-
-	return agents_ranked
-
 
 
 # SORING ------------------------------------------------------------------------------------------------------------
 
 
-func _sort_agents_by_laps(agent_1: Node2D, agent_2: Node2D): # desc
+func _sort_drivers_by_laps(driver_1: Node2D, driver_2: Node2D): # desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var agent_1_lap_count: int = agent_1.driver_stats[Pfs.STATS.LAP_COUNT].size()
-	var agent_2_lap_count: int = agent_2.driver_stats[Pfs.STATS.LAP_COUNT].size()
-	if agent_1_lap_count > agent_2_lap_count:
+	var driver_1_lap_count: int = driver_1.driver_stats[Pfs.STATS.LAP_COUNT].size()
+	var driver_2_lap_count: int = driver_2.driver_stats[Pfs.STATS.LAP_COUNT].size()
+	if driver_1_lap_count > driver_2_lap_count:
 		return true
 	return false
 
 
-func _sort_trackers_by_offset(agent_tracker_1, agent_tracker_2):# desc
+func _sort_trackers_by_offset(driver_tracker_1, driver_tracker_2):# desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	if agent_tracker_1.offset > agent_tracker_2.offset:
+	if driver_tracker_1.offset > driver_tracker_2.offset:
 		return true
 	return false
 
 
-func _sort_agents_by_goals_reached(agent_1: Node2D, agent_2: Node2D):# desc
+func _sort_drivers_by_goals_reached(driver_1: Node2D, driver_2: Node2D):# desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var agent_1_goals_to_reach_size: int = agent_1.controller.goals_to_reach.size()
-	var agent_2_goals_to_reach_size: int = agent_2.controller.goals_to_reach.size()
-	if agent_1_goals_to_reach_size < agent_2_goals_to_reach_size:
+	var driver_1_goals_to_reach_size: int = driver_1.control_manager.goals_to_reach.size()
+	var driver_2_goals_to_reach_size: int = driver_2.control_manager.goals_to_reach.size()
+	if driver_1_goals_to_reach_size < driver_2_goals_to_reach_size:
 		return true
 	return false
 
 
-func _sort_agents_by_points(agent_1: Node2D, agent_2: Node2D):# desc
+func _sort_drivers_by_points(driver_1: Node2D, driver_2: Node2D):# desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var agent_1_points: int = agent_1.driver_stats[Pfs.STATS.POINTS]
-	var agent_2_points: int = agent_2.driver_stats[Pfs.STATS.POINTS]
-	if agent_1_points > agent_2_points:
+	var driver_1_points: int = driver_1.driver_stats[Pfs.STATS.POINTS]
+	var driver_2_points: int = driver_2.driver_stats[Pfs.STATS.POINTS]
+	if driver_1_points > driver_2_points:
 		return true
 	return false
 
 
-func _sort_trackers_by_speed(agent_1, agent_2): # desc ... ne uporabljam
+func _sort_drivers_by_speed(driver_1 , driver_2): # desc ... ne uporabljam
 
-	if agent_1.velocity.length() > agent_2.velocity.length():
+	if driver_1.velocity.length() > driver_2.velocity.length():
 	    return true
 	return false

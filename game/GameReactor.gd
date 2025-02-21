@@ -7,8 +7,8 @@ var camera_leader: Node2D = null setget _change_camera_leader
 var slomo_in_progress: bool = false
 var available_pickable_positions: Array # za random spawn
 var navigation_positions: Array # pozicije vseh navigation tiletov
-var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja agento druga na drugega
-var agents_finished: Array # agenti v cilju
+var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja driverjev druga na drugega
+var drivers_finished: Array # driverji v cilju
 
 onready var game_parent: Game = get_parent()
 
@@ -18,25 +18,25 @@ func _ready() -> void:
 	Rfs.game_reactor = self
 
 
-func _pull_agent_on_field(agent_to_pull: Agent): # temp ... Vechile class
+func _pull_driver_on_field(drivers_to_pull: Vehicle): # temp ... Vehicle class
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING and Sts.one_screen_mode:
 
-		if agent_to_pull.is_active:
+		if drivers_to_pull.is_active:
 
-			var agent_pull_position: Vector2 = _get_agent_pull_position(agent_to_pull)
-			agent_to_pull.call_deferred("pull_on_screen", agent_pull_position)
+			var pull_position: Vector2 = _get_driver_pull_position(drivers_to_pull)
+			drivers_to_pull.call_deferred("pull_on_screen", pull_position)
 
 			# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
 			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
-			if agent_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size() < camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size():
-				agent_to_pull.update_stat(Pfs.STATS.LAP_COUNT, camera_leader.driver_stats[Pfs.STATS.LAP_COUNT])
+			if drivers_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size() < camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size():
+				drivers_to_pull.update_stat(Pfs.STATS.LAP_COUNT, camera_leader.driver_stats[Pfs.STATS.LAP_COUNT])
 			# mogoče tega spodej nebi mel ... bomo videlo po testu
-			if agent_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED].size() < camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].size():
-				agent_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED])
+			if drivers_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED].size() < camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].size():
+				drivers_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED])
 
 
-func _get_agent_pull_position(agent_to_pull: Node2D): # temp ... Vechile class
+func _get_driver_pull_position(drivers_to_pull: Node2D): # temp ... Vehicle class
 	# na koncu izbrana pull pozicija:
 	# - je na območju navigacije
 	# - upošteva razdaljo do vodilnega
@@ -44,11 +44,11 @@ func _get_agent_pull_position(agent_to_pull: Node2D): # temp ... Vechile class
 	#	printt ("current_pull_positions",current_pull_positions.size())
 
 	# pull pozicija brez omejitev
-	var pull_position_distance_from_leader: float = agent_to_pull.near_radius # pull razdalja od vodilnega plejerja
+	var pull_position_distance_from_leader: float = drivers_to_pull.near_radius # pull razdalja od vodilnega plejerja
 
-	var vector_to_leading_player: Vector2 = camera_leader.global_position - agent_to_pull.global_position
+	var vector_to_leading_player: Vector2 = camera_leader.global_position - drivers_to_pull.global_position
 	var vector_to_pull_position: Vector2 = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
-	var agent_pull_position: Vector2 = agent_to_pull.global_position + vector_to_pull_position
+	var driver_pull_position: Vector2 = drivers_to_pull.global_position + vector_to_pull_position
 
 	# implementacija omejitev, da ni na steni ali elementu ali drugemu plejerju
 	var navigation_position_as_pull_position: Vector2
@@ -62,7 +62,7 @@ func _get_agent_pull_position(agent_to_pull: Node2D): # temp ... Vechile class
 		# ostale nav celice ... če je boljša, jo določim za novo opredeljeno
 		else:
 			# preverim, če je bližja od trenutno opredeljene ... itak da je
-			if cell_position.distance_to(agent_pull_position) < navigation_position_as_pull_position.distance_to(agent_pull_position):
+			if cell_position.distance_to(driver_pull_position) < navigation_position_as_pull_position.distance_to(driver_pull_position):
 				# pozicija je dovolj stran od vodilnega
 				if cell_position.distance_to(camera_leader.global_position) > pull_position_distance_from_leader:
 					# če je pozicija zasedena
@@ -157,7 +157,7 @@ func _check_for_game_end():
 
 	# preverim, če kakšen plejer še dirka
 	for player in game_parent.game_tracker.players_in_game:
-		if player.is_active and not player in agents_finished:
+		if player.is_active and not player in drivers_finished:
 			all_players_finished_or_deactivated = false
 			break
 
@@ -165,7 +165,7 @@ func _check_for_game_end():
 	var is_success: bool = false
 	if all_players_finished_or_deactivated:
 		for player in game_parent.game_tracker.players_in_game:
-			if player in agents_finished:
+			if player in drivers_finished:
 				is_success = true
 		# apliciram stage ... pošlje signal
 		if is_success:
@@ -188,11 +188,11 @@ func _change_camera_leader(new_camera_leader: Node2D):
 
 func _on_game_time_is_up():
 		# če je potekel čas je verjetno še kdo v igri
-	get_tree().set_group(Rfs.group_agents, "is_active", false)
-#	for agent in game_parent.game_tracker.agents_in_game:
+	get_tree().set_group(Rfs.group_drivers, "is_active", false)
+#	for driver in game_parent.game_tracker.drivers_in_game:
 #		# če se disejbla sam na GO signal je prepozno za final game data
-#		if agent.is_active:
-#			agent.is_active = false
+#		if driver.is_active:
+#			driver.is_active = false
 
 
 func _on_fx_finished(finished_fx: Node): # Node, ker je lahko audio
@@ -201,66 +201,66 @@ func _on_fx_finished(finished_fx: Node): # Node, ker je lahko audio
 		finished_fx.queue_free()
 
 
-func _on_agent_reached_goal(reached_goal: Node, reaching_agent: Agent): # level poveže  # temp ... Vechile class
-	# reagirata agent in igra
+func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level poveže  # temp ... Vehicle class
+	# reagirata driver in igra
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
 
 		# če je zaporedje, more bit goal enak prvemu v vrsti
-		if not game_level.reach_goals_in_sequence or reached_goal == reaching_agent.goals_to_reach[0]:
+		if not game_level.reach_goals_in_sequence or reached_goal == reaching_driver.goals_to_reach[0]:
 
 			# dodam med dosežene
-			reaching_agent.update_stat(Pfs.STATS.GOALS_REACHED, reached_goal)
+			reaching_driver.update_stat(Pfs.STATS.GOALS_REACHED, reached_goal)
 
 			# next ...
-			var reached_goals_count: int = reaching_agent.driver_stats[Pfs.STATS.GOALS_REACHED].size()
+			var reached_goals_count: int = reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED].size()
 			if reached_goals_count < game_level.level_goals.size():
-				reaching_agent.controller.goal_reached(reached_goal)
+				reaching_driver.control_manager.goal_reached(reached_goal)
 				Rfs.sound_manager.play_sfx("little_horn")
 			elif game_level.level_finish:
-				reaching_agent.controller.goal_reached(reached_goal, game_level.level_finish)
+				reaching_driver.control_manager.goal_reached(reached_goal, game_level.level_finish)
 				Rfs.sound_manager.play_sfx("little_horn")
 			else:
-				reaching_agent.controller.goal_reached(reached_goal)
+				reaching_driver.control_manager.goal_reached(reached_goal)
 				Rfs.sound_manager.play_sfx("finish_horn")
-				agents_finished.append(reaching_agent)
+				drivers_finished.append(reaching_driver)
 
 		_check_for_game_end()
 
 
-func _on_finish_line_crossed(agent_across: Agent): # sproži finish line  # temp ... Vechile class
+func _on_finish_line_crossed(drivers_across: Vehicle): # sproži finish line  # temp ... Vehicle class
 
 	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
 
-		var agent_goals_reached: Array = agent_across.driver_stats[Pfs.STATS.GOALS_REACHED].duplicate()
+		var driver_goals_reached: Array = drivers_across.driver_stats[Pfs.STATS.GOALS_REACHED].duplicate()
 
 		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
-		if game_level.level_goals.empty() or agent_goals_reached == game_level.level_goals:
+		if game_level.level_goals.empty() or driver_goals_reached == game_level.level_goals:
 
 			# stat level time
-			agent_across.prev_lap_level_time = game_parent.hud.game_timer.game_time_hunds
+			drivers_across.prev_lap_level_time = game_parent.hud.game_timer.game_time_hunds
 
-			agent_across.update_stat(Pfs.STATS.LEVEL_TIME, game_parent.hud.game_timer.game_time_hunds)
+			drivers_across.update_stat(Pfs.STATS.LEVEL_TIME, game_parent.hud.game_timer.game_time_hunds)
 
 			var has_finished_level: bool = false
 
 			# WITH LAPS ... lap finished če so vsi čekpointi
 			if game_parent.level_profile["level_laps"] > 1:
-				var lap_time: float = agent_across.driver_stats[Pfs.STATS.LAP_TIME]
-				agent_across.update_stat(Pfs.STATS.LAP_COUNT, lap_time)
+				var lap_time: float = drivers_across.driver_stats[Pfs.STATS.LAP_TIME]
+				drivers_across.update_stat(Pfs.STATS.LAP_COUNT, lap_time)
 
-				if agent_across.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game_parent.level_profile["level_laps"]:
+				if drivers_across.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game_parent.level_profile["level_laps"]:
 					has_finished_level = true
 			else:
 				has_finished_level = true
 
 			if has_finished_level:
-				agents_finished.append(agent_across) # pred drive out, ker se tam deaktivira
+				drivers_finished.append(drivers_across) # pred drive out, ker se tam deaktivira
 				var drive_out_time: float = 1
 				var drive_out_vector: Vector2 = Vector2.ZERO
 				if game_level.drive_out_position:
 					drive_out_vector = game_level.drive_out_position.rotated(game_level.level_finish.global_rotation)
-				agent_across.drive_out(drive_out_vector, drive_out_time)
+				drivers_across.drive_out(drive_out_vector, drive_out_time)
 				Rfs.sound_manager.play_sfx("finish_horn")
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
@@ -270,39 +270,39 @@ func _on_finish_line_crossed(agent_across: Agent): # sproži finish line  # temp
 
 func _on_body_exited_playing_field(body: Node) -> void:
 
-	#	if body.is_in_group(Rfs.group_agents):
+	#	if body.is_in_group(Rfs.group_drivers):
 	if body.is_in_group(Rfs.group_players):
-		_pull_agent_on_field(body)
+		_pull_driver_on_field(body)
 	elif body.has_method("on_out_of_playing_field"):
 		body.on_out_of_playing_field() # ta funkcija zakasni učinek
 
 
-func _on_agent_activity_change(changed_agent: Agent): # temp ... Vechile class
-#	printt("acitvity", changed_agent.name, changed_agent.is_active)
+func _on_driver_activity_change(changed_driver: Vehicle): # temp ... Vehicle class
+#	printt("acitvity", changed_driver.name, changed_driver.is_active)
 
 	# preverja, če je še kakšen player aktiven ... za GO
-	if changed_agent.is_active:
+	if changed_driver.is_active:
 		pass
 	else:
-		#		game_parent.game_tracker.players_in_game.erase(changed_agent)
-		#		game_parent.game_tracker.agents_in_game.erase(changed_agent)
-		#		game_parent.game_tracker.ais_in_game.erase(changed_agent)
+		#		game_parent.game_tracker.players_in_game.erase(changed_driver)
+		#		game_parent.game_tracker.drivers_in_game.erase(changed_driver)
+		#		game_parent.game_tracker.ais_in_game.erase(changed_driver)
 
-		# pripnem končne podatke o agentu
-		var agent_has_finished: bool = agents_finished.has(changed_agent)
+		# pripnem končne podatke o driverju
+		var driver_has_finished: bool = drivers_finished.has(changed_driver)
 		# če ni deaktiviran v finišu izgubi ranking
-		if not agent_has_finished:
+		if not driver_has_finished:
 			# samo za GO ... ni za statistiko
-			changed_agent.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
-		game_parent.finale_game_data[changed_agent.driver_name_id] = {
-			"driver_profile": changed_agent.driver_profile,
-			"driver_stats": changed_agent.driver_stats,
+			changed_driver.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
+		game_parent.finale_game_data[changed_driver.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
+			"driver_profile": changed_driver.driver_profile,
+			"driver_stats": changed_driver.driver_stats,
 			}
 
 		if Sts.hide_view_on_player_deactivated and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
 			# skrijem view
 			var hide_view_time: float
-			var removed_game_view: ViewportContainer = game_parent.game_views.find_key(changed_agent)
+			var removed_game_view: ViewportContainer = game_parent.game_views.find_key(changed_driver)
 			# odstranim, če ni zadnji view
 			if removed_game_view and game_parent.game_views.size() > 1:
 				removed_game_view.queue_free()
@@ -310,7 +310,7 @@ func _on_agent_activity_change(changed_agent: Agent): # temp ... Vechile class
 				# setam preostale
 				game_parent._set_game_views(game_parent.game_views.size())
 				# odstranim imitatorja ... more bit za setanje game_views
-				game_parent.hud.agent_huds_holder.remove_view_imitator(game_parent.game_views)
+				game_parent.hud.driver_huds_holder.remove_view_imitator(game_parent.game_views)
 
 		# preverim, če je bil zadnji plejer da končam igro ... za primer, če ni nobe
 		if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:

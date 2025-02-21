@@ -1,5 +1,5 @@
 extends Area2D
-# agent zazna podlago in prilagodi vožnjo glede na tip poglage
+# vehicle zazna podlago in prilagodi vožnjo glede na tip poglage
 
 #export (Pfs.SURFACE) var surface_type: int = 0
 export var surface_type: int = 0 # preverim, da je isto kot v profilih SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}

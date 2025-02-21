@@ -1,5 +1,5 @@
 extends Node2D
-
+class_name Weapon
 
 signal weapon_shot
 
@@ -13,7 +13,7 @@ export var ai_enabled: bool = false # spawner lahko povozi
 
 var is_set: bool = false
 var weapon_reloaded: bool = true
-var ammo_count: int = 0 # napolnems strani agenta ali igre
+var ammo_count: int = 0 # napolnems strani vehila ali igre
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -40,7 +40,7 @@ func _ready() -> void:
 	fire_cover_particles.emitting = false
 
 
-func setup(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče agent
+func set_weapon(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče vehil
 
 	weapon_owner = owner_node
 
@@ -52,7 +52,7 @@ func setup(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče agent
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
 		ai_enabled = with_ai
-		weapon_ai.setup(weapon_owner)
+		weapon_ai.set_ai(weapon_owner)
 
 	show()
 	is_set = true

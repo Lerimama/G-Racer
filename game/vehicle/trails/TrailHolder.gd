@@ -1,7 +1,7 @@
 extends Position2D
 
 
-var agent_trail_alpha = 0.05
+var vehicle_trail_alpha = 0.05
 var trail_pseudodecay_color = Color.white
 var active_trail: Line2D
 
@@ -12,17 +12,17 @@ func _ready() -> void:
 
 func spawn_new_trail():
 
-	var AgentTrail: PackedScene = preload("res://game/agent/trails/AgentTrail.tscn")
-	var new_agent_trail: Line2D = AgentTrail.instance()
-	new_agent_trail.modulate.a = agent_trail_alpha
-	new_agent_trail.z_index = z_index
-	new_agent_trail.width = 20
-	Rfs.node_creation_parent.add_child(new_agent_trail)
+	var VehicleTrail: PackedScene = preload("res://game/vehicle/trails/VehicleTrail.tscn")
+	var new_vehicle_trail: Line2D = VehicleTrail.instance()
+	new_vehicle_trail.modulate.a = vehicle_trail_alpha
+	new_vehicle_trail.z_index = z_index
+	new_vehicle_trail.width = 20
+	Rfs.node_creation_parent.add_child(new_vehicle_trail)
 
 	# signal za deaktivacijo, če ni bila že prej
-	new_agent_trail.connect("trail_exiting", self, "_on_trail_exiting")
+	new_vehicle_trail.connect("trail_exiting", self, "_on_trail_exiting")
 
-	return new_agent_trail
+	return new_vehicle_trail
 
 
 func decay():
@@ -39,10 +39,10 @@ func update_trail(moving_speed: float = 0, stop_speed_threshold: float = 0.5):
 		# start hiding trail + add trail points ... ob ponovnem premiku se ista spet pokaže
 		active_trail.add_points(global_position)
 		active_trail.gradient.colors[1] = trail_pseudodecay_color
-		if moving_speed > stop_speed_threshold and active_trail.modulate.a < agent_trail_alpha:
+		if moving_speed > stop_speed_threshold and active_trail.modulate.a < vehicle_trail_alpha:
 			# če se premikam in se je tril že začel skrivat ga prikažem
 			var trail_grad = get_tree().create_tween()
-			trail_grad.tween_property(active_trail, "modulate:a", agent_trail_alpha, 0.5)
+			trail_grad.tween_property(active_trail, "modulate:a", vehicle_trail_alpha, 0.5)
 		else:
 			# če grem počasi ga skrijem
 			var trail_grad = get_tree().create_tween()

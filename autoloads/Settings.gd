@@ -16,8 +16,7 @@ var game_mdoe: int = GAME_MODE.SINGLE
 var game_time_limit: int = 5 # če je 0 ni omejitve
 var start_countdown: bool = true
 var countdown_start_limit: int = 5
-var fast_start_window_time: float = 0.32
-var fast_start_time: float = 0.2
+var fast_start_time: float = 0.32
 var pickables_count_limit: int = 5
 var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
 var enemies_mode: bool = false
@@ -63,7 +62,7 @@ func _ready() -> void:
 
 		camera_zoom_range = [2, 2.3]
 		camera_zoom_range = [1, 5]
-		fast_start_window_time = 1
+		fast_start_time = 1
 		game_shadows_rotation_deg = 45
 
 		# obratne vrednosti
@@ -73,7 +72,7 @@ func _ready() -> void:
 		enemies_mode = true
 		camera_shake_on = false
 		slomo_fx_on = false
-		one_screen_mode = false
+#		one_screen_mode = false
 #		hide_view_on_player_deactivated = true
 
 		drivers_on_game_start = [ "JOU", "MOU", "ROU"]

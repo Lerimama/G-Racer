@@ -10,7 +10,7 @@
 [ext_resource path="res://common/shader_rect/ShaderCanvasRect.tscn" type="PackedScene" id=16]
 [ext_resource path="res://assets/materials/ground_linart.material" type="Material" id=17]
 [ext_resource path="res://assets/materials/ground_dust.material" type="Material" id=19]
-[ext_resource path="res://game/level/racing/AgentTracker.gd" type="Script" id=20]
+[ext_resource path="res://game/level/racing/DriverTracker.gd" type="Script" id=20]
 [ext_resource path="res://game/level/StartPosition.tscn" type="PackedScene" id=21]
 [ext_resource path="res://game/level/racing/StartLights.tscn" type="PackedScene" id=22]
 [ext_resource path="res://common/shader_rect/ShaderTextureRect.tscn" type="PackedScene" id=23]
@@ -276,12 +276,12 @@ position = Vector2( 312, 0 )
 curve = SubResource( 13454 )
 script = ExtResource( 24 )
 
-[node name="AgentTracker" type="PathFollow2D" parent="Tracking/LevelTrack"]
+[node name="Tracker" type="PathFollow2D" parent="Tracking/LevelTrack"]
 position = Vector2( 0, 735 )
 rotation = -1.42654
 script = ExtResource( 20 )
 
-[node name="CrossIndicator" type="Sprite" parent="Tracking/LevelTrack/AgentTracker"]
+[node name="CrossIndicator" type="Sprite" parent="Tracking/LevelTrack/Tracker"]
 scale = Vector2( 30, 30 )
 texture = ExtResource( 1 )
 

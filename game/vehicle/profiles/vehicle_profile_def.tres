@@ -1,11 +1,11 @@
 [gd_resource type="Resource" load_steps=2 format=2]
 
-[ext_resource path="res://game/agent/profiles/agent_profile_def.gd" type="Script" id=1]
+[ext_resource path="res://game/vehicle/profiles/vehicle_profile_def.gd" type="Script" id=1]
 
 [resource]
 script = ExtResource( 1 )
-agent_max_engine_power = 500.0
-agent_mass = 100.0
+start_max_engine_power = 500.0
+masa = 100.0
 ai_power_equlizer_addon = -10.0
 fast_start_power_addon = 200.0
 max_engine_power_rotation_adapt = 1.1
@@ -16,6 +16,6 @@ gas_usage_idle = -0.05
 ai_target_rank = 5
 on_hit_disabled_time = 2.0
 gas_tank_size = 200.0
-group_weapons_by_type = true
 damage_engine_power_factor = 1.0
-agent_health = 1.0
+vehicle_health = 1.0
+group_weapons_by_type = true

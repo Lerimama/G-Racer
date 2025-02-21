@@ -3,7 +3,7 @@ extends Camera2D
 
 export (Resource) var shake_profile_game
 export (Resource) var shake_profile_projectile
-export (Resource) var shake_profile_agent
+export (Resource) var shake_profile_vehicle
 
 var camera_player: Node2D
 var follow_target: Node setget _change_follow_target
@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 
 		# zoom ... dinamic
 		if dynamic_zoom_on:
-			if follow_target.is_in_group(Rfs.group_agents) and not follow_target.velocity == Vector2.ZERO:
+			if follow_target.is_in_group(Rfs.group_drivers) and not follow_target.velocity == Vector2.ZERO:
 				# samo, če je nad minimumom limit
 				if follow_target.velocity.length() > min_zoom_target_speed:
 					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
@@ -102,8 +102,8 @@ func shake_camera(source: Node):
 		var shake_trauma: float = 0
 		if source.is_in_group(Rfs.group_projectiles) and shake_profile_projectile:
 			shaker.shake_profile = shake_profile_projectile
-		if source.is_in_group(Rfs.group_agents) and shake_profile_agent:
-			shaker.shake_profile = shake_profile_agent
+		if source.is_in_group(Rfs.group_drivers) and shake_profile_vehicle:
+			shaker.shake_profile = shake_profile_vehicle
 		elif source == Rfs.game_manager and shake_profile_game:
 			shaker.shake_profile = shake_profile_game
 
@@ -140,7 +140,7 @@ func _change_follow_target(new_follow_target: Node):
 	if not new_follow_target == follow_target:
 		#		print ("change camera target")
 		#		smoothing_enabled = false
-		##		if new_follow_target.is_in_group(Rfs.group_agents):# or Rfs.game_manager game_on: # RFK ... kamera - hitrost setanja poizicije
+		##		if new_follow_target.is_in_group(Rfs.group_drivers):# or Rfs.game_manager game_on: # RFK ... kamera - hitrost setanja poizicije
 		#		var transition_tween = get_tree().create_tween()
 		##			transition_tween.tween_property(self, "position", new_follow_target.position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 		#		transition_tween.tween_property(self, "position", follow_target.global_position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)

@@ -1,9 +1,9 @@
 extends RigidBody2D
-class_name Agent
+class_name Vehicle
 
 
 signal activity_changed
-signal stat_changed (stats_owner_id, driver_stats) # agent in damage
+signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
@@ -17,12 +17,12 @@ var velocity: Vector2 = Vector2.ZERO
 var driver_name_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
-var agent_profile: Dictionary
-var agent_camera: Camera2D # spawner
+var vehicle_profile: Dictionary
+var vehicle_camera: Camera2D # spawner
 
-# iz agent profila
-#var agent_type: int
-var agent_color: Color = Color.red
+# iz vehicle profila
+#var vehicle_type: int
+var vehicle_color: Color = Color.red
 var gas_usage: float
 var gas_usage_idle: float
 var gas_tank_size: float
@@ -34,14 +34,14 @@ var ai_target_rank: int
 var revive_time: float = 2
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 var body_state: Physics2DDirectBodyState
-var agent_tracker: PathFollow2D # napolni se, ko se agent pripiše trackerju
+var driver_tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
 
 # drugo ...
 var triggering_weapons: Array = []
 var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
-onready var controller: Node = $AgentController # zamenja se ob spawnu AI/PLAYER
-onready var motion_manager: MotionManager = $MotionManager
+onready var control_manager: Node = $Control # zamenja se ob spawnu AI/PLAYER
+onready var motion_manager: Node = $Motion
 
 onready var equip_positions: Node2D = $EquipPositions
 onready var weapons: Node2D = $Weapons
@@ -57,8 +57,8 @@ onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
 onready var terrain_detect: Area2D = $TerrainDetect
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 
-onready var CollisionParticles: PackedScene = preload("res://game/agent/fx/AgentCollisionParticles.tscn")
-onready var ExplodingAgent: PackedScene = preload("res://game/agent/fx/ExplodingAgent.tscn")
+onready var CollisionParticles: PackedScene = preload("res://game/vehicle/fx/VehicleCollisionParticles.tscn")
+onready var ExplodingVehicle: PackedScene = preload("res://game/vehicle/fx/ExplodingVehicle.tscn")
 
 # debug
 onready var direction_line: Line2D = $DirectionLine
@@ -66,50 +66,51 @@ var debug_trail_time: float = 0
 var debug_trail: Line2D
 
 # neu
-export var agent_motion_profile: Resource = null
+export var vehicle_motion_profile: Resource = null
 
 
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"): # idle
-		motion_manager.boost_agent()
+		motion_manager.boost_vehicle()
 
 
 func _ready() -> void:
-#	printt("AGENT", self.name, get_collision_layer_bit(0))
+#	printt("VEHICLE", self.name, get_collision_layer_bit(0))
 
-	add_to_group(Rfs.group_agents)
+	add_to_group(Rfs.group_drivers)
 
 	z_as_relative = false
-	z_index = Pfs.z_indexes["agents"]
+	z_index = Pfs.z_indexes["vehicles"]
 
 	equip_positions.hide()
 	near_radius = get_node("NearArea/CollisionShape2D").shape.radius # za pullanje
 
 	if driver_profile:
-		agent_color = driver_profile["driver_color"] # agagentobarva ...
-#		agent_type = driver_profile["agent_type"]
+		vehicle_color = driver_profile["driver_color"] # driver barva ...
+#		vehicle_type = driver_profile["vehicle_type"]
 
-		if agent_motion_profile:
-			ai_target_rank = agent_motion_profile.ai_target_rank
-			height = agent_motion_profile.height
-			elevation = agent_motion_profile.elevation
-			gas_tank_size = agent_motion_profile.gas_tank_size
-			gas_usage = agent_motion_profile.gas_usage
-			gas_usage_idle = agent_motion_profile.gas_usage_idle
-		elif agent_profile:
-			ai_target_rank = agent_profile["ai_target_rank"]
-			height = agent_profile["height"]
-			elevation = agent_profile["elevation"]
-			gas_tank_size = agent_profile["gas_tank_size"]
-			gas_usage = agent_profile["gas_usage"]
-			gas_usage_idle = agent_profile["gas_usage_idle"]
+		if vehicle_motion_profile:
+			ai_target_rank = vehicle_motion_profile.ai_target_rank
+			height = vehicle_motion_profile.height
+			elevation = vehicle_motion_profile.elevation
+			gas_tank_size = vehicle_motion_profile.gas_tank_size
+			gas_usage = vehicle_motion_profile.gas_usage
+			gas_usage_idle = vehicle_motion_profile.gas_usage_idle
+		elif vehicle_profile:
+			ai_target_rank = vehicle_profile["ai_target_rank"]
+			height = vehicle_profile["height"]
+			elevation = vehicle_profile["elevation"]
+			gas_tank_size = vehicle_profile["gas_tank_size"]
+			gas_usage = vehicle_profile["gas_usage"]
+			gas_usage_idle = vehicle_profile["gas_usage_idle"]
 
-		_add_controller()
+		_add_driver_controller()
+
 		_add_motion_manager()
 
-		if agent_motion_profile:
-			agent_motion_profile._set_default_parameters(self)
+		if vehicle_motion_profile:
+			vehicle_motion_profile._set_default_parameters(self)
 		else:
 			motion_manager._set_default_parameters()
 #
@@ -120,7 +121,7 @@ func _ready() -> void:
 		for weapon in weapons.get_children():
 			var legit: bool = true
 			if weapon in equip_positions.positions_equiped.values():
-				weapon.setup(self)
+				weapon.set_weapon(self)
 				var used_for_triggering: bool = true
 				if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
 					used_for_triggering = false
@@ -167,8 +168,9 @@ func _process(delta: float) -> void:
 	if engines.engines_on: # poraba
 		update_stat(Pfs.STATS.GAS, gas_usage)
 
-	if driver_name_id == "MOU":
-		print ("max P ", motion_manager.max_engine_power)
+#	if driver_name_id == "MOU":
+#		print ("max P ", motion_manager.max_engine_power)
+
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
 	# print("power %s / " % motion_manager.current_engine_power, "force %s" % force)
@@ -177,18 +179,18 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 	velocity = state.get_linear_velocity() # tole je bol prej brez stejta
 
 	if is_active:
-		set_applied_torque(motion_manager.torque_on_agent)
+		set_applied_torque(motion_manager.torque_on_vehicle)
 		match motion_manager.motion:
 			motion_manager.MOTION.IDLE, motion_manager.MOTION.IDLE_LEFT, motion_manager.MOTION.IDLE_RIGHT:
 				# sila je 0 samo, če ni idle rotacije ali pa ja ROTATION, ker rotiram s torqu
-				front_mass.set_applied_force(motion_manager.force_on_agent)
-				rear_mass.set_applied_force(-motion_manager.force_on_agent)
+				front_mass.set_applied_force(motion_manager.force_on_vehicle)
+				rear_mass.set_applied_force(-motion_manager.force_on_vehicle)
 			motion_manager.MOTION.FWD, motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
-				front_mass.set_applied_force(motion_manager.force_on_agent)
+				front_mass.set_applied_force(motion_manager.force_on_vehicle)
 				rear_mass.set_applied_force(Vector2.ZERO)
 			motion_manager.MOTION.REV, motion_manager.MOTION.REV_LEFT, motion_manager.MOTION.REV_RIGHT:
 				front_mass.set_applied_force(Vector2.ZERO)
-				rear_mass.set_applied_force(motion_manager.force_on_agent)
+				rear_mass.set_applied_force(motion_manager.force_on_vehicle)
 
 
 # LAJF ----------------------------------------------------------------------------
@@ -215,8 +217,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
 	print ("max ", motion_manager.max_engine_power)
 
-	if agent_camera:
-		agent_camera.shake_camera(hit_by)
+	if vehicle_camera:
+		vehicle_camera.shake_camera(hit_by)
 
 
 func on_item_picked(pickable_key: int):
@@ -225,7 +227,7 @@ func on_item_picked(pickable_key: int):
 		Pfs.PICKABLE.PICKABLE_SHIELD:
 			_spawn_shield()
 		Pfs.PICKABLE.PICKABLE_NITRO:
-			motion_manager.boost_agent()
+			motion_manager.boost_vehicle()
 		_:
 			# če spreminja statistiko
 			if "driver_stat" in Pfs.pickable_profiles[pickable_key].keys():
@@ -258,22 +260,22 @@ func _explode():
 	trail_source.decay()
 
 	visible = false
-	controller.set_process_input(false)
+	control_manager.set_process_input(false)
 	set_physics_process(false)
 	# resetira na revive
 
 	# spawn eksplozije
-	var new_exploding_agent = ExplodingAgent.instance()
-	new_exploding_agent.global_position = global_position
-	new_exploding_agent.global_rotation = global_rotation
-	new_exploding_agent.modulate.a = 1
-	new_exploding_agent.velocity = velocity # podamo hitrost, da se premika s hitrostjo agenta
-	new_exploding_agent.spawner_color = agent_color
-	new_exploding_agent.z_index = z_index + 1
-	Rfs.node_creation_parent.add_child(new_exploding_agent)
+	var new_exploding_vehicle = ExplodingVehicle.instance()
+	new_exploding_vehicle.global_position = global_position
+	new_exploding_vehicle.global_rotation = global_rotation
+	new_exploding_vehicle.modulate.a = 1
+	new_exploding_vehicle.velocity = velocity # podamo hitrost, da se premika s hitrostjo vehila
+	new_exploding_vehicle.spawner_color = vehicle_color
+	new_exploding_vehicle.z_index = z_index + 1
+	Rfs.node_creation_parent.add_child(new_exploding_vehicle)
 
-	if agent_camera:
-		agent_camera.shake_camera(self)
+	if vehicle_camera:
+		vehicle_camera.shake_camera(self)
 	queue_free()
 
 
@@ -284,7 +286,7 @@ func _revive():
 	#	collision_shape.disabled = false
 
 	self.is_active = true
-	controller.set_process_input(true)
+	control_manager.set_process_input(true)
 	set_physics_process(true)
 	visible = true
 
@@ -293,7 +295,7 @@ func _revive():
 
 #
 #func _reset_motion():
-#	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v agent "v igri"
+#	# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v vehicle "v igri"
 #
 #	motion_manager.motion = motion_manager.MOTION.IDLE
 #	front_mass.set_applied_force(Vector2.ZERO)
@@ -345,7 +347,7 @@ func drive_out(drive_out_vector: Vector2 = Vector2.ZERO, drive_out_time: float =
 	engines.shutdown_engines()
 	modulate.a = 0
 	#	set_sleeping(true)
-	#	printt("drive out", is_sleeping(), controller.ai_target)
+	#	printt("drive out", is_sleeping(), control_manager.ai_target)
 	#	set_physics_process(false)
 	#	motion_manager.motion = motion_manager.MOTION.IDLE
 
@@ -372,7 +374,7 @@ func _spawn_shield():
 func pull_on_screen(pull_position: Vector2): # kliče GM
 
 	# disejblam koližne
-	controller.set_process_input(false)
+	control_manager.set_process_input(false)
 	collision_shape.set_deferred("disabled", true)
 
 	# reštartam trail
@@ -383,7 +385,7 @@ func pull_on_screen(pull_position: Vector2): # kliče GM
 	pull_tween.tween_property(body_state, "transform:origin", pull_position, pull_time)#.set_ease(Tween.EASE_OUT)
 	yield(pull_tween, "finished")
 	collision_shape.set_deferred("disabled", false)
-	controller.set_process_input(true)
+	control_manager.set_process_input(true)
 
 	update_stat(Pfs.STATS.GAS, Sts.pull_gas_penalty)
 
@@ -411,7 +413,7 @@ func _change_activity(new_is_active: bool):
 	if not new_is_active == is_active:
 		is_active = new_is_active
 		if is_active == true:
-			controller.set_process_input(true)
+			control_manager.set_process_input(true)
 			call_deferred("set_physics_process", true)
 			call_deferred("set_process", true)
 			update_stat(Pfs.STATS.WINS, driver_stats[Pfs.STATS.WINS])
@@ -419,7 +421,7 @@ func _change_activity(new_is_active: bool):
 		else: # ga upočasnim v trenutni smeri
 #			_reset_motion()
 			motion_manager.motion = motion_manager.MOTION.IDLE
-			controller.set_process_input(false)
+			control_manager.set_process_input(false)
 			# nočeš ga skos slišat, če je multiplejer
 			engines.shutdown_engines()
 			call_deferred("set_physics_process", false)
@@ -428,38 +430,38 @@ func _change_activity(new_is_active: bool):
 		emit_signal("activity_changed", self)
 
 
-func _add_controller():
+func _add_driver_controller():
 
 	 # zbrišem placeholder
-	controller.queue_free()
+	control_manager.queue_free()
 
-	var AgentController: PackedScene# = drivers_controller_profile["controller_scene"]
+	var DriverController: PackedScene
 	if driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-#		controller.controller_type = -1
-		AgentController = Pfs.ai_profile["controller_scene"]
+		DriverController = Pfs.ai_profile["driver_scene"]
 	else:
-		var drivers_controller_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
-		AgentController = drivers_controller_profile["controller_scene"]
+		var drivers_driver_profile: Dictionary = Pfs.controller_profiles[driver_profile["controller_type"]]
+		DriverController = drivers_driver_profile["driver_scene"]
 
-	# spawn na vrh agentovega drevesa
-	controller = AgentController.instance()
-	controller.controlled_agent = self
-	controller.agent_manager = motion_manager
+	# spawn na vrh vehicle ovega drevesa
+	control_manager = DriverController.instance()
+	control_manager.controlled_vehicle = self
+	control_manager.motion_manager = motion_manager
 	if not driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		controller.controller_type = driver_profile["controller_type"]
+		control_manager.controller_type = driver_profile["controller_type"]
+		print ("PLAYER ",  driver_profile["controller_type"], control_manager.controller_type)
 
-	call_deferred("add_child", controller)
-	call_deferred("move_child", controller, 0)
+	call_deferred("add_child", control_manager)
+	call_deferred("move_child", control_manager, 0)
 
 
 func _add_motion_manager():
 
-#	agent_profile = Pfs.agent_profiles[driver_profile["agent_type"]]
-	var motion_manager_path = agent_profile["motion_manager_path"]
+#	vehicle_profile = Pfs.vehicle_profiles[driver_profile["vehicle_type"]]
+	var motion_manager_path = vehicle_profile["motion_manager_path"]
 	motion_manager.set_script(motion_manager_path)
-	motion_manager.managed_agent = self
-	if agent_motion_profile:
-		motion_manager.agent_motion_profile = agent_motion_profile
+	motion_manager.managed_vehicle = self
+	if vehicle_motion_profile:
+		motion_manager.vehicle_motion_profile = vehicle_motion_profile
 
 
 #	motion_manager.set_process(false)
@@ -537,7 +539,7 @@ func _on_ReviveTimer_timeout() -> void:
 	_revive()
 
 
-func _on_Agent_body_entered(body: Node2D) -> void:
+func _on_Vehicle_body_entered(body: Node2D) -> void:
 
 	if not $Sounds/HitWall2.is_playing():
 		$Sounds/HitWall.play()
@@ -549,7 +551,7 @@ func _on_Agent_body_entered(body: Node2D) -> void:
 		new_collision_particles.position = body_state.get_contact_local_position(0)
 		new_collision_particles.rotation = body_state.get_contact_local_normal(0).angle() # rotacija partiklov glede na normalo površine
 		new_collision_particles.amount = (velocity.length() + 15)/15 # količnik je korektor ... 15 dodam zato da amount ni nikoli nič
-		new_collision_particles.color = agent_color
+		new_collision_particles.color = vehicle_color
 		new_collision_particles.set_emitting(true)
 		Rfs.node_creation_parent.add_child(new_collision_particles)
 
@@ -561,9 +563,7 @@ func _exit_tree() -> void:
 	#	printt("smeti", name, is_active)
 
 	self.is_active = false # zazih
-	if agent_camera:
-		if agent_camera.follow_target == self:
-			agent_camera.follow_target = null
+	if vehicle_camera:
+		if vehicle_camera.follow_target == self:
+			vehicle_camera.follow_target = null
 	trail_source.decay()
-
-

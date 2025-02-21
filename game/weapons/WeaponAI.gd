@@ -22,7 +22,7 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 		self.aim_target = null
 
 
-func setup(weapon_owner: Node2D, turn_on: bool = true):
+func set_ai(weapon_owner: Node2D, turn_on: bool = true):
 
 	if turn_on:
 		ai_weapon = get_parent()
@@ -46,7 +46,7 @@ func _process(delta: float) -> void:
 			ray_angle += delta * ray_rotating_speed
 			var target_in_reach: Node2D = Mts.get_rotating_raycast_collision(self, Vector2.RIGHT.rotated(ray_angle), aim_distance)
 			if target_in_reach:
-				if target_in_reach.is_in_group(Rfs.group_agents) or target_in_reach.is_in_group(Rfs.group_ai):
+				if target_in_reach.is_in_group(Rfs.group_drivers) or target_in_reach.is_in_group(Rfs.group_ai):
 					available_targets[target_in_reach] = global_position.distance_to(target_in_reach.global_position)
 			# nov krog
 			if ray_angle >= deg2rad(360):

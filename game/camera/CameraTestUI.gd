@@ -30,7 +30,7 @@ export(float, 0, 1) var add_trauma: float = 0.2
 
 var shake_on: bool = false
 export (float, 0, 1) var added_shake_trauma: float = 0.5
-#export (float, 0, 1) var agent_explosion_shake = 0.5 # explosion add_trauma
+#export (float, 0, 1) var vehicle_explosion_shake = 0.5 # explosion add_trauma
 #export (float, 0, 1) var bullet_hit_shake = 0.2 # bullet add_trauma
 #export (float, 0, 1) var misile_hit_shake = 0.4 # misile add_trauma
 

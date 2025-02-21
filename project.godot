@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "RigidBody2D",
-"class": "Agent",
-"language": "GDScript",
-"path": "res://game/agent/Agent.gd"
-}, {
 "base": "ColorRect",
 "class": "ColorTile",
 "language": "GDScript",
@@ -23,6 +18,11 @@ _global_script_classes=[ {
 "class": "Colorblindness",
 "language": "GDScript",
 "path": "res://addons/paulloz.colorblindness/colorblindness.gd"
+}, {
+"base": "Node2D",
+"class": "Equipment",
+"language": "GDScript",
+"path": "res://game/equipment/Equipment.gd"
 }, {
 "base": "Container",
 "class": "FlexGridContainer",
@@ -39,11 +39,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://game/Gui.gd"
 }, {
-"base": "Control",
-"class": "Hud",
-"language": "GDScript",
-"path": "res://game/gui/hud/Hud.gd"
-}, {
 "base": "Node2D",
 "class": "Level",
 "language": "GDScript",
@@ -53,11 +48,6 @@ _global_script_classes=[ {
 "class": "Main",
 "language": "GDScript",
 "path": "res://Main.gd"
-}, {
-"base": "Node",
-"class": "MotionManager",
-"language": "GDScript",
-"path": "res://game/agent/MotionManager.gd"
 }, {
 "base": "Node",
 "class": "Operator",
@@ -234,6 +224,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://_zaloga ... ni v uporabi/Shocker.gd"
 }, {
+"base": "RigidBody2D",
+"class": "Vehicle",
+"language": "GDScript",
+"path": "res://game/vehicle/Vehicle.gd"
+}, {
 "base": "ImageTexture",
 "class": "VersatileAtlasTexture",
 "language": "GDScript",
@@ -244,22 +239,25 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://_zaloga ... ni v uporabi/Walker.gd"
 }, {
+"base": "Node2D",
+"class": "Weapon",
+"language": "GDScript",
+"path": "res://game/weapons/Weapon.gd"
+}, {
 "base": "Control",
 "class": "________________",
 "language": "GDScript",
 "path": "res://autoloads/__________________.gd"
 } ]
 _global_script_class_icons={
-"Agent": "",
 "ColorTile": "",
 "Colorblindness": "res://addons/paulloz.colorblindness/colorblindness.svg",
+"Equipment": "",
 "FlexGridContainer": "res://addons/color-palette/utilities/FlexGridContainerIcon.png",
 "Game": "",
 "Gui": "",
-"Hud": "",
 "Level": "",
 "Main": "",
-"MotionManager": "",
 "Operator": "",
 "Palette": "",
 "PaletteImporter": "",
@@ -295,8 +293,10 @@ _global_script_class_icons={
 "SS2D_VertexProperties": "",
 "Shaker": "",
 "Shocker": "",
+"Vehicle": "",
 "VersatileAtlasTexture": "res://addons/versatile_atlas/icon_x.svg",
 "Walker": "",
+"Weapon": "",
 "________________": ""
 }
 
@@ -598,7 +598,7 @@ buffering/agile_event_flushing=true
 [layer_names]
 
 2d_physics/layer_1="all"
-2d_physics/layer_2="bolts"
+2d_physics/layer_2="agents"
 2d_physics/layer_3="ai_targets"
 2d_physics/layer_4="vision_breakers"
 2d_physics/layer_5="players"

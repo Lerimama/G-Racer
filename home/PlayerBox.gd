@@ -13,7 +13,7 @@ onready var controllers_node: VBoxContainer = $Content/Properties/Controllers/Ty
 onready var line_edit: LineEdit = $Content/LineEdit
 onready var transform_btn: Button = $Content/Menu/TransformBtn
 onready var remove_btn: Button = $Content/Menu/RemoveBtn
-onready var agents_node: VBoxContainer = $Content/Properties/Agents/Types
+onready var drivers_node: VBoxContainer = $Content/Properties/Drivers/Types
 onready var color_rect: ColorRect = $Content/ColorRect
 onready var avatar_btn: TextureButton = $Content/AvatarBtn
 
@@ -61,7 +61,7 @@ func _set_driver_box():
 		remove_btn.show()
 
 	_set_driver_controller()
-	_set_driver_agent()
+	_set_driver_vehicle()
 
 
 func _set_driver_controller():
@@ -89,17 +89,17 @@ func _set_driver_controller():
 				new_btn.hide()
 
 
-func _set_driver_agent():
+func _set_driver_vehicle():
 
-	var btn_template: Button = Mts.remove_chidren_and_get_template(agents_node.get_children())
+	var btn_template: Button = Mts.remove_chidren_and_get_template(drivers_node.get_children())
 
-	for agent_type in Pfs.AGENT.values():
+	for vehicle_type in Pfs.VEHICLE.values():
 		var new_btn: Button = btn_template.duplicate()
-		new_btn.text = Pfs.AGENT.keys()[agent_type]
-		agents_node.add_child(new_btn)
-		new_btn.connect("pressed", self, "_on_agent_btn_pressed", [new_btn])
+		new_btn.text = Pfs.VEHICLE.keys()[vehicle_type]
+		drivers_node.add_child(new_btn)
+		new_btn.connect("pressed", self, "_on_driver_btn_pressed", [new_btn])
 
-		if not driver_profile["agent_type"] == agent_type:
+		if not driver_profile["vehicle_type"] == vehicle_type:
 			new_btn.hide()
 
 		if is_ai:
@@ -123,15 +123,15 @@ func _on_controller_btn_pressed(btn: Button):
 
 
 
-func _on_agent_btn_pressed(btn: Button):
+func _on_driver_btn_pressed(btn: Button):
 
-	var next_btn_index: int = agents_node.get_children().find(btn) + 1
-	if next_btn_index > agents_node.get_child_count() - 1:
+	var next_btn_index: int = drivers_node.get_children().find(btn) + 1
+	if next_btn_index > drivers_node.get_child_count() - 1:
 		next_btn_index = 0
 
-	agents_node.get_child(next_btn_index).show()
-	driver_profile["agent_type"] = next_btn_index
-	agents_node.get_child(next_btn_index).grab_focus()
+	drivers_node.get_child(next_btn_index).show()
+	driver_profile["vehicle_type"] = next_btn_index
+	drivers_node.get_child(next_btn_index).grab_focus()
 	btn.hide()
 
 

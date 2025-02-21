@@ -61,7 +61,7 @@ func _process(delta: float) -> void:
 	#		start_decay()
 
 
-func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo agenta in na začetek arraya
+func add_points(current_position, at_pos: =  -1): # dodaj piko na pozicijo vehila in na začetek arraya
 
 	# minimalni razmak med pikami ... če je razdalja med trenutno piko in eno piko nazaj (-1) manjša od minimalne željene
 	#	if get_point_count() > 0 and current_position.distance_to(points[get_point_count() - 1]) < min_spawn_distance:
@@ -86,4 +86,4 @@ func _on_DecayTween_tween_all_completed() -> void:
 
 func _on_Trail_tree_exiting() -> void:
 
-	emit_signal("trail_exiting", self) # pošljem agentu, ki jo deaktivira
+	emit_signal("trail_exiting", self) # pošljem vehilu, ki jo deaktivira

@@ -2,16 +2,19 @@ extends Node
 
 # global nodes
 var main_node: Main = null
-var game_manager: Game = null
+var game_manager: Node2D = null
 var game_reactor: Node = null
 var sound_manager: Node = null
 var node_creation_parent: Node2D = null # NCP ... ven?
 var ultimate_popup: Popup = null
 
 # groups
+var group_agents = "agents"
+var group_vehicles = "vehicles"
 var group_players = "players"
 var group_ai = "ais"
-var group_agents = "agents"
+var group_drivers = "drivers"
+
 var group_pickables = "pickables"
 var group_shadows = "shadows"
 var group_projectiles = "projectiles"

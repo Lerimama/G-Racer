@@ -299,7 +299,7 @@ func _exit_tree() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_agents) and body != spawner:
+	if body.is_in_group(Rfs.group_drivers) and body != spawner:
 		if not detect_target or not is_instance_valid(detect_target):
 			detect_fx = _spawn_and_start_fx(DetecFx, false)
 			detect_target = body

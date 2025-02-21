@@ -76,4 +76,4 @@ func _on_Decay_tween_all_completed() -> void:
 
 func _on_ThrustTrail_tree_exiting() -> void:
 
-	emit_signal("trail_exiting", self) # dinamično povezano z agentom
+	emit_signal("trail_exiting", self) # dinamično povezano z vehilom

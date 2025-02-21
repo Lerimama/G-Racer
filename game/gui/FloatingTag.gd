@@ -35,7 +35,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 
-	var owners_camera: Camera2D = tag_owner.agent_camera
+	var owners_camera: Camera2D = tag_owner.vehicle_camera
 
 	if tag_owner:
 		global_position = tag_owner.global_position

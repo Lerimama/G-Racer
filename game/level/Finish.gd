@@ -24,5 +24,5 @@ func _change_activity(new_acive: bool):
 
 func _on_FinishLine_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_agents):
+	if body.is_in_group(Rfs.group_drivers):
 		emit_signal("reached_by", body)

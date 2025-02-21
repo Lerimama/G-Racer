@@ -4,48 +4,48 @@ extends Control
 var view_imitators: Dictionary = {}
 
 onready var view_imitator: Control = $ViewImitator
-onready var first_agent_hud: VBoxContainer = $ViewImitator/AgentHud
-onready var AgentHud: PackedScene = preload("res://game/gui/AgentHud.tscn")
+onready var first_driver_hud: VBoxContainer = $ViewImitator/DriverHud
+onready var DriverHud: PackedScene = preload("res://game/gui/DriverHud.tscn")
 
 
-func set_agent_huds(game_views: Dictionary, one_screen_mode: bool):
+func set_driver_huds(game_views: Dictionary, one_screen_mode: bool):
 
 	# debug reset
-	if first_agent_hud:
-		first_agent_hud.queue_free()
-		first_agent_hud = null
+	if first_driver_hud:
+		first_driver_hud.queue_free()
+		first_driver_hud = null
 
 	if one_screen_mode:
 		var imitated_view: ViewportContainer = game_views.keys()[0]
-		for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-			var new_player_agent_hud: Control = AgentHud.instance()
-			view_imitator.add_child(new_player_agent_hud)
-			new_player_agent_hud.set_agent_hud(player_agent, imitated_view)
+		for player_driver in get_tree().get_nodes_in_group(Rfs.group_players):
+			var new_player_driver_hud: Control = DriverHud.instance()
+			view_imitator.add_child(new_player_driver_hud)
+			new_player_driver_hud.set_driver_hud(player_driver, imitated_view)
 		# view predstavnik je prvik plejer
 		view_imitators[view_imitator] = game_views.values()[0]
 		# ai huds
-		for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
-			var new_ai_agent_hud: Control = AgentHud.instance()
-			view_imitator.add_child(new_ai_agent_hud)
-			new_ai_agent_hud.set_agent_hud(ai_agent, imitated_view, true)
+		for ai_driver in get_tree().get_nodes_in_group(Rfs.group_ai):
+			var new_ai_driver_hud: Control = DriverHud.instance()
+			view_imitator.add_child(new_ai_driver_hud)
+			new_ai_driver_hud.set_driver_hud(ai_driver, imitated_view, true)
 	else:
-		# agent huds and view imitators
+		# vehicle huds and view imitators
 		for view in game_views:
 			# spawnam view imitatorja, ki je dimenzijska kopija pripadajočega viewa
 			var view_imitator_template: Control = Mts.remove_chidren_and_get_template([view_imitator])
 			var new_view_imitator: Control = view_imitator_template.duplicate()
 			add_child(new_view_imitator)
 			# player hud
-			var player_agent: Agent = game_views[view]
-			var new_player_agent_hud = new_view_imitator.get_node("AgentHud")
-			new_player_agent_hud.set_agent_hud(player_agent, view)
+			var player_driver: Vehicle = game_views[view]
+			var new_player_driver_hud = new_view_imitator.get_node("DriverHud")
+			new_player_driver_hud.set_driver_hud(player_driver, view)
 			# view predstavnik je pripadajoči plejer
-			view_imitators[new_view_imitator] = player_agent
+			view_imitators[new_view_imitator] = player_driver
 			# ai huds
-			for ai_agent in get_tree().get_nodes_in_group(Rfs.group_ai):
-				var new_ai_agent_hud: Control = AgentHud.instance()
-				new_view_imitator.add_child(new_ai_agent_hud)
-				new_ai_agent_hud.set_agent_hud(ai_agent, view, true)
+			for ai_driver in get_tree().get_nodes_in_group(Rfs.group_ai):
+				var new_ai_driver_hud: Control = DriverHud.instance()
+				new_view_imitator.add_child(new_ai_driver_hud)
+				new_ai_driver_hud.set_driver_hud(ai_driver, view, true)
 
 	# aplciram game_views dimezije na imitatorja
 	_set_imitators_size(game_views)
@@ -77,7 +77,7 @@ func _set_imitators_size(game_views: Dictionary):
 
 	# setam novo velikost ... views in imitatorji imajo skupnega plejerja
 	for view in game_views:
-		var view_player: Agent = game_views[view]
+		var view_player: Vehicle = game_views[view]
 		if view_player in view_imitators.values():
 			var view_imitator_to_set: Control = view_imitators.find_key(view_player)
 			view_imitator_to_set.rect_size = view.rect_size

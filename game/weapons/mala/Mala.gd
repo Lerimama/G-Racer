@@ -38,7 +38,7 @@ func _physics_process(delta: float) -> void:
 		influenced_body.on_hit(self, global_position)
 
 
-func setup(owner_node: Node2D):
+func set_weapon(owner_node: Node2D):
 
 	mala_owner = owner_node
 	elevation = mala_owner.elevation + elevation

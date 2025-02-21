@@ -17,7 +17,7 @@ margin_bottom = 48.0
 size_flags_vertical = 0
 text = "P1 : "
 
-[node name="Agent" type="Label" parent="."]
+[node name="Driver" type="Label" parent="."]
 margin_left = 117.0
 margin_right = 194.0
 margin_bottom = 48.0

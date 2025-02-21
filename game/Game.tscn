@@ -9,9 +9,9 @@
 [ext_resource path="res://game/gui/PauseGame.tscn" type="PackedScene" id=7]
 [ext_resource path="res://game/gui/hud/Hud.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/key_3.wav" type="AudioStream" id=9]
-[ext_resource path="res://game/gui/AgentHuds.gd" type="Script" id=10]
+[ext_resource path="res://game/gui/DriverHuds.gd" type="Script" id=10]
 [ext_resource path="res://assets/sounds/music/moose.mp3" type="AudioStream" id=11]
-[ext_resource path="res://game/gui/AgentHud.tscn" type="PackedScene" id=12]
+[ext_resource path="res://game/gui/DriverHud.tscn" type="PackedScene" id=12]
 [ext_resource path="res://game/gui/LevelOver.tscn" type="PackedScene" id=13]
 [ext_resource path="res://assets/sounds/sfx/misile_flight.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sounds/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
@@ -160,23 +160,23 @@ custom_styles/panel = SubResource( 18 )
 [node name="Gui" type="CanvasLayer" parent="."]
 script = ExtResource( 50 )
 
-[node name="AgentHuds" type="Control" parent="Gui"]
+[node name="DriverHuds" type="Control" parent="Gui"]
 margin_right = 2560.0
 margin_bottom = 1440.0
 script = ExtResource( 10 )
 
-[node name="ViewImitator" type="Control" parent="Gui/AgentHuds"]
+[node name="ViewImitator" type="Control" parent="Gui/DriverHuds"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
 
-[node name="__ColorRect" type="Panel" parent="Gui/AgentHuds/ViewImitator"]
+[node name="__ColorRect" type="Panel" parent="Gui/DriverHuds/ViewImitator"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_styles/panel = SubResource( 19 )
 
-[node name="AgentHud" parent="Gui/AgentHuds/ViewImitator" instance=ExtResource( 12 )]
+[node name="DriverHud" parent="Gui/DriverHuds/ViewImitator" instance=ExtResource( 12 )]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5

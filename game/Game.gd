@@ -4,15 +4,15 @@ class_name Game
 
 signal game_stage_changed(game_manager)
 
-enum GAME_STAGE {LOADING, SETUP, READY, INTRO, FAST_START, PLAYING, PAUSED, END_SUCCESS, END_FAIL}
-var game_stage: int = GAME_STAGE.LOADING setget _change_game_stage
+enum GAME_STAGE {SETUP, READY, INTRO, PLAYING, PAUSED, END_SUCCESS, END_FAIL}
+var game_stage: int = -1 setget _change_game_stage
 
 export (Array, NodePath) var main_signal_connecting_paths: Array = []
 var main_signal_connecting_nodes: Array = []
 
 enum VIEW_TILE {ONE, TWO_VER, THREE_LEFT, THREE_RIGHT, FOUR }
 
-var fast_start_window_on: bool = false # agent ga čekira in reagira
+var fast_start_window_on: bool = false # driver ga čekira in reagira
 var game_views: Dictionary = {}
 
 # level
@@ -28,7 +28,8 @@ onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta i
 onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
 onready var game_views_holder: VFlowContainer = $GameViewFlow
 onready var GameView: PackedScene = preload("res://game/GameView.tscn")
-onready var hud: Hud = $Gui/Hud
+#onready var hud: Hud = $Gui/Hud
+onready var hud: Control = $Gui/Hud
 onready var game_tracker: Node = $GameTracker
 onready var game_reactor: Node = $GameReactor
 
@@ -37,7 +38,7 @@ var finale_game_data: Dictionary = {
 	# 	"levels_count"
 	#	"podatki o igri": 1,
 	#	"podatki o vseh agentih, ki so začeli": 1,
-	#	"agent_index": {
+	#	"driver_id_name": {
 	#		"driver_stats": {},
 	#		"driver_profile": {},
 	#	},
@@ -102,12 +103,12 @@ func _set_game():
 			# hard mode
 			if not finale_game_data[driver_name_id_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 				drivers_in_start_indexes.append(driver_name_id_data)
-		game_reactor.agents_finished.clear()
+		game_reactor.drivers_finished.clear()
 
 	# spawn drivers ... po zaporedji v arrayu indexov
 	var spawned_position_index = 0
 	for driver_name_id in drivers_in_start_indexes:
-		_spawn_agent(driver_name_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
+		_spawn_vehicle(driver_name_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
 		spawned_position_index += 1
 
 	yield(get_tree(), "idle_frame")
@@ -122,8 +123,8 @@ func _set_game():
 		else:
 			main_camera.playing_field.enable_playing_field(true, true) # z edgom
 		# pripišem plejer kamere
-		for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
-			player_agent.agent_camera = main_camera
+		for player_vehicle in get_tree().get_nodes_in_group(Rfs.group_players):
+			player_vehicle.vehicle_camera = main_camera
 		# set default view dodam med game viewe
 		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
 		_set_game_views(1)
@@ -135,8 +136,8 @@ func _set_game():
 		# default view dodam med game viewe
 		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
 		# pripišem default kamero
-		var player_agent_in_first_view: Agent = game_views.values().front()
-		player_agent_in_first_view.agent_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
+		var player_vehicle_in_first_view: Vehicle = game_views.values().front()
+		player_vehicle_in_first_view.vehicle_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
 		# ugasnem playing field
 		get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0].get_node("PlayingField").enable_playing_field(false)
 		# spawnam viewe še za preostale plejerje
@@ -187,13 +188,13 @@ func _game_intro():
 	fade_tween.tween_property(self, "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
 	yield(fade_tween, "finished")
 
-	# agents drive-in
+	# drivers drive-in
 	var drive_in_time: float = 2
-	for agent in game_tracker.agents_in_game:
+	for driver in game_tracker.drivers_in_game:
 		var drive_in_vector: Vector2 = Vector2.ZERO
 		if game_level.drive_in_position:
 			drive_in_vector = game_level.drive_in_position.rotated(game_level.level_start.global_rotation)
-		agent.drive_in(drive_in_vector, drive_in_time)
+		driver.drive_in(drive_in_vector, drive_in_time)
 
 	# počakam, da odpelje
 	yield(get_tree().create_timer(drive_in_time),"timeout")
@@ -208,9 +209,6 @@ func _start_game():
 		game_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
 		yield(game_level.start_lights, "countdown_finished")
 
-	# fast start
-	self.game_stage = GAME_STAGE.FAST_START
-	yield(get_tree().create_timer(Sts.fast_start_window_time), "timeout")
 	self.game_stage = GAME_STAGE.PLAYING
 
 	Rfs.sound_manager.play_music()
@@ -222,10 +220,6 @@ func _change_game_stage(new_game_stage: int):
 	game_stage = new_game_stage
 
 	match game_stage:
-
-		GAME_STAGE.LOADING:
-			pass
-
 		GAME_STAGE.SETUP:
 			# najprej povežem s s signalom
 			for connecting_node in main_signal_connecting_nodes:
@@ -237,9 +231,6 @@ func _change_game_stage(new_game_stage: int):
 
 		GAME_STAGE.INTRO:
 			pass
-
-		GAME_STAGE.FAST_START: # samo kar ni samo na štartu
-			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 			if not level_profile["level_type"] == Pfs.BASE_TYPE.RACING: # zaženem vsakič, tudi po pavzi
@@ -320,13 +311,13 @@ func _set_game_views(players_count: int = 1):
 
 func _spawn_new_game_views():
 
-	for player_agent in get_tree().get_nodes_in_group(Rfs.group_players):
+	for player_vehicle in get_tree().get_nodes_in_group(Rfs.group_players):
 		# def view je že setan
-		if not player_agent == get_tree().get_nodes_in_group(Rfs.group_players)[0]:
+		if not player_vehicle == get_tree().get_nodes_in_group(Rfs.group_players)[0]:
 			var new_game_view: ViewportContainer = GameView.instance()
 			game_views_holder.add_child(new_game_view)
-			game_views[new_game_view] = player_agent
-			player_agent.agent_camera = new_game_view.get_node("Viewport/GameCamera")
+			game_views[new_game_view] = player_vehicle
+			player_vehicle.vehicle_camera = new_game_view.get_node("Viewport/GameCamera")
 
 	# viewport world
 	var world_to_inherit: World2D = game_views.keys()[0].get_node("Viewport").world_2d
@@ -349,7 +340,7 @@ func _spawn_level(spawn_level_profile: Dictionary):
 	# setup
 	new_level.connect("level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	for node_path in new_level.level_goals_paths:
-		new_level.get_node(node_path).connect("reached_by", game_reactor, "_on_agent_reached_goal")
+		new_level.get_node(node_path).connect("reached_by", game_reactor, "_on_goal_reached")
 	if new_level.level_finish_path:
 		new_level.get_node(new_level.level_finish_path).connect("reached_by", game_reactor, "_on_finish_line_crossed")
 
@@ -358,10 +349,10 @@ func _spawn_level(spawn_level_profile: Dictionary):
 	game_level = new_level
 
 
-func _spawn_agent(agent_driver_name_id, spawned_position_index: int):
+func _spawn_vehicle(driver_name_id, spawned_position_index: int):
 
-	var scene_name: String = "agent_scene"
-	var agent_type: int = Pfs.AGENT.values()[0]
+	var scene_name: String = "vehicle_scene"
+	var vehicle_type: int = Pfs.VEHICLE.values()[0]
 
 	var new_driver_stats: Dictionary = Pfs.start_driver_stats.duplicate()
 	new_driver_stats[Pfs.STATS.LAP_COUNT] = [] # prepišem array v slovarju, da je tudi ta unique
@@ -378,33 +369,33 @@ func _spawn_agent(agent_driver_name_id, spawned_position_index: int):
 #	var new_int_array: PoolIntArray = [1,5]
 #	new_driver_stats[Pfs.STATS.LIFE] = new_int_array
 
-	var NewAgentInstance: PackedScene = Pfs.agent_profiles[agent_type][scene_name]
-	var new_agent = NewAgentInstance.instance()
-	new_agent.driver_name_id = agent_driver_name_id
-	new_agent.modulate.a = 0 # za intro
-	new_agent.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
-	new_agent.global_position = start_position_nodes[spawned_position_index].global_position
+	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
+	var new_vehicle = NewVehicleInstance.instance()
+	new_vehicle.driver_name_id = driver_name_id
+	new_vehicle.modulate.a = 0 # za intro
+	new_vehicle.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_vehicle.global_position = start_position_nodes[spawned_position_index].global_position
 
 	# profili ... iz njih podatke povleče sam na rea dy
-	new_agent.driver_profile = Pfs.driver_profiles[agent_driver_name_id].duplicate()
-	new_agent.driver_stats = new_driver_stats
-	new_agent.agent_profile = Pfs.agent_profiles[agent_type].duplicate()
+	new_vehicle.driver_profile = Pfs.driver_profiles[driver_name_id].duplicate()
+	new_vehicle.driver_stats = new_driver_stats
+	new_vehicle.vehicle_profile = Pfs.vehicle_profiles[vehicle_type].duplicate()
 
-	Rfs.node_creation_parent.add_child(new_agent)
+	Rfs.node_creation_parent.add_child(new_vehicle)
 
 	# ai navigation
-	if Pfs.driver_profiles[agent_driver_name_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		new_agent.controller.level_navigation = game_level.level_navigation
+	if Pfs.driver_profiles[driver_name_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
+		new_vehicle.control_manager.level_navigation = game_level.level_navigation
 	# trackers
 	if game_level.level_track:
-		new_agent.agent_tracker = game_level.level_track.set_new_tracker(new_agent)
+		new_vehicle.driver_tracker = game_level.level_track.set_new_tracker(new_vehicle)
 	# goals
-	new_agent.controller.goals_to_reach = game_level.level_goals.duplicate()
+	new_vehicle.control_manager.goals_to_reach = game_level.level_goals.duplicate()
 
 	# connect
-	self.connect("game_stage_changed", new_agent.controller, "_on_game_stage_change")
-	new_agent.connect("activity_changed", game_reactor, "_on_agent_activity_change")
-	new_agent.connect("stat_changed", hud, "_on_agent_stat_changed")
+	self.connect("game_stage_changed", new_vehicle.control_manager, "_on_game_stage_change")
+	new_vehicle.connect("activity_changed", game_reactor, "_on_driver_activity_change")
+	new_vehicle.connect("stat_changed", hud, "_on_driver_stat_changed")
 
 
 func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions: Array, level_type: int):

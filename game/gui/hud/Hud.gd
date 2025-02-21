@@ -1,5 +1,5 @@
 extends Control
-class_name Hud
+#class_name Hud
 
 
 var record_lap_time: int = 0
@@ -20,7 +20,6 @@ onready var level_name: Label = $HudSections/Center/Btm/LevelName
 
 onready var start_countdown: Control = $Popups/StartCountdown
 
-onready var AgentHud: PackedScene = preload("res://game/gui/AgentHud.tscn")
 onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
 onready var StatBox: PackedScene = preload("res://game/gui/hud/StatBox.tscn")
 
@@ -51,11 +50,11 @@ func set_hud(game_manager):
 	record_lap_label.hide()
 
 	# statboxes
-	for agent in game_manager.game_tracker.agents_in_game:
-		set_agent_statbox(agent, game_manager.level_profile["level_type"], game_manager.game_tracker.agents_in_game.size())
+	for driver in game_manager.game_tracker.drivers_in_game:
+		set_driver_statbox(driver, game_manager.level_profile["level_type"], game_manager.game_tracker.drivers_in_game.size())
 
 
-func set_agent_statbox(statbox_agent: Agent, level_type: int, all_statboxes_count: int): # kliče GM
+func set_driver_statbox(statbox_driver: Vehicle, level_type: int, all_statboxes_count: int): # kliče GM
 
 	statbox_count += 1
 
@@ -66,21 +65,21 @@ func set_agent_statbox(statbox_agent: Agent, level_type: int, all_statboxes_coun
 	else:
 		left_section.add_child(new_statbox)
 
-	statboxes_with_drivers[new_statbox] = statbox_agent
+	statboxes_with_drivers[new_statbox] = statbox_driver
 
-	var driver_stats: Dictionary = statbox_agent.driver_stats
-	var driver_profile: Dictionary = Pfs.driver_profiles[statbox_agent.driver_name_id]
+	var driver_stats: Dictionary = statbox_driver.driver_stats
+	var driver_profile: Dictionary = Pfs.driver_profiles[statbox_driver.driver_name_id]
 
 	# driver line
-	new_statbox.driver_name_label.text = str(statbox_agent.driver_name_id)
+	new_statbox.driver_name_label.text = str(statbox_driver.driver_name_id)
 	new_statbox.driver_name_label.modulate = driver_profile["driver_color"]
 	new_statbox.driver_avatar.set_texture(driver_profile["driver_avatar"])
 
 	# driver stats
 	for stat in driver_stats:
-		_on_agent_stat_changed(statbox_agent.driver_name_id, stat, driver_stats[stat])
+		_on_driver_stat_changed(statbox_driver.driver_name_id, stat, driver_stats[stat])
 
-#		if statbox_agent.driver_name_id == "JOU":# and not Pfs.STATS.keys()[agent_stat_key] == "GAS":
+#		if statbox_driver.driver_name_id == "JOU":# and not Pfs.STATS.keys()[driver_stat_key] == "GAS":
 #			printt("stat changed", Pfs.STATS.keys()[Pfs.STATS.values().find(stat)], driver_stats[stat])
 
 
@@ -118,7 +117,7 @@ func on_game_over():
 		statbox.hide()
 
 
-func _on_agent_stat_changed(driver_name_id, agent_stat_key: int, stat_value):
+func _on_driver_stat_changed(driver_name_id, driver_stat_key: int, stat_value):
 	# stat value je že preračunana, hud samo zapisuje
 
 	# opredelim drive statbox
@@ -129,11 +128,11 @@ func _on_agent_stat_changed(driver_name_id, agent_stat_key: int, stat_value):
 			break
 
 	# stat_to_change ... STAT key string
-	var current_key_index: int = Pfs.STATS.values().find(agent_stat_key)
+	var current_key_index: int = Pfs.STATS.values().find(driver_stat_key)
 	var current_key: String = Pfs.STATS.keys()[current_key_index]
 	var stat_to_change: Control = statbox_to_change.get(current_key)
 
-#	print("agent_stat_key",agent_stat_key)
+#	print("driver_stat_key",driver_stat_key)
 	# če je podan array elementov (laps finished, goals, wins, ...
 	if stat_value is Array:
 		# preverjam, če hočem current/max ... zadnja količina je int, ostale pa karkoli drugega
@@ -155,7 +154,7 @@ func _on_agent_stat_changed(driver_name_id, agent_stat_key: int, stat_value):
 		pass
 
 	# če stat ni v hudu, ampak drugje
-	#	match agent_stat_key:
+	#	match driver_stat_key:
 	##		Pfs.STATS.HEALTH:
 	#		Pfs.STATS.LEVEL_TIME:
 	#			return
@@ -163,7 +162,7 @@ func _on_agent_stat_changed(driver_name_id, agent_stat_key: int, stat_value):
 	stat_to_change.stat_value = stat_value
 
 
-func spawn_agent_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool = false):
+func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool = false):
 
 	var new_floating_tag = FloatingTag.instance()
 
