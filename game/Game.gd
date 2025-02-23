@@ -28,27 +28,20 @@ onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta i
 onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
 onready var game_views_holder: VFlowContainer = $GameViewFlow
 onready var GameView: PackedScene = preload("res://game/GameView.tscn")
-#onready var hud: Hud = $Gui/Hud
 onready var hud: Control = $Gui/Hud
 onready var game_tracker: Node = $Tracker
 onready var game_reactor: Node = $Reactor
 
 var game_levels: Array = []
 var finale_game_data: Dictionary = {
-	# 	"levels_count"
-	#	"podatki o igri": 1,
-	#	"podatki o vseh agentih, ki so začeli": 1,
 	#	"driver_id_name": {
 	#		"driver_stats": {},
 	#		"driver_profile": {},
-	#	},
+	#		},
 }
 
 var drivers_on_start: Array = [] # to so nodeti
 var camera_leader: Node2D = null setget _change_camera_leader
-
-# still tracking
-#var camera_leader: Node2D setget _change_camera_leader # trenutno vodilni igralec ... lahko tudi kakšen drug pogoj
 
 
 func _input(event: InputEvent) -> void:
@@ -94,22 +87,33 @@ func _set_game():
 
 	# drivers on level start
 	var driver_name_ids_on_start: Array = []
-	if level_count == 1:
-		finale_game_data.clear()
+	if level_count == 1:	# prvi level napolni finale data s praznimi slovarji štartnih
 		driver_name_ids_on_start = Sts.drivers_on_game_start
 		for driver_name_id in driver_name_ids_on_start:
-				finale_game_data[driver_name_id] = {}
-	else:
+			finale_game_data[driver_name_id] = {}
+		# spawn drivers ... začasno se podvaja
+		for driver_name_id in driver_name_ids_on_start:
+			_spawn_vehicle(driver_name_id, driver_name_ids_on_start.find(driver_name_id)) # scena, pozicija, profile id (barva, ...)
+
+	else: # ostali leveli
+		# start drivers
 		for driver_name_id in finale_game_data:
 			if not finale_game_data[driver_name_id]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 				driver_name_ids_on_start.append(driver_name_id)
+		# spawn drivers ... po zaporedji v arrayu indexov
+		for driver_name_id in driver_name_ids_on_start:
+			var new_veh = _spawn_vehicle(driver_name_id, driver_name_ids_on_start.find(driver_name_id)) # scena, pozicija, profile id (barva, ...)
+		# tihi aply statistike prejšnega levela ... hud še ni spawnan
+		for driver in drivers_on_start:
+			var drivers_final_level_data: Dictionary= finale_game_data[driver.driver_name_id]["driver_stats"]
+			for stat in drivers_final_level_data:
+				if not stat in [Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]:
+					driver.driver_stats[stat] = drivers_final_level_data[stat]
+		# reset
 		game_reactor.drivers_finished.clear()
-
-
-	# spawn drivers ... po zaporedji v arrayu indexov
-	for driver_name_id in driver_name_ids_on_start:
-		_spawn_vehicle(driver_name_id, driver_name_ids_on_start.find(driver_name_id)) # scena, pozicija, profile id (barva, ...)
-
+		finale_game_data.clear()
+		for driver_name_id in driver_name_ids_on_start:
+				finale_game_data[driver_name_id] = {}
 
 	yield(get_tree(), "idle_frame")
 
@@ -156,6 +160,7 @@ func _set_game():
 
 func _set_game_level():
 
+	# reset
 	level_count += 1
 	if level_count > 0:
 		# unmute sfx
@@ -178,7 +183,7 @@ func _set_game_level():
 
 func _game_intro():
 
-#	self.game_stage = GAME_STAGE.INTRO
+	self.game_stage = GAME_STAGE.INTRO
 
 	# pokažem sceno
 	var fade_time: float = 1
@@ -230,7 +235,8 @@ func _change_game_stage(new_game_stage: int):
 		GAME_STAGE.READY:
 			emit_signal("game_stage_changed", self)
 
-#		GAME_STAGE.INTRO:
+		GAME_STAGE.INTRO:
+			emit_signal("game_stage_changed", self)
 #			pass
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
@@ -308,6 +314,28 @@ func _set_game_views(players_count: int = 1):
 			game_views.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
 
 
+func apply_waiting_ai_final_data():
+
+	var current_game_time: int = hud.game_timer.game_time_hunds
+
+	# dodam neuvrščene ai-je, ki vedno pridejo do konca
+	for driver_name_id in finale_game_data:
+		if finale_game_data[driver_name_id].empty():
+			for driver in game_tracker.drivers_in_game: # ... lahko tudi ... for driver in drivers_on_start:
+				if driver.driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
+					# izračun predvidenega časa ... glede na prevožen procent
+					var distance_needed_part: float = driver.driver_tracker.unit_offset
+					if distance_needed_part == 0: # če obtiči na štartu ... verjetno nioli
+						driver.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time
+					else:
+						driver.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
+
+					finale_game_data[driver.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
+						"driver_profile": driver.driver_profile,
+						"driver_stats": driver.driver_stats,
+						}
+
+
 func _change_camera_leader(new_camera_leader: Node2D):
 
 	if not new_camera_leader == camera_leader:
@@ -351,7 +379,7 @@ func _spawn_level(spawn_level_profile: Dictionary):
 	for node_path in new_level.level_goals_paths:
 		new_level.get_node(node_path).connect("reached_by", game_reactor, "_on_goal_reached")
 	if new_level.level_finish_path:
-		new_level.get_node(new_level.level_finish_path).connect("reached_by", game_reactor, "_on_finish_line_crossed")
+		new_level.get_node(new_level.level_finish_path).connect("reached_by", game_reactor, "_on_finish_crossed")
 
 	new_level.set_level()
 
@@ -374,9 +402,11 @@ func _spawn_vehicle(driver_name_id, spawned_position_index: int):
 		##	var new_int_array: PoolIntArray = [1,5]
 		##	new_driver_stats[Pfs.STATS.LIFE] = new_int_array
 	# reset notranji arrayev ... da so unique
-	new_driver_stats[Pfs.STATS.LAP_COUNT] = []
-	new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
-	new_driver_stats[Pfs.STATS.WINS] = []
+	new_driver_stats[Pfs.STATS.LAP_COUNT] = new_driver_stats[Pfs.STATS.LAP_COUNT].duplicate()
+#	new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
+#	new_driver_stats[Pfs.STATS.WINS] = []
+	new_driver_stats[Pfs.STATS.GOALS_REACHED] = new_driver_stats[Pfs.STATS.GOALS_REACHED].duplicate()
+	new_driver_stats[Pfs.STATS.WINS] = new_driver_stats[Pfs.STATS.WINS].duplicate()
 
 	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
@@ -418,3 +448,4 @@ func _on_level_is_set(level_type: int, start_positions: Array, camera_limits: Co
 	game_reactor.navigation_positions = nav_positions
 	start_position_nodes = start_positions.duplicate()
 	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)
+	print ("LVEL ET")

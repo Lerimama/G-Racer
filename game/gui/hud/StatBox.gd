@@ -5,37 +5,30 @@ var all_box_stats: Array
 
 # id
 onready var driver_line: HBoxContainer = $DriverId/DriverLine
-#onready var driver_avatar: TextureRect = $DriverId/DriverLine/Avatar
 onready var driver_name_label: Label = $DriverId/DriverLine/Name
 onready var driver_avatar: TextureRect = $DriverId/DriverLine/Avatar
 
 # driver
 onready var LIFE: HBoxContainer = find_node("StatLife")
-onready var LEVEL_RANK: HBoxContainer = find_node("StatLevelRank") # $DriverId/DriverLine/StatLevelRank
-onready var WINS: HBoxContainer = find_node("StatWins") # $DriverId/DriverLine/StatWins
-onready var HEALTH: HBoxContainer = find_node("StatHealth") # $DriverId/DriverLine/StatHealth
-onready var CASH: HBoxContainer = find_node("StatCash") # $DriverStats/HBoxContainer/StatCash
-onready var POINTS: HBoxContainer = find_node("StatPoints") # $DriverStats/HBoxContainer/StatPoints
-onready var GAS: HBoxContainer = find_node("StatGas") # $DriverStats/HBoxContainer/StatGas
+onready var LEVEL_RANK: HBoxContainer = find_node("StatLevelRank")
+onready var WINS: HBoxContainer = find_node("StatWins")
+onready var HEALTH: HBoxContainer = find_node("StatHealth")
+onready var CASH: HBoxContainer = find_node("StatCash")
+onready var POINTS: HBoxContainer = find_node("StatPoints")
+onready var GAS: HBoxContainer = find_node("StatGas")
 
 # race
-onready var LAP_COUNT: HBoxContainer = find_node("StatLapCount") # $RaceStats/HBoxContainer/StatLapCount
-onready var BEST_LAP_TIME: HBoxContainer = find_node("StatBestLap") # $RaceStats/HBoxContainer/StatBestLap
-onready var LEVEL_TIME: HBoxContainer = find_node("StatLevelTime") # $RaceStats/HBoxContainer/StatLevelTime
+onready var LAP_COUNT: HBoxContainer = find_node("StatLapCount")
+onready var BEST_LAP_TIME: HBoxContainer = find_node("StatBestLap")
+onready var LEVEL_TIME: HBoxContainer = find_node("StatLevelTime")
 onready var LAP_TIME: HBoxContainer = find_node("StatLapTime")
 
 # battle
-onready var BULLET_COUNT: HBoxContainer = find_node("StatBullet") # $BattleStats/HBoxContainer/StatBullet
-onready var MISILE_COUNT: HBoxContainer = find_node("StatMisile") # $BattleStats/HBoxContainer/StatMisile
-onready var MINA_COUNT: HBoxContainer = find_node("StatMina") # $BattleStats/HBoxContainer/StatMina
-onready var SMALL_COUNT: HBoxContainer = find_node("StatSmallBullet") # $BattleStats/HBoxContainer/StatSmallBullet
-onready var GOALS_REACHED: HBoxContainer = find_node("GoalReached") # $BattleStats/HBoxContainer/GoalReached
-
-#func _ready() -> void:
-#
-#	all_box_stats = get_children()
-#	var driver_stat = all_box_stats.pop_front()
-#	all_box_stats.push_front(stat_wins)
+onready var BULLET_COUNT: HBoxContainer = find_node("StatBullet")
+onready var MISILE_COUNT: HBoxContainer = find_node("StatMisile")
+onready var MINA_COUNT: HBoxContainer = find_node("StatMina")
+onready var SMALL_COUNT: HBoxContainer = find_node("StatSmallBullet")
+onready var GOALS_REACHED: HBoxContainer = find_node("GoalReached")
 
 
 func set_statbox_elements(level_type: int, single_driver_mode: bool = false): # kliče HUD

@@ -90,24 +90,24 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed("no2"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.HEALTH, -0.1)
-#		else:
-#			update_stat(Pfs.STATS.WINS, 1) # temp WINS pozicija
+		else:
+			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile) # temp WINS pozicija
 
 	if Input.is_action_pressed("no3"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.HEALTH, 0.1)
-#		else:
-#			update_stat(Pfs.STATS.WINS, -1) # temp WINS pozicija
+		else:
+			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile) # temp WINS pozicija
 	if Input.is_action_pressed("no4"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.GAS, -100)
-#		else:
-#			update_stat(Pfs.STATS.LIFE, -1)
+		else:
+			update_stat(Pfs.STATS.LIFE, -1)
 	if Input.is_action_pressed("no5"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.GAS, 100)
-#		else:
-#			update_stat(Pfs.STATS.LIFE, 1)
+		else:
+			update_stat(Pfs.STATS.LIFE, 1)
 
 func _ready() -> void:
 
@@ -387,58 +387,69 @@ func _spawn_driver_controller():
 # ON ------------------------------------------------------------------------------------------------
 
 
-func update_stat(stat_key: int, change_value):
+func update_stat(stat_key: int, stat_value):
 #	print("stat key", Pfs.STATS.keys()[stat_key])
 	# statistika se preračuna in pošlje naprej nova vrednost
+	# change_value je lahko:
+	#	+/- delta value ... driver_stats += change_value >> default
+	#	end value ... driver_stats = change_value
+	#	values array ... driver_stats.append(change_value)
+	#	curr/max array ... driver_stats = [curr/max]
 
 	match stat_key:
 
-		Pfs.STATS.LEVEL_TIME,Pfs.STATS.LAP_TIME,Pfs.STATS.LAP_TIME:
-			driver_stats[stat_key] = change_value # change_value je + ali -
-
-		Pfs.STATS.LEVEL_RANK:
-			driver_stats[stat_key] = change_value # change_value je + ali -
-
+		# vehicle
 		Pfs.STATS.GAS:
-			driver_stats[stat_key] += change_value # change_value je + ali -
-			# manjka becina
+			driver_stats[stat_key] += stat_value
 			if driver_stats[Pfs.STATS.GAS] <= 0:
 				driver_stats[Pfs.STATS.GAS] = 0
 				_die(false)
-			# povečam max ... obstaja zaradi hud gas bar
-			elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
+			elif driver_stats[Pfs.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
 				gas_tank_size = driver_stats[Pfs.STATS.GAS]
-
 		Pfs.STATS.HEALTH:
-			driver_stats[stat_key] += change_value # change_value je + ali -
+			driver_stats[stat_key] += stat_value # change_value je + ali -
 			driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
 			_evaluate_damage(driver_stats[Pfs.STATS.HEALTH])
 			if driver_stats[Pfs.STATS.HEALTH] == 0:
 				_die()
-
-		Pfs.STATS.GOALS_REACHED, Pfs.STATS.WINS: # arrays
-			driver_stats[stat_key].append(change_value)
-
-		Pfs.STATS.LAP_COUNT:
-			driver_stats[stat_key].append(change_value)
-			# preverjam best lap
-			var curr_lap_time: float = change_value
-			var is_best_lap: bool = true
-			for lap_time in Pfs.STATS.LAP_COUNT:
-				if curr_lap_time > lap_time:
-					is_best_lap = false
-					break
-			if is_best_lap:
-				Pfs.STATS.BEST_LAP_TIME = curr_lap_time
-				# pošlje xtra signal
-				emit_signal("stat_changed", driver_name_id, Pfs.STATS.BEST_LAP_TIME, curr_lap_time)
-
+		# driver
 		Pfs.STATS.LIFE:
-			var new_life_count: int = driver_stats[stat_key] + change_value
-			var max_life_count: int = Pfs.start_driver_stats[stat_key]
-			driver_stats[stat_key] = [new_life_count, max_life_count]
-		_:
-			driver_stats[stat_key] += change_value # change_value je + ali -
+			# vzamem max valu, ki je zadnja v arrayu in no potem vrnem nazaj na konec
+			var new_life_count: int = driver_stats[stat_key][0] + stat_value
+			driver_stats[stat_key] = [new_life_count, driver_stats[stat_key][1]]
+			printt ("LAJF", driver_stats[stat_key])
+
+		Pfs.STATS.GOALS_REACHED:
+			driver_stats[stat_key].append(stat_value)
+		Pfs.STATS.WINS:
+			# vzamem max valu, ki je zadnja v arrayu in no potem vrnem nazaj na konec
+			var max_wins: int = driver_stats[stat_key].pop_back()
+			var levels_won: Array = driver_stats[stat_key].duplicate()
+			levels_won.append(stat_value)
+			levels_won.append(max_wins)
+			driver_stats[stat_key] = levels_won
+		# level
+		Pfs.STATS.LEVEL_RANK: # na konča
+			driver_stats[stat_key] = stat_value
+		Pfs.STATS.LEVEL_TIME:
+			prev_lap_level_time = stat_value
+			driver_stats[stat_key] = stat_value
+		Pfs.STATS.LAP_COUNT: # če so krogi
+			var lap_time: float = stat_value
+			driver_stats[stat_key].append(stat_value)
+			# best lap
+			var curr_best_lap_time: float = driver_stats[Pfs.STATS.BEST_LAP_TIME]
+			if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
+				driver_stats[Pfs.STATS.BEST_LAP_TIME] = lap_time
+				emit_signal("stat_changed", driver_name_id, Pfs.STATS.BEST_LAP_TIME, lap_time) # pošlje xtra signal
+		Pfs.STATS.LAP_TIME: # vsak frejm
+			var curr_game_time: float = stat_value
+			var lap_time: float = curr_game_time - prev_lap_level_time
+			# alt ... seštevanje časov preteklih krogov ni najbolj natančno ... pomembno če loviš rekorde
+			driver_stats[stat_key] = stat_value
+
+		_: # default
+			driver_stats[stat_key] += stat_value
 
 	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
 

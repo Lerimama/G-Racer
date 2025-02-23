@@ -13,7 +13,6 @@ var level_finish: Node2D
 var level_track: Path2D
 var level_goals: Array = []
 
-#var level_type: int = 0 # določi glede na pripete elemente ...def = LEVEL_TYPE.BATTLE
 var navigation_cells_positions: Array = []
 var goal_reached_signal: String = "reached_by" # vsak goal more met to
 var available_pickable_positions: Array = [] # tole je bolje delovalo, dokler sem uporabljal tilemap

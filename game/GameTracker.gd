@@ -32,8 +32,7 @@ func _process(delta: float) -> void:
 
 		yield(get_tree(), "idle_frame") # da ma za naprej sigurno legit drajverje
 		for driver in drivers_in_game:
-			var curent_lap_time: int = game.hud.game_timer.game_time_hunds - driver.prev_lap_level_time
-			driver.update_stat(Pfs.STATS.LAP_TIME, curent_lap_time)
+			driver.update_stat(Pfs.STATS.LAP_TIME, game.hud.game_timer.game_time_hunds)
 
 
 func _update_ranking():

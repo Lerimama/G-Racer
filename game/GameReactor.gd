@@ -206,7 +206,7 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 				reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 
 
-func _on_finish_line_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
+func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
 
 	if game.game_stage >= game.GAME_STAGE.PLAYING and crossing_driver.is_active == true: # > ai lahko pride v cilj po igri
 
@@ -215,18 +215,15 @@ func _on_finish_line_crossed(crossing_driver: Vehicle): # sproži finish line  #
 		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
 		if game_level.level_goals.empty() or driver_goals_reached == game_level.level_goals:
 
-			# stat level time
-			crossing_driver.prev_lap_level_time = game.hud.game_timer.game_time_hunds
-
+			# stat level time ... ostale čase preračuna driver v update stats
 			crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
 
 			var has_finished_level: bool = false
 
 			# WITH LAPS ... lap finished če so vsi čekpointi
 			if game.level_profile["level_laps"] > 1:
-				var lap_time: float = crossing_driver.driver_stats[Pfs.STATS.LAP_TIME]
-				crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, lap_time)
-
+#				var lap_time: float = crossing_driver.driver_stats[Pfs.STATS.LAP_TIME]
+				crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds) # ... ostale lap statse preračuna driver v update stats
 				if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 					has_finished_level = true
 			else:
@@ -257,13 +254,14 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	# finale data za vse ki so še v igri
 	if driver_vehicle in drivers_finished:
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = drivers_finished.size()
+		if drivers_finished.size() == 1: # zmaga
+			driver_vehicle.update_stat(Pfs.STATS.WINS, game.level_profile) # temp WINS pozicija
 	else:
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
 	game.finale_game_data[driver_vehicle.driver_name_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
 		"driver_profile": driver_vehicle.driver_profile,
 		"driver_stats": driver_vehicle.driver_stats,
 		}
-	print("data", game.finale_game_data[driver_vehicle.driver_name_id])
 
 	# hide view
 	if Sts.hide_view_on_player_deactivated:# and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
@@ -276,3 +274,4 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 			game.hud.driver_huds_holder.remove_view_imitator(game.game_views) # odstranim imitatorja ... more bit za setanje game_views
 
 	_check_for_game_end()
+

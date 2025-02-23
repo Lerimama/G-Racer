@@ -78,7 +78,7 @@ func _ready() -> void:
 #		one_screen_mode = false
 #		hide_view_on_player_deactivated = true
 
-		drivers_on_game_start = [ "JOU", "MOU"]#, "ROU"]
+		drivers_on_game_start = [ "JOU", "MOU", "ROU"]
 
 		names_on_game_start = ["Prvi", "Drugi","sdfwsgfsdf"]
 
@@ -89,8 +89,8 @@ func _ready() -> void:
 				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 #				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			elif drivers_on_game_start.find(driver_name_id) == 1:
-#				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
+#				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			elif drivers_on_game_start.find(driver_name_id) == 2:
 #				Pfs.driver_profiles[driver_name_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
 				Pfs.driver_profiles[driver_name_id]["driver_type"] = Pfs.DRIVER_TYPE.AI

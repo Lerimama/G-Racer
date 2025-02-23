@@ -34,7 +34,7 @@ func _ready() -> void:
 
 
 func set_hud(game_manager):
-	print("SET>AM HUD")
+
 	var level_lap_count: int = game_manager.level_profile["level_laps"]
 	var level_time_limit: int = game_manager.level_profile["level_time_limit"]
 
@@ -111,20 +111,12 @@ func on_game_start():
 
 func on_level_over():
 
-#	game_timer.stop_timer()
-#	for statbox in statboxes_with_drivers:
-#		statbox.hide()
 	for section in sections_holder.get_children():
 		section.hide()
 
 
 func on_game_over():
 
-#	game_timer.stop_timer()
-#	game_timer.hide()
-#	record_lap_label.hide()
-#	for statbox in statboxes_with_drivers:
-#		statbox.hide()
 	for section in sections_holder.get_children():
 		section.hide()
 
@@ -144,7 +136,6 @@ func _on_driver_stat_changed(driver_name_id, driver_stat_key: int, stat_value):
 	var current_key: String = Pfs.STATS.keys()[current_key_index]
 	var stat_to_change: Control = statbox_to_change.get(current_key)
 
-#	print("driver_stat_key",driver_stat_key)
 	# če je podan array elementov (laps finished, goals, wins, ...
 	if stat_value is Array:
 		# preverjam, če hočem current/max ... zadnja količina je int, ostale pa karkoli drugega
@@ -154,22 +145,22 @@ func _on_driver_stat_changed(driver_name_id, driver_stat_key: int, stat_value):
 				non_int_present = true
 		# zadnja količina je int, ostale pa karkoli drugega
 		if stat_value.back() is int and non_int_present:
-			var real_value_count: int = stat_value.size() - 1 # ker je zadnji int
-			var stat_value_max_count: int = stat_value.back()
-			stat_value = [real_value_count, stat_value_max_count]
+			stat_value = [min(stat_value.size() - 1, stat_value.back()), stat_value.back()]
+		# samo ena količina je int ... curr = 0/max
+		elif stat_value.size() == 1 and stat_value.back() is int:
+			stat_value = [0, stat_value.back()]
+		# samo dve količini količina je int ... curr = [0] / max = [1]
+		elif stat_value.size() == 2 and not non_int_present:# and stat_value.back() is int and stat_value.front() is int:
+			stat_value = [min(stat_value.front(), stat_value.back()), stat_value.back()]
 		else:
-		# ni podatka o max value
+			# ni podatka o max value
+			# če e tu ni bo treba RFK da bo pravilno
 			stat_value = stat_value.size()
+		printt ("po", stat_value)
 
 	elif stat_value is PoolIntArray:
 		#		print("int array")
 		pass
-
-	# če stat ni v hudu, ampak drugje
-	#	match driver_stat_key:
-	##		Pfs.STATS.HEALTH:
-	#		Pfs.STATS.LEVEL_TIME:
-	#			return
 
 	stat_to_change.stat_value = stat_value
 

@@ -146,6 +146,7 @@ stat_name = "W"
 margin_left = 501.0
 margin_right = 651.0
 margin_bottom = 64.0
+stat_type = 2
 icon_texture = ExtResource( 3 )
 stat_name = "L"
 

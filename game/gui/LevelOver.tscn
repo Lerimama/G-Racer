@@ -16,9 +16,11 @@ __meta__ = {
 }
 
 [node name="Background" type="ColorRect" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.784314 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.784314 )
+color = Color( 0, 0, 0, 1 )
 
 [node name="Panel" type="Panel" parent="."]
 modulate = Color( 0, 0, 0, 0.941176 )
@@ -54,75 +56,68 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -320.0
-margin_top = -136.0
+margin_top = -116.0
 margin_right = 320.0
-margin_bottom = 136.0
+margin_bottom = 156.0
 custom_constants/separation = 8
 
-[node name="Title" type="Label" parent="Content/Results"]
-margin_left = 245.0
-margin_right = 395.0
-margin_bottom = 48.0
-size_flags_horizontal = 4
-text = "Results"
-
 [node name="RankingLine" parent="Content/Results" instance=ExtResource( 4 )]
+margin_left = 140.0
+margin_top = 0.0
+margin_right = 500.0
+margin_bottom = 48.0
+
+[node name="RankingLine2" parent="Content/Results" instance=ExtResource( 4 )]
 margin_left = 140.0
 margin_top = 56.0
 margin_right = 500.0
 margin_bottom = 104.0
 
-[node name="RankingLine2" parent="Content/Results" instance=ExtResource( 4 )]
+[node name="RankingLine3" parent="Content/Results" instance=ExtResource( 4 )]
 margin_left = 140.0
 margin_top = 112.0
 margin_right = 500.0
 margin_bottom = 160.0
 
-[node name="RankingLine3" parent="Content/Results" instance=ExtResource( 4 )]
+[node name="RankingLine4" parent="Content/Results" instance=ExtResource( 4 )]
 margin_left = 140.0
 margin_top = 168.0
 margin_right = 500.0
 margin_bottom = 216.0
-
-[node name="RankingLine4" parent="Content/Results" instance=ExtResource( 4 )]
-margin_left = 140.0
-margin_top = 224.0
-margin_right = 500.0
-margin_bottom = 272.0
 
 [node name="Menu" type="HBoxContainer" parent="."]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -347.5
+margin_left = -233.0
 margin_top = -266.0
-margin_right = 347.5
-margin_bottom = -218.0
+margin_right = 233.0
+margin_bottom = -208.0
 grow_horizontal = 2
 size_flags_horizontal = 4
 custom_constants/separation = 64
 
 [node name="QuitBtn" type="Button" parent="Menu"]
-margin_right = 521.0
+margin_right = 503.0
 margin_bottom = 58.0
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
-text = "QUIT TO MAIN MENU"
+text = "QUIT TOURNAMENT"
 
 [node name="ContinueBtn" type="Button" parent="Menu"]
-margin_left = 585.0
-margin_right = 860.0
+margin_left = 567.0
+margin_right = 875.0
 margin_bottom = 58.0
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
-text = "CONTINUE"
+text = "NEXT LEVEL"
 
 [node name="QuitGameBtn" type="Button" parent="Menu"]
 visible = false
-margin_left = 188.0
-margin_right = 244.0
-margin_bottom = 13.0
+margin_left = 530.0
+margin_right = 820.0
+margin_bottom = 58.0
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
 text = "QUIT GAME"

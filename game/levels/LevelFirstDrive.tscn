@@ -1514,7 +1514,7 @@ outlines = [ PoolVector2Array( -787, -10551, -919, -4822, -847, -3647, -1122, -1
 
 [sub_resource type="Curve2D" id=94]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, -10, 387, 0, 0, 0, 0, 5, -66726 )
+"points": PoolVector2Array( 0, 0, 0, 0, -10, 387, 0, 0, 0, 0, 350, -3737 )
 }
 
 [node name="LevelFirstDrive" instance=ExtResource( 1 )]
@@ -1560,7 +1560,7 @@ navpoly = SubResource( 93 )
 [node name="LevelTrack" parent="Tracking" index="2"]
 curve = SubResource( 94 )
 
-[node name="AgentTracker" parent="Tracking/LevelTrack" index="0"]
+[node name="Tracker" parent="Tracking/LevelTrack" index="0"]
 position = Vector2( -10, 387 )
 rotation = -1.57057
 

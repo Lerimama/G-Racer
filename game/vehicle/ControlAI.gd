@@ -513,8 +513,6 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 
 func _on_game_stage_change(game_manager: Game): # od GMja
 
-#	var game_is_on: bool = false
-
 	match game_manager.game_stage:
 		game_manager.GAME_STAGE.PLAYING:
 			# random start

@@ -126,8 +126,10 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 	# upoštevam damage
 	current_engine_power -= current_engine_power * managed_vehicle.vehicle_damage * 0.5# managed_vehicle.damage_engine_power_factor
 
+	# debug ... ai engine power je počasen
 	if managed_vehicle.is_in_group(Rfs.group_ai):
-		current_engine_power /=6
+		current_engine_power /=1
+
 	return current_engine_power * Sts.world_hsp_power_factor
 
 

@@ -32,46 +32,51 @@ func stats(): pass # -----------------------------------------------------------
 
 # vsi mogoči statsi
 enum STATS {
-		WINS, LIFE, HEALTH, POINTS, GAS, CASH, # 0 > 5
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, # 6 > 9
-		LEVEL_RANK, LAP_COUNT, GOALS_REACHED # 10 > 12
-		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # 13 > 15
-		DAMAGE # 16 še ne beležim ... obratno od health
+		# tipi:
+		#	Int ... je samo vrednost
+		#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v driverja
+		#	Array ... lahko se računa current in max value
+		#	PoolIntArray ... vedno
+		WINS, # array zmaganih level_data ... samo dodajaš ... PRENOSNA
+		LIFE, # PoolIntArray curr/max ... PRENOSNA
+		HEALTH, # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
+		POINTS, GAS, CASH, # 2 > 5 ... PRENOSNA
+		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, # +/- delta ... PRENOSNA
+		LEVEL_RANK, # value
+		LAP_COUNT, # PoolIntArray časov kroga ... samo dodajaš
+		GOALS_REACHED # array ciljev ... samo dodajaš
+		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # value ... hunds
+		DAMAGE # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
 		}
 
-#var start_vehicle_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
-#	STATS.LEVEL_RANK: 0,
-#	STATS.LEVEL_TIME: 0, # hunds
-#	STATS.BEST_LAP_TIME: 0,
-#	STATS.LAP_COUNT: [], # časi
-#	STATS.GOALS_REACHED: [], # nodeti
-#}
 enum RANKING_MODE {TIME, POINTS}
 
 var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-	# tipi:
-	#	Int ... je samo vrednost
-	#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v driverja
-	#	Array ... lahko se računa current in max value
-	#	PoolIntArray ... vedno
-	STATS.WINS: [], # zmagani leveli
-	STATS.LIFE: 3,
-	STATS.HEALTH: 1.0, # health percetnage
-	STATS.GAS: 2000,
+	# arrayi se ob spawnu prepišejo da so uniq
+	# driver
+
+	# zmagani leveli [level_data_1,level_data_1, level_data_1, ..., WINS NEEDED]
+	# če je arrray z eno številko, ga šteje, ko max
+	STATS.WINS: [5],
+	# celo igra sta notri dve številki ki označujeta curr max
+	STATS.LIFE: [5, 5],
 	STATS.CASH: 0,
 	STATS.POINTS :0,
-	#
+	# level
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0, # hunds
 	STATS.BEST_LAP_TIME: 0,
 	STATS.LAP_COUNT: [], # časi
 	STATS.GOALS_REACHED: [], # nodeti
+	STATS.LAP_TIME: 0, # hunds
+	# vehicle
+	STATS.HEALTH: 1.0, # health percetnage
+	STATS.GAS: 2000,
 	# weapons
 	STATS.BULLET_COUNT: 10,
 	STATS.MISILE_COUNT: 5,
 	STATS.SMALL_COUNT: 5,
 	STATS.MINA_COUNT: 3,
-	STATS.LAP_TIME: 0, # hunds
 }
 
 
