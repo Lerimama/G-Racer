@@ -3,11 +3,16 @@ extends Node2D
 
 signal reached_by
 
-var is_active: bool = false setget _change_activity
+export var is_active: bool = false setget _change_activity
 
 onready var finish_line: Area2D = $FinishLine
-onready var drive_out_position: Position2D = $DriveOutPosition
-onready var camera_position: Position2D = $CameraPosition
+onready var drive_out_position_node: Position2D = $DriveOutPosition
+
+
+func _ready() -> void:
+
+	drive_out_position_node.hide()
+	self.is_active = is_active
 
 
 func _change_activity(new_acive: bool):

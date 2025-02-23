@@ -8,7 +8,7 @@ export (float, 100, 300, 0.5) var fast_start_power_addon: float = 200 # rabi dri
 export (float, 1, 2, 0.05) var max_engine_power_rotation_adapt: float = 1.1
 
 export (float, 0, 50, 0.5) var height: float = 10
-export (float, 0, 100, 0.5) var elevation: float =  7
+export (float, 0, 100, 0.5) var driving_elevation: float =  7
 export (float, -1, 0, 0.05) var gas_usage: float =  -0.1 # per HSP?
 export (float, -0.1, 0, 0.01) var gas_usage_idle: float = -0.05 # per HSP?
 export (int, 0, 10) var target_rank: float = 5
@@ -25,7 +25,7 @@ export (float, 0, 1, 0.1) var damage_engine_power_factor: float = 1
 
 func _set_default_parameters(managed_vehicle: Vehicle):
 
-	var motion_manager: Node = managed_vehicle.motion_manager
+	var motion_manager: Node2D = managed_vehicle.motion_manager
 	motion_manager.max_engine_rotation_deg = 45
 	motion_manager.engine_rotation_speed = 0.1
 	managed_vehicle.mass = masa
@@ -47,7 +47,7 @@ func _set_default_parameters(managed_vehicle: Vehicle):
 func _set_motion_parameters(vehicle: Vehicle, new_motion: int):
 #	print("resource motion", motion_manager.MOTION.keys()[new_motion])
 
-		var motion_manager: Node = vehicle.motion_manager
+		var motion_manager: Node2D = vehicle.motion_manager
 
 		motion_manager.torque_on_vehicle = 0
 		var new_rotation_direction: int = 0
@@ -115,7 +115,7 @@ func _set_motion_parameters(vehicle: Vehicle, new_motion: int):
 func _set_rotation_parameters(managed_vehicle: Vehicle, is_reverse: bool = false):
 #	printt("rotation on resource", motion_manager.MOTION.keys()[motion_manager.motion])
 
-	var motion_manager: Node = managed_vehicle.motion_manager
+	var motion_manager: Node2D = managed_vehicle.motion_manager
 	var rotation_motion: int = motion_manager.rotation_motion
 
 	var front_mass_bias: float = 0.5
@@ -151,28 +151,28 @@ func _set_rotation_parameters(managed_vehicle: Vehicle, is_reverse: bool = false
 			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
 
-func update_profile_parameters(managed_vehicle: Vehicle):
-	# marsikaj se me igro ne spreminja, pa vseeno ... junevenou
-
-	# vehicle
-	vehicle_damage = managed_vehicle.vehicle_damage
-	damage_effect_factor = managed_vehicle.damage_effect_factor
-	target_rank = managed_vehicle.target_rank
-	height = managed_vehicle.height
-	elevation = managed_vehicle.elevation
-	gas_tank_size = managed_vehicle.gas_tank_size
-	gas_usage = managed_vehicle.gas_usage
-	gas_usage_idle = managed_vehicle.gas_usage_idle
-	masa = managed_vehicle.masa
-	on_hit_disabled_time = managed_vehicle.on_hit_disabled_time
-	group_weapons_by_type = managed_vehicle.group_weapons_by_type
-	vehicle_damage = managed_vehicle.vehicle_damage
-	damage_effect_factor = managed_vehicle.damage_effect_factor
-	damage_engine_power_factor = managed_vehicle.damage_engine_power_factor
-	heal_rate = managed_vehicle.heal_rate
-
-	# motion manager
-	start_max_engine_power = managed_vehicle.motion_manager.start_max_engine_power
-	ai_power_equlizer_addon = managed_vehicle.motion_manager.ai_power_equlizer_addon
-	fast_start_power_addon = managed_vehicle.motion_manager.fast_start_power_addon
-	max_engine_power_rotation_adapt = managed_vehicle.motion_manager.max_engine_power_rotation_adapt
+#func update_profile_parameters(managed_vehicle: Vehicle):
+#	# marsikaj se me igro ne spreminja, pa vseeno ... junevenou
+#
+#	# vehicle
+#	vehicle_damage = managed_vehicle.vehicle_damage
+#	damage_effect_factor = managed_vehicle.damage_effect_factor
+#	target_rank = managed_vehicle.target_rank
+#	height = managed_vehicle.height
+#	driving_elevation = managed_vehicle.driving_elevation
+#	gas_tank_size = managed_vehicle.gas_tank_size
+#	gas_usage = managed_vehicle.gas_usage
+#	gas_usage_idle = managed_vehicle.gas_usage_idle
+#	masa = managed_vehicle.masa
+#	on_hit_disabled_time = managed_vehicle.on_hit_disabled_time
+#	group_weapons_by_type = managed_vehicle.group_weapons_by_type
+#	vehicle_damage = managed_vehicle.vehicle_damage
+#	damage_effect_factor = managed_vehicle.damage_effect_factor
+#	damage_engine_power_factor = managed_vehicle.damage_engine_power_factor
+#	heal_rate = managed_vehicle.heal_rate
+#
+#	# motion manager
+#	start_max_engine_power = managed_vehicle.motion_manager.start_max_engine_power
+#	ai_power_equlizer_addon = managed_vehicle.motion_manager.ai_power_equlizer_addon
+#	fast_start_power_addon = managed_vehicle.motion_manager.fast_start_power_addon
+#	max_engine_power_rotation_adapt = managed_vehicle.motion_manager.max_engine_power_rotation_adapt

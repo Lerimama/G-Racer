@@ -35,7 +35,7 @@ func stop_engines():
 	$Sounds/EngineStart.stop()
 
 
-func manage_engines(motion_manager: Node):
+func manage_engines(motion_manager: Node2D):
 
 	match motion_manager.motion:
 

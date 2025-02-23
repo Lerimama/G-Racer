@@ -2,42 +2,38 @@ extends Node
 
 
 var game_level: Level
-
-var agents_in_game: Array # all valid controlled and interacting, tud non-actve
-var drivers_in_game: Array # all valid with ranking, all ranked, tud non-actve
-var players_in_game: Array # tudi valid agents, drivers, tud non-actve
-var ais_in_game: Array # tudi valid agents, drivers, tud non-actve
-#var drivers_in_game_ranked: Array = []
-#var drivers_in_game_active: Array = []
-
-onready var game_parent: Node2D = get_parent()
+var drivers_in_game: Array # all valid and activated ki jih trackam, all ranked, tud non-actve
+onready var game: Node2D = get_parent()
 
 
 func _process(delta: float) -> void:
 
-	#	if game_level:
 	# beleženje prisotnosti
-	drivers_in_game = get_tree().get_nodes_in_group(Rfs.group_drivers)
-	players_in_game = []
-	ais_in_game = []
-	for driver in drivers_in_game:
-		if is_instance_valid(driver):
-			#		if is_instance_valid(driver) and driver.is_active:
-			if driver.is_in_group(Rfs.group_players): players_in_game.append(driver)
-			if driver.is_in_group(Rfs.group_ai): ais_in_game.append(driver)
-		if not is_instance_valid(driver):# and not driver.is_active:
-			drivers_in_game.erase(driver)
+	drivers_in_game = []
+	for driver in get_tree().get_nodes_in_group(Rfs.group_drivers):
+		if is_instance_valid(driver) and driver.is_active and not driver.is_queued_for_deletion():
+			drivers_in_game.append(driver)
 
 	# ranking
-	if drivers_in_game.size() > 1 and game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
-		_update_ranking()
+	if game.game_stage == game.GAME_STAGE.PLAYING:
 
-	if game_parent.game_stage == game_parent.GAME_STAGE.PLAYING:
+		if drivers_in_game.size() > 1:
+			_update_ranking()
 
+		# camera leader
+		if Sts.one_screen_mode:
+			var new_camera_leader: Node2D = null
+			for driver in drivers_in_game:
+				if driver.is_in_group(Rfs.group_players):
+					new_camera_leader = driver
+					break
+			game.camera_leader = new_camera_leader
+
+
+		yield(get_tree(), "idle_frame") # da ma za naprej sigurno legit drajverje
 		for driver in drivers_in_game:
-			if driver.is_active:
-				var curent_lap_time: int = game_parent.hud.game_timer.game_time_hunds - driver.prev_lap_level_time
-				driver.update_stat(Pfs.STATS.LAP_TIME, curent_lap_time)
+			var curent_lap_time: int = game.hud.game_timer.game_time_hunds - driver.prev_lap_level_time
+			driver.update_stat(Pfs.STATS.LAP_TIME, curent_lap_time)
 
 
 func _update_ranking():
@@ -47,7 +43,7 @@ func _update_ranking():
 	var drivers_ranked: Array = []
 
 	# RACING
-	if game_parent.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
+	if game.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
 		# tracking
 		if game_level.level_track:
 			# najprej rangiram trackerje
@@ -61,7 +57,7 @@ func _update_ranking():
 			drivers_ranked = unranked_drivers
 			drivers_ranked.sort_custom(self, "_sort_drivers_by_goals_reached")
 		# pol rangirane po trackerju rangiram po prevoženih krogih
-		if game_parent.level_profile["level_laps"] > 1:
+		if game.level_profile["level_laps"] > 1:
 			drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
 
 	# BATTLE
@@ -80,8 +76,8 @@ func _update_ranking():
 		if ranked_driver.is_in_group(Rfs.group_players):
 			players_ranked.append(ranked_driver)
 
-	if not players_ranked[0] == game_parent.game_reactor.camera_leader:
-		game_parent.game_reactor.camera_leader = players_ranked[0]
+	if not players_ranked[0] == game.camera_leader:
+		game.camera_leader = players_ranked[0]
 
 	drivers_in_game = drivers_ranked
 
@@ -99,7 +95,7 @@ func _sort_drivers_by_laps(driver_1: Node2D, driver_2: Node2D): # desc
 	return false
 
 
-func _sort_trackers_by_offset(driver_tracker_1, driver_tracker_2):# desc
+func _sort_trackers_by_offset(driver_tracker_1, driver_tracker_2): # asc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	if driver_tracker_1.offset > driver_tracker_2.offset:
@@ -110,8 +106,8 @@ func _sort_trackers_by_offset(driver_tracker_1, driver_tracker_2):# desc
 func _sort_drivers_by_goals_reached(driver_1: Node2D, driver_2: Node2D):# desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var driver_1_goals_to_reach_size: int = driver_1.control_manager.goals_to_reach.size()
-	var driver_2_goals_to_reach_size: int = driver_2.control_manager.goals_to_reach.size()
+	var driver_1_goals_to_reach_size: int = driver_1.driver.goals_to_reach.size()
+	var driver_2_goals_to_reach_size: int = driver_2.driver.goals_to_reach.size()
 	if driver_1_goals_to_reach_size < driver_2_goals_to_reach_size:
 		return true
 	return false

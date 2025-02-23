@@ -39,6 +39,7 @@ func _on_game_stage_changed(current_game_manager: Game):
 
 	match game_manager.game_stage:
 		game_manager.GAME_STAGE.READY:
+			is_set = false
 			hud.set_hud(game_manager)
 			if game_manager.level_profile["level_time_limit"] > 0:
 				if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
@@ -61,7 +62,7 @@ func _on_game_stage_changed(current_game_manager: Game):
 #			print (finale_data)
 			# je level zadnji?
 #			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
-			if game_manager.level_index < (Sts.game_levels.size() - 1):
+			if game_manager.level_count < Sts.game_levels.size():
 				level_over.open(finale_data)
 				hud.on_level_over()
 			else:

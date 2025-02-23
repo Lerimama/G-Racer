@@ -2,7 +2,7 @@ extends RigidBody2D
 class_name Vehicle
 
 
-signal driver_terminated (sebe)
+signal vehicle_deactivated (vehicle)
 signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
 
 export var height: float = 0 # na redi potegne iz pro
@@ -44,8 +44,8 @@ var driver_tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
 var triggering_weapons: Array = []
 var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
-onready var control_manager: Node = $Control # zamenja se ob spawnu AI/PLAYER
-onready var motion_manager: Node = $Motion
+onready var driver: Node2D = $Driver # zamenja se ob spawnu AI/PLAYER
+onready var motion_manager: Node2D = $Motion
 
 onready var equip_positions: Node2D = $EquipPositions
 onready var weapons: Node2D = $Weapons
@@ -75,24 +75,39 @@ var masa: float
 var heal_rate: float
 var damage_engine_power_factor: float
 var level_type: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
+var turned_on: bool = false	# neodvisen on aktivitja
+
+export (float, 5, 20, 0.5) var driving_elevation: float = 7
+
 
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_pressed("no1"): # idle
-		motion_manager.boost_vehicle()
+		if driver_name_id == "MOU":
+			_revive()
+		else:
+			motion_manager.boost_vehicle()
 	if Input.is_action_pressed("no2"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.HEALTH, -0.1)
+#		else:
+#			update_stat(Pfs.STATS.WINS, 1) # temp WINS pozicija
+
 	if Input.is_action_pressed("no3"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.HEALTH, 0.1)
+#		else:
+#			update_stat(Pfs.STATS.WINS, -1) # temp WINS pozicija
 	if Input.is_action_pressed("no4"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.GAS, -100)
+#		else:
+#			update_stat(Pfs.STATS.LIFE, -1)
 	if Input.is_action_pressed("no5"): # race
 		if driver_name_id == "MOU":
 			update_stat(Pfs.STATS.GAS, 100)
-
+#		else:
+#			update_stat(Pfs.STATS.LIFE, 1)
 
 func _ready() -> void:
 
@@ -109,46 +124,24 @@ func _ready() -> void:
 	if driver_profile:
 		vehicle_color = driver_profile["driver_color"] # driver barva ...
 
-	_set_vehicle_parameters()
-
-	# motion_manager
-	var motion_manager_path = default_vehicle_profile["motion_manager_path"]
-	motion_manager.set_script(motion_manager_path)
-
-	# controller spawn (ai ima full nodetov notri
+	_load_vehicle_parameters()
+	motion_manager.set_script(default_vehicle_profile["motion_manager_path"])
 	_spawn_driver_controller()
-
 	_set_weapons_and_staff()
 
 
 func _process(delta: float) -> void:
 
 	# debug trail
-	#	if Input.is_action_pressed("T"):
-	#		if not debug_trail:
-	#			debug_trail = Line2D.new()
-	#			debug_trail.z_index = 1000
-	#			Rfs.node_creation_parent.add_child(debug_trail)
-	#		else:
-	#			debug_trail_time += delta
-	#			if debug_trail_time > 0.1:
-	#				debug_trail.add_point(global_position)
-	#				debug_trail_time = 0
-	#	if Input.is_action_just_released("T"):
-	#		debug_trail_time = 0
-	#		debug_trail = null
+	_drawing_trail_controls(delta)
 
 	trail_source.update_trail(velocity.length())
 
-	if engines.engines_on: # poraba
-		update_stat(Pfs.STATS.GAS, gas_usage)
-
-	# heal
-	if driver_stats[Pfs.STATS.HEALTH] < 1 and is_active:
-		if level_type == Pfs.BASE_TYPE.RACING:
-			update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.time_game_heal_rate_factor)
-		else:
-			update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.points_game_heal_rate_factor)
+	if is_active:
+		if engines.engines_on: update_stat(Pfs.STATS.GAS, gas_usage)
+		if driver_stats[Pfs.STATS.HEALTH] < 1:
+			if level_type == Pfs.BASE_TYPE.RACING: update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.time_game_heal_rate_factor)
+			else: update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.points_game_heal_rate_factor)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
@@ -172,89 +165,107 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 				rear_mass.set_applied_force(motion_manager.force_on_vehicle)
 
 
-# LAJF ----------------------------------------------------------------------------
-
-
-func on_hit(hit_by: Node2D, hit_global_position: Vector2):
-
-	if not is_shielded:
-
-		update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
-
-		if "hit_inertia" in hit_by:
-			var local_hit_position: Vector2 = hit_global_position - position
-			var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
-			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
-
-	if vehicle_camera:
-		vehicle_camera.shake_camera(hit_by)
-
-
-func on_item_picked(pickable_key: int):
-
-	match pickable_key:
-		Pfs.PICKABLE.PICKABLE_SHIELD:
-			_spawn_shield()
-		Pfs.PICKABLE.PICKABLE_NITRO:
-			motion_manager.boost_vehicle()
-		_:
-			# če spreminja statistiko
-			if "driver_stat" in Pfs.pickable_profiles[pickable_key].keys():
-				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
-				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
-				update_stat(change_stat_key, change_value)
+# LAJFLUP ----------------------------------------------------------------------------
 
 
 func _die(with_explode: bool = true):
 
-	self.is_active = false # v setget se aktivnost disejbla in nastavi IDLE
-
 	if with_explode:
+
 		collision_shape.set_deferred("disabled", true)
 		_explode()
+
 		if driver_stats[Pfs.STATS.GAS] <= 0: # manjko benza je permanentni die
-			emit_signal("driver_terminated", self)
+			self.is_active = false
 			queue_free()
 		else:
 			if level_type == Pfs.BASE_TYPE.RACING:
+				turn_off()
+				driver.set_process_input(false)
+				call_deferred("set_physics_process", false)
+				call_deferred("set_process", false)
 				revive_timer.start(revive_time)
 			else:
 				update_stat(Pfs.STATS.LIFE, - 1)
 				if driver_stats[Pfs.STATS.LIFE][0] > 0: # life je array current/max
+					turn_off()
+					driver.set_process_input(false)
+					call_deferred("set_physics_process", false)
+					call_deferred("set_process", false)
 					revive_timer.start(revive_time)
 				else:
-					emit_signal("driver_terminated", self)
+					self.is_active = false
 					queue_free()
-
-
-func _explode():
-
-	if vehicle_camera:
-		vehicle_camera.shake_camera(self)
-
-	# spawn eksplozije
-	var new_exploding_vehicle = ExplodingVehicle.instance()
-	new_exploding_vehicle.global_position = global_position
-	new_exploding_vehicle.global_rotation = global_rotation
-	new_exploding_vehicle.modulate.a = 1
-	new_exploding_vehicle.velocity = velocity # podamo hitrost, da se premika s hitrostjo vehila
-	new_exploding_vehicle.spawner_color = vehicle_color
-	new_exploding_vehicle.z_index = z_index + 1
-	Rfs.node_creation_parent.add_child(new_exploding_vehicle)
-
-	hide()
+	else:
+		self.is_active = false
 
 
 func _revive():
 
-	# reset pred prikazom
-	self.is_active = true
 	collision_shape.set_deferred("disabled", false)
-	engines.start_engines() # med igro je se avtomatsko prižge
 	show()
+	turn_on()
 
 	# reset energije
 	update_stat(Pfs.STATS.HEALTH, 1)
+
+
+func _evaluate_damage(damaged_health: float):
+
+	var damage_size_from_health: float = 1 - damaged_health
+	var real_damage_size: float = damage_size_from_health * damage_effect_factor
+	vehicle_damage = real_damage_size
+
+
+func turn_on():
+
+	engines.start_engines()
+	motion_manager.motion = motion_manager.MOTION.IDLE
+	turned_on = true
+
+	var turn_tween = get_tree().create_tween()
+	turn_tween.tween_property(self, "elevation", driving_elevation, 2).from(0.0).set_ease(Tween.EASE_IN_OUT)
+
+
+func turn_off():
+
+	trail_source.decay() # zazih
+
+	var turn_tween = get_tree().create_tween()
+	turn_tween.tween_property(self, "elevation", 0, 1).set_ease(Tween.EASE_IN_OUT)
+	yield(turn_tween, "finished")
+
+	engines.stop_engines()
+	motion_manager.motion = motion_manager.MOTION.DISSABLED
+	turned_on = false
+
+
+func _change_activity(new_is_active: bool):
+	# ko ga igra šteje ali pa pozabi
+	# nima veze z ugašanjem in skrivanjem
+	# nima veze z motion
+	# kontrole so kompletno off
+
+	if not new_is_active == is_active:
+		is_active = new_is_active
+
+		# postane znan igri, ni pa nujno prižgan
+		if is_active:
+			_load_vehicle_parameters()
+			driver.set_process_input(true)
+			call_deferred("set_physics_process", true)
+			call_deferred("set_process", true)
+		else:
+			turn_off()
+			_save_vehicle_parameters()
+			driver.set_process_input(false)
+			call_deferred("set_physics_process", false)
+			call_deferred("set_process", false)
+
+			emit_signal("vehicle_deactivated", self)
+
+
+# SET -------------------------------------------------------------------------------------------------
 
 
 func _set_weapons_and_staff():
@@ -289,7 +300,45 @@ func _set_weapons_and_staff():
 			equip.hide()
 
 
-func _set_vehicle_parameters(): # vsebinski, ne fizični
+func _save_vehicle_parameters(): # vsebinski, ne fizični
+	# marsikaj se me igro ne spreminja, pa vseeno ... junevernou
+
+	if vehicle_motion_profile:
+		# vehicle
+		vehicle_motion_profile.vehicle_damage = vehicle_damage
+		vehicle_motion_profile.damage_effect_factor = damage_effect_factor
+		vehicle_motion_profile.target_rank = target_rank
+		vehicle_motion_profile.height = height
+		vehicle_motion_profile.driving_elevation = driving_elevation
+		vehicle_motion_profile.gas_tank_size = gas_tank_size
+		vehicle_motion_profile.gas_usage = gas_usage
+		vehicle_motion_profile.gas_usage_idle = gas_usage_idle
+		vehicle_motion_profile.masa = masa
+		vehicle_motion_profile.on_hit_disabled_time = on_hit_disabled_time
+		vehicle_motion_profile.group_weapons_by_type = group_weapons_by_type
+		vehicle_motion_profile.vehicle_damage = vehicle_damage
+		vehicle_motion_profile.damage_effect_factor = damage_effect_factor
+		vehicle_motion_profile.damage_engine_power_factor = damage_engine_power_factor
+		vehicle_motion_profile.heal_rate = heal_rate
+		# motion manager
+		vehicle_motion_profile.start_max_engine_power = motion_manager.start_max_engine_power
+		vehicle_motion_profile.ai_power_equlizer_addon = motion_manager.ai_power_equlizer_addon
+		vehicle_motion_profile.fast_start_power_addon = motion_manager.fast_start_power_addon
+		vehicle_motion_profile.max_engine_power_rotation_adapt = motion_manager.max_engine_power_rotation_adapt
+	else:
+		default_vehicle_profile["damage_engine_power_factor"] = damage_engine_power_factor
+		default_vehicle_profile["heal_rate"] = heal_rate
+		default_vehicle_profile["on_hit_disabled_time"] = on_hit_disabled_time
+		default_vehicle_profile["damage_effect_factor"] = damage_effect_factor
+		default_vehicle_profile["target_rank"] = target_rank
+		default_vehicle_profile["height"] = height
+		default_vehicle_profile["driving_elevation"] = driving_elevation
+		default_vehicle_profile["gas_tank_size"] = gas_tank_size
+		default_vehicle_profile["gas_usage"] = gas_usage
+		default_vehicle_profile["gas_usage_idle"] = gas_usage_idle
+
+
+func _load_vehicle_parameters(): # vsebinski, ne fizični
 
 	if vehicle_motion_profile:
 		damage_engine_power_factor = vehicle_motion_profile.damage_engine_power_factor
@@ -299,7 +348,7 @@ func _set_vehicle_parameters(): # vsebinski, ne fizični
 		on_hit_disabled_time = vehicle_motion_profile.on_hit_disabled_time
 		target_rank = vehicle_motion_profile.target_rank
 		height = vehicle_motion_profile.height
-		elevation = vehicle_motion_profile.elevation
+		driving_elevation = vehicle_motion_profile.driving_elevation
 		gas_tank_size = vehicle_motion_profile.gas_tank_size
 		gas_usage = vehicle_motion_profile.gas_usage
 		gas_usage_idle = vehicle_motion_profile.gas_usage_idle
@@ -310,7 +359,7 @@ func _set_vehicle_parameters(): # vsebinski, ne fizični
 		damage_effect_factor = default_vehicle_profile["damage_effect_factor"]
 		target_rank = default_vehicle_profile["target_rank"]
 		height = default_vehicle_profile["height"]
-		elevation = default_vehicle_profile["elevation"]
+		driving_elevation = default_vehicle_profile["driving_elevation"]
 		gas_tank_size = default_vehicle_profile["gas_tank_size"]
 		gas_usage = default_vehicle_profile["gas_usage"]
 		gas_usage_idle = default_vehicle_profile["gas_usage_idle"]
@@ -326,75 +375,22 @@ func _spawn_driver_controller():
 		DriverController = drivers_driver_profile["driver_scene"]
 
 	# spawn na vrh vehicleovega drevesa
-	control_manager = DriverController.instance()
-	control_manager.controlled_vehicle = self
-	control_manager.motion_manager = motion_manager
+	driver = DriverController.instance()
+	driver.vehicle = self
+	driver.motion_manager = motion_manager
 	if not driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		control_manager.controller_type = driver_profile["controller_type"]
+		driver.controller_type = driver_profile["controller_type"]
 
-	call_deferred("add_child", control_manager)
-	call_deferred("move_child", control_manager, 0)
+	call_deferred("add_child", driver)
+	call_deferred("move_child", driver, 0)
 
-
-func _change_activity(new_is_active: bool):
-
-	if not new_is_active == is_active:
-		is_active = new_is_active
-
-		# shranim trenutno stanje bolta v profil
-		if vehicle_motion_profile:
-			vehicle_motion_profile.update_profile_parameters(self)
-
-		# postane znan igri, ni pa nujno prižgan
-		if is_active:
-
-			# če kameri sledi meni, jo nulliram
-			if vehicle_camera and vehicle_camera.follow_target == self:
-				vehicle_camera.follow_target = null
-
-			control_manager.set_process_input(true)
-			call_deferred("set_physics_process", true)
-			call_deferred("set_process", true)
-			update_stat(Pfs.STATS.WINS, driver_stats[Pfs.STATS.WINS]) # temp WINS pozicija
-
-		# ga upočasnim v trenutni smeri
-		else:
-			# motion
-			motion_manager.motion = motion_manager.MOTION.IDLE
-			set_applied_force(Vector2.ZERO)
-			set_applied_torque(0)
-
-			# vehile
-			trail_source.decay() # zazih
-			engines.stop_engines()
-
-			# procesi
-			control_manager.set_process_input(false)
-			call_deferred("set_physics_process", false)
-			call_deferred("set_process", false)
-
-			# resource apdejt
-			if vehicle_motion_profile:
-				vehicle_motion_profile.update_profile_parameters(self)
-
-
-func _on_weapon_shot(stat_key: int, change_value):
-
-	driver_stats[stat_key] += change_value # change_value je + ali -
-	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
-
-
-func _evaluate_damage(damaged_health: float):
-
-	var damage_size_from_health: float = 1 - damaged_health
-	var real_damage_size: float = damage_size_from_health * damage_effect_factor
-	vehicle_damage = real_damage_size
+# ON ------------------------------------------------------------------------------------------------
 
 
 func update_stat(stat_key: int, change_value):
+#	print("stat key", Pfs.STATS.keys()[stat_key])
 	# statistika se preračuna in pošlje naprej nova vrednost
 
-	# health
 	match stat_key:
 
 		Pfs.STATS.LEVEL_TIME,Pfs.STATS.LAP_TIME,Pfs.STATS.LAP_TIME:
@@ -409,7 +405,6 @@ func update_stat(stat_key: int, change_value):
 			if driver_stats[Pfs.STATS.GAS] <= 0:
 				driver_stats[Pfs.STATS.GAS] = 0
 				_die(false)
-#				self.is_active = false
 			# povečam max ... obstaja zaradi hud gas bar
 			elif driver_stats[Pfs.STATS.GAS] > gas_tank_size:
 				gas_tank_size = driver_stats[Pfs.STATS.GAS]
@@ -435,6 +430,7 @@ func update_stat(stat_key: int, change_value):
 					break
 			if is_best_lap:
 				Pfs.STATS.BEST_LAP_TIME = curr_lap_time
+				# pošlje xtra signal
 				emit_signal("stat_changed", driver_name_id, Pfs.STATS.BEST_LAP_TIME, curr_lap_time)
 
 		Pfs.STATS.LIFE:
@@ -442,55 +438,66 @@ func update_stat(stat_key: int, change_value):
 			var max_life_count: int = Pfs.start_driver_stats[stat_key]
 			driver_stats[stat_key] = [new_life_count, max_life_count]
 		_:
-			#			print(driver_stats.keys()[stat_key])
 			driver_stats[stat_key] += change_value # change_value je + ali -
 
+	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
+
+
+func on_hit(hit_by: Node2D, hit_global_position: Vector2):
+
+	if not is_shielded:
+
+		update_stat(Pfs.STATS.HEALTH, - hit_by.hit_damage)
+
+		if "hit_inertia" in hit_by:
+			var local_hit_position: Vector2 = hit_global_position - position
+			var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
+			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
+
+	if vehicle_camera:
+		vehicle_camera.shake_camera(hit_by)
+
+
+func on_item_picked(pickable_key: int):
+
+	match pickable_key:
+		Pfs.PICKABLE.PICKABLE_SHIELD:
+			_spawn_shield()
+		Pfs.PICKABLE.PICKABLE_NITRO:
+			motion_manager.boost_vehicle()
+		_:
+			# če spreminja statistiko
+			if "driver_stat" in Pfs.pickable_profiles[pickable_key].keys():
+				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
+				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
+				update_stat(change_stat_key, change_value)
+
+
+func _on_weapon_shot(stat_key: int, change_value):
+
+	driver_stats[stat_key] += change_value # change_value je + ali -
 	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
 
 
 # UTILITI ------------------------------------------------------------------------------------------------
 
 
-func drive_in(drive_in_vector: Vector2 = Vector2.ZERO, drive_in_time: float = 1):
+func _explode():
 
-	self.is_active = true
+	if vehicle_camera:
+		vehicle_camera.shake_camera(self)
 
-	collision_shape.set_deferred("disabled", true)
-	modulate.a = 1
-	motion_manager.motion = motion_manager.MOTION.IDLE
-	engines.start_engines()
+	# spawn eksplozije
+	var new_exploding_vehicle = ExplodingVehicle.instance()
+	new_exploding_vehicle.global_position = global_position
+	new_exploding_vehicle.global_rotation = global_rotation
+	new_exploding_vehicle.modulate.a = 1
+	new_exploding_vehicle.velocity = velocity # podamo hitrost, da se premika s hitrostjo vehila
+	new_exploding_vehicle.spawner_color = vehicle_color
+	new_exploding_vehicle.z_index = z_index + 1
+	Rfs.node_creation_parent.add_child(new_exploding_vehicle)
 
-	var drive_in_finished_position: Vector2 = global_position
-	var drive_in_start_position: Vector2 = global_position + drive_in_vector
-	# premaknem ga nazaj in zapeljem do linije
-	body_state.transform.origin = drive_in_start_position
-	var drive_in_tween = get_tree().create_tween()
-	drive_in_tween.tween_property(body_state, "transform:origin", drive_in_finished_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	yield(drive_in_tween, "finished")
-
-	collision_shape.set_deferred("disabled", false)
-
-
-func drive_out(drive_out_vector: Vector2 = Vector2.ZERO, drive_out_time: float = 1):
-
-	collision_shape.set_deferred("disabled", true)
-	self.is_active = false
-
-	var drive_out_position: Vector2 = global_position + drive_out_vector
-	var angle_to_vector: float = get_angle_to(drive_out_position)
-
-	var drive_out_tween = get_tree().create_tween()
-	# obrnem ga proti cilju in zapeljem do linije
-	#	drive_out_tween.tween_property(body_state, "transform:rotated", angle_to_vector, drive_out_time/5)
-	drive_out_tween.tween_property(body_state, "transform:origin", drive_out_position, drive_out_time).set_ease(Tween.EASE_IN)
-	yield(drive_out_tween, "finished")
-
-	engines.stop_engines()
-	modulate.a = 0
-	#	set_sleeping(true)
-	#	printt("drive out", is_sleeping(), control_manager.ai_target)
-	#	set_physics_process(false)
-	#	motion_manager.motion = motion_manager.MOTION.IDLE
+	hide()
 
 
 func revup():
@@ -515,7 +522,7 @@ func _spawn_shield():
 func pull_on_screen(pull_position: Vector2): # kliče GM
 
 	# disejblam koližne
-	control_manager.set_process_input(false)
+	driver.set_process_input(false)
 	collision_shape.set_deferred("disabled", true)
 
 	# reštartam trail
@@ -526,7 +533,7 @@ func pull_on_screen(pull_position: Vector2): # kliče GM
 	pull_tween.tween_property(body_state, "transform:origin", pull_position, pull_time)#.set_ease(Tween.EASE_OUT)
 	yield(pull_tween, "finished")
 	collision_shape.set_deferred("disabled", false)
-	control_manager.set_process_input(true)
+	driver.set_process_input(true)
 
 	update_stat(Pfs.STATS.GAS, Sts.pull_gas_penalty)
 
@@ -547,6 +554,23 @@ func screen_wrap(): # ne uporabljam
 	if not is_active:
 		return
 	body_state.set_transform(xform)
+
+
+func _drawing_trail_controls(delta: float):
+
+	if Input.is_action_pressed("T"):
+		if not debug_trail:
+			debug_trail = Line2D.new()
+			debug_trail.z_index = 1000
+			Rfs.node_creation_parent.add_child(debug_trail)
+		else:
+			debug_trail_time += delta
+			if debug_trail_time > 0.1:
+				debug_trail.add_point(global_position)
+				debug_trail_time = 0
+	if Input.is_action_just_released("T"):
+		debug_trail_time = 0
+		debug_trail = null
 
 
 # SIGNALI ------------------------------------------------------------------------------------------------
@@ -579,14 +603,6 @@ func _on_Vehicle_body_entered(body: Node2D) -> void:
 func _exit_tree() -> void: # če ni samo za za debug je nekaj narobe ... da se brez tega
 	# pospravljanje morebitnih smeti
 	#	printt("smeti", name, is_active)
-
-	#	if vehicle_motion_profile:
-	#		vehicle_motion_profile.update_profile_parameters(self)
-	#
 	#	self.is_active = false # zazih
-	#	if vehicle_camera:
-	#		if vehicle_camera.follow_target == self:
-	#			vehicle_camera.follow_target = null
-	#	trail_source.decay()
 
 	pass

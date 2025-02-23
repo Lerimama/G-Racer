@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 
 
 signal weapon_triggered
@@ -82,6 +82,7 @@ func _ready() -> void:
 	controlled_vehicle = get_parent()
 
 	controlled_vehicle.add_to_group(Rfs.group_ai)
+	controlled_vehicle.add_to_group(Rfs.group_drivers)
 
 	motion_manager.is_ai = true
 
@@ -133,7 +134,6 @@ func _physics_process(delta: float) -> void:
 			force_direction_line.default_color = Color.red
 			if not ai_state == AI_STATE.OFF: # če izgubi tarčo gre v SEARCH
 				self.ai_state = AI_STATE.SEARCH
-
 		motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
 
 		# debug line
@@ -532,9 +532,8 @@ func _on_game_stage_change(game_manager: Game): # od GMja
 			else:
 				self.ai_state = AI_STATE.SEARCH
 		game_manager.GAME_STAGE.END_SUCCESS, game_manager.GAME_STAGE.END_FAIL:
-			if not game_manager.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
-				self.ai_state = AI_STATE.OFF
-				motion_manager.motion = motion_manager.MOTION.IDLE
+			self.ai_state = AI_STATE.OFF
+			motion_manager.motion = motion_manager.MOTION.IDLE
 
 
 func _on_NavigationAgent2D_path_changed() -> void:

@@ -29,7 +29,7 @@
 [ext_resource path="res://common/shader_rect/ShaderCanvasRect.tscn" type="PackedScene" id=27]
 [ext_resource path="res://game/level/LevelEnvironment.tscn" type="PackedScene" id=28]
 [ext_resource path="res://game/level/terrain/surfaces/SurfaceNitro_SS2D.tscn" type="PackedScene" id=29]
-[ext_resource path="res://game/level/Finish.tscn" type="PackedScene" id=30]
+[ext_resource path="res://game/level/LevelFinish.tscn" type="PackedScene" id=30]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
 seed = 7

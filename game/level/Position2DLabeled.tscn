@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=1]
+
+[node name="DriveOutPosition" type="Position2D"]
+position = Vector2( 0, -1024 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EditorRectLabel" type="ColorRect" parent="."]
+margin_left = -50.0
+margin_top = -50.0
+margin_right = 50.0
+margin_bottom = 50.0
+rect_pivot_offset = Vector2( 50, 50 )
+color = Color( 0.827451, 0, 1, 1 )
+
+[node name="Label" type="Label" parent="EditorRectLabel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -118.0
+margin_top = 72.0
+margin_right = 118.0
+margin_bottom = 120.0
+theme = ExtResource( 1 )
+text = "DRIVE OUT"

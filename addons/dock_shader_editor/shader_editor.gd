@@ -11,11 +11,11 @@ func get_plugin_name():
 
 func get_plugin_icon():
 	return get_editor_interface().get_base_control().get_icon("Shader", "EditorIcons")
-	
+
 func _enter_tree():
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
-	
+
 	panel_instance = PanelContainer.new()
 	panel_instance.name = "Shader"
 	panel_instance.theme = get_theme(shader_editor)
@@ -23,7 +23,7 @@ func _enter_tree():
 	make_visible(true)
 	panel_instance.size_flags_vertical = 3
 	panel_instance.size_flags_horizontal = 3
-	
+
 	shader_editor = find_editor(get_editor_interface().get_base_control(), 0)
 	dock = shader_editor.get_parent()
 
@@ -31,20 +31,20 @@ func _enter_tree():
 		shader_editor.remove_child(child)
 		panel_instance.add_child(child)
 	make_visible(false)
-	
+
 	dock.remove_child(shader_editor)
 
 func _exit_tree():
 	dock.add_child(shader_editor)
-	
+
 	for child in panel_instance.get_children():
 		panel_instance.remove_child(child)
 		shader_editor.add_child(child)
-	
+
 	if panel_instance:
 		remove_control_from_docks(panel_instance)
 		panel_instance.queue_free()
-		
+
 func handles(object):
 	if not panel_instance:
 		return false

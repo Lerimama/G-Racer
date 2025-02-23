@@ -9,6 +9,7 @@ var game_levels_count: int = 5
 var statbox_count: int = 0
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
 
+onready var sections_holder: HBoxContainer = $HudSections
 onready var left_section: VBoxContainer = $HudSections/Left
 onready var right_section: VBoxContainer = $HudSections/Right
 onready var center_top: VBoxContainer = $HudSections/Center/Top
@@ -33,7 +34,7 @@ func _ready() -> void:
 
 
 func set_hud(game_manager):
-
+	print("SET>AM HUD")
 	var level_lap_count: int = game_manager.level_profile["level_laps"]
 	var level_time_limit: int = game_manager.level_profile["level_time_limit"]
 
@@ -45,13 +46,22 @@ func set_hud(game_manager):
 	# game stats
 	game_levels_count = game_manager.game_levels.size()
 	level_lap_limit = level_lap_count
+	game_timer.stop_timer()
 	game_timer.reset_timer(level_time_limit)
 	game_timer.show()
 	record_lap_label.hide()
+	for section in sections_holder.get_children():
+		section.show()
 
-	# statboxes
-	for driver in game_manager.game_tracker.drivers_in_game:
-		set_driver_statbox(driver, game_manager.level_profile["level_type"], game_manager.game_tracker.drivers_in_game.size())
+	# statboxes reset
+	for statbox in statboxes_with_drivers:
+		statbox.queue_free()
+	statboxes_with_drivers.clear()
+	statbox_count = 0
+
+	# new statboxes
+	for vehicle in game_manager.drivers_on_start:
+		set_driver_statbox(vehicle, game_manager.level_profile["level_type"], game_manager.drivers_on_start.size())
 
 
 func set_driver_statbox(statbox_driver: Vehicle, level_type: int, all_statboxes_count: int): # kliče GM
@@ -79,10 +89,6 @@ func set_driver_statbox(statbox_driver: Vehicle, level_type: int, all_statboxes_
 	for stat in driver_stats:
 		_on_driver_stat_changed(statbox_driver.driver_name_id, stat, driver_stats[stat])
 
-#		if statbox_driver.driver_name_id == "JOU":# and not Pfs.STATS.keys()[driver_stat_key] == "GAS":
-#			printt("stat changed", Pfs.STATS.keys()[Pfs.STATS.values().find(stat)], driver_stats[stat])
-
-
 	if all_statboxes_count == 1: # single player
 		new_statbox.set_statbox_elements(level_type, true)
 	else:
@@ -105,16 +111,22 @@ func on_game_start():
 
 func on_level_over():
 
-	game_timer.stop_timer()
+#	game_timer.stop_timer()
+#	for statbox in statboxes_with_drivers:
+#		statbox.hide()
+	for section in sections_holder.get_children():
+		section.hide()
 
 
 func on_game_over():
 
-	game_timer.stop_timer()
-	game_timer.hide()
-	record_lap_label.hide()
-	for statbox in statboxes_with_drivers:
-		statbox.hide()
+#	game_timer.stop_timer()
+#	game_timer.hide()
+#	record_lap_label.hide()
+#	for statbox in statboxes_with_drivers:
+#		statbox.hide()
+	for section in sections_holder.get_children():
+		section.hide()
 
 
 func _on_driver_stat_changed(driver_name_id, driver_stat_key: int, stat_value):

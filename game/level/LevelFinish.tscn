@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=2]
-[ext_resource path="res://game/level/Finish.gd" type="Script" id=3]
+[ext_resource path="res://game/level/LevelFinish.gd" type="Script" id=3]
+[ext_resource path="res://common/EditorRectLabel.tscn" type="PackedScene" id=4]
 
 [sub_resource type="Image" id=11380]
 data = {
@@ -53,17 +54,14 @@ stretch_mode = 2
 [node name="CollisionPolygon2D" type="CollisionShape2D" parent="FinishLine"]
 shape = SubResource( 2923 )
 
-[node name="CameraPosition" type="Position2D" parent="."]
-
 [node name="DriveOutPosition" type="Position2D" parent="."]
 position = Vector2( 0, -1024 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Line2d" type="Line2D" parent="DriveOutPosition"]
-position = Vector2( -72, 0 )
-points = PoolVector2Array( -320, 0, 472, 0 )
-default_color = Color( 1, 0, 1, 1 )
+[node name="EditorRectLabel" parent="DriveOutPosition" instance=ExtResource( 4 )]
+text = "drive out
+direction"
 
 [connection signal="body_entered" from="FinishLine" to="." method="_on_FinishLine_body_entered"]

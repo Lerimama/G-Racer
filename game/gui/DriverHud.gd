@@ -45,7 +45,7 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 		is_set = true
 	else:
 		# weapons
-		hud_driver.control_manager.connect("next_weapon_selected", self, "_on_next_weapon_selected")
+		hud_driver.driver.connect("next_weapon_selected", self, "_on_next_weapon_selected")
 		for weapon in hud_driver.triggering_weapons:
 			_add_weapon_selector(weapon)
 		is_set = true

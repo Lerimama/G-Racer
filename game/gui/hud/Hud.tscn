@@ -532,8 +532,14 @@ name_as_icon = false
 name_as_icon = false
 
 [editable path="HudSections/Left/StatBox"]
+[editable path="HudSections/Left/StatBox/DriverStats/HBoxContainer/StatGas"]
 [editable path="HudSections/Left/StatBox_2"]
+[editable path="HudSections/Left/StatBox_2/DriverStats/HBoxContainer/StatGas"]
 [editable path="HudSections/Left/StatBox_3"]
+[editable path="HudSections/Left/StatBox_3/DriverStats/HBoxContainer/StatGas"]
 [editable path="HudSections/Right/StatBox"]
+[editable path="HudSections/Right/StatBox/DriverStats/HBoxContainer/StatGas"]
 [editable path="HudSections/Right/StatBox_2"]
+[editable path="HudSections/Right/StatBox_2/DriverStats/HBoxContainer/StatGas"]
 [editable path="HudSections/Right/StatBox_3"]
+[editable path="HudSections/Right/StatBox_3/DriverStats/HBoxContainer/StatGas"]

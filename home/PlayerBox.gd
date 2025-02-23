@@ -26,11 +26,12 @@ func _ready() -> void:
 			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
 			driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
 			driver_profile["driver_name_obs"] = Pfs.ai_profile["ai_name"]
+			driver_profile["driver_color"] = Pfs.colors[driver_index]
 		else:
 			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
 			driver_profile["driver_name_obs"] = Pfs.names[driver_index]
 			driver_profile["driver_avatar"] = Pfs.avatars[driver_index]
-		driver_profile["driver_color"] = Pfs.colors[driver_index]
+			driver_profile["driver_color"] = Pfs.colors[driver_index]
 
 		_set_driver_box()
 

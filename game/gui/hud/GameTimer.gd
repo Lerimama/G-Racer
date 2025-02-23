@@ -7,7 +7,7 @@ signal time_is_up # pošlje se v hud, ki javi game managerju
 enum TIMER_MODE {COUNT_UP, COUNT_DOWN}
 var timer_mode: int = TIMER_MODE.COUNT_UP
 
-enum TIMER_STATE {COUNTING, STOPPED, PAUSED}
+enum TIMER_STATE {STOPPED, COUNTING, PAUSED}
 var timer_state: int = TIMER_STATE.STOPPED
 
 var game_time: float # čas igre v sekundah z decimalkami
@@ -41,8 +41,6 @@ func _process(delta: float) -> void:
 			start_timer_os_msecs = Time.get_ticks_msec()
 
 		# samo zapis v timerju .. OPT
-#		game_time_hunds = game_time(Time.get_ticks_msec() - start_timer_os_msecs) * 10
-#		game_time_hunds = (Time.get_ticks_msec() - start_timer_os_msecs) * 10
 		game_time = float(Time.get_ticks_msec() - start_timer_os_msecs) / 1000
 		game_time_hunds = game_time * 100 # - (Time.get_ticks_msec() - start_timer_os_msecs) * 10
 
@@ -56,18 +54,7 @@ func _process(delta: float) -> void:
 			mins_label.text = "%02d" % (floor(game_time_left / 60))
 			secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60) * 60)
 			hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)
-#		if timer_mode == TIMER_MODE.COUNT_UP:
-#			mins_label.text = "%02d" % floor(game_time / 60)
-#			secs_label.text = "%02d" % (floor(game_time) - floor(game_time / 60) * 60)
-#			hunds_label.text = "%02d" % floor((game_time - floor(game_time)) * 100)
-#		else:
-#			var game_time_left: float = game_time_limit - game_time
-#			mins_label.text = "%02d" % (floor(game_time_left / 60))
-#			secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60) * 60)
-#			hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)
 
-			# game time is up
-			#			printt(game_time, game_time_limit, game_time - game_time_limit)
 			if game_time_left <= 0:
 				modulate = Rfs.color_red
 				stop_timer()
@@ -90,6 +77,8 @@ func _process(delta: float) -> void:
 
 func reset_timer(timer_limit: float = game_time_limit):
 
+	timer_state = TIMER_STATE.STOPPED
+
 	# setup
 	game_time_limit = timer_limit
 	sudden_death_mode = Sts.sudden_death_mode
@@ -107,6 +96,7 @@ func reset_timer(timer_limit: float = game_time_limit):
 
 	# reset
 	modulate = Rfs.color_hud_base
+	start_timer_os_msecs = -1
 	game_time = 0
 	game_time_hunds = 0
 	if timer_mode == TIMER_MODE.COUNT_UP:
@@ -121,6 +111,7 @@ func reset_timer(timer_limit: float = game_time_limit):
 
 func start_timer():
 
+	reset_timer()
 	timer_state = TIMER_STATE.COUNTING
 
 

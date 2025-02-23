@@ -103,9 +103,9 @@ engines_path = NodePath("Engines")
 group_weapons_by_type = false
 vehicle_motion_profile = ExtResource( 1 )
 
-[node name="Control" type="Node" parent="."]
+[node name="Driver" type="Node2D" parent="."]
 
-[node name="Motion" type="Node" parent="."]
+[node name="Motion" type="Node2D" parent="."]
 script = ExtResource( 10 )
 
 [node name="-------------- Z\? - Under" type="Control" parent="."]

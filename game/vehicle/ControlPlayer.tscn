@@ -2,5 +2,5 @@
 
 [ext_resource path="res://game/vehicle/ControlPlayer.gd" type="Script" id=1]
 
-[node name="ControllerPlayer" type="Node"]
+[node name="ControllerPlayer" type="Node2D"]
 script = ExtResource( 1 )

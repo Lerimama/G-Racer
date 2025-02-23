@@ -13,7 +13,7 @@ class_name PlayerData
 export var driver_nm: String = "res drajver"
 #export var driver_avatar: Texture = preload("res://home/avatar_david.tres")
 #export var driver_color: Color = Color.palevioletred
-#export var control_manager: int = 0
+#export var control: int = 0
 #export var driver_type: int = 0
 
 func change_data_value(data_value):

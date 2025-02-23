@@ -16,19 +16,14 @@ var level_goals: Array = []
 #var level_type: int = 0 # določi glede na pripete elemente ...def = LEVEL_TYPE.BATTLE
 var navigation_cells_positions: Array = []
 var goal_reached_signal: String = "reached_by" # vsak goal more met to
+var available_pickable_positions: Array = [] # tole je bolje delovalo, dokler sem uporabljal tilemap
 
 onready var level_navigation: NavigationPolygonInstance = $Tracking/LevelNavigation
 onready var tilemap_objects: TileMap = $Objects/Objects
 onready var camera_limits_rect: Panel # = $CameraLimits
-onready var finish_camera_position_node: Position2D = $Tracking/LevelFinish/CameraPosition
-onready var drive_out_position: Vector2 = $Tracking/LevelFinish/DriveOutPosition.position
 
 # start
 onready var level_start: Node2D = $Tracking/LevelStart
-onready var start_lights: Node2D = $Tracking/LevelStart/StartLights
-onready var start_camera_position_node: Position2D = $Tracking/LevelStart/CameraPosition
-onready var start_positions_node: Node2D = $Tracking/LevelStart/StartPositions
-onready var drive_in_position: Vector2 = $Tracking/LevelStart/DriveInPosition.position
 
 
 func _ready() -> void:
@@ -40,9 +35,6 @@ func _ready() -> void:
 	$__WorldMeters.hide()
 
 	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
-
-	for child in start_positions_node.get_children():
-		child.hide()
 
 
 func set_level():
@@ -77,9 +69,14 @@ func set_level():
 	navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
 	_resize_to_level_size()
 
-	var camera_nodes: Array = [camera_limits_rect, start_camera_position_node, finish_camera_position_node]
-
-	emit_signal("level_is_set", start_positions_node.get_children(), camera_nodes, navigation_cells_positions, level_type)
+	emit_signal(
+		"level_is_set",
+		level_type,
+		level_start.start_positions_holder.get_children(),
+		camera_limits_rect,
+		level_start.camera_position_node,
+		navigation_cells_positions
+		)
 
 
 func _set_level_objects():
@@ -128,15 +125,30 @@ func _set_level_objects():
 			$Objects.add_child(new_object_scene)
 
 
-func spawn_pickable(spawn_global_position: Vector2, pickable_name: String, pickable_index: int):
+func spawn_pickable(pickable_key: int = -1):
 
-	var scene_to_spawn: PackedScene = preload("res://game/level/pickables/Pickable.tscn")
-	var pickable_tile_offset: Vector2 = Vector2(8,8)
+	if not navigation_cells_positions.empty():
 
-	var new_pickable_scene = scene_to_spawn.instance() #
-	new_pickable_scene.position = spawn_global_position + pickable_tile_offset
-	new_pickable_scene.pickable_key = pickable_index
-	$Pickables.add_child(new_pickable_scene)
+		if pickable_key == -1: # random pickable
+			pickable_key = Pfs.pickable_profiles.keys().pick_random()
+
+		var random_cell_position: Vector2 = navigation_cells_positions.pick_random()
+		var NewPickable: PackedScene = preload("res://game/level/pickables/Pickable.tscn")
+
+		var new_pickable = NewPickable.instance()
+		new_pickable.global_position = random_cell_position
+		new_pickable.pickable_key = pickable_key
+		$Pickables.add_child(new_pickable)
+
+		new_pickable.connect("tree_exiting", self, "_on_pickable_picked",[new_pickable.global_position])
+
+		# odstranim celico iz arraya tistih na voljo
+		available_pickable_positions.erase(random_cell_position)
+
+
+func _on_pickable_picked(pickable_position: Vector2):
+
+	available_pickable_positions.append(pickable_position)
 
 
 func _resize_to_level_size():
@@ -166,8 +178,3 @@ func _get_tilemap_cells(tilemap: TileMap):
 			tilemap_cells.append(cell)
 
 	return tilemap_cells
-
-
-func _exit_tree() -> void:
-	#	print ("LEVEL GRE")
-	pass

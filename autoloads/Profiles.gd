@@ -32,10 +32,11 @@ func stats(): pass # -----------------------------------------------------------
 
 # vsi mogoči statsi
 enum STATS {
-		WINS, LIFE, HEALTH, POINTS, GAS, CASH,
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT,
-		LEVEL_RANK, LAP_COUNT, BEST_LAP_TIME, LEVEL_TIME, GOALS_REACHED, LAP_TIME,
-		DAMAGE # obratno od health
+		WINS, LIFE, HEALTH, POINTS, GAS, CASH, # 0 > 5
+		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, # 6 > 9
+		LEVEL_RANK, LAP_COUNT, GOALS_REACHED # 10 > 12
+		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # 13 > 15
+		DAMAGE # 16 še ne beležim ... obratno od health
 		}
 
 #var start_vehicle_level_stats: Dictionary = { # tale slovar je med igro v level stats slovarju
@@ -92,7 +93,7 @@ var default_driver_profile: Dictionary = {
 }
 
 var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres"), preload("res://home/avatar_ai.tres")]
-var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red]
+var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
 var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
 
@@ -104,6 +105,7 @@ var ai_profile: Dictionary = {
 	"ai_type": AI_TYPE.DEFAULT, # obs
 	"ai_name": "STEINY",
 	"random_start_range": "", # še na nodu
+	"driver_color": Rfs.color_red,
 }
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
@@ -168,6 +170,7 @@ var vehicle_profiles: Dictionary = {
 		"damage_engine_power_factor": 1, # kako aplicirana škoda vpliva na moč motorja ... to je že mal v detajle
 		"on_hit_disabled_time": 1,
 		"heal_rate": 0.01, # lerp rate
+		"driving_elevation": 7,
 		},
 	}
 

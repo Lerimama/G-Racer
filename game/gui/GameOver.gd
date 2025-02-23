@@ -39,10 +39,18 @@ func _set_scorelist(final_game_data):
 	# uvrščeni
 	var drivers_ranked: Array = []
 	for driver_data in final_game_data:
+
 		if not final_game_data[driver_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 			drivers_ranked.append(final_game_data[driver_data])
+
 	# sortiram
 	drivers_ranked.sort_custom(self, "_sort_driver_data_by_rank")
+
+	# dodam ai, ki jih še čakam
+	for driver_data in final_game_data:
+		if driver_data.empty():
+			drivers_ranked.append(final_game_data[driver_data])
+
 	# dodam neurvščene ... brezzaporedno
 	for driver_data in final_game_data:
 		if final_game_data[driver_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
@@ -51,7 +59,9 @@ func _set_scorelist(final_game_data):
 	# spawnam scoreline
 	for ranked_driver_data in drivers_ranked:
 		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
-		if ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+		if ranked_driver_data.empty():
+			new_ranking_line.get_node("Rank").text = "..."
+		elif ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
 			new_ranking_line.get_node("Rank").text = "NN"
 		else:
 			new_ranking_line.get_node("Rank").text = str(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK]) + ". Place"

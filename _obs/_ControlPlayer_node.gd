@@ -4,7 +4,7 @@ extends Node2D
 #signal weapon_triggered
 signal next_weapon_selected
 
-var vehicle: Vehicle # temp ... Vehicle class
+var controlled_vehicle: Vehicle # temp ... Vehicle class
 var controller_type: int
 var motion_manager: Node2D
 
@@ -28,35 +28,28 @@ func _input(event: InputEvent) -> void:
 	# ta del inputa je kar razdelan, ampak ko enkrat registrira vse možnosti ga lahko "pozabim"
 	# ga lahko "pozabim" in pedenam _set_driving_motion()
 
-	if vehicle.is_active:
+	if controlled_vehicle.is_active:
 
 		# select weapon
 		if Input.is_action_just_pressed(selector_action):
 			selected_item_index += 1
-			if selected_item_index > vehicle.triggering_weapons.size() - 1: # poskrbi tudi za primer, da je samo en item
+			if selected_item_index > controlled_vehicle.triggering_weapons.size() - 1: # poskrbi tudi za primer, da je samo en item
 				selected_item_index = 0
 			elif selected_item_index < 0:
-				selected_item_index = vehicle.triggering_weapons.size() - 1
+				selected_item_index = controlled_vehicle.triggering_weapons.size() - 1
 			emit_signal("next_weapon_selected", selected_item_index)
 
 		# shoot
 		if Input.is_action_pressed(shoot_action):
-			var selected_weapon: Node2D = vehicle.triggering_weapons[selected_item_index]
+			var selected_weapon: Node2D = controlled_vehicle.triggering_weapons[selected_item_index]
 			if selected_weapon.has_method("_on_weapon_triggered"):
 				selected_weapon._on_weapon_triggered()
 			# še vsa orožja istega tipa
-			if vehicle.group_weapons_by_type:
-				for weapon in vehicle.weapons.get_children():
+			if controlled_vehicle.group_weapons_by_type:
+				for weapon in controlled_vehicle.weapons.get_children():
 					if weapon.weapon_type == selected_weapon.weapon_type:
 						weapon._on_weapon_triggered()
 
-		# revup
-		if Input.is_action_just_pressed(fwd_action) or Input.is_action_just_pressed(rev_action):
-			vehicle.revup()
-
-	if game_is_on \
-	and not motion_manager.motion == motion_manager.MOTION.DISSARAY \
-	and not motion_manager.motion == motion_manager.MOTION.OFF:
 		# motion
 		var prev_actions: Array = pressed_driving_actions.duplicate()
 		if Input.is_action_pressed(fwd_action):
@@ -80,13 +73,17 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	vehicle.add_to_group(Rfs.group_players)
+	controlled_vehicle.add_to_group(Rfs.group_players)
 	# player coližn lejer
-	vehicle.set_collision_layer_bit(4, true)
+	controlled_vehicle.set_collision_layer_bit(4, true)
 
 
 func _set_driving_motion(pressed_actions: Array):
 
+	if not game_is_on and pressed_actions.has(fwd_action):
+		controlled_vehicle.revup()
+
+	if game_is_on and not motion_manager.motion == motion_manager.MOTION.DISSARAY:
 		if fwd_action in pressed_actions:
 			if pressed_actions.has(left_action):
 				motion_manager.motion = motion_manager.MOTION.FWD_LEFT
@@ -95,7 +92,7 @@ func _set_driving_motion(pressed_actions: Array):
 			else:
 				motion_manager.motion = motion_manager.MOTION.FWD
 			if fast_start_window_is_open:
-				vehicle.revup()
+				controlled_vehicle.revup()
 				motion_manager.boost_vehicle(motion_manager.fast_start_power_addon, Sts.fast_start_time)
 		elif rev_action in pressed_actions:
 			if left_action in pressed_actions:
@@ -130,7 +127,8 @@ func _on_game_stage_change(game_manager: Game): # od GMja
 			#			print ("fast start closed")
 		game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
 			game_is_on = false
-			if vehicle.is_active: # zazih
-				vehicle.is_active = false
+			if controlled_vehicle.is_active:
+				#				set_physics_process(false)
+				controlled_vehicle.is_active = false
 				print ("disejblam", " _prepozno")
 

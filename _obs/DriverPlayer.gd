@@ -6,7 +6,7 @@ signal next_weapon_selected
 
 var controlled_vehicle: Vehicle # temp ... Vehicle class
 var controller_type: int
-var motion_manager: Node
+var motion_manager: Node2D
 
 onready var controller_actions: Dictionary = Pfs.controller_profiles[controller_type]
 onready var fwd_action: String = controller_actions["fwd_action"]

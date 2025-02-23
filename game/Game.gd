@@ -4,7 +4,7 @@ class_name Game
 
 signal game_stage_changed(game_manager)
 
-enum GAME_STAGE {SETUP, READY, INTRO, PLAYING, PAUSED, END_SUCCESS, END_FAIL}
+enum GAME_STAGE {SETTING_UP, READY, INTRO, PLAYING, PAUSED, END_SUCCESS, END_FAIL}
 var game_stage: int = -1 setget _change_game_stage
 
 export (Array, NodePath) var main_signal_connecting_paths: Array = []
@@ -18,7 +18,7 @@ var game_views: Dictionary = {}
 # level
 var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
-var level_index = 0
+var level_count: int = 0
 var start_position_nodes: Array # dobi od levela
 
 # shadows
@@ -43,6 +43,9 @@ var finale_game_data: Dictionary = {
 	#		"driver_profile": {},
 	#	},
 }
+
+var drivers_on_start: Array = [] # to so nodeti
+var camera_leader: Node2D = null setget _change_camera_leader
 
 # still tracking
 #var camera_leader: Node2D setget _change_camera_leader # trenutno vodilni igralec ... lahko tudi kakšen drug pogoj
@@ -78,8 +81,9 @@ func _ready() -> void:
 
 
 func _set_game():
+	# čez tole gre tudi next level
 
-	self.game_stage = GAME_STAGE.SETUP
+	self.game_stage = GAME_STAGE.SETTING_UP
 
 	_set_game_level()
 
@@ -88,28 +92,24 @@ func _set_game():
 	game_reactor.game_level = game_level
 	game_tracker.game_level = game_level
 
-	# camera start positions
-	get_tree().set_group(Rfs.group_player_cameras, "follow_target", game_level.start_camera_position_node)
-
 	# drivers on level start
-	var drivers_in_start_indexes: Array = []
-	var drivers_in_start_names: Array = []
-
-	if finale_game_data.empty():
-		drivers_in_start_indexes = Sts.drivers_on_game_start
-		drivers_in_start_names = Sts.names_on_game_start
+	var driver_name_ids_on_start: Array = []
+	if level_count == 1:
+		finale_game_data.clear()
+		driver_name_ids_on_start = Sts.drivers_on_game_start
+		for driver_name_id in driver_name_ids_on_start:
+				finale_game_data[driver_name_id] = {}
 	else:
-		for driver_name_id_data in finale_game_data:
-			# hard mode
-			if not finale_game_data[driver_name_id_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
-				drivers_in_start_indexes.append(driver_name_id_data)
+		for driver_name_id in finale_game_data:
+			if not finale_game_data[driver_name_id]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+				driver_name_ids_on_start.append(driver_name_id)
 		game_reactor.drivers_finished.clear()
 
+
 	# spawn drivers ... po zaporedji v arrayu indexov
-	var spawned_position_index = 0
-	for driver_name_id in drivers_in_start_indexes:
-		_spawn_vehicle(driver_name_id, spawned_position_index) # scena, pozicija, profile id (barva, ...)
-		spawned_position_index += 1
+	for driver_name_id in driver_name_ids_on_start:
+		_spawn_vehicle(driver_name_id, driver_name_ids_on_start.find(driver_name_id)) # scena, pozicija, profile id (barva, ...)
+
 
 	yield(get_tree(), "idle_frame")
 
@@ -156,8 +156,8 @@ func _set_game():
 
 func _set_game_level():
 
-#	level_index += 1
-	if level_index > 0:
+	level_count += 1
+	if level_count > 0:
 		# unmute sfx
 		if not Rfs.sound_manager.sfx_set_to_mute:
 			var bus_index: int = AudioServer.get_bus_index("GameSfx")
@@ -171,14 +171,14 @@ func _set_game_level():
 		game_level.set_physics_process(false)
 		game_level.queue_free()
 
-	var new_level_key: int = Sts.game_levels[level_index]
+	var new_level_key: int = Sts.game_levels[level_count - 1]
 	level_profile = Pfs.level_profiles[new_level_key]
 	_spawn_level(level_profile)
 
 
 func _game_intro():
 
-	self.game_stage = GAME_STAGE.INTRO
+#	self.game_stage = GAME_STAGE.INTRO
 
 	# pokažem sceno
 	var fade_time: float = 1
@@ -189,11 +189,11 @@ func _game_intro():
 
 	# drivers drive-in
 	var drive_in_time: float = 2
-	for driver in game_tracker.drivers_in_game:
-		var drive_in_vector: Vector2 = Vector2.ZERO
-		if game_level.drive_in_position:
-			drive_in_vector = game_level.drive_in_position.rotated(game_level.level_start.global_rotation)
-		driver.drive_in(drive_in_vector, drive_in_time)
+	for driver in drivers_on_start:
+		var drive_in_position: Vector2 = Vector2.ZERO
+		if game_level.level_start:
+			drive_in_position = game_level.level_start.drive_in_position_node.global_position
+			driver.motion_manager.drive_in(drive_in_position, drive_in_time)
 
 	# počakam, da odpelje
 	yield(get_tree().create_timer(drive_in_time),"timeout")
@@ -205,8 +205,8 @@ func _start_game():
 
 	# start countdown
 	if Sts.start_countdown and level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
-		game_level.start_lights.start_countdown() # če je skrit, pošlje signal takoj
-		yield(game_level.start_lights, "countdown_finished")
+		game_level.level_start.start_lights.start_countdown() # če je skrit, pošlje signal takoj
+		yield(game_level.level_start.start_lights, "countdown_finished")
 
 	self.game_stage = GAME_STAGE.PLAYING
 
@@ -219,7 +219,9 @@ func _change_game_stage(new_game_stage: int):
 	game_stage = new_game_stage
 
 	match game_stage:
-		GAME_STAGE.SETUP:
+		GAME_STAGE.SETTING_UP:
+			# reset
+			drivers_on_start.clear()
 			# najprej povežem s s signalom
 			for connecting_node in main_signal_connecting_nodes:
 				if not self.is_connected("game_stage_changed", connecting_node, "_on_game_stage_changed"):
@@ -228,8 +230,8 @@ func _change_game_stage(new_game_stage: int):
 		GAME_STAGE.READY:
 			emit_signal("game_stage_changed", self)
 
-		GAME_STAGE.INTRO:
-			pass
+#		GAME_STAGE.INTRO:
+#			pass
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 			if not level_profile["level_type"] == Pfs.BASE_TYPE.RACING: # zaženem vsakič, tudi po pavzi
@@ -250,7 +252,6 @@ func _change_game_stage(new_game_stage: int):
 				# navigacija AI
 				# kvefri elementov, ki so v areni
 			get_tree().set_group(Rfs.group_player_cameras, "follow_target", null)
-			game_reactor.camera_leader = null # trenutno vodilni igralec (rabim za camera target in pull target)
 			Rfs.sound_manager.stop_music()
 			var bus_index: int = AudioServer.get_bus_index("GameSfx")
 			AudioServer.set_bus_mute(bus_index, true)
@@ -305,6 +306,13 @@ func _set_game_views(players_count: int = 1):
 			game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
 			game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
 			game_views.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+
+
+func _change_camera_leader(new_camera_leader: Node2D):
+
+	if not new_camera_leader == camera_leader:
+		camera_leader = new_camera_leader
+		get_tree().set_group(Rfs.group_player_cameras, "follow_target", camera_leader)
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
@@ -389,31 +397,24 @@ func _spawn_vehicle(driver_name_id, spawned_position_index: int):
 
 	# ai navigation
 	if Pfs.driver_profiles[driver_name_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		new_vehicle.control_manager.level_navigation = game_level.level_navigation
+		new_vehicle.driver.level_navigation = game_level.level_navigation
 	# trackers
 	if game_level.level_track:
 		new_vehicle.driver_tracker = game_level.level_track.set_new_tracker(new_vehicle)
 	# goals
-	new_vehicle.control_manager.goals_to_reach = game_level.level_goals.duplicate()
+	new_vehicle.driver.goals_to_reach = game_level.level_goals.duplicate()
 
 	# connect
-	self.connect("game_stage_changed", new_vehicle.control_manager, "_on_game_stage_change")
-	new_vehicle.connect("driver_terminated", game_reactor, "_on_driver_terminated")
+	self.connect("game_stage_changed", new_vehicle.driver, "_on_game_stage_change")
+	new_vehicle.connect("vehicle_deactivated", game_reactor, "_on_vehicle_deactivated")
 	new_vehicle.connect("stat_changed", hud, "_on_driver_stat_changed")
 
+	drivers_on_start.append(new_vehicle)
 
-func _on_level_is_set(start_positions: Array, camera_nodes: Array, nav_positions: Array, level_type: int):
+
+func _on_level_is_set(level_type: int, start_positions: Array, camera_limits: Control, camera_start_position_node: Position2D, nav_positions: Array):
 
 	level_profile["level_type"] = level_type # do tukaj ga ni v slovarju
-	# navigacija za AI
 	game_reactor.navigation_positions = nav_positions
-	# random pickable pozicije
-	game_reactor.available_pickable_positions = nav_positions.duplicate()
-	# spawn poz
 	start_position_nodes = start_positions.duplicate()
-	# kamera
-	var camera_limits: Control = camera_nodes[0]
-	var camera_start_position: Vector2 = camera_nodes[1].global_position
-	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position)
-
-	#	printt("GM level goals", level_profile["level_goals"])
+	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)
