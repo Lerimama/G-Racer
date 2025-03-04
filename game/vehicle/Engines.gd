@@ -39,7 +39,11 @@ func manage_engines(motion_manager: Node2D):
 
 	match motion_manager.motion:
 
-		motion_manager.MOTION.FWD, motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
+#		motion_manager.MOTION.FWD, motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
+		motion_manager.MOTION.FWD:
+			for thrust in all_thrusts:
+				thrust.start_fx()
+		motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
 			for thrust in all_thrusts:
 				thrust.start_fx()
 			for thrust in front_thrusts:
@@ -47,7 +51,15 @@ func manage_engines(motion_manager: Node2D):
 			for thrust in rear_thrusts:
 				thrust.rotation = - motion_manager.force_rotation
 
-		motion_manager.MOTION.REV, motion_manager.MOTION.REV_LEFT, motion_manager.MOTION.REV_RIGHT:
+		motion_manager.MOTION.REV:
+			for thrust in all_thrusts:
+				thrust.start_fx()
+			for thrust in front_thrusts:
+				thrust.rotation = - motion_manager.force_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+			for thrust in rear_thrusts:
+				thrust.rotation = motion_manager.force_rotation + deg2rad(180)
+
+		motion_manager.MOTION.REV_LEFT, motion_manager.MOTION.REV_RIGHT:
 			for thrust in all_thrusts:
 				thrust.start_fx()
 			for thrust in front_thrusts:

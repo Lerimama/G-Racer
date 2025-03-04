@@ -1,4 +1,4 @@
-tool
+#tool
 extends HBoxContainer
 
 enum STAT_TYPE {COUNT, TIME, ICONS}
@@ -53,6 +53,9 @@ func _ready() -> void:
 
 
 func _on_stat_change(new_stat_value):
+#	if name == "StatWins":
+#		print("new_stat_value ", name, new_stat_value)
+
 
 	# če je string je sporočilo ... skrijem vse razen sporočila
 	if new_stat_value is String:
@@ -61,7 +64,7 @@ func _on_stat_change(new_stat_value):
 		count_icons_holder.hide()
 
 	# če je array je ponavadi količina in max količina
-	elif new_stat_value is Array or new_stat_value is PoolIntArray:
+	elif new_stat_value is Array:
 		match stat_type:
 			STAT_TYPE.COUNT:
 				stat_count_label.text = str(new_stat_value[0]) + "/" + str(new_stat_value[1]) # +1 ker kaže trnenutnega, ne končanega
@@ -69,16 +72,24 @@ func _on_stat_change(new_stat_value):
 				_write_clock_time(new_stat_value[0], stat_time_label)
 				pass
 			STAT_TYPE.ICONS:
-				_set_icons_state(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
+				_set_icons_state(new_stat_value[0], new_stat_value[1]) # preveri lajf na začetku in seta pravilno stanje ikon
+#				_set_icons_state(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
 
 	# če je številka ga primerjam
-	elif new_stat_value is float or new_stat_value is int :
+	elif new_stat_value is float or new_stat_value is int:
+
 		match stat_type:
 			STAT_TYPE.COUNT:
 				stat_count_label.text = "%02d" % new_stat_value
+				# ranking dela pravilno, samo zapisati ga noče???
+#				if self == get_parent().get_node("StatLevelRank"):
+#					stat_count_label.text = str(new_stat_value)
+#					printt("after", new_stat_value, $Label.text)
+
+
 			STAT_TYPE.TIME:
 				_write_clock_time(new_stat_value, stat_time_label)
-			STAT_TYPE.ICONS:
+			STAT_TYPE.ICONS: # recimo healthbar
 				if new_stat_value is float: # ponavadi procent
 					var stat_value_percent: int = round(new_stat_value * 10)
 					var max_percent_value: int = 10
@@ -89,16 +100,9 @@ func _on_stat_change(new_stat_value):
 	stat_value = new_stat_value
 
 
-func _set_icons_state(count_value):
+func _set_icons_state(count_value, max_count_value: int = 0):
 
-	yield(get_tree(), "idle_frame") # predvsem zaradi debug reset
-
-	# current / max ?
-	var max_count_value: int = 0
-	if count_value is Array or count_value is PoolIntArray:
-		max_count_value = count_value[1]
-		var current_count_value: int = count_value[0]
-		count_value = current_count_value
+	yield(get_tree(), "idle_frame") # more bit, da apdejta na začetku
 
 	# stat value icons
 	if max_count_value == 0:
@@ -116,6 +120,7 @@ func _set_icons_state(count_value):
 
 	# stat value / max value icons
 	else:
+#		print("max min",  max_count_value, count_value)
 		# če je max manjši od count_value
 		if max_count_value < count_value:
 			max_count_value = count_value

@@ -56,17 +56,17 @@ var random_start_range: Array = [0.1, 1]
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
-#	if Input.is_action_just_pressed("no0"): # idle
-#		self.ai_state = AI_STATE.OFF
-	if Input.is_action_just_pressed("no1"): # idle
-		self.ai_state = AI_STATE.RACE_TRACK
-	if Input.is_action_just_pressed("no2"): # race
-		self.ai_state = AI_STATE.SEARCH
-	if Input.is_action_pressed("no3"):
-		wanted_speed = 900
-	if Input.is_action_just_pressed("no4"): # follow leader
-#		wanted_speed = -1
-		motion_manager.boost_vehicle()
+	if Input.is_action_just_pressed("no0"): # idle
+		self.ai_state = AI_STATE.OFF
+#	if Input.is_action_just_pressed("no1"): # idle
+#		self.ai_state = AI_STATE.RACE_TRACK
+#	if Input.is_action_just_pressed("no2"): # race
+#		self.ai_state = AI_STATE.SEARCH
+#	if Input.is_action_pressed("no3"):
+#		wanted_speed = 900
+#	if Input.is_action_just_pressed("no4"): # follow leader
+##		wanted_speed = -1
+#		motion_manager.boost_vehicle()
 
 	elif Input.is_action_just_pressed("left_click"): # follow leader
 		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(global_position, level_navigation.get_local_mouse_position())
@@ -114,53 +114,44 @@ func _get_target_side(target_position: Vector2):
 
 func _physics_process(delta: float) -> void:
 
+
 	if vehicle.is_active:
 
-		if motion_manager.motion == motion_manager.MOTION.DISSARAY and not ai_state == AI_STATE.OFF:
-			self.ai_state = AI_STATE.OFF
+		# state from ai_target
+		if not ai_state == AI_STATE.OFF:
+			# dissaray
+			if motion_manager.motion == motion_manager.MOTION.DISSARAY:
+				self.ai_state = AI_STATE.OFF
+			# SREACH > ai target
+			else:
+				if not ai_target: self.ai_state = AI_STATE.SEARCH
+				elif not is_instance_valid(ai_target): self.ai_state = AI_STATE.SEARCH
+				elif "is_active" in ai_target and not ai_target.is_active: self.ai_state = AI_STATE.SEARCH
 
 		_state_machine(delta)
 
-		# force rotation
+
 		var vector_to_target: Vector2 = Vector2.ZERO
-		if ai_target and is_instance_valid(ai_target):
-		#		if ai_target and not ai_target.is_queued_for_deletion():
-			force_direction_line.default_color = Color.yellow
-			if ai_state == AI_STATE.RACE_TRACK:
-				vector_to_target = _get_tracking_position(ai_target) - global_position
-			else:
-				vector_to_target = ai_target.global_position - global_position
-		else:
-			force_direction_line.default_color = Color.red
-			if not ai_state == AI_STATE.OFF: # če izgubi tarčo gre v SEARCH
-				self.ai_state = AI_STATE.SEARCH
+		if ai_state == AI_STATE.RACE_TRACK:
+			vector_to_target = _get_tracking_position(ai_target) - global_position
+		elif ai_target:
+			vector_to_target = ai_target.global_position - global_position
+
 		motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
 
 		# debug line
+		if ai_target and is_instance_valid(ai_target): force_direction_line.default_color = Color.yellow
+		else: force_direction_line.default_color = Color.red
 		force_direction_line.set_point_position(0, Vector2.ZERO)
 		force_direction_line.set_point_position(1, vector_to_target.rotated(- vehicle.global_rotation))
 
 		if not _update_vision() == null:
 			vehicle.set_linear_velocity(braking_velocity)
 
-			#		if ai_target:
-			#			motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, motion_manager.driving_gear * _get_target_side(ai_target.global_position) * deg2rad(motion_manager.max_engine_rotation_deg), motion_manager.engine_rotation_speed)
-			##			motion_manager.rotation_dir = _get_target_side(vector_to_target)
-
-			#		var roundabout_position = _update_vision()
-			#		if roundabout_position:# is Vector2:
-			#			vehicle.set_linear_velocity(braking_velocity)
-			#			if roundabout_position == Vector2.ZERO:
-			#				motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
-			#			else:
-			#				motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
-			#			navigation_agent.set_target_location(roundabout_position) # _temp?
-			#		else:
-			#			motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
-
 
 func _state_machine(delta: float):
 #	printt ("ai_state: ", AI_STATE.keys()[ai_state], motion_manager.current_engine_power)
+
 
 	match ai_state:
 
@@ -171,7 +162,6 @@ func _state_machine(delta: float):
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				var driver_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(driver_tracker_position)
-				#			Mts.spawn_indikator(driver_tracker_position, Color.white, vehicle.rotation, Rfs.node_creation_parent)
 			if not _adjust_power_speed_limit():
 				motion_manager.current_engine_power = motion_manager.max_engine_power
 
@@ -185,7 +175,6 @@ func _state_machine(delta: float):
 			elif search_target_reached:
 				self.ai_state = AI_STATE.SEARCH
 			motion_manager.current_engine_power = motion_manager.max_engine_power
-#			vehicle.engine_power = vehicle.max_engine_power * engine_power_factor_search
 
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			ai_target = _get_better_targets(ai_target)
@@ -214,67 +203,6 @@ func _state_machine(delta: float):
 			navigation_agent.set_target_location(ai_target.global_position)
 			motion_manager.current_engine_power = motion_manager.max_engine_power / 3
 			_react_to_target(ai_target)
-
-
-func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
-	# keep_on_distance - ustavi na distanci in jo vzdržuje
-	# aggresive - posešuje do tarče
-
-	# debug
-	#	keep_distance = 500
-	#	near_distance = 800
-	#	keep_on_distance = true
-	#	be_aggressive = false
-
-	var any_collider = Mts.get_directed_raycast_collision(target_ray, react_target.global_position)
-
-	var target_in_sight: bool = false
-	if any_collider and any_collider == react_target and is_instance_valid(react_target):
-	#	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():
-		target_in_sight = true
-
-	if target_in_sight:
-		var target_closeup_breaking_factor: float = 1
-		var distance_to_target = global_position.distance_to(react_target.global_position)
-		if distance_to_target < keep_distance:
-			if keep_on_distance: # ustavi tik pred tarčo
-				target_closeup_breaking_factor = breaking_factor_keep
-				motion_manager.current_engine_power = motion_manager.max_engine_power * engine_power_factor_keep
-			elif be_aggressive: # fuuul power čez tarčo
-				motion_manager.current_engine_power = motion_manager.max_engine_power
-			else: # spusti gasa čez tarčo
-				motion_manager.current_engine_power = 0
-			motion_manager.current_engine_power = 0
-		elif distance_to_target < near_distance:
-			if be_aggressive: # pospešuje proti tarči
-				motion_manager.current_engine_power = motion_manager.max_engine_power
-				motion_manager.boost_vehicle()
-			else: # upočasnuje proti tarči
-				target_closeup_breaking_factor = breaking_factor_near
-		else:
-			motion_manager.current_engine_power = motion_manager.max_engine_power
-		braking_velocity = vehicle.velocity * target_closeup_breaking_factor
-		vehicle.set_linear_velocity(braking_velocity)
-	else:
-		# če izgubi pogled na tarčo, še zmeraj v tistem trenutku videl
-		navigation_agent.set_target_location(global_position)
-
-
-func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
-	# redko ... je pa dober obvod do poenotenja kontrole z agenti z različnimi močmi
-	# samo omejevanje, ker, če je ukaz navzgo, vehicle ne more preko svoje max moči ... logično
-
-	if wanted_speed == -1:
-		return false
-
-	if wanted_speed == 0:
-		motion_manager.current_engine_power = 0
-	else:
-		var current_speed: float = vehicle.body_state.get_linear_velocity().length()
-		if current_speed > wanted_speed:
-			motion_manager.current_engine_power = lerp(motion_manager.current_engine_power, 0, speed_change_rate)
-
-	return true
 
 
 func _update_vision():
@@ -371,7 +299,89 @@ func _change_ai_state(new_ai_state: int):
 	ai_state = new_ai_state
 
 
-func goal_reached(goal_reached: Node2D, extra_target: Node2D = null):
+# REAKT ------------------------------------------------------------------------------------------------
+
+
+func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
+	# keep_on_distance - ustavi na distanci in jo vzdržuje
+	# aggresive - posešuje do tarče
+
+	# debug
+	#	keep_distance = 500
+	#	near_distance = 800
+	#	keep_on_distance = true
+	#	be_aggressive = false
+
+	var any_collider = Mts.get_directed_raycast_collision(target_ray, react_target.global_position)
+
+	var target_in_sight: bool = false
+	if any_collider and any_collider == react_target and is_instance_valid(react_target):
+	#	if any_collider and any_collider == react_target and not react_target.is_queued_for_deletion():
+		target_in_sight = true
+
+	if target_in_sight:
+		var target_closeup_breaking_factor: float = 1
+		var distance_to_target = global_position.distance_to(react_target.global_position)
+		if distance_to_target < keep_distance:
+			if keep_on_distance: # ustavi tik pred tarčo
+				target_closeup_breaking_factor = breaking_factor_keep
+				motion_manager.current_engine_power = motion_manager.max_engine_power * engine_power_factor_keep
+			elif be_aggressive: # fuuul power čez tarčo
+				motion_manager.current_engine_power = motion_manager.max_engine_power
+			else: # spusti gasa čez tarčo
+				motion_manager.current_engine_power = 0
+			motion_manager.current_engine_power = 0
+		elif distance_to_target < near_distance:
+			if be_aggressive: # pospešuje proti tarči
+				motion_manager.current_engine_power = motion_manager.max_engine_power
+				motion_manager.boost_vehicle()
+			else: # upočasnuje proti tarči
+				target_closeup_breaking_factor = breaking_factor_near
+		else:
+			motion_manager.current_engine_power = motion_manager.max_engine_power
+		braking_velocity = vehicle.velocity * target_closeup_breaking_factor
+		vehicle.set_linear_velocity(braking_velocity)
+	else:
+		# če izgubi pogled na tarčo, še zmeraj v tistem trenutku videl
+		navigation_agent.set_target_location(global_position)
+
+
+func _react_to_obsticles(vector_to_target: Vector2 = Vector2.ZERO): # še ne dela
+
+	if ai_target:
+		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, motion_manager.driving_gear * _get_target_side(ai_target.global_position) * deg2rad(motion_manager.max_engine_rotation_deg), motion_manager.engine_rotation_speed)
+		#		motion_manager.rotation_dir = _get_target_side(vector_to_target)
+
+	var roundabout_position = _update_vision()
+	if roundabout_position:# is Vector2:
+		vehicle.set_linear_velocity(braking_velocity)
+		if roundabout_position == Vector2.ZERO:
+			motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
+		else:
+			motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
+		navigation_agent.set_target_location(roundabout_position) # _temp?
+	else:
+		motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+
+
+func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
+	# redko ... je pa dober obvod do poenotenja kontrole z agenti z različnimi močmi
+	# samo omejevanje, ker, če je ukaz navzgo, vehicle ne more preko svoje max moči ... logično
+
+	if wanted_speed == -1:
+		return false
+
+	if wanted_speed == 0:
+		motion_manager.current_engine_power = 0
+	else:
+		var current_speed: float = vehicle.body_state.get_linear_velocity().length()
+		if current_speed > wanted_speed:
+			motion_manager.current_engine_power = lerp(motion_manager.current_engine_power, 0, speed_change_rate)
+
+	return true
+
+
+func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null):
 
 	goals_to_reach.erase(goal_reached)
 
@@ -530,7 +540,7 @@ func _on_game_stage_change(game_manager: Game): # od GMja
 			else:
 				self.ai_state = AI_STATE.SEARCH
 		game_manager.GAME_STAGE.END_SUCCESS, game_manager.GAME_STAGE.END_FAIL:
-			if not game_manager.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
+			if not game_manager.level_profile["rank_by"] == Pfs.RANK_BY.TIME:
 				self.ai_state = AI_STATE.OFF
 				motion_manager.motion = motion_manager.MOTION.IDLE
 

@@ -16,8 +16,12 @@ onready var game_scene_path: String = "res://game/Game.tscn"
 func _ready() -> void:
 
 	Rfs.main_node = self
-#	_home_in()
-	_game_in()
+
+	if OS.is_debug_build():
+		Sts.start_debug()
+	else:
+		_home_in()
+	#	_game_in()
 
 
 # SCENE IN ---------------------------------------------------------------------
@@ -100,9 +104,16 @@ func _free_scene(scene_node):
 	#	print ("SCENE RELEASED (in next step): ", scene_node)
 	scene_node.free()
 
-
+var is_loading: bool = false
+#
+#func _process(delta: float) -> void:
+#
+#	if is_loading:
+#		var laoding_status: = ResourceLoader.load_interactive()
 func spawn_new_scene(scene_path, parent_node): # spawn scene
 	#	print(scene_path, parent_node)
+	printt("start_loadding", Time.get_ticks_msec(), scene_path)
+	is_loading = true
 	var scene_resource = ResourceLoader.load(scene_path)
 
 	current_scene = scene_resource.instance()
@@ -111,4 +122,6 @@ func spawn_new_scene(scene_path, parent_node): # spawn scene
 	parent_node.add_child(current_scene) # direct child of root
 	print ("SCENE ADDED: ", current_scene)
 
+	printt("scene added", Time.get_ticks_msec())
+	is_loading = false
 	return current_scene

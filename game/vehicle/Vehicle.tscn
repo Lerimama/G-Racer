@@ -169,7 +169,7 @@ pause_mode = 1
 
 [node name="ShapePoly" type="Polygon2D" parent="."]
 z_index = 2
-color = Color( 0.192157, 0.192157, 0.192157, 1 )
+color = Color( 0.262745, 0.262745, 0.262745, 1 )
 texture_offset = Vector2( 56, 112 )
 texture_rotation_degrees = -90.0
 polygon = PoolVector2Array( -104, -48, -96, -56, 96, -56, 112, -40, 112, 40, 96, 56, -96, 56, -104, 48, -104, 0 )
@@ -199,7 +199,7 @@ color = Color( 0, 0, 0, 1 )
 polygon = PoolVector2Array( -24, -32, -16, -48, 40, -48, 48, -40, 48, 40, 40, 48, -16, 48, -24, 32, 16, 32, 16, -32 )
 
 [node name="Polygon2D7" type="Polygon2D" parent="ShapePoly"]
-modulate = Color( 1, 1, 1, 0.435294 )
+modulate = Color( 0, 0, 0, 0.247059 )
 polygon = PoolVector2Array( -80, -16, -64, -32, -40, -24, -40, 24, -64, 32, -80, 16 )
 
 [node name="Polygon2D3" type="Polygon2D" parent="ShapePoly/Polygon2D7"]

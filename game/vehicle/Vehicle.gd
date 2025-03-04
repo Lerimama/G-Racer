@@ -14,7 +14,7 @@ var is_active: bool = false setget _change_activity # predvsem za pošiljanje si
 var velocity: Vector2 = Vector2.ZERO
 
 # driver (poda spawner)
-var driver_name_id
+var driver_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
 var default_vehicle_profile: Dictionary
@@ -74,7 +74,7 @@ export var vehicle_motion_profile: Resource = null
 var masa: float
 var heal_rate: float
 var damage_engine_power_factor: float
-var level_type: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
+var rank_by: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
 var turned_on: bool = false	# neodvisen on aktivitja
 
 export (float, 5, 20, 0.5) var driving_elevation: float = 7
@@ -83,31 +83,32 @@ export (float, 5, 20, 0.5) var driving_elevation: float = 7
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_pressed("no1"): # idle
-		if driver_name_id == "MOU":
+		if driver_id == "MOU":
 			_revive()
 		else:
 			motion_manager.boost_vehicle()
 	if Input.is_action_pressed("no2"): # race
-		if driver_name_id == "MOU":
+		if driver_id == "MOU":
 			update_stat(Pfs.STATS.HEALTH, -0.1)
-		else:
-			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile) # temp WINS pozicija
+#		else:
+#			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile["level_name"]) # temp WINS pozicija
 
 	if Input.is_action_pressed("no3"): # race
-		if driver_name_id == "MOU":
+		if driver_id == "MOU":
 			update_stat(Pfs.STATS.HEALTH, 0.1)
-		else:
-			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile) # temp WINS pozicija
+#		else:
+#			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile["level_name"]) # temp WINS pozicija
 	if Input.is_action_pressed("no4"): # race
-		if driver_name_id == "MOU":
+		if driver_id == "MOU":
 			update_stat(Pfs.STATS.GAS, -100)
-		else:
-			update_stat(Pfs.STATS.LIFE, -1)
+#		else:
+#			update_stat(Pfs.STATS.LIFE, -1)
 	if Input.is_action_pressed("no5"): # race
-		if driver_name_id == "MOU":
+		if driver_id == "MOU":
 			update_stat(Pfs.STATS.GAS, 100)
-		else:
-			update_stat(Pfs.STATS.LIFE, 1)
+#		else:
+#			update_stat(Pfs.STATS.LIFE, 1)
+
 
 func _ready() -> void:
 
@@ -117,6 +118,7 @@ func _ready() -> void:
 
 	z_as_relative = false
 	z_index = Pfs.z_indexes["vehicles"]
+	shape_poly.color = driver_profile["driver_color"]
 
 	equip_positions.hide()
 	near_radius = get_node("NearArea/CollisionShape2D").shape.radius # za pullanje
@@ -131,7 +133,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-
 	# debug trail
 	_drawing_trail_controls(delta)
 
@@ -140,8 +141,10 @@ func _process(delta: float) -> void:
 	if is_active:
 		if engines.engines_on: update_stat(Pfs.STATS.GAS, gas_usage)
 		if driver_stats[Pfs.STATS.HEALTH] < 1:
-			if level_type == Pfs.BASE_TYPE.RACING: update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.time_game_heal_rate_factor)
-			else: update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.points_game_heal_rate_factor)
+			if rank_by == Pfs.RANK_BY.TIME:
+				update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.time_game_heal_rate_factor)
+			else:
+				update_stat(Pfs.STATS.HEALTH, heal_rate * Sts.points_game_heal_rate_factor)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
@@ -179,29 +182,38 @@ func _die(with_explode: bool = true):
 			self.is_active = false
 			queue_free()
 		else:
-			if level_type == Pfs.BASE_TYPE.RACING:
+			if rank_by == Pfs.RANK_BY.TIME:
 				turn_off()
 				driver.set_process_input(false)
 				call_deferred("set_physics_process", false)
 				call_deferred("set_process", false)
 				revive_timer.start(revive_time)
 			else:
-				update_stat(Pfs.STATS.LIFE, - 1)
-				if driver_stats[Pfs.STATS.LIFE][0] > 0: # life je array current/max
+				if Sts.life_is_scalp:
 					turn_off()
 					driver.set_process_input(false)
 					call_deferred("set_physics_process", false)
 					call_deferred("set_process", false)
 					revive_timer.start(revive_time)
 				else:
-					self.is_active = false
-					queue_free()
+					update_stat(Pfs.STATS.LIFE, - 1)
+					if driver_stats[Pfs.STATS.LIFE] > 0: # life je array current/max
+						turn_off()
+						driver.set_process_input(false)
+						call_deferred("set_physics_process", false)
+						call_deferred("set_process", false)
+						revive_timer.start(revive_time)
+					else:
+						self.is_active = false
+						queue_free()
 	else:
 		self.is_active = false
 
 
 func _revive():
 
+	call_deferred("set_physics_process", true)
+	call_deferred("set_process", true)
 	collision_shape.set_deferred("disabled", false)
 	show()
 	turn_on()
@@ -393,19 +405,19 @@ func update_stat(stat_key: int, stat_value):
 	# change_value je lahko:
 	#	+/- delta value ... driver_stats += change_value >> default
 	#	end value ... driver_stats = change_value
-	#	values array ... driver_stats.append(change_value)
-	#	curr/max array ... driver_stats = [curr/max]
+	# 	trenuten čas
 
 	match stat_key:
-
 		# vehicle
 		Pfs.STATS.GAS:
-			driver_stats[stat_key] += stat_value
-			if driver_stats[Pfs.STATS.GAS] <= 0:
-				driver_stats[Pfs.STATS.GAS] = 0
-				_die(false)
-			elif driver_stats[Pfs.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
-				gas_tank_size = driver_stats[Pfs.STATS.GAS]
+			Sts.ai_gas_on = false
+			if is_in_group(Rfs.group_players) or Sts.ai_gas_on:
+				driver_stats[stat_key] += stat_value
+				if driver_stats[Pfs.STATS.GAS] <= 0:
+					driver_stats[Pfs.STATS.GAS] = 0
+					_die(false)
+				elif driver_stats[Pfs.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
+					gas_tank_size = driver_stats[Pfs.STATS.GAS]
 		Pfs.STATS.HEALTH:
 			driver_stats[stat_key] += stat_value # change_value je + ali -
 			driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
@@ -414,20 +426,11 @@ func update_stat(stat_key: int, stat_value):
 				_die()
 		# driver
 		Pfs.STATS.LIFE:
-			# vzamem max valu, ki je zadnja v arrayu in no potem vrnem nazaj na konec
-			var new_life_count: int = driver_stats[stat_key][0] + stat_value
-			driver_stats[stat_key] = [new_life_count, driver_stats[stat_key][1]]
-			printt ("LAJF", driver_stats[stat_key])
-
-		Pfs.STATS.GOALS_REACHED:
+			driver_stats[stat_key] += stat_value
+		Pfs.STATS.GOALS_REACHED: # goal nodes names or duplicate?
 			driver_stats[stat_key].append(stat_value)
-		Pfs.STATS.WINS:
-			# vzamem max valu, ki je zadnja v arrayu in no potem vrnem nazaj na konec
-			var max_wins: int = driver_stats[stat_key].pop_back()
-			var levels_won: Array = driver_stats[stat_key].duplicate()
-			levels_won.append(stat_value)
-			levels_won.append(max_wins)
-			driver_stats[stat_key] = levels_won
+		Pfs.STATS.WINS: # level names
+			driver_stats[stat_key].append(stat_value)
 		# level
 		Pfs.STATS.LEVEL_RANK: # na konča
 			driver_stats[stat_key] = stat_value
@@ -441,17 +444,16 @@ func update_stat(stat_key: int, stat_value):
 			var curr_best_lap_time: float = driver_stats[Pfs.STATS.BEST_LAP_TIME]
 			if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
 				driver_stats[Pfs.STATS.BEST_LAP_TIME] = lap_time
-				emit_signal("stat_changed", driver_name_id, Pfs.STATS.BEST_LAP_TIME, lap_time) # pošlje xtra signal
+				emit_signal("stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time) # pošlje xtra signal
 		Pfs.STATS.LAP_TIME: # vsak frejm
 			var curr_game_time: float = stat_value
 			var lap_time: float = curr_game_time - prev_lap_level_time
-			# alt ... seštevanje časov preteklih krogov ni najbolj natančno ... pomembno če loviš rekorde
 			driver_stats[stat_key] = stat_value
 
 		_: # default
 			driver_stats[stat_key] += stat_value
 
-	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
+	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
 
 
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):
@@ -465,8 +467,13 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 			var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
 			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
 
-	if vehicle_camera:
-		vehicle_camera.shake_camera(hit_by)
+		if vehicle_camera:
+			vehicle_camera.shake_camera(hit_by)
+
+		if Sts.life_is_scalp and driver_stats[Pfs.STATS.HEALTH] <= 0:
+			if "spawner" in hit_by: # debug zaradi debug no2
+				hit_by.spawner.update_stat(Pfs.STATS.LIFE, 1)
+
 
 
 func on_item_picked(pickable_key: int):
@@ -487,7 +494,7 @@ func on_item_picked(pickable_key: int):
 func _on_weapon_shot(stat_key: int, change_value):
 
 	driver_stats[stat_key] += change_value # change_value je + ali -
-	emit_signal("stat_changed", driver_name_id, stat_key, driver_stats[stat_key])
+	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
 
 
 # UTILITI ------------------------------------------------------------------------------------------------

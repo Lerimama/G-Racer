@@ -128,7 +128,7 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 
 	# debug ... ai engine power je počasen
 	if managed_vehicle.is_in_group(Rfs.group_ai):
-		current_engine_power /=1
+		current_engine_power /=10
 
 	return current_engine_power * Sts.world_hsp_power_factor
 
@@ -298,7 +298,6 @@ func drive_out(drive_out_position: Vector2, drive_out_time: float = 1):
 	yield(get_tree().create_timer(drive_out_time), "timeout")
 #	managed_vehicle.modulate.a = 0
 	managed_vehicle.turn_off()
-
 
 
 func boost_vehicle(added_power: float = 0, boosting_time: float = 0):

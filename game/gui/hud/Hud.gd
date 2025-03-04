@@ -2,9 +2,9 @@ extends Control
 #class_name Hud
 
 
-var record_lap_time: int = 0
-var level_lap_limit: int
-var game_levels_count: int = 5
+var level_lap_count: int
+var level_goals: Array = []
+var max_wins_count: int
 
 var statbox_count: int = 0
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
@@ -35,17 +35,19 @@ func _ready() -> void:
 
 func set_hud(game_manager):
 
-	var level_lap_count: int = game_manager.level_profile["level_laps"]
+	level_lap_count = game_manager.level_profile["level_laps"]
+#	level_time_limit = game_manager.level_profile["level_time_limit"]
+	level_goals = game_manager.level_profile["level_goals"]
+	max_wins_count = game_manager.curr_game_settings["max_wins_count"]
+
 	var level_time_limit: int = game_manager.level_profile["level_time_limit"]
 
-	if game_manager.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
+	if game_manager.level_profile["rank_by"] == Pfs.RANK_BY.TIME:
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
 
 	# game stats
-	game_levels_count = game_manager.game_levels.size()
-	level_lap_limit = level_lap_count
 	game_timer.stop_timer()
 	game_timer.reset_timer(level_time_limit)
 	game_timer.show()
@@ -54,17 +56,17 @@ func set_hud(game_manager):
 		section.show()
 
 	# statboxes reset
-	for statbox in statboxes_with_drivers:
-		statbox.queue_free()
+	for statbox_name_id in statboxes_with_drivers:
+		statboxes_with_drivers[statbox_name_id].queue_free()
 	statboxes_with_drivers.clear()
 	statbox_count = 0
 
 	# new statboxes
 	for vehicle in game_manager.drivers_on_start:
-		set_driver_statbox(vehicle, game_manager.level_profile["level_type"], game_manager.drivers_on_start.size())
+		set_driver_statbox(vehicle, game_manager.level_profile["rank_by"], game_manager.drivers_on_start.size())
 
 
-func set_driver_statbox(statbox_driver: Vehicle, level_type: int, all_statboxes_count: int): # kliče GM
+func set_driver_statbox(statbox_driver: Vehicle, rank_by: int, all_statboxes_count: int): # kliče GM
 
 	statbox_count += 1
 
@@ -75,24 +77,24 @@ func set_driver_statbox(statbox_driver: Vehicle, level_type: int, all_statboxes_
 	else:
 		left_section.add_child(new_statbox)
 
-	statboxes_with_drivers[new_statbox] = statbox_driver
+	statboxes_with_drivers[statbox_driver.driver_id] = new_statbox
 
 	var driver_stats: Dictionary = statbox_driver.driver_stats
-	var driver_profile: Dictionary = Pfs.driver_profiles[statbox_driver.driver_name_id]
+	var driver_profile: Dictionary = statbox_driver.driver_profile
 
 	# driver line
-	new_statbox.driver_name_label.text = str(statbox_driver.driver_name_id)
+	new_statbox.driver_name_label.text = str(statbox_driver.driver_id)
 	new_statbox.driver_name_label.modulate = driver_profile["driver_color"]
 	new_statbox.driver_avatar.set_texture(driver_profile["driver_avatar"])
 
 	# driver stats
 	for stat in driver_stats:
-		_on_driver_stat_changed(statbox_driver.driver_name_id, stat, driver_stats[stat])
+		_on_driver_stat_changed(statbox_driver.driver_id, stat, driver_stats[stat])
 
 	if all_statboxes_count == 1: # single player
-		new_statbox.set_statbox_elements(level_type, true)
+		new_statbox.set_statbox_elements(rank_by, true)
 	else:
-		new_statbox.set_statbox_elements(level_type)
+		new_statbox.set_statbox_elements(rank_by)
 
 	# če je predzadnji bo zadnji ... na levi strani
 	# če je zadnji bo zadnji na drugi strani
@@ -121,48 +123,62 @@ func on_game_over():
 		section.hide()
 
 
-func _on_driver_stat_changed(driver_name_id, driver_stat_key: int, stat_value):
-	# stat value je že preračunana, hud samo zapisuje
+func _on_driver_stat_changed(driver_id, stat_key: int, stat_value):
+	# stat value je že preračunana, končna vrednost
+	# tukaj se opredeli obliko zapisa
+
+#	if stat_key == 0:
+#		printt ("WIN", stat_key, stat_value)
+#	if stat_key == 10:
+#		printt ("RANK", driver_stat_key, stat_value)
 
 	# opredelim drive statbox
 	var statbox_to_change: Control
-	for statbox in statboxes_with_drivers:
-		if statboxes_with_drivers[statbox].driver_name_id == driver_name_id:
-			statbox_to_change = statbox
+	for statbox_name_id in statboxes_with_drivers:
+		if statboxes_with_drivers[statbox_name_id]:
+			statbox_to_change = statboxes_with_drivers[statbox_name_id]
 			break
 
 	# stat_to_change ... STAT key string
-	var current_key_index: int = Pfs.STATS.values().find(driver_stat_key)
+	var current_key_index: int = Pfs.STATS.values().find(stat_key)
 	var current_key: String = Pfs.STATS.keys()[current_key_index]
 	var stat_to_change: Control = statbox_to_change.get(current_key)
 
-	# če je podan array elementov (laps finished, goals, wins, ...
-	if stat_value is Array:
-		# preverjam, če hočem current/max ... zadnja količina je int, ostale pa karkoli drugega
-		var non_int_present: bool = false
-		for value in stat_value:
-			if not value is int:
-				non_int_present = true
-		# zadnja količina je int, ostale pa karkoli drugega
-		if stat_value.back() is int and non_int_present:
-			stat_value = [min(stat_value.size() - 1, stat_value.back()), stat_value.back()]
-		# samo ena količina je int ... curr = 0/max
-		elif stat_value.size() == 1 and stat_value.back() is int:
-			stat_value = [0, stat_value.back()]
-		# samo dve količini količina je int ... curr = [0] / max = [1]
-		elif stat_value.size() == 2 and not non_int_present:# and stat_value.back() is int and stat_value.front() is int:
-			stat_value = [min(stat_value.front(), stat_value.back()), stat_value.back()]
-		else:
-			# ni podatka o max value
-			# če e tu ni bo treba RFK da bo pravilno
-			stat_value = stat_value.size()
-		printt ("po", stat_value)
+	match stat_key:
 
-	elif stat_value is PoolIntArray:
-		#		print("int array")
-		pass
+		# stat_value = Int, Float
+		Pfs.STATS.GAS:
+			stat_to_change.stat_value = stat_value
+		Pfs.STATS.HEALTH: # ENERGY BAR
+			# 10 = 100 % v pseudo-bar
+			var curr_health_percent: int = round(stat_value * 10)
+			stat_to_change.stat_value = [curr_health_percent, 10]
+		Pfs.STATS.LIFE:
+			stat_to_change.stat_value = [stat_value, 3]
+		Pfs.STATS.CASH:
+			stat_to_change.stat_value = stat_value
+		Pfs.STATS.POINTS: # default
+			stat_to_change.stat_value = stat_value
 
-	stat_to_change.stat_value = stat_value
+		# stat_value = Array
+		Pfs.STATS.GOALS_REACHED:
+			stat_to_change.stat_value = [stat_value.size(), level_goals.size()]
+		Pfs.STATS.WINS:
+			stat_to_change.stat_value = [stat_value.size(), Sts.wins_goal_count]
+
+		# level
+		Pfs.STATS.LEVEL_RANK: # na konča
+			stat_to_change.stat_value = stat_value
+		Pfs.STATS.LEVEL_TIME:
+			stat_to_change.stat_value = stat_value
+		Pfs.STATS.LAP_COUNT: # če so krogi
+			stat_to_change.stat_value = [stat_value.size(), level_lap_count]
+		Pfs.STATS.BEST_LAP_TIME:
+			stat_to_change.stat_value = stat_value
+		Pfs.STATS.LAP_TIME: # vsak frejm
+			stat_to_change.stat_value = stat_value
+		_:
+			stat_to_change.stat_value = stat_value
 
 
 func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool = false):

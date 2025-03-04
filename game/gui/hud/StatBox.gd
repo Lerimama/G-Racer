@@ -16,6 +16,7 @@ onready var HEALTH: HBoxContainer = find_node("StatHealth")
 onready var CASH: HBoxContainer = find_node("StatCash")
 onready var POINTS: HBoxContainer = find_node("StatPoints")
 onready var GAS: HBoxContainer = find_node("StatGas")
+#onready var LEVEL_RANK: HBoxContainer = $DriverId/DriverLine/StatLevelRank
 
 # race
 onready var LAP_COUNT: HBoxContainer = find_node("StatLapCount")
@@ -30,9 +31,12 @@ onready var MINA_COUNT: HBoxContainer = find_node("StatMina")
 onready var SMALL_COUNT: HBoxContainer = find_node("StatSmallBullet")
 onready var GOALS_REACHED: HBoxContainer = find_node("GoalReached")
 
+onready var _rank_label: Label = $DriverId/DriverLine/StatLevelRank/Label
 
-func set_statbox_elements(level_type: int, single_driver_mode: bool = false): # kliče HUD
 
+func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kliče HUD
+
+	_rank_label.text = "10"
 	# tole je treba spucat
 
 	# debug .... hide all
@@ -60,15 +64,15 @@ func set_statbox_elements(level_type: int, single_driver_mode: bool = false): # 
 
 	var lap_count: = 1 # !!!
 	var goals_count: = 1 # !!!
-	match level_type:
-		Pfs.BASE_TYPE.RACING:
+	match rank_by:
+		Pfs.RANK_BY.TIME:
 			$RaceStats.show()
 			LEVEL_RANK.show()
 #			if LAP_COUNT.size() > 1:
 			LAP_COUNT.show()
 #			if GOALS_REACHED.size() > 1:
 			GOALS_REACHED.show()
-		Pfs.BASE_TYPE.BATTLE:
+		Pfs.RANK_BY.POINTS:
 			$BattleStats.show()
 			LEVEL_RANK.show()
 			WINS.show()

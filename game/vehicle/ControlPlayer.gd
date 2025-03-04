@@ -113,7 +113,7 @@ func _set_driving_motion(pressed_actions: Array):
 				motion_manager.motion = motion_manager.MOTION.IDLE
 
 
-func goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_target je za ai zaenkrat
+func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_target je za ai zaenkrat
 
 	goals_to_reach.erase(goal_reached)
 

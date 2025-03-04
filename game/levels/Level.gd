@@ -57,11 +57,11 @@ func set_level():
 			get_node(goal_path).show()
 
 	# set type
-	var level_type: int = 0
+	var level_ranking_type: int = 0
 	if level_finish or not level_goals.empty():
-		level_type = Pfs.BASE_TYPE.RACING
+		level_ranking_type = Pfs.RANK_BY.TIME
 	else:
-		level_type = Pfs.BASE_TYPE.BATTLE
+		level_ranking_type = Pfs.RANK_BY.POINTS
 
 	# pošljem
 	_set_level_objects()
@@ -70,10 +70,11 @@ func set_level():
 
 	emit_signal(
 		"level_is_set",
-		level_type,
+		level_ranking_type,
 		level_start.start_positions_holder.get_children(),
 		camera_limits_rect,
 		level_start.camera_position_node,
+		level_goals,
 		navigation_cells_positions
 		)
 

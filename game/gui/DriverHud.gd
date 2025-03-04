@@ -43,6 +43,10 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 	if for_ai:
 		driver_is_ai = true
 		is_set = true
+		if Sts.ai_gas_on:
+			gas_bar.show()
+		else:
+			gas_bar.hide()
 	else:
 		# weapons
 		hud_driver.driver.connect("next_weapon_selected", self, "_on_next_weapon_selected")

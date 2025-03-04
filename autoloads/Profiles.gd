@@ -1,7 +1,7 @@
 extends Node
 
 
-func z_index(): pass # ------------------------------------------------------------
+func __z_index(): pass # ------------------------------------------------------------
 
 #Z INDEX
 #- background = -10
@@ -28,7 +28,7 @@ var z_indexes: Dictionary = {
 }
 
 
-func stats(): pass # ------------------------------------------------------------
+func __stats(): pass # ------------------------------------------------------------
 
 # vsi mogoči statsi
 enum STATS {
@@ -57,9 +57,9 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 
 	# zmagani leveli [level_data_1,level_data_1, level_data_1, ..., WINS NEEDED]
 	# če je arrray z eno številko, ga šteje, ko max
-	STATS.WINS: [5],
+	STATS.WINS: [],
 	# celo igra sta notri dve številki ki označujeta curr max
-	STATS.LIFE: [5, 5],
+	STATS.LIFE: 0,
 	STATS.CASH: 0,
 	STATS.POINTS :0,
 	# level
@@ -80,7 +80,7 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 }
 
 
-func drivers(): pass # ------------------------------------------------------------
+func __drivers(): pass # ------------------------------------------------------------
 
 
 enum DRIVER_TYPE {PLAYER, AI}
@@ -154,7 +154,7 @@ var controller_profiles: Dictionary = {
 }
 
 
-func vehicles(): pass # ------------------------------------------------------------
+func __vehicles(): pass # ------------------------------------------------------------
 
 enum VEHICLE {BASIC, TRUCK}
 var vehicle_profiles: Dictionary = {
@@ -166,7 +166,7 @@ var vehicle_profiles: Dictionary = {
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
 		"gas_usage_idle": -0.05, # per HSP?
-		"target_rank": 5,
+		"target_rank": 5, # 10 je najpomembnejša
 		"gas_tank_size": 200, # liters
 
 		# neu
@@ -179,7 +179,7 @@ var vehicle_profiles: Dictionary = {
 		},
 	}
 
-func equipment(): pass # ------------------------------------------------------------
+func __equipment(): pass # ------------------------------------------------------------
 
 enum EQUIPMENT {NITRO, SHIELD}
 var equipment_profiles : Dictionary = {
@@ -196,8 +196,7 @@ var equipment_profiles : Dictionary = {
 }
 
 
-
-func weapons(): pass # ------------------------------------------------------------
+func __weapons(): pass # ------------------------------------------------------------
 
 var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
 
@@ -235,52 +234,65 @@ var ammo_profiles : Dictionary = {
 }
 
 
-func levels(): pass # ------------------------------------------------------------
+func __levels(): pass # ------------------------------------------------------------
 
-enum BASE_TYPE {BATTLE, RACING} # BATTLE JE PRVI ALI NEDEFINED
-enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE} # to zaporedje upošteva zapordje home gumbov
+
+enum RANK_BY {TIME, POINTS} # BATTLE JE PRVI ALI NEDEFINED
+
+enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT} # to zaporedje upošteva zapordje home gumbov
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
-		"level_name": "xxx",
+		"level_name": "dafault",
 		"level_desc": "jajsjdsjdj",
 		"level_scene": preload("res://game/levels/Level.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time": 0,
+		"level_time_limit": 0,
 		"level_laps": 0,
 		# določeno ob spawnu
-#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},
 	LEVELS.FIRST_DRIVE: {
-		"level_name": "xxx",
+		"level_name": "first drive",
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		# določeno ob spawnu
-#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"level_goals": [],
+		},
+	LEVELS.FIRST_DRIVE_SHORT: {
+		"level_name": "first drive shorty",
+		"level_desc": "SMall",
+		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
+		"level_thumb": preload("res://home/thumb_level_race.tres"),
+		"level_time_limit": 0,
+		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
+		# določeno ob spawnu
+#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},
 	LEVELS.TRAINING: {
-		"level_name": "xxx",
+		"level_name": "training",
 		"level_desc": "xxx",
 #		"level_path": "res://game/levels/LevelTraining.tscn",
 		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		"level_thumb": preload("res://home/thumb_level_training.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0,
-#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},
 	LEVELS.STAFF: {
-		"level_name": "xxx",
+		"level_name": "staff",
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelStaff.tscn"),
 		"level_thumb": preload("res://home/thumb_level_mission.tres"),
 		"level_time_limit": 60,
 		"level_laps": 1,
-#		"level_type": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},
 }
@@ -335,7 +347,7 @@ var level_object_profiles: Dictionary = {
 }
 
 
-func surfaces(): pass # ------------------------------------------------------------
+func __surfaces(): pass # ------------------------------------------------------------
 
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
@@ -365,7 +377,7 @@ var surface_type_profiles: Dictionary = {
 	},
 }
 
-func pickables(): pass # ------------------------------------------------------------
+func __pickables(): pass # ------------------------------------------------------------
 
 enum PICKABLE{
 	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA,

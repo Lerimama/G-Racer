@@ -58,7 +58,6 @@ func _on_PlayBtn_pressed() -> void:
 	Rfs.ultimate_popup.open_popup()
 	yield(get_tree().create_timer(0.1),"timeout")
 	Rfs.main_node.call_deferred("home_out")
-#	Rfs.main_node.call_deferred("home_out")
 
 
 func _on_BackBtn_pressed() -> void:

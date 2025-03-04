@@ -2,11 +2,11 @@ extends Control
 
 
 var final_level_data: Dictionary = {}
-var waiting_driver_name_ids: Array = []
+var still_driving_ids: Array = []
 
-onready var FinalRankingLine: PackedScene = preload("res://game/gui/FinalRankingLine.tscn")
-onready var results: VBoxContainer = $Content/Results
 onready var content: Control = $Content
+onready var background: ColorRect = $Background
+onready var scorelist: VBoxContainer = $Content/Scorelist
 
 
 func _ready() -> void:
@@ -19,13 +19,12 @@ func open(level_data: Dictionary):
 	final_level_data = level_data
 
 	# če je kakšen (ai) prazen, ga dodam me prazne
-	for driver_name_id in final_level_data:
-		if final_level_data[driver_name_id].empty():
-			if not driver_name_id in waiting_driver_name_ids:
-				waiting_driver_name_ids.append(driver_name_id)
+	still_driving_ids = []
+	for driver_id in final_level_data:
+		if final_level_data[driver_id].empty():
+			still_driving_ids.append(driver_id)
 
-	_set_scorelist()
-
+	scorelist.set_scorelist(final_level_data)
 
 	var background_fadein_transparency: float = 1
 
@@ -42,67 +41,21 @@ func open(level_data: Dictionary):
 
 func _process(delta: float) -> void:
 
-	if not final_level_data.empty():
-		for driver_name_id in waiting_driver_name_ids:
-			var waiting_driver_data: Dictionary = final_level_data[driver_name_id]
-			if not waiting_driver_data.empty():
-				waiting_driver_name_ids.erase(driver_name_id)
-				_set_scorelist()
-
-
-func _set_scorelist():
-
-	for child in results.get_children(): child.queue_free()
-
-	# uvrščeni
-	var drivers_ranked: Array = []
-	for driver_data in final_level_data:
-		if not final_level_data[driver_data].empty():
-			if not final_level_data[driver_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
-				drivers_ranked.append(final_level_data[driver_data])
-	# sortiram uvrščene
-	drivers_ranked.sort_custom(self, "_sort_driver_data_by_rank")
-
-	# dodam ai, ki jih še čakam
-	for driver_data in final_level_data:
-		if final_level_data[driver_data].empty():
-			drivers_ranked.append(final_level_data[driver_data])
-	# dodam neurvščene ... brezzaporedno
-	for driver_data in final_level_data:
-		if not final_level_data[driver_data].empty():
-			if final_level_data[driver_data]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
-				drivers_ranked.append(final_level_data[driver_data])
-
-	# spawnam scoreline
-	for ranked_driver_data in drivers_ranked:
-		var new_ranking_line = FinalRankingLine.instance() # spawn ranking line
-		new_ranking_line.get_node("Driver").text = final_level_data.find_key(ranked_driver_data)
-		if ranked_driver_data.empty():
-			new_ranking_line.get_node("Rank").text = "..."
-			new_ranking_line.get_node("Result").text = "... waiting"
-		elif ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
-			new_ranking_line.get_node("Rank").text = "NN"
-			new_ranking_line.get_node("Result").text = "timeless"
-		else:
-			new_ranking_line.get_node("Rank").text = str(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_RANK]) + ". Place"
-			new_ranking_line.get_node("Result").text = Mts.get_clock_time(ranked_driver_data["driver_stats"][Pfs.STATS.LEVEL_TIME])
-		results.add_child(new_ranking_line)
-
-
-func _sort_driver_data_by_rank(driver_data_1: Dictionary, driver_data_2: Dictionary): # ascecnd a1 < a2
-	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
-
-	var driver_1_rank: int = driver_data_1["driver_stats"][Pfs.STATS.LEVEL_RANK]
-	var driver_2_rank: int = driver_data_2["driver_stats"][Pfs.STATS.LEVEL_RANK]
-	if driver_1_rank < driver_2_rank:
-		return true
-	return false
+	# čakam, da se spremeni število in apdejtam
+	var still_driving_count: int = still_driving_ids.size()
+	for driver_id in still_driving_ids:
+		if not final_level_data[driver_id].empty():
+			still_driving_ids.erase(driver_id)
+	if not still_driving_ids.size() == still_driving_count:
+		scorelist.update_scorelines(final_level_data)
 
 
 func _apply_final_data_and_hide(what_to_do: int):
 
 	get_parent().game_manager.apply_waiting_ai_final_data()
-	_set_scorelist()
+
+	still_driving_ids.clear()
+	scorelist.update_scorelines(final_level_data)
 
 	get_viewport().set_disable_input(true)
 	var fade_tween = get_tree().create_tween()

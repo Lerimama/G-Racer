@@ -1514,7 +1514,7 @@ outlines = [ PoolVector2Array( -787, -10551, -919, -4822, -847, -3647, -1122, -1
 
 [sub_resource type="Curve2D" id=94]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, -10, 387, 0, 0, 0, 0, 46, -64036 )
+"points": PoolVector2Array( 0, 0, 0, 0, -10, 387, 0, 0, 0, 0, 350, -3737 )
 }
 
 [node name="LevelFirstDrive" instance=ExtResource( 1 )]
@@ -1562,17 +1562,10 @@ curve = SubResource( 94 )
 
 [node name="Tracker" parent="Tracking/LevelTrack" index="0"]
 position = Vector2( -10, 387 )
-rotation = -1.56993
+rotation = -1.57057
 
 [node name="LevelFinish" parent="Tracking" index="3"]
-position = Vector2( 244, -64009 )
-
-[node name="Line" parent="Tracking/LevelFinish/FinishLine" index="0"]
-margin_left = -1670.0
-margin_right = 1670.0
-
-[node name="CameraLimits" parent="." index="10"]
-margin_top = -69351.0
+position = Vector2( 322, -3534 )
 
 [node name="__ScreenSize" parent="." index="14"]
 visible = false
@@ -1623,4 +1616,3 @@ position = Vector2( -1151, -377 )
 
 [editable path="Terrain/TerrainMountain"]
 [editable path="Terrain/TerrainMountain2"]
-[editable path="Tracking/LevelFinish"]

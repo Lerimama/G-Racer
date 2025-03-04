@@ -55,7 +55,8 @@ func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 		hundreds = 0
 
 	# return [minutes, seconds, hundreds]
-	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds
+#	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds
+	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + "." + "%02d" % hundreds
 
 	return time_on_clock
 

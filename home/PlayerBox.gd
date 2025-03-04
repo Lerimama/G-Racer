@@ -2,8 +2,8 @@ extends Control
 
 
 var is_ai: bool = true # spawner prvega spremeni v human
-#var driver_index: int = 0
-var driver_index
+var driver_index: int = 0
+#var driver_index
 var driver_profile: Dictionary = {}
 
 var transform_btn_text: String = "MAKE HUMAN"

@@ -30,7 +30,8 @@ func _process(delta: float) -> void:
 			game.camera_leader = new_camera_leader
 
 
-		yield(get_tree(), "idle_frame") # da ma za naprej sigurno legit drajverje
+		yield(get_tree(), "idle_frame")
+
 		for driver in drivers_in_game:
 			driver.update_stat(Pfs.STATS.LAP_TIME, game.hud.game_timer.game_time_hunds)
 
@@ -42,7 +43,7 @@ func _update_ranking():
 	var drivers_ranked: Array = []
 
 	# RACING
-	if game.level_profile["level_type"] == Pfs.BASE_TYPE.RACING:
+	if game.level_profile["rank_by"] == Pfs.RANK_BY.TIME:
 		# tracking
 		if game_level.level_track:
 			# najprej rangiram trackerje

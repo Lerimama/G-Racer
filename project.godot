@@ -325,9 +325,7 @@ gdscript/warnings/integer_division=false
 
 window/size/width=2560
 window/size/height=1440
-window/size/resizable=false
-window/size/borderless=true
-window/size/fullscreen=true
+window/size/always_on_top=true
 window/size/test_width=640
 window/size/test_height=360
 window/stretch/mode="2d"
@@ -622,7 +620,7 @@ quality/intended_usage/framebuffer_allocation=0
 2d/snapping/use_gpu_pixel_snap=true
 limits/buffers/canvas_polygon_buffer_size_kb=512
 limits/buffers/canvas_polygon_index_buffer_size_kb=512
-environment/default_clear_color=Color( 0.223529, 0.223529, 0.223529, 1 )
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 
 [world]
 

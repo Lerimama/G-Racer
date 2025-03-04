@@ -21,7 +21,7 @@ func _ready() -> void:
 	light_poly.color = Rfs.color_red
 
 
-func goal_reached(vehicle: Vehicle):
+func _goal_reached(vehicle: Vehicle):
 
 	emit_signal("reached_by", self, vehicle)
 
@@ -42,4 +42,4 @@ func _on_DetectArea_body_exited(body: Node) -> void:
 
 	if body in drivers_in_goal_area:
 		drivers_in_goal_area.erase(body)
-		goal_reached(body)
+		_goal_reached(body)

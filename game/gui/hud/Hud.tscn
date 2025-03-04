@@ -130,16 +130,16 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
-[node name="StatWins" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="5"]
+[node name="StatWins" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="3"]
 name_as_icon = false
 
-[node name="StatLife" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="6"]
+[node name="StatLife" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="4"]
 name_as_icon = false
 
-[node name="StatHealth" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="7"]
+[node name="StatHealth" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="5"]
 name_as_icon = false
 
-[node name="StatLevelRank" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="8"]
+[node name="StatLevelRank" parent="HudSections/Left/StatBox/DriverId/DriverLine" index="6"]
 name_as_icon = false
 
 [node name="StatCash" parent="HudSections/Left/StatBox/DriverStats/HBoxContainer" index="1"]
@@ -188,16 +188,16 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
-[node name="StatWins" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="5"]
+[node name="StatWins" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="3"]
 name_as_icon = false
 
-[node name="StatLife" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="6"]
+[node name="StatLife" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="4"]
 name_as_icon = false
 
-[node name="StatHealth" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="7"]
+[node name="StatHealth" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="5"]
 name_as_icon = false
 
-[node name="StatLevelRank" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="8"]
+[node name="StatLevelRank" parent="HudSections/Left/StatBox_2/DriverId/DriverLine" index="6"]
 name_as_icon = false
 
 [node name="StatCash" parent="HudSections/Left/StatBox_2/DriverStats/HBoxContainer" index="1"]
@@ -246,16 +246,16 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
-[node name="StatWins" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="5"]
+[node name="StatWins" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="3"]
 name_as_icon = false
 
-[node name="StatLife" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="6"]
+[node name="StatLife" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="4"]
 name_as_icon = false
 
-[node name="StatHealth" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="7"]
+[node name="StatHealth" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="5"]
 name_as_icon = false
 
-[node name="StatLevelRank" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="8"]
+[node name="StatLevelRank" parent="HudSections/Left/StatBox_3/DriverId/DriverLine" index="6"]
 name_as_icon = false
 
 [node name="StatCash" parent="HudSections/Left/StatBox_3/DriverStats/HBoxContainer" index="1"]
@@ -367,16 +367,16 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
-[node name="StatWins" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="5"]
+[node name="StatWins" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="3"]
 name_as_icon = false
 
-[node name="StatLife" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="6"]
+[node name="StatLife" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="4"]
 name_as_icon = false
 
-[node name="StatHealth" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="7"]
+[node name="StatHealth" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="5"]
 name_as_icon = false
 
-[node name="StatLevelRank" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="8"]
+[node name="StatLevelRank" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="6"]
 name_as_icon = false
 
 [node name="StatCash" parent="HudSections/Right/StatBox/DriverStats/HBoxContainer" index="1"]
@@ -425,16 +425,16 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
-[node name="StatWins" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="5"]
+[node name="StatWins" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="3"]
 name_as_icon = false
 
-[node name="StatLife" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="6"]
+[node name="StatLife" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="4"]
 name_as_icon = false
 
-[node name="StatHealth" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="7"]
+[node name="StatHealth" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="5"]
 name_as_icon = false
 
-[node name="StatLevelRank" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="8"]
+[node name="StatLevelRank" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="6"]
 name_as_icon = false
 
 [node name="StatCash" parent="HudSections/Right/StatBox_2/DriverStats/HBoxContainer" index="1"]
@@ -483,16 +483,16 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 47.0 ]
 }
 
-[node name="StatWins" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="5"]
+[node name="StatWins" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="3"]
 name_as_icon = false
 
-[node name="StatLife" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="6"]
+[node name="StatLife" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="4"]
 name_as_icon = false
 
-[node name="StatHealth" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="7"]
+[node name="StatHealth" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="5"]
 name_as_icon = false
 
-[node name="StatLevelRank" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="8"]
+[node name="StatLevelRank" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="6"]
 name_as_icon = false
 
 [node name="StatCash" parent="HudSections/Right/StatBox_3/DriverStats/HBoxContainer" index="1"]
