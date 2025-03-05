@@ -4,7 +4,6 @@ extends Node
 var game_level: Level
 
 var slomo_in_progress: bool = false
-var navigation_positions: Array # pozicije vseh navigation tiletov
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja driverjev druga na drugega
 var drivers_finished: Array # driverji v cilju, predvsem za določanje ranka v cilju (ki ni isti kot med tekmo
 
@@ -16,65 +15,37 @@ func _ready() -> void:
 	Rfs.game_reactor = self
 
 
-func _pull_driver_on_field(drivers_to_pull: Vehicle): # temp ... Vehicle class
+func _pull_vehicle_on_field(vehicle_to_pull: Vehicle): # temp ... Vehicle class
 
-	if game.game_stage == game.GAME_STAGE.PLAYING and Sts.one_screen_mode:
+	if game.game_stage == game.GAME_STAGE.PLAYING:# and Sts.one_screen_mode:
 
-		if drivers_to_pull.is_active:
+		if vehicle_to_pull.is_active:
+			# točna leading pozicija
+			#			var pull_position: Vector2 = vehicle_to_pull.global_position + vector_to_leading_player
+			# near raduis - closest
+			#			var vector_to_leading_player: Vector2 = game.camera_leader.global_position - vehicle_to_pull.global_position
+			#			var distance_with_near_radius_adapt: float = vector_to_leading_player.length() - game.camera_leader.near_radius
+			#			var pull_position: Vector2 = vehicle_to_pull.global_position + vector_to_leading_player.normalized() * distance_with_near_radius_adapt
+			# near raduis - vzporedna
+			var leader_left_near_position: Vector2 = game.camera_leader.global_position + Vector2.UP.rotated(game.camera_leader.global_rotation) * game.camera_leader.near_radius
+			var leader_right_near_position: Vector2 = game.camera_leader.global_position + Vector2.DOWN.rotated(game.camera_leader.global_rotation) * game.camera_leader.near_radius
+			var vector_to_left_position: Vector2 = leader_left_near_position - vehicle_to_pull.global_position
+			var vector_to_right_position: Vector2 = leader_right_near_position - vehicle_to_pull.global_position
+			var vector_to_pull_position: Vector2 = Vector2.ZERO
+			if vector_to_left_position.length() < vector_to_right_position.length():
+				vector_to_pull_position = vector_to_left_position
+			else:
+				vector_to_pull_position = vector_to_right_position
 
-			var pull_position: Vector2 = _get_driver_pull_position(drivers_to_pull)
-			drivers_to_pull.call_deferred("pull_on_screen", pull_position)
+			var pull_position: Vector2 = vehicle_to_pull.global_position + vector_to_pull_position
+			vehicle_to_pull.pull_on_screen(pull_position)
 
-			# če preskoči ciljno črto jo dodaj, če jo je leader prevozil
 			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
-			if drivers_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size() < game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size():
-				drivers_to_pull.update_stat(Pfs.STATS.LAP_COUNT, game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT])
+			if vehicle_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size() < game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size():
+				vehicle_to_pull.update_stat(Pfs.STATS.LAP_COUNT, game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].duplicate())
 			# mogoče tega spodej nebi mel ... bomo videlo po testu
-			if drivers_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED].size() < game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].size():
-				drivers_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED])
-
-
-func _get_driver_pull_position(drivers_to_pull: Node2D): # temp ... Vehicle class
-	# na koncu izbrana pull pozicija:
-	# - je na območju navigacije
-	# - upošteva razdaljo do vodilnega
-	# - se ne pokriva z drugim plejerjem
-	#	printt ("current_pull_positions",current_pull_positions.size())
-
-	# pull pozicija brez omejitev
-	var pull_position_distance_from_leader: float = drivers_to_pull.near_radius # pull razdalja od vodilnega plejerja
-
-	var vector_to_leading_player: Vector2 = game.camera_leader.global_position - drivers_to_pull.global_position
-	var vector_to_pull_position: Vector2 = vector_to_leading_player - vector_to_leading_player.normalized() * pull_position_distance_from_leader
-	var driver_pull_position: Vector2 = drivers_to_pull.global_position + vector_to_pull_position
-
-	# implementacija omejitev, da ni na steni ali elementu ali drugemu plejerju
-	var navigation_position_as_pull_position: Vector2
-	var available_navigation_pull_positions: Array
-
-	# poiščem navigacijsko celico, ki je najbližje določeni pull poziciji
-	for cell_position in navigation_positions:
-		# prva nav celica v preverjanju se opredeli kot trenutno najbližja
-		if navigation_position_as_pull_position == Vector2.ZERO:
-			navigation_position_as_pull_position = cell_position
-		# ostale nav celice ... če je boljša, jo določim za novo opredeljeno
-		else:
-			# preverim, če je bližja od trenutno opredeljene ... itak da je
-			if cell_position.distance_to(driver_pull_position) < navigation_position_as_pull_position.distance_to(driver_pull_position):
-				# pozicija je dovolj stran od vodilnega
-				if cell_position.distance_to(game.camera_leader.global_position) > pull_position_distance_from_leader:
-					# če je pozicija zasedena
-					if cell_position in current_pull_positions:
-						var pull_pos_index: int = current_pull_positions.find(cell_position)
-						var corrected_pull_position = pull_position_distance_from_leader + pull_pos_index
-						if cell_position.distance_to(game.camera_leader.global_position) > corrected_pull_position:
-							navigation_position_as_pull_position = cell_position
-					else: # če je poza zasedena dobim njen in dex med zasedenimi dodam korekcijo na zahtevani razdalji od vodilnega
-						navigation_position_as_pull_position = cell_position
-
-	current_pull_positions.append(navigation_position_as_pull_position) # OBS trenutno ne rabim
-
-	return navigation_position_as_pull_position
+			if vehicle_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED].size() < game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].size():
+				vehicle_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].duplicate())
 
 
 func spawn_random_pickables():
@@ -187,33 +158,65 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 		if not game_level.reach_goals_in_sequence or reached_goal == reaching_driver.goals_to_reach[0]:
 
 			# dodam med dosežene
-			reaching_driver.update_stat(Pfs.STATS.GOALS_REACHED, reached_goal)
+			reaching_driver.update_stat(Pfs.STATS.GOALS_REACHED, reached_goal.name)
 
-			var reached_goals_count: int = reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED].size()
+			# ček če so vsi cilji doseženi
+			var all_goals_reached: bool = true
+			for goal in game_level.level_goals:
+				var goal_name: String = goal.name
+				if not goal_name in reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED]:
+					all_goals_reached = false
+					break
+
 			# next goal
-			if reached_goals_count < game_level.level_goals.size():
-				Rfs.sound_manager.play_sfx("little_horn")
-				reaching_driver.driver.on_goal_reached(reached_goal)
-			# to finish
-			elif game_level.level_finish:
-				Rfs.sound_manager.play_sfx("little_horn")
-				reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
-			# all goals reached
+			if all_goals_reached:
+				# to finish
+				if game_level.level_finish:
+					Rfs.sound_manager.play_sfx("little_horn")
+					reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
+				# all goals reached and finished
+				else:
+					Rfs.sound_manager.play_sfx("finish_horn")
+					reaching_driver.driver.on_goal_reached(reached_goal)
+					drivers_finished.append(reaching_driver)
+					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 			else:
-				Rfs.sound_manager.play_sfx("finish_horn")
+				Rfs.sound_manager.play_sfx("little_horn")
 				reaching_driver.driver.on_goal_reached(reached_goal)
-				drivers_finished.append(reaching_driver)
-				reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+
+
+			#			var reached_goals_count: int = reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED].size()
+			#			if reached_goals_count < game_level.level_goals.size():
+			#				Rfs.sound_manager.play_sfx("little_horn")
+			#				reaching_driver.driver.on_goal_reached(reached_goal)
+			#			# to finish
+			#			elif game_level.level_finish:
+			#				Rfs.sound_manager.play_sfx("little_horn")
+			#				reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
+			#			# all goals reached
+			#			else:
+			#				Rfs.sound_manager.play_sfx("finish_horn")
+			#				reaching_driver.driver.on_goal_reached(reached_goal)
+			#				drivers_finished.append(reaching_driver)
+			#				reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+
 
 
 func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
 
 	if game.game_stage >= game.GAME_STAGE.PLAYING and crossing_driver.is_active == true: # > ai lahko pride v cilj po igri
 
-		var driver_goals_reached: Array = crossing_driver.driver_stats[Pfs.STATS.GOALS_REACHED].duplicate()
+		# ček če so vsi cilji doseženi
+		var all_goals_reached: bool = true
+		for goal in game_level.level_goals:
+			var goal_name: String = goal.name
+			if not goal_name in crossing_driver.driver_stats[Pfs.STATS.GOALS_REACHED]:
+				all_goals_reached = false
+				break
 
 		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
-		if game_level.level_goals.empty() or driver_goals_reached == game_level.level_goals:
+		if all_goals_reached:
+		#		if game_level.level_goals.empty() or crossing_driver.driver_stats[Pfs.STATS.GOALS_REACHED] == game_level.level_goals:
 
 			# stat level time ... ostale čase preračuna driver v update stats
 			crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
@@ -238,13 +241,10 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 				Rfs.sound_manager.play_sfx("little_horn")
 
 
-func _on_body_exited_playing_field(body: Node) -> void:
+func _on_body_exited_playing_field(player_vehicle: Node) -> void:
+	# playingfield kolajda samo s plejerji
 
-	#	if body.is_in_group(Rfs.group_drivers):
-	if body.is_in_group(Rfs.group_players) and body.is_active:
-		_pull_driver_on_field(body)
-	elif body.has_method("on_out_of_playing_field"):
-		body.on_out_of_playing_field() # ta funkcija zakasni učinek
+	_pull_vehicle_on_field(player_vehicle)
 
 
 func _on_vehicle_deactivated(driver_vehicle: Vehicle):
@@ -256,7 +256,7 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = finished_driver_rank
 		# dodam zmago
 		if finished_driver_rank == 1: # zmaga
-			driver_vehicle.update_stat(Pfs.STATS.WINS, game.level_profile["level_name"]) # temp WINS pozicija
+			driver_vehicle.update_stat(Pfs.STATS.WINS, game.level_index) # temp WINS pozicija
 		# dodam cash nagrado
 		if not finished_driver_rank > Sts.ranking_cash_rewards.size():
 			driver_vehicle.update_stat(Pfs.STATS.CASH, Sts.ranking_cash_rewards[finished_driver_rank - 1])

@@ -36,7 +36,6 @@ func _ready() -> void:
 func set_hud(game_manager):
 
 	level_lap_count = game_manager.level_profile["level_laps"]
-#	level_time_limit = game_manager.level_profile["level_time_limit"]
 	level_goals = game_manager.level_profile["level_goals"]
 	max_wins_count = game_manager.curr_game_settings["max_wins_count"]
 

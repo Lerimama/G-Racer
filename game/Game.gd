@@ -18,7 +18,7 @@ var game_views: Dictionary = {}
 # level
 var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
-var level_count: int = 0
+var level_index: int = -1
 var start_position_nodes: Array # dobi od levela
 
 # shadows
@@ -77,8 +77,10 @@ func _ready() -> void:
 	call_deferred("_set_game")
 	printt("game read", Time.get_ticks_msec())
 
+
 func _set_game():
 	# čez tole gre tudi next level
+	level_index += 1
 
 	self.game_stage = GAME_STAGE.SETTING_UP
 
@@ -91,7 +93,8 @@ func _set_game():
 
 	# drivers on level start
 	var driver_ids_on_start: Array = []
-	if level_count == 1:	# prvi level napolni finale data s praznimi slovarji štartnih
+
+	if level_index == 0:	# prvi level napolni finale data s praznimi slovarji štartnih
 		driver_ids_on_start = Sts.drivers_on_game_start
 		for driver_id in driver_ids_on_start:
 			finale_game_data[driver_id] = {}
@@ -120,41 +123,43 @@ func _set_game():
 		for driver_id in driver_ids_on_start:
 				finale_game_data[driver_id] = {}
 
+
 	yield(get_tree(), "idle_frame") # IDLE ... set game
 
 	# camera
 	if Sts.one_screen_mode:
-		var main_camera: Camera2D = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
+		var game_camera: Camera2D = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
 		# prižgem playing field
-		main_camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
+		game_camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
 		if level_profile["rank_by"] == Pfs.RANK_BY.TIME:
-			main_camera.playing_field.enable_playing_field(true)
+			game_camera.playing_field.enable_playing_field(true)
 		else:
-			main_camera.playing_field.enable_playing_field(true, true) # z edgom
-		# pripišem plejer kamere
+			game_camera.playing_field.enable_playing_field(true, true) # z edgom
+		# plejer kamere
 		for player_vehicle in get_tree().get_nodes_in_group(Rfs.group_players):
-			player_vehicle.vehicle_camera = main_camera
+			player_vehicle.vehicle_camera = game_camera
 		# set default view dodam med game viewe
 		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
 		_set_game_views(1)
 	else:
-		# debug ... ai solo postane plejer
+		# debug ... če je samo ai, postane plejer
 		if get_tree().get_nodes_in_group(Rfs.group_players).empty():
 			get_tree().get_nodes_in_group(Rfs.group_ai)[0].add_to_group(Rfs.group_players)
 
-		# default view dodam med game viewe
-		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
-		# pripišem default kamero
+		# default view in prvi plejer
+		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0] #  dodam ga med game viewe
 		var player_vehicle_in_first_view: Vehicle = game_views.values().front()
 		player_vehicle_in_first_view.vehicle_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
 		# ugasnem playing field
 		get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0].get_node("PlayingField").enable_playing_field(false)
-		# spawnam viewe še za preostale plejerje
-		_spawn_new_game_views()
-		# set views
+		# spawnam ostake viewe
+		_spawn_game_views()
 		var players_count: int = get_tree().get_nodes_in_group(Rfs.group_players).size()
+		# setam
 		_set_game_views(players_count)
-
+		# camera targets
+		for player in get_tree().get_nodes_in_group(Rfs.group_players):
+			player.vehicle_camera.follow_target = player
 
 	self.game_stage = GAME_STAGE.READY
 
@@ -165,13 +170,13 @@ func _set_game():
 
 func _set_game_level():
 
-	level_count += 1
+#	level_index += 1
 
-	if level_count > 0:
-		# unmute sfx
-		if not Rfs.sound_manager.sfx_set_to_mute:
-			var bus_index: int = AudioServer.get_bus_index("GameSfx")
-			AudioServer.set_bus_mute(bus_index, false)
+#	if level_index > 0:
+	# unmute sfx
+	if not Rfs.sound_manager.sfx_set_to_mute:
+		var bus_index: int = AudioServer.get_bus_index("GameSfx")
+		AudioServer.set_bus_mute(bus_index, false)
 
 	#		# zbrišem vse otroke v NCP (agenti, orožja, efekti, ...)
 	#		for child in Rfs.node_creation_parent.get_children():
@@ -182,7 +187,7 @@ func _set_game_level():
 		game_level.set_physics_process(false)
 		game_level.queue_free()
 
-	var new_level_key: int = Sts.game_levels[level_count - 1]
+	var new_level_key: int = Sts.game_levels[level_index]
 	level_profile = Pfs.level_profiles[new_level_key]
 	_spawn_level(level_profile)
 
@@ -354,7 +359,7 @@ func _change_camera_leader(new_camera_leader: Node2D):
 # SPAWNING ---------------------------------------------------------------------------------------------
 
 
-func _spawn_new_game_views():
+func _spawn_game_views():
 
 	for player_vehicle in get_tree().get_nodes_in_group(Rfs.group_players):
 		# def view je že setan
@@ -393,13 +398,13 @@ func _spawn_level(spawn_level_profile: Dictionary):
 	game_level = new_level
 
 
-func _spawn_vehicle(driver_id, spawned_position_index: int):
+func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 
 	var scene_name: String = "vehicle_scene"
 	var vehicle_type: int = Pfs.VEHICLE.values()[0]
 
 	var new_driver_stats: Dictionary = {}
-	if level_count > 1:
+	if level_index > 0:
 		new_driver_stats = finale_game_data[driver_id]["driver_stats"]
 	else:
 		new_driver_stats = Pfs.start_driver_stats.duplicate()
@@ -443,10 +448,9 @@ func _spawn_vehicle(driver_id, spawned_position_index: int):
 	drivers_on_start.append(new_vehicle)
 
 
-func _on_level_is_set(rank_by: int, start_positions: Array, camera_limits: Control, camera_start_position_node: Position2D, level_goals: Array, nav_positions: Array):
+func _on_level_is_set(rank_by: int, start_positions: Array, camera_limits: Control, camera_start_position_node: Position2D, level_goals: Array):
 
 	level_profile["rank_by"] = rank_by # do tukaj ga ni v slovarju
 	level_profile["level_goals"] = level_goals # do tukaj ga ni v slovarju
-	game_reactor.navigation_positions = nav_positions
 	start_position_nodes = start_positions.duplicate()
 	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)

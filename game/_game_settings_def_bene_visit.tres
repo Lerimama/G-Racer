@@ -1,0 +1,19 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://game/game_settings_def.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+camera_zoom_range = [ 1, 1.5 ]
+start_countdown = true
+countdown_start_limit = 5
+pickables_count_limit = 5
+pull_gas_penalty = -20.0
+drifting_mode = true
+life_is_scalp = true
+ranking_cash_rewards = [ 5000, 3000, 1000 ]
+game_shadows_rotation_deg = 45.0
+game_shadows_color = Color( 0, 0, 0, 1 )
+game_shadows_length_factor = 1.0
+game_shadows_alpha = 0.4
+game_shadows_direction = Vector2( 800, 0 )

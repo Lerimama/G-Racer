@@ -13,7 +13,6 @@ var level_finish: Node2D
 var level_track: Path2D
 var level_goals: Array = []
 
-var navigation_cells_positions: Array = []
 var goal_reached_signal: String = "reached_by" # vsak goal more met to
 var available_pickable_positions: Array = [] # tole je bolje delovalo, dokler sem uporabljal tilemap
 
@@ -63,19 +62,19 @@ func set_level():
 	else:
 		level_ranking_type = Pfs.RANK_BY.POINTS
 
-	# pošljem
 	_set_level_objects()
-	navigation_cells_positions = level_navigation.level_navigation_points.duplicate()
+	available_pickable_positions = level_navigation.level_navigation_points.duplicate()
+
 	_resize_to_level_size()
 
+	# pošljem
 	emit_signal(
 		"level_is_set",
 		level_ranking_type,
 		level_start.start_positions_holder.get_children(),
 		camera_limits_rect,
 		level_start.camera_position_node,
-		level_goals,
-		navigation_cells_positions
+		level_goals
 		)
 
 
@@ -127,12 +126,12 @@ func _set_level_objects():
 
 func spawn_pickable(pickable_key: int = -1):
 
-	if not navigation_cells_positions.empty():
+	if not available_pickable_positions.empty():
 
 		if pickable_key == -1: # random pickable
 			pickable_key = Pfs.pickable_profiles.keys().pick_random()
 
-		var random_cell_position: Vector2 = navigation_cells_positions.pick_random()
+		var random_cell_position: Vector2 = available_pickable_positions.pick_random()
 		var NewPickable: PackedScene = preload("res://game/level/pickables/Pickable.tscn")
 
 		var new_pickable = NewPickable.instance()
@@ -148,7 +147,8 @@ func spawn_pickable(pickable_key: int = -1):
 
 func _on_pickable_picked(pickable_position: Vector2):
 
-	available_pickable_positions.append(pickable_position)
+	if not pickable_position in available_pickable_positions:
+		available_pickable_positions.append(pickable_position)
 
 
 func _resize_to_level_size():

@@ -100,7 +100,6 @@ contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 7 )
 engines_path = NodePath("Engines")
-group_weapons_by_type = false
 vehicle_motion_profile = ExtResource( 1 )
 
 [node name="Driver" type="Node2D" parent="."]
@@ -168,6 +167,7 @@ bus = "GameSfx"
 pause_mode = 1
 
 [node name="ShapePoly" type="Polygon2D" parent="."]
+visible = false
 z_index = 2
 color = Color( 0.262745, 0.262745, 0.262745, 1 )
 texture_offset = Vector2( 56, 112 )
@@ -278,10 +278,10 @@ pause_mode = 1
 position = Vector2( -109, -108 )
 
 [node name="Dropper" parent="Weapons" instance=ExtResource( 9 )]
-position = Vector2( -64, -142 )
+position = Vector2( -62, -161 )
 
 [node name="LauncherL" parent="Weapons" instance=ExtResource( 5 )]
-position = Vector2( 106, -155 )
+position = Vector2( 100, -165 )
 
 [node name="LauncherR" parent="Weapons" instance=ExtResource( 5 )]
 position = Vector2( 120, -88 )
@@ -596,7 +596,6 @@ valign = 1
 uppercase = true
 
 [node name="Mass" type="Node2D" parent="."]
-visible = false
 
 [node name="Front" type="Node2D" parent="Mass"]
 position = Vector2( 65, 0 )
@@ -642,7 +641,6 @@ monitorable = false
 shape = SubResource( 5293 )
 
 [node name="NearArea" type="Area2D" parent="."]
-visible = false
 monitoring = false
 monitorable = false
 

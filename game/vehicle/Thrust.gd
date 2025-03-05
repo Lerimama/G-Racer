@@ -3,7 +3,7 @@ extends Node2D
 
 enum POSITION {LEFT, RIGHT, FRONT, REAR}
 export (POSITION) var position_on_vehicle: int = 0
-onready var thrust_owner: Node2D = owner.owner
+onready var thrust_owner: Node2D # pošlje engine
 
 var thrust_active: bool = false
 var thrust_trail_alpha = 0.05
@@ -25,15 +25,16 @@ func _ready() -> void:
 			scale.y = 1
 		POSITION.RIGHT:
 			scale.y = -1
-
+	pass
 
 func _process(delta: float) -> void:
 
-	if thrust_owner:
+	if thrust_active:
+	#	if thrust_owner:
 		update_trail()
 
-# particles
 
+# particles
 func start_fx(only_one_shot: bool = false, reverse_direction: bool = false):
 
 	if not thrust_active:

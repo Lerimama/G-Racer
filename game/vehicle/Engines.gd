@@ -12,7 +12,9 @@ onready var EngineParticlesFront: PackedScene = preload("res://game/vehicle/fx/E
 
 
 func _ready() -> void:
-	pass # Replace with function body.
+
+	for thrust in all_thrusts:
+		thrust.thrust_owner = get_parent()
 
 func start_engines():
 
@@ -37,58 +39,51 @@ func stop_engines():
 
 func manage_engines(motion_manager: Node2D):
 
+	for thrust in all_thrusts:
+		thrust.start_fx()
+
+	var to_idle_rotation_factor: float =  motion_manager.engine_rotation_speed * 2
+	var to_force_rotation_factor: float = 0.5 # _temp ...rotacija thrusta je počasna
+
 	match motion_manager.motion:
 
-#		motion_manager.MOTION.FWD, motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
-		motion_manager.MOTION.FWD:
-			for thrust in all_thrusts:
-				thrust.start_fx()
-		motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
-			for thrust in all_thrusts:
-				thrust.start_fx()
+		motion_manager.MOTION.FWD,motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
 			for thrust in front_thrusts:
-				thrust.rotation = motion_manager.force_rotation # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+				thrust.rotation = lerp_angle(thrust.rotation,  motion_manager.force_rotation, 1)
 			for thrust in rear_thrusts:
-				thrust.rotation = - motion_manager.force_rotation
+				thrust.rotation = lerp_angle(thrust.rotation, 0, to_force_rotation_factor)
 
-		motion_manager.MOTION.REV:
-			for thrust in all_thrusts:
-				thrust.start_fx()
+		motion_manager.MOTION.REV, motion_manager.MOTION.REV_LEFT, motion_manager.MOTION.REV_RIGHT:
 			for thrust in front_thrusts:
-				thrust.rotation = - motion_manager.force_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
+				thrust.rotation = lerp_angle(thrust.rotation, - deg2rad(180), to_idle_rotation_factor)
 			for thrust in rear_thrusts:
-				thrust.rotation = motion_manager.force_rotation + deg2rad(180)
-
-		motion_manager.MOTION.REV_LEFT, motion_manager.MOTION.REV_RIGHT:
-			for thrust in all_thrusts:
-				thrust.start_fx()
-			for thrust in front_thrusts:
-				thrust.rotation = - motion_manager.force_rotation + deg2rad(180) # za samo zavijanje ne lerpam, ker je lerpano obračanje glavne smeri
-			for thrust in rear_thrusts:
-				thrust.rotation = motion_manager.force_rotation + deg2rad(180)
+				thrust.rotation = lerp_angle(thrust.rotation,  motion_manager.force_rotation + deg2rad(180), to_force_rotation_factor)
 
 		motion_manager.MOTION.IDLE:
 			for thrust in all_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, 0, 0.1)
+				thrust.rotation = lerp_angle(thrust.rotation, 0, to_idle_rotation_factor)
 				thrust.stop_fx()
-			for thrust in all_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, 0, motion_manager.engine_rotation_speed)
 
-		motion_manager.MOTION.IDLE_LEFT, motion_manager.MOTION.IDLE_RIGHT:
-			var rotate_to_angle:float = deg2rad(motion_manager.max_engine_rotation_deg) #  motion_manager.driving_gear ... # 60 je poseben deg2rad(max_engine_rotation_deg)
-			if motion_manager.MOTION.IDLE_LEFT:
-				rotate_to_angle *= -1
-			for thrust in all_thrusts:
-				thrust.start_fx()
+		motion_manager.MOTION.IDLE_RIGHT, motion_manager.MOTION.IDLE_LEFT:
+
+			var idle_dir: int = 1
+			if motion_manager.motion == motion_manager.MOTION.IDLE_LEFT:
+				idle_dir = -1
+
 			match motion_manager.rotation_motion:
+
 				motion_manager.ROTATION_MOTION.SPIN:
 					for thrust in front_thrusts:
-						thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, motion_manager.engine_rotation_speed) # lerpam, ker obrat glavne smeri ni lerpan
+						thrust.rotation = lerp_angle(thrust.rotation, deg2rad(90) * idle_dir, to_idle_rotation_factor) # lerpam, ker obrat glavne smeri ni lerpan
 					for thrust in rear_thrusts:
-						thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle + deg2rad(180), motion_manager.engine_rotation_speed)
-				motion_manager.ROTATION_MOTION.SLIDE: # oba pogona  v smeri premika
-					for thrust in all_thrusts:
-						thrust.rotation = lerp_angle(thrust.rotation, rotate_to_angle, motion_manager.engine_rotation_speed)
+						thrust.rotation = lerp_angle(thrust.rotation, - deg2rad(90) * idle_dir, to_idle_rotation_factor)
+
+				motion_manager.ROTATION_MOTION.SLIDE:
+					for thrust in front_thrusts:
+						thrust.rotation = lerp_angle(thrust.rotation, deg2rad(90) * idle_dir, to_idle_rotation_factor) # lerpam, ker obrat glavne smeri ni lerpan
+					for thrust in rear_thrusts:
+						thrust.rotation = lerp_angle(thrust.rotation, deg2rad(90) * idle_dir, to_idle_rotation_factor)
+
 
 
 func boost_engines():

@@ -17,10 +17,12 @@ export (float, 0, 0.5) var gas_tank_size: float = 200 # liters
 
 # neu
 export var group_weapons_by_type: bool = true
-export (float, 0, 1, 0.05) var vehicle_damage: float = 0
-export (float, 0, 1, 0.1) var damage_effect_factor: float = 1
 export (float, 0, 1, 0.1) var heal_rate: float = 0.5
-export (float, 0, 1, 0.1) var damage_engine_power_factor: float = 1
+export (float, 0, 1, 0.1) var health_effect_factor: float = 1
+
+# kasneje se tudi seta glede na opremo
+export var front_mass_bias: float = 0.5
+export var mass_manipulate_part: float = 0.5
 
 
 func _set_default_parameters(managed_vehicle: Vehicle):
@@ -29,86 +31,66 @@ func _set_default_parameters(managed_vehicle: Vehicle):
 	motion_manager.max_engine_rotation_deg = 45
 	motion_manager.engine_rotation_speed = 0.1
 	managed_vehicle.mass = masa
+	managed_vehicle.front_mass.mass = motion_manager.AKA_ZERO_MASS
+	managed_vehicle.rear_mass.mass = motion_manager.AKA_ZERO_MASS
+	managed_vehicle.linear_damp = 1
+	managed_vehicle.front_mass.linear_damp = 0
+	managed_vehicle.rear_mass.linear_damp = 0
 
 	if managed_vehicle.is_in_group(Rfs.group_ai):
 		motion_manager.max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 		managed_vehicle.angular_damp = 16
-		managed_vehicle.linear_damp = 1
 	else:
 		motion_manager.max_engine_power = start_max_engine_power
-		managed_vehicle.angular_damp = 1
-		managed_vehicle.linear_damp = 1
-		managed_vehicle.front_mass.mass = motion_manager.AKA_ZERO_MASS
-		managed_vehicle.rear_mass.mass = motion_manager.AKA_ZERO_MASS
-		managed_vehicle.front_mass.linear_damp = 0
-		managed_vehicle.rear_mass.linear_damp = 0
+		managed_vehicle.angular_damp = 14
 
 
 func _set_motion_parameters(vehicle: Vehicle, new_motion: int):
 #	print("resource motion", motion_manager.MOTION.keys()[new_motion])
 
 		var motion_manager: Node2D = vehicle.motion_manager
+#		printt("motion", motion_manager.MOTION.keys()[new_motion])
 
 		motion_manager.torque_on_vehicle = 0
-		var new_rotation_direction: int = 0
+
+		_set_default_parameters(vehicle)
 
 		match new_motion:
-			motion_manager.MOTION.FWD:
-				new_rotation_direction = 0
+			motion_manager.MOTION.FWD, motion_manager.MOTION.REV:
+				#				_set_default_parameters(vehicle)
+				pass
 			motion_manager.MOTION.FWD_LEFT:
-				new_rotation_direction = -1
 				motion_manager.rotation_motion = motion_manager.selected_rotation_motion
 				vehicle.angular_damp = 14
 				vehicle.front_mass.linear_damp = 0
 				vehicle.rear_mass.linear_damp = 4
 			motion_manager.MOTION.FWD_RIGHT:
-				new_rotation_direction = 1
 				motion_manager.rotation_motion = motion_manager.selected_rotation_motion
 				vehicle.angular_damp = 14
 				vehicle.front_mass.linear_damp = 0
 				vehicle.rear_mass.linear_damp = 4
-			motion_manager.MOTION.REV:
-#				rotating = false
-				new_rotation_direction = 0
 			motion_manager.MOTION.REV_LEFT:
-				new_rotation_direction = -1
 				motion_manager.rotation_motion = motion_manager.selected_rotation_motion
 				vehicle.angular_damp = 14
 				vehicle.front_mass.linear_damp = 4
 				vehicle.rear_mass.linear_damp = 0
 			motion_manager.MOTION.REV_RIGHT:
-				new_rotation_direction = 1
 				motion_manager.rotation_motion = motion_manager.selected_rotation_motion
 				vehicle.angular_damp = 14
 				vehicle.front_mass.linear_damp = 4
 				vehicle.rear_mass.linear_damp = 0
 			motion_manager.MOTION.IDLE:
-				new_rotation_direction = 0
-				vehicle.angular_damp = 3
-				# _temp tole spodaj je pomoje oveč... testiraj
-				# func _reset_motion():
-				# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v vehicle "v igri"
-				#				vehicle.front_mass.set_applied_force(Vector2.ZERO)
-				#				vehicle.front_mass.set_applied_torque(0)
-				#				vehicle.rear_mass.set_applied_force(Vector2.ZERO)
-				#				vehicle.rear_mass.set_applied_torque(0)
+				vehicle.angular_damp = 1
 			motion_manager.MOTION.IDLE_LEFT:
-				new_rotation_direction = -1
 				motion_manager.rotation_motion = motion_manager.selected_idle_rotation
 				vehicle.angular_damp = 3
 			motion_manager.MOTION.IDLE_RIGHT:
-				new_rotation_direction = 1
 				motion_manager.rotation_motion = motion_manager.selected_idle_rotation
 				vehicle.angular_damp = 3
 			motion_manager.MOTION.DISSARAY:
 				pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 
-#		if not new_rotation_direction == rotation_dir:
-		motion_manager.rotation_dir = new_rotation_direction
-
-		if motion_manager.rotation_dir == 0:
-			_set_default_parameters(vehicle)
-		else:
+		if not motion_manager.rotation_dir == 0:
 			_set_rotation_parameters(vehicle)
 
 
@@ -118,15 +100,15 @@ func _set_rotation_parameters(managed_vehicle: Vehicle, is_reverse: bool = false
 	var motion_manager: Node2D = managed_vehicle.motion_manager
 	var rotation_motion: int = motion_manager.rotation_motion
 
-	var front_mass_bias: float = 0.5
 	match rotation_motion:
 		motion_manager.ROTATION_MOTION.DEFAULT:
 			motion_manager.max_engine_rotation_deg = 35
 			managed_vehicle.angular_damp = 10
-			var split_vehicle_mass = masa / 2
-			managed_vehicle.mass = split_vehicle_mass
-			managed_vehicle.front_mass.mass = split_vehicle_mass * front_mass_bias
-			managed_vehicle.rear_mass.mass = split_vehicle_mass * (1 - front_mass_bias)
+			# masa vehicla
+			var manipulate_part_mass: float = managed_vehicle.mass * mass_manipulate_part
+			managed_vehicle.mass -= manipulate_part_mass
+			managed_vehicle.front_mass.mass = manipulate_part_mass * front_mass_bias
+			managed_vehicle.rear_mass.mass = manipulate_part_mass * (1 - front_mass_bias)
 			#			if is_reverse:
 			#				managed_vehicle.front_mass.linear_damp = 0
 			#				managed_vehicle.rear_mass.linear_damp = 4
@@ -137,10 +119,11 @@ func _set_rotation_parameters(managed_vehicle: Vehicle, is_reverse: bool = false
 			motion_manager.max_engine_rotation_deg = 32
 			managed_vehicle.front_mass.linear_damp = 1
 			managed_vehicle.rear_mass.linear_damp = 6
-			var split_vehicle_mass = masa / 2
-			managed_vehicle.mass = split_vehicle_mass
-			managed_vehicle.front_mass.mass = split_vehicle_mass * front_mass_bias
-			managed_vehicle.rear_mass.mass = split_vehicle_mass * (1 - front_mass_bias)
+			# masa vehicla
+			var manipulate_part_mass: float = managed_vehicle.mass * mass_manipulate_part
+			managed_vehicle.mass -= manipulate_part_mass
+			managed_vehicle.front_mass.mass = manipulate_part_mass * front_mass_bias
+			managed_vehicle.rear_mass.mass = manipulate_part_mass * (1 - front_mass_bias)
 		motion_manager.ROTATION_MOTION.SPIN:
 			managed_vehicle.angular_damp = 4 # 16
 			motion_manager.torque_on_vehicle = 9300000 * motion_manager.rotation_dir
@@ -150,29 +133,3 @@ func _set_rotation_parameters(managed_vehicle: Vehicle, is_reverse: bool = false
 			#				linear_damp = managed_vehicle.default_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
 			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
-
-#func update_profile_parameters(managed_vehicle: Vehicle):
-#	# marsikaj se me igro ne spreminja, pa vseeno ... junevenou
-#
-#	# vehicle
-#	vehicle_damage = managed_vehicle.vehicle_damage
-#	damage_effect_factor = managed_vehicle.damage_effect_factor
-#	target_rank = managed_vehicle.target_rank
-#	height = managed_vehicle.height
-#	driving_elevation = managed_vehicle.driving_elevation
-#	gas_tank_size = managed_vehicle.gas_tank_size
-#	gas_usage = managed_vehicle.gas_usage
-#	gas_usage_idle = managed_vehicle.gas_usage_idle
-#	masa = managed_vehicle.masa
-#	on_hit_disabled_time = managed_vehicle.on_hit_disabled_time
-#	group_weapons_by_type = managed_vehicle.group_weapons_by_type
-#	vehicle_damage = managed_vehicle.vehicle_damage
-#	damage_effect_factor = managed_vehicle.damage_effect_factor
-#	damage_engine_power_factor = managed_vehicle.damage_engine_power_factor
-#	heal_rate = managed_vehicle.heal_rate
-#
-#	# motion manager
-#	start_max_engine_power = managed_vehicle.motion_manager.start_max_engine_power
-#	ai_power_equlizer_addon = managed_vehicle.motion_manager.ai_power_equlizer_addon
-#	fast_start_power_addon = managed_vehicle.motion_manager.fast_start_power_addon
-#	max_engine_power_rotation_adapt = managed_vehicle.motion_manager.max_engine_power_rotation_adapt

@@ -59,14 +59,14 @@ func _update_ranking():
 		# pol rangirane po trackerju rangiram po prevoženih krogih
 		if game.level_profile["level_laps"] > 1:
 			drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
-
 	# BATTLE
 	else:
 		# rangiram po točkah
 		drivers_ranked = unranked_drivers
 		drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
 
-	# ranking stats
+
+	# UPDATE STATS
 	var players_ranked: Array = []
 	for ranked_driver in drivers_ranked:
 		var prev_rank: int = ranked_driver.driver_stats[Pfs.STATS.LEVEL_RANK]
@@ -76,9 +76,12 @@ func _update_ranking():
 		if ranked_driver.is_in_group(Rfs.group_players):
 			players_ranked.append(ranked_driver)
 
-	if not players_ranked[0] == game.camera_leader:
-		game.camera_leader = players_ranked[0]
+	# camera leader
+#	if Sts.one_screen_mode:
+##	if not players_ranked[0] == game.camera_leader:
+#		game.camera_leader = players_ranked[0]
 
+	# drivers in game
 	drivers_in_game = drivers_ranked
 
 

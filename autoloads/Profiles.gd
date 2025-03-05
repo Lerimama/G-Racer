@@ -37,13 +37,13 @@ enum STATS {
 		#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v driverja
 		#	Array ... lahko se računa current in max value
 		#	PoolIntArray ... vedno
-		WINS, # array zmaganih level_data ... samo dodajaš ... PRENOSNA
-		LIFE, # PoolIntArray curr/max ... PRENOSNA
+		WINS, # curr level index / max ... PRENOSNA
+		LIFE, # have or taken .. curr int / max ... PRENOSNA
 		HEALTH, # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
-		POINTS, GAS, CASH, # 2 > 5 ... PRENOSNA
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, # +/- delta ... PRENOSNA
-		LEVEL_RANK, # value
-		LAP_COUNT, # PoolIntArray časov kroga ... samo dodajaš
+		POINTS, GAS, CASH, # float ... PRENOSNA
+		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, # int ... +/- delta ... PRENOSNA
+		LEVEL_RANK, # int
+		LAP_COUNT, # časi krogov
 		GOALS_REACHED # array ciljev ... samo dodajaš
 		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # value ... hunds
 		DAMAGE # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
@@ -171,8 +171,7 @@ var vehicle_profiles: Dictionary = {
 
 		# neu
 		"group_weapons_by_type": "", # < zakaj string? kako da ni nč? ... grdo
-		"damage_effect_factor": 1, # vpliva na to koliko škode od planirane naredi neka zadeva
-		"damage_engine_power_factor": 1, # kako aplicirana škoda vpliva na moč motorja ... to je že mal v detajle
+		"health_effect_factor": 1, # vpliva na to koliko škode od planirane naredi neka zadeva
 		"on_hit_disabled_time": 1,
 		"heal_rate": 0.01, # lerp rate
 		"driving_elevation": 7,

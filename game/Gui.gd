@@ -71,7 +71,7 @@ func _on_game_stage_changed(current_game_manager: Game):
 			var fade_tween = get_tree().create_tween()
 			fade_tween.tween_property(game_cover, "modulate:a", 0.8, 0.7)
 			yield(fade_tween, "finished")
-			if game_manager.level_count < Sts.game_levels.size():
+			if game_manager.level_index < Sts.game_levels.size() - 1:
 				level_over.open(finale_data)
 				hud.on_level_over()
 			else:

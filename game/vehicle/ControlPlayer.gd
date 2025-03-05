@@ -56,7 +56,7 @@ func _input(event: InputEvent) -> void:
 
 	if game_is_on \
 	and not motion_manager.motion == motion_manager.MOTION.DISSARAY \
-	and not motion_manager.motion == motion_manager.MOTION.OFF:
+	and not motion_manager.motion == motion_manager.MOTION.DISSABLED:
 		# motion
 		var prev_actions: Array = pressed_driving_actions.duplicate()
 		if Input.is_action_pressed(fwd_action):

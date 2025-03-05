@@ -3,7 +3,7 @@ extends Node2D
 
 var managed_vehicle: Node2D  # = get_parent()
 
-enum MOTION {DISSABLED, IDLE, IDLE_LEFT, IDLE_RIGHT, FWD, FWD_LEFT, FWD_RIGHT, REV, REV_LEFT, REV_RIGHT, DISSARAY, OFF}
+enum MOTION {DISSABLED, IDLE, IDLE_LEFT, IDLE_RIGHT, FWD, FWD_LEFT, FWD_RIGHT, REV, REV_LEFT, REV_RIGHT, DISSARAY}#, OFF}
 var motion: int = MOTION.IDLE setget _change_motion
 
 enum ROTATION_MOTION {
@@ -48,7 +48,9 @@ var start_max_engine_power: float = 500
 var ai_power_equlizer_addon: float = -10
 var fast_start_power_addon: float = 200
 var max_engine_power_rotation_adapt: float = 1.1
-
+# kasneje se tudi seta glede na opremo
+var front_mass_bias: float = 0.5
+var mass_manipulate_part: float = 0.5
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
@@ -73,9 +75,6 @@ func _process(delta: float) -> void:
 
 	if not managed_vehicle.is_active: # tole seta tudi na startu
 		current_engine_power = 0 # cela sila je pade na 0
-		#		force_on_vehicle = Vector2.ZERO
-		#		force_rotation = 0
-		rotation_dir = 0
 	else:
 		# PLAYER ima drugače kot AI ...
 		_motion_machine()
@@ -83,13 +82,13 @@ func _process(delta: float) -> void:
 
 	# debug
 	var vector_to_target = force_on_vehicle.normalized() * 0.5 * current_engine_power
-#	vector_to_target = vector_to_target.rotated(- managed_vehicle.global_rotation)
 	vector_to_target = vector_to_target.rotated(- global_rotation)
 	managed_vehicle.direction_line.set_point_position(1, vector_to_target)
 	managed_vehicle.direction_line.default_color = Color.green
 
 
 func _motion_machine():
+
 	match motion:
 		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
 			if is_ai:
@@ -97,7 +96,6 @@ func _motion_machine():
 				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
-#				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + managed_vehicle.global_rotation) * _accelarate_to_engine_power()
 				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
 			if is_ai:
@@ -106,7 +104,6 @@ func _motion_machine():
 			else:
 				force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_vehicle = Vector2.LEFT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
-#				force_on_vehicle = Vector2.LEFT.rotated(force_rotation + managed_vehicle.global_rotation) * _accelarate_to_engine_power()
 		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT, MOTION.DISSABLED:
 			force_rotation = 0
 			force_on_vehicle = Vector2.ZERO
@@ -123,14 +120,17 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 	engine_power_percentage = current_engine_power / current_max_engine_power
 	if current_max_engine_power == 0: engine_power_percentage = 0
 
-	# upoštevam damage
-	current_engine_power -= current_engine_power * managed_vehicle.vehicle_damage * 0.5# managed_vehicle.damage_engine_power_factor
+	# upoštevam health kot poškodovano vozilo
+	if Sts.health_effects_vehicle:
+		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+		current_engine_power -= current_engine_power * damage_effect_scale
 
 	# debug ... ai engine power je počasen
 	if managed_vehicle.is_in_group(Rfs.group_ai):
 		current_engine_power /=10
 
-	return current_engine_power * Sts.world_hsp_power_factor
+#	return current_engine_power * Sts.world_hsp_power_factor
+	return 0
 
 
 func _change_motion(new_motion):
@@ -139,56 +139,53 @@ func _change_motion(new_motion):
 	if not motion == new_motion:
 		motion = new_motion
 
+		# edini rotation_dir setter
+		match motion:
+			MOTION.FWD, MOTION.REV, MOTION.IDLE, MOTION.DISSABLED:
+				rotation_dir = 0
+			MOTION.FWD_LEFT, MOTION.REV_LEFT, MOTION.IDLE_LEFT:
+				rotation_dir = -1
+			MOTION.FWD_RIGHT, MOTION.REV_RIGHT, MOTION.IDLE_RIGHT:
+				rotation_dir = 1
+
 		if vehicle_motion_profile:
 			vehicle_motion_profile._set_motion_parameters(managed_vehicle, motion)
+
 		else:
 			torque_on_vehicle = 0
+			_set_default_parameters()
 
 			match motion:
-				MOTION.FWD:
-					rotation_dir = 0
+				MOTION.FWD, MOTION.REV:
+					managed_vehicle.angular_damp = 14
+					managed_vehicle.front_mass.linear_damp = 0
+					managed_vehicle.rear_mass.linear_damp = 4
 				MOTION.FWD_LEFT:
-					rotation_dir = -1
 					rotation_motion = selected_rotation_motion
 					managed_vehicle.angular_damp = 14
 					managed_vehicle.front_mass.linear_damp = 0
 					managed_vehicle.rear_mass.linear_damp = 4
 				MOTION.FWD_RIGHT:
-					rotation_dir = 1
 					rotation_motion = selected_rotation_motion
 					managed_vehicle.angular_damp = 14
 					managed_vehicle.front_mass.linear_damp = 0
 					managed_vehicle.rear_mass.linear_damp = 4
-				MOTION.REV:
-					rotation_dir = 0
 				MOTION.REV_LEFT:
-					rotation_dir = -1
 					rotation_motion = selected_rotation_motion
 					managed_vehicle.angular_damp = 14
 					managed_vehicle.front_mass.linear_damp = 4
 					managed_vehicle.rear_mass.linear_damp = 0
 				MOTION.REV_RIGHT:
-					rotation_dir = 1
 					rotation_motion = selected_rotation_motion
 					managed_vehicle.angular_damp = 14
 					managed_vehicle.front_mass.linear_damp = 4
 					managed_vehicle.rear_mass.linear_damp = 0
 				MOTION.IDLE:
-					rotation_dir = 0
-					managed_vehicle.angular_damp = 3
-					# _temp tole spodaj je pomoje oveč... testiraj
-					# func _reset_motion():
-					# naj bo kar "totalni" reset, ki se ga ne kliče med tem, ko je v vehicle "v igri"
-					#				managed_vehicle.front_mass.set_applied_force(Vector2.ZERO)
-					#				managed_vehicle.front_mass.set_applied_torque(0)
-					#				managed_vehicle.rear_mass.set_applied_force(Vector2.ZERO)
-					#				managed_vehicle.rear_mass.set_applied_torque(0)
+					managed_vehicle.angular_damp = 1
 				MOTION.IDLE_LEFT:
-					rotation_dir = -1
 					rotation_motion = selected_idle_rotation
 					managed_vehicle.angular_damp = 3
 				MOTION.IDLE_RIGHT:
-					rotation_dir = 1
 					rotation_motion = selected_idle_rotation
 					managed_vehicle.angular_damp = 3
 				MOTION.DISSABLED:
@@ -196,48 +193,48 @@ func _change_motion(new_motion):
 				MOTION.DISSARAY:
 					pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 
-			if rotation_dir == 0:
-				_set_default_parameters()
-			else:
+			if not rotation_dir == 0:
 				_set_rotation_parameters(rotation_dir)
 
 
-func _set_rotation_parameters(new_rotation_direction: float, is_reverse: bool = false):
 
-	if vehicle_motion_profile:
-		vehicle_motion_profile._set_rotation_parameters(managed_vehicle)
-	else:
-		var front_mass_bias: float = 0.5
-		match rotation_motion:
-			ROTATION_MOTION.DEFAULT:
-				max_engine_rotation_deg = 35
-				managed_vehicle.angular_damp = 10
-				var split_vehicle_mass = managed_vehicle.masa / 2
-				managed_vehicle.mass = split_vehicle_mass
-				managed_vehicle.front_mass.mass = split_vehicle_mass * front_mass_bias
-				managed_vehicle.rear_mass.mass = split_vehicle_mass * (1 - front_mass_bias)
-				#			if is_reverse:
-				#				managed_vehicle.front_mass.linear_damp = 0
-				#				managed_vehicle.rear_mass.linear_damp = 4
-				#			else:
-				#			managed_vehicle.front_mass.linear_damp = 0
-				#			managed_vehicle.rear_mass.linear_damp = 4
-			ROTATION_MOTION.DRIFT:
-				max_engine_rotation_deg = 32
-				managed_vehicle.front_mass.linear_damp = 1
-				managed_vehicle.rear_mass.linear_damp = 6
-				var split_vehicle_mass = managed_vehicle.masa / 2
-				managed_vehicle.mass = split_vehicle_mass
-				managed_vehicle.front_mass.mass = split_vehicle_mass * front_mass_bias
-				managed_vehicle.rear_mass.mass = split_vehicle_mass * (1 - front_mass_bias)
-			ROTATION_MOTION.SPIN:
-				managed_vehicle.angular_damp = 4 # 16
-				torque_on_vehicle = 9300000 * rotation_dir
-				max_engine_rotation_deg = 90
-			ROTATION_MOTION.SLIDE:
-				#				force_on_vehicle = Vector2.DOWN.rotated(managed_vehicle.rotation) * rotation_dir
-				#				linear_damp = managed_vehicle.default_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
-				managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
+func _set_rotation_parameters(is_reverse: bool = false):
+#	printt("rotation on resource", motion_manager.MOTION.keys()[motion_manager.motion])
+
+	match rotation_motion:
+		ROTATION_MOTION.DEFAULT:
+			max_engine_rotation_deg = 35
+			managed_vehicle.angular_damp = 10
+			# masa vehicla
+			var manipulate_part_mass: float = managed_vehicle.mass * mass_manipulate_part
+			managed_vehicle.mass -= manipulate_part_mass
+			managed_vehicle.front_mass.mass = manipulate_part_mass * front_mass_bias
+			managed_vehicle.rear_mass.mass = manipulate_part_mass * (1 - front_mass_bias)
+			#			if is_reverse:
+			#				managed_vehicle.front_mass.linear_damp = 0
+			#				managed_vehicle.rear_mass.linear_damp = 4
+			#			else:
+			#			managed_vehicle.front_mass.linear_damp = 0
+			#			managed_vehicle.rear_mass.linear_damp = 4
+		ROTATION_MOTION.DRIFT:
+			max_engine_rotation_deg = 32
+			managed_vehicle.front_mass.linear_damp = 1
+			managed_vehicle.rear_mass.linear_damp = 6
+			# masa vehicla
+			var manipulate_part_mass: float = managed_vehicle.mass * mass_manipulate_part
+			managed_vehicle.mass -= manipulate_part_mass
+			managed_vehicle.front_mass.mass = manipulate_part_mass * front_mass_bias
+			managed_vehicle.rear_mass.mass = manipulate_part_mass * (1 - front_mass_bias)
+		ROTATION_MOTION.SPIN:
+			managed_vehicle.angular_damp = 4 # 16
+			torque_on_vehicle = 9300000 * rotation_dir
+			max_engine_rotation_deg = 90
+		ROTATION_MOTION.SLIDE:
+			#				force_on_vehicle = Vector2.DOWN.rotated(managed_vehicle.rotation) * rotation_dir
+			#				linear_damp = managed_vehicle.default_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
+			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
+
+
 
 
 func _set_default_parameters(): # fizični, ne vsebinski22
@@ -250,20 +247,18 @@ func _set_default_parameters(): # fizični, ne vsebinski22
 			max_engine_rotation_deg = 45
 			engine_rotation_speed = 0.1
 			managed_vehicle.mass = managed_vehicle.masa
+			managed_vehicle.linear_damp = 1
+			managed_vehicle.front_mass.mass = AKA_ZERO_MASS
+			managed_vehicle.rear_mass.mass = AKA_ZERO_MASS
+			managed_vehicle.front_mass.linear_damp = 0
+			managed_vehicle.rear_mass.linear_damp = 0
 
 			if is_ai:
 				max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 				managed_vehicle.angular_damp = 16
-				managed_vehicle.linear_damp = 1
 			else:
 				max_engine_power = start_max_engine_power
-				managed_vehicle.angular_damp = 1
-				managed_vehicle.linear_damp = 1
-				managed_vehicle.front_mass.mass = AKA_ZERO_MASS
-				managed_vehicle.rear_mass.mass = AKA_ZERO_MASS
-				managed_vehicle.front_mass.linear_damp = 0
-				managed_vehicle.rear_mass.linear_damp = 0
-
+				managed_vehicle.angular_damp = 14
 
 # SPECIALS ------------------------------------------------------------------------------------
 

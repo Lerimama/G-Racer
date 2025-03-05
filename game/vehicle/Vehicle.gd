@@ -4,6 +4,7 @@ class_name Vehicle
 
 signal vehicle_deactivated (vehicle)
 signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
+signal pull_success # da GM neha pullat
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
@@ -27,10 +28,8 @@ var gas_usage: float
 var gas_usage_idle: float
 var gas_tank_size: float
 var near_radius: float
-var damage_effect_factor: float # vpliva na health
-var vehicle_damage: float # obratno od health * resiliance ... to bo enkrat health
 var on_hit_disabled_time: float
-
+var health_effect_factor: float
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 
 # tracking
@@ -73,7 +72,6 @@ var debug_trail: Line2D
 export var vehicle_motion_profile: Resource = null
 var masa: float
 var heal_rate: float
-var damage_engine_power_factor: float
 var rank_by: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
 var turned_on: bool = false	# neodvisen on aktivitja
 
@@ -189,7 +187,7 @@ func _die(with_explode: bool = true):
 				call_deferred("set_process", false)
 				revive_timer.start(revive_time)
 			else:
-				if Sts.life_is_scalp:
+				if Sts.life_as_life_taken:
 					turn_off()
 					driver.set_process_input(false)
 					call_deferred("set_physics_process", false)
@@ -220,13 +218,6 @@ func _revive():
 
 	# reset energije
 	update_stat(Pfs.STATS.HEALTH, 1)
-
-
-func _evaluate_damage(damaged_health: float):
-
-	var damage_size_from_health: float = 1 - damaged_health
-	var real_damage_size: float = damage_size_from_health * damage_effect_factor
-	vehicle_damage = real_damage_size
 
 
 func turn_on():
@@ -317,8 +308,6 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 
 	if vehicle_motion_profile:
 		# vehicle
-		vehicle_motion_profile.vehicle_damage = vehicle_damage
-		vehicle_motion_profile.damage_effect_factor = damage_effect_factor
 		vehicle_motion_profile.target_rank = target_rank
 		vehicle_motion_profile.height = height
 		vehicle_motion_profile.driving_elevation = driving_elevation
@@ -328,9 +317,7 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 		vehicle_motion_profile.masa = masa
 		vehicle_motion_profile.on_hit_disabled_time = on_hit_disabled_time
 		vehicle_motion_profile.group_weapons_by_type = group_weapons_by_type
-		vehicle_motion_profile.vehicle_damage = vehicle_damage
-		vehicle_motion_profile.damage_effect_factor = damage_effect_factor
-		vehicle_motion_profile.damage_engine_power_factor = damage_engine_power_factor
+		vehicle_motion_profile.health_effect_factor = health_effect_factor
 		vehicle_motion_profile.heal_rate = heal_rate
 		# motion manager
 		vehicle_motion_profile.start_max_engine_power = motion_manager.start_max_engine_power
@@ -338,10 +325,9 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 		vehicle_motion_profile.fast_start_power_addon = motion_manager.fast_start_power_addon
 		vehicle_motion_profile.max_engine_power_rotation_adapt = motion_manager.max_engine_power_rotation_adapt
 	else:
-		default_vehicle_profile["damage_engine_power_factor"] = damage_engine_power_factor
+		default_vehicle_profile["health_effect_factor"] = health_effect_factor
 		default_vehicle_profile["heal_rate"] = heal_rate
 		default_vehicle_profile["on_hit_disabled_time"] = on_hit_disabled_time
-		default_vehicle_profile["damage_effect_factor"] = damage_effect_factor
 		default_vehicle_profile["target_rank"] = target_rank
 		default_vehicle_profile["height"] = height
 		default_vehicle_profile["driving_elevation"] = driving_elevation
@@ -353,10 +339,8 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 func _load_vehicle_parameters(): # vsebinski, ne fizični
 
 	if vehicle_motion_profile:
-		damage_engine_power_factor = vehicle_motion_profile.damage_engine_power_factor
+		health_effect_factor = vehicle_motion_profile.health_effect_factor
 		heal_rate = vehicle_motion_profile.heal_rate
-		vehicle_damage = vehicle_motion_profile.vehicle_damage
-		damage_effect_factor = vehicle_motion_profile.damage_effect_factor
 		on_hit_disabled_time = vehicle_motion_profile.on_hit_disabled_time
 		target_rank = vehicle_motion_profile.target_rank
 		height = vehicle_motion_profile.height
@@ -365,10 +349,9 @@ func _load_vehicle_parameters(): # vsebinski, ne fizični
 		gas_usage = vehicle_motion_profile.gas_usage
 		gas_usage_idle = vehicle_motion_profile.gas_usage_idle
 	else:
-		damage_engine_power_factor = default_vehicle_profile["damage_engine_power_factor"]
+		health_effect_factor = default_vehicle_profile["health_effect_factor"]
 		heal_rate = default_vehicle_profile["heal_rate"]
 		on_hit_disabled_time = default_vehicle_profile["on_hit_disabled_time"]
-		damage_effect_factor = default_vehicle_profile["damage_effect_factor"]
 		target_rank = default_vehicle_profile["target_rank"]
 		height = default_vehicle_profile["height"]
 		driving_elevation = default_vehicle_profile["driving_elevation"]
@@ -421,7 +404,6 @@ func update_stat(stat_key: int, stat_value):
 		Pfs.STATS.HEALTH:
 			driver_stats[stat_key] += stat_value # change_value je + ali -
 			driver_stats[Pfs.STATS.HEALTH] = clamp(driver_stats[Pfs.STATS.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
-			_evaluate_damage(driver_stats[Pfs.STATS.HEALTH])
 			if driver_stats[Pfs.STATS.HEALTH] == 0:
 				_die()
 		# driver
@@ -470,10 +452,9 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		if vehicle_camera:
 			vehicle_camera.shake_camera(hit_by)
 
-		if Sts.life_is_scalp and driver_stats[Pfs.STATS.HEALTH] <= 0:
+		if Sts.life_as_life_taken and driver_stats[Pfs.STATS.HEALTH] <= 0:
 			if "spawner" in hit_by: # debug zaradi debug no2
 				hit_by.spawner.update_stat(Pfs.STATS.LIFE, 1)
-
 
 
 func on_item_picked(pickable_key: int):
@@ -539,19 +520,20 @@ func _spawn_shield():
 
 func pull_on_screen(pull_position: Vector2): # kliče GM
 
-	# disejblam koližne
-	driver.set_process_input(false)
-	collision_shape.set_deferred("disabled", true)
+		# disejblam koližne
+	#	driver.set_process_input(false)
+	#	collision_shape.set_deferred("disabled", true)
 
 	# reštartam trail
 	trail_source.decay()
 
-	var pull_time: float = 0.2
+	var pull_time: float = 0.1
 	var pull_tween = get_tree().create_tween()
-	pull_tween.tween_property(body_state, "transform:origin", pull_position, pull_time)#.set_ease(Tween.EASE_OUT)
+	pull_tween.tween_property(body_state, "transform:origin", pull_position, pull_time).set_ease(Tween.EASE_OUT)
 	yield(pull_tween, "finished")
-	collision_shape.set_deferred("disabled", false)
-	driver.set_process_input(true)
+	#	transform.origin = pull_position
+	#	collision_shape.set_deferred("disabled", false)
+	#	driver.set_process_input(true)
 
 	update_stat(Pfs.STATS.GAS, Sts.pull_gas_penalty)
 
