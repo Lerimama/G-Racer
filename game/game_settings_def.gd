@@ -7,7 +7,7 @@ export var health_effects_vehicle: bool = true
 export (float, 0, 0.05, 0.005) var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damiđa da ma vehicle lahko med 0 in 1
 export (float, 0, 0.05, 0.005) var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
 
-export var camera_zoom_range: Array = [1, 1.5]
+export var camera_zoom_range: Vector2 = Vector2(1, 1.5)
 export var start_countdown: bool = true
 export var countdown_start_limit: int = 5
 export var pickables_count_limit: int = 5

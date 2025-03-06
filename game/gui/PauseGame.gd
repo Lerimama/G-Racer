@@ -1,49 +1,43 @@
 extends Control
 
 
-#func _input(event: InputEvent) -> void:
-#
-#	#	if Rfs.game_manager.game_on:
-#	if Input.is_action_just_pressed("ui_cancel"):
-#		if not visible:
-#			pause_game()
-#		else:
-#			_on_PlayBtn_pressed()
-
-
 func _ready() -> void:
 
-	visible = false
-	modulate.a = 0
+	hide()
 
 
 func pause_game():
 
+	show()
 	get_viewport().set_disable_input(true) # anti dablklik
+	get_tree().set_pause(true)
 
-	visible = true
 #	Global.sound_manager.play_gui_sfx("screen_slide")
 	$Menu/PlayBtn.grab_focus()
+	var pause_in_time: float = 0.32
+	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_tween.tween_property(self, "modulate:a", 1, pause_in_time).from(0.0).set_ease(Tween.EASE_IN)
 
-	var pause_in_time: float = 0.5
-	var fade_in_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	fade_in_tween.tween_callback(get_tree(), "set_pause", [true])
-	fade_in_tween.tween_property(self, "modulate:a", 1, pause_in_time)
-	fade_in_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
+	yield(fade_tween, "finished")
+
+	get_viewport().set_disable_input(false)
+
 
 
 func play_on():
 
 	get_viewport().set_disable_input(true) # anti dablklik
-#	Global.sound_manager.play_gui_sfx("screen_slide")
 
+#	Global.sound_manager.play_gui_sfx("screen_slide")
 	var pause_out_time: float = 0.5
-	var fade_out_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	fade_out_tween.tween_property(self, "modulate:a", 0, pause_out_time)
-	fade_out_tween.tween_callback(self, "hide")
-	fade_out_tween.tween_callback(get_tree(), "set_pause", [false])
-	fade_out_tween.tween_callback(get_viewport(), "set_disable_input", [false]) # anti dablklik
-	yield(fade_out_tween, "finished")
+	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_tween.tween_property(self, "modulate:a", 0, pause_out_time).set_ease(Tween.EASE_IN)
+
+	yield(fade_tween, "finished")
+
+	hide()
+	get_tree().set_pause(false)
+	get_viewport().set_disable_input(false)
 
 
 # MENU ---------------------------------------------------------------------------------------------

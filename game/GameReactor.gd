@@ -201,7 +201,6 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 			#				reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 
 
-
 func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
 
 	if game.game_stage >= game.GAME_STAGE.PLAYING and crossing_driver.is_active == true: # > ai lahko pride v cilj po igri
@@ -256,27 +255,31 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = finished_driver_rank
 		# dodam zmago
 		if finished_driver_rank == 1: # zmaga
-			driver_vehicle.update_stat(Pfs.STATS.WINS, game.level_index) # temp WINS pozicija
+			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
+			driver_vehicle.update_stat(Pfs.STATS.WINS, game.level_index)
+			#			driver_vehicle.update_stat(Pfs.STATS.WINS, 1) # temp WINS pozicija
 		# dodam cash nagrado
-		if not finished_driver_rank > Sts.ranking_cash_rewards.size():
+		if not finished_driver_rank > Sts.ranking_cash_rewards.size() and not finished_driver_rank == -1:
 			driver_vehicle.update_stat(Pfs.STATS.CASH, Sts.ranking_cash_rewards[finished_driver_rank - 1])
 	else:
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
 
-	game.finale_game_data[driver_vehicle.driver_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
-		"driver_profile": driver_vehicle.driver_profile,
-		"driver_stats": driver_vehicle.driver_stats,
-		}
+#	game.finale_game_data[driver_vehicle.driver_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
+##		"driver_profile": driver_vehicle.driver_profile,
+#		"driver_stats": driver_vehicle.driver_stats,
+#		}
+	game.finale_game_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
+
 
 	# hide view
 	if Sts.hide_view_on_player_deactivated:# and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
 		var hide_view_time: float
-		var removed_game_view: ViewportContainer = game.game_views.find_key(driver_vehicle)
-		if removed_game_view and game.game_views.size() > 1: # preverim, da ni zadnji view
+		var removed_game_view: ViewportContainer = game.game_views_with_drivers.find_key(driver_vehicle)
+		if removed_game_view and game.game_views_with_drivers.size() > 1: # preverim, da ni zadnji view
 			removed_game_view.queue_free()
-			game.game_views.erase(removed_game_view)
-			game._set_game_views(game.game_views.size()) # setam preostale
-			game.hud.driver_huds_holder.remove_view_imitator(game.game_views) # odstranim imitatorja ... more bit za setanje game_views
+			game.game_views_with_drivers.erase(removed_game_view)
+			game.set_game_views(game.game_views_with_drivers.size()) # setam preostale
+			game.hud.driver_huds_holder.remove_view_imitator(game.game_views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
 
 	_check_for_game_end()
 

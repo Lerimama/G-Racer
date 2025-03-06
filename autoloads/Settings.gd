@@ -36,7 +36,8 @@ var slomo_fx_on: bool = true
 var easy_mode: bool = false
 var full_equip_mode: bool = false
 var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
-var camera_zoom_range: Array = [1, 1.5]
+#var camera_zoom_range: Array = [1, 1.5]
+var camera_zoom_range: Vector2 = Vector2(1, 1.5)
 var camera_shake_on: bool = true
 var enemies_mode: bool = false
 var wins_goal_count: int = 5 # kdo pride prej do tega števila zmag
@@ -85,10 +86,16 @@ func _apply_debug_settings():
 #	game_levels = [Pfs.LEVELS.TRAINING]
 #	game_levels = [Pfs.LEVELS.DEFAULT]
 #	game_levels = [Pfs.LEVELS.STAFF]
-	game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
+#	game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
+	game_levels = [Pfs.LEVELS.FIRST_DRIVE_SHORT, Pfs.LEVELS.FIRST_DRIVE_SHORT]
 
-	camera_zoom_range = [2, 2.3]
-	camera_zoom_range = [1, 1.4]
+
+	camera_zoom_range = Vector2(2, 2.3)
+	camera_zoom_range *= 1.1 # 2 plejers > 3
+#	camera_zoom_range *= 2 #  3 + plejers > 3
+#	camera_zoom_range *= 5
+
+
 	fast_start_time = 1
 	game_shadows_rotation_deg = 45
 
@@ -99,11 +106,11 @@ func _apply_debug_settings():
 	camera_shake_on = false
 	slomo_fx_on = false
 #	full_equip_mode = true
-#	one_screen_mode = false
+	one_screen_mode = false
 #	hide_view_on_player_deactivated = true
 	time_game_heal_rate_factor = 0
 
-	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh"]
+	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh"]#, "RO", "eh"]
 
 	# max wins is level count
 	var max_wins_is_level_count: bool = true
@@ -113,6 +120,7 @@ func _apply_debug_settings():
 	Pfs.driver_profiles = {}
 	for driver_id in drivers_on_game_start:
 		Pfs.driver_profiles[driver_id] = Pfs.default_driver_profile.duplicate()
+		Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
 		if drivers_on_game_start.find(driver_id) == 0:
 			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_blue
@@ -120,6 +128,7 @@ func _apply_debug_settings():
 		elif drivers_on_game_start.find(driver_id) == 1:
 			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_red
+			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/avatar_marty.tres")
 #			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
 #			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1

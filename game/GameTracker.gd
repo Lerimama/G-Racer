@@ -67,10 +67,11 @@ func _update_ranking():
 
 
 	# UPDATE STATS
+	var allready_finished_count: int = game.game_reactor.drivers_finished.size() # adaptacija ranka, ker so tisti v cilju neaktivni
 	var players_ranked: Array = []
 	for ranked_driver in drivers_ranked:
 		var prev_rank: int = ranked_driver.driver_stats[Pfs.STATS.LEVEL_RANK]
-		var new_rank: int = drivers_ranked.find(ranked_driver) + 1
+		var new_rank: int = drivers_ranked.find(ranked_driver) + 1 + allready_finished_count
 		if not new_rank == prev_rank:
 			ranked_driver.update_stat(Pfs.STATS.LEVEL_RANK, new_rank)
 		if ranked_driver.is_in_group(Rfs.group_players):

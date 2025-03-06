@@ -86,10 +86,6 @@ func set_driver_statbox(statbox_driver: Vehicle, rank_by: int, all_statboxes_cou
 	new_statbox.driver_name_label.modulate = driver_profile["driver_color"]
 	new_statbox.driver_avatar.set_texture(driver_profile["driver_avatar"])
 
-	# driver stats
-	for stat in driver_stats:
-		_on_driver_stat_changed(statbox_driver.driver_id, stat, driver_stats[stat])
-
 	if all_statboxes_count == 1: # single player
 		new_statbox.set_statbox_elements(rank_by, true)
 	else:
@@ -102,6 +98,13 @@ func set_driver_statbox(statbox_driver: Vehicle, rank_by: int, all_statboxes_cou
 	else:
 		new_statbox.set_statbox_align(statbox_count, true)
 
+	yield(get_tree(), "idle_frame") # rabim, ker je prvič po spawnu in mora preskočit statbox setting staff
+
+	# driver stats
+	for stat in driver_stats:
+#		call_deferred("_on_driver_stat_changed", statbox_driver.driver_id, stat, driver_stats[stat])
+		_on_driver_stat_changed(statbox_driver.driver_id, stat, driver_stats[stat])
+
 	new_statbox.show()
 
 
@@ -110,19 +113,13 @@ func on_game_start():
 	game_timer.start_timer()
 
 
-func on_level_over():
-
-	for section in sections_holder.get_children():
-		section.hide()
-
-
 func on_game_over():
 
 	for section in sections_holder.get_children():
 		section.hide()
 
 
-func _on_driver_stat_changed(driver_id, stat_key: int, stat_value):
+func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
@@ -133,10 +130,9 @@ func _on_driver_stat_changed(driver_id, stat_key: int, stat_value):
 
 	# opredelim drive statbox
 	var statbox_to_change: Control
-	for statbox_name_id in statboxes_with_drivers:
-		if statboxes_with_drivers[statbox_name_id]:
-			statbox_to_change = statboxes_with_drivers[statbox_name_id]
-			break
+	if driver_id in statboxes_with_drivers.keys():
+		if statboxes_with_drivers[driver_id] != null:
+			statbox_to_change = statboxes_with_drivers[driver_id]
 
 	# stat_to_change ... STAT key string
 	var current_key_index: int = Pfs.STATS.values().find(stat_key)
@@ -163,8 +159,10 @@ func _on_driver_stat_changed(driver_id, stat_key: int, stat_value):
 		Pfs.STATS.GOALS_REACHED:
 			stat_to_change.stat_value = [stat_value.size(), level_goals.size()]
 		Pfs.STATS.WINS:
-			stat_to_change.stat_value = [stat_value.size(), Sts.wins_goal_count]
-
+			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
+			#			stat_to_change.stat_value = [stat_value.size(), Sts.wins_goal_count]
+			stat_to_change.stat_value = stat_value.size()
+#			stat_to_change.stat_value = stat_value
 		# level
 		Pfs.STATS.LEVEL_RANK: # na konča
 			stat_to_change.stat_value = stat_value

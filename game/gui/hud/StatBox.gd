@@ -111,7 +111,6 @@ func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kli
 
 func set_statbox_align(statbox_count: int, last_in_section: bool = false):
 
-#	var stats_to_align: Array = [$StatDriver, $BattleStats, $RaceStats]
 	var stats_to_align: Array = [$DriverId, $DriverStats, $RaceStats, $BattleStats]
 
 	# left

@@ -46,7 +46,6 @@ enum STATS {
 		LAP_COUNT, # časi krogov
 		GOALS_REACHED # array ciljev ... samo dodajaš
 		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # value ... hunds
-		DAMAGE # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
 		}
 
 enum RANKING_MODE {TIME, POINTS}
@@ -57,7 +56,7 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 
 	# zmagani leveli [level_data_1,level_data_1, level_data_1, ..., WINS NEEDED]
 	# če je arrray z eno številko, ga šteje, ko max
-	STATS.WINS: [],
+	STATS.WINS: [], # level index
 	# celo igra sta notri dve številki ki označujeta curr max
 	STATS.LIFE: 0,
 	STATS.CASH: 0,
@@ -87,6 +86,7 @@ enum DRIVER_TYPE {PLAYER, AI}
 
 var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 }
+
 var available_driver_names: Array = ["Prvi", "Drugi", "Tretji", "sdfsg", "sdfwsgfsdf"]
 var default_driver_profile: Dictionary = {
 	"driver_name_obs": "PLAJER", # samo še home

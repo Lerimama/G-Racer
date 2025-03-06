@@ -10,7 +10,6 @@ var sound_manager: Node = null
 var node_creation_parent: Node2D = null # NCP ... ven?
 var ultimate_popup: Popup = null
 
-
 func groups(): pass # ------------------------------------------------------------
 
 var group_agents = "agents"

@@ -4,6 +4,8 @@ extends Node2D
 var engines_on: bool = false
 
 # engine thrusts
+onready var left_thrusts: Array = [$FrontEngine/ThrustL, $RearEngine/ThrustL]
+onready var right_thrusts: Array = [$FrontEngine/ThrustR, $RearEngine/ThrustR]
 onready var front_thrusts: Array = [$FrontEngine/ThrustL, $FrontEngine/ThrustR]
 onready var rear_thrusts: Array = [$RearEngine/ThrustL, $RearEngine/ThrustR]
 onready var all_thrusts: Array = [$FrontEngine/ThrustL, $FrontEngine/ThrustR, $RearEngine/ThrustL, $RearEngine/ThrustR] # thrusts so samo vizualna prezentacija headinga
@@ -48,6 +50,7 @@ func manage_engines(motion_manager: Node2D):
 	match motion_manager.motion:
 
 		motion_manager.MOTION.FWD,motion_manager.MOTION.FWD_LEFT, motion_manager.MOTION.FWD_RIGHT:
+
 			for thrust in front_thrusts:
 				thrust.rotation = lerp_angle(thrust.rotation,  motion_manager.force_rotation, 1)
 			for thrust in rear_thrusts:
@@ -61,8 +64,19 @@ func manage_engines(motion_manager: Node2D):
 
 		motion_manager.MOTION.IDLE:
 			for thrust in all_thrusts:
-				thrust.rotation = lerp_angle(thrust.rotation, 0, to_idle_rotation_factor)
 				thrust.stop_fx()
+
+			for thrust in left_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, deg2rad(0.001), to_idle_rotation_factor)
+				if thrust.rotation < deg2rad(1):
+					thrust.rotation = 0
+			# rotacijo v drugo smer naredi z približanjem ciljnega kota
+			for thrust in right_thrusts:
+				thrust.rotation = lerp_angle(thrust.rotation, deg2rad(359.999), to_force_rotation_factor)
+				# ko je skoraj 0 = 0
+				if thrust.rotation > deg2rad(359):
+					thrust.rotation = 0
+
 
 		motion_manager.MOTION.IDLE_RIGHT, motion_manager.MOTION.IDLE_LEFT:
 

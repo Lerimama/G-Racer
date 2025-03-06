@@ -167,7 +167,6 @@ bus = "GameSfx"
 pause_mode = 1
 
 [node name="ShapePoly" type="Polygon2D" parent="."]
-visible = false
 z_index = 2
 color = Color( 0.262745, 0.262745, 0.262745, 1 )
 texture_offset = Vector2( 56, 112 )
@@ -273,6 +272,7 @@ pause_mode = 1
 [node name="Equipment" type="Node2D" parent="."]
 
 [node name="Weapons" type="Node2D" parent="."]
+visible = false
 
 [node name="Turret" parent="Weapons" instance=ExtResource( 3 )]
 position = Vector2( -109, -108 )

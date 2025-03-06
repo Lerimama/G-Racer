@@ -11,7 +11,7 @@ var shake_camera_on: bool = true
 var dynamic_zoom_on: bool = true
 
 # dinamic zoom in offset
-var camera_zoom_range: Array = Sts.camera_zoom_range # [1, 1.5]
+var camera_zoom_range: Vector2 = Sts.camera_zoom_range # [1, 1.5]
 var camera_zoom_lerp_factor: float = 0.01
 var min_zoom_target_speed: float = 1000
 var max_zoom_target_speed: float = 1500
@@ -75,15 +75,15 @@ func _process(delta: float) -> void:
 					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
 					 # vel, čez min span limit, nam da procent zasedenosti zoom spanao
 					var target_speed_part_in_span: float = (follow_target.velocity.length() - min_zoom_target_speed) / max_zoom_velocity_span # %
-					var camera_zoom_span: float = abs(camera_zoom_range[1] - camera_zoom_range[0])
+					var camera_zoom_span: float = abs(camera_zoom_range.y - camera_zoom_range.x)
 					var camera_zoom_addon_in_span: float = camera_zoom_span * target_speed_part_in_span
-					zoom.x = lerp(zoom.x, camera_zoom_range[0] + camera_zoom_addon_in_span, camera_zoom_lerp_factor)
+					zoom.x = lerp(zoom.x, camera_zoom_range.x + camera_zoom_addon_in_span, camera_zoom_lerp_factor)
 			else:
-				zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
+				zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor)
 
 		# default zoom ... lerp za mehkobo prehodov
-		zoom.x = lerp(zoom.x, camera_zoom_range[0], camera_zoom_lerp_factor)
-		zoom.x = clamp(zoom.x, camera_zoom_range[0], camera_zoom_range[1])
+		zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor)
+		zoom.x = clamp(zoom.x, camera_zoom_range.x, camera_zoom_range.y)
 		zoom.y = zoom.x
 
 

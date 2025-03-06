@@ -86,26 +86,15 @@ func _input(event: InputEvent) -> void:
 		else:
 			motion_manager.boost_vehicle()
 	if Input.is_action_pressed("no2"): # race
-		if driver_id == "MOU":
-			update_stat(Pfs.STATS.HEALTH, -0.1)
-#		else:
-#			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile["level_name"]) # temp WINS pozicija
+#		if driver_id == "JOU":
+		update_stat(Pfs.STATS.HEALTH, -0.1)
 
 	if Input.is_action_pressed("no3"): # race
-		if driver_id == "MOU":
-			update_stat(Pfs.STATS.HEALTH, 0.1)
-#		else:
-#			update_stat(Pfs.STATS.WINS, Rfs.game_manager.level_profile["level_name"]) # temp WINS pozicija
+		update_stat(Pfs.STATS.HEALTH, 0.1)
 	if Input.is_action_pressed("no4"): # race
-		if driver_id == "MOU":
-			update_stat(Pfs.STATS.GAS, -100)
-#		else:
-#			update_stat(Pfs.STATS.LIFE, -1)
+		update_stat(Pfs.STATS.GAS, -100)
 	if Input.is_action_pressed("no5"): # race
-		if driver_id == "MOU":
-			update_stat(Pfs.STATS.GAS, 100)
-#		else:
-#			update_stat(Pfs.STATS.LIFE, 1)
+		update_stat(Pfs.STATS.GAS, 100)
 
 
 func _ready() -> void:
@@ -412,7 +401,9 @@ func update_stat(stat_key: int, stat_value):
 		Pfs.STATS.GOALS_REACHED: # goal nodes names or duplicate?
 			driver_stats[stat_key].append(stat_value)
 		Pfs.STATS.WINS: # level names
+			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
 			driver_stats[stat_key].append(stat_value)
+			#			driver_stats[stat_key] += stat_value
 		# level
 		Pfs.STATS.LEVEL_RANK: # na konča
 			driver_stats[stat_key] = stat_value

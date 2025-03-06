@@ -4,7 +4,7 @@ class_name Game
 
 signal game_stage_changed(game_manager)
 
-enum GAME_STAGE {SETTING_UP, READY, INTRO, PLAYING, PAUSED, END_SUCCESS, END_FAIL}
+enum GAME_STAGE {SETTING_UP, READY, INTRO, PLAYING, END_SUCCESS, END_FAIL}
 var game_stage: int = -1 setget _change_game_stage
 
 export (Array, NodePath) var main_signal_connecting_paths: Array = []
@@ -13,7 +13,7 @@ var main_signal_connecting_nodes: Array = []
 enum VIEW_TILE {ONE, TWO_VER, THREE_LEFT, THREE_RIGHT, FOUR }
 
 var fast_start_window_on: bool = false # driver ga čekira in reagira
-var game_views: Dictionary = {}
+var game_views_with_drivers: Dictionary = {}
 
 # level
 var game_level: Level
@@ -32,19 +32,12 @@ onready var hud: Control = $Gui/Hud
 onready var game_tracker: Node = $Tracker
 onready var game_reactor: Node = $Reactor
 
-#var game_levels: Array = []
-var finale_game_data: Dictionary = {
-#		"driver_id_name": {
-#				"driver_stats": {},
-#				"driver_profile": {},
-#				},
-}
-
+var finale_game_data: Dictionary = {}
 var drivers_on_start: Array = [] # to so nodeti
 var camera_leader: Node2D = null setget _change_camera_leader
-
 onready var curr_game_settings: Dictionary = {
 	"max_wins_count": Sts.wins_goal_count
+	#var game_levels: Array = []
 }
 
 func _input(event: InputEvent) -> void:
@@ -74,94 +67,96 @@ func _ready() -> void:
 		main_signal_connecting_nodes.append(get_node(path))
 
 #	game_levels = Sts.game_levels
-	call_deferred("_set_game")
+	call_deferred("set_game")
 	printt("game read", Time.get_ticks_msec())
 
 
-func _set_game():
-	# čez tole gre tudi next level
-	level_index += 1
+func set_game():
+	# čez set_game gre tudi next level
 
 	self.game_stage = GAME_STAGE.SETTING_UP
 
+	# reset
+	drivers_on_start.clear()
+
+	for view in game_views_holder.get_children():
+		if not view == game_views_holder.get_child(0):
+			view.queue_free()
+	game_views_with_drivers.clear()
+
+	level_index += 1
 	_set_game_level()
 
+
+
 	yield(get_tree(), "idle_frame")
+
 
 	game_reactor.game_level = game_level
 	game_tracker.game_level = game_level
 
-	# drivers on level start
-	var driver_ids_on_start: Array = []
-
-	if level_index == 0:	# prvi level napolni finale data s praznimi slovarji štartnih
-		driver_ids_on_start = Sts.drivers_on_game_start
-		for driver_id in driver_ids_on_start:
+	# prvi level
+	if level_index == 0:
+		for driver_id in Sts.drivers_on_game_start:
 			finale_game_data[driver_id] = {}
-		# spawn drivers ... začasno se podvaja
-		for driver_id in driver_ids_on_start:
-			_spawn_vehicle(driver_id, driver_ids_on_start.find(driver_id)) # scena, pozicija, profile id (barva, ...)
-
-	else: # ostali leveli
-		# start drivers
+			finale_game_data[driver_id]["driver_profile"] = Pfs.driver_profiles[driver_id]
+			_spawn_vehicle(driver_id, Sts.drivers_on_game_start.find(driver_id))
+	else:
+		var start_position_index: int = 0
 		for driver_id in finale_game_data:
 			if not finale_game_data[driver_id]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
-				driver_ids_on_start.append(driver_id)
-		# spawn drivers ... po zaporedji v arrayu indexov
-		for driver_id in driver_ids_on_start:
-			var new_veh = _spawn_vehicle(driver_id, driver_ids_on_start.find(driver_id)) # scena, pozicija, profile id (barva, ...)
-		# tihi aply statistike prejšnega levela ... hud še ni spawnan
+				_spawn_vehicle(driver_id, start_position_index)
+				start_position_index += 1
+
+		# prenos stats v vehicle iz prejšnega levela ... tihi, ker hud še ni spawnan
 		for driver in drivers_on_start:
-			var drivers_final_level_data: Dictionary= finale_game_data[driver.driver_id]["driver_stats"]
-			for stat in drivers_final_level_data:
-				if not stat in [Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]:
-					driver.driver_stats[stat] = drivers_final_level_data[stat]
-
-		# reset ... prestavljeno na začetek levela
-		game_reactor.drivers_finished.clear()
-		finale_game_data.clear()
-		for driver_id in driver_ids_on_start:
-				finale_game_data[driver_id] = {}
+			var prev_level_stats: Dictionary = finale_game_data[driver.driver_id]["driver_stats"]
+			var stats_to_reset: Array = [Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]
+			for stat in prev_level_stats:
+				if not stat in stats_to_reset:
+					driver.driver_stats[stat] = prev_level_stats[stat]
+			finale_game_data[driver.driver_id].erase("driver_stats")
 
 
-	yield(get_tree(), "idle_frame") # IDLE ... set game
+	yield(get_tree(), "idle_frame")
 
-	# camera
+
+	# camera in views
 	if Sts.one_screen_mode:
 		var game_camera: Camera2D = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
-		# prižgem playing field
 		game_camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
 		if level_profile["rank_by"] == Pfs.RANK_BY.TIME:
 			game_camera.playing_field.enable_playing_field(true)
 		else:
 			game_camera.playing_field.enable_playing_field(true, true) # z edgom
-		# plejer kamere
 		for player_vehicle in get_tree().get_nodes_in_group(Rfs.group_players):
 			player_vehicle.vehicle_camera = game_camera
-		# set default view dodam med game viewe
-		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
-		_set_game_views(1)
+		# game view dodam med aktivne
+		game_views_with_drivers[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0]
+		set_game_views(1)
 	else:
-		# debug ... če je samo ai, postane plejer
-		if get_tree().get_nodes_in_group(Rfs.group_players).empty():
-			get_tree().get_nodes_in_group(Rfs.group_ai)[0].add_to_group(Rfs.group_players)
-
 		# default view in prvi plejer
-		game_views[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0] #  dodam ga med game viewe
-		var player_vehicle_in_first_view: Vehicle = game_views.values().front()
+		game_views_with_drivers[game_views_holder.get_child(0)] = get_tree().get_nodes_in_group(Rfs.group_players)[0] #  dodam ga med game viewe
+		var player_vehicle_in_first_view: Vehicle = game_views_with_drivers.values().front()
 		player_vehicle_in_first_view.vehicle_camera = get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0]
-		# ugasnem playing field
 		get_tree().get_nodes_in_group(Rfs.group_player_cameras)[0].get_node("PlayingField").enable_playing_field(false)
-		# spawnam ostake viewe
+		# ostali viewe
 		_spawn_game_views()
 		var players_count: int = get_tree().get_nodes_in_group(Rfs.group_players).size()
-		# setam
-		_set_game_views(players_count)
+		set_game_views(players_count)
 		# camera targets
 		for player in get_tree().get_nodes_in_group(Rfs.group_players):
 			player.vehicle_camera.follow_target = player
 
+
+
+
+
+
+	game_reactor.drivers_finished.clear()
+
 	self.game_stage = GAME_STAGE.READY
+
 
 	Rfs.ultimate_popup.hide() # skrijem pregame
 
@@ -170,18 +165,11 @@ func _set_game():
 
 func _set_game_level():
 
-#	level_index += 1
-
-#	if level_index > 0:
-	# unmute sfx
-	if not Rfs.sound_manager.sfx_set_to_mute:
-		var bus_index: int = AudioServer.get_bus_index("GameSfx")
-		AudioServer.set_bus_mute(bus_index, false)
-
-	#		# zbrišem vse otroke v NCP (agenti, orožja, efekti, ...)
-	#		for child in Rfs.node_creation_parent.get_children():
-	#			child.queue_free()
-
+	if level_index > 0:
+		# unmute sfx
+		if not Rfs.sound_manager.sfx_set_to_mute:
+			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+			AudioServer.set_bus_mute(bus_index, false)
 
 	if game_level: # če level že obstaja, ga najprej moram zbrisat
 		game_level.set_physics_process(false)
@@ -236,8 +224,6 @@ func _change_game_stage(new_game_stage: int):
 
 	match game_stage:
 		GAME_STAGE.SETTING_UP:
-			# reset
-			drivers_on_start.clear()
 			# najprej povežem s s signalom
 			for connecting_node in main_signal_connecting_nodes:
 				if not self.is_connected("game_stage_changed", connecting_node, "_on_game_stage_changed"):
@@ -248,14 +234,10 @@ func _change_game_stage(new_game_stage: int):
 
 		GAME_STAGE.INTRO:
 			emit_signal("game_stage_changed", self)
-#			pass
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 			if not level_profile["rank_by"] == Pfs.RANK_BY.TIME: # zaženem vsakič, tudi po pavzi
 				game_reactor.spawn_random_pickables()
-			emit_signal("game_stage_changed", self)
-
-		GAME_STAGE.PAUSED:
 			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
@@ -276,7 +258,7 @@ func _change_game_stage(new_game_stage: int):
 			AudioServer.set_bus_mute(bus_index, true)
 
 
-func _set_game_views(players_count: int = 1):
+func set_game_views(players_count: int = 1):
 
 	# flow separation
 	var v_sep: float = game_views_holder.get_constant("vseparation")
@@ -288,65 +270,66 @@ func _set_game_views(players_count: int = 1):
 	match players_count:
 		1:
 			view_tile = VIEW_TILE.ONE
-			game_views.keys()[0].get_node("Viewport").size = full_size
+			game_views_with_drivers.keys()[0].get_node("Viewport").size = full_size
 		2:
 			view_tile = VIEW_TILE.TWO_VER
 			if view_tile == VIEW_TILE.TWO_VER:
 				# view size
-				game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-				game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views_with_drivers.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views_with_drivers.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 1)
 				# adapt for separation
-				game_views.keys()[0].get_node("Viewport").size.x -= h_sep/2
-				game_views.keys()[1].get_node("Viewport").size.x -= h_sep/2
+				game_views_with_drivers.keys()[0].get_node("Viewport").size.x -= h_sep/2
+				game_views_with_drivers.keys()[1].get_node("Viewport").size.x -= h_sep/2
 		3:
 			view_tile = VIEW_TILE.THREE_LEFT
 			if view_tile == VIEW_TILE.THREE_LEFT:
-				game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-				game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				game_views.keys()[0].get_node("Viewport").size.y -= v_sep/2
-				game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views_with_drivers.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views_with_drivers.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views_with_drivers.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views_with_drivers.keys()[0].get_node("Viewport").size.y -= v_sep/2
+				game_views_with_drivers.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views_with_drivers.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
 			elif view_tile == VIEW_TILE.THREE_RIGHT:
-				game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-				game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 1)
-				game_views.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-				game_views.keys()[2].get_node("Viewport").size.y -= v_sep/2
-			game_views.keys()[2].get_node("Viewport").size.y -= v_sep/2
+				game_views_with_drivers.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views_with_drivers.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+				game_views_with_drivers.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 1)
+				game_views_with_drivers.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views_with_drivers.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+				game_views_with_drivers.keys()[2].get_node("Viewport").size.y -= v_sep/2
+			game_views_with_drivers.keys()[2].get_node("Viewport").size.y -= v_sep/2
 		4:
 			view_tile = VIEW_TILE.FOUR
-			game_views.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-			game_views.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-			game_views.keys()[3].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-			game_views.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
-			game_views.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-			game_views.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-			game_views.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
-			game_views.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views_with_drivers.keys()[0].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views_with_drivers.keys()[1].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views_with_drivers.keys()[3].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views_with_drivers.keys()[2].get_node("Viewport").size = full_size * Vector2(0.5, 0.5)
+			game_views_with_drivers.keys()[0].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views_with_drivers.keys()[1].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views_with_drivers.keys()[2].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
+			game_views_with_drivers.keys()[3].get_node("Viewport").size -= Vector2(h_sep, v_sep)/2
 
 
-func apply_waiting_ai_final_data():
+func apply_stats_to_unfinished_drivers(unfinished_driver_ids: Array):
 
 	var current_game_time: int = hud.game_timer.game_time_hunds
 
 	# dodam neuvrščene ai-je, ki vedno pridejo do konca
-	for driver_id in finale_game_data:
-		if finale_game_data[driver_id].empty():
-			for driver in game_tracker.drivers_in_game: # ... lahko tudi ... for driver in drivers_on_start:
-				if driver.driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-					# izračun predvidenega časa ... glede na prevožen procent
-					var distance_needed_part: float = driver.driver_tracker.unit_offset
-					if distance_needed_part == 0: # če obtiči na štartu ... verjetno nioli
-						driver.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time
-					else:
-						driver.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
+	for driver_id in unfinished_driver_ids:
 
-					finale_game_data[driver.driver_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
-						"driver_profile": driver.driver_profile,
-						"driver_stats": driver.driver_stats,
-						}
+		var driver_vehicle: Vehicle
+		for vehicle in game_tracker.drivers_in_game:
+			if vehicle.driver_id == driver_id:
+				driver_vehicle = vehicle
+				break
+
+		# izračun predvidenega časa ... glede na prevožen procent
+		if driver_vehicle:
+			var distance_needed_part: float = driver_vehicle.driver_tracker.unit_offset
+			if distance_needed_part == 0: # če obtiči na štartu ... verjetno nioli
+				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time
+			else:
+				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
+			finale_game_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 
 
 func _change_camera_leader(new_camera_leader: Node2D):
@@ -366,15 +349,15 @@ func _spawn_game_views():
 		if not player_vehicle == get_tree().get_nodes_in_group(Rfs.group_players)[0]:
 			var new_game_view: ViewportContainer = GameView.instance()
 			game_views_holder.add_child(new_game_view)
-			game_views[new_game_view] = player_vehicle
+			game_views_with_drivers[new_game_view] = player_vehicle
 			player_vehicle.vehicle_camera = new_game_view.get_node("Viewport/GameCamera")
 
 	# viewport world
-	var world_to_inherit: World2D = game_views.keys()[0].get_node("Viewport").world_2d
-	var current_game_views: Dictionary = game_views
-	for view_index in game_views.size():
+	var world_to_inherit: World2D = game_views_with_drivers.keys()[0].get_node("Viewport").world_2d
+	var current_game_views: Dictionary = game_views_with_drivers
+	for view_index in game_views_with_drivers.size():
 		if view_index > 0:
-			game_views.keys()[view_index].get_node("Viewport").world_2d = world_to_inherit
+			game_views_with_drivers.keys()[view_index].get_node("Viewport").world_2d = world_to_inherit
 
 
 func _spawn_level(spawn_level_profile: Dictionary):
@@ -405,14 +388,14 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 
 	var new_driver_stats: Dictionary = {}
 	if level_index > 0:
-		new_driver_stats = finale_game_data[driver_id]["driver_stats"]
+		new_driver_stats = finale_game_data[driver_id]["driver_stats"].duplicate()
 	else:
 		new_driver_stats = Pfs.start_driver_stats.duplicate()
-
 		# reset notranji arrayev ... da so unique
+		# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
+		new_driver_stats[Pfs.STATS.WINS] = []
 		new_driver_stats[Pfs.STATS.LAP_COUNT] = []
 		new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
-		new_driver_stats[Pfs.STATS.WINS] = []
 
 	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()

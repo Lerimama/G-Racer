@@ -1,8 +1,8 @@
-[gd_scene load_steps=58 format=2]
+[gd_scene load_steps=60 format=2]
 
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/Game.gd" type="Script" id=2]
-[ext_resource path="res://game/gui/GameOver.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/sounds/music/nitro_music.mp3" type="AudioStream" id=4]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=5]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/key_2.wav" type="AudioStream" id=6]
@@ -12,7 +12,6 @@
 [ext_resource path="res://game/gui/DriverHuds.gd" type="Script" id=10]
 [ext_resource path="res://assets/sounds/music/moose.mp3" type="AudioStream" id=11]
 [ext_resource path="res://game/gui/DriverHud.tscn" type="PackedScene" id=12]
-[ext_resource path="res://game/gui/LevelOver.tscn" type="PackedScene" id=13]
 [ext_resource path="res://assets/sounds/sfx/misile_flight.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sounds/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sounds/sfx/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=16]
@@ -42,6 +41,9 @@
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=40]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skill_cling.wav" type="AudioStream" id=41]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=42]
+[ext_resource path="res://assets/theme/fonts/black_slanted_L.tres" type="DynamicFont" id=43]
+[ext_resource path="res://game/gui/ScoreTable.tscn" type="PackedScene" id=44]
+[ext_resource path="res://game/gui/GameOver.gd" type="Script" id=45]
 [ext_resource path="res://assets/sounds/sfx/_pa/events/countdown-a.ogg" type="AudioStream" id=46]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/key_5.wav" type="AudioStream" id=47]
 [ext_resource path="res://assets/sounds/sfx/_pa/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=48]
@@ -82,11 +84,11 @@ random_pitch = 1.05
 script = ExtResource( 2 )
 main_signal_connecting_paths = [ NodePath("Gui") ]
 
-[node name="Tracker" type="Node" parent="."]
-script = ExtResource( 26 )
-
 [node name="Reactor" type="Node" parent="."]
 script = ExtResource( 30 )
+
+[node name="Tracker" type="Node" parent="."]
+script = ExtResource( 26 )
 
 [node name="GameViewFlow" type="VFlowContainer" parent="."]
 anchor_right = 1.0
@@ -103,14 +105,12 @@ custom_constants/hseparation = 10
 size_flags_vertical = 1
 
 [node name="GameView2" parent="GameViewFlow" instance=ExtResource( 1 )]
-visible = false
 margin_left = 2570.0
 margin_right = 5130.0
 
 [node name="GameView3" parent="GameViewFlow" instance=ExtResource( 1 )]
-visible = false
-margin_left = 2570.0
-margin_right = 5130.0
+margin_left = 5140.0
+margin_right = 7700.0
 size_flags_vertical = 0
 
 [node name="__test_flow" type="HFlowContainer" parent="."]
@@ -158,6 +158,7 @@ size_flags_horizontal = 3
 custom_styles/panel = SubResource( 18 )
 
 [node name="Gui" type="CanvasLayer" parent="."]
+pause_mode = 2
 script = ExtResource( 50 )
 
 [node name="DriverHuds" type="Control" parent="Gui"]
@@ -170,8 +171,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
 
-[node name="__ColorRect" type="Panel" parent="Gui/DriverHuds/ViewImitator"]
-visible = false
+[node name="Edge" type="Panel" parent="Gui/DriverHuds/ViewImitator"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_styles/panel = SubResource( 19 )
@@ -198,14 +198,97 @@ color = Color( 0, 0, 0, 1 )
 [node name="PauseGame" parent="Gui" instance=ExtResource( 7 )]
 visible = false
 
-[node name="LevelOver" parent="Gui" instance=ExtResource( 13 )]
-visible = false
+[node name="GameOver" type="Control" parent="Gui"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+script = ExtResource( 45 )
 __meta__ = {
-"_edit_vertical_guides_": [ 320.0 ]
+"_edit_vertical_guides_": [ 320.0, 1280.0 ]
 }
 
-[node name="GameOver" parent="Gui" instance=ExtResource( 3 )]
+[node name="Background" type="ColorRect" parent="Gui/GameOver"]
 visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.784314 )
+
+[node name="Panel" type="Panel" parent="Gui/GameOver"]
+visible = false
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="Gui/GameOver"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -760.0
+margin_top = 208.0
+margin_right = 760.0
+margin_bottom = 426.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 43 )
+text = "GAME OVER"
+align = 1
+
+[node name="Level" type="Control" parent="Gui/GameOver"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Game" type="Control" parent="Gui/GameOver"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ScoreTable" parent="Gui/GameOver" instance=ExtResource( 44 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -488.0
+margin_top = 576.0
+margin_right = 490.0
+margin_bottom = 880.0
+
+[node name="Menu" type="HBoxContainer" parent="Gui/GameOver"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -206.0
+margin_top = -268.0
+margin_right = 209.0
+margin_bottom = -210.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+custom_constants/separation = 64
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="QuitGameBtn" type="Button" parent="Gui/GameOver/Menu"]
+visible = false
+margin_right = 290.0
+margin_bottom = 58.0
+focus_neighbour_left = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "QUIT GAME"
+
+[node name="QuitBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_right = 127.0
+margin_bottom = 58.0
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "QUIT"
+
+[node name="RestartBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_left = 191.0
+margin_right = 415.0
+margin_bottom = 58.0
+focus_neighbour_right = NodePath("../QuitGameBtn")
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "RESTART"
 
 [node name="SoundManager" type="Node" parent="."]
 pause_mode = 2
@@ -433,3 +516,6 @@ bus = "GameSfx"
 [node name="MisileExplode" type="AudioStreamPlayer" parent="SoundManager/_ni vec tuki"]
 stream = ExtResource( 18 )
 bus = "GameSfx"
+
+[connection signal="pressed" from="Gui/GameOver/Menu/QuitGameBtn" to="Gui/GameOver" method="_on_QuitGameBtn_pressed"]
+[connection signal="pressed" from="Gui/GameOver/Menu/QuitBtn" to="Gui/GameOver" method="_on_QuitBtn_pressed"]

@@ -22,20 +22,20 @@ onready var stat_icon: TextureRect = $Icon
 onready var stat_name_label: Label = $Name
 onready var stat_count_label: Label = $Label
 onready var stat_time_label: HBoxContainer = $TimeLabel
-onready var count_icons_holder: HBoxContainer = $CountIcons
 onready var blink_timer: Timer = $BlinkTimer
+onready var count_icons_holder: HBoxContainer = $CountIcons
 
 
 func _ready() -> void:
 
-	# stat icon
-	get_node("Icon").texture = icon_texture
-	# stat name
-	stat_name_label.text = "%s " % stat_name
-
 	# debug reset count icon
 	for child in count_icons_holder.get_children():
 		child.queue_free()
+	#	yield(get_tree(), "idle_frame") ... zankrat ne rabim
+
+	# stat icon
+	stat_icon.texture = icon_texture
+	stat_name_label.text = "%s " % stat_name
 
 	# name or icon
 	if name_as_icon and icon_texture:
@@ -48,14 +48,28 @@ func _ready() -> void:
 		stat_name_label.hide()
 		stat_icon.hide()
 
-
-	_set_visibility_per_stat_type(stat_type)
+	match stat_type:
+		STAT_TYPE.COUNT:
+			stat_count_label.show()
+			stat_time_label.hide()
+			count_icons_holder.hide()
+		STAT_TYPE.TIME:
+			stat_count_label.hide()
+			stat_time_label.show()
+			count_icons_holder.hide()
+		STAT_TYPE.ICONS:
+			stat_count_label.hide()
+			stat_time_label.hide()
+			count_icons_holder.show()
+			# name lebel, icon
+			stat_icon.hide()
+			stat_name_label.hide()
+			_update_count_icons()
 
 
 func _on_stat_change(new_stat_value):
 #	if name == "StatWins":
 #		print("new_stat_value ", name, new_stat_value)
-
 
 	# če je string je sporočilo ... skrijem vse razen sporočila
 	if new_stat_value is String:
@@ -72,8 +86,7 @@ func _on_stat_change(new_stat_value):
 				_write_clock_time(new_stat_value[0], stat_time_label)
 				pass
 			STAT_TYPE.ICONS:
-				_set_icons_state(new_stat_value[0], new_stat_value[1]) # preveri lajf na začetku in seta pravilno stanje ikon
-#				_set_icons_state(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
+				_update_count_icons(new_stat_value[0], new_stat_value[1]) # preveri lajf na začetku in seta pravilno stanje ikon
 
 	# če je številka ga primerjam
 	elif new_stat_value is float or new_stat_value is int:
@@ -81,12 +94,6 @@ func _on_stat_change(new_stat_value):
 		match stat_type:
 			STAT_TYPE.COUNT:
 				stat_count_label.text = "%02d" % new_stat_value
-				# ranking dela pravilno, samo zapisati ga noče???
-#				if self == get_parent().get_node("StatLevelRank"):
-#					stat_count_label.text = str(new_stat_value)
-#					printt("after", new_stat_value, $Label.text)
-
-
 			STAT_TYPE.TIME:
 				_write_clock_time(new_stat_value, stat_time_label)
 			STAT_TYPE.ICONS: # recimo healthbar
@@ -94,44 +101,51 @@ func _on_stat_change(new_stat_value):
 					var stat_value_percent: int = round(new_stat_value * 10)
 					var max_percent_value: int = 10
 					new_stat_value = [stat_value_percent, max_percent_value]
-				_set_icons_state(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
+				_update_count_icons(new_stat_value) # preveri lajf na začetku in seta pravilno stanje ikon
 
 	# aplciram novi value
 	stat_value = new_stat_value
 
 
-func _set_icons_state(count_value, max_count_value: int = 0):
+func _update_count_icons(count_value = 0, max_count_value: int = 0):
+#	count_value = randi() % 5
+#	max_count_value =  randi() % 5 + 2
+#	max_count_value =  0
+#	count_value = 1
+#	if name == "StatWins":
+#		printt ("max_count_difference", self, self.get_parent().get_parent().get_parent(), count_value, max_count_value)
 
-	yield(get_tree(), "idle_frame") # more bit, da apdejta na začetku
 
-	# stat value icons
+	var count_icon_texture: Texture = stat_icon.texture
+
+	# curr only
 	if max_count_value == 0:
 		var count_difference: int = count_value - count_icons_holder.get_child_count()
-		# ker je ena že notri, jo samo skrivam ... je templejt
+		# premalo ikon
 		if count_difference > 0:
 			for count in count_difference:
 				var new_icon: TextureRect = TextureRect.new()
-				new_icon.texture = icon_texture
+				new_icon.texture = count_icon_texture
 				count_icons_holder.add_child(new_icon)
+				new_icon.modulate = icon_on_color
+		# preveč ikon
 		elif count_difference < 0:
 			for count in abs(count_difference):
-				#				count_icons_holder.get_child(count).queue_free()
-				count_icons_holder.get_children().back().queue_free() # testni način
+				count_icons_holder.get_child(count).queue_free()
 
-	# stat value / max value icons
+	# curr / max
 	else:
-#		print("max min",  max_count_value, count_value)
 		# če je max manjši od count_value
 		if max_count_value < count_value:
 			max_count_value = count_value
-
-		# če ni pravilno število ikon
+		# premalo ikon
 		var max_count_difference: int = max_count_value - count_icons_holder.get_child_count()
 		if max_count_difference > 0:
 			for count in max_count_difference: # templejt je že notri
 				var new_icon: TextureRect = TextureRect.new()
-				new_icon.texture = icon_texture
+				new_icon.texture = count_icon_texture
 				count_icons_holder.add_child(new_icon)
+		# preveč ikon
 		elif max_count_difference < 0:
 			for count in abs(max_count_difference):
 				count_icons_holder.get_child(count).queue_free()
@@ -144,29 +158,8 @@ func _set_icons_state(count_value, max_count_value: int = 0):
 				count_icons_holder.get_child(icon_index).modulate = icon_off_color
 
 
-func _set_visibility_per_stat_type(current_stat_type: int):
-
-	match current_stat_type:
-		STAT_TYPE.COUNT:
-			stat_count_label.show()
-			stat_time_label.hide()
-			count_icons_holder.hide()
-		STAT_TYPE.TIME:
-			stat_count_label.hide()
-			stat_time_label.show()
-			count_icons_holder.hide()
-		STAT_TYPE.ICONS:
-			stat_count_label.hide()
-			stat_time_label.hide()
-			count_icons_holder.show()
-			# name lebel, icon
-			stat_icon.hide()
-			stat_name_label.hide()
-
-
 func _write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde
 
-#	printt ("delam clock", hundreds)
 	var seconds: float = hundreds / 100.0
 	var rounded_minutes: int = floor(seconds / 60) # vse cele sekunde delim s 60
 	var rounded_seconds_leftover: int = floor(seconds) - rounded_minutes * 60 # vse sekunde minus sekunde v celih minutah

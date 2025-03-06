@@ -1,12 +1,13 @@
 extends Control
 
 
-var final_level_data: Dictionary = {}
+var final_game_data: Dictionary = {}
 var still_driving_ids: Array = []
 
-onready var content: Control = $Content
 onready var background: ColorRect = $Background
-onready var scorelist: VBoxContainer = $Content/Scorelist
+onready var score_table: VBoxContainer = $ScoreTable
+onready var title: Label = $Title
+onready var restart_btn: Button = $Menu/RestartBtn
 
 
 func _ready() -> void:
@@ -14,17 +15,35 @@ func _ready() -> void:
 	hide()
 
 
-func open(level_data: Dictionary):
+func _process(delta: float) -> void:
 
-	final_level_data = level_data
+	# čakam, da se spremeni število in apdejtam
+	var still_driving_count: int = still_driving_ids.size()
+	for driver_id in still_driving_ids:
+		if "driver_stats" in final_game_data[driver_id]:
+			still_driving_ids.erase(driver_id)
+	if not still_driving_ids.size() == still_driving_count:
+		score_table.update_scorelines(final_game_data)
 
-	# če je kakšen (ai) prazen, ga dodam me prazne
-	still_driving_ids = []
-	for driver_id in final_level_data:
-		if final_level_data[driver_id].empty():
+
+func open(curr_game_data: Dictionary, level_index: int, levels_count: int, is_success: bool):
+
+	final_game_data = curr_game_data
+
+	# level or game finished
+	if level_index < levels_count - 1:
+		_set_for_level_finished(level_index, levels_count)
+	else:
+		_set_for_game_finished(is_success)
+
+
+	# če je kakšen (ai) prazen, ga dodam med prazne
+	still_driving_ids.clear()
+	for driver_id in final_game_data:
+		if not "driver_stats" in final_game_data[driver_id]:
 			still_driving_ids.append(driver_id)
 
-	scorelist.set_scorelist(final_level_data)
+	score_table.set_scorelist(final_game_data)
 
 	var background_fadein_transparency: float = 1
 
@@ -39,46 +58,79 @@ func open(level_data: Dictionary):
 	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)
 
 
-func _process(delta: float) -> void:
+func _set_for_level_finished(level_index: int, levels_count: int):
 
-	# čakam, da se spremeni število in apdejtam
-	var still_driving_count: int = still_driving_ids.size()
-	for driver_id in still_driving_ids:
-		if not final_level_data[driver_id].empty():
-			still_driving_ids.erase(driver_id)
-	if not still_driving_ids.size() == still_driving_count:
-		scorelist.update_scorelines(final_level_data)
+	var finished_level_key: int = Sts.game_levels[level_index]
+	var finished_level_name: String = Pfs.level_profiles[finished_level_key]["level_name"]
+
+	title.text = finished_level_name.to_upper() + " FINISHED"
+	title.modulate = Rfs.color_green
+
+	if restart_btn.is_connected("pressed", self, "_on_restart_pressed"):
+		restart_btn.disconnect("pressed", self, "_on_restart_pressed")
+	if not restart_btn.is_connected("pressed", self, "_on_next_pressed"):
+		restart_btn.connect("pressed", self, "_on_next_pressed")
+	restart_btn.text = "NEXT LEVEL"
 
 
-func _apply_final_data_and_hide(what_to_do: int):
+func _set_for_game_finished(is_success: bool):
 
-	get_parent().game_manager.apply_waiting_ai_final_data()
+	if is_success:
+		title.text = "GAME FINISHED"
+		title.modulate = Rfs.color_green
+	else:
+		title.text = "GAME OVER"
+		title.modulate = Rfs.color_red
 
-	still_driving_ids.clear()
-	scorelist.update_scorelines(final_level_data)
+	if restart_btn.is_connected("pressed", self, "_on_next_pressed"):
+		restart_btn.disconnect("pressed", self, "_on_next_pressed")
+	if not restart_btn.is_connected("pressed", self, "_on_restart_pressed"):
+		restart_btn.connect("pressed", self, "_on_restart_pressed")
+	restart_btn.text = "RESTART"
+
+
+
+func _apply_final_stats_and_close(close_to: int):
+
+	get_parent().game_manager.apply_stats_to_unfinished_drivers(still_driving_ids)
 
 	get_viewport().set_disable_input(true)
+
 	var fade_tween = get_tree().create_tween()
 	fade_tween.tween_property(get_parent().game_cover, "modulate:a", 1, 0.3)
 	yield(fade_tween, "finished")
-	yield(get_tree().create_timer(2), "timeout")
 
-	get_parent().back_to_what(what_to_do)
+	score_table.update_scorelines(final_game_data)
+	var time_to_read: float = 2
+	yield(get_tree().create_timer(time_to_read), "timeout")
+
+
+	match close_to:
+		-1:
+			Rfs.main_node.game_out()
+		0:
+			Rfs.main_node.reload_game()
+		1:
+			get_parent().game_manager.set_game()
+
 	get_viewport().set_disable_input(false)
 	hide()
 
 
-func _on_RestartBtn_pressed() -> void:
-	$Menu/RestartBtn.set_disabled(true)
-	_apply_final_data_and_hide(0)
+func _on_restart_pressed() -> void:
+
+	_apply_final_stats_and_close(0)
+
+
+func _on_next_pressed() -> void:
+
+	_apply_final_stats_and_close(1)
 
 
 func _on_QuitBtn_pressed() -> void:
 
-	$Menu/QuitBtn.set_disabled(true)
-	_apply_final_data_and_hide(-1)
+	_apply_final_stats_and_close(-1)
 
 
 func _on_QuitGameBtn_pressed() -> void:
 	get_tree().quit()
-
