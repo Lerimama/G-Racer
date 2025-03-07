@@ -92,7 +92,7 @@ func _set_for_game_finished(is_success: bool):
 
 func _apply_final_stats_and_close(close_to: int):
 
-	get_parent().game_manager.apply_stats_to_unfinished_drivers(still_driving_ids)
+	get_parent().game_manager.game_reactor.apply_stats_to_unfinished_drivers(still_driving_ids)
 
 	get_viewport().set_disable_input(true)
 

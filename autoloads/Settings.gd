@@ -111,6 +111,9 @@ func _apply_debug_settings():
 	time_game_heal_rate_factor = 0
 
 	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh"]#, "RO", "eh"]
+#	drivers_on_game_start = [ "JOU", "MOU"]
+#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]#, "RO", "eh"]
+#	drivers_on_game_start = [ "JOU"]
 
 	# max wins is level count
 	var max_wins_is_level_count: bool = true
@@ -131,12 +134,13 @@ func _apply_debug_settings():
 			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/avatar_marty.tres")
 #			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
-#			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP1
+#			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_green
 		elif drivers_on_game_start.find(driver_id) == 3:
+			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 #			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP2
-			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+#			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_yellow
 
 

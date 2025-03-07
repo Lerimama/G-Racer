@@ -39,37 +39,37 @@ margin = Rect2( 0, 0, 0, 0 )
 margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
-[node name="StatBox_Ver" type="VBoxContainer"]
+[node name="StatBox_Ver_Minimal" type="VBoxContainer"]
 margin_right = 653.0
-margin_bottom = 658.0
+margin_bottom = 864.0
 size_flags_vertical = 3
 theme = ExtResource( 3 )
 custom_constants/separation = 8
 script = ExtResource( 7 )
 __meta__ = {
-"_edit_group_": true,
 "_edit_horizontal_guides_": [ 48.0, 208.0 ],
 "_edit_vertical_guides_": [ 1056.0 ]
 }
 
 [node name="DriverId" type="MarginContainer" parent="."]
-margin_right = 403.0
+margin_right = 166.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="DriverId"]
 show_behind_parent = true
-margin_right = 403.0
+margin_right = 166.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.431373 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="DriverId"]
-margin_right = 403.0
+margin_right = 166.0
 margin_bottom = 64.0
 custom_constants/separation = 24
 
 [node name="Avatar" type="TextureRect" parent="DriverId/BoxContainer"]
+visible = false
 modulate = Color( 1, 0.964706, 0.878431, 1 )
 margin_right = 64.0
 margin_bottom = 64.0
@@ -78,10 +78,15 @@ size_flags_vertical = 4
 texture = SubResource( 2 )
 expand = true
 
+[node name="VSeparator" type="VSeparator" parent="DriverId/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_right = 4.0
+margin_bottom = 64.0
+
 [node name="Name" type="Label" parent="DriverId/BoxContainer"]
-margin_left = 88.0
+margin_left = 28.0
 margin_top = 8.0
-margin_right = 202.0
+margin_right = 142.0
 margin_bottom = 56.0
 rect_min_size = Vector2( 114, 0 )
 text = "MMM"
@@ -91,17 +96,41 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="VSeparator" type="VSeparator" parent="DriverId/BoxContainer"]
-visible = false
+[node name="VSeparator_2" type="VSeparator" parent="DriverId/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 226.0
-margin_right = 230.0
+margin_left = 166.0
+margin_right = 166.0
 margin_bottom = 64.0
+custom_constants/separation = -4
 
-[node name="StatWins" parent="DriverId/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 226.0
+[node name="Wins" type="MarginContainer" parent="."]
+margin_top = 72.0
+margin_right = 189.0
+margin_bottom = 136.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="Wins"]
+show_behind_parent = true
+margin_right = 189.0
+margin_bottom = 64.0
+color = Color( 0, 0, 0, 0.235294 )
+
+[node name="BoxContainer" type="HBoxContainer" parent="Wins"]
+margin_right = 189.0
+margin_bottom = 64.0
+size_flags_horizontal = 0
+custom_constants/separation = 16
+
+[node name="VSeparator" type="VSeparator" parent="Wins/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_bottom = 64.0
+custom_constants/separation = 0
+
+[node name="StatWins" parent="Wins/BoxContainer" instance=ExtResource( 6 )]
+margin_left = 16.0
 margin_top = 6.0
-margin_right = 379.0
+margin_right = 169.0
 margin_bottom = 58.0
 rect_min_size = Vector2( 0, 52 )
 size_flags_horizontal = 8
@@ -109,17 +138,16 @@ size_flags_vertical = 4
 icon_texture = ExtResource( 11 )
 stat_name = "W"
 
-[node name="VSeparator_2" type="VSeparator" parent="DriverId/BoxContainer"]
+[node name="VSeparator_2" type="VSeparator" parent="Wins/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 403.0
-margin_right = 403.0
+margin_left = 185.0
+margin_right = 189.0
 margin_bottom = 64.0
-custom_constants/separation = -4
 
 [node name="Life" type="MarginContainer" parent="."]
-margin_top = 72.0
+margin_top = 144.0
 margin_right = 189.0
-margin_bottom = 136.0
+margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -147,6 +175,7 @@ margin_bottom = 64.0
 stat_type = 3
 icon_texture = ExtResource( 5 )
 stat_name = "L"
+name_as_icon = false
 
 [node name="VSeparator_2" type="VSeparator" parent="Life/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
@@ -155,9 +184,9 @@ margin_right = 189.0
 margin_bottom = 64.0
 
 [node name="Cash" type="MarginContainer" parent="."]
-margin_top = 144.0
+margin_top = 216.0
 margin_right = 189.0
-margin_bottom = 208.0
+margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -193,9 +222,9 @@ margin_right = 189.0
 margin_bottom = 64.0
 
 [node name="Points" type="MarginContainer" parent="."]
-margin_top = 216.0
+margin_top = 288.0
 margin_right = 185.0
-margin_bottom = 280.0
+margin_bottom = 352.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -232,9 +261,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="Rank" type="MarginContainer" parent="."]
-margin_top = 288.0
+margin_top = 360.0
 margin_right = 189.0
-margin_bottom = 352.0
+margin_bottom = 424.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -269,9 +298,9 @@ margin_right = 189.0
 margin_bottom = 64.0
 
 [node name="LapGoalCount" type="MarginContainer" parent="."]
-margin_top = 360.0
+margin_top = 432.0
 margin_right = 354.0
-margin_bottom = 424.0
+margin_bottom = 496.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -317,9 +346,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="LapTime" type="MarginContainer" parent="."]
-margin_top = 432.0
+margin_top = 504.0
 margin_right = 354.0
-margin_bottom = 496.0
+margin_bottom = 568.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -349,7 +378,8 @@ margin_right = 169.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 8 )
-stat_name = "LT"
+stat_name = ""
+name_as_icon = false
 
 [node name="StatBestLap" parent="LapTime/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 185.0
@@ -357,7 +387,8 @@ margin_right = 338.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 16 )
-stat_name = "BL"
+stat_name = ""
+name_as_icon = false
 
 [node name="VSeparator_2" type="VSeparator" parent="LapTime/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
@@ -448,6 +479,7 @@ margin_top = -83.0
 margin_right = 179.0
 margin_bottom = -27.0
 stat_name = "G"
+count_digits_size = 4
 
 [node name="VSeparator" parent="Invisibles/BoxContainer/StatGas" index="2"]
 margin_bottom = 56.0

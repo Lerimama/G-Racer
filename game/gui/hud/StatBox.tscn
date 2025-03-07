@@ -59,19 +59,19 @@ __meta__ = {
 }
 
 [node name="DriverId" type="MarginContainer" parent="."]
-margin_right = 1015.0
+margin_right = 1027.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 200, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="DriverId"]
 show_behind_parent = true
-margin_right = 1015.0
+margin_right = 1027.0
 margin_bottom = 64.0
 color = Color( 1, 0.966, 0.88, 0.521569 )
 
 [node name="DriverLine" type="HBoxContainer" parent="DriverId"]
-margin_right = 1015.0
+margin_right = 1027.0
 margin_bottom = 64.0
 size_flags_horizontal = 0
 custom_constants/separation = 20
@@ -109,7 +109,7 @@ custom_styles/separator = SubResource( 6 )
 [node name="StatWins" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
 margin_left = 331.0
 margin_top = 6.0
-margin_right = 481.0
+margin_right = 484.0
 margin_bottom = 58.0
 rect_min_size = Vector2( 0, 52 )
 size_flags_horizontal = 8
@@ -119,49 +119,49 @@ icon_texture = ExtResource( 4 )
 stat_name = "W"
 
 [node name="StatLife" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
-margin_left = 501.0
-margin_right = 651.0
+margin_left = 504.0
+margin_right = 657.0
 margin_bottom = 64.0
 stat_type = 2
 icon_texture = ExtResource( 3 )
 stat_name = "L"
 
 [node name="StatHealth" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
-margin_left = 671.0
-margin_right = 821.0
+margin_left = 677.0
+margin_right = 830.0
 margin_bottom = 64.0
 stat_type = 2
 icon_texture = ExtResource( 16 )
 stat_name = "E"
 
 [node name="StatLevelRank" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
-margin_left = 841.0
-margin_right = 991.0
+margin_left = 850.0
+margin_right = 1003.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 14 )
 stat_name = "R"
 
 [node name="MarginB" type="VSeparator" parent="DriverId/DriverLine"]
-margin_left = 1011.0
-margin_right = 1015.0
+margin_left = 1023.0
+margin_right = 1027.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 
 [node name="DriverStats" type="MarginContainer" parent="."]
 margin_top = 72.0
-margin_right = 565.0
+margin_right = 516.0
 margin_bottom = 136.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="DriverStats"]
 show_behind_parent = true
-margin_right = 565.0
+margin_right = 516.0
 margin_bottom = 64.0
 color = Color( 1, 0.966, 0.88, 0.521569 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="DriverStats"]
-margin_right = 565.0
+margin_right = 516.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -176,59 +176,66 @@ custom_styles/separator = SubResource( 4 )
 
 [node name="StatCash" parent="DriverStats/HBoxContainer" instance=ExtResource( 6 )]
 margin_left = 20.0
-margin_right = 170.0
+margin_right = 173.0
 margin_bottom = 64.0
 stat_name = "$"
 
 [node name="StatPoints" parent="DriverStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 186.0
-margin_right = 336.0
+margin_left = 189.0
+margin_right = 342.0
 margin_bottom = 64.0
 stat_name = "P"
 
 [node name="StatGas" parent="DriverStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 352.0
-margin_right = 545.0
+margin_left = 358.0
+margin_right = 496.0
 margin_bottom = 64.0
 stat_name = "G"
+
+[node name="Icon" parent="DriverStats/HBoxContainer/StatGas" index="0"]
+margin_top = 8.0
+margin_bottom = 56.0
 
 [node name="Name" parent="DriverStats/HBoxContainer/StatGas" index="1"]
 margin_top = 8.0
 margin_bottom = 56.0
 
-[node name="Label" parent="DriverStats/HBoxContainer/StatGas" index="2"]
+[node name="VSeparator" parent="DriverStats/HBoxContainer/StatGas" index="2"]
+margin_bottom = 64.0
+
+[node name="Label" parent="DriverStats/HBoxContainer/StatGas" index="3"]
 margin_top = 8.0
-margin_right = 193.0
+margin_right = 138.0
 margin_bottom = 56.0
 rect_min_size = Vector2( 100, 0 )
 text = "LLLL"
 
-[node name="CountIcons" parent="DriverStats/HBoxContainer/StatGas" index="4"]
+[node name="CountIcons" parent="DriverStats/HBoxContainer/StatGas" index="5"]
 margin_left = 193.0
 margin_right = 193.0
 margin_bottom = 64.0
 
 [node name="MarginB" type="VSeparator" parent="DriverStats/HBoxContainer"]
-margin_left = 561.0
-margin_right = 565.0
+margin_left = 512.0
+margin_right = 516.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 
 [node name="RaceStats" type="MarginContainer" parent="."]
 margin_top = 144.0
-margin_right = 688.0
+margin_right = 700.0
 margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="RaceStats"]
 show_behind_parent = true
-margin_right = 688.0
+margin_right = 700.0
 margin_bottom = 64.0
 color = Color( 1, 0.966, 0.88, 0.521569 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="RaceStats"]
-margin_right = 688.0
+margin_right = 700.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -243,57 +250,56 @@ custom_styles/separator = SubResource( 4 )
 
 [node name="StatLapCount" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
 margin_left = 20.0
-margin_right = 170.0
+margin_right = 173.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 13 )
 stat_name = "L"
 
 [node name="StatBestLap" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 186.0
-margin_right = 336.0
+margin_left = 189.0
+margin_right = 342.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 12 )
 stat_name = "BL"
 
 [node name="StatLapTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 352.0
-margin_right = 502.0
+margin_left = 358.0
+margin_right = 511.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 9 )
 stat_name = "LT"
 
 [node name="StatLevelTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 518.0
-margin_right = 668.0
+margin_left = 527.0
+margin_right = 680.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 11 )
 stat_name = "LT"
 
 [node name="MarginB" type="VSeparator" parent="RaceStats/HBoxContainer"]
-margin_left = 684.0
-margin_right = 688.0
+margin_left = 696.0
+margin_right = 700.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 
 [node name="BattleStats" type="MarginContainer" parent="."]
-visible = false
 margin_top = 216.0
-margin_right = 363.0
+margin_right = 869.0
 margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="BattleStats"]
 show_behind_parent = true
-margin_right = 854.0
+margin_right = 869.0
 margin_bottom = 64.0
 color = Color( 1, 0.966, 0.88, 0.521569 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BattleStats"]
-margin_right = 854.0
+margin_right = 869.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -308,44 +314,42 @@ custom_styles/separator = SubResource( 4 )
 
 [node name="GoalReached" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
 margin_left = 20.0
-margin_top = 1.52588e-05
-margin_right = 170.0
+margin_right = 173.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 15 )
 stat_name = "G"
 
 [node name="StatSmallBullet" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 20.0
-margin_top = 1.52588e-05
-margin_right = 170.0
+margin_left = 189.0
+margin_right = 342.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 17 )
 stat_name = "B"
 
 [node name="StatBullet" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 20.0
-margin_right = 117.0
+margin_left = 358.0
+margin_right = 511.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 17 )
 stat_name = "B"
 
 [node name="StatMisile" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 133.0
-margin_right = 230.0
+margin_left = 527.0
+margin_right = 680.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 8 )
 stat_name = "M"
 
 [node name="StatMina" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
-margin_left = 246.0
-margin_right = 343.0
+margin_left = 696.0
+margin_right = 849.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 5 )
 stat_name = "M"
 
 [node name="MarginB" type="VSeparator" parent="BattleStats/HBoxContainer"]
-margin_left = 359.0
-margin_right = 363.0
+margin_left = 865.0
+margin_right = 869.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 

@@ -66,4 +66,3 @@ margin_bottom = 84.0
 rect_min_size = Vector2( 90, 48 )
 custom_fonts/font = ExtResource( 3 )
 text = "00"
-percent_visible = -0.5

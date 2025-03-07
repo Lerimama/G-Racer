@@ -39,7 +39,7 @@ margin = Rect2( 0, 0, 0, 0 )
 margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
-[node name="StatBox_Ver" type="VBoxContainer"]
+[node name="StatBox_Ver_Strict" type="VBoxContainer"]
 margin_right = 653.0
 margin_bottom = 658.0
 size_flags_vertical = 3
@@ -53,19 +53,19 @@ __meta__ = {
 }
 
 [node name="DriverId" type="MarginContainer" parent="."]
-margin_right = 403.0
+margin_right = 226.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="DriverId"]
 show_behind_parent = true
-margin_right = 403.0
+margin_right = 226.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.431373 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="DriverId"]
-margin_right = 403.0
+margin_right = 226.0
 margin_bottom = 64.0
 custom_constants/separation = 24
 
@@ -98,10 +98,41 @@ margin_left = 226.0
 margin_right = 230.0
 margin_bottom = 64.0
 
-[node name="StatWins" parent="DriverId/BoxContainer" instance=ExtResource( 6 )]
+[node name="VSeparator_2" type="VSeparator" parent="DriverId/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
 margin_left = 226.0
+margin_right = 226.0
+margin_bottom = 64.0
+custom_constants/separation = -4
+
+[node name="Wins" type="MarginContainer" parent="."]
+margin_top = 72.0
+margin_right = 189.0
+margin_bottom = 136.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="Wins"]
+show_behind_parent = true
+margin_right = 189.0
+margin_bottom = 64.0
+color = Color( 0, 0, 0, 0.235294 )
+
+[node name="BoxContainer" type="HBoxContainer" parent="Wins"]
+margin_right = 189.0
+margin_bottom = 64.0
+size_flags_horizontal = 0
+custom_constants/separation = 16
+
+[node name="VSeparator" type="VSeparator" parent="Wins/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_bottom = 64.0
+custom_constants/separation = 0
+
+[node name="StatWins" parent="Wins/BoxContainer" instance=ExtResource( 6 )]
+margin_left = 16.0
 margin_top = 6.0
-margin_right = 379.0
+margin_right = 169.0
 margin_bottom = 58.0
 rect_min_size = Vector2( 0, 52 )
 size_flags_horizontal = 8
@@ -109,17 +140,16 @@ size_flags_vertical = 4
 icon_texture = ExtResource( 11 )
 stat_name = "W"
 
-[node name="VSeparator_2" type="VSeparator" parent="DriverId/BoxContainer"]
+[node name="VSeparator_2" type="VSeparator" parent="Wins/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 403.0
-margin_right = 403.0
+margin_left = 185.0
+margin_right = 189.0
 margin_bottom = 64.0
-custom_constants/separation = -4
 
 [node name="Life" type="MarginContainer" parent="."]
-margin_top = 72.0
+margin_top = 144.0
 margin_right = 189.0
-margin_bottom = 136.0
+margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -147,6 +177,7 @@ margin_bottom = 64.0
 stat_type = 3
 icon_texture = ExtResource( 5 )
 stat_name = "L"
+name_as_icon = false
 
 [node name="VSeparator_2" type="VSeparator" parent="Life/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
@@ -155,9 +186,9 @@ margin_right = 189.0
 margin_bottom = 64.0
 
 [node name="Cash" type="MarginContainer" parent="."]
-margin_top = 144.0
+margin_top = 216.0
 margin_right = 189.0
-margin_bottom = 208.0
+margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -193,9 +224,9 @@ margin_right = 189.0
 margin_bottom = 64.0
 
 [node name="Points" type="MarginContainer" parent="."]
-margin_top = 216.0
+margin_top = 288.0
 margin_right = 185.0
-margin_bottom = 280.0
+margin_bottom = 352.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -232,9 +263,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="Rank" type="MarginContainer" parent="."]
-margin_top = 288.0
+margin_top = 360.0
 margin_right = 189.0
-margin_bottom = 352.0
+margin_bottom = 424.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -269,9 +300,9 @@ margin_right = 189.0
 margin_bottom = 64.0
 
 [node name="LapGoalCount" type="MarginContainer" parent="."]
-margin_top = 360.0
+margin_top = 432.0
 margin_right = 354.0
-margin_bottom = 424.0
+margin_bottom = 496.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -317,9 +348,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="LapTime" type="MarginContainer" parent="."]
-margin_top = 432.0
+margin_top = 504.0
 margin_right = 354.0
-margin_bottom = 496.0
+margin_bottom = 568.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 

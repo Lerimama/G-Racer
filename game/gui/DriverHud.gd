@@ -31,7 +31,6 @@ func _ready() -> void:
 
 func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool = false):
 
-
 	hud_driver = driver_node
 	drivers_viewport = view.get_node("Viewport")
 

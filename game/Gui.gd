@@ -13,7 +13,6 @@ onready var game_over: Control = $GameOver
 onready var game_cover: ColorRect = $GameCover
 
 
-
 func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
 
 	if Input.is_action_just_pressed("ui_cancel") and game_manager.game_stage == game_manager.GAME_STAGE.PLAYING:
@@ -45,8 +44,6 @@ func _on_game_stage_changed(curr_game_manager: Game):
 				if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
 					hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")
 			driver_huds_holder.set_driver_huds(game_manager, Sts.one_screen_mode)
-
-		game_manager.GAME_STAGE.INTRO:
 
 			var fade_tween = get_tree().create_tween()
 			fade_tween.tween_property(game_cover, "modulate:a", 0, 0.7)

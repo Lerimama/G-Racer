@@ -131,6 +131,29 @@ func _check_for_game_end():
 				game.game_stage = game.GAME_STAGE.END_FAIL
 
 
+func apply_stats_to_unfinished_drivers(unfinished_driver_ids: Array):
+
+	var current_game_time: int = game.hud.game_timer.game_time_hunds
+
+	# dodam neuvrščene ai-je, ki vedno pridejo do konca
+	for driver_id in unfinished_driver_ids:
+
+		var driver_vehicle: Vehicle
+		for vehicle in game.game_tracker.drivers_in_game:
+			if vehicle.driver_id == driver_id:
+				driver_vehicle = vehicle
+				break
+
+		# izračun predvidenega časa ... glede na prevožen procent
+		if driver_vehicle:
+			var distance_needed_part: float = driver_vehicle.driver_tracker.unit_offset
+			if distance_needed_part == 0: # če obtiči na štartu ... verjetno nioli
+				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time
+			else:
+				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
+			game.finale_game_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
+
+
 # SIGNALI ------------------------------------------------------------------------------------------------------
 
 
@@ -274,12 +297,12 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	# hide view
 	if Sts.hide_view_on_player_deactivated:# and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
 		var hide_view_time: float
-		var removed_game_view: ViewportContainer = game.game_views_with_drivers.find_key(driver_vehicle)
-		if removed_game_view and game.game_views_with_drivers.size() > 1: # preverim, da ni zadnji view
+		var removed_game_view: ViewportContainer = game.game_views.views_with_drivers.find_key(driver_vehicle)
+		if removed_game_view and game.game_views.views_with_drivers.size() > 1: # preverim, da ni zadnji view
 			removed_game_view.queue_free()
-			game.game_views_with_drivers.erase(removed_game_view)
-			game.set_game_views(game.game_views_with_drivers.size()) # setam preostale
-			game.hud.driver_huds_holder.remove_view_imitator(game.game_views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
+			game.game_views.views_with_drivers.erase(removed_game_view)
+			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
+			game.hud.driver_huds_holder.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
 
 	_check_for_game_end()
 

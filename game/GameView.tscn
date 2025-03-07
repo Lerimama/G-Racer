@@ -19,13 +19,13 @@ debug_draw = 3
 render_target_update_mode = 3
 
 [node name="GameCamera" parent="Viewport" instance=ExtResource( 4 )]
-visible = false
 smoothing_speed = 20.0
 
-[node name="HudHolder" type="Control" parent="Viewport"]
+[node name="HudHolder_obs" type="Control" parent="Viewport"]
 margin_right = 2560.0
 margin_bottom = 1440.0
 rect_min_size = Vector2( 2560, 1440 )
 
 [editable path="Viewport/GameCamera"]
+[editable path="Viewport/GameCamera/Shaker"]
 [editable path="Viewport/GameCamera/TestUI/SetupPanel"]

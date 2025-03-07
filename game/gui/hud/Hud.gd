@@ -1,12 +1,12 @@
 extends Control
-#class_name Hud
 
+
+enum STATBOX_TYPE{BOX, VER, VER_STRICT, VER_MINIMAL, HOR, HOR_MINIMAL, HOR_WIDE, BOX_MINIMAL, MINIMAL}
 
 var level_lap_count: int
 var level_goals: Array = []
 var max_wins_count: int
 
-var statbox_count: int = 0
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
 
 onready var sections_holder: HBoxContainer = $HudSections
@@ -16,13 +16,17 @@ onready var center_top: VBoxContainer = $HudSections/Center/Top
 onready var center_btm: VBoxContainer = $HudSections/Center/Btm
 
 onready var game_timer: HBoxContainer = $HudSections/Center/Top/GameTimer
-onready var record_lap_label: Label = $HudSections/Center/Top/RecordLap
+onready var best_lap_label: Label = $HudSections/Center/Top/BestLap
 onready var level_name: Label = $HudSections/Center/Btm/LevelName
 
 onready var start_countdown: Control = $Popups/StartCountdown
-
 onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
-onready var StatBox: PackedScene = preload("res://game/gui/hud/StatBox.tscn")
+
+onready var StatBox_Ver_Strict: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Strict.tscn")
+onready var StatBox_Ver_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Minimal.tscn")
+onready var StatBox_Ver: PackedScene = preload("res://game/gui/hud/StatBox_Ver.tscn")
+onready var StatBox_Hor: PackedScene = preload("res://game/gui/hud/StatBox_Hor.tscn")
+onready var StatBox_Boxed: PackedScene = preload("res://game/gui/hud/StatBox_Boxed.tscn")
 
 
 func _ready() -> void:
@@ -50,33 +54,47 @@ func set_hud(game_manager):
 	game_timer.stop_timer()
 	game_timer.reset_timer(level_time_limit)
 	game_timer.show()
-	record_lap_label.hide()
+	best_lap_label.hide()
 	for section in sections_holder.get_children():
 		section.show()
 
 	# statboxes reset
-	for statbox_name_id in statboxes_with_drivers:
-		statboxes_with_drivers[statbox_name_id].queue_free()
+	for statbox in statboxes_with_drivers:
+		statbox.queue_free()
 	statboxes_with_drivers.clear()
-	statbox_count = 0
 
 	# new statboxes
-	for vehicle in game_manager.drivers_on_start:
-		set_driver_statbox(vehicle, game_manager.level_profile["rank_by"], game_manager.drivers_on_start.size())
+	var viewed_drivers: Array = []
+	for driver in game_manager.drivers_on_start:
+		if not driver.motion_manager.is_ai:
+			viewed_drivers.append(driver)
+	for viewed_driver in viewed_drivers:
+		set_driver_statbox(viewed_driver, viewed_drivers.find(viewed_driver), viewed_drivers.size(), game_manager.level_profile["rank_by"])
 
 
-func set_driver_statbox(statbox_driver: Vehicle, rank_by: int, all_statboxes_count: int): # kliče GM
+func on_game_start():
 
-	statbox_count += 1
+	game_timer.start_timer()
 
-	# spawn left /right
-	var new_statbox: VBoxContainer = StatBox.instance()
-	if statbox_count % 2 == 0:
-		right_section.add_child(new_statbox)
-	else:
+
+func on_game_over():
+
+	for section in sections_holder.get_children():
+		section.hide()
+
+
+func set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int, rank_by: int): # kliče GM
+
+	var NewStatBox: PackedScene #= StatBox
+	NewStatBox = _get_statbox_by_type(statbox_index, all_statboxes_count)
+
+	var new_statbox: BoxContainer = NewStatBox.instance()
+	if statbox_index % 2 == 0:
 		left_section.add_child(new_statbox)
+	else:
+		right_section.add_child(new_statbox)
 
-	statboxes_with_drivers[statbox_driver.driver_id] = new_statbox
+	statboxes_with_drivers[new_statbox] = statbox_driver.driver_id
 
 	var driver_stats: Dictionary = statbox_driver.driver_stats
 	var driver_profile: Dictionary = statbox_driver.driver_profile
@@ -91,32 +109,63 @@ func set_driver_statbox(statbox_driver: Vehicle, rank_by: int, all_statboxes_cou
 	else:
 		new_statbox.set_statbox_elements(rank_by)
 
-	# če je predzadnji bo zadnji ... na levi strani
-	# če je zadnji bo zadnji na drugi strani
-	if statbox_count < all_statboxes_count - 1:
-		new_statbox.set_statbox_align(statbox_count)
+	# določim zadnje v sekcijah ... spawnani so levo, denos, levo, desno, ...
+	var left_side_statboxes_count: int = ceil(all_statboxes_count / 2)
+	if statbox_index == left_side_statboxes_count or statbox_index == all_statboxes_count - 1:
+		new_statbox.set_statbox_align(statbox_index, true)
 	else:
-		new_statbox.set_statbox_align(statbox_count, true)
-
-	yield(get_tree(), "idle_frame") # rabim, ker je prvič po spawnu in mora preskočit statbox setting staff
+		new_statbox.set_statbox_align(statbox_index)
 
 	# driver stats
 	for stat in driver_stats:
-#		call_deferred("_on_driver_stat_changed", statbox_driver.driver_id, stat, driver_stats[stat])
 		_on_driver_stat_changed(statbox_driver.driver_id, stat, driver_stats[stat])
 
 	new_statbox.show()
 
+	statbox_index += 1 # pred idle, ker je na vrsti že naslednja
 
-func on_game_start():
+func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 
-	game_timer.start_timer()
+	var statbox_type: int = 0
 
+	if Sts.one_screen_mode:
+		if all_statboxes_count <= 4:
+			statbox_type = STATBOX_TYPE.BOX
+		if all_statboxes_count <= 10:
+			statbox_type = STATBOX_TYPE.BOX_MINIMAL
+		else:
+			statbox_type = STATBOX_TYPE.HOR_MINIMAL
+	else:
+		if all_statboxes_count <= 2:
+			statbox_type = STATBOX_TYPE.VER
+		elif all_statboxes_count == 3:
+			if statbox_index == 1: # desni view je večji
+				statbox_type = STATBOX_TYPE.BOX
+			else:
+				statbox_type = STATBOX_TYPE.VER_MINIMAL
+		elif all_statboxes_count == 4:
+			statbox_type = STATBOX_TYPE.VER_MINIMAL
 
-func on_game_over():
-
-	for section in sections_holder.get_children():
-		section.hide()
+	match statbox_type:
+		STATBOX_TYPE.BOX:
+			return StatBox_Boxed
+		STATBOX_TYPE.BOX_MINIMAL:
+			return StatBox_Boxed
+			print ("missing statbox type > BOX_MINIMAL")
+		STATBOX_TYPE.VER:
+			return StatBox_Ver
+		STATBOX_TYPE.VER_MINIMAL:
+			return StatBox_Ver_Minimal
+		STATBOX_TYPE.VER_STRICT:
+			return StatBox_Ver_Minimal
+		STATBOX_TYPE.HOR:
+			return StatBox_Hor
+		STATBOX_TYPE.HOR_MINIMAL:
+			print ("missing statbox type > HOR_MINIMAL")
+			return StatBox_Hor
+		STATBOX_TYPE.HOR_WIDE:
+			print ("missing statbox type > HOR_WIDE")
+			return StatBox_Hor
 
 
 func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
@@ -128,11 +177,14 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 #	if stat_key == 10:
 #		printt ("RANK", driver_stat_key, stat_value)
 
-	# opredelim drive statbox
+	# opredelim statbox
 	var statbox_to_change: Control
-	if driver_id in statboxes_with_drivers.keys():
-		if statboxes_with_drivers[driver_id] != null:
-			statbox_to_change = statboxes_with_drivers[driver_id]
+	if driver_id in statboxes_with_drivers.values():
+		var statbox: Control = statboxes_with_drivers.find_key(driver_id)
+		if statbox != null: # find key lahko vrne null
+			statbox_to_change = statbox
+	if not statbox_to_change: # ai ga nima, statistiko pa vseeno pošilja
+		return
 
 	# stat_to_change ... STAT key string
 	var current_key_index: int = Pfs.STATS.values().find(stat_key)
@@ -162,7 +214,6 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
 			#			stat_to_change.stat_value = [stat_value.size(), Sts.wins_goal_count]
 			stat_to_change.stat_value = stat_value.size()
-#			stat_to_change.stat_value = stat_value
 		# level
 		Pfs.STATS.LEVEL_RANK: # na konča
 			stat_to_change.stat_value = stat_value

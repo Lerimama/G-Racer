@@ -1,21 +1,21 @@
 [gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
-[ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=2]
-[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=3]
-[ext_resource path="res://assets/icons/icon_mina_VRSA.tres" type="Texture" id=4]
-[ext_resource path="res://assets/icons/icon_hud_life_VRSA.tres" type="Texture" id=5]
-[ext_resource path="res://game/gui/hud/StatLine.tscn" type="PackedScene" id=6]
-[ext_resource path="res://game/gui/hud/StatBox.gd" type="Script" id=7]
-[ext_resource path="res://assets/icons/icon_hud_lap_time_VRSA.tres" type="Texture" id=8]
-[ext_resource path="res://assets/icons/icon_hud_health_VRSA.tres" type="Texture" id=9]
-[ext_resource path="res://assets/design/atlas_home.png" type="Texture" id=10]
-[ext_resource path="res://assets/icons/icon_hud_wins_VRSA.tres" type="Texture" id=11]
-[ext_resource path="res://assets/icons/icon_hud_level_time_VRSA.tres" type="Texture" id=12]
-[ext_resource path="res://assets/icons/icon_hud_level_rank.tres" type="Texture" id=13]
-[ext_resource path="res://assets/icons/icon_hud_lap_count_VRSA.tres" type="Texture" id=14]
-[ext_resource path="res://assets/icons/icon_hud_goals_VRSA.tres" type="Texture" id=15]
-[ext_resource path="res://assets/icons/icon_hud_best_lap_time_VRSA.tres" type="Texture" id=16]
+[ext_resource path="res://assets/design/atlas_home.png" type="Texture" id=2]
+[ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=3]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=4]
+[ext_resource path="res://assets/icons/icon_mina_VRSA.tres" type="Texture" id=5]
+[ext_resource path="res://assets/icons/icon_hud_life_VRSA.tres" type="Texture" id=6]
+[ext_resource path="res://assets/icons/icon_hud_lap_time_VRSA.tres" type="Texture" id=7]
+[ext_resource path="res://assets/icons/icon_hud_health_VRSA.tres" type="Texture" id=8]
+[ext_resource path="res://assets/icons/icon_hud_wins_VRSA.tres" type="Texture" id=9]
+[ext_resource path="res://assets/icons/icon_hud_level_time_VRSA.tres" type="Texture" id=10]
+[ext_resource path="res://assets/icons/icon_hud_level_rank.tres" type="Texture" id=11]
+[ext_resource path="res://assets/icons/icon_hud_lap_count_VRSA.tres" type="Texture" id=12]
+[ext_resource path="res://assets/icons/icon_hud_goals_VRSA.tres" type="Texture" id=13]
+[ext_resource path="res://game/gui/hud/StatBox.gd" type="Script" id=14]
+[ext_resource path="res://assets/icons/icon_hud_best_lap_time_VRSA.tres" type="Texture" id=15]
+[ext_resource path="res://game/gui/hud/StatLine.tscn" type="PackedScene" id=16]
 [ext_resource path="res://assets/icons/icon_misile_VRSA.tres" type="Texture" id=17]
 
 [sub_resource type="Image" id=3]
@@ -33,19 +33,19 @@ flags = 5
 image = SubResource( 3 )
 size = Vector2( 128, 128 )
 script = ExtResource( 1 )
-atlas = ExtResource( 10 )
+atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 128, 128 )
 margin = Rect2( 0, 0, 0, 0 )
 margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
-[node name="StatBox_Ver" type="VBoxContainer"]
-margin_right = 653.0
-margin_bottom = 658.0
+[node name="StatBox_Boxed" type="VBoxContainer"]
+margin_right = 527.0
+margin_bottom = 280.0
 size_flags_vertical = 3
-theme = ExtResource( 3 )
+theme = ExtResource( 4 )
 custom_constants/separation = 8
-script = ExtResource( 7 )
+script = ExtResource( 14 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_horizontal_guides_": [ 48.0, 208.0 ],
@@ -98,7 +98,7 @@ margin_left = 226.0
 margin_right = 230.0
 margin_bottom = 64.0
 
-[node name="StatWins" parent="DriverId/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatWins" parent="DriverId/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 226.0
 margin_top = 6.0
 margin_right = 379.0
@@ -106,7 +106,7 @@ margin_bottom = 58.0
 rect_min_size = Vector2( 0, 52 )
 size_flags_horizontal = 8
 size_flags_vertical = 4
-icon_texture = ExtResource( 11 )
+icon_texture = ExtResource( 9 )
 stat_name = "W"
 
 [node name="VSeparator_2" type="VSeparator" parent="DriverId/BoxContainer"]
@@ -116,210 +116,111 @@ margin_right = 403.0
 margin_bottom = 64.0
 custom_constants/separation = -4
 
-[node name="Life" type="MarginContainer" parent="."]
+[node name="Driver" type="MarginContainer" parent="."]
 margin_top = 72.0
-margin_right = 189.0
+margin_right = 527.0
 margin_bottom = 136.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
-[node name="ColorRect" type="ColorRect" parent="Life"]
+[node name="ColorRect" type="ColorRect" parent="Driver"]
 show_behind_parent = true
-margin_right = 189.0
+margin_right = 527.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
-[node name="BoxContainer" type="HBoxContainer" parent="Life"]
-margin_right = 189.0
+[node name="BoxContainer" type="HBoxContainer" parent="Driver"]
+margin_right = 527.0
 margin_bottom = 64.0
 size_flags_horizontal = 0
 custom_constants/separation = 16
 
-[node name="VSeparator" type="VSeparator" parent="Life/BoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="Driver/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
 margin_bottom = 64.0
 custom_constants/separation = 0
 
-[node name="StatLife" parent="Life/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatLife" parent="Driver/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 16.0
 margin_right = 169.0
 margin_bottom = 64.0
 stat_type = 3
-icon_texture = ExtResource( 5 )
+icon_texture = ExtResource( 6 )
 stat_name = "L"
 
-[node name="VSeparator_2" type="VSeparator" parent="Life/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
+[node name="StatCash" parent="Driver/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 185.0
-margin_right = 189.0
+margin_right = 338.0
+margin_bottom = 64.0
+stat_name = "$"
+
+[node name="StatPoints" parent="Driver/BoxContainer" instance=ExtResource( 16 )]
+margin_left = 354.0
+margin_right = 507.0
+margin_bottom = 64.0
+stat_name = "P"
+
+[node name="VSeparator_2" type="VSeparator" parent="Driver/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 523.0
+margin_right = 527.0
 margin_bottom = 64.0
 
-[node name="Cash" type="MarginContainer" parent="."]
+[node name="Vehicle" type="MarginContainer" parent="."]
 margin_top = 144.0
-margin_right = 189.0
+margin_right = 527.0
 margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
-[node name="ColorRect" type="ColorRect" parent="Cash"]
+[node name="ColorRect" type="ColorRect" parent="Vehicle"]
 show_behind_parent = true
-margin_right = 189.0
+margin_right = 527.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
-[node name="BoxContainer" type="HBoxContainer" parent="Cash"]
-margin_right = 189.0
-margin_bottom = 64.0
-custom_constants/separation = 16
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="VSeparator" type="VSeparator" parent="Cash/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="StatCash" parent="Cash/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 16.0
-margin_right = 169.0
-margin_bottom = 64.0
-stat_name = "$"
-
-[node name="VSeparator_2" type="VSeparator" parent="Cash/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
-margin_bottom = 64.0
-
-[node name="Points" type="MarginContainer" parent="."]
-margin_top = 216.0
-margin_right = 185.0
-margin_bottom = 280.0
-rect_min_size = Vector2( 0, 64 )
-size_flags_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="Points"]
-show_behind_parent = true
-margin_right = 185.0
-margin_bottom = 64.0
-color = Color( 0, 0, 0, 0.235294 )
-
-[node name="BoxContainer" type="HBoxContainer" parent="Points"]
-margin_right = 185.0
-margin_bottom = 64.0
-custom_constants/separation = 16
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="VSeparator" type="VSeparator" parent="Points/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="StatPoints" parent="Points/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 16.0
-margin_right = 169.0
-margin_bottom = 64.0
-stat_name = "P"
-
-[node name="VSeparator_2" type="VSeparator" parent="Points/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 185.0
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="Rank" type="MarginContainer" parent="."]
-margin_top = 288.0
-margin_right = 189.0
-margin_bottom = 352.0
-rect_min_size = Vector2( 0, 64 )
-size_flags_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="Rank"]
-show_behind_parent = true
-margin_right = 189.0
-margin_bottom = 64.0
-color = Color( 0, 0, 0, 0.235294 )
-
-[node name="BoxContainer" type="HBoxContainer" parent="Rank"]
-margin_right = 189.0
+[node name="BoxContainer" type="HBoxContainer" parent="Vehicle"]
+margin_right = 527.0
 margin_bottom = 64.0
 size_flags_horizontal = 0
 custom_constants/separation = 16
 
-[node name="VSeparator" type="VSeparator" parent="Rank/BoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="Vehicle/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
 margin_bottom = 64.0
 custom_constants/separation = 0
 
-[node name="StatLevelRank" parent="Rank/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatLapCount" parent="Vehicle/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 16.0
 margin_right = 169.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 13 )
-stat_name = "R"
-
-[node name="VSeparator_2" type="VSeparator" parent="Rank/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
-margin_bottom = 64.0
-
-[node name="LapGoalCount" type="MarginContainer" parent="."]
-margin_top = 360.0
-margin_right = 354.0
-margin_bottom = 424.0
-rect_min_size = Vector2( 0, 64 )
-size_flags_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="LapGoalCount"]
-show_behind_parent = true
-margin_right = 354.0
-margin_bottom = 64.0
-color = Color( 0, 0, 0, 0.235294 )
-
-[node name="BoxContainer" type="HBoxContainer" parent="LapGoalCount"]
-margin_right = 354.0
-margin_bottom = 64.0
-size_flags_vertical = 5
-custom_constants/separation = 16
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="VSeparator" type="VSeparator" parent="LapGoalCount/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="StatLapCount" parent="LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 16.0
-margin_right = 169.0
-margin_bottom = 64.0
-icon_texture = ExtResource( 14 )
+icon_texture = ExtResource( 12 )
 stat_name = "L"
 
-[node name="GoalReached" parent="LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
+[node name="GoalReached" parent="Vehicle/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 185.0
 margin_right = 338.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 15 )
+icon_texture = ExtResource( 13 )
 stat_name = "G"
 
-[node name="VSeparator_2" type="VSeparator" parent="LapGoalCount/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
+[node name="StatLevelRank" parent="Vehicle/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 354.0
-margin_right = 354.0
+margin_right = 507.0
 margin_bottom = 64.0
-custom_constants/separation = 0
+icon_texture = ExtResource( 11 )
+stat_name = "R"
+
+[node name="VSeparator_2" type="VSeparator" parent="Vehicle/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 523.0
+margin_right = 527.0
+margin_bottom = 64.0
 
 [node name="LapTime" type="MarginContainer" parent="."]
-margin_top = 432.0
+margin_top = 216.0
 margin_right = 354.0
-margin_bottom = 496.0
+margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -343,20 +244,20 @@ modulate = Color( 1, 1, 1, 0 )
 margin_bottom = 64.0
 custom_constants/separation = 0
 
-[node name="StatLapTime" parent="LapTime/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatLapTime" parent="LapTime/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 16.0
 margin_right = 169.0
 margin_bottom = 64.0
 stat_type = 1
-icon_texture = ExtResource( 8 )
+icon_texture = ExtResource( 7 )
 stat_name = "LT"
 
-[node name="StatBestLap" parent="LapTime/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatBestLap" parent="LapTime/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 185.0
 margin_right = 338.0
 margin_bottom = 64.0
 stat_type = 1
-icon_texture = ExtResource( 16 )
+icon_texture = ExtResource( 15 )
 stat_name = "BL"
 
 [node name="VSeparator_2" type="VSeparator" parent="LapTime/BoxContainer"]
@@ -394,32 +295,32 @@ margin_right = 179.0
 margin_bottom = 3.0
 custom_constants/separation = 0
 
-[node name="StatSmallBullet" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatSmallBullet" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_top = 19.0
 margin_right = 179.0
 margin_bottom = 75.0
-icon_texture = ExtResource( 2 )
+icon_texture = ExtResource( 3 )
 stat_name = "B"
 
-[node name="StatBullet" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatBullet" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_top = 91.0
 margin_right = 179.0
 margin_bottom = 147.0
-icon_texture = ExtResource( 2 )
+icon_texture = ExtResource( 3 )
 stat_name = "B"
 
-[node name="StatMisile" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatMisile" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_top = 163.0
 margin_right = 179.0
 margin_bottom = 219.0
 icon_texture = ExtResource( 17 )
 stat_name = "M"
 
-[node name="StatMina" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatMina" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_top = 235.0
 margin_right = 179.0
 margin_bottom = 291.0
-icon_texture = ExtResource( 4 )
+icon_texture = ExtResource( 5 )
 stat_name = "M"
 
 [node name="VSeparator_2" type="VSeparator" parent="Invisibles/BoxContainer"]
@@ -428,22 +329,22 @@ margin_right = 179.0
 margin_bottom = 310.0
 custom_constants/separation = 0
 
-[node name="StatHealth" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatHealth" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_top = 326.0
 margin_right = 179.0
 margin_bottom = 382.0
 stat_type = 3
-icon_texture = ExtResource( 9 )
+icon_texture = ExtResource( 8 )
 stat_name = "E"
 
-[node name="StatLevelTime" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatLevelTime" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_right = 179.0
 margin_bottom = 454.0
 stat_type = 1
-icon_texture = ExtResource( 12 )
+icon_texture = ExtResource( 10 )
 stat_name = "LT"
 
-[node name="StatGas" parent="Invisibles/BoxContainer" instance=ExtResource( 6 )]
+[node name="StatGas" parent="Invisibles/BoxContainer" instance=ExtResource( 16 )]
 margin_top = -83.0
 margin_right = 179.0
 margin_bottom = -27.0
