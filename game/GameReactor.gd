@@ -245,12 +245,17 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 
 			var has_finished_level: bool = false
 
-			# WITH LAPS ... lap finished če so vsi čekpointi
-			if game.level_profile["level_laps"] > 1:
-				crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds) # ... ostale lap statse preračuna driver v update stats
-				if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
-					has_finished_level = true
-			else:
+#			# WITH LAPS ... lap finished če so vsi čekpointi
+#			if game.level_profile["level_laps"] > 1:
+#				crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds) # ... ostale lap statse preračuna driver v update stats
+#				if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+#					has_finished_level = true
+#			else:
+#				has_finished_level = true
+
+			# če ni krogov javi lap count za registriranje prehoda cilja
+			crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds) # ... ostale lap statse preračuna driver v update stats
+			if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 				has_finished_level = true
 
 			if has_finished_level:

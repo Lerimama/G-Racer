@@ -6,7 +6,7 @@ enum STATBOX_TYPE{BOX, VER, VER_STRICT, VER_MINIMAL, HOR, HOR_MINIMAL, HOR_WIDE,
 var level_lap_count: int
 var level_goals: Array = []
 var max_wins_count: int
-
+var time_still_time: float = 1.5
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
 
 onready var sections_holder: HBoxContainer = $HudSections
@@ -124,11 +124,14 @@ func set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbox
 
 	statbox_index += 1 # pred idle, ker je na vrsti že naslednja
 
+
 func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 
 	var statbox_type: int = 0
 
-	if Sts.one_screen_mode:
+	if all_statboxes_count == 1:
+		statbox_type = STATBOX_TYPE.VER_STRICT
+	elif Sts.one_screen_mode:
 		if all_statboxes_count <= 4:
 			statbox_type = STATBOX_TYPE.BOX
 		if all_statboxes_count <= 10:
@@ -140,7 +143,8 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 			statbox_type = STATBOX_TYPE.VER
 		elif all_statboxes_count == 3:
 			if statbox_index == 1: # desni view je večji
-				statbox_type = STATBOX_TYPE.BOX
+#				statbox_type = STATBOX_TYPE.BOX
+				statbox_type = STATBOX_TYPE.VER
 			else:
 				statbox_type = STATBOX_TYPE.VER_MINIMAL
 		elif all_statboxes_count == 4:
@@ -219,12 +223,36 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			stat_to_change.stat_value = stat_value
 		Pfs.STATS.LEVEL_TIME:
 			stat_to_change.stat_value = stat_value
-		Pfs.STATS.LAP_COUNT: # če so krogi
+
+		Pfs.STATS.LAP_COUNT: # tudi če ni krogov ... takrat gre čez linijo in reagira na to dejstvo
+			# lap count
 			stat_to_change.stat_value = [stat_value.size(), level_lap_count]
+			# stoječi prikaz časa kroga
+			var time_stat: Control = statbox_to_change.get("LAP_TIME")
+			if time_stat.stat_value > 0:
+				var time_still_stat: Control = statbox_to_change.get("lap_time_still")
+				time_still_stat.stat_value = time_stat.stat_value
+				time_still_stat.modulate = Rfs.color_red # zeleno ga obarva BEST LAP event
+				time_stat.hide()
+				time_still_stat.show()
+				yield(get_tree().create_timer(time_still_time), "timeout")
+				time_still_stat.hide()
+				time_stat.show()
+
 		Pfs.STATS.BEST_LAP_TIME:
-			stat_to_change.stat_value = stat_value
+			if stat_value > 0:
+				stat_to_change.stat_value = stat_value
+				# pokaže, če je še skrit
+				stat_to_change.get_parent().get_parent().show()
+				# obarvam stoječi prikaz časa kroga
+				statbox_to_change.get("lap_time_still").modulate = Rfs.color_green
+
 		Pfs.STATS.LAP_TIME: # vsak frejm
 			stat_to_change.stat_value = stat_value
+
+
+
+
 		_:
 			stat_to_change.stat_value = stat_value
 

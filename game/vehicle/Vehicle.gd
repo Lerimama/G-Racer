@@ -4,7 +4,6 @@ class_name Vehicle
 
 signal vehicle_deactivated (vehicle)
 signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
-signal pull_success # da GM neha pullat
 
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
@@ -410,14 +409,17 @@ func update_stat(stat_key: int, stat_value):
 		Pfs.STATS.LEVEL_TIME:
 			prev_lap_level_time = stat_value
 			driver_stats[stat_key] = stat_value
-		Pfs.STATS.LAP_COUNT: # če so krogi
 			var lap_time: float = stat_value
 			driver_stats[stat_key].append(stat_value)
 			# best lap
 			var curr_best_lap_time: float = driver_stats[Pfs.STATS.BEST_LAP_TIME]
-			if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
-				driver_stats[Pfs.STATS.BEST_LAP_TIME] = lap_time
-				emit_signal("stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time) # pošlje xtra signal
+			if not lap_time == 0:
+				if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
+					driver_stats[Pfs.STATS.BEST_LAP_TIME] = lap_time
+					# deferred da je za lap count signalom
+					call_deferred("emit_signal", "stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time)
+					emit_signal("stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time)
+
 		Pfs.STATS.LAP_TIME: # vsak frejm
 			var curr_game_time: float = stat_value
 			var lap_time: float = curr_game_time - prev_lap_level_time

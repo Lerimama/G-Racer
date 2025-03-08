@@ -19,8 +19,10 @@ onready var GOALS_REACHED: HBoxContainer = find_node("GoalReached")
 # time
 onready var LAP_COUNT: HBoxContainer = find_node("StatLapCount")
 onready var LAP_TIME: HBoxContainer = find_node("StatLapTime")
+onready var lap_time_still: HBoxContainer = find_node("StatLapTime_Still")
 onready var BEST_LAP_TIME: HBoxContainer = find_node("StatBestLap")
 onready var LEVEL_TIME: HBoxContainer = find_node("StatLevelTime")
+#onready var lap_time_still: HBoxContainer = $LapTime/BoxContainer/StatLapTime_Still
 
 # on driver hud
 onready var HEALTH: HBoxContainer = find_node("StatHealth")
@@ -35,7 +37,8 @@ onready var rank_by_points_stats: Array = [WINS, CASH, LEVEL_RANK, GOALS_REACHED
 	]
 onready var rank_by_time_stat: Array = [WINS, CASH, LEVEL_RANK, GOALS_REACHED,
 	LAP_COUNT,
-	LAP_TIME, # tudi BEST LAP in LAP TIME
+	LAP_TIME,
+	BEST_LAP_TIME,
 	]
 onready var invisibles: MarginContainer = $Invisibles
 onready var driver_id: MarginContainer = $DriverId
@@ -53,7 +56,9 @@ func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kli
 	for stat_holder in get_children():
 		stat_holder.hide()
 	driver_id.show()
+	lap_time_still.hide()
 
+	# debug
 	var show_all_available_stats: bool = false
 	if show_all_available_stats:
 		show_all_available_stats()
@@ -61,16 +66,18 @@ func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kli
 
 	if rank_by == Pfs.RANK_BY.TIME:
 		for stat in rank_by_time_stat:
-			stat.get_parent().get_parent().show()
-		BEST_LAP_TIME.hide()
-		LEVEL_TIME.hide()
+			if stat == BEST_LAP_TIME:# or stat == LEVEL_TIME:
+				stat.get_parent().get_parent().hide()
+			else:
+				stat.get_parent().get_parent().show()
+#		LEVEL_TIME.hide()
 	else:
 		for stat in rank_by_points_stats:
 			stat.get_parent().get_parent().show()
 
 	if single_driver_mode:
 		LEVEL_RANK.get_parent().get_parent().hide()
-	GOALS_REACHED.hide()
+	GOALS_REACHED.hide() # temp
 
 
 func show_all_available_stats(): # kliče HUD

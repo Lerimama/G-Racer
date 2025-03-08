@@ -226,19 +226,19 @@ custom_styles/separator = SubResource( 4 )
 
 [node name="RaceStats" type="MarginContainer" parent="."]
 margin_top = 144.0
-margin_right = 700.0
+margin_right = 869.0
 margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="RaceStats"]
 show_behind_parent = true
-margin_right = 700.0
+margin_right = 869.0
 margin_bottom = 64.0
 color = Color( 1, 0.966, 0.88, 0.521569 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="RaceStats"]
-margin_right = 700.0
+margin_right = 869.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -274,17 +274,25 @@ stat_type = 1
 icon_texture = ExtResource( 9 )
 stat_name = "LT"
 
-[node name="StatLevelTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatLapTime_Still" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
 margin_left = 527.0
 margin_right = 680.0
+margin_bottom = 64.0
+stat_type = 1
+icon_texture = ExtResource( 9 )
+stat_name = "LT"
+
+[node name="StatLevelTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
+margin_left = 696.0
+margin_right = 849.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 11 )
 stat_name = "LT"
 
 [node name="MarginB" type="VSeparator" parent="RaceStats/HBoxContainer"]
-margin_left = 696.0
-margin_right = 700.0
+margin_left = 865.0
+margin_right = 869.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 

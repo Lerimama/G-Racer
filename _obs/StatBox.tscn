@@ -1,22 +1,22 @@
 [gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
-[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=2]
-[ext_resource path="res://assets/icons/icon_hud_life_VRSA.tres" type="Texture" id=3]
-[ext_resource path="res://assets/icons/icon_hud_wins_VRSA.tres" type="Texture" id=4]
-[ext_resource path="res://assets/icons/icon_mina_VRSA.tres" type="Texture" id=5]
-[ext_resource path="res://game/gui/hud/StatLine.tscn" type="PackedScene" id=6]
-[ext_resource path="res://game/gui/hud/StatBox.gd" type="Script" id=7]
-[ext_resource path="res://assets/icons/icon_misile_VRSA.tres" type="Texture" id=8]
-[ext_resource path="res://assets/icons/icon_hud_lap_time_VRSA.tres" type="Texture" id=9]
-[ext_resource path="res://assets/design/atlas_home.png" type="Texture" id=10]
-[ext_resource path="res://assets/icons/icon_hud_level_time_VRSA.tres" type="Texture" id=11]
-[ext_resource path="res://assets/icons/icon_hud_best_lap_time_VRSA.tres" type="Texture" id=12]
-[ext_resource path="res://assets/icons/icon_hud_lap_count_VRSA.tres" type="Texture" id=13]
+[ext_resource path="res://assets/design/atlas_home.png" type="Texture" id=2]
+[ext_resource path="res://assets/icons/icon_mina_VRSA.tres" type="Texture" id=3]
+[ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=4]
+[ext_resource path="res://assets/icons/icon_misile_VRSA.tres" type="Texture" id=5]
+[ext_resource path="res://assets/icons/icon_hud_life_VRSA.tres" type="Texture" id=6]
+[ext_resource path="res://assets/icons/icon_hud_best_lap_time_VRSA.tres" type="Texture" id=7]
+[ext_resource path="res://game/gui/hud/StatLine.tscn" type="PackedScene" id=8]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=9]
+[ext_resource path="res://assets/icons/icon_hud_goals_VRSA.tres" type="Texture" id=10]
+[ext_resource path="res://assets/icons/icon_hud_wins_VRSA.tres" type="Texture" id=11]
+[ext_resource path="res://assets/icons/icon_hud_health_VRSA.tres" type="Texture" id=12]
+[ext_resource path="res://game/gui/hud/StatBox.gd" type="Script" id=13]
 [ext_resource path="res://assets/icons/icon_hud_level_rank.tres" type="Texture" id=14]
-[ext_resource path="res://assets/icons/icon_hud_goals_VRSA.tres" type="Texture" id=15]
-[ext_resource path="res://assets/icons/icon_hud_health_VRSA.tres" type="Texture" id=16]
-[ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=17]
+[ext_resource path="res://assets/icons/icon_hud_level_time_VRSA.tres" type="Texture" id=15]
+[ext_resource path="res://assets/icons/icon_hud_lap_time_VRSA.tres" type="Texture" id=16]
+[ext_resource path="res://assets/icons/icon_hud_lap_count_VRSA.tres" type="Texture" id=17]
 
 [sub_resource type="Image" id=7]
 data = {
@@ -33,7 +33,7 @@ flags = 5
 image = SubResource( 7 )
 size = Vector2( 128, 128 )
 script = ExtResource( 1 )
-atlas = ExtResource( 10 )
+atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 128, 128 )
 margin = Rect2( 0, 0, 0, 0 )
 margin_color = Color( 1, 1, 1, 0 )
@@ -49,9 +49,9 @@ margin_right = 1053.0
 margin_bottom = 206.0
 rect_rotation = 0.0838268
 size_flags_vertical = 3
-theme = ExtResource( 2 )
+theme = ExtResource( 9 )
 custom_constants/separation = 8
-script = ExtResource( 7 )
+script = ExtResource( 13 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_horizontal_guides_": [ 48.0, 208.0 ],
@@ -106,7 +106,7 @@ margin_bottom = 80.0
 custom_constants/separation = 0
 custom_styles/separator = SubResource( 6 )
 
-[node name="StatWins" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
+[node name="StatWins" parent="DriverId/DriverLine" instance=ExtResource( 8 )]
 margin_left = 331.0
 margin_top = 6.0
 margin_right = 484.0
@@ -115,26 +115,26 @@ rect_min_size = Vector2( 0, 52 )
 size_flags_horizontal = 8
 size_flags_vertical = 4
 stat_type = 2
-icon_texture = ExtResource( 4 )
+icon_texture = ExtResource( 11 )
 stat_name = "W"
 
-[node name="StatLife" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
+[node name="StatLife" parent="DriverId/DriverLine" instance=ExtResource( 8 )]
 margin_left = 504.0
 margin_right = 657.0
 margin_bottom = 64.0
 stat_type = 2
-icon_texture = ExtResource( 3 )
+icon_texture = ExtResource( 6 )
 stat_name = "L"
 
-[node name="StatHealth" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
+[node name="StatHealth" parent="DriverId/DriverLine" instance=ExtResource( 8 )]
 margin_left = 677.0
 margin_right = 830.0
 margin_bottom = 64.0
 stat_type = 2
-icon_texture = ExtResource( 16 )
+icon_texture = ExtResource( 12 )
 stat_name = "E"
 
-[node name="StatLevelRank" parent="DriverId/DriverLine" instance=ExtResource( 6 )]
+[node name="StatLevelRank" parent="DriverId/DriverLine" instance=ExtResource( 8 )]
 margin_left = 850.0
 margin_right = 1003.0
 margin_bottom = 64.0
@@ -174,19 +174,19 @@ margin_right = 4.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 
-[node name="StatCash" parent="DriverStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatCash" parent="DriverStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 20.0
 margin_right = 173.0
 margin_bottom = 64.0
 stat_name = "$"
 
-[node name="StatPoints" parent="DriverStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatPoints" parent="DriverStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 189.0
 margin_right = 342.0
 margin_bottom = 64.0
 stat_name = "P"
 
-[node name="StatGas" parent="DriverStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatGas" parent="DriverStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 358.0
 margin_right = 496.0
 margin_bottom = 64.0
@@ -248,35 +248,35 @@ margin_right = 4.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 
-[node name="StatLapCount" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatLapCount" parent="RaceStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 20.0
 margin_right = 173.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 13 )
+icon_texture = ExtResource( 17 )
 stat_name = "L"
 
-[node name="StatBestLap" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatBestLap" parent="RaceStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 189.0
 margin_right = 342.0
 margin_bottom = 64.0
 stat_type = 1
-icon_texture = ExtResource( 12 )
+icon_texture = ExtResource( 7 )
 stat_name = "BL"
 
-[node name="StatLapTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatLapTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 358.0
 margin_right = 511.0
 margin_bottom = 64.0
 stat_type = 1
-icon_texture = ExtResource( 9 )
+icon_texture = ExtResource( 16 )
 stat_name = "LT"
 
-[node name="StatLevelTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatLevelTime" parent="RaceStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 527.0
 margin_right = 680.0
 margin_bottom = 64.0
 stat_type = 1
-icon_texture = ExtResource( 11 )
+icon_texture = ExtResource( 15 )
 stat_name = "LT"
 
 [node name="MarginB" type="VSeparator" parent="RaceStats/HBoxContainer"]
@@ -312,39 +312,39 @@ margin_right = 4.0
 margin_bottom = 64.0
 custom_styles/separator = SubResource( 4 )
 
-[node name="GoalReached" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="GoalReached" parent="BattleStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 20.0
 margin_right = 173.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 15 )
+icon_texture = ExtResource( 10 )
 stat_name = "G"
 
-[node name="StatSmallBullet" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatSmallBullet" parent="BattleStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 189.0
 margin_right = 342.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 17 )
+icon_texture = ExtResource( 4 )
 stat_name = "B"
 
-[node name="StatBullet" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatBullet" parent="BattleStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 358.0
 margin_right = 511.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 17 )
+icon_texture = ExtResource( 4 )
 stat_name = "B"
 
-[node name="StatMisile" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatMisile" parent="BattleStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 527.0
 margin_right = 680.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 8 )
+icon_texture = ExtResource( 5 )
 stat_name = "M"
 
-[node name="StatMina" parent="BattleStats/HBoxContainer" instance=ExtResource( 6 )]
+[node name="StatMina" parent="BattleStats/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 696.0
 margin_right = 849.0
 margin_bottom = 64.0
-icon_texture = ExtResource( 5 )
+icon_texture = ExtResource( 3 )
 stat_name = "M"
 
 [node name="MarginB" type="VSeparator" parent="BattleStats/HBoxContainer"]

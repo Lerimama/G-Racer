@@ -1528,7 +1528,6 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
-level_goals_paths = [ NodePath("PickableBullet2") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0
@@ -1562,7 +1561,7 @@ curve = SubResource( 94 )
 
 [node name="Tracker" parent="Tracking/LevelTrack" index="0"]
 position = Vector2( -10, 387 )
-rotation = -1.57057
+rotation = -1.48372
 
 [node name="LevelFinish" parent="Tracking" index="3"]
 position = Vector2( 322, -3534 )

@@ -219,19 +219,19 @@ margin_bottom = 64.0
 
 [node name="LapTime" type="MarginContainer" parent="."]
 margin_top = 216.0
-margin_right = 354.0
+margin_right = 523.0
 margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="LapTime"]
 show_behind_parent = true
-margin_right = 354.0
+margin_right = 523.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="LapTime"]
-margin_right = 354.0
+margin_right = 523.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -252,9 +252,17 @@ stat_type = 1
 icon_texture = ExtResource( 7 )
 stat_name = "LT"
 
-[node name="StatBestLap" parent="LapTime/BoxContainer" instance=ExtResource( 16 )]
+[node name="StatLapTime_Still" parent="LapTime/BoxContainer" instance=ExtResource( 16 )]
 margin_left = 185.0
 margin_right = 338.0
+margin_bottom = 64.0
+stat_type = 1
+icon_texture = ExtResource( 7 )
+stat_name = "LT"
+
+[node name="StatBestLap" parent="LapTime/BoxContainer" instance=ExtResource( 16 )]
+margin_left = 354.0
+margin_right = 507.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 15 )
@@ -262,8 +270,8 @@ stat_name = "BL"
 
 [node name="VSeparator_2" type="VSeparator" parent="LapTime/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 354.0
-margin_right = 354.0
+margin_left = 523.0
+margin_right = 523.0
 margin_bottom = 64.0
 custom_constants/separation = 0
 

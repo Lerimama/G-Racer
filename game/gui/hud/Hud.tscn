@@ -4,7 +4,7 @@
 [ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/gui/hud/Hud.gd" type="Script" id=3]
 [ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=4]
-[ext_resource path="res://game/gui/hud/StatBox.tscn" type="PackedScene" id=5]
+[ext_resource path="res://_obs/StatBox.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/gui/hud/GameTimer.tscn" type="PackedScene" id=8]
 [ext_resource path="res://game/gui/hud/StartCountdown.tscn" type="PackedScene" id=9]
 

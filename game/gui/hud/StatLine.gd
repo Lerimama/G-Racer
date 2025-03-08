@@ -29,7 +29,6 @@ onready var blink_timer: Timer = $BlinkTimer
 onready var count_icons_holder: HBoxContainer = $CountIcons
 
 
-
 func _ready() -> void:
 
 	# debug reset count icon
@@ -42,7 +41,6 @@ func _ready() -> void:
 	stat_name_label.text = "%s " % stat_name
 
 	# digit count
-#	var digits_size_string: String = "%" + "d"
 	if count_digits_size > 0:
 		digits_size_string = "%0" + str(count_digits_size) + "d"
 
