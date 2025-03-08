@@ -116,16 +116,17 @@ size_flags_vertical = 3
 
 [node name="GameTimer" parent="HudSections/Center/Top" instance=ExtResource( 8 )]
 margin_left = 253.0
-margin_right = 587.0
-margin_bottom = 77.0
+margin_right = 586.0
+margin_bottom = 0.0
 rect_min_size = Vector2( 0, 0 )
 size_flags_horizontal = 6
 
-[node name="BestLap" type="Label" parent="HudSections/Center/Top"]
+[node name="LevelRecord" type="Label" parent="HudSections/Center/Top"]
+visible = false
 margin_left = 141.0
-margin_top = 81.0
+margin_top = 4.0
 margin_right = 698.0
-margin_bottom = 129.0
+margin_bottom = 52.0
 grow_horizontal = 2
 size_flags_horizontal = 6
 text = "Best lap: 00:00.0 by JOU"

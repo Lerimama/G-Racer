@@ -404,15 +404,16 @@ func update_stat(stat_key: int, stat_value):
 			driver_stats[stat_key].append(stat_value)
 			#			driver_stats[stat_key] += stat_value
 		# level
-		Pfs.STATS.LEVEL_RANK: # na konča
+		Pfs.STATS.LEVEL_RANK:
 			driver_stats[stat_key] = stat_value
-		Pfs.STATS.LEVEL_TIME:
-			prev_lap_level_time = stat_value
+		Pfs.STATS.LEVEL_TIME: # na finished
 			driver_stats[stat_key] = stat_value
-			var lap_time: float = stat_value
+		Pfs.STATS.LAP_COUNT:
 			driver_stats[stat_key].append(stat_value)
+			prev_lap_level_time = stat_value
 			# best lap
 			var curr_best_lap_time: float = driver_stats[Pfs.STATS.BEST_LAP_TIME]
+			var lap_time: float = stat_value
 			if not lap_time == 0:
 				if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
 					driver_stats[Pfs.STATS.BEST_LAP_TIME] = lap_time
@@ -421,9 +422,10 @@ func update_stat(stat_key: int, stat_value):
 					emit_signal("stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time)
 
 		Pfs.STATS.LAP_TIME: # vsak frejm
+			printt("LAP time", prev_lap_level_time, stat_value)
 			var curr_game_time: float = stat_value
 			var lap_time: float = curr_game_time - prev_lap_level_time
-			driver_stats[stat_key] = stat_value
+			driver_stats[stat_key] = lap_time
 
 		_: # default
 			driver_stats[stat_key] += stat_value

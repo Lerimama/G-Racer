@@ -39,7 +39,7 @@ func get_hunds_from_clock(clock_string: String):
 	return (mins * 60 * 100) + (secs * 100) + hunds
 
 
-func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
+func get_clock_time_string(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 
 	# če so podane stotinke, pretvorim v sekunde z decimalko
 	var seconds_to_split: float = hundreds_to_split / 100.0
@@ -61,20 +61,19 @@ func get_clock_time(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 	return time_on_clock
 
 
-func write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotinke ali ne cele sekunde
+func get_clock_time_array(hundreds_to_split: int): # cele stotinke ali ne cele sekunde
 
-	var seconds: float = hundreds / 100.0
+	var seconds: float = hundreds_to_split / 100.0
 	var rounded_minutes: int = floor(seconds / 60) # vse cele sekunde delim s 60
 	var rounded_seconds_leftover: int = floor(seconds) - rounded_minutes * 60 # vse sekunde minus sekunde v celih minutah
 	var rounded_hundreds_leftover: int = round((seconds - floor(seconds)) * 100) # decimalke množim x 100 in zaokrožim na celo
+
 	# če je točno 100 stotink doda 1 sekundo da stotinke na 0
 	if rounded_hundreds_leftover == 100:
 		rounded_seconds_leftover += 1
 		rounded_hundreds_leftover = 0
 
-	time_label.get_node("Mins").text = "%02d" % rounded_minutes
-	time_label.get_node("Secs").text = "%02d" % rounded_seconds_leftover
-	time_label.get_node("Hunds").text = "%02d" % rounded_hundreds_leftover
+	return [rounded_minutes, rounded_seconds_leftover, rounded_hundreds_leftover]
 
 
 func generate_random_string(random_string_length: int):
@@ -99,7 +98,7 @@ func get_all_named_collision_layers(in_range: int = 21):
 		var layer_name = ProjectSettings.get_setting("layer_names/2d_physics/layer_" + str(i))
 		if layer_name:
 			layer_names_by_index[i] = layer_name
-#			print("Layer " + str(i) + ": " + layer_name)
+		#			print("Layer " + str(i) + ": " + layer_name)
 
 	return layer_names_by_index
 
@@ -177,7 +176,6 @@ func get_rotating_raycast_collision(raycast_node: RayCast2D, ray_direction: Vect
 		return raycast_node.get_collider()
 
 
-
 func check_front_back(checker_node: Node2D, position_to_check: Vector2):
 
 	var checker_vector_rotated: Vector2 = Vector2.RIGHT.rotated(checker_node.global_rotation)
@@ -222,6 +220,7 @@ var all_indikators_spawned: Array = []
 var all_indikator_lines_spawned: Array = []
 onready var indikator: PackedScene = preload("res://common/debug/DebugIndikator.tscn")
 
+
 func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false, scale_by: float = 10):
 
 	if clear_spawned_before:
@@ -241,7 +240,6 @@ func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, paren
 #	all_indikators_spawned.append(new_indikator)
 
 	return new_indikator
-
 
 
 func spawn_indikator_line(first_point: Vector2, second_point: Vector2, col: Color = Color.blue, parent_node = get_tree().root, clear_spawned_before: bool = false):

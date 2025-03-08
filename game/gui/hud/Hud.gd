@@ -1,10 +1,11 @@
 extends Control
 
 
-enum STATBOX_TYPE{BOX, VER, VER_STRICT, VER_MINIMAL, HOR, HOR_MINIMAL, HOR_WIDE, BOX_MINIMAL, MINIMAL}
+enum STATBOX_TYPE{BOX, BOX_MINIMAL, VER, VER_STRICT, VER_MINIMAL, HOR, MINIMAL}
 
 var level_lap_count: int
 var level_goals: Array = []
+var level_record: Array # [value, owner]
 var max_wins_count: int
 var time_still_time: float = 1.5
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
@@ -16,17 +17,21 @@ onready var center_top: VBoxContainer = $HudSections/Center/Top
 onready var center_btm: VBoxContainer = $HudSections/Center/Btm
 
 onready var game_timer: HBoxContainer = $HudSections/Center/Top/GameTimer
-onready var best_lap_label: Label = $HudSections/Center/Top/BestLap
+onready var level_record_label: Label = $HudSections/Center/Top/LevelRecord
 onready var level_name: Label = $HudSections/Center/Btm/LevelName
 
 onready var start_countdown: Control = $Popups/StartCountdown
 onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
 
+onready var StatBox_Boxed: PackedScene = preload("res://game/gui/hud/StatBox_Boxed.tscn")
+onready var StatBox_Boxed_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Boxed_Minimal.tscn")
+onready var StatBox_Hor: PackedScene = preload("res://game/gui/hud/StatBox_Hor.tscn")
+onready var StatBox_Ver: PackedScene = preload("res://game/gui/hud/StatBox_Ver.tscn")
 onready var StatBox_Ver_Strict: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Strict.tscn")
 onready var StatBox_Ver_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Minimal.tscn")
-onready var StatBox_Ver: PackedScene = preload("res://game/gui/hud/StatBox_Ver.tscn")
-onready var StatBox_Hor: PackedScene = preload("res://game/gui/hud/StatBox_Hor.tscn")
-onready var StatBox_Boxed: PackedScene = preload("res://game/gui/hud/StatBox_Boxed.tscn")
+onready var StatBox_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Minimal.tscn")
+
+var game_manager: Game
 
 
 func _ready() -> void:
@@ -37,8 +42,9 @@ func _ready() -> void:
 			child.queue_free()
 
 
-func set_hud(game_manager):
+func set_hud(new_game_manager: Game):
 
+	game_manager = new_game_manager
 	level_lap_count = game_manager.level_profile["level_laps"]
 	level_goals = game_manager.level_profile["level_goals"]
 	max_wins_count = game_manager.curr_game_settings["max_wins_count"]
@@ -54,7 +60,7 @@ func set_hud(game_manager):
 	game_timer.stop_timer()
 	game_timer.reset_timer(level_time_limit)
 	game_timer.show()
-	best_lap_label.hide()
+	level_record_label.hide()
 	for section in sections_holder.get_children():
 		section.show()
 
@@ -70,6 +76,13 @@ func set_hud(game_manager):
 			viewed_drivers.append(driver)
 	for viewed_driver in viewed_drivers:
 		set_driver_statbox(viewed_driver, viewed_drivers.find(viewed_driver), viewed_drivers.size(), game_manager.level_profile["rank_by"])
+
+	# level rekord
+	level_record = game_manager.level_profile["level_record"]
+	if not level_record[0] == 0:
+		var level_record_clock_time: String = Mts.get_clock_time_string(level_record[0])
+		level_record_label.text = "LEVEL RECORD " + level_record_clock_time + " by " + str(level_record[1])
+		level_record_label.show()
 
 
 func on_game_start():
@@ -134,17 +147,17 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 	elif Sts.one_screen_mode:
 		if all_statboxes_count <= 4:
 			statbox_type = STATBOX_TYPE.BOX
-		if all_statboxes_count <= 10:
+		elif all_statboxes_count <= 10:
 			statbox_type = STATBOX_TYPE.BOX_MINIMAL
 		else:
-			statbox_type = STATBOX_TYPE.HOR_MINIMAL
+			statbox_type = STATBOX_TYPE.MINIMAL
 	else:
 		if all_statboxes_count <= 2:
-			statbox_type = STATBOX_TYPE.VER
+			statbox_type = STATBOX_TYPE.VER_STRICT
 		elif all_statboxes_count == 3:
 			if statbox_index == 1: # desni view je večji
-#				statbox_type = STATBOX_TYPE.BOX
-				statbox_type = STATBOX_TYPE.VER
+				statbox_type = STATBOX_TYPE.BOX
+#				statbox_type = STATBOX_TYPE.VER_STRICT
 			else:
 				statbox_type = STATBOX_TYPE.VER_MINIMAL
 		elif all_statboxes_count == 4:
@@ -154,22 +167,17 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 		STATBOX_TYPE.BOX:
 			return StatBox_Boxed
 		STATBOX_TYPE.BOX_MINIMAL:
-			return StatBox_Boxed
-			print ("missing statbox type > BOX_MINIMAL")
+			return StatBox_Boxed_Minimal
 		STATBOX_TYPE.VER:
 			return StatBox_Ver
-		STATBOX_TYPE.VER_MINIMAL:
-			return StatBox_Ver_Minimal
 		STATBOX_TYPE.VER_STRICT:
+			return StatBox_Ver_Strict
+		STATBOX_TYPE.VER_MINIMAL:
 			return StatBox_Ver_Minimal
 		STATBOX_TYPE.HOR:
 			return StatBox_Hor
-		STATBOX_TYPE.HOR_MINIMAL:
-			print ("missing statbox type > HOR_MINIMAL")
-			return StatBox_Hor
-		STATBOX_TYPE.HOR_WIDE:
-			print ("missing statbox type > HOR_WIDE")
-			return StatBox_Hor
+		STATBOX_TYPE.MINIMAL:
+			return StatBox_Minimal
 
 
 func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
@@ -218,18 +226,17 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
 			#			stat_to_change.stat_value = [stat_value.size(), Sts.wins_goal_count]
 			stat_to_change.stat_value = stat_value.size()
+
 		# level
-		Pfs.STATS.LEVEL_RANK: # na konča
+		Pfs.STATS.LEVEL_RANK:
 			stat_to_change.stat_value = stat_value
 		Pfs.STATS.LEVEL_TIME:
 			stat_to_change.stat_value = stat_value
-
-		Pfs.STATS.LAP_COUNT: # tudi če ni krogov ... takrat gre čez linijo in reagira na to dejstvo
-			# lap count
+		Pfs.STATS.LAP_COUNT: # vsakič, ko gre čez finish
 			stat_to_change.stat_value = [stat_value.size(), level_lap_count]
 			# stoječi prikaz časa kroga
 			var time_stat: Control = statbox_to_change.get("LAP_TIME")
-			if time_stat.stat_value > 0:
+			if not time_stat.stat_value == 0:
 				var time_still_stat: Control = statbox_to_change.get("lap_time_still")
 				time_still_stat.stat_value = time_stat.stat_value
 				time_still_stat.modulate = Rfs.color_red # zeleno ga obarva BEST LAP event
@@ -238,21 +245,26 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				yield(get_tree().create_timer(time_still_time), "timeout")
 				time_still_stat.hide()
 				time_stat.show()
-
 		Pfs.STATS.BEST_LAP_TIME:
-			if stat_value > 0:
-				stat_to_change.stat_value = stat_value
-				# pokaže, če je še skrit
+			if not stat_value == 0:
+				# statičen čas zapišem kot string
+				var stat_to_change_clock_time: String = Mts.get_clock_time_string(stat_value)
+				stat_to_change.stat_value = stat_to_change_clock_time
 				stat_to_change.get_parent().get_parent().show()
 				# obarvam stoječi prikaz časa kroga
 				statbox_to_change.get("lap_time_still").modulate = Rfs.color_green
-
+				# je tudi rekord levela?
+				if stat_value < level_record[0] and not level_record[0] == 0:
+					var new_level_record: Array = [stat_value, driver_id]
+					var level_record_clock_time: String = Mts.get_clock_time_string(new_level_record[0])
+					game_manager.level_profile["level_record"] = new_level_record
+					level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(new_level_record[1])
+					level_record_label.show()
+					level_record_label.modulate = Rfs.color_green
+					yield(get_tree().create_timer(time_still_time), "timeout")
+					level_record_label.modulate = Color.white
 		Pfs.STATS.LAP_TIME: # vsak frejm
 			stat_to_change.stat_value = stat_value
-
-
-
-
 		_:
 			stat_to_change.stat_value = stat_value
 

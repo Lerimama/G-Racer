@@ -48,9 +48,8 @@ margin_bottom = 52.0
 text = "0000"
 
 [node name="TimeLabel" type="HBoxContainer" parent="."]
-visible = false
 margin_left = 153.0
-margin_right = 372.0
+margin_right = 346.0
 margin_bottom = 57.0
 grow_horizontal = 2
 size_flags_horizontal = 0
@@ -102,10 +101,10 @@ text = "00"
 
 [node name="Hunds" type="Control" parent="TimeLabel"]
 margin_left = 141.0
-margin_right = 219.0
+margin_right = 193.0
 margin_bottom = 57.0
 grow_horizontal = 2
-rect_min_size = Vector2( 78, 0 )
+rect_min_size = Vector2( 52, 0 )
 size_flags_horizontal = 0
 size_flags_vertical = 5
 __meta__ = {
@@ -130,6 +129,7 @@ margin_bottom = 56.0
 grow_horizontal = 0
 rect_min_size = Vector2( 58, 48 )
 text = "00"
+percent_visible = 0.5
 
 [node name="CountIcons" type="HBoxContainer" parent="."]
 visible = false

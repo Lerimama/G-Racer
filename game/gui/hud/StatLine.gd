@@ -111,11 +111,7 @@ func _on_stat_change(new_stat_value):
 
 		match stat_type:
 			STAT_TYPE.COUNT:
-
-#				stat_count_label.text = "%02d" % new_stat_value
 				stat_count_label.text = digits_size_string % new_stat_value
-#				stat_count_label.text = "%d" % new_stat_value
-
 			STAT_TYPE.TIME_HUND, STAT_TYPE.TIME_SEC:
 				_write_clock_time(new_stat_value, stat_time_label)
 			STAT_TYPE.ICONS: # recimo healthbar

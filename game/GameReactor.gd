@@ -153,6 +153,8 @@ func apply_stats_to_unfinished_drivers(unfinished_driver_ids: Array):
 				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
 			game.finale_game_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 
+	game.finale_game_data["level_data"] = game.level_profile
+
 
 # SIGNALI ------------------------------------------------------------------------------------------------------
 
@@ -199,10 +201,12 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
 				# all goals reached and finished
 				else:
+
 					Rfs.sound_manager.play_sfx("finish_horn")
 					reaching_driver.driver.on_goal_reached(reached_goal)
 					drivers_finished.append(reaching_driver)
 					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+					reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 				reaching_driver.driver.on_goal_reached(reached_goal)
@@ -239,31 +243,19 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
 		if all_goals_reached:
 		#		if game_level.level_goals.empty() or crossing_driver.driver_stats[Pfs.STATS.GOALS_REACHED] == game_level.level_goals:
-
-			# stat level time ... ostale čase preračuna driver v update stats
-			crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
-
 			var has_finished_level: bool = false
+			# če ni krogov je lap count da stat ve za prehod cilja
+			crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds)
 
-#			# WITH LAPS ... lap finished če so vsi čekpointi
-#			if game.level_profile["level_laps"] > 1:
-#				crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds) # ... ostale lap statse preračuna driver v update stats
-#				if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
-#					has_finished_level = true
-#			else:
-#				has_finished_level = true
-
-			# če ni krogov javi lap count za registriranje prehoda cilja
-			crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds) # ... ostale lap statse preračuna driver v update stats
 			if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 				has_finished_level = true
-
 			if has_finished_level:
 				Rfs.sound_manager.play_sfx("finish_horn")
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.level_finish:	drive_out_position = game_level.level_finish.drive_out_position_node.global_position
 				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
+				crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 
@@ -292,10 +284,6 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	else:
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
 
-#	game.finale_game_data[driver_vehicle.driver_id] = { # more bit id, da ni odvisen od obstoja vehicle noda
-##		"driver_profile": driver_vehicle.driver_profile,
-#		"driver_stats": driver_vehicle.driver_stats,
-#		}
 	game.finale_game_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 
 

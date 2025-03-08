@@ -19,9 +19,9 @@ var sudden_death_mode: bool # dela samo, če ni stopwatch mode
 
 var game_time_limit: float # določi na reset
 var countdown_start_limit: int
-onready var mins_label: Label = $Mins
-onready var secs_label: Label = $Secs
-onready var hunds_label: Label = $Hunds
+onready var mins_label: Label = $MinSec/Mins
+onready var secs_label: Label = $MinSec/Secs
+onready var hunds_label: Label = $Hunds/Hunds
 
 
 func _ready() -> void:
@@ -87,12 +87,10 @@ func reset_timer(timer_limit: float = game_time_limit):
 		timer_mode = TIMER_MODE.COUNT_UP
 	else:
 		timer_mode = TIMER_MODE.COUNT_DOWN
-	if not hunds_mode:
-		get_node("Dots2").hide()
-		hunds_label.hide()
+	if hunds_mode:
+		hunds_label.get_parent().show()
 	else:
-		get_node("Dots2").show()
-		hunds_label.show()
+		hunds_label.get_parent().hide()
 
 	# reset
 	modulate = Rfs.color_hud_base

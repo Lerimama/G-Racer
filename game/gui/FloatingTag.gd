@@ -11,7 +11,6 @@ var ver_offset: float = 0
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var label: Label = $Tag/Label
-onready var time_label: HBoxContainer = $Tag/TimeLabel
 
 
 func _ready() -> void:
@@ -23,14 +22,13 @@ func _ready() -> void:
 	match tag_type:
 		TAG_TYPE.TEXT:
 			label.show()
-			time_label.hide()
 			label.text = content_to_show
 		TAG_TYPE.TIME:
-			label.hide()
-			time_label.show()
+			label.show()
 			var time_to_write: float = content_to_show
-			Mts.write_clock_time(time_to_write, time_label)
-		TAG_TYPE.ICON: pass
+			label.text = Mts.get_clock_time_string(time_to_write)
+		TAG_TYPE.ICON:
+			label.show()
 
 
 func _physics_process(delta: float) -> void:

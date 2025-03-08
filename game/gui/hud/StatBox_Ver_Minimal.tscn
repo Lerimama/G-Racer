@@ -103,51 +103,10 @@ margin_right = 166.0
 margin_bottom = 64.0
 custom_constants/separation = -4
 
-[node name="Wins" type="MarginContainer" parent="."]
+[node name="Life" type="MarginContainer" parent="."]
 margin_top = 72.0
 margin_right = 189.0
 margin_bottom = 136.0
-rect_min_size = Vector2( 0, 64 )
-size_flags_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="Wins"]
-show_behind_parent = true
-margin_right = 189.0
-margin_bottom = 64.0
-color = Color( 0, 0, 0, 0.235294 )
-
-[node name="BoxContainer" type="HBoxContainer" parent="Wins"]
-margin_right = 189.0
-margin_bottom = 64.0
-size_flags_horizontal = 0
-custom_constants/separation = 16
-
-[node name="VSeparator" type="VSeparator" parent="Wins/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="StatWins" parent="Wins/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 16.0
-margin_top = 6.0
-margin_right = 169.0
-margin_bottom = 58.0
-rect_min_size = Vector2( 0, 52 )
-size_flags_horizontal = 8
-size_flags_vertical = 4
-icon_texture = ExtResource( 11 )
-stat_name = "W"
-
-[node name="VSeparator_2" type="VSeparator" parent="Wins/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
-margin_bottom = 64.0
-
-[node name="Life" type="MarginContainer" parent="."]
-margin_top = 144.0
-margin_right = 189.0
-margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -172,10 +131,8 @@ custom_constants/separation = 0
 margin_left = 16.0
 margin_right = 169.0
 margin_bottom = 64.0
-stat_type = 3
 icon_texture = ExtResource( 5 )
 stat_name = "L"
-name_as_icon = false
 
 [node name="VSeparator_2" type="VSeparator" parent="Life/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
@@ -183,48 +140,10 @@ margin_left = 185.0
 margin_right = 189.0
 margin_bottom = 64.0
 
-[node name="Cash" type="MarginContainer" parent="."]
-margin_top = 216.0
-margin_right = 189.0
-margin_bottom = 280.0
-rect_min_size = Vector2( 0, 64 )
-size_flags_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="Cash"]
-show_behind_parent = true
-margin_right = 189.0
-margin_bottom = 64.0
-color = Color( 0, 0, 0, 0.235294 )
-
-[node name="BoxContainer" type="HBoxContainer" parent="Cash"]
-margin_right = 189.0
-margin_bottom = 64.0
-custom_constants/separation = 16
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="VSeparator" type="VSeparator" parent="Cash/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="StatCash" parent="Cash/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 16.0
-margin_right = 169.0
-margin_bottom = 64.0
-stat_name = "$"
-
-[node name="VSeparator_2" type="VSeparator" parent="Cash/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
-margin_bottom = 64.0
-
 [node name="Points" type="MarginContainer" parent="."]
-margin_top = 288.0
+margin_top = 144.0
 margin_right = 185.0
-margin_bottom = 352.0
+margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -261,9 +180,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="Rank" type="MarginContainer" parent="."]
-margin_top = 360.0
+margin_top = 216.0
 margin_right = 189.0
-margin_bottom = 424.0
+margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -297,58 +216,10 @@ margin_left = 185.0
 margin_right = 189.0
 margin_bottom = 64.0
 
-[node name="LapGoalCount" type="MarginContainer" parent="."]
-margin_top = 432.0
-margin_right = 354.0
-margin_bottom = 496.0
-rect_min_size = Vector2( 0, 64 )
-size_flags_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="LapGoalCount"]
-show_behind_parent = true
-margin_right = 354.0
-margin_bottom = 64.0
-color = Color( 0, 0, 0, 0.235294 )
-
-[node name="BoxContainer" type="HBoxContainer" parent="LapGoalCount"]
-margin_right = 354.0
-margin_bottom = 64.0
-size_flags_vertical = 5
-custom_constants/separation = 16
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="VSeparator" type="VSeparator" parent="LapGoalCount/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_bottom = 64.0
-custom_constants/separation = 0
-
-[node name="StatLapCount" parent="LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 16.0
-margin_right = 169.0
-margin_bottom = 64.0
-icon_texture = ExtResource( 14 )
-stat_name = "L"
-
-[node name="GoalReached" parent="LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 185.0
-margin_right = 338.0
-margin_bottom = 64.0
-icon_texture = ExtResource( 15 )
-stat_name = "G"
-
-[node name="VSeparator_2" type="VSeparator" parent="LapGoalCount/BoxContainer"]
-modulate = Color( 1, 1, 1, 0 )
-margin_left = 354.0
-margin_right = 354.0
-margin_bottom = 64.0
-custom_constants/separation = 0
-
 [node name="LapTime" type="MarginContainer" parent="."]
-margin_top = 504.0
+margin_top = 288.0
 margin_right = 354.0
-margin_bottom = 568.0
+margin_bottom = 352.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -398,9 +269,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="BestLapTime" type="MarginContainer" parent="."]
-margin_top = 576.0
+margin_top = 360.0
 margin_right = 185.0
-margin_bottom = 640.0
+margin_bottom = 424.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -536,5 +407,138 @@ text = "LLLL"
 margin_left = 148.0
 margin_right = 148.0
 margin_bottom = 56.0
+
+[node name="VSeparator_3" type="VSeparator" parent="Invisibles/BoxContainer"]
+margin_top = 307.0
+margin_right = 179.0
+margin_bottom = 310.0
+custom_constants/separation = 0
+
+[node name="Wins" type="MarginContainer" parent="Invisibles/BoxContainer"]
+margin_top = -390.0
+margin_right = 189.0
+margin_bottom = -326.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="Invisibles/BoxContainer/Wins"]
+show_behind_parent = true
+margin_right = 189.0
+margin_bottom = 64.0
+color = Color( 0, 0, 0, 0.235294 )
+
+[node name="BoxContainer" type="HBoxContainer" parent="Invisibles/BoxContainer/Wins"]
+margin_right = 189.0
+margin_bottom = 64.0
+size_flags_horizontal = 0
+custom_constants/separation = 16
+
+[node name="VSeparator" type="VSeparator" parent="Invisibles/BoxContainer/Wins/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_bottom = 64.0
+custom_constants/separation = 0
+
+[node name="StatWins" parent="Invisibles/BoxContainer/Wins/BoxContainer" instance=ExtResource( 6 )]
+margin_left = 16.0
+margin_top = 6.0
+margin_right = 169.0
+margin_bottom = 58.0
+rect_min_size = Vector2( 0, 52 )
+size_flags_horizontal = 8
+size_flags_vertical = 4
+icon_texture = ExtResource( 11 )
+stat_name = "W"
+
+[node name="VSeparator_2" type="VSeparator" parent="Invisibles/BoxContainer/Wins/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 185.0
+margin_right = 189.0
+margin_bottom = 64.0
+
+[node name="Cash" type="MarginContainer" parent="Invisibles/BoxContainer"]
+margin_top = -246.0
+margin_right = 189.0
+margin_bottom = -182.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="Invisibles/BoxContainer/Cash"]
+show_behind_parent = true
+margin_right = 189.0
+margin_bottom = 64.0
+color = Color( 0, 0, 0, 0.235294 )
+
+[node name="BoxContainer" type="HBoxContainer" parent="Invisibles/BoxContainer/Cash"]
+margin_right = 189.0
+margin_bottom = 64.0
+custom_constants/separation = 16
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="VSeparator" type="VSeparator" parent="Invisibles/BoxContainer/Cash/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_bottom = 64.0
+custom_constants/separation = 0
+
+[node name="StatCash" parent="Invisibles/BoxContainer/Cash/BoxContainer" instance=ExtResource( 6 )]
+margin_left = 16.0
+margin_right = 169.0
+margin_bottom = 64.0
+stat_name = "$"
+
+[node name="VSeparator_2" type="VSeparator" parent="Invisibles/BoxContainer/Cash/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 185.0
+margin_right = 189.0
+margin_bottom = 64.0
+
+[node name="LapGoalCount" type="MarginContainer" parent="Invisibles/BoxContainer"]
+margin_top = -174.0
+margin_right = 354.0
+margin_bottom = -110.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="Invisibles/BoxContainer/LapGoalCount"]
+show_behind_parent = true
+margin_right = 354.0
+margin_bottom = 64.0
+color = Color( 0, 0, 0, 0.235294 )
+
+[node name="BoxContainer" type="HBoxContainer" parent="Invisibles/BoxContainer/LapGoalCount"]
+margin_right = 354.0
+margin_bottom = 64.0
+size_flags_vertical = 5
+custom_constants/separation = 16
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="VSeparator" type="VSeparator" parent="Invisibles/BoxContainer/LapGoalCount/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_bottom = 64.0
+custom_constants/separation = 0
+
+[node name="StatLapCount" parent="Invisibles/BoxContainer/LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
+margin_left = 16.0
+margin_right = 169.0
+margin_bottom = 64.0
+icon_texture = ExtResource( 14 )
+stat_name = "L"
+
+[node name="GoalReached" parent="Invisibles/BoxContainer/LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
+margin_left = 185.0
+margin_right = 338.0
+margin_bottom = 64.0
+icon_texture = ExtResource( 15 )
+stat_name = "G"
+
+[node name="VSeparator_2" type="VSeparator" parent="Invisibles/BoxContainer/LapGoalCount/BoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 354.0
+margin_right = 354.0
+margin_bottom = 64.0
+custom_constants/separation = 0
 
 [editable path="Invisibles/BoxContainer/StatGas"]

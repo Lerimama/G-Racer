@@ -107,19 +107,19 @@ custom_constants/separation = -4
 
 [node name="Wins" type="MarginContainer" parent="."]
 margin_top = 72.0
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 136.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Wins"]
 show_behind_parent = true
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="Wins"]
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 size_flags_horizontal = 0
 custom_constants/separation = 16
@@ -132,7 +132,7 @@ custom_constants/separation = 0
 [node name="StatWins" parent="Wins/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
 margin_top = 6.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 58.0
 rect_min_size = Vector2( 0, 52 )
 size_flags_horizontal = 8
@@ -142,25 +142,25 @@ stat_name = "W"
 
 [node name="VSeparator_2" type="VSeparator" parent="Wins/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
+margin_left = 378.0
+margin_right = 382.0
 margin_bottom = 64.0
 
 [node name="Life" type="MarginContainer" parent="."]
 margin_top = 144.0
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 208.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Life"]
 show_behind_parent = true
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="Life"]
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 size_flags_horizontal = 0
 custom_constants/separation = 16
@@ -172,34 +172,32 @@ custom_constants/separation = 0
 
 [node name="StatLife" parent="Life/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
-stat_type = 3
 icon_texture = ExtResource( 5 )
 stat_name = "L"
-name_as_icon = false
 
 [node name="VSeparator_2" type="VSeparator" parent="Life/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
+margin_left = 378.0
+margin_right = 382.0
 margin_bottom = 64.0
 
 [node name="Cash" type="MarginContainer" parent="."]
 margin_top = 216.0
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 280.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Cash"]
 show_behind_parent = true
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="Cash"]
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 custom_constants/separation = 16
 __meta__ = {
@@ -213,31 +211,31 @@ custom_constants/separation = 0
 
 [node name="StatCash" parent="Cash/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
 stat_name = "$"
 
 [node name="VSeparator_2" type="VSeparator" parent="Cash/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
+margin_left = 378.0
+margin_right = 382.0
 margin_bottom = 64.0
 
 [node name="Points" type="MarginContainer" parent="."]
 margin_top = 288.0
-margin_right = 185.0
+margin_right = 378.0
 margin_bottom = 352.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Points"]
 show_behind_parent = true
-margin_right = 185.0
+margin_right = 378.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="Points"]
-margin_right = 185.0
+margin_right = 378.0
 margin_bottom = 64.0
 custom_constants/separation = 16
 __meta__ = {
@@ -251,32 +249,32 @@ custom_constants/separation = 0
 
 [node name="StatPoints" parent="Points/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
 stat_name = "P"
 
 [node name="VSeparator_2" type="VSeparator" parent="Points/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 185.0
+margin_left = 378.0
+margin_right = 378.0
 margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="Rank" type="MarginContainer" parent="."]
 margin_top = 360.0
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 424.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Rank"]
 show_behind_parent = true
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="Rank"]
-margin_right = 189.0
+margin_right = 382.0
 margin_bottom = 64.0
 size_flags_horizontal = 0
 custom_constants/separation = 16
@@ -288,32 +286,32 @@ custom_constants/separation = 0
 
 [node name="StatLevelRank" parent="Rank/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 13 )
 stat_name = "R"
 
 [node name="VSeparator_2" type="VSeparator" parent="Rank/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 189.0
+margin_left = 378.0
+margin_right = 382.0
 margin_bottom = 64.0
 
 [node name="LapGoalCount" type="MarginContainer" parent="."]
 margin_top = 432.0
-margin_right = 354.0
+margin_right = 740.0
 margin_bottom = 496.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="LapGoalCount"]
 show_behind_parent = true
-margin_right = 354.0
+margin_right = 740.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="LapGoalCount"]
-margin_right = 354.0
+margin_right = 740.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -328,40 +326,40 @@ custom_constants/separation = 0
 
 [node name="StatLapCount" parent="LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 14 )
 stat_name = "L"
 
 [node name="GoalReached" parent="LapGoalCount/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 185.0
-margin_right = 338.0
+margin_left = 378.0
+margin_right = 724.0
 margin_bottom = 64.0
 icon_texture = ExtResource( 15 )
 stat_name = "G"
 
 [node name="VSeparator_2" type="VSeparator" parent="LapGoalCount/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 354.0
-margin_right = 354.0
+margin_left = 740.0
+margin_right = 740.0
 margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="LapTime" type="MarginContainer" parent="."]
 margin_top = 504.0
-margin_right = 354.0
+margin_right = 740.0
 margin_bottom = 568.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="LapTime"]
 show_behind_parent = true
-margin_right = 354.0
+margin_right = 740.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="LapTime"]
-margin_right = 354.0
+margin_right = 740.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -376,15 +374,15 @@ custom_constants/separation = 0
 
 [node name="StatLapTime" parent="LapTime/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 8 )
 stat_name = "LT"
 
 [node name="StatLapTime_Still" parent="LapTime/BoxContainer" instance=ExtResource( 6 )]
-margin_left = 185.0
-margin_right = 338.0
+margin_left = 378.0
+margin_right = 724.0
 margin_bottom = 64.0
 stat_type = 1
 icon_texture = ExtResource( 8 )
@@ -392,26 +390,26 @@ stat_name = "LT"
 
 [node name="VSeparator_2" type="VSeparator" parent="LapTime/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 354.0
-margin_right = 354.0
+margin_left = 740.0
+margin_right = 740.0
 margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="BestLapTime" type="MarginContainer" parent="."]
 margin_top = 576.0
-margin_right = 185.0
+margin_right = 378.0
 margin_bottom = 640.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="BestLapTime"]
 show_behind_parent = true
-margin_right = 185.0
+margin_right = 378.0
 margin_bottom = 64.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="HBoxContainer" parent="BestLapTime"]
-margin_right = 185.0
+margin_right = 378.0
 margin_bottom = 64.0
 size_flags_vertical = 5
 custom_constants/separation = 16
@@ -426,16 +424,15 @@ custom_constants/separation = 0
 
 [node name="StatBestLap" parent="BestLapTime/BoxContainer" instance=ExtResource( 6 )]
 margin_left = 16.0
-margin_right = 169.0
+margin_right = 362.0
 margin_bottom = 64.0
-stat_type = 1
 icon_texture = ExtResource( 16 )
 stat_name = "BL"
 
 [node name="VSeparator_2" type="VSeparator" parent="BestLapTime/BoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 185.0
-margin_right = 185.0
+margin_left = 378.0
+margin_right = 378.0
 margin_bottom = 64.0
 custom_constants/separation = 0
 
@@ -449,12 +446,12 @@ size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Invisibles"]
 show_behind_parent = true
-margin_right = 179.0
+margin_right = 346.0
 margin_bottom = 526.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="VBoxContainer" parent="Invisibles"]
-margin_right = 179.0
+margin_right = 346.0
 margin_bottom = 526.0
 size_flags_vertical = 5
 custom_constants/separation = 16

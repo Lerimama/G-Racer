@@ -7,6 +7,7 @@ var still_driving_ids: Array = []
 onready var background: ColorRect = $Background
 onready var score_table: VBoxContainer = $ScoreTable
 onready var title: Label = $Title
+onready var level_record_label: Label = $LevelRecord
 onready var restart_btn: Button = $Menu/RestartBtn
 
 
@@ -20,15 +21,16 @@ func _process(delta: float) -> void:
 	# čakam, da se spremeni število in apdejtam
 	var still_driving_count: int = still_driving_ids.size()
 	for driver_id in still_driving_ids:
-		if "driver_stats" in final_game_data[driver_id]:
-			still_driving_ids.erase(driver_id)
+		if not driver_id == "level_data":
+			if "driver_stats" in final_game_data[driver_id]:
+				still_driving_ids.erase(driver_id)
 	if not still_driving_ids.size() == still_driving_count:
 		score_table.update_scorelines(final_game_data)
 
 
-func open(curr_game_data: Dictionary, level_index: int, levels_count: int, is_success: bool):
+func open(curr_level_data: Dictionary, level_index: int, levels_count: int, is_success: bool):
 
-	final_game_data = curr_game_data
+	final_game_data = curr_level_data
 
 	# level or game finished
 	if level_index < levels_count - 1:
@@ -36,12 +38,20 @@ func open(curr_game_data: Dictionary, level_index: int, levels_count: int, is_su
 	else:
 		_set_for_game_finished(is_success)
 
+	var level_record: Array = final_game_data["level_data"]["level_record"]
+	if not level_record[0] == 0:
+		var level_record_clock_time: String = Mts.get_clock_time_string(level_record[0])
+		level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(level_record[1])
+		level_record_label.show()
+	else:
+		level_record_label.hide()
 
 	# če je kakšen (ai) prazen, ga dodam med prazne
 	still_driving_ids.clear()
 	for driver_id in final_game_data:
-		if not "driver_stats" in final_game_data[driver_id]:
-			still_driving_ids.append(driver_id)
+		if not driver_id == "level_data":
+			if not "driver_stats" in final_game_data[driver_id]:
+				still_driving_ids.append(driver_id)
 
 	score_table.set_scorelist(final_game_data)
 
@@ -87,7 +97,6 @@ func _set_for_game_finished(is_success: bool):
 	if not restart_btn.is_connected("pressed", self, "_on_restart_pressed"):
 		restart_btn.connect("pressed", self, "_on_restart_pressed")
 	restart_btn.text = "RESTART"
-
 
 
 func _apply_final_stats_and_close(close_to: int):

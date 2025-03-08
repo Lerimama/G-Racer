@@ -247,7 +247,7 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 2,
-		"level_record": "00:00.00"
+		"level_record": ["00:00.00", "player"]
 		# določeno ob spawnu
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
@@ -259,7 +259,7 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
-		"level_record": "00:00.00"
+		"level_record": [1000, "player"]
 		# določeno ob spawnu
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
@@ -271,7 +271,7 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 2, # če so goalsi delajo isto kot čekpointi
-		"level_record": "00:00.00"
+		"level_record": [1000, "player"]
 		# določeno ob spawnu
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
@@ -284,7 +284,7 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_training.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0,
-		"level_record": "00:00.00"
+		"level_record": [100, "player"]
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},
@@ -295,7 +295,7 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/thumb_level_mission.tres"),
 		"level_time_limit": 60,
 		"level_laps": 1,
-		"level_record": "00:00.00"
+		"level_record": [100, "player"]
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},

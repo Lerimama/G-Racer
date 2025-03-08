@@ -70,7 +70,6 @@ func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kli
 				stat.get_parent().get_parent().hide()
 			else:
 				stat.get_parent().get_parent().show()
-#		LEVEL_TIME.hide()
 	else:
 		for stat in rank_by_points_stats:
 			stat.get_parent().get_parent().show()

@@ -29,12 +29,24 @@ onready var game_reactor: Node = $Reactor
 onready var game_views: Control = $GameViews
 
 var finale_game_data: Dictionary = {}
+#	- naredi finale_game_data v obliko:
+#	finale_game_data["level_data"] = {
+#		level_data {
+#			level_time: 100,
+#			level_profile: {}
+#			...
+#			}
+#		drivers_data {
+#			driver_stats: {},
+#			driver_profile: {}
+#			}
 var drivers_on_start: Array = [] # to so nodeti
 var camera_leader: Node2D = null setget _change_camera_leader
 onready var curr_game_settings: Dictionary = {
 	"max_wins_count": Sts.wins_goal_count
 	#var game_levels: Array = []
 }
+
 
 func _input(event: InputEvent) -> void:
 
@@ -73,6 +85,8 @@ func set_game():
 
 	level_index += 1
 	_spawn_level(level_index)
+
+	finale_game_data["level_data"] = level_profile
 
 	yield(get_tree(), "idle_frame") # da lhko sodim po motion aman
 
@@ -168,11 +182,9 @@ func _change_game_stage(new_game_stage: int):
 
 	match game_stage:
 		GAME_STAGE.SETTING_UP:
-			# najprej povežem s s signalom
 			for connecting_node in main_signal_connecting_nodes:
 				if not self.is_connected("game_stage_changed", connecting_node, "_on_game_stage_changed"):
 					self.connect("game_stage_changed", connecting_node, "_on_game_stage_changed")
-
 			if not game_views.is_connected("views_are_set", self, "_on_views_are_set"):
 				game_views.connect("views_are_set", self, "_on_views_are_set")
 
@@ -188,6 +200,7 @@ func _change_game_stage(new_game_stage: int):
 			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
+			finale_game_data["level_data"] = level_profile
 			#			print("finale_game_data")
 			#			print(finale_game_data)
 			#			yield(get_tree().create_timer(Sts.get_it_time), "timeout")

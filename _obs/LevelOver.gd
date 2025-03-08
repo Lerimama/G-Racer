@@ -21,8 +21,9 @@ func open(level_data: Dictionary):
 	# če je kakšen (ai) prazen, ga dodam me prazne
 	still_driving_ids = []
 	for driver_id in final_level_data:
-		if final_level_data[driver_id].empty():
-			still_driving_ids.append(driver_id)
+		if not driver_id == "level_data":
+			if final_level_data[driver_id].empty():
+				still_driving_ids.append(driver_id)
 
 	scorelist.set_scorelist(final_level_data)
 

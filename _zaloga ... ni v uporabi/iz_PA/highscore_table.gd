@@ -102,7 +102,7 @@ func fill_scoreline(scoreline: Control, game_data: Dictionary, lines_count: int,
 	if current_position_score > 0:
 		if game_data["highscore_type"] == Profiles.HighscoreTypes.TIME:
 			var current_position_seconds: float = current_position_score
-			scoreline.get_node(score_node_name).text = Global.get_clock_time(current_position_seconds)
+			scoreline.get_node(score_node_name).text = Global.get_clock_time_string(current_position_seconds)
 		elif game_data["highscore_type"] == Profiles.HighscoreTypes.POINTS:
 			var current_position_points: int = current_position_score
 			scoreline.get_node(score_node_name).text = str(current_position_points)

@@ -68,7 +68,9 @@ func set_game_views(drivers_for_views: Array = [], mono_screen: bool = false):
 				view.get_node("Viewport").world_2d = world_to_inherit
 
 		# tile views
-		if drivers_for_views.size() > 1:
+		if drivers_for_views.size() == 1:
+			emit_signal("views_are_set")
+		else:
 			_tile_views(drivers_for_views.size())
 
 
