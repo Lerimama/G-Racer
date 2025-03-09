@@ -25,10 +25,10 @@ onready var setup_table: Control = $TestUI/SetupPanel/SetupTable
 onready var shaker: Node = $Shaker
 
 
-func _input(event: InputEvent) -> void:
-
-	if Input.is_action_pressed("ui_accept"):
-		shake_camera(Rfs.game_manager)
+#func _input(event: InputEvent) -> void:
+#
+#	if Input.is_action_pressed("ui_accept"):
+#		shake_camera(Rfs.game_manager)
 
 
 func _ready():
@@ -105,7 +105,7 @@ func shake_camera(source: Node):
 			shaker.shake_profile = shake_profile_projectile
 		if source.is_in_group(Rfs.group_drivers) and shake_profile_vehicle:
 			shaker.shake_profile = shake_profile_vehicle
-		elif source == Rfs.game_manager and shake_profile_game:
+		elif source is Game and shake_profile_game:
 			shaker.shake_profile = shake_profile_game
 
 		shaker.call_deferred("shake_it")

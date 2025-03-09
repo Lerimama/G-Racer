@@ -48,7 +48,6 @@ margin_bottom = 52.0
 text = "0000"
 
 [node name="TimeLabel" type="HBoxContainer" parent="."]
-visible = false
 margin_left = 153.0
 margin_right = 346.0
 margin_bottom = 57.0
@@ -72,9 +71,9 @@ __meta__ = {
 
 [node name="Mins" type="Label" parent="TimeLabel/MinSec"]
 margin_left = 6.0
-margin_top = 4.0
+margin_top = 8.0
 margin_right = 64.0
-margin_bottom = 52.0
+margin_bottom = 56.0
 rect_min_size = Vector2( 58, 48 )
 size_flags_vertical = 1
 text = "00"
@@ -82,8 +81,9 @@ align = 1
 
 [node name="Dots" type="Label" parent="TimeLabel/MinSec"]
 margin_left = 67.0
+margin_top = 4.0
 margin_right = 79.0
-margin_bottom = 56.0
+margin_bottom = 60.0
 rect_min_size = Vector2( 12, 56 )
 size_flags_horizontal = 4
 size_flags_vertical = 1
@@ -92,9 +92,9 @@ align = 1
 
 [node name="Secs" type="Label" parent="TimeLabel/MinSec"]
 margin_left = 85.0
-margin_top = 4.0
+margin_top = 8.0
 margin_right = 143.0
-margin_bottom = 52.0
+margin_bottom = 56.0
 rect_min_size = Vector2( 58, 48 )
 size_flags_vertical = 1
 text = "00"
@@ -113,9 +113,9 @@ __meta__ = {
 
 [node name="Dots2" type="Label" parent="TimeLabel/Hunds"]
 margin_left = 1.0
-margin_top = 4.0
+margin_top = 8.0
 margin_right = 12.0
-margin_bottom = 60.0
+margin_bottom = 64.0
 rect_min_size = Vector2( 0, 56 )
 size_flags_horizontal = 4
 text = "."
@@ -123,13 +123,13 @@ align = 1
 
 [node name="Hunds" type="Label" parent="TimeLabel/Hunds"]
 margin_left = 17.0
-margin_top = 4.0
+margin_top = 8.0
 margin_right = 75.0
-margin_bottom = 52.0
+margin_bottom = 56.0
 grow_horizontal = 0
 rect_min_size = Vector2( 58, 48 )
 text = "00"
-percent_visible = -0.5
+percent_visible = 0.5
 
 [node name="CountIcons" type="HBoxContainer" parent="."]
 visible = false

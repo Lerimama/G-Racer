@@ -270,7 +270,7 @@ var level_profiles: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
-		"level_laps": 2, # če so goalsi delajo isto kot čekpointi
+		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
 		# določeno ob spawnu
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente

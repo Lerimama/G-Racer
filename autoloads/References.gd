@@ -4,7 +4,6 @@ extends Node
 func global_nodes(): pass # ------------------------------------------------------------
 
 var main_node: Node = null
-var game_manager: Node2D = null
 var game_reactor: Node = null
 var sound_manager: Node = null
 var node_creation_parent: Node2D = null # NCP ... ven?

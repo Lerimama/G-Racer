@@ -61,13 +61,15 @@ var game_shadows_length_factor: float = 1 # odvisna od višine vira svetlobe
 var game_shadows_alpha: float = 0.4 # odvisna od moči svetlobe
 var game_shadows_direction: Vector2 = Vector2(800,0) # odvisna od moči svetlobe
 
-# neu ... v resource
+# neu
 var health_effects_vehicle: bool = true
 var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damiđa da ma vehicle lahko med 0 in 1
 var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
+var ai_gets_record: bool = true
 
 
 # ON START -----------------------------------------------------------------------------------
+
 
 var drivers_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
@@ -174,6 +176,7 @@ func _set_game_settings_per_level(selected_level_index: int = 0):
 
 func load_saved_game_settings(saved_game_settings: Resource):
 
+	ai_gets_record = saved_game_settings.ai_gets_record
 	health_effects_vehicle = saved_game_settings.health_effects_vehicle
 	time_game_heal_rate_factor = saved_game_settings.time_game_heal_rate_factor
 	points_game_heal_rate_factor = saved_game_settings.points_game_heal_rate_factor

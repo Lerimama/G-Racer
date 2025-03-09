@@ -114,7 +114,6 @@ text = "AXLsadsd"
 valign = 1
 clip_text = true
 uppercase = true
-percent_visible = 0.625
 __meta__ = {
 "_editor_description_": ""
 }
@@ -145,7 +144,7 @@ margin_right = 240.0
 margin_bottom = 56.0
 grow_horizontal = 2
 size_flags_horizontal = 5
-text = "00:00.00"
+text = "00:00.00F"
 align = 1
 valign = 1
 uppercase = true
@@ -155,19 +154,19 @@ __meta__ = {
 
 [node name="Stats" type="MarginContainer" parent="."]
 margin_left = 629.0
-margin_right = 1195.0
+margin_right = 1002.0
 margin_bottom = 64.0
 grow_horizontal = 0
 rect_min_size = Vector2( 200, 64 )
 
 [node name="ColorRect" type="ColorRect" parent="Stats"]
 show_behind_parent = true
-margin_right = 566.0
+margin_right = 373.0
 margin_bottom = 64.0
 color = Color( 1, 0.964706, 0.878431, 0.0980392 )
 
 [node name="Line" type="HBoxContainer" parent="Stats"]
-margin_right = 566.0
+margin_right = 373.0
 margin_bottom = 64.0
 size_flags_horizontal = 8
 custom_constants/separation = 20
@@ -180,7 +179,7 @@ custom_constants/separation = 0
 [node name="StatWins" parent="Stats/Line" instance=ExtResource( 3 )]
 margin_left = 20.0
 margin_top = 6.0
-margin_right = 366.0
+margin_right = 173.0
 margin_bottom = 58.0
 rect_min_size = Vector2( 0, 52 )
 size_flags_vertical = 4
@@ -189,9 +188,9 @@ icon_texture = ExtResource( 2 )
 stat_name = "W"
 
 [node name="Reward" type="Label" parent="Stats/Line"]
-margin_left = 386.0
+margin_left = 193.0
 margin_top = 4.0
-margin_right = 546.0
+margin_right = 353.0
 margin_bottom = 59.0
 rect_min_size = Vector2( 160, 55 )
 size_flags_horizontal = 8
@@ -231,7 +230,7 @@ stat_name = "R"
 
 [node name="MarginB" type="VSeparator" parent="Stats/Line"]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 566.0
-margin_right = 566.0
+margin_left = 373.0
+margin_right = 373.0
 margin_bottom = 64.0
 custom_constants/separation = 0

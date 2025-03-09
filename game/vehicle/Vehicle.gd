@@ -409,20 +409,17 @@ func update_stat(stat_key: int, stat_value):
 		Pfs.STATS.LEVEL_TIME: # na finished
 			driver_stats[stat_key] = stat_value
 		Pfs.STATS.LAP_COUNT:
-			driver_stats[stat_key].append(stat_value)
+			# dobiš level time in odšteješ prev lap level time
+			var lap_time: int = stat_value - prev_lap_level_time
 			prev_lap_level_time = stat_value
+			driver_stats[stat_key].append(lap_time)
 			# best lap
 			var curr_best_lap_time: float = driver_stats[Pfs.STATS.BEST_LAP_TIME]
-			var lap_time: float = stat_value
 			if not lap_time == 0:
 				if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
 					driver_stats[Pfs.STATS.BEST_LAP_TIME] = lap_time
-					# deferred da je za lap count signalom
-					call_deferred("emit_signal", "stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time)
-					emit_signal("stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time)
-
+					call_deferred("emit_signal", "stat_changed", driver_id, Pfs.STATS.BEST_LAP_TIME, lap_time) # deferred da je za lap time signalom
 		Pfs.STATS.LAP_TIME: # vsak frejm
-			printt("LAP time", prev_lap_level_time, stat_value)
 			var curr_game_time: float = stat_value
 			var lap_time: float = curr_game_time - prev_lap_level_time
 			driver_stats[stat_key] = lap_time
@@ -431,6 +428,7 @@ func update_stat(stat_key: int, stat_value):
 			driver_stats[stat_key] += stat_value
 
 	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
+
 
 
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):

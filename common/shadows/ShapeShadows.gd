@@ -5,7 +5,7 @@ extends Node2D
 signal all_shadows_updated # ne uporabljam
 signal all_shadows_merged # ne uporabljam
 
-export var enabled: bool = true setget _change_enabled
+export var is_cast: bool = true setget _change_is_cast
 export (NodePath) var shadow_owner_path: String # če je kaj drugega kot senčkin parent
 export(Array, NodePath) var shadow_caster_paths: Array
 export var merge_all: bool = false
@@ -32,17 +32,17 @@ var shadow_owner_height: float = 50
 
 onready var shadow_owner: Node#2D
 
+func _change_is_cast(is_enabled: bool):
 
-func _change_enabled(new_enabled):
-
-	enabled = new_enabled
-	if enabled:
+	is_cast = is_enabled
+	if is_cast:
 		update_all_shadows()
 	else:
 		for child in get_children():
 			child.queue_free()
 		for shadow_casting_shape in caster_shapes_shadows.keys():
 			caster_shapes_shadows.erase(shadow_casting_shape)
+
 
 func _ready() -> void:
 
@@ -55,13 +55,6 @@ func _ready() -> void:
 			shadow_owner = get_node(shadow_owner_path)
 		else:
 			shadow_owner = get_parent()
-
-		# per game
-		if Rfs.game_manager:
-			shadow_rotation_deg = Rfs.game_manager.game_shadows_rotation_deg
-			shadows_color = Rfs.game_manager.game_shadows_color
-			shadows_alpha = Rfs.game_manager.game_shadows_alpha
-			shadows_length_factor = Rfs.game_manager.game_shadows_length_factor
 
 		# per owner
 		shadow_owner_global_rotation_deg = shadow_owner.global_rotation_degrees
@@ -79,15 +72,25 @@ func _ready() -> void:
 		hide()
 
 
+func update_shadow_parameters(shadow_setter: Node): # kliče gm prek grupe ... nedefinirano, da lahko kliče tudi kdo drug
+
+	shadow_rotation_deg = shadow_setter.game_shadows_rotation_deg
+	shadows_color = shadow_setter.game_shadows_color
+	shadows_alpha = shadow_setter.game_shadows_alpha
+	shadows_length_factor = shadow_setter.game_shadows_length_factor
+
+	update_all_shadows()
+
+
 func _process(delta: float) -> void:
 
-	if shadow_owner and enabled:
+	if shadow_owner and is_cast:
 		_detect_owner_change()
 
 
 func update_all_shadows():
 
-	if enabled:
+	if is_cast:
 		if not is_updating_shadows:# and not shape == null: # zaradi oblike vnosa (export array
 			for child in get_children():
 				if child is Polygon2D: # ne brišam

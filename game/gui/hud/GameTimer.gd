@@ -16,6 +16,7 @@ var game_time_hunds: int # čas igre v zaokroženih stotinkah
 # opredelijo se bo štartu tajmerja
 var hunds_mode: bool
 var sudden_death_mode: bool # dela samo, če ni stopwatch mode
+var start_timer_os_msecs: int = -1
 
 var game_time_limit: float # določi na reset
 var countdown_start_limit: int
@@ -28,11 +29,7 @@ func _ready() -> void:
 
 	# večino setam ob štartu tajmerja
 	modulate = Rfs.color_hud_base
-#	yield(Rfs.game_manager, "ready")
-#	reset_timer()
 
-
-var start_timer_os_msecs: int = -1
 
 func _process(delta: float) -> void:
 

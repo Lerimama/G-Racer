@@ -131,31 +131,6 @@ func _check_for_game_end():
 				game.game_stage = game.GAME_STAGE.END_FAIL
 
 
-func apply_stats_to_unfinished_drivers(unfinished_driver_ids: Array):
-
-	var current_game_time: int = game.hud.game_timer.game_time_hunds
-
-	# dodam neuvrščene ai-je, ki vedno pridejo do konca
-	for driver_id in unfinished_driver_ids:
-
-		var driver_vehicle: Vehicle
-		for vehicle in game.game_tracker.drivers_in_game:
-			if vehicle.driver_id == driver_id:
-				driver_vehicle = vehicle
-				break
-
-		# izračun predvidenega časa ... glede na prevožen procent
-		if driver_vehicle:
-			var distance_needed_part: float = driver_vehicle.driver_tracker.unit_offset
-			if distance_needed_part == 0: # če obtiči na štartu ... verjetno nioli
-				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time
-			else:
-				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
-			game.finale_game_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
-
-	game.finale_game_data["level_data"] = game.level_profile
-
-
 # SIGNALI ------------------------------------------------------------------------------------------------------
 
 
@@ -203,29 +178,13 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 				else:
 
 					Rfs.sound_manager.play_sfx("finish_horn")
+					reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds) # more bit pred drive out
 					reaching_driver.driver.on_goal_reached(reached_goal)
 					drivers_finished.append(reaching_driver)
 					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
-					reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 				reaching_driver.driver.on_goal_reached(reached_goal)
-
-
-			#			var reached_goals_count: int = reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED].size()
-			#			if reached_goals_count < game_level.level_goals.size():
-			#				Rfs.sound_manager.play_sfx("little_horn")
-			#				reaching_driver.driver.on_goal_reached(reached_goal)
-			#			# to finish
-			#			elif game_level.level_finish:
-			#				Rfs.sound_manager.play_sfx("little_horn")
-			#				reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
-			#			# all goals reached
-			#			else:
-			#				Rfs.sound_manager.play_sfx("finish_horn")
-			#				reaching_driver.driver.on_goal_reached(reached_goal)
-			#				drivers_finished.append(reaching_driver)
-			#				reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 
 
 func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
@@ -251,11 +210,11 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 				has_finished_level = true
 			if has_finished_level:
 				Rfs.sound_manager.play_sfx("finish_horn")
+				crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.level_finish:	drive_out_position = game_level.level_finish.drive_out_position_node.global_position
 				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
-				crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds)
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 
@@ -284,7 +243,7 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	else:
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
 
-	game.finale_game_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
+	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 
 
 	# hide view

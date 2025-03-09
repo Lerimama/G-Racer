@@ -7,7 +7,7 @@
 extents = Vector2( 13.5, 7 )
 
 [sub_resource type="CircleShape2D" id=5306]
-radius = 303.059
+radius = 512.0
 
 [sub_resource type="CircleShape2D" id=5307]
 radius = 31.6425
@@ -18,6 +18,11 @@ projectile_profile = ExtResource( 4 )
 [node name="CollisionShape2D" parent="ShapeArea" index="0"]
 position = Vector2( -1.5, 0 )
 shape = SubResource( 5308 )
+
+[node name="DetectArea" parent="." index="6"]
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="CollisionShape2D" parent="DetectArea" index="0"]
 shape = SubResource( 5306 )

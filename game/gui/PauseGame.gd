@@ -1,6 +1,7 @@
 extends Control
 
 
+
 func _ready() -> void:
 
 	hide()
@@ -52,11 +53,8 @@ func _on_RestartBtn_pressed() -> void:
 
 #	Global.sound_manager.play_gui_sfx("btn_confirm")
 	Rfs.sound_manager.stop_music()
-
-#	Rfs.game_manager.stop_game_elements()
 	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
 	Rfs.main_node.reload_game()
-#	Rfs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
