@@ -93,10 +93,11 @@ func _motion_machine():
 		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
 			if is_ai:
 				# force_rotation = proti tarči AI ... določa AI
-				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
+#				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
+				pass
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
-				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
+			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
 			if is_ai:
 				# force_rotation = proti tarči AI ... določa AI
@@ -126,8 +127,8 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 		current_engine_power -= current_engine_power * damage_effect_scale
 
 	# debug ... ai engine power je počasen
-	if managed_vehicle.is_in_group(Rfs.group_ai):
-		current_engine_power /=5
+#	if managed_vehicle.is_in_group(Rfs.group_ai):
+#		current_engine_power /=10
 
 	return current_engine_power * Sts.world_hsp_power_factor
 

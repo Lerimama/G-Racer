@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
+[ext_resource path="res://game/weapons/ammo/profiles/profile_ammo_misile.tres" type="Resource" id=1]
 [ext_resource path="res://game/weapons/ammo/projectile/Projectile.tscn" type="PackedScene" id=3]
-[ext_resource path="res://game/weapons/ammo/profiles/profile_ammo_homer.tres" type="Resource" id=4]
 
 [sub_resource type="RectangleShape2D" id=5308]
 extents = Vector2( 13.5, 7 )
@@ -12,14 +12,15 @@ radius = 1064.27
 [sub_resource type="CircleShape2D" id=5307]
 radius = 31.6425
 
-[node name="ProjectileHomer" instance=ExtResource( 3 )]
-projectile_profile = ExtResource( 4 )
+[node name="ProjectileMisile" instance=ExtResource( 3 )]
+projectile_profile = ExtResource( 1 )
 
 [node name="CollisionShape2D" parent="ShapeArea" index="0"]
 position = Vector2( -1.5, 0 )
 shape = SubResource( 5308 )
 
 [node name="DetectArea" parent="." index="6"]
+visible = false
 __meta__ = {
 "_edit_group_": true
 }

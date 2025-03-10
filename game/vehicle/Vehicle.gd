@@ -111,6 +111,7 @@ func _ready() -> void:
 
 	if driver_profile:
 		vehicle_color = driver_profile["driver_color"] # driver barva ...
+		target_rank = driver_profile["target_rank"]
 
 	_load_vehicle_parameters()
 	motion_manager.set_script(default_vehicle_profile["motion_manager_path"])
@@ -261,7 +262,7 @@ func _change_activity(new_is_active: bool):
 
 func _set_weapons_and_staff():
 
-		# set weapons
+	# set weapons
 	for weapon in weapons.get_children():
 		# če je opremljeno na pozicijo
 		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
@@ -296,13 +297,13 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 
 	if vehicle_motion_profile:
 		# vehicle
-		vehicle_motion_profile.target_rank = target_rank
+		# vehicle_motion_profile.target_rank = target_rank ker je drivejrev
 		vehicle_motion_profile.height = height
 		vehicle_motion_profile.driving_elevation = driving_elevation
 		vehicle_motion_profile.gas_tank_size = gas_tank_size
-		vehicle_motion_profile.gas_usage = gas_usage
-		vehicle_motion_profile.gas_usage_idle = gas_usage_idle
-		vehicle_motion_profile.masa = masa
+		# vehicle_motion_profile.gas_usage = gas_usage
+		# vehicle_motion_profile.gas_usage_idle = gas_usage_idle
+		# vehicle_motion_profile.masa = masa
 		vehicle_motion_profile.on_hit_disabled_time = on_hit_disabled_time
 		vehicle_motion_profile.group_weapons_by_type = group_weapons_by_type
 		vehicle_motion_profile.health_effect_factor = health_effect_factor

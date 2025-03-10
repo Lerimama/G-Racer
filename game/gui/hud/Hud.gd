@@ -276,8 +276,9 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 						level_record_label.modulate = Color.white
 			Pfs.STATS.LAP_TIME: # za uro med krogom ... vsak frejm
 				stat_to_change.stat_value = stat_value
-			_:
-				stat_to_change.stat_value = stat_value
+			_: # ammo, ...
+				#				stat_to_change.stat_value = stat_value
+				pass
 
 
 func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool = false):

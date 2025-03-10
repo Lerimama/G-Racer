@@ -1,10 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://game/gui/hud/StatBox_Boxed.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=2]
 [ext_resource path="res://game/gui/hud/Hud.gd" type="Script" id=3]
 [ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=4]
-[ext_resource path="res://_obs/StatBox.tscn" type="PackedScene" id=5]
 [ext_resource path="res://game/gui/hud/GameTimer.tscn" type="PackedScene" id=8]
 [ext_resource path="res://game/gui/hud/StartCountdown.tscn" type="PackedScene" id=9]
 
@@ -78,22 +77,22 @@ margin_right = -16.0
 margin_bottom = -16.0
 
 [node name="Left" type="VBoxContainer" parent="HudSections"]
-margin_right = 1106.0
+margin_right = 840.0
 margin_bottom = 1408.0
 size_flags_horizontal = 3
 
 [node name="StatBox_Boxed" parent="HudSections/Left" instance=ExtResource( 1 )]
-margin_right = 1106.0
+margin_right = 840.0
 margin_bottom = 372.0
 
 [node name="StatBox_Boxed_2" parent="HudSections/Left" instance=ExtResource( 1 )]
 margin_top = 376.0
-margin_right = 1106.0
+margin_right = 840.0
 margin_bottom = 748.0
 
 [node name="StatBox_Boxed_4" parent="HudSections/Left" instance=ExtResource( 1 )]
 margin_top = 752.0
-margin_right = 1106.0
+margin_right = 840.0
 margin_bottom = 1124.0
 
 [node name="StatBox_Boxed_5" parent="HudSections/Left" instance=ExtResource( 1 )]
@@ -104,19 +103,20 @@ margin_bottom = 1132.0
 
 [node name="StatBox_Boxed_3" parent="HudSections/Left" instance=ExtResource( 1 )]
 margin_top = 1128.0
-margin_right = 1106.0
+margin_right = 840.0
 margin_bottom = 1408.0
 size_flags_vertical = 8
 
 [node name="Center" type="VBoxContainer" parent="HudSections"]
-margin_left = 1110.0
-margin_right = 1703.0
+margin_left = 844.0
+margin_right = 1684.0
 margin_bottom = 1408.0
 grow_horizontal = 2
 size_flags_horizontal = 3
 
 [node name="Top" type="VBoxContainer" parent="HudSections/Center"]
-margin_right = 593.0
+margin_left = 123.0
+margin_right = 716.0
 margin_bottom = 702.0
 grow_horizontal = 2
 size_flags_horizontal = 4
@@ -206,9 +206,9 @@ margin_right = 593.0
 margin_bottom = 64.0
 
 [node name="Btm" type="VBoxContainer" parent="HudSections/Center"]
-margin_left = 169.0
+margin_left = 293.0
 margin_top = 706.0
-margin_right = 423.0
+margin_right = 547.0
 margin_bottom = 1408.0
 grow_horizontal = 2
 size_flags_horizontal = 4
@@ -259,341 +259,22 @@ margin_right = 254.0
 margin_bottom = 64.0
 
 [node name="Right" type="VBoxContainer" parent="HudSections"]
-margin_left = 1707.0
-margin_right = 2774.0
+margin_left = 1688.0
+margin_right = 2528.0
 margin_bottom = 1408.0
 size_flags_horizontal = 3
 
-[node name="StatBox" parent="HudSections/Right" instance=ExtResource( 5 )]
-modulate = Color( 0.964706, 0, 0, 1 )
-margin_top = 0.0
-margin_right = 1067.0
-margin_bottom = 466.0
-rect_rotation = 0.0
-__meta__ = {
-"_edit_horizontal_guides_": [ 47.0 ]
-}
+[node name="StatBox_Boxed" parent="HudSections/Right" instance=ExtResource( 1 )]
+margin_right = 840.0
+margin_bottom = 560.0
 
-[node name="DriverId" parent="HudSections/Right/StatBox" index="0"]
-margin_right = 1067.0
+[node name="StatBox_Boxed_2" parent="HudSections/Right" instance=ExtResource( 1 )]
+margin_top = 564.0
+margin_right = 840.0
+margin_bottom = 1124.0
 
-[node name="ColorRect" parent="HudSections/Right/StatBox/DriverId" index="0"]
-margin_right = 1067.0
-
-[node name="DriverLine" parent="HudSections/Right/StatBox/DriverId" index="1"]
-margin_right = 1067.0
-
-[node name="StatWins" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="StatLife" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="StatHealth" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="5"]
-margin_left = 331.0
-margin_right = 677.0
-name_as_icon = false
-
-[node name="StatLevelRank" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="6"]
-margin_left = 697.0
-margin_right = 1043.0
-name_as_icon = false
-
-[node name="MarginB" parent="HudSections/Right/StatBox/DriverId/DriverLine" index="7"]
-margin_left = 1063.0
-margin_right = 1067.0
-
-[node name="DriverStats" parent="HudSections/Right/StatBox" index="1"]
-visible = false
-
-[node name="StatCash" parent="HudSections/Right/StatBox/DriverStats/HBoxContainer" index="1"]
-visible = false
-name_as_icon = false
-
-[node name="StatPoints" parent="HudSections/Right/StatBox/DriverStats/HBoxContainer" index="2"]
-visible = false
-name_as_icon = false
-
-[node name="StatGas" parent="HudSections/Right/StatBox/DriverStats/HBoxContainer" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="RaceStats" parent="HudSections/Right/StatBox" index="2"]
-margin_top = 72.0
-margin_right = 748.0
-margin_bottom = 136.0
-
-[node name="ColorRect" parent="HudSections/Right/StatBox/RaceStats" index="0"]
-margin_right = 748.0
-
-[node name="HBoxContainer" parent="HudSections/Right/StatBox/RaceStats" index="1"]
-margin_right = 748.0
-
-[node name="StatLapCount" parent="HudSections/Right/StatBox/RaceStats/HBoxContainer" index="1"]
-margin_right = 366.0
-name_as_icon = false
-
-[node name="StatBestLap" parent="HudSections/Right/StatBox/RaceStats/HBoxContainer" index="2"]
-visible = false
-name_as_icon = false
-
-[node name="StatLapTime" parent="HudSections/Right/StatBox/RaceStats/HBoxContainer" index="3"]
-margin_left = 382.0
-margin_right = 728.0
-name_as_icon = false
-
-[node name="StatLevelTime" parent="HudSections/Right/StatBox/RaceStats/HBoxContainer" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="MarginB" parent="HudSections/Right/StatBox/RaceStats/HBoxContainer" index="5"]
-margin_left = 744.0
-margin_right = 748.0
-
-[node name="BattleStats" parent="HudSections/Right/StatBox" index="3"]
-visible = false
-
-[node name="GoalReached" parent="HudSections/Right/StatBox/BattleStats/HBoxContainer" index="1"]
-name_as_icon = false
-
-[node name="StatSmallBullet" parent="HudSections/Right/StatBox/BattleStats/HBoxContainer" index="2"]
-name_as_icon = false
-
-[node name="StatBullet" parent="HudSections/Right/StatBox/BattleStats/HBoxContainer" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="StatMisile" parent="HudSections/Right/StatBox/BattleStats/HBoxContainer" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="StatMina" parent="HudSections/Right/StatBox/BattleStats/HBoxContainer" index="5"]
-visible = false
-name_as_icon = false
-
-[node name="StatBox_2" parent="HudSections/Right" instance=ExtResource( 5 )]
-modulate = Color( 0.964706, 0, 0, 1 )
-margin_top = 470.0
-margin_right = 1067.0
-margin_bottom = 937.0
-rect_rotation = 0.0
-__meta__ = {
-"_edit_horizontal_guides_": [ 47.0 ]
-}
-
-[node name="DriverId" parent="HudSections/Right/StatBox_2" index="0"]
-margin_right = 1067.0
-
-[node name="ColorRect" parent="HudSections/Right/StatBox_2/DriverId" index="0"]
-margin_right = 1067.0
-
-[node name="DriverLine" parent="HudSections/Right/StatBox_2/DriverId" index="1"]
-margin_right = 1067.0
-
-[node name="StatWins" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="StatLife" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="StatHealth" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="5"]
-margin_left = 331.0
-margin_right = 677.0
-name_as_icon = false
-
-[node name="StatLevelRank" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="6"]
-margin_left = 697.0
-margin_right = 1043.0
-name_as_icon = false
-
-[node name="MarginB" parent="HudSections/Right/StatBox_2/DriverId/DriverLine" index="7"]
-margin_left = 1063.0
-margin_right = 1067.0
-
-[node name="DriverStats" parent="HudSections/Right/StatBox_2" index="1"]
-visible = false
-
-[node name="StatCash" parent="HudSections/Right/StatBox_2/DriverStats/HBoxContainer" index="1"]
-visible = false
-name_as_icon = false
-
-[node name="StatPoints" parent="HudSections/Right/StatBox_2/DriverStats/HBoxContainer" index="2"]
-visible = false
-name_as_icon = false
-
-[node name="StatGas" parent="HudSections/Right/StatBox_2/DriverStats/HBoxContainer" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="RaceStats" parent="HudSections/Right/StatBox_2" index="2"]
-margin_top = 72.0
-margin_right = 748.0
-margin_bottom = 136.0
-
-[node name="ColorRect" parent="HudSections/Right/StatBox_2/RaceStats" index="0"]
-margin_right = 748.0
-
-[node name="HBoxContainer" parent="HudSections/Right/StatBox_2/RaceStats" index="1"]
-margin_right = 748.0
-
-[node name="StatLapCount" parent="HudSections/Right/StatBox_2/RaceStats/HBoxContainer" index="1"]
-margin_right = 366.0
-name_as_icon = false
-
-[node name="StatBestLap" parent="HudSections/Right/StatBox_2/RaceStats/HBoxContainer" index="2"]
-visible = false
-name_as_icon = false
-
-[node name="StatLapTime" parent="HudSections/Right/StatBox_2/RaceStats/HBoxContainer" index="3"]
-margin_left = 382.0
-margin_right = 728.0
-name_as_icon = false
-
-[node name="StatLevelTime" parent="HudSections/Right/StatBox_2/RaceStats/HBoxContainer" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="MarginB" parent="HudSections/Right/StatBox_2/RaceStats/HBoxContainer" index="5"]
-margin_left = 744.0
-margin_right = 748.0
-
-[node name="BattleStats" parent="HudSections/Right/StatBox_2" index="3"]
-visible = false
-
-[node name="GoalReached" parent="HudSections/Right/StatBox_2/BattleStats/HBoxContainer" index="1"]
-name_as_icon = false
-
-[node name="StatSmallBullet" parent="HudSections/Right/StatBox_2/BattleStats/HBoxContainer" index="2"]
-name_as_icon = false
-
-[node name="StatBullet" parent="HudSections/Right/StatBox_2/BattleStats/HBoxContainer" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="StatMisile" parent="HudSections/Right/StatBox_2/BattleStats/HBoxContainer" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="StatMina" parent="HudSections/Right/StatBox_2/BattleStats/HBoxContainer" index="5"]
-visible = false
-name_as_icon = false
-
-[node name="StatBox_3" parent="HudSections/Right" instance=ExtResource( 5 )]
-modulate = Color( 0.964706, 0, 0, 1 )
-margin_top = 941.0
-margin_right = 1067.0
+[node name="StatBox_Boxed_3" parent="HudSections/Right" instance=ExtResource( 1 )]
+margin_top = 1128.0
+margin_right = 840.0
 margin_bottom = 1408.0
-rect_rotation = 0.0
-__meta__ = {
-"_edit_horizontal_guides_": [ 47.0 ]
-}
-
-[node name="DriverId" parent="HudSections/Right/StatBox_3" index="0"]
-margin_right = 1067.0
-
-[node name="ColorRect" parent="HudSections/Right/StatBox_3/DriverId" index="0"]
-margin_right = 1067.0
-
-[node name="DriverLine" parent="HudSections/Right/StatBox_3/DriverId" index="1"]
-margin_right = 1067.0
-
-[node name="StatWins" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="StatLife" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="StatHealth" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="5"]
-margin_left = 331.0
-margin_right = 677.0
-name_as_icon = false
-
-[node name="StatLevelRank" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="6"]
-margin_left = 697.0
-margin_right = 1043.0
-name_as_icon = false
-
-[node name="MarginB" parent="HudSections/Right/StatBox_3/DriverId/DriverLine" index="7"]
-margin_left = 1063.0
-margin_right = 1067.0
-
-[node name="DriverStats" parent="HudSections/Right/StatBox_3" index="1"]
-visible = false
-
-[node name="StatCash" parent="HudSections/Right/StatBox_3/DriverStats/HBoxContainer" index="1"]
-visible = false
-name_as_icon = false
-
-[node name="StatPoints" parent="HudSections/Right/StatBox_3/DriverStats/HBoxContainer" index="2"]
-visible = false
-name_as_icon = false
-
-[node name="StatGas" parent="HudSections/Right/StatBox_3/DriverStats/HBoxContainer" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="RaceStats" parent="HudSections/Right/StatBox_3" index="2"]
-margin_top = 72.0
-margin_right = 748.0
-margin_bottom = 136.0
-
-[node name="ColorRect" parent="HudSections/Right/StatBox_3/RaceStats" index="0"]
-margin_right = 748.0
-
-[node name="HBoxContainer" parent="HudSections/Right/StatBox_3/RaceStats" index="1"]
-margin_right = 748.0
-
-[node name="StatLapCount" parent="HudSections/Right/StatBox_3/RaceStats/HBoxContainer" index="1"]
-margin_right = 366.0
-name_as_icon = false
-
-[node name="StatBestLap" parent="HudSections/Right/StatBox_3/RaceStats/HBoxContainer" index="2"]
-visible = false
-name_as_icon = false
-
-[node name="StatLapTime" parent="HudSections/Right/StatBox_3/RaceStats/HBoxContainer" index="3"]
-margin_left = 382.0
-margin_right = 728.0
-name_as_icon = false
-
-[node name="StatLevelTime" parent="HudSections/Right/StatBox_3/RaceStats/HBoxContainer" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="MarginB" parent="HudSections/Right/StatBox_3/RaceStats/HBoxContainer" index="5"]
-margin_left = 744.0
-margin_right = 748.0
-
-[node name="BattleStats" parent="HudSections/Right/StatBox_3" index="3"]
-visible = false
-
-[node name="GoalReached" parent="HudSections/Right/StatBox_3/BattleStats/HBoxContainer" index="1"]
-name_as_icon = false
-
-[node name="StatSmallBullet" parent="HudSections/Right/StatBox_3/BattleStats/HBoxContainer" index="2"]
-name_as_icon = false
-
-[node name="StatBullet" parent="HudSections/Right/StatBox_3/BattleStats/HBoxContainer" index="3"]
-visible = false
-name_as_icon = false
-
-[node name="StatMisile" parent="HudSections/Right/StatBox_3/BattleStats/HBoxContainer" index="4"]
-visible = false
-name_as_icon = false
-
-[node name="StatMina" parent="HudSections/Right/StatBox_3/BattleStats/HBoxContainer" index="5"]
-visible = false
-name_as_icon = false
-
-[editable path="HudSections/Right/StatBox"]
-[editable path="HudSections/Right/StatBox/DriverStats/HBoxContainer/StatGas"]
-[editable path="HudSections/Right/StatBox_2"]
-[editable path="HudSections/Right/StatBox_2/DriverStats/HBoxContainer/StatGas"]
-[editable path="HudSections/Right/StatBox_3"]
-[editable path="HudSections/Right/StatBox_3/DriverStats/HBoxContainer/StatGas"]
+size_flags_vertical = 8

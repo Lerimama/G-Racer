@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/vehicle/ControlAI.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=2]
 
 [sub_resource type="CircleShape2D" id=5261]
 radius = 628.013
@@ -65,10 +66,16 @@ margin_right = 16.0
 margin_bottom = 16.0
 
 [node name="DirectionLine" type="Line2D" parent="."]
-visible = false
+modulate = Color( 1, 1, 1, 0.784314 )
 points = PoolVector2Array( 0, 0, 100, 0 )
-width = 4.0
-default_color = Color( 1, 1, 0, 1 )
+width = 20.0
+default_color = Color( 0.313726, 0.317647, 1, 0.92549 )
+
+[node name="TargetLine" type="Line2D" parent="."]
+modulate = Color( 1, 1, 1, 0.784314 )
+points = PoolVector2Array( 0, 0, 100, 0 )
+width = 15.0
+default_color = Color( 0, 1, 0, 1 )
 
 [node name="__BoltShape" type="Polygon2D" parent="."]
 modulate = Color( 0.890196, 0.168627, 0.168627, 0.262745 )
@@ -91,6 +98,15 @@ position = Vector2( 112, -72 )
 scale = Vector2( -1, -1 )
 color = Color( 1, 1, 1, 0.298039 )
 polygon = PoolVector2Array( 16, -16, 32, -40, 40, -24, 56, -40, 56, -24, 72, -32, 72, -16 )
+
+[node name="__Label" type="Label" parent="."]
+margin_left = 2.0
+margin_top = 92.0
+margin_right = 234.0
+margin_bottom = 140.0
+rect_scale = Vector2( 3, 3 )
+theme = ExtResource( 2 )
+text = "asdwadawd"
 
 [connection signal="navigation_finished" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_navigation_finished"]
 [connection signal="path_changed" from="NavigationAgent2D" to="." method="_on_NavigationAgent2D_path_changed"]

@@ -21,7 +21,7 @@ tracks/0/keys = {
 [node name="Turret" instance=ExtResource( 1 )]
 weapon_type = 1
 weapon_ammo = 3
-ai_enabled = true
+use_ai = true
 
 [node name="Polygon2D" parent="WeaponSprite" index="1"]
 polygon = PoolVector2Array( 32, -4, -8, -4, -8, 4, 0, 4, 32, 4, 32, 0 )

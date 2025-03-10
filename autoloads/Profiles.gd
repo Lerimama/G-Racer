@@ -41,7 +41,7 @@ enum STATS {
 		LIFE, # have or taken .. curr int / max ... PRENOSNA
 		HEALTH, # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
 		POINTS, GAS, CASH, # float ... PRENOSNA
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, # int ... +/- delta ... PRENOSNA
+		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, HOMER_COUNT # int ... +/- delta ... PRENOSNA
 		LEVEL_RANK, # int
 		LAP_COUNT, # časi krogov
 		GOALS_REACHED # array ciljev ... samo dodajaš
@@ -72,10 +72,11 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.HEALTH: 1.0, # health percetnage
 	STATS.GAS: 2000,
 	# weapons
-	STATS.BULLET_COUNT: 10,
+	STATS.BULLET_COUNT: 100,
 	STATS.MISILE_COUNT: 5,
-	STATS.SMALL_COUNT: 5,
+	STATS.SMALL_COUNT: 500,
 	STATS.MINA_COUNT: 3,
+	STATS.HOMER_COUNT: 50,
 }
 
 
@@ -95,6 +96,7 @@ var default_driver_profile: Dictionary = {
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"vehicle_type": VEHICLE.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
+	"target_rank": 10, # prepiše vehicle target_rank
 }
 
 var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres"), preload("res://home/avatar_ai.tres")]
@@ -111,6 +113,7 @@ var ai_profile: Dictionary = {
 	"ai_name": "STEINY",
 	"random_start_range": "", # še na nodu
 	"driver_color": Rfs.color_red,
+	"target_rank": 0, # prepiše vehicle target_rank
 }
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
@@ -199,7 +202,8 @@ func __weapons(): pass # -------------------------------------------------------
 
 var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
 
-enum AMMO {BULLET, MISILE, MINA, SMALL} # kot v orožjih
+enum AMMO {BULLET, MISILE, MINA, SMALL, HOMER} # kot v orožjih
+
 
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
@@ -230,6 +234,13 @@ var ammo_profiles : Dictionary = {
 		"stat_key": STATS.SMALL_COUNT,
 		"mag_size": 100,
 	},
+	AMMO.HOMER: {
+		"reload_time": 0.1, #
+		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
+		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
+		"stat_key": STATS.HOMER_COUNT,
+		"mag_size": 100,
+	},
 }
 
 
@@ -238,7 +249,7 @@ func __levels(): pass # --------------------------------------------------------
 
 enum RANK_BY {TIME, POINTS} # BATTLE JE PRVI ALI NEDEFINED
 
-enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT} # to zaporedje upošteva zapordje home gumbov
+enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP} # to zaporedje upošteva zapordje home gumbov
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
 		"level_name": "dafault",
@@ -268,6 +279,18 @@ var level_profiles: Dictionary = {
 		"level_name": "first drive shorty",
 		"level_desc": "SMall",
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
+		"level_thumb": preload("res://home/thumb_level_race.tres"),
+		"level_time_limit": 0,
+		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
+		"level_record": [1000, "player"]
+		# določeno ob spawnu
+#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
+#		"level_goals": [],
+		},
+	LEVELS.SETUP: {
+		"level_name": "SETUP",
+		"level_desc": "SMall",
+		"level_scene": preload("res://game/levels/LevelAISetup.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
@@ -350,6 +373,23 @@ var level_object_profiles: Dictionary = {
 	},
 }
 
+#var ai_targets: Dictionary {
+#	0: [
+#
+#	],
+#	1: [
+#
+#	],
+#	2: [
+#
+#	],
+#	3: [
+#
+#	],
+#	4: [
+#
+#	],
+#}
 
 func __surfaces(): pass # ------------------------------------------------------------
 

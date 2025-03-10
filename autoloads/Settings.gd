@@ -89,13 +89,15 @@ func _apply_debug_settings():
 #	game_levels = [Pfs.LEVELS.DEFAULT]
 #	game_levels = [Pfs.LEVELS.STAFF]
 #	game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
-	game_levels = [Pfs.LEVELS.FIRST_DRIVE_SHORT, Pfs.LEVELS.FIRST_DRIVE_SHORT]
+#	game_levels = [Pfs.LEVELS.FIRST_DRIVE_SHORT, Pfs.LEVELS.FIRST_DRIVE_SHORT]
+	game_levels = [Pfs.LEVELS.SETUP]
 
 
 	camera_zoom_range = Vector2(2, 2.3)
 	camera_zoom_range *= 1.1 # 2 plejers > 3
 #	camera_zoom_range *= 2 #  3 + plejers > 3
 #	camera_zoom_range *= 5
+	camera_zoom_range *= 0.7 #  3 + plejers > 3
 
 
 	fast_start_time = 1
@@ -108,12 +110,12 @@ func _apply_debug_settings():
 	camera_shake_on = false
 	slomo_fx_on = false
 #	full_equip_mode = true
-	one_screen_mode = false
+#	one_screen_mode = false
 #	hide_view_on_player_deactivated = true
 	time_game_heal_rate_factor = 0
 
 	drivers_on_game_start = [ "JOU", "MOU", "ROU"]#, "heh"]#, "RO", "eh"]
-#	drivers_on_game_start = [ "JOU", "MOU"]
+	drivers_on_game_start = [ "JOU", "MOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]#, "RO", "eh"]
 #	drivers_on_game_start = [ "JOU"]
 
@@ -131,10 +133,10 @@ func _apply_debug_settings():
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_blue
 #			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 1:
-#			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
+			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_red
 			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/avatar_marty.tres")
-			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+#			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
 #			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI

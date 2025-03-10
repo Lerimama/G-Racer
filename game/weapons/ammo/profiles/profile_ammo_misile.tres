@@ -1,0 +1,31 @@
+[gd_resource type="Resource" load_steps=8 format=2]
+
+[ext_resource path="res://game/weapons/ammo/fx/FxHomerShoot.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/weapons/ammo/trails/TrailMisile.tscn" type="PackedScene" id=2]
+[ext_resource path="res://game/weapons/ammo/fx/FxHommerHit.tscn" type="PackedScene" id=3]
+[ext_resource path="res://game/weapons/ammo/fx/FxHommerDissarm.tscn" type="PackedScene" id=4]
+[ext_resource path="res://game/weapons/ammo/profiles/profile_ammo_def.gd" type="Script" id=5]
+[ext_resource path="res://game/weapons/ammo/fx/FxHommerDetect.tscn" type="PackedScene" id=6]
+[ext_resource path="res://game/weapons/ammo/fx/FxHommerFlight.tscn" type="PackedScene" id=7]
+
+[resource]
+script = ExtResource( 5 )
+damage_type = 0
+height = 0.0
+elevation = 3.0
+masa = 4.5
+lifetime = 3.2
+hit_damage = 0.5
+hit_inertia = 0.0
+start_thrust_power = 10.0
+max_thrust_power = 150.0
+direction_start_range = Vector2( -0.1, 0.1 )
+trail = ExtResource( 2 )
+shoot_fx = ExtResource( 1 )
+flight_fx = ExtResource( 7 )
+detect_fx = ExtResource( 6 )
+hit_fx = ExtResource( 3 )
+dissarm_fx = ExtResource( 4 )
+homming_mode = false
+use_vision_for_collision = false
+delete_on_out_of_screen = false

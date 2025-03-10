@@ -38,7 +38,13 @@ func _input(event: InputEvent) -> void:
 			elif selected_item_index < 0:
 				selected_item_index = vehicle.triggering_weapons.size() - 1
 			emit_signal("next_weapon_selected", selected_item_index)
-
+			# weapon ai on/ off
+			var selected_weapon: Node2D = vehicle.triggering_weapons[selected_item_index]
+			if selected_weapon.use_ai:
+				selected_weapon.weapon_ai.ai_enabled = true
+			else:
+				for weapon in vehicle.triggering_weapons:
+					weapon.weapon_ai.ai_enabled = false
 		# shoot
 		if Input.is_action_pressed(shoot_action):
 			var selected_weapon: Node2D = vehicle.triggering_weapons[selected_item_index]

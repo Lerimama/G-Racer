@@ -174,7 +174,6 @@ anchor_bottom = 1.0
 rect_clip_content = true
 
 [node name="Edge" type="Panel" parent="Gui/DriverHuds/ViewImitator"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_styles/panel = SubResource( 19 )

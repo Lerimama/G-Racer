@@ -60,7 +60,7 @@ texture = ExtResource( 6 )
 
 [node name="Polygon2D" type="Polygon2D" parent="WeaponSprite"]
 modulate = Color( 1, 0.411765, 0.411765, 1 )
-polygon = PoolVector2Array( 32, -8, 0, -8, 0, -16, -24, -16, -24, 16, 0, 16, 0, 8, 32, 8, 32, 0 )
+polygon = PoolVector2Array( 32, -8, 0, -8, 0, -16, -11, -21, -24, -16, -31, -7, -31, 4, -25, 14, -13, 19, 0, 16, 0, 8, 32, 8, 32, 0 )
 
 [node name="FireCoverParticles" type="Particles2D" parent="WeaponSprite"]
 modulate = Color( 1, 1, 1, 0.427451 )
@@ -99,5 +99,9 @@ anims/shooting_motion = SubResource( 5275 )
 [node name="WeaponAI" type="RayCast2D" parent="."]
 cast_to = Vector2( 100, 0 )
 script = ExtResource( 2 )
+
+[node name="__Line2D" type="Line2D" parent="WeaponAI"]
+visible = false
+points = PoolVector2Array( 2, 0, 192, 0 )
 
 [connection signal="timeout" from="ReloadTimer" to="." method="_on_ReloadTimer_timeout"]

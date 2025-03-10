@@ -4,16 +4,17 @@ class_name Weapon
 signal weapon_shot
 
 enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER, MALA}
-enum WEAPON_AMMO {BULLET, MISILE, MINA, SMALL} # kot v profilih
+enum WEAPON_AMMO {BULLET, MISILE, MINA, SMALL, HOMER} # kot v profilih
 
 export (WEAPON_TYPE) var weapon_type: int = 0
 export (WEAPON_AMMO) var weapon_ammo: int = 0 # 0 = AMMO.BULLET
 export var fx_enabled: bool = true
-export var ai_enabled: bool = false # spawner lahko povozi
+export var use_ai: bool = false # spawner lahko povozi
 
 var is_set: bool = false
 var weapon_reloaded: bool = true
 var ammo_count: int = 0 # napolnems strani vehila ali igre
+#var ai_enabled: bool = false
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
 onready var reload_timer: Timer = $ReloadTimer
@@ -40,7 +41,7 @@ func _ready() -> void:
 	fire_cover_particles.emitting = false
 
 
-func set_weapon(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče vehil
+func set_weapon(owner_node: Node2D, with_ai: bool = use_ai): # kliče vehil
 
 	weapon_owner = owner_node
 
@@ -51,7 +52,7 @@ func set_weapon(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče vehil
 
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
-		ai_enabled = with_ai
+		use_ai = with_ai
 		weapon_ai.set_ai(weapon_owner)
 
 	show()

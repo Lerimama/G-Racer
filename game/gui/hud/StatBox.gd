@@ -31,6 +31,7 @@ onready var BULLET_COUNT: HBoxContainer = find_node("StatBullet")
 onready var MISILE_COUNT: HBoxContainer = find_node("StatMisile")
 onready var MINA_COUNT: HBoxContainer = find_node("StatMina")
 onready var SMALL_COUNT: HBoxContainer = find_node("StatSmallBullet")
+#onready var HOMER_COUNT: HBoxContainer = find_node("StatMisile")
 
 onready var rank_by_points_stats: Array = [WINS, CASH, LEVEL_RANK, GOALS_REACHED,
 	LIFE,

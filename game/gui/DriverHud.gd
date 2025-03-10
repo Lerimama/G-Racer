@@ -21,6 +21,8 @@ onready var health_bar: Control = $HealthBar
 onready var health_bar_line: ColorRect = $HealthBar/Bar
 onready var gas_bar: Control = $GasBar
 onready var gas_bar_line: ColorRect = $GasBar/Bar
+onready var visibility_notifier: VisibilityNotifier2D = $VisibilityNotifier2D
+
 
 
 func _ready() -> void:
@@ -39,6 +41,8 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 
 	_update_hud_position()
 
+	visibility_notifier.rect.size = rect_size
+
 	if for_ai:
 		driver_is_ai = true
 		is_set = true
@@ -46,6 +50,8 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 			gas_bar.show()
 		else:
 			gas_bar.hide()
+
+
 	else:
 		# weapons
 		hud_driver.driver.connect("next_weapon_selected", self, "_on_next_weapon_selected")
@@ -74,7 +80,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(hud_driver):
 		hide()
 
-	if is_set and visible:
+	if is_set:
 
 		_update_hud_position()
 
@@ -170,11 +176,11 @@ func _on_SelectorTimer_timeout() -> void:
 
 	selector.hide()
 
-#func _on_VisibilityNotifier2D_screen_entered() -> void:
-##	show()
-#	pass
-#
-#
-#func _on_VisibilityNotifier2D_screen_exited() -> void:
-##	hide()
-#	pass
+
+func _on_VisibilityNotifier2D_screen_entered() -> void:
+#	print("SHOW")
+	show()
+
+func _on_VisibilityNotifier2D_screen_exited() -> void:
+#	print("HIDE")
+	hide()

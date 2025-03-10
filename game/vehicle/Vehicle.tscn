@@ -100,6 +100,7 @@ contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 7 )
 engines_path = NodePath("Engines")
+group_weapons_by_type = false
 vehicle_motion_profile = ExtResource( 1 )
 
 [node name="Driver" type="Node2D" parent="."]
@@ -272,7 +273,6 @@ pause_mode = 1
 [node name="Equipment" type="Node2D" parent="."]
 
 [node name="Weapons" type="Node2D" parent="."]
-visible = false
 
 [node name="Turret" parent="Weapons" instance=ExtResource( 3 )]
 position = Vector2( -109, -108 )
@@ -285,6 +285,7 @@ position = Vector2( 100, -165 )
 
 [node name="LauncherR" parent="Weapons" instance=ExtResource( 5 )]
 position = Vector2( 120, -88 )
+weapon_ammo = 4
 
 [node name="WeaponGun" parent="Weapons" instance=ExtResource( 4 )]
 position = Vector2( 78, -117 )
