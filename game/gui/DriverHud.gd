@@ -24,7 +24,6 @@ onready var gas_bar_line: ColorRect = $GasBar/Bar
 onready var visibility_notifier: VisibilityNotifier2D = $VisibilityNotifier2D
 
 
-
 func _ready() -> void:
 
 	selector_item_template = Mts.remove_chidren_and_get_template(selector.get_children())
@@ -81,7 +80,6 @@ func _process(delta: float) -> void:
 		hide()
 
 	if is_set:
-
 		_update_hud_position()
 
 		# manage health bar
@@ -108,14 +106,14 @@ func _process(delta: float) -> void:
 			for weapon in selector_items.values():
 				if "weapon_ammo" in weapon:
 					var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
-					var ammo_count: float = hud_driver.driver_stats[ammo_count_key]
+					var ammo_count: float = hud_driver.driver_weapon_stats[ammo_count_key]
 					var selector_item: Control = selector_items.find_key(weapon)
 					selector_item.get_node("CountLabel").text = "%02d" % ammo_count
 			if hide_no_ammo:
 				for weapon in selector_items:
 					if "weapon_ammo" in weapon:
 						var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
-						var ammo_count: float = hud_driver.driver_stats[ammo_count_key]
+						var ammo_count: float = hud_driver.driver_weapon_stats[ammo_count_key]
 						if ammo_count > 0:
 							hide()
 						else:
@@ -132,7 +130,7 @@ func _add_weapon_selector(item_weapon: Node2D):
 	if "weapon_ammo" in item_weapon:
 		new_selector_item.get_node("Icon").texture = Pfs.ammo_profiles[item_weapon.weapon_ammo]["icon"]
 		var weapon_ammo_count_key: int = Pfs.ammo_profiles[item_weapon.weapon_ammo]["stat_key"]
-		new_selector_item.get_node("CountLabel").text = "%02d" % hud_driver.driver_stats[weapon_ammo_count_key]
+		new_selector_item.get_node("CountLabel").text = "%02d" % hud_driver.driver_weapon_stats[weapon_ammo_count_key]
 	else:
 		new_selector_item.get_node("Icon").texture = Pfs._temp_mala_icon
 		new_selector_item.get_node("CountLabel").hide()

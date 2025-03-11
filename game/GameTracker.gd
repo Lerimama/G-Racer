@@ -3,6 +3,7 @@ extends Node
 
 var game_level: Level
 var drivers_in_game: Array # all valid and activated ki jih trackam, all ranked, tud non-actve
+
 onready var game: Node2D = get_parent()
 
 
@@ -33,7 +34,7 @@ func _process(delta: float) -> void:
 		yield(get_tree(), "idle_frame")
 
 		for driver in drivers_in_game:
-			driver.update_stat(Pfs.STATS.LAP_TIME, game.hud.game_timer.game_time_hunds)
+			driver.update_stat(Pfs.STATS.LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
 
 
 func _update_ranking():

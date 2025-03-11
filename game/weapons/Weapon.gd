@@ -48,7 +48,8 @@ func set_weapon(owner_node: Node2D, with_ai: bool = use_ai): # kliče vehil
 	reload_time = Pfs.ammo_profiles[weapon_ammo]["reload_time"]
 	AmmoScene = Pfs.ammo_profiles[weapon_ammo]["scene"]
 	ammo_stat_key = Pfs.ammo_profiles[weapon_ammo]["stat_key"]
-	ammo_count = weapon_owner.driver_stats[ammo_stat_key]
+#	ammo_count = weapon_owner.driver_stats[ammo_stat_key]
+	ammo_count = weapon_owner.driver_weapon_stats[ammo_stat_key]
 
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
@@ -62,15 +63,14 @@ func set_weapon(owner_node: Node2D, with_ai: bool = use_ai): # kliče vehil
 func _process(delta: float) -> void:
 
 	if is_set:
-		ammo_count = weapon_owner.driver_stats[ammo_stat_key]
-
+#		ammo_count = weapon_owner.driver_stats[ammo_stat_key]
+		ammo_count = weapon_owner.driver_weapon_stats[ammo_stat_key]
 
 func _on_weapon_triggered():
 
 	if is_set:
 		if ammo_count > 0 and weapon_reloaded:
 			_shoot()
-
 
 func _shoot():
 

@@ -9,7 +9,6 @@ var camera_on_tracker: bool = true
 
 # PERMANENT --------------------------------------------------------------------------------------------
 
-var hide_view_on_player_deactivated: = false
 var fx_zero_intensity_distance: float = 100000
 var get_it_time: float = 2
 var slomo_time_scale: float = 0.1
@@ -97,8 +96,8 @@ func _apply_debug_settings():
 	camera_zoom_range *= 1.1 # 2 plejers > 3
 #	camera_zoom_range *= 2 #  3 + plejers > 3
 #	camera_zoom_range *= 5
-	camera_zoom_range *= 0.7
-	camera_zoom_range *= 4
+#	camera_zoom_range *= 0.7
+#	camera_zoom_range *= 4
 
 
 	fast_start_time = 1
@@ -136,8 +135,8 @@ func _apply_debug_settings():
 		elif drivers_on_game_start.find(driver_id) == 1:
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_red
 			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/avatar_marty.tres")
-#			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
+#			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
 #			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
 			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI

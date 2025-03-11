@@ -107,16 +107,20 @@ func _motion_machine():
 				force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_vehicle = Vector2.LEFT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT, MOTION.DISSABLED:
+			current_engine_power = lerp(current_engine_power, 0, accelarate_speed)
 			force_rotation = 0
 			force_on_vehicle = Vector2.ZERO
 		MOTION.DISSARAY: # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
+			current_engine_power = 0
 			force_rotation = 0
 			force_on_vehicle = Vector2.ZERO
 
 
 func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_power):
+#	printt (current_engine_power , max_engine_power, force_on_vehicle.length())
 
-	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
+#	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
+	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, pow(accelarate_speed, 2))
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
 	engine_power_percentage = current_engine_power / current_max_engine_power

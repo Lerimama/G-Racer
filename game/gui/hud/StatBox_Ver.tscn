@@ -499,6 +499,9 @@ margin_right = 148.0
 rect_min_size = Vector2( 100, 0 )
 text = "LLLL"
 
+[node name="Hunds" parent="Invisibles/BoxContainer/StatGas/TimeLabel/Hunds" index="1"]
+percent_visible = 1.0
+
 [node name="CountIcons" parent="Invisibles/BoxContainer/StatGas" index="5"]
 margin_left = 148.0
 margin_right = 148.0

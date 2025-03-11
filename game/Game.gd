@@ -23,7 +23,7 @@ onready var game_shadows_alpha: float = Sts.game_shadows_alpha # set_game seta i
 onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta iz profilov
 onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
 
-onready var hud: Control = $Gui/Hud
+onready var gui: CanvasLayer = $Gui
 onready var game_tracker: Node = $Tracker
 onready var game_reactor: Node = $Reactor
 onready var game_views: Control = $GameViews
@@ -41,7 +41,6 @@ onready var curr_game_settings: Dictionary = {
 	#var game_levels: Array = []
 }
 var game_levels: Array = []
-
 var final_level_data: Dictionary = {
 	"level_time": 100,
 	level_profile: {},
@@ -110,7 +109,7 @@ func set_game():
 		# prenos stats v vehicle iz prejšnega levela in reset ... tihi, ker hud še ni spawnan
 		for driver in drivers_on_start:
 			var prev_level_stats: Dictionary = final_drivers_data[driver.driver_id]["driver_stats"]
-			var stats_to_reset: Array = [Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]
+			var stats_to_reset: Array = [Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]
 			for stat in prev_level_stats:
 				if not stat in stats_to_reset:
 					driver.driver_stats[stat] = prev_level_stats[stat]
@@ -271,6 +270,7 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 	var vehicle_type: int = Pfs.VEHICLE.values()[0]
 
 	var new_driver_stats: Dictionary = {}
+	var new_driver_weapon_stats: Dictionary = {}
 	if level_index > 0:
 		new_driver_stats = final_drivers_data[driver_id]["driver_stats"].duplicate()
 	else:
@@ -280,6 +280,7 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 		new_driver_stats[Pfs.STATS.WINS] = []
 		new_driver_stats[Pfs.STATS.LAP_COUNT] = []
 		new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
+		new_driver_weapon_stats = Pfs.start_driver_weapon_stats.duplicate()
 
 	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
@@ -291,6 +292,7 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 	# profili ... iz njih podatke povleče sam na rea dy
 	new_vehicle.driver_profile = Pfs.driver_profiles[driver_id].duplicate()
 	new_vehicle.driver_stats = new_driver_stats
+	new_vehicle.driver_weapon_stats = new_driver_weapon_stats
 	new_vehicle.default_vehicle_profile = Pfs.vehicle_profiles[vehicle_type].duplicate()
 
 	# tip level je njegov namen obstoja, edino kar ve o levelu ... zaenkrat
@@ -309,7 +311,7 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 	new_vehicle.driver.goals_to_reach = game_level.level_goals.duplicate()
 
 	# connect
-	new_vehicle.connect("stat_changed", hud, "_on_driver_stat_changed")
+	new_vehicle.connect("stat_changed", gui.hud, "_on_driver_stat_changed")
 	self.connect("game_stage_changed", new_vehicle.driver, "_on_game_stage_change")
 	new_vehicle.connect("vehicle_deactivated", game_reactor, "_on_vehicle_deactivated")
 

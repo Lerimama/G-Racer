@@ -41,11 +41,14 @@ func _pull_vehicle_on_field(vehicle_to_pull: Vehicle): # temp ... Vehicle class
 			vehicle_to_pull.pull_on_screen(pull_position)
 
 			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
-			if vehicle_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size() < game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size():
-				vehicle_to_pull.update_stat(Pfs.STATS.LAP_COUNT, game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].duplicate())
-			# mogoče tega spodej nebi mel ... bomo videlo po testu
-			if vehicle_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED].size() < game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].size():
-				vehicle_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED].duplicate())
+			var lap_count_diff: int = game.camera_leader.driver_stats[Pfs.STATS.LAP_COUNT].size() - vehicle_to_pull.driver_stats[Pfs.STATS.LAP_COUNT].size()
+			for count in lap_count_diff:
+				var uncounted_lap_time: float = 0
+				vehicle_to_pull.update_stat(Pfs.STATS.LAP_COUNT, uncounted_lap_time)
+			# poenotim goals ... mogoče nebi mel ... bomo videli po testu
+			for goal in game.camera_leader.driver_stats[Pfs.STATS.GOALS_REACHED]:
+				if not goal in vehicle_to_pull.driver_stats[Pfs.STATS.GOALS_REACHED]:
+					vehicle_to_pull.update_stat(Pfs.STATS.GOALS_REACHED, goal)
 
 
 func spawn_random_pickables():
@@ -168,20 +171,32 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					all_goals_reached = false
 					break
 
-			# next goal
+			# all reached
 			if all_goals_reached:
-				# to finish
-				if game_level.level_finish:
-					Rfs.sound_manager.play_sfx("little_horn")
-					reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
-				# all goals reached and finished
-				else:
+				var has_finished_level: bool = false
+				# vsi krogi
+				reaching_driver.update_stat(Pfs.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
+				if reaching_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+					has_finished_level = true
+				if has_finished_level:
+					# to finish
+					if game_level.level_finish:
+						Rfs.sound_manager.play_sfx("little_horn")
+						reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
+					# all goals reached and finished
+					else:
 
-					Rfs.sound_manager.play_sfx("finish_horn")
-					reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds) # more bit pred drive out
-					reaching_driver.driver.on_goal_reached(reached_goal)
-					drivers_finished.append(reaching_driver)
-					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+						Rfs.sound_manager.play_sfx("finish_horn")
+						reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+						reaching_driver.driver.on_goal_reached(reached_goal)
+						drivers_finished.append(reaching_driver)
+						reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+
+				# new lap goals reset
+				else:
+					reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED] = []
+					Rfs.sound_manager.play_sfx("little_horn")
+			# next goal
 			else:
 				Rfs.sound_manager.play_sfx("little_horn")
 				reaching_driver.driver.on_goal_reached(reached_goal)
@@ -204,13 +219,12 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 		#		if game_level.level_goals.empty() or crossing_driver.driver_stats[Pfs.STATS.GOALS_REACHED] == game_level.level_goals:
 			var has_finished_level: bool = false
 			# če ni krogov je lap count da stat ve za prehod cilja
-			crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.hud.game_timer.game_time_hunds)
-
+			crossing_driver.update_stat(Pfs.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
 			if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 				has_finished_level = true
 			if has_finished_level:
 				Rfs.sound_manager.play_sfx("finish_horn")
-				crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.hud.game_timer.game_time_hunds) # more bit pred drive out
+				crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.level_finish:	drive_out_position = game_level.level_finish.drive_out_position_node.global_position
@@ -245,16 +259,17 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 
 	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 
-
 	# hide view
-	if Sts.hide_view_on_player_deactivated:# and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
-		var hide_view_time: float
-		var removed_game_view: ViewportContainer = game.game_views.views_with_drivers.find_key(driver_vehicle)
-		if removed_game_view and game.game_views.views_with_drivers.size() > 1: # preverim, da ni zadnji view
-			removed_game_view.queue_free()
-			game.game_views.views_with_drivers.erase(removed_game_view)
-			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
-			game.hud.driver_huds_holder.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
+	game.gui.hud.get_parent().driver_huds_holder.unset_driver_hud(driver_vehicle.driver_id)
+
+	#	if Sts.hide_view_on_player_deactivated:# and not Sts.one_screen_mode: # ne uporabljam, ker ne smem zbrisat original viewa
+	#		var hide_view_time: float
+	#		var removed_game_view: ViewportContainer = game.game_views.views_with_drivers.find_key(driver_vehicle)
+	#		if removed_game_view and game.game_views.views_with_drivers.size() > 1: # preverim, da ni zadnji view
+	#			removed_game_view.queue_free()
+	#			game.game_views.views_with_drivers.erase(removed_game_view)
+	#			game.hud.driver_huds_holder.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
+	#			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
 
 	_check_for_game_end()
 

@@ -17,6 +17,7 @@ var velocity: Vector2 = Vector2.ZERO
 var driver_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
+var driver_weapon_stats: Dictionary
 var default_vehicle_profile: Dictionary
 var vehicle_camera: Camera2D # spawner
 
@@ -73,8 +74,10 @@ var masa: float
 var heal_rate: float
 var rank_by: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
 var turned_on: bool = false	# neodvisen on aktivitja
-
 export (float, 5, 20, 0.5) var driving_elevation: float = 7
+# sounds
+onready var collision_sound: AudioStreamPlayer = $Sounds/Collision
+
 
 
 #func _input(event: InputEvent) -> void:
@@ -253,7 +256,6 @@ func _change_activity(new_is_active: bool):
 			driver.set_process_input(false)
 			call_deferred("set_physics_process", false)
 			call_deferred("set_process", false)
-
 			emit_signal("vehicle_deactivated", self)
 
 
@@ -431,7 +433,6 @@ func update_stat(stat_key: int, stat_value):
 	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
 
 
-
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
 	if not is_shielded:
@@ -463,13 +464,14 @@ func on_item_picked(pickable_key: int):
 			if "driver_stat" in Pfs.pickable_profiles[pickable_key].keys():
 				var change_value: float = Pfs.pickable_profiles[pickable_key]["value"]
 				var change_stat_key: int = Pfs.pickable_profiles[pickable_key]["driver_stat"]
-				update_stat(change_stat_key, change_value)
+				if not change_stat_key in Pfs.WEAPON_STAT:
+					update_stat(change_stat_key, change_value)
 
 
 func _on_weapon_shot(stat_key: int, change_value):
 
-	driver_stats[stat_key] += change_value # change_value je + ali -
-	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
+	driver_weapon_stats[stat_key] += change_value # change_value je + ali -
+	emit_signal("stat_changed", driver_id, stat_key, driver_weapon_stats[stat_key])
 
 
 # UTILITI ------------------------------------------------------------------------------------------------
@@ -491,13 +493,6 @@ func _explode():
 	Rfs.node_creation_parent.add_child(new_exploding_vehicle)
 
 	hide()
-
-
-func revup():
-
-	$Sounds/EngineRevup.play()
-	for thrust in engines.all_thrusts:
-		thrust.start_fx(true)
 
 
 func _spawn_shield():
@@ -577,9 +572,7 @@ func _on_ReviveTimer_timeout() -> void:
 
 func _on_Vehicle_body_entered(body: Node2D) -> void:
 
-	if not $Sounds/HitWall2.is_playing():
-		$Sounds/HitWall.play()
-		$Sounds/HitWall2.play()
+	collision_sound.play()
 
 	# odbojni partikli
 	if velocity.length() > pseudo_stop_speed: # ta omenitev je zato, da ne prši, ko si fiksiran v steno

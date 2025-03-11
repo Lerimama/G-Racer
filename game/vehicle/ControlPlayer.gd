@@ -58,7 +58,7 @@ func _input(event: InputEvent) -> void:
 
 		# revup
 		if Input.is_action_just_pressed(fwd_action) or Input.is_action_just_pressed(rev_action):
-			vehicle.revup()
+			vehicle.engines.revup()
 
 	if game_is_on \
 	and not motion_manager.motion == motion_manager.MOTION.DISSARAY \
@@ -101,7 +101,7 @@ func _set_driving_motion(pressed_actions: Array):
 			else:
 				motion_manager.motion = motion_manager.MOTION.FWD
 			if fast_start_window_is_open:
-				vehicle.revup()
+				vehicle.engines.revup()
 				motion_manager.boost_vehicle(motion_manager.fast_start_power_addon, Sts.fast_start_time)
 		elif rev_action in pressed_actions:
 			if left_action in pressed_actions:

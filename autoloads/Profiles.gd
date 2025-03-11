@@ -47,6 +47,9 @@ enum STATS {
 		GOALS_REACHED # array ciljev ... samo dodajaš
 		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # value ... hunds
 		}
+enum WEAPON_STAT {
+	BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, HOMER_COUNT # int ... +/- delta ... PRENOSNA
+}
 
 enum RANKING_MODE {TIME, POINTS}
 
@@ -72,11 +75,20 @@ var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
 	STATS.HEALTH: 1.0, # health percetnage
 	STATS.GAS: 2000,
 	# weapons
-	STATS.BULLET_COUNT: 100,
-	STATS.MISILE_COUNT: 5,
-	STATS.SMALL_COUNT: 500,
-	STATS.MINA_COUNT: 3,
-	STATS.HOMER_COUNT: 50,
+#	STATS.BULLET_COUNT: 100,
+#	STATS.MISILE_COUNT: 5,
+#	STATS.SMALL_COUNT: 500,
+#	STATS.MINA_COUNT: 3,
+#	STATS.HOMER_COUNT: 50,
+}
+
+var start_driver_weapon_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+	# weapons
+	WEAPON_STAT.BULLET_COUNT: 100,
+	WEAPON_STAT.MISILE_COUNT: 5,
+	WEAPON_STAT.SMALL_COUNT: 500,
+	WEAPON_STAT.MINA_COUNT: 3,
+	WEAPON_STAT.HOMER_COUNT: 50,
 }
 
 
@@ -210,35 +222,35 @@ var ammo_profiles : Dictionary = {
 		"reload_time": 0.2,
 		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"stat_key": STATS.BULLET_COUNT,
+		"stat_key": WEAPON_STAT.BULLET_COUNT,
 		"mag_size": 10,
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"scene": preload("res://game/weapons/ammo/ProjectileHomer.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
-		"stat_key": STATS.MISILE_COUNT,
+		"stat_key": WEAPON_STAT.MISILE_COUNT,
 		"mag_size": 1,
 	},
 	AMMO.MINA: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/MinaExplode.tscn"),
 		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
-		"stat_key": STATS.MINA_COUNT,
+		"stat_key": WEAPON_STAT.MINA_COUNT,
 		"mag_size": 3,
 	},
 	AMMO.SMALL: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"stat_key": STATS.SMALL_COUNT,
+		"stat_key": WEAPON_STAT.SMALL_COUNT,
 		"mag_size": 100,
 	},
 	AMMO.HOMER: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"stat_key": STATS.HOMER_COUNT,
+		"stat_key": WEAPON_STAT.HOMER_COUNT,
 		"mag_size": 100,
 	},
 }
@@ -281,7 +293,7 @@ var level_profiles: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
 		"level_time_limit": 0,
-		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
+		"level_laps": 1, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
 		# določeno ob spawnu
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
@@ -436,7 +448,7 @@ var pickable_profiles: Dictionary = {
 		"value": 20,
 		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": STATS.BULLET_COUNT,
+		"driver_stat": WEAPON_STAT.BULLET_COUNT,
 	},
 	PICKABLE.PICKABLE_MISILE: {
 		"color": Rfs.color_pickable_ammo,
