@@ -77,23 +77,23 @@ var turned_on: bool = false	# neodvisen on aktivitja
 export (float, 5, 20, 0.5) var driving_elevation: float = 7
 
 
-func _input(event: InputEvent) -> void:
-
-	if Input.is_action_pressed("no1"): # idle
-		if driver_id == "MOU":
-			_revive()
-		else:
-			motion_manager.boost_vehicle()
-	if Input.is_action_pressed("no2"): # race
-#		if driver_id == "JOU":
-		update_stat(Pfs.STATS.HEALTH, -0.1)
-
-	if Input.is_action_pressed("no3"): # race
-		update_stat(Pfs.STATS.HEALTH, 0.1)
-	if Input.is_action_pressed("no4"): # race
-		update_stat(Pfs.STATS.GAS, -100)
-	if Input.is_action_pressed("no5"): # race
-		update_stat(Pfs.STATS.GAS, 100)
+#func _input(event: InputEvent) -> void:
+#
+#	if Input.is_action_pressed("no1"): # idle
+#		if driver_id == "MOU":
+#			_revive()
+#		else:
+#			motion_manager.boost_vehicle()
+#	if Input.is_action_pressed("no2"): # race
+##		if driver_id == "JOU":
+#		update_stat(Pfs.STATS.HEALTH, -0.1)
+#
+#	if Input.is_action_pressed("no3"): # race
+#		update_stat(Pfs.STATS.HEALTH, 0.1)
+#	if Input.is_action_pressed("no4"): # race
+#		update_stat(Pfs.STATS.GAS, -100)
+#	if Input.is_action_pressed("no5"): # race
+#		update_stat(Pfs.STATS.GAS, 100)
 
 
 func _ready() -> void:

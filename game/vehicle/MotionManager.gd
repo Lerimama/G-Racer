@@ -97,7 +97,8 @@ func _motion_machine():
 				pass
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
-			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
+				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
+#			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
 			if is_ai:
 				# force_rotation = proti tarči AI ... določa AI

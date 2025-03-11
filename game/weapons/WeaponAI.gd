@@ -5,7 +5,6 @@ var aim_distance: float = 1000
 var ray_angle: float
 var aim_target: Node2D = null setget _change_aim_target
 var aiming_on_target: bool = false # cilja in išče nove
-var locked_on_target: bool = false # cilja in ne išče novih
 var available_targets: Dictionary
 var ray_rotating_speed: float = 6 # množim z delto
 var turret_rotating_speed: float = 10 # množim z delto
@@ -16,8 +15,8 @@ var ai_enabled: bool = false
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("left_click"):
-		var ai_target = Mts.spawn_indikator(get_global_mouse_position(), Color(Color.blue, 0), 0, Rfs.node_creation_parent)
-		lock_on_target(ai_target)
+		var indi_target = Mts.spawn_indikator(get_global_mouse_position(), Color(Color.blue, 0), 0, Rfs.node_creation_parent)
+		self.aim_target = indi_target
 	if Input.is_action_just_pressed("no3"): # idle
 		self.aim_target = null
 
@@ -98,10 +97,3 @@ func _change_aim_target(new_target: Node2D):
 	else:
 		aim_target = null # rabim, če ni validen
 		aiming_on_target = false
-		locked_on_target = false
-
-
-func lock_on_target(new_target:  Node2D):
-
-	locked_on_target = true
-	self.aim_target = new_target
