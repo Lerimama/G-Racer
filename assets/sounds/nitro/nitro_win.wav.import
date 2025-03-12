@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/nitro_level_win.wav-5350dfbfd5033530335e9b8a1466611c.sample"
+path="res://.import/nitro_win.wav-c4f3a77f625513f8cf9cb07ca5d63a69.sample"
 
 [deps]
 
-source_file="res://assets/sounds/nitro/nitro_level_win.wav"
-dest_files=[ "res://.import/nitro_level_win.wav-5350dfbfd5033530335e9b8a1466611c.sample" ]
+source_file="res://assets/sounds/nitro/nitro_win.wav"
+dest_files=[ "res://.import/nitro_win.wav-c4f3a77f625513f8cf9cb07ca5d63a69.sample" ]
 
 [params]
 

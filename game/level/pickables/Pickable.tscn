@@ -4,7 +4,7 @@
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/textures/atlas_pickables.png" type="Texture" id=3]
 [ext_resource path="res://game/level/pickables/Pickable.gd" type="Script" id=4]
-[ext_resource path="res://assets/sounds/sfx/_pa/gui/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=6]
+[ext_resource path="res://game/level/pickables/sounds/pickup___39026__wildweasel__keypickup.wav" type="AudioStream" id=5]
 [ext_resource path="res://common/tex/light_2.png" type="Texture" id=7]
 
 [sub_resource type="Image" id=577]
@@ -106,9 +106,9 @@ __meta__ = {
 [node name="Sounds" type="Node" parent="."]
 pause_mode = 2
 
-[node name="PickedDefault" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 6 )
-volume_db = -15.0
+[node name="Picked" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+volume_db = -10.0
 bus = "GameSfx"
 
 [node name="Light2D" type="Light2D" parent="."]
@@ -125,5 +125,5 @@ anims/RESET = SubResource( 571 )
 anims/edge_rotate = SubResource( 569 )
 
 [connection signal="body_entered" from="." to="." method="_on_Item_body_entered"]
-[connection signal="finished" from="Sounds/PickedDefault" to="." method="_on_Picked_finished"]
+[connection signal="finished" from="Sounds/Picked" to="." method="_on_Picked_finished"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

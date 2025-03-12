@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav-b756de6fee211e5492f3761906ae4758.sample"
+
+[deps]
+
+source_file="res://game/vehicle/sounds/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav"
+dest_files=[ "res://.import/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav-b756de6fee211e5492f3761906ae4758.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

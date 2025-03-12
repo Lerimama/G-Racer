@@ -11,15 +11,19 @@ onready var game_over: Control = $GameOver
 onready var game_cover: ColorRect = $GameCover
 
 
-func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
-
-	if Input.is_action_just_pressed("ui_cancel"):
-		if game_manager:
-			if game_manager.game_stage == game_manager.GAME_STAGE.PLAYING or game_manager.game_stage == game_manager.GAME_STAGE.READY:
-				if pause_game.visible:
-					pause_game.play_on()
-				else:
-					pause_game.pause_game()
+#func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
+#
+#	if Input.is_action_just_pressed("ui_cancel"):
+#		if game_manager:
+#			if game_manager.game_stage == game_manager.GAME_STAGE.PLAYING or game_manager.game_stage == game_manager.GAME_STAGE.READY:
+#				if pause_game.visible:
+#					game_manager.game_sound.menu_music.stop()
+#					game_manager.game_sound.game_music.stream_paused = false
+#					pause_game.play_on()
+#				else:
+#					game_manager.game_sound.game_music.stream_paused = true
+#					game_manager.game_sound.menu_music.play()
+#					pause_game.pause_game()
 
 
 func _ready() -> void:
@@ -67,6 +71,12 @@ func _on_game_stage_changed(curr_game_manager: Game):
 			game_over.open(game_manager)
 			hud.on_game_over()
 
+			if game_manager.game_sound.win_jingle.is_playing():
+				yield(game_manager.game_sound.win_jingle, "finished")
+			elif game_manager.game_sound.lose_jingle.is_playing():
+				yield(game_manager.game_sound.win_jingle, "finished")
+			game_manager.game_sound.menu_music.play()
+
 
 func _process(delta: float) -> void:
 
@@ -82,17 +92,18 @@ func _process(delta: float) -> void:
 				game_over.score_table.update_scorelines(game_manager.final_drivers_data)
 
 
-func close_gui(close_to: int):
+func close_game(close_to: int, delay_time: float = 0):
 
-	get_viewport().set_disable_input(true)
+	get_tree().paused = true # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
+	#	get_viewport().set_disable_input(true)
+
+	game_manager.game_sound.fade_sounds(game_manager.game_sound.menu_music)
 
 	if not unfinished_driver_ids.empty():
 		_update_final_data()
 
-
-	var time_to_read: float = 2
-	var fade_tween = get_tree().create_tween()
-	fade_tween.tween_property(game_over, "modulate:a", 1, 0.3).set_delay(time_to_read)
+	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	fade_tween.tween_property(game_over, "modulate:a", 1, 0.3).set_delay(delay_time)
 	fade_tween.tween_property(game_cover, "modulate:a", 1, 0.3)
 	yield(fade_tween, "finished")
 	game_over.hide()

@@ -34,7 +34,6 @@ func _ready() -> void:
 
 	drop_direction = -transform.x # rikverc na osi x
 
-#	Rfs.sound_manager.play_sfx("mina_shoot")
 	$Sounds/ShockerShoot.play()
 
 	# drop mine
@@ -67,7 +66,6 @@ func _on_CollisionArea_body_entered(body: Node) -> void:
 	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body != spawner:
 #	if body.has_method("on_hit") and body.is_class("KinematicBody2D") and body.name != spawner:
 
-		Rfs.sound_manager.play_sfx("shocker_effect")
 
 		active_timer.stop()
 
@@ -96,6 +94,5 @@ func _on_ActiveTimer_timeout() -> void:
 
 # kvefri
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
-#	Rfs.sound_manager.stop_sfx("shocker_effect")
 #	print("JA")
 	queue_free()

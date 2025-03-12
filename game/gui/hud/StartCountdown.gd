@@ -25,12 +25,12 @@ extends Control
 #
 #func play_countdown_a_sound():
 #
-##	Rfs.sound_manager.play_gui_sfx("start_countdown_a")
+##	sound_manager.play_gui_sfx("start_countdown_a")
 #	pass
 #
 #func play_countdown_b_sound():
 #
-##	Rfs.sound_manager.play_gui_sfx("start_countdown_b")
+##	sound_manager.play_gui_sfx("start_countdown_b")
 #	pass
 #
 #

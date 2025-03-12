@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=2]
+[gd_scene load_steps=38 format=2]
 
 [ext_resource path="res://game/vehicle/profiles/profile_vehicle_def.tres" type="Resource" id=1]
 [ext_resource path="res://game/vehicle/Thrust.tscn" type="PackedScene" id=2]
@@ -13,16 +13,17 @@
 [ext_resource path="res://game/vehicle/EquipPositions.gd" type="Script" id=11]
 [ext_resource path="res://game/weapons/mala/Mala.tscn" type="PackedScene" id=12]
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-Black.ttf" type="DynamicFontData" id=13]
-[ext_resource path="res://assets/sounds/sfx/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=14]
+[ext_resource path="res://game/vehicle/sounds/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=14]
 [ext_resource path="res://common/tex/burst_light.png" type="Texture" id=15]
 [ext_resource path="res://common/tex/glow_light.png" type="Texture" id=16]
-[ext_resource path="res://assets/sounds/sfx/engine___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=17]
+[ext_resource path="res://game/vehicle/sounds/engine___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=17]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=18]
 [ext_resource path="res://assets/sounds/sfx/_pa/skills/skilled_frcer.wav" type="AudioStream" id=19]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=20]
 [ext_resource path="res://assets/sounds/sfx/bullet_hit___PA_hit_wall.wav" type="AudioStream" id=21]
 [ext_resource path="res://assets/sounds/sfx/_pa/last_beat.wav" type="AudioStream" id=22]
-[ext_resource path="res://assets/sounds/sfx/engine_revup___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=23]
+[ext_resource path="res://game/vehicle/sounds/engine_revup___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=23]
+[ext_resource path="res://game/vehicle/sounds/nitro_short___491407__samsterbirdies__jet-engine-startup.wav" type="AudioStream" id=24]
 [ext_resource path="res://assets/sounds/sfx/_pa/burst/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=26]
 [ext_resource path="res://assets/textures/bolt/bolt.png" type="Texture" id=27]
 
@@ -149,6 +150,11 @@ bus = "GameSfx"
 
 [node name="EngineRevup" type="AudioStreamPlayer" parent="Engines/Sounds"]
 stream = ExtResource( 23 )
+bus = "GameSfx"
+
+[node name="EngineBoost" type="AudioStreamPlayer" parent="Engines/Sounds"]
+stream = ExtResource( 24 )
+volume_db = 5.0
 bus = "GameSfx"
 
 [node name="Engine" type="AudioStreamPlayer" parent="Engines/Sounds"]
@@ -644,6 +650,7 @@ pause_mode = 1
 
 [node name="DirectionLine" type="Line2D" parent="."]
 position = Vector2( 26, 0 )
+z_index = 1000
 points = PoolVector2Array( 0, 0, 100, 0 )
 width = 4.0
 

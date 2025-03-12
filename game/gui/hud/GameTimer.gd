@@ -23,6 +23,8 @@ var countdown_start_limit: int
 onready var mins_label: Label = $MinSec/Mins
 onready var secs_label: Label = $MinSec/Secs
 onready var hunds_label: Label = $Hunds/Hunds
+onready var game_coundown_sound_a: AudioStreamPlayer = $Sounds/GameCoundownA
+onready var game_coundown_sound_b: AudioStreamPlayer = $Sounds/GameCoundownB
 
 
 func _ready() -> void:
@@ -59,7 +61,7 @@ func _process(delta: float) -> void:
 				mins_label.text = "00"
 				secs_label.text = "00"
 				hunds_label.text = "00"
-				Rfs.sound_manager.play_gui_sfx("game_countdown_a")
+				game_coundown_sound_a.play()
 				if sudden_death_mode:
 					emit_signal("sudden_death_activated") # pošlje se v hud, ki javi game managerju
 				else:
@@ -68,7 +70,7 @@ func _process(delta: float) -> void:
 			elif game_time_left < countdown_start_limit: # če je countdown limit 0, ta pogoj nikoli ne velja
 				# za vsakič, ko mine sekunda
 				if game_time == floor(game_time):
-					Rfs.sound_manager.play_gui_sfx("game_countdown_b")
+					game_coundown_sound_b.play()
 				modulate = Rfs.color_yellow
 
 

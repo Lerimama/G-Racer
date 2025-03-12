@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/nitro_game_over.wav-070d6c071f088ab3899ab7e1cee7f8f4.sample"
+path="res://.import/nitro_level_lose.wav-f23c9fccc92f3c28b1112ad25731b774.sample"
 
 [deps]
 
-source_file="res://assets/sounds/nitro/nitro_game_over.wav"
-dest_files=[ "res://.import/nitro_game_over.wav-070d6c071f088ab3899ab7e1cee7f8f4.sample" ]
+source_file="res://assets/sounds/nitro/nitro_level_lose.wav"
+dest_files=[ "res://.import/nitro_level_lose.wav-f23c9fccc92f3c28b1112ad25731b774.sample" ]
 
 [params]
 

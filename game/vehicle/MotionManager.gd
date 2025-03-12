@@ -52,6 +52,7 @@ var max_engine_power_rotation_adapt: float = 1.1
 var front_mass_bias: float = 0.5
 var mass_manipulate_part: float = 0.5
 
+
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no0"): # idle
@@ -89,6 +90,23 @@ func _process(delta: float) -> void:
 
 func _motion_machine():
 
+	# vigl vagl brez vpliva na silo
+	#	if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
+	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+	#		if damage_effect_scale > 0:
+	#			var vigl_limit: float = deg2rad(10)
+	#			if not is_vigling:
+	#				is_vigling = true
+	#				var vigl_tween = get_tree().create_tween()
+	#				vigl_tween.tween_property(self, "torque_on_vehicle", -10000000 * predznak, 0.5).as_relative()
+	#				yield(vigl_tween, "finished")
+	#				predznak = - predznak
+	#				is_vigling = false
+	#				if managed_vehicle.driver_id == "MOU":
+	#					printt(managed_vehicle.rotation_degrees, torque_on_vehicle, predznak)
+	##				printt(managed_vehicle.rotation_degrees)
+	##			_drive_vigl_vagl(damage_effect_scale)
+
 	match motion:
 		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
 			if is_ai:
@@ -97,6 +115,18 @@ func _motion_machine():
 				pass
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+				# vigl vagl z vplivom na silo
+				#				if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
+				#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+				#					if damage_effect_scale > 0:
+				#						var vigl_limit: float = deg2rad(10)
+				#						if not is_vigling:
+				#							is_vigling = true
+				#							var vigl_tween = get_tree().create_tween()
+				#							vigl_tween.tween_property(self, "force_rotation", vigl_limit / 3* predznak, 0.1).as_relative()
+				#							yield(vigl_tween, "finished")
+				#							predznak = - predznak
+				#							is_vigling = false
 				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 #			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
@@ -109,31 +139,39 @@ func _motion_machine():
 		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT, MOTION.DISSABLED:
 			current_engine_power = lerp(current_engine_power, 0, accelarate_speed)
 			force_rotation = 0
-			force_on_vehicle = Vector2.ZERO
+			force_on_vehicle = Vector2.ZERO # OPT ... če ni, potem niha ... z vidika sile bi bilo bolj pravilno brez
 		MOTION.DISSARAY: # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 			current_engine_power = 0
 			force_rotation = 0
 			force_on_vehicle = Vector2.ZERO
 
+#	if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
+#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+#		if damage_effect_scale > 0:
+#			_drive_vigl_vagl(damage_effect_scale)
+#
+#		force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+#		force_on_vehicle = Vector2.LEFT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 
 func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_power):
 #	printt (current_engine_power , max_engine_power, force_on_vehicle.length())
 
-#	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
+	#	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
 	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, pow(accelarate_speed, 2))
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
 	engine_power_percentage = current_engine_power / current_max_engine_power
-	if current_max_engine_power == 0: engine_power_percentage = 0
+	if current_max_engine_power == 0:
+		engine_power_percentage = 0
 
-	# upoštevam health kot poškodovano vozilo
-	if Sts.health_effects_vehicle:
+	# dmg fx
+	if Sts.HEALTH_EFFECTS.POWER in Sts.health_effects:
+		var adapt_factor: float = 0.001
 		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
-		current_engine_power -= current_engine_power * damage_effect_scale
-
-	# debug ... ai engine power je počasen
-#	if managed_vehicle.is_in_group(Rfs.group_ai):
-#		current_engine_power /=10
+		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
+#		if managed_vehicle.driver_id == "MOU":
+#			printt( "POWER DMG", current_engine_power, damaged_engine_power)
+		current_engine_power = damaged_engine_power
 
 	return current_engine_power * Sts.world_hsp_power_factor
 
@@ -144,8 +182,7 @@ func _change_motion(new_motion):
 	if not motion == new_motion:
 		motion = new_motion
 
-		# edini rotation_dir setter
-		match motion:
+		match motion: # edini rotation_dir setter
 			MOTION.FWD, MOTION.REV, MOTION.IDLE, MOTION.DISSABLED:
 				rotation_dir = 0
 			MOTION.FWD_LEFT, MOTION.REV_LEFT, MOTION.IDLE_LEFT:
@@ -202,7 +239,6 @@ func _change_motion(new_motion):
 				_set_rotation_parameters(rotation_dir)
 
 
-
 func _set_rotation_parameters(is_reverse: bool = false):
 #	printt("rotation on resource", motion_manager.MOTION.keys()[motion_manager.motion])
 
@@ -240,8 +276,6 @@ func _set_rotation_parameters(is_reverse: bool = false):
 			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
 
-
-
 func _set_default_parameters(): # fizični, ne vsebinski22
 
 	if managed_vehicle:
@@ -265,7 +299,28 @@ func _set_default_parameters(): # fizični, ne vsebinski22
 				max_engine_power = start_max_engine_power
 				managed_vehicle.angular_damp = 14
 
+
 # SPECIALS ------------------------------------------------------------------------------------
+
+
+var is_vigling: bool = false
+var predznak: int = -1
+func _drive_vigl_vagl(vigl_vagl_amount: float):
+	# dela, ampak prekine vpliv forca
+	# tween je testno bolje z lerpom (in timer)
+
+	var vigl_limit: float = deg2rad(10)
+	if not is_vigling:
+		is_vigling = true
+		var vigl_tween = get_tree().create_tween()
+		vigl_tween.tween_property(managed_vehicle, "position:x", 10.0 * predznak, 0.1).as_relative()
+		vigl_tween.tween_property(managed_vehicle, "global_rotation", vigl_limit * predznak, 0.1).as_relative()
+		yield(vigl_tween, "finished")
+		predznak = - predznak
+		is_vigling = false
+
+	printt("drive vigl vagl", vigl_vagl_amount)
+
 
 
 func drive_in(drive_in_position: Vector2, drive_in_time: float = 1):
@@ -305,13 +360,18 @@ func boost_vehicle(added_power: float = 0, boosting_time: float = 0):
 
 	if not is_boosting:
 		is_boosting = true
-		Rfs.sound_manager.play_sfx("pickable_nitro")
+
+		managed_vehicle.engines.boost_engines() # fx
+
 		if added_power == 0:
 			added_power = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_addon"]
 		engine_power_addon += added_power
-		if boosting_time == 0:
+
+		if boosting_time > 0:
+			yield(get_tree().create_timer(boosting_time),"timeout")
+		else:
+			managed_vehicle.engines.boost_engines(false)
 			boosting_time = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]
-		yield(get_tree().create_timer(boosting_time),"timeout")
 
 		engine_power_addon -= added_power
 		is_boosting = false

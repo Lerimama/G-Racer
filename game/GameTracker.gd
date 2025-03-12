@@ -4,8 +4,8 @@ extends Node
 var game_level: Level
 var drivers_in_game: Array # all valid and activated ki jih trackam, all ranked, tud non-actve
 
-onready var game: Node2D = get_parent()
-
+#onready var game: Node2D = get_parent()
+var game: Game # poda GM na ready
 
 func _process(delta: float) -> void:
 

@@ -3,7 +3,9 @@ extends Resource
 
 # PER LEVEL STYLE --------------------------------------------------------------------------------------------
 
-export var health_effects_vehicle: bool = true
+enum HEALTH_EFFECTS {MOTION, POWER, GAS} # kot v settings
+var health_effects: Array = []
+
 export (float, 0, 0.05, 0.005) var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damiđa da ma vehicle lahko med 0 in 1
 export (float, 0, 0.05, 0.005) var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
 

@@ -7,7 +7,8 @@ var slomo_in_progress: bool = false
 var current_pull_positions: Array # že zasedene pozicije za preventanje nalaganja driverjev druga na drugega
 var drivers_finished: Array # driverji v cilju, predvsem za določanje ranka v cilju (ki ni isti kot med tekmo
 
-onready var game: Game = get_parent()
+#onready var game: Game = get_parent()
+var game: Game # poda GM na ready
 
 
 func _ready() -> void:
@@ -181,12 +182,11 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 				if has_finished_level:
 					# to finish
 					if game_level.level_finish:
-						Rfs.sound_manager.play_sfx("little_horn")
+						game.game_sound.little_horn.play()
 						reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
 					# all goals reached and finished
 					else:
-
-						Rfs.sound_manager.play_sfx("finish_horn")
+						game.game_sound.big_horn.play()
 						reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 						reaching_driver.driver.on_goal_reached(reached_goal)
 						drivers_finished.append(reaching_driver)
@@ -195,10 +195,10 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 				# new lap goals reset
 				else:
 					reaching_driver.driver_stats[Pfs.STATS.GOALS_REACHED] = []
-					Rfs.sound_manager.play_sfx("little_horn")
+					game.game_sound.little_horn.play()
 			# next goal
 			else:
-				Rfs.sound_manager.play_sfx("little_horn")
+				game.game_sound.little_horn.play()
 				reaching_driver.driver.on_goal_reached(reached_goal)
 
 
@@ -223,14 +223,14 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 			if crossing_driver.driver_stats[Pfs.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 				has_finished_level = true
 			if has_finished_level:
-				Rfs.sound_manager.play_sfx("finish_horn")
+				game.game_sound.big_horn.play()
 				crossing_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.level_finish:	drive_out_position = game_level.level_finish.drive_out_position_node.global_position
 				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
 			else:
-				Rfs.sound_manager.play_sfx("little_horn")
+				game.game_sound.little_horn.play()
 
 
 func _on_body_exited_playing_field(player_vehicle: Node) -> void:

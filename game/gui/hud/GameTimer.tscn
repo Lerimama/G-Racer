@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://game/gui/hud/GameTimer.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=2]
 [ext_resource path="res://assets/theme/fonts/body_font_slanted.tres" type="DynamicFont" id=3]
+[ext_resource path="res://game/gui/sounds/countdown-a.ogg" type="AudioStream" id=4]
+[ext_resource path="res://game/gui/sounds/countdown-b.ogg" type="AudioStream" id=5]
 
 [node name="GameTimer" type="HBoxContainer"]
 margin_left = -163.0
@@ -97,3 +99,15 @@ rect_min_size = Vector2( 58, 48 )
 custom_fonts/font = ExtResource( 3 )
 text = "00"
 percent_visible = 0.5
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="GameCoundownA" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 4 )
+volume_db = -10.0
+pitch_scale = 0.8
+
+[node name="GameCoundownB" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+volume_db = -5.0
+pitch_scale = 0.7

@@ -384,8 +384,15 @@ func update_stat(stat_key: int, stat_value):
 	match stat_key:
 		# vehicle
 		Pfs.STATS.GAS:
-			Sts.ai_gas_on = false
 			if is_in_group(Rfs.group_players) or Sts.ai_gas_on:
+				# dmg fx
+				if Sts.HEALTH_EFFECTS.GAS in Sts.health_effects:
+					var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pfs.STATS.HEALTH])
+					var damaged_gas_usage: float = stat_value + stat_value * damage_effect_scale
+#					if driver_id == "MOU":
+#						printt( "GAS DMG", damaged_gas_usage, stat_value, gas_usage)
+					stat_value = damaged_gas_usage
+
 				driver_stats[stat_key] += stat_value
 				if driver_stats[Pfs.STATS.GAS] <= 0:
 					driver_stats[Pfs.STATS.GAS] = 0
@@ -428,7 +435,11 @@ func update_stat(stat_key: int, stat_value):
 			driver_stats[stat_key] = lap_time
 
 		_: # default
-			driver_stats[stat_key] += stat_value
+			if stat_key in driver_stats:
+				driver_stats[stat_key] += stat_value
+			else:
+				print("stat is not legit: ", stat_key)
+				return
 
 	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
 

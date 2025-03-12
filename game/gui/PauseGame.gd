@@ -1,6 +1,18 @@
 extends Control
 
 
+func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
+
+	if Input.is_action_just_pressed("ui_cancel"):
+
+		var game_manager: Game = get_parent().game_manager
+		if game_manager:
+			if game_manager.game_stage == game_manager.GAME_STAGE.PLAYING or game_manager.game_stage == game_manager.GAME_STAGE.READY:
+				if visible:
+					play_on()
+				else:
+					pause_game()
+
 
 func _ready() -> void:
 
@@ -9,11 +21,17 @@ func _ready() -> void:
 
 func pause_game():
 
+	get_parent().game_manager.game_sound.game_music.stream_paused = true
+	get_parent().game_manager.game_sound.menu_music.play()
+#	var mn_music = get_parent().game_manager.game_sound.menu_music
+#	var gm_music = get_parent().game_manager.game_sound.game_music
+#	get_parent().game_manager.game_sound.fade_sounds(gm_music, mn_music, true)
+
 	show()
 	get_viewport().set_disable_input(true) # anti dablklik
 	get_tree().set_pause(true)
 
-#	Global.sound_manager.play_gui_sfx("screen_slide")
+#	Global.game_sound.play_gui_sfx("screen_slide")
 	$Menu/PlayBtn.grab_focus()
 	var pause_in_time: float = 0.32
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
@@ -24,17 +42,21 @@ func pause_game():
 	get_viewport().set_disable_input(false)
 
 
-
 func play_on():
 
 	get_viewport().set_disable_input(true) # anti dablklik
 
-#	Global.sound_manager.play_gui_sfx("screen_slide")
+#	Global.game_sound.play_gui_sfx("screen_slide")
 	var pause_out_time: float = 0.5
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(self, "modulate:a", 0, pause_out_time).set_ease(Tween.EASE_IN)
 
 	yield(fade_tween, "finished")
+
+#	var gm_music = get_parent().game_manager.game_sound.game_music
+#	get_parent().game_manager.game_sound.fade_sounds(mn_music, gm_music)
+	get_parent().game_manager.game_sound.menu_music.stop()
+	get_parent().game_manager.game_sound.game_music.stream_paused = false
 
 	hide()
 	get_tree().set_pause(false)
@@ -51,15 +73,11 @@ func _on_PlayBtn_pressed() -> void:
 
 func _on_RestartBtn_pressed() -> void:
 
-#	Global.sound_manager.play_gui_sfx("btn_confirm")
-	Rfs.sound_manager.stop_music()
-	get_tree().paused = false #... tween za izhod pavzo drevesa ignorira
-	Rfs.main_node.reload_game()
+	get_parent().close_game(0, 0)
 
 
 func _on_QuitBtn_pressed() -> void:
 
-#	Global.game_manager.stop_game_elements()
-	Rfs.sound_manager.stop_music()
-	# get_tree().paused = false ... tween za izhod pavzo drevesa ignorira
-	Rfs.main_node.game_out()
+	get_parent().close_game(-1, 0)
+
+

@@ -7,9 +7,9 @@ var engines_on: bool = false
 onready var engine_start_sound: AudioStreamPlayer = $Sounds/EngineStart
 onready var engine_revup_sound: AudioStreamPlayer = $Sounds/EngineRevup
 onready var engine_drive_sound: AudioStreamPlayer = $Sounds/Engine
+onready var engine_boost_sound: AudioStreamPlayer = $Sounds/EngineBoost
 # ... ni še
 onready var engine_stop_sound: AudioStreamPlayer = $Sounds/EngineStart
-onready var engine_boost_sound: AudioStreamPlayer = $Sounds/EngineStart
 
 # thrusts
 onready var left_thrusts: Array = [$FrontEngine/ThrustL, $RearEngine/ThrustL]
@@ -137,7 +137,11 @@ func _on_engines_start_finished():
 	engine_drive_sound.play()
 
 
-func boost_engines():
-	pass
+func boost_engines(turn_on: bool = true):
+
+	if turn_on: # ne uporabljam ... itak (še) ni loopan
+		engine_boost_sound.play()
+	else:
+		engine_boost_sound.stop()
 
 

@@ -23,32 +23,36 @@ onready var game_shadows_alpha: float = Sts.game_shadows_alpha # set_game seta i
 onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta iz profilov
 onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
 
+# main nodes
+# _temp... za tele ne rabim signalov?
+# njim podelim tudi self
 onready var gui: CanvasLayer = $Gui
 onready var game_tracker: Node = $Tracker
 onready var game_reactor: Node = $Reactor
 onready var game_views: Control = $GameViews
+onready var game_sound: Node = $Sound
 
-var final_drivers_data: Dictionary = {
-#	"xavier": {
-#		"driver_stats": {},
-#		"... driver_profile": {}
-#		},
-}
+var game_levels: Array = []
 var drivers_on_start: Array = [] # to so nodeti
 var camera_leader: Node2D = null setget _change_camera_leader
 onready var curr_game_settings: Dictionary = {
 	"max_wins_count": Sts.wins_goal_count
 	#var game_levels: Array = []
-}
-var game_levels: Array = []
+	}
 var final_level_data: Dictionary = {
-	"level_time": 100,
-	level_profile: {},
-	"...": "",
+	#	"level_time": 100,
+	#	level_profile: {},
+	#	"...": "",
+	}
+var final_drivers_data: Dictionary = {
+	#	"xavier": {
+	#		"driver_stats": {},
+	#		"driver_profile": {}
+	#		},
 	}
 
-func _input(event: InputEvent) -> void:
 
+func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"):
 		get_tree().set_group(Rfs.group_shadows, "imitate_3d", true)
@@ -68,6 +72,12 @@ func _ready() -> void:
 	# nodeti, ki želijo glavni signal
 	for path in main_signal_connecting_paths:
 		main_signal_connecting_nodes.append(get_node(path))
+
+	gui.game_manager = self
+	game_tracker.game = self
+	game_reactor.game = self
+	game_views.game_manager = self
+	game_sound.game_manager = self
 
 	call_deferred("set_game")
 
@@ -175,8 +185,6 @@ func _start_game():
 
 	self.game_stage = GAME_STAGE.PLAYING
 
-	Rfs.sound_manager.play_music()
-
 
 func _change_game_stage(new_game_stage: int):
 #	print("GAME_STAGE: ", GAME_STAGE.keys()[new_game_stage])
@@ -185,6 +193,7 @@ func _change_game_stage(new_game_stage: int):
 
 	match game_stage:
 		GAME_STAGE.SETTING_UP:
+			game_sound.intro_jingle.play()
 			for connecting_node in main_signal_connecting_nodes:
 				if not self.is_connected("game_stage_changed", connecting_node, "_on_game_stage_changed"):
 					self.connect("game_stage_changed", connecting_node, "_on_game_stage_changed")
@@ -192,23 +201,36 @@ func _change_game_stage(new_game_stage: int):
 				game_views.connect("views_are_set", self, "_on_views_are_set")
 
 		GAME_STAGE.READY:
+			if not game_sound.intro_jingle.is_playing(): # _temp
+				game_sound.intro_jingle.play()
+
 			Rfs.ultimate_popup.hide() # skrijem pregame
 			_game_intro() # če je tukajni statistike?
 
 			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
+			game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
+
+
 			if not level_profile["rank_by"] == Pfs.RANK_BY.TIME: # zaženem vsakič, tudi po pavzi
 				game_reactor.spawn_random_pickables()
 			emit_signal("game_stage_changed", self)
 
 		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
+
+			if game_stage == GAME_STAGE.END_SUCCESS:
+				game_sound.fade_sounds(game_sound.game_music, game_sound.win_jingle)
+			else:
+				game_sound.fade_sounds(game_sound.game_music, game_sound.lose_jingle)
+
 			final_level_data["level_profile"] = level_profile
 			#			print("final_drivers_data")
 			#			print(final_drivers_data)
 			#			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
 #			if not game_reactor.drivers_finished.empty(): # zmaga
 #				game_reactor.drivers_finished[0].update_stat(Pfs.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
+
 			emit_signal("game_stage_changed", self)
 			# ustavi elemente
 				# best lap stats reset
@@ -216,9 +238,8 @@ func _change_game_stage(new_game_stage: int):
 				# navigacija AI
 				# kvefri elementov, ki so v areni
 			get_tree().set_group(Rfs.group_player_cameras, "follow_target", null)
-			Rfs.sound_manager.stop_music()
-			var bus_index: int = AudioServer.get_bus_index("GameSfx")
-			AudioServer.set_bus_mute(bus_index, true)
+#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+#			AudioServer.set_bus_mute(bus_index, true)
 
 
 func _change_camera_leader(new_camera_leader: Node2D):
@@ -235,7 +256,7 @@ func _spawn_level(new_level_index: int):
 
 	# curr level off
 	if new_level_index > 0:
-		if not Rfs.sound_manager.sfx_set_to_mute: # unmute sfx
+		if not game_sound.sfx_set_to_mute: # unmute sfx
 			var bus_index: int = AudioServer.get_bus_index("GameSfx")
 			AudioServer.set_bus_mute(bus_index, false)
 	if game_level: # če level že obstaja, ga najprej moram zbrisat

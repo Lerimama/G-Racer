@@ -61,10 +61,14 @@ var game_shadows_alpha: float = 0.4 # odvisna od moči svetlobe
 var game_shadows_direction: Vector2 = Vector2(800,0) # odvisna od moči svetlobe
 
 # neu
-var health_effects_vehicle: bool = true
+enum HEALTH_EFFECTS {MOTION, POWER, GAS} # kot v settings profilu
+var health_effects: Array = []
+
+#var health_effects_performance: bool = true
 var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damiđa da ma vehicle lahko med 0 in 1
 var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
 var ai_gets_record: bool = true
+#enum DAMAGE_EFFECTS
 
 
 # ON START -----------------------------------------------------------------------------------
@@ -113,6 +117,9 @@ func _apply_debug_settings():
 #	one_screen_mode = false
 #	hide_view_on_player_deactivated = true
 	time_game_heal_rate_factor = 0
+	health_effects = [HEALTH_EFFECTS.POWER, HEALTH_EFFECTS.GAS, HEALTH_EFFECTS.MOTION]
+	health_effects = [HEALTH_EFFECTS.MOTION]
+
 
 	drivers_on_game_start = [ "JOU", "MOU", "ROU"]#, "heh"]#, "RO", "eh"]
 	drivers_on_game_start = [ "JOU", "MOU"]
@@ -179,7 +186,7 @@ func _set_game_settings_per_level(selected_level_index: int = 0):
 func load_saved_game_settings(saved_game_settings: Resource):
 
 	ai_gets_record = saved_game_settings.ai_gets_record
-	health_effects_vehicle = saved_game_settings.health_effects_vehicle
+	health_effects = saved_game_settings.health_effects
 	time_game_heal_rate_factor = saved_game_settings.time_game_heal_rate_factor
 	points_game_heal_rate_factor = saved_game_settings.points_game_heal_rate_factor
 

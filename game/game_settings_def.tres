@@ -4,7 +4,6 @@
 
 [resource]
 script = ExtResource( 1 )
-health_effects_vehicle = true
 time_game_heal_rate_factor = 0.01
 points_game_heal_rate_factor = 0.0
 camera_zoom_range = Vector2( 1, 1.5 )
