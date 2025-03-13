@@ -641,28 +641,26 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
-func _on_game_stage_change(game_manager: Game): # od GMja
+#func _on_game_stage_change(game_manager: Game): # od GMja
 
-	match game_manager.game_stage:
-		game_manager.GAME_STAGE.PLAYING:
-			# random start
-			randomize()
-			var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
-			yield(get_tree().create_timer(random_start_delay), "timeout")
-			# level type
-			if vehicle.driver_tracker:
-				self.ai_state = AI_STATE.RACE_TRACK
-			elif not goals_to_reach.empty():
-				self.ai_state = AI_STATE.RACE_TO_GOAL
-			elif game_manager.game_level.level_finish:
-				ai_target = game_manager.game_level.level_finish
-				self.ai_state = AI_STATE.RACE_TO_GOAL
-			else:
-				self.ai_state = AI_STATE.SEARCH
-		game_manager.GAME_STAGE.END_SUCCESS, game_manager.GAME_STAGE.END_FAIL:
-			if not game_manager.level_profile["rank_by"] == Pfs.RANK_BY.TIME:
-				self.ai_state = AI_STATE.OFF
-				motion_manager.motion = motion_manager.MOTION.IDLE
+
+func on_game_start(game_level: Node2D): # od GMja
+	printt("level", ai_state, motion_manager.motion)
+	# random start
+	randomize()
+	var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
+	yield(get_tree().create_timer(random_start_delay), "timeout")
+	# level type
+	if vehicle.driver_tracker:
+		self.ai_state = AI_STATE.RACE_TRACK
+	elif not goals_to_reach.empty():
+		self.ai_state = AI_STATE.RACE_TO_GOAL
+	elif game_level.level_finish:
+		ai_target = game_level.level_finish
+		self.ai_state = AI_STATE.RACE_TO_GOAL
+	else:
+		self.ai_state = AI_STATE.SEARCH
+
 
 
 func _on_NavigationAgent2D_path_changed() -> void:

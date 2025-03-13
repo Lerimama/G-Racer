@@ -2,7 +2,7 @@ extends Node2D
 
 
 #signal weapon_triggered
-signal next_weapon_selected
+signal item_selected
 
 var controlled_vehicle: Vehicle # temp ... Vehicle class
 var controller_type: int
@@ -37,7 +37,7 @@ func _input(event: InputEvent) -> void:
 				selected_item_index = 0
 			elif selected_item_index < 0:
 				selected_item_index = controlled_vehicle.triggering_weapons.size() - 1
-			emit_signal("next_weapon_selected", selected_item_index)
+			emit_signal("item_selected", selected_item_index)
 
 		# shoot
 		if Input.is_action_pressed(shoot_action):

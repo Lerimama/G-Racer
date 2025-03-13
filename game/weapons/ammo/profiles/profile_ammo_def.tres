@@ -17,3 +17,4 @@ direction_start_range = Vector2( 0, 0 )
 homming_mode = false
 use_vision_for_collision = false
 delete_on_out_of_screen = false
+magazine_size = 10

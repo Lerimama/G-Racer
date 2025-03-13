@@ -41,11 +41,9 @@ func _ready() -> void:
 func _on_Item_body_entered(body: Node) -> void:
 #		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
 
-
 	if body.is_in_group(Rfs.group_drivers):
 		emit_signal("reached_by", self, body)
 		picked_sound.play()
-		print("new_loop ", picked_sound.is_playing(), picked_sound.volume_db)
 		if pickable_key == Pfs.PICKABLE.PICKABLE_RANDOM:
 			var random_range: int = Pfs.pickable_profiles.keys().size() - 1 # izloči random
 			var random_pickable_index = randi() % random_range

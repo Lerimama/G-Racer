@@ -4,7 +4,8 @@ extends Node2D
 var managed_vehicle: Node2D  # = get_parent()
 
 enum MOTION {DISSABLED, IDLE, IDLE_LEFT, IDLE_RIGHT, FWD, FWD_LEFT, FWD_RIGHT, REV, REV_LEFT, REV_RIGHT, DISSARAY}#, OFF}
-var motion: int = MOTION.IDLE setget _change_motion
+var motion: int = MOTION.DISSABLED setget _change_motion # idla ga turn on, disejbla ga turn off
+#var motion: int = MOTION.IDLE setget _change_motion
 
 enum ROTATION_MOTION {
 	DEFAULT,
@@ -89,7 +90,8 @@ func _process(delta: float) -> void:
 
 
 func _motion_machine():
-
+#	if is_ai:
+#		print(motion)
 	# vigl vagl brez vpliva na silo
 	#	if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
 	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])

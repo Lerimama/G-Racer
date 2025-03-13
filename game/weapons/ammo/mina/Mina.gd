@@ -29,6 +29,9 @@ onready var active_timer: Timer = $ActiveTimer
 onready var smoke_particles: Particles2D = $SmokeParticles
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 
+export var icon_texture: Texture = load("res://assets/icons/icon_bullet_VRSA.tres")
+export var magazine_size: int = 10
+
 
 func _ready() -> void:
 

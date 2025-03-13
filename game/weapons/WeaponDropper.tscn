@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/weapons/Weapon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/weapons/ammo/mina/Mina.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/icons/icon_mina_VRSA.tres" type="Texture" id=3]
 
 [node name="Dropper" instance=ExtResource( 1 )]
 weapon_type = 3
 weapon_ammo = 2
+Ammo = ExtResource( 2 )
+load_icon = ExtResource( 3 )

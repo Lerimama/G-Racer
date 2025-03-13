@@ -17,7 +17,7 @@ var velocity: Vector2 = Vector2.ZERO
 var driver_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
-var driver_weapon_stats: Dictionary
+var weapon_stats: Dictionary
 var default_vehicle_profile: Dictionary
 var vehicle_camera: Camera2D # spawner
 
@@ -40,10 +40,10 @@ var body_state: Physics2DDirectBodyState
 var driver_tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
 
 # drugo ...
-var triggering_weapons: Array = []
+var triggering_equipment: Array = []
 var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
-onready var driver: Node2D = $Driver # zamenja se ob spawnu AI/PLAYER
+onready var controller: Node2D = $Controller # zamenja se ob spawnu AI/PLAYER
 onready var motion_manager: Node2D = $Motion
 
 onready var equip_positions: Node2D = $EquipPositions
@@ -123,6 +123,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+
 	# debug trail
 	_drawing_trail_controls(delta)
 
@@ -174,14 +175,14 @@ func _die(with_explode: bool = true):
 		else:
 			if rank_by == Pfs.RANK_BY.TIME:
 				turn_off()
-				driver.set_process_input(false)
+				controller.set_process_input(false)
 				call_deferred("set_physics_process", false)
 				call_deferred("set_process", false)
 				revive_timer.start(revive_time)
 			else:
 				if Sts.life_as_life_taken:
 					turn_off()
-					driver.set_process_input(false)
+					controller.set_process_input(false)
 					call_deferred("set_physics_process", false)
 					call_deferred("set_process", false)
 					revive_timer.start(revive_time)
@@ -189,7 +190,7 @@ func _die(with_explode: bool = true):
 					update_stat(Pfs.STATS.LIFE, - 1)
 					if driver_stats[Pfs.STATS.LIFE] > 0: # life je array current/max
 						turn_off()
-						driver.set_process_input(false)
+						controller.set_process_input(false)
 						call_deferred("set_physics_process", false)
 						call_deferred("set_process", false)
 						revive_timer.start(revive_time)
@@ -247,13 +248,13 @@ func _change_activity(new_is_active: bool):
 		# postane znan igri, ni pa nujno prižgan
 		if is_active:
 			_load_vehicle_parameters()
-			driver.set_process_input(true)
+			controller.set_process_input(true)
 			call_deferred("set_physics_process", true)
 			call_deferred("set_process", true)
 		else:
 			turn_off()
 			_save_vehicle_parameters()
-			driver.set_process_input(false)
+			controller.set_process_input(false)
 			call_deferred("set_physics_process", false)
 			call_deferred("set_process", false)
 			emit_signal("vehicle_deactivated", self)
@@ -271,17 +272,19 @@ func _set_weapons_and_staff():
 		var legit: bool = true
 		if weapon in equip_positions.positions_equiped.values():
 			weapon.set_weapon(self)
+			weapon_stats[weapon] = weapon.load_count
+
+			# on set
 			var used_for_triggering: bool = true
 			if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
 				used_for_triggering = false
 			if group_weapons_by_type:
-				for trigg_weapon in triggering_weapons:
+				for trigg_weapon in triggering_equipment:
 					if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
 						used_for_triggering = false
 			if used_for_triggering:
 				if weapon.has_method("_on_weapon_triggered"):
-						weapon.connect("weapon_shot", self, "_on_weapon_shot")
-						triggering_weapons.append(weapon)
+					triggering_equipment.append(weapon)
 		else:
 			weapon.hide()
 
@@ -361,14 +364,14 @@ func _spawn_driver_controller():
 		DriverController = drivers_driver_profile["driver_scene"]
 
 	# spawn na vrh vehicleovega drevesa
-	driver = DriverController.instance()
-	driver.vehicle = self
-	driver.motion_manager = motion_manager
+	controller = DriverController.instance()
+	controller.vehicle = self
+	controller.motion_manager = motion_manager
 	if not driver_profile["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		driver.controller_type = driver_profile["controller_type"]
+		controller.controller_type = driver_profile["controller_type"]
 
-	call_deferred("add_child", driver)
-	call_deferred("move_child", driver, 0)
+	call_deferred("add_child", controller)
+	call_deferred("move_child", controller, 0)
 
 # ON ------------------------------------------------------------------------------------------------
 
@@ -389,8 +392,6 @@ func update_stat(stat_key: int, stat_value):
 				if Sts.HEALTH_EFFECTS.GAS in Sts.health_effects:
 					var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pfs.STATS.HEALTH])
 					var damaged_gas_usage: float = stat_value + stat_value * damage_effect_scale
-#					if driver_id == "MOU":
-#						printt( "GAS DMG", damaged_gas_usage, stat_value, gas_usage)
 					stat_value = damaged_gas_usage
 
 				driver_stats[stat_key] += stat_value
@@ -479,11 +480,6 @@ func on_item_picked(pickable_key: int):
 					update_stat(change_stat_key, change_value)
 
 
-func _on_weapon_shot(stat_key: int, change_value):
-
-	driver_weapon_stats[stat_key] += change_value # change_value je + ali -
-	emit_signal("stat_changed", driver_id, stat_key, driver_weapon_stats[stat_key])
-
 
 # UTILITI ------------------------------------------------------------------------------------------------
 
@@ -521,7 +517,7 @@ func _spawn_shield():
 func pull_on_screen(pull_position: Vector2): # kliče GM
 
 		# disejblam koližne
-	#	driver.set_process_input(false)
+	#	controller.set_process_input(false)
 	#	collision_shape.set_deferred("disabled", true)
 
 	# reštartam trail
@@ -533,7 +529,7 @@ func pull_on_screen(pull_position: Vector2): # kliče GM
 	yield(pull_tween, "finished")
 	#	transform.origin = pull_position
 	#	collision_shape.set_deferred("disabled", false)
-	#	driver.set_process_input(true)
+	#	controller.set_process_input(true)
 
 	update_stat(Pfs.STATS.GAS, Sts.pull_gas_penalty)
 

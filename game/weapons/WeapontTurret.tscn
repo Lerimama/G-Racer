@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://game/weapons/Weapon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/weapons/ammo/ProjectileBulletSmall.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=3]
 
 [sub_resource type="Animation" id=1]
 length = 0.2
@@ -22,6 +24,8 @@ tracks/0/keys = {
 weapon_type = 1
 weapon_ammo = 3
 use_ai = true
+Ammo = ExtResource( 2 )
+load_icon = ExtResource( 3 )
 
 [node name="Polygon2D" parent="WeaponSprite" index="1"]
 polygon = PoolVector2Array( 32, -4, -8, -4, -8, 4, 0, 4, 32, 4, 32, 0 )

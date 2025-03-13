@@ -1,12 +1,14 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/weapons/mala/Mala.gd" type="Script" id=1]
+[ext_resource path="res://assets/icons/icon_mala_VRSA.tres" type="Texture" id=2]
 
 [node name="Mala" type="Area2D"]
 monitoring = false
 monitorable = false
 script = ExtResource( 1 )
 hit_damage = 0.002
+load_icon = ExtResource( 2 )
 
 [node name="ShapePoly" type="Polygon2D" parent="."]
 position = Vector2( -108, 0 )

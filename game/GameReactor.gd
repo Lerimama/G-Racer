@@ -183,12 +183,12 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					# to finish
 					if game_level.level_finish:
 						game.game_sound.little_horn.play()
-						reaching_driver.driver.on_goal_reached(reached_goal, game_level.level_finish)
+						reaching_driver.controller.on_goal_reached(reached_goal, game_level.level_finish)
 					# all goals reached and finished
 					else:
 						game.game_sound.big_horn.play()
 						reaching_driver.update_stat(Pfs.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
-						reaching_driver.driver.on_goal_reached(reached_goal)
+						reaching_driver.controller.on_goal_reached(reached_goal)
 						drivers_finished.append(reaching_driver)
 						reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 
@@ -199,7 +199,7 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 			# next goal
 			else:
 				game.game_sound.little_horn.play()
-				reaching_driver.driver.on_goal_reached(reached_goal)
+				reaching_driver.controller.on_goal_reached(reached_goal)
 
 
 func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
@@ -258,7 +258,8 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 		driver_vehicle.driver_stats[Pfs.STATS.LEVEL_RANK] = -1
 
 	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
-
+	game.final_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
+	printt("DEACT", game.final_drivers_data[driver_vehicle.driver_id]["weapon_stats"])
 	# hide view
 	game.gui.hud.get_parent().driver_huds_holder.unset_driver_hud(driver_vehicle.driver_id)
 

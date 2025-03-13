@@ -1,7 +1,7 @@
 extends Area2D
 
 
-signal weapon_shot
+#signal weapon_shot
 
 enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER, MALA}
 
@@ -16,6 +16,8 @@ export var elevation: float = 0 # glese na owner
 export var hit_damage: float = 1
 export (Array, PackedScene) var travel_fx: Array
 export (Array, PackedScene) var hit_fx: Array
+export (Texture) var load_icon: Texture = null # uni ime
+var load_count: int = 1 # da ni errorja pri preverjanju štetja
 
 var influenced_bodies: Array = []
 var mala_owner: Node2D
@@ -61,10 +63,8 @@ func _on_weapon_triggered(trigger_owner: Node2D):
 
 
 func _shoot(weapon_owner: Node2D):
-
+#
 	var no_use_disabled = true
-	if not no_use_disabled:
-		emit_signal("weapon_shot")#, ammo_stat_key, -1)
 
 
 func _dissarm():

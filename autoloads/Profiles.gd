@@ -30,77 +30,73 @@ var z_indexes: Dictionary = {
 
 func __stats(): pass # ------------------------------------------------------------
 
-# vsi mogoči statsi
+# tipi:
+#	Int ... je samo vrednost
+#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v driverja
+#	Array ... lahko se računa current in max value
+#	PoolIntArray ... vedno
+
 enum STATS {
-		# tipi:
-		#	Int ... je samo vrednost
-		#	Array, PoolIntArray ... potrebno reset uniq ob apliciranju v driverja
-		#	Array ... lahko se računa current in max value
-		#	PoolIntArray ... vedno
-		WINS, # curr level index / max ... PRENOSNA
-		LIFE, # have or taken .. curr int / max ... PRENOSNA
-		HEALTH, # 0.0 > 1.0 ...  value ali +/- delta ... PRENOSNA
-		POINTS, GAS, CASH, # float ... PRENOSNA
-		BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, HOMER_COUNT # int ... +/- delta ... PRENOSNA
-		LEVEL_RANK, # int
-		LAP_COUNT, # časi krogov
-		GOALS_REACHED # array ciljev ... samo dodajaš
-		BEST_LAP_TIME, LEVEL_TIME, LAP_TIME, # value ... hunds
+		# driver
+		WINS,
+		LIFE,
+		HEALTH,
+		POINTS,
+		GAS,
+		CASH,
+		# level (reset on level)
+		LEVEL_RANK,
+		LAP_COUNT,
+		GOALS_REACHED,
+		BEST_LAP_TIME,
+		LEVEL_TIME,
+		LAP_TIME,
 		}
-enum WEAPON_STAT {
-	BULLET_COUNT, MISILE_COUNT, MINA_COUNT, SMALL_COUNT, HOMER_COUNT # int ... +/- delta ... PRENOSNA
-}
-
-enum RANKING_MODE {TIME, POINTS}
-
-var start_driver_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-	# arrayi se ob spawnu prepišejo da so uniq
+var start_driver_stats: Dictionary = {
 	# driver
-
-	# zmagani leveli [level_data_1,level_data_1, level_data_1, ..., WINS NEEDED]
-	# če je arrray z eno številko, ga šteje, ko max
-	STATS.WINS: [], # level index
-	# celo igra sta notri dve številki ki označujeta curr max
-	STATS.LIFE: 0,
+	STATS.WINS: [], # level index in game levels
+	STATS.LIFE: 0, # life have/taken
 	STATS.CASH: 0,
 	STATS.POINTS :0,
-	# level
-	STATS.LEVEL_RANK: 0,
-	STATS.LEVEL_TIME: 0, # hunds
-	STATS.BEST_LAP_TIME: 0,
-	STATS.LAP_COUNT: [], # časi
-	STATS.GOALS_REACHED: [], # nodeti
-	STATS.LAP_TIME: 0, # hunds
 	# vehicle
-	STATS.HEALTH: 1.0, # health percetnage
+	STATS.HEALTH: 1.0, # percetnage
 	STATS.GAS: 2000,
-	# weapons
-#	STATS.BULLET_COUNT: 100,
-#	STATS.MISILE_COUNT: 5,
-#	STATS.SMALL_COUNT: 500,
-#	STATS.MINA_COUNT: 3,
-#	STATS.HOMER_COUNT: 50,
-}
+	# level (reset per level)
+	STATS.LEVEL_RANK: 0,
+	STATS.LEVEL_TIME: 0,
+	STATS.BEST_LAP_TIME: 0,
+	STATS.LAP_COUNT: [], # lap time
+	STATS.GOALS_REACHED: [], # goal node duplicate?
+	STATS.LAP_TIME: 0,
+	}
 
-var start_driver_weapon_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-	# weapons
-	WEAPON_STAT.BULLET_COUNT: 100,
-	WEAPON_STAT.MISILE_COUNT: 5,
-	WEAPON_STAT.SMALL_COUNT: 500,
-	WEAPON_STAT.MINA_COUNT: 3,
-	WEAPON_STAT.HOMER_COUNT: 50,
-}
+enum WEAPON_STAT { # int ... +/- delta ... PRENOSNA
+	BULLET_COUNT,
+	MISILE_COUNT,
+	MINA_COUNT,
+	SMALL_COUNT,
+	HOMER_COUNT,
+	}
+#var start_weapon_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
+#	# weapons
+#	WEAPON_STAT.BULLET_COUNT: 100,
+#	WEAPON_STAT.MISILE_COUNT: 5,
+#	WEAPON_STAT.SMALL_COUNT: 500,
+#	WEAPON_STAT.MINA_COUNT: 3,
+#	WEAPON_STAT.HOMER_COUNT: 50,
+#	}
 
 
 func __drivers(): pass # ------------------------------------------------------------
 
+var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres"), preload("res://home/avatar_ai.tres")]
+var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
+var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
 enum DRIVER_TYPE {PLAYER, AI}
+enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 
-var driver_profiles: Dictionary = { # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
-}
-
-var available_driver_names: Array = ["Prvi", "Drugi", "Tretji", "sdfsg", "sdfwsgfsdf"]
+var driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 var default_driver_profile: Dictionary = {
 	"driver_name_obs": "PLAJER", # samo še home
 	"driver_avatar": preload("res://home/avatar_david.tres"),
@@ -109,14 +105,7 @@ var default_driver_profile: Dictionary = {
 	"vehicle_type": VEHICLE.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
 	"target_rank": 10, # prepiše vehicle target_rank
-}
-
-var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres"), preload("res://home/avatar_ai.tres")]
-var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
-var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
-
-
-enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
+	}
 var ai_profile: Dictionary = {
 	"driver_scene": preload("res://game/vehicle/ControlAI.tscn"),
 	"ai_avatar": preload("res://home/avatar_ai.tres"),
@@ -126,7 +115,7 @@ var ai_profile: Dictionary = {
 	"random_start_range": "", # še na nodu
 	"driver_color": Rfs.color_red,
 	"target_rank": 0, # prepiše vehicle target_rank
-}
+	}
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
 var controller_profiles: Dictionary = {
@@ -166,7 +155,7 @@ var controller_profiles: Dictionary = {
 		selector_action = "jp2_selector",
 		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
-}
+	}
 
 
 func __vehicles(): pass # ------------------------------------------------------------
@@ -193,6 +182,7 @@ var vehicle_profiles: Dictionary = {
 		},
 	}
 
+
 func __equipment(): pass # ------------------------------------------------------------
 
 enum EQUIPMENT {NITRO, SHIELD}
@@ -207,16 +197,13 @@ var equipment_profiles : Dictionary = {
 		"scene": preload("res://game/equipment/shield/Shield.tscn"),
 		"time": 3,
 	},
-}
+	}
 
 
 func __weapons(): pass # ------------------------------------------------------------
 
 var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
-
 enum AMMO {BULLET, MISILE, MINA, SMALL, HOMER} # kot v orožjih
-
-
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		"reload_time": 0.2,
@@ -253,14 +240,12 @@ var ammo_profiles : Dictionary = {
 		"stat_key": WEAPON_STAT.HOMER_COUNT,
 		"mag_size": 100,
 	},
-}
+	}
 
 
 func __levels(): pass # ------------------------------------------------------------
 
-
 enum RANK_BY {TIME, POINTS} # BATTLE JE PRVI ALI NEDEFINED
-
 enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP} # to zaporedje upošteva zapordje home gumbov
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
@@ -334,7 +319,7 @@ var level_profiles: Dictionary = {
 #		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
 #		"level_goals": [],
 		},
-}
+	}
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
 var level_object_profiles: Dictionary = {
@@ -383,25 +368,8 @@ var level_object_profiles: Dictionary = {
 		"object_scene": preload("res://game/level/objects/GoalPillar.tscn"),
 		"target_rank": 5,
 	},
-}
+	}
 
-#var ai_targets: Dictionary {
-#	0: [
-#
-#	],
-#	1: [
-#
-#	],
-#	2: [
-#
-#	],
-#	3: [
-#
-#	],
-#	4: [
-#
-#	],
-#}
 
 func __surfaces(): pass # ------------------------------------------------------------
 
@@ -431,7 +399,7 @@ var surface_type_profiles: Dictionary = {
 		"engine_power_addon": 0,
 		"shake_amount": 0,
 	},
-}
+	}
 
 func __pickables(): pass # ------------------------------------------------------------
 
@@ -455,14 +423,14 @@ var pickable_profiles: Dictionary = {
 		"value": 2,
 		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": STATS.MISILE_COUNT,
+		"driver_stat": WEAPON_STAT.MISILE_COUNT,
 	},
 	PICKABLE.PICKABLE_MINA: {
 		"color": Rfs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": STATS.MINA_COUNT,
+		"driver_stat": WEAPON_STAT.MINA_COUNT,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
 		"color": Rfs.color_pickable_stat,
@@ -518,4 +486,4 @@ var pickable_profiles: Dictionary = {
 		"elevation": 3,
 		"target_rank": 9,
 	},
-}
+	}

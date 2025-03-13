@@ -2,7 +2,7 @@ extends Node2D
 
 
 #signal weapon_triggered
-signal next_weapon_selected
+signal item_selected
 
 var vehicle: Vehicle # temp ... Vehicle class
 var controller_type: int
@@ -20,7 +20,7 @@ onready var selector_action: String = controller_actions["selector_action"]
 var pressed_driving_actions: Array = []
 var goals_to_reach: Array = []
 var selected_item_index = 0
-var game_is_on: bool = false
+#var game_is_on: bool = false
 var fast_start_window_is_open: bool = false
 
 
@@ -33,21 +33,21 @@ func _input(event: InputEvent) -> void:
 		# select weapon
 		if Input.is_action_just_pressed(selector_action):
 			selected_item_index += 1
-			if selected_item_index > vehicle.triggering_weapons.size() - 1: # poskrbi tudi za primer, da je samo en item
+			if selected_item_index > vehicle.triggering_equipment.size() - 1: # poskrbi tudi za primer, da je samo en item
 				selected_item_index = 0
 			elif selected_item_index < 0:
-				selected_item_index = vehicle.triggering_weapons.size() - 1
-			emit_signal("next_weapon_selected", selected_item_index)
+				selected_item_index = vehicle.triggering_equipment.size() - 1
+			emit_signal("item_selected", selected_item_index)
 			# weapon ai on/ off
-			var selected_weapon: Node2D = vehicle.triggering_weapons[selected_item_index]
+			var selected_weapon: Node2D = vehicle.triggering_equipment[selected_item_index]
 			if selected_weapon.use_ai:
 				selected_weapon.weapon_ai.ai_enabled = true
 			else:
-				for weapon in vehicle.triggering_weapons:
+				for weapon in vehicle.triggering_equipment:
 					weapon.weapon_ai.ai_enabled = false
 		# shoot
 		if Input.is_action_pressed(shoot_action):
-			var selected_weapon: Node2D = vehicle.triggering_weapons[selected_item_index]
+			var selected_weapon: Node2D = vehicle.triggering_equipment[selected_item_index]
 			if selected_weapon.has_method("_on_weapon_triggered"):
 				selected_weapon._on_weapon_triggered()
 			# še vsa orožja istega tipa
@@ -60,15 +60,16 @@ func _input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed(fwd_action) or Input.is_action_just_pressed(rev_action):
 			vehicle.engines.revup()
 
-	if game_is_on \
-	and not motion_manager.motion == motion_manager.MOTION.DISSARAY \
+#	if game_is_on \
+#	and not motion_manager.motion == motion_manager.MOTION.DISSARAY \
+	if not motion_manager.motion == motion_manager.MOTION.DISSARAY \
 	and not motion_manager.motion == motion_manager.MOTION.DISSABLED:
 		# motion
 		var prev_actions: Array = pressed_driving_actions.duplicate()
 		if Input.is_action_pressed(fwd_action):
 			if not fwd_action in pressed_driving_actions: pressed_driving_actions.append(fwd_action)
 		elif Input.is_action_pressed(rev_action):
-			if not rev_action in pressed_driving_actions: pressed_driving_actions.append(rev_action)
+			if not rev_action in pressed_driving_actions:  pressed_driving_actions.append(rev_action)
 		else:
 			if fwd_action in pressed_driving_actions: pressed_driving_actions.erase(fwd_action)
 			if rev_action in pressed_driving_actions: pressed_driving_actions.erase(rev_action)
@@ -85,6 +86,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _ready() -> void:
+	printt ("redi", motion_manager.motion)
 
 	vehicle.add_to_group(Rfs.group_players)
 	# player coližn lejer
@@ -124,19 +126,21 @@ func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_
 	goals_to_reach.erase(goal_reached)
 
 
-func _on_game_stage_change(game_manager: Game): # od GMja
+#func _on_game_stage_change(game_manager: Game): # od GMja
 
-	match game_manager.game_stage:
-		game_manager.GAME_STAGE.PLAYING:
-			#			print ("fast start open")
-			game_is_on = true
-			fast_start_window_is_open = true
-			yield(get_tree().create_timer(Sts.fast_start_time), "timeout")
-			fast_start_window_is_open = false
-			#			print ("fast start closed")
-		game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
-			game_is_on = false
-			if vehicle.is_active: # zazih
-				vehicle.is_active = false
-				print ("disejblam", " _prepozno")
+
+func on_game_start(game_level: Node2D): # od GMja
+	printt("start plajer", motion_manager.motion)
+#	game_is_on = true
+#	and not motion_manager.motion == motion_manager.MOTION.DISSABLED:
+
+	fast_start_window_is_open = true
+	yield(get_tree().create_timer(Sts.fast_start_time), "timeout")
+	fast_start_window_is_open = false
+	#			print ("fast start closed")
+#	game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
+##		game_is_on = false
+#		if vehicle.is_active: # zazih
+#			vehicle.is_active = false
+#			print ("disejblam", " _prepozno")
 

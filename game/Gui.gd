@@ -33,49 +33,48 @@ func _ready() -> void:
 	game_cover.modulate.a = 1
 
 
-func _on_game_stage_changed(curr_game_manager: Game):
+func on_game_start():
 
-	game_manager = curr_game_manager
+	hud.on_game_start()
 
-	match game_manager.game_stage:
 
-		game_manager.GAME_STAGE.READY:
-			hud.set_hud(game_manager)
-			if game_manager.level_profile["level_time_limit"] > 0:
-				if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
-					hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")
-			driver_huds_holder.set_driver_huds(game_manager, Sts.one_screen_mode)
+func open_game_over():
 
-			# fejdin
-			var fade_tween = get_tree().create_tween()
-			fade_tween.tween_property(game_cover, "modulate:a", 0, 0.7)
-			yield(fade_tween, "finished")
+	yield(get_tree().create_timer(Sts.get_it_time), "timeout")
 
-		game_manager.GAME_STAGE.PLAYING:
-			hud.on_game_start()
+	# pseudo fejdout
+	var fade_tween = get_tree().create_tween()
+	fade_tween.tween_property(game_cover, "modulate:a", 0.8, 0.7)
+	yield(fade_tween, "finished")
 
-		game_manager.GAME_STAGE.END_SUCCESS, game_manager.GAME_STAGE.END_FAIL:
-			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
+	# če je kakšen (ai) prazen, ga dodam med prazne
+	unfinished_driver_ids.clear()
+	for driver_id in game_manager.final_drivers_data:
+		if not "driver_stats" in game_manager.final_drivers_data[driver_id]:
+			unfinished_driver_ids.append(driver_id)
 
-			# pseudo fejdout
-			var fade_tween = get_tree().create_tween()
-			fade_tween.tween_property(game_cover, "modulate:a", 0.8, 0.7)
-			yield(fade_tween, "finished")
+	game_over.open(game_manager)
+	hud.on_game_over()
 
-			# če je kakšen (ai) prazen, ga dodam med prazne
-			unfinished_driver_ids.clear()
-			for driver_id in game_manager.final_drivers_data:
-				if not "driver_stats" in game_manager.final_drivers_data[driver_id]:
-					unfinished_driver_ids.append(driver_id)
+	if game_manager.game_sound.win_jingle.is_playing():
+		yield(game_manager.game_sound.win_jingle, "finished")
+	elif game_manager.game_sound.lose_jingle.is_playing():
+		yield(game_manager.game_sound.win_jingle, "finished")
+	game_manager.game_sound.menu_music.play()
 
-			game_over.open(game_manager)
-			hud.on_game_over()
 
-			if game_manager.game_sound.win_jingle.is_playing():
-				yield(game_manager.game_sound.win_jingle, "finished")
-			elif game_manager.game_sound.lose_jingle.is_playing():
-				yield(game_manager.game_sound.win_jingle, "finished")
-			game_manager.game_sound.menu_music.play()
+func set_gui():
+
+	hud.set_hud(game_manager)
+	if game_manager.level_profile["level_time_limit"] > 0:
+		if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
+			hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")
+	driver_huds_holder.set_driver_huds(game_manager, Sts.one_screen_mode)
+
+	# fejdin
+	var fade_tween = get_tree().create_tween()
+	fade_tween.tween_property(game_cover, "modulate:a", 0, 0.7)
+	yield(fade_tween, "finished")
 
 
 func _process(delta: float) -> void:
@@ -95,10 +94,8 @@ func _process(delta: float) -> void:
 func close_game(close_to: int, delay_time: float = 0):
 
 	get_tree().paused = true # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
-	#	get_viewport().set_disable_input(true)
 
 	game_manager.game_sound.fade_sounds(game_manager.game_sound.menu_music)
-
 	if not unfinished_driver_ids.empty():
 		_update_final_data()
 
@@ -108,6 +105,7 @@ func close_game(close_to: int, delay_time: float = 0):
 	yield(fade_tween, "finished")
 	game_over.hide()
 
+	get_tree().paused = false # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
 	get_viewport().set_disable_input(false)
 
 	match close_to:

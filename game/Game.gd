@@ -46,6 +46,7 @@ var final_level_data: Dictionary = {
 	}
 var final_drivers_data: Dictionary = {
 	#	"xavier": {
+	#		"weapon_stats": {},
 	#		"driver_stats": {},
 	#		"driver_profile": {}
 	#		},
@@ -118,12 +119,19 @@ func set_game():
 
 		# prenos stats v vehicle iz prejšnega levela in reset ... tihi, ker hud še ni spawnan
 		for driver in drivers_on_start:
-			var prev_level_stats: Dictionary = final_drivers_data[driver.driver_id]["driver_stats"]
+			# driver stats
 			var stats_to_reset: Array = [Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]
+			var prev_level_stats: Dictionary = final_drivers_data[driver.driver_id]["driver_stats"]
 			for stat in prev_level_stats:
 				if not stat in stats_to_reset:
 					driver.driver_stats[stat] = prev_level_stats[stat]
 			final_drivers_data[driver.driver_id].erase("driver_stats")
+			# weapon stats
+			prev_level_stats = final_drivers_data[driver.driver_id]["weapon_stats"]
+			for stat in prev_level_stats:
+				driver.weapon_stats[stat] = prev_level_stats[stat]
+			final_drivers_data[driver.driver_id].erase("weapon_stats")
+
 
 	yield(get_tree(), "idle_frame") # da lhko sodim po motion aman
 
@@ -192,30 +200,27 @@ func _change_game_stage(new_game_stage: int):
 	game_stage = new_game_stage
 
 	match game_stage:
+
 		GAME_STAGE.SETTING_UP:
 			game_sound.intro_jingle.play()
-			for connecting_node in main_signal_connecting_nodes:
-				if not self.is_connected("game_stage_changed", connecting_node, "_on_game_stage_changed"):
-					self.connect("game_stage_changed", connecting_node, "_on_game_stage_changed")
 			if not game_views.is_connected("views_are_set", self, "_on_views_are_set"):
 				game_views.connect("views_are_set", self, "_on_views_are_set")
 
 		GAME_STAGE.READY:
 			if not game_sound.intro_jingle.is_playing(): # _temp
 				game_sound.intro_jingle.play()
-
 			Rfs.ultimate_popup.hide() # skrijem pregame
-			_game_intro() # če je tukajni statistike?
-
-			emit_signal("game_stage_changed", self)
+			gui.set_gui()
+			_game_intro()
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 			game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
-
-
 			if not level_profile["rank_by"] == Pfs.RANK_BY.TIME: # zaženem vsakič, tudi po pavzi
 				game_reactor.spawn_random_pickables()
-			emit_signal("game_stage_changed", self)
+
+			gui.on_game_start()
+			for driver in get_tree().get_nodes_in_group(Rfs.group_drivers):
+				driver.controller.on_game_start(game_level)
 
 		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
 
@@ -228,18 +233,19 @@ func _change_game_stage(new_game_stage: int):
 			#			print("final_drivers_data")
 			#			print(final_drivers_data)
 			#			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
-#			if not game_reactor.drivers_finished.empty(): # zmaga
-#				game_reactor.drivers_finished[0].update_stat(Pfs.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
+			#			if not game_reactor.drivers_finished.empty(): # zmaga
+			#				game_reactor.drivers_finished[0].update_stat(Pfs.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
 
-			emit_signal("game_stage_changed", self)
+			gui.open_game_over()
+
 			# ustavi elemente
 				# best lap stats reset
 				# looping sounds stop
 				# navigacija AI
 				# kvefri elementov, ki so v areni
 			get_tree().set_group(Rfs.group_player_cameras, "follow_target", null)
-#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
-#			AudioServer.set_bus_mute(bus_index, true)
+			#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+			#			AudioServer.set_bus_mute(bus_index, true)
 
 
 func _change_camera_leader(new_camera_leader: Node2D):
@@ -290,52 +296,48 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 	var scene_name: String = "vehicle_scene"
 	var vehicle_type: int = Pfs.VEHICLE.values()[0]
 
-	var new_driver_stats: Dictionary = {}
-	var new_driver_weapon_stats: Dictionary = {}
-	if level_index > 0:
-		new_driver_stats = final_drivers_data[driver_id]["driver_stats"].duplicate()
-	else:
-		new_driver_stats = Pfs.start_driver_stats.duplicate()
-		# reset notranji arrayev ... da so unique
-		# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-		new_driver_stats[Pfs.STATS.WINS] = []
-		new_driver_stats[Pfs.STATS.LAP_COUNT] = []
-		new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
-		new_driver_weapon_stats = Pfs.start_driver_weapon_stats.duplicate()
-
 	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
-	new_vehicle.driver_id = driver_id
+
 	new_vehicle.modulate.a = 0 # za intro
 	new_vehicle.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_vehicle.global_position = start_position_nodes[spawned_position_index].global_position
 
-	# profili ... iz njih podatke povleče sam na rea dy
-	new_vehicle.driver_profile = Pfs.driver_profiles[driver_id].duplicate()
-	new_vehicle.driver_stats = new_driver_stats
-	new_vehicle.driver_weapon_stats = new_driver_weapon_stats
+	new_vehicle.driver_id = driver_id
 	new_vehicle.default_vehicle_profile = Pfs.vehicle_profiles[vehicle_type].duplicate()
-
-	# tip level je njegov namen obstoja, edino kar ve o levelu ... zaenkrat
+	new_vehicle.driver_profile = Pfs.driver_profiles[driver_id].duplicate()
 	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
+
+	# stats
+	var new_driver_stats: Dictionary = {}
+	var new_weapon_stats: Dictionary = {}
+	if level_index > 0:
+		new_driver_stats = final_drivers_data[driver_id]["driver_stats"].duplicate()
+		new_weapon_stats = final_drivers_data[driver_id]["weapon_stats"].duplicate()
+	else:
+		# weapon stats se napolnijo ob setanju weaponow
+		new_driver_stats = Pfs.start_driver_stats.duplicate()
+
+		# reset notranji arrayev ... da so unique
+		new_driver_stats[Pfs.STATS.WINS] = []
+		new_driver_stats[Pfs.STATS.LAP_COUNT] = []
+		new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
+	new_vehicle.driver_stats = new_driver_stats
+	new_vehicle.weapon_stats = new_weapon_stats
 
 	Rfs.node_creation_parent.add_child(new_vehicle)
 
 	# ai navigation
 	if Pfs.driver_profiles[driver_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
-		new_vehicle.driver.level_navigation = game_level.level_navigation
-
+		new_vehicle.controller.level_navigation = game_level.level_navigation
 	# trackers
 	if game_level.level_track:
 		new_vehicle.driver_tracker = game_level.level_track.set_new_tracker(new_vehicle)
 	# goals
-	new_vehicle.driver.goals_to_reach = game_level.level_goals.duplicate()
-
+	new_vehicle.controller.goals_to_reach = game_level.level_goals.duplicate()
 	# connect
 	new_vehicle.connect("stat_changed", gui.hud, "_on_driver_stat_changed")
-	self.connect("game_stage_changed", new_vehicle.driver, "_on_game_stage_change")
 	new_vehicle.connect("vehicle_deactivated", game_reactor, "_on_vehicle_deactivated")
-
 
 	drivers_on_start.append(new_vehicle)
 

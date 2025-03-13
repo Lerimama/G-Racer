@@ -29,7 +29,7 @@ var use_vision_for_collision: bool = false
 var delete_on_out_of_screen: bool = false
 var spawner: Node
 var is_active: bool = false
-var misile_time: float = 0 # čas za domet
+var misile_time: float = 0
 var detect_target: Node2D
 var is_out_of_screen: bool = false
 
@@ -55,6 +55,11 @@ onready var vision_ray: RayCast2D = $VisionRay
 onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 onready var shape_area: Area2D = $ShapeArea
 
+# neu
+export var icon_texture: Texture = load("res://assets/icons/icon_bullet_VRSA.tres")
+export var magazine_size: int = 10
+# ni v profilih
+var homming_delay: float = 1
 
 
 func _ready() -> void:
@@ -113,6 +118,11 @@ func _physics_process(delta: float) -> void:
 
 	misile_time += delta
 
+	# homing vklop
+	if homming_mode and misile_time > homming_delay:
+		if detect_area.monitoring == false:
+			detect_area.set_deferred("monitoring", true)
+
 	if trail:
 		trail.add_points(trail_position.global_position)
 
@@ -140,7 +150,6 @@ func _physics_process(delta: float) -> void:
 		# sledenje
 		if not is_instance_valid(detect_target):
 			detect_target = null
-
 		if detect_target:
 			direction = lerp(direction, global_position.direction_to(detect_target.global_position), 0.1)
 			rotation = global_position.direction_to(detect_target.global_position).angle()
@@ -283,6 +292,9 @@ func _change_projectile_profile(new_projectile_profile: Resource):
 	homming_mode = projectile_profile.homming_mode
 	use_vision_for_collision = projectile_profile.use_vision_for_collision
 	delete_on_out_of_screen = projectile_profile.delete_on_out_of_screen
+
+	icon_texture = projectile_profile.icon_texture
+	magazine_size = projectile_profile.magazine_size
 
 
 func _exit_tree() -> void:

@@ -5,13 +5,12 @@ var hud_driver: Vehicle
 var is_set: bool = false
 var driver_is_ai: bool = false
 
-var selected_weapon: Node2D # index znotraj aktivnih orožij
-var selector_items: Dictionary = {} # item in njegovo orožja
-var selector_item_template: Control
+var counters_with_items: Dictionary = {} # item in njegovo orožja
+var item_counter_template: Control
 var drivers_viewport: Viewport
 var always_open: bool = true
 var selector_open_time: float = 0
-var hide_no_ammo: bool = false
+var hide_empty: bool = false
 
 onready var selector: Control = $Selector
 onready var local_offset: Vector2 = Vector2(- selector.rect_size.x, 100)
@@ -26,7 +25,7 @@ onready var visibility_notifier: VisibilityNotifier2D = $VisibilityNotifier2D
 
 func _ready() -> void:
 
-	selector_item_template = Mts.remove_chidren_and_get_template(selector.get_children())
+	item_counter_template = Mts.remove_chidren_and_get_template(selector.get_children())
 	hide()
 
 
@@ -49,15 +48,13 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 			gas_bar.show()
 		else:
 			gas_bar.hide()
-
-
 	else:
-		# weapons
-		hud_driver.driver.connect("next_weapon_selected", self, "_on_next_weapon_selected")
-		for weapon in hud_driver.triggering_weapons:
-			_add_weapon_selector(weapon)
+		# items
+		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
+		for item in hud_driver.triggering_equipment:
+			_add_item_counter(item)
 		is_set = true
-		_on_next_weapon_selected(0)
+		_on_item_selected(0)
 
 	show()
 
@@ -98,53 +95,40 @@ func _process(delta: float) -> void:
 			else:
 				gas_bar_line.color = Rfs.color_yellow
 
-		# weapons
+		# items
 		if driver_is_ai:
 			if selector.visible:
 				selector.hide()
 		else:
-			for weapon in selector_items.values():
-				if "weapon_ammo" in weapon:
-					var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
-					var ammo_count: float = hud_driver.driver_weapon_stats[ammo_count_key]
-					var selector_item: Control = selector_items.find_key(weapon)
-					selector_item.get_node("CountLabel").text = "%02d" % ammo_count
-			if hide_no_ammo:
-				for weapon in selector_items:
-					if "weapon_ammo" in weapon:
-						var ammo_count_key: int = Pfs.ammo_profiles[weapon.weapon_ammo]["stat_key"]
-						var ammo_count: float = hud_driver.driver_weapon_stats[ammo_count_key]
-						if ammo_count > 0:
-							hide()
-						else:
-							show()
+			for counter in counters_with_items:
+				counter.get_node("CountLabel").text = "%02d" % counters_with_items[counter].load_count
+				if hide_empty:
+					if counters_with_items[counter].load_count > 0:
+						show()
+					else:
+						hide()
 
 
-func _add_weapon_selector(item_weapon: Node2D):
+func _add_item_counter(new_item: Node2D):
 
-	var new_selector_item: Control = selector_item_template.duplicate()
+	var new_selector_item: Control = item_counter_template.duplicate()
 	selector.add_child(new_selector_item)
 
-	selector_items[new_selector_item] = item_weapon
-
-	if "weapon_ammo" in item_weapon:
-		new_selector_item.get_node("Icon").texture = Pfs.ammo_profiles[item_weapon.weapon_ammo]["icon"]
-		var weapon_ammo_count_key: int = Pfs.ammo_profiles[item_weapon.weapon_ammo]["stat_key"]
-		new_selector_item.get_node("CountLabel").text = "%02d" % hud_driver.driver_weapon_stats[weapon_ammo_count_key]
-	else:
-		new_selector_item.get_node("Icon").texture = Pfs._temp_mala_icon
-		new_selector_item.get_node("CountLabel").hide()
+	counters_with_items[new_selector_item] = new_item
+	new_selector_item.get_node("CountLabel").text = "%02d" % new_item.load_count
+	new_selector_item.get_node("Icon").texture = new_item.load_icon
 
 
-func _remove_weapon_selector(selector_item: Control):
+func _remove_item_counter(item_to_remove: Control):
 
-	selector_items.erase(selector_item)
-	selector_item.queue_free()
+	counters_with_items.erase(item_to_remove)
+	item_to_remove.queue_free()
 
+#var selected_item: Node2D # index znotraj aktivnih orožij
 
-func _on_next_weapon_selected(selected_index: int):
+func _on_item_selected(selected_index: int):
 
-	if is_set and not selector_items.empty() and not driver_is_ai:
+	if is_set and not counters_with_items.empty() and not driver_is_ai:
 
 		# če ni viden ga samo pokaže in izbira v naslednjem koraku
 		if not selector.visible:
@@ -152,15 +136,15 @@ func _on_next_weapon_selected(selected_index: int):
 		# če je viden izbira
 		else:
 			# prevent ... zazih
-			if selected_index > selector_items.size() - 1: # poskrbi tudi za primer, da je samo en item
-				selected_index = selector_items.size() - 1
+			if selected_index > counters_with_items.size() - 1: # poskrbi tudi za primer, da je samo en item
+				selected_index = counters_with_items.size() - 1
 
 			# izberem orožje
-			var new_selected_item: Control = selector_items.keys()[selected_index]
-			selected_weapon = selector_items[new_selected_item]
+			var new_selected_item: Control = counters_with_items.keys()[selected_index]
+#			selected_item = counters_with_items[new_selected_item]
 
 			# LNF
-			for item in selector_items:
+			for item in counters_with_items:
 				if item == new_selected_item:
 					item.modulate.a = 1
 				else:

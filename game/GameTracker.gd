@@ -111,8 +111,8 @@ func _sort_trackers_by_offset(driver_tracker_1, driver_tracker_2): # asc
 func _sort_drivers_by_goals_reached(driver_1: Node2D, driver_2: Node2D):# desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var driver_1_goals_to_reach_size: int = driver_1.driver.goals_to_reach.size()
-	var driver_2_goals_to_reach_size: int = driver_2.driver.goals_to_reach.size()
+	var driver_1_goals_to_reach_size: int = driver_1.controller.goals_to_reach.size()
+	var driver_2_goals_to_reach_size: int = driver_2.controller.goals_to_reach.size()
 	if driver_1_goals_to_reach_size < driver_2_goals_to_reach_size:
 		return true
 	return false
