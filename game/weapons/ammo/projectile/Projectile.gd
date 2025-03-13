@@ -98,10 +98,8 @@ func _ready() -> void:
 		start_thrust_power = max_thrust_power
 	thrust_power = start_thrust_power * thrust_power_to_spawner_factor + spawner_speed * 10
 
-	if homming_mode:
-		detect_area.set_deferred("monitoring", true)
-	else:
-		detect_area.set_deferred("monitoring", false)
+	detect_area.set_deferred("monitoring", false)
+	# če je homming jo prižge v procesu
 
 	# spawn trail
 	if Trail:

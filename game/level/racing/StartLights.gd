@@ -8,11 +8,14 @@ var light_index: int = 0
 onready var on_lights: Array = $OnLights.get_children()
 onready var off_lights: Array = $OffLights.get_children()
 onready var light_timer: Timer = $LightTimer
+onready var countdown_a: AudioStreamPlayer = $Sounds/CountdownA
+onready var countdown_b: AudioStreamPlayer = $Sounds/CountdownB
 
 
 func _ready() -> void:
 
 	visible = Sts.start_countdown
+
 	for light in off_lights:
 		light.show()
 	for light in on_lights:
@@ -29,7 +32,7 @@ func start_countdown():
 func turn_on_light():
 
 	if light_index < 3:
-		$CountdownA.play()
+		countdown_a.play()
 		on_lights[light_index].show()
 		off_lights[light_index].hide()
 		light_index += 1
@@ -41,7 +44,7 @@ func turn_on_light():
 func turn_off_all_lights():
 
 	light_index = 0
-	$CountdownB.play()
+	countdown_b.play()
 
 	var off_time: float = 0.2
 	for light in on_lights:

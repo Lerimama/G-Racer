@@ -265,7 +265,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 5,
+		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
 		# določeno ob spawnu
@@ -277,7 +277,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "SMall",
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/thumb_level_race.tres"),
-		"level_time_limit": 0,
+		"level_time_limit": 5,
 		"level_laps": 1, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
 		# določeno ob spawnu

@@ -46,7 +46,7 @@ var one_screen_mode: bool = true
 # PER LEVEL STYLE --------------------------------------------------------------------------------------------
 
 var start_countdown: bool = true
-var countdown_start_limit: int = 5
+var countdown_start_time: int = 3
 var pickables_count_limit: int = 5
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
@@ -69,6 +69,7 @@ var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot d
 var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
 var ai_gets_record: bool = true
 #enum DAMAGE_EFFECTS
+var sudden_death_start_time: int = 20
 
 
 # ON START -----------------------------------------------------------------------------------
@@ -190,9 +191,10 @@ func load_saved_game_settings(saved_game_settings: Resource):
 	time_game_heal_rate_factor = saved_game_settings.time_game_heal_rate_factor
 	points_game_heal_rate_factor = saved_game_settings.points_game_heal_rate_factor
 
+	sudden_death_start_time = saved_game_settings.sudden_death_start_time
 	camera_zoom_range = saved_game_settings.camera_zoom_range
 	start_countdown = saved_game_settings.start_countdown
-	countdown_start_limit = saved_game_settings.countdown_start_limit
+	countdown_start_time = saved_game_settings.countdown_start_time
 	pickables_count_limit = saved_game_settings.pickables_count_limit
 	pull_gas_penalty = saved_game_settings.pull_gas_penalty
 	drifting_mode = saved_game_settings.drifting_mode

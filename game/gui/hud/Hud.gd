@@ -245,19 +245,23 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				stat_to_change.stat_value = [stat_value.size(), level_lap_count]
 				# apdejtam tudi LAP TIME prikaz
 				var time_stat: Control = statbox_to_change.get("LAP_TIME")
-				time_stat.stat_value = stat_value.back()
-				# stoječi prikaz časa kroga
-				if not time_stat.stat_value == 0:
-					var time_still_stat: Control = statbox_to_change.get("lap_time_still")
-					time_still_stat.stat_value = time_stat.stat_value
-					time_still_stat.modulate = Rfs.color_red # zeleno ga obarva BEST LAP event
-					time_stat.hide()
-					time_still_stat.show()
-					yield(get_tree().create_timer(time_still_time), "timeout")
-					time_still_stat.hide()
-					time_stat.show()
+				if not stat_value.empty():
+					time_stat.stat_value = stat_value.back()
+					# stoječi prikaz časa kroga
+					if not time_stat.stat_value == 0:
+						var time_still_stat: Control = statbox_to_change.get("lap_time_still")
+						time_still_stat.stat_value = time_stat.stat_value
+						time_still_stat.modulate = Rfs.color_red # zeleno ga obarva BEST LAP event
+						time_stat.hide()
+						time_still_stat.show()
+						yield(get_tree().create_timer(time_still_time), "timeout")
+						time_still_stat.hide()
+						time_stat.show()
 			Pfs.STATS.BEST_LAP_TIME:
-				if not stat_value == 0:
+				if stat_value == 0:
+					stat_to_change.stat_value = 0
+					stat_to_change.get_parent().get_parent().hide()
+				else:
 					# statičen čas zapišem kot string
 					var stat_to_change_clock_time: String = Mts.get_clock_time_string(stat_value)
 					stat_to_change.stat_value = stat_to_change_clock_time

@@ -93,7 +93,7 @@ func _process(delta: float) -> void:
 
 func close_game(close_to: int, delay_time: float = 0):
 
-	get_tree().paused = true # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
+	get_tree().paused = true # proces, fp, input ... pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
 
 	game_manager.game_sound.fade_sounds(game_manager.game_sound.menu_music)
 	if not unfinished_driver_ids.empty():
@@ -113,8 +113,9 @@ func close_game(close_to: int, delay_time: float = 0):
 			Rfs.main_node.game_out()
 		0:
 			Rfs.main_node.reload_game()
+			#			game_manager.set_game(0)
 		1:
-			game_manager.set_game()
+			game_manager.set_game(1)
 
 
 func _update_final_data():

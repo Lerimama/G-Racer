@@ -104,7 +104,6 @@ percent_visible = 0.5
 
 [node name="GameCoundownA" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 4 )
-volume_db = -10.0
 pitch_scale = 0.8
 
 [node name="GameCoundownB" type="AudioStreamPlayer" parent="Sounds"]

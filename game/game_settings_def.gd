@@ -11,7 +11,8 @@ export (float, 0, 0.05, 0.005) var points_game_heal_rate_factor: float = 0 # na 
 
 export var camera_zoom_range: Vector2 = Vector2(1, 1.5)
 export var start_countdown: bool = true
-export var countdown_start_limit: int = 5
+export var countdown_start_time: int = 3
+export var sudden_death_start_time: int = 20
 export var pickables_count_limit: int = 5
 export var pull_gas_penalty: float = -20
 export var drifting_mode: bool = true # drift ali tilt?

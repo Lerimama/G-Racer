@@ -10,7 +10,7 @@ var timer_mode: int = TIMER_MODE.COUNT_UP
 enum TIMER_STATE {STOPPED, COUNTING, PAUSED}
 var timer_state: int = TIMER_STATE.STOPPED
 
-var game_time: float # čas igre v sekundah z decimalkami
+var game_time_secs: float # čas igre v sekundah z decimalkami
 var game_time_hunds: int # čas igre v zaokroženih stotinkah
 
 # opredelijo se bo štartu tajmerja
@@ -18,8 +18,9 @@ var hunds_mode: bool
 var sudden_death_mode: bool # dela samo, če ni stopwatch mode
 var start_timer_os_msecs: int = -1
 
-var game_time_limit: float # določi na reset
-var countdown_start_limit: int
+var game_time_limit: float # opredeli ga reset
+var countdown_start_time: int # opredeli ga reset
+var sudden_death_start_time: int  # opredeli ga reset
 onready var mins_label: Label = $MinSec/Mins
 onready var secs_label: Label = $MinSec/Secs
 onready var hunds_label: Label = $Hunds/Hunds
@@ -40,38 +41,37 @@ func _process(delta: float) -> void:
 			start_timer_os_msecs = Time.get_ticks_msec()
 
 		# samo zapis v timerju .. OPT
-		game_time = float(Time.get_ticks_msec() - start_timer_os_msecs) / 1000
-		game_time_hunds = game_time * 100 # - (Time.get_ticks_msec() - start_timer_os_msecs) * 10
+		game_time_secs = float(Time.get_ticks_msec() - start_timer_os_msecs) / 1000
+		game_time_hunds = game_time_secs * 100 # - (Time.get_ticks_msec() - start_timer_os_msecs) * 10
 
 		# zapišem
 		if timer_mode == TIMER_MODE.COUNT_UP:
-			mins_label.text = "%02d" % floor(game_time / 60)
-			secs_label.text = "%02d" % (floor(game_time) - floor(game_time / 60) * 60)
-			hunds_label.text = "%02d" % floor((game_time - floor(game_time)) * 100)
+			mins_label.text = "%02d" % floor(game_time_secs / 60)
+			secs_label.text = "%02d" % (floor(game_time_secs) - floor(game_time_secs / 60) * 60)
+			hunds_label.text = "%02d" % floor((game_time_secs - floor(game_time_secs)) * 100)
 		else:
-			var game_time_left: float = game_time_limit - game_time
+			var game_time_left: float = game_time_limit - game_time_secs
 			mins_label.text = "%02d" % (floor(game_time_left / 60))
 			secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60) * 60)
 			hunds_label.text = "%02d" % floor((game_time_left - floor(game_time_left)) * 100)
 
 			if game_time_left <= 0:
-				modulate = Rfs.color_red
 				stop_timer()
-				game_time = game_time_limit # namesto spodnjega zapisa ... ne deluje
+				game_time_secs = game_time_limit # namesto spodnjega zapisa ... ne deluje
 				mins_label.text = "00"
 				secs_label.text = "00"
 				hunds_label.text = "00"
+				modulate = Rfs.color_red
 				game_coundown_sound_a.play()
-				if sudden_death_mode:
-					emit_signal("sudden_death_activated") # pošlje se v hud, ki javi game managerju
-				else:
-					emit_signal("time_is_up") # pošlje se v hud, ki javi GM
+				emit_signal("time_is_up") # pošlje se v hud, ki javi GM
 			# GO countdown
-			elif game_time_left < countdown_start_limit: # če je countdown limit 0, ta pogoj nikoli ne velja
+			elif game_time_left <= countdown_start_time: # če je countdown limit 0, ta pogoj nikoli ne velja
 				# za vsakič, ko mine sekunda
-				if game_time == floor(game_time):
-					game_coundown_sound_b.play()
+				game_coundown_sound_b.play()
+				countdown_start_time -= 1
 				modulate = Rfs.color_yellow
+			elif sudden_death_mode and game_time_left < sudden_death_start_time:
+				pass
 
 
 func reset_timer(timer_limit: float = game_time_limit):
@@ -81,7 +81,8 @@ func reset_timer(timer_limit: float = game_time_limit):
 	# setup
 	game_time_limit = timer_limit
 	sudden_death_mode = Sts.sudden_death_mode
-	countdown_start_limit = Sts.countdown_start_limit # čas, ko je obarvan in se sliši bip bip
+	countdown_start_time = Sts.countdown_start_time # čas, ko je obarvan in se sliši bip bip
+	sudden_death_start_time = Sts.sudden_death_start_time # čas, ko je obarvan in se sliši bip bip
 	if game_time_limit == 0:
 		timer_mode = TIMER_MODE.COUNT_UP
 	else:
@@ -94,7 +95,7 @@ func reset_timer(timer_limit: float = game_time_limit):
 	# reset
 	modulate = Rfs.color_hud_base
 	start_timer_os_msecs = -1
-	game_time = 0
+	game_time_secs = 0
 	game_time_hunds = 0
 	if timer_mode == TIMER_MODE.COUNT_UP:
 		mins_label.text = "00"

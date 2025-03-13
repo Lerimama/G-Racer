@@ -37,11 +37,13 @@ polygon = PoolVector2Array( -32, -32, 32, -32, 32, 32, -32, 32 )
 [node name="LightTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="CountdownA" type="AudioStreamPlayer" parent="."]
+[node name="Sounds" type="Node" parent="."]
+
+[node name="CountdownA" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 3 )
 bus = "GameSfx"
 
-[node name="CountdownB" type="AudioStreamPlayer" parent="."]
+[node name="CountdownB" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 3 )
 volume_db = 5.0
 pitch_scale = 1.3

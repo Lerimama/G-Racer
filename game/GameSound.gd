@@ -105,30 +105,39 @@ func play_gui_sfx(effect_for: String):
 # MUSKA --------------------------------------------------------------------------------------------------------
 
 
-func fade_sounds(sound_1: AudioStreamPlayer, sound_2: AudioStreamPlayer = null, pause_instead: bool = false, in_parallel: bool = false, fade_time: float = 2):
+func fade_sounds(sound_1: AudioStreamPlayer, sound_2: AudioStreamPlayer = null, pause_instead: bool = false, in_parallel: bool = false, fade_time: float = 1):
 
 	var sound_1_def_volume: float = sound_1.volume_db
+	printt ("fading", sound_1, sound_2, sound_1_def_volume)
+	var fade_tween = get_tree().create_tween()
 
+	# out
 	if not sound_2:
-		var fade_tween = get_tree().create_tween()
-		fade_tween.tween_property(sound_1, "volume_db", -80, fade_time)
+		fade_tween.tween_property(sound_1, "volume_db", -80.0, fade_time)
 		if pause_instead:
 			fade_tween.tween_callback(sound_1, "set_stream_paused", true)
 		else:
 			fade_tween.tween_callback(sound_1, "stop")
+	# in
+	elif not sound_1:
+		if sound_2.stream_paused:
+			fade_tween.tween_callback(sound_2, "set_stream_paused", false)
+		else:
+			fade_tween.tween_callback(sound_2, "play")
+		fade_tween.parallel().tween_property(sound_2, "volume_db", sound_2.volume_db, fade_time).from(-80.0)
+	# out/in
 	else:
-		var fade_tween = get_tree().create_tween()
-		fade_tween.tween_property(sound_1, "volume_db", -80, fade_time)
+		fade_tween.tween_property(sound_1, "volume_db", -80.0, fade_time/2)
 		if pause_instead:
 			fade_tween.tween_callback(sound_1, "set_stream_paused", true)
 		else:
 			fade_tween.tween_callback(sound_1, "stop")
 		if sound_2.stream_paused:
-			fade_tween.tween_callback(sound_1, "set_stream_paused", false)
+			fade_tween.parallel().tween_callback(sound_1, "set_stream_paused", false)
+			fade_tween.parallel().tween_property(sound_2, "volume_db", sound_2.volumew_db, fade_time/2).from(-80.0)
 		else:
-			fade_tween.tween_callback(sound_2, "play")
-		fade_tween.tween_property(sound_2, "volume_db", sound_2.volume_db, fade_time).from(-80)
-
+			fade_tween.parallel().tween_callback(sound_2, "play")
+	yield(fade_tween, "finished")
 	sound_1.volume_db = sound_1_def_volume
 
 

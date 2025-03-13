@@ -594,7 +594,7 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 
 	return level_navigation.nav_position_target
 
-
+# trenutno ne uporabljam
 var track_target_prediction: float = 500
 var prev_tracker_offset: float = 0
 
@@ -641,11 +641,8 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
-#func _on_game_stage_change(game_manager: Game): # od GMja
-
-
 func on_game_start(game_level: Node2D): # od GMja
-	printt("level", ai_state, motion_manager.motion)
+
 	# random start
 	randomize()
 	var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
@@ -660,7 +657,6 @@ func on_game_start(game_level: Node2D): # od GMja
 		self.ai_state = AI_STATE.RACE_TO_GOAL
 	else:
 		self.ai_state = AI_STATE.SEARCH
-
 
 
 func _on_NavigationAgent2D_path_changed() -> void:

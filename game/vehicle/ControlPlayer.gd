@@ -20,9 +20,7 @@ onready var selector_action: String = controller_actions["selector_action"]
 var pressed_driving_actions: Array = []
 var goals_to_reach: Array = []
 var selected_item_index = 0
-#var game_is_on: bool = false
-var fast_start_window_is_open: bool = false
-
+var fast_start_window_is_open: bool = true
 
 func _input(event: InputEvent) -> void:
 	# ta del inputa je kar razdelan, ampak ko enkrat registrira vse možnosti ga lahko "pozabim"
@@ -57,11 +55,11 @@ func _input(event: InputEvent) -> void:
 						weapon._on_weapon_triggered()
 
 		# revup
-		if Input.is_action_just_pressed(fwd_action) or Input.is_action_just_pressed(rev_action):
-			vehicle.engines.revup()
+#		if motion_manager.motion == motion_manager.MOTION.DISSABLED:
+		if fast_start_window_is_open:
+			if Input.is_action_just_pressed(fwd_action) or Input.is_action_just_pressed(rev_action):
+				vehicle.engines.revup()
 
-#	if game_is_on \
-#	and not motion_manager.motion == motion_manager.MOTION.DISSARAY \
 	if not motion_manager.motion == motion_manager.MOTION.DISSARAY \
 	and not motion_manager.motion == motion_manager.MOTION.DISSABLED:
 		# motion
@@ -86,7 +84,6 @@ func _input(event: InputEvent) -> void:
 
 
 func _ready() -> void:
-	printt ("redi", motion_manager.motion)
 
 	vehicle.add_to_group(Rfs.group_players)
 	# player coližn lejer
@@ -126,21 +123,14 @@ func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_
 	goals_to_reach.erase(goal_reached)
 
 
-#func _on_game_stage_change(game_manager: Game): # od GMja
-
-
 func on_game_start(game_level: Node2D): # od GMja
-	printt("start plajer", motion_manager.motion)
-#	game_is_on = true
-#	and not motion_manager.motion == motion_manager.MOTION.DISSABLED:
 
 	fast_start_window_is_open = true
 	yield(get_tree().create_timer(Sts.fast_start_time), "timeout")
 	fast_start_window_is_open = false
-	#			print ("fast start closed")
-#	game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
-##		game_is_on = false
-#		if vehicle.is_active: # zazih
-#			vehicle.is_active = false
-#			print ("disejblam", " _prepozno")
+	#	game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
+	##		game_is_on = false
+	#		if vehicle.is_active: # zazih
+	#			vehicle.is_active = false
+	#			print ("disejblam", " _prepozno")
 

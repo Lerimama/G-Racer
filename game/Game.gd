@@ -5,7 +5,7 @@ class_name Game
 signal game_stage_changed(game_manager)
 
 enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, END_FAIL}
-var game_stage: int = -1 setget _change_game_stage
+var game_stage: int = 0 setget _change_game_stage
 
 export (Array, NodePath) var main_signal_connecting_paths: Array = []
 var main_signal_connecting_nodes: Array = []
@@ -14,7 +14,7 @@ var fast_start_window_on: bool = false # driver ga čekira in reagira
 # level
 var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
-var level_index: int = -1
+var level_index: int = 0
 var start_position_nodes: Array # dobi od levela
 
 # shadows
@@ -83,7 +83,7 @@ func _ready() -> void:
 	call_deferred("set_game")
 
 
-func set_game():
+func set_game(level_index_add: int = 0):
 	# čez set_game gre tudi next level
 
 	self.game_stage = GAME_STAGE.SETTING_UP
@@ -92,9 +92,8 @@ func set_game():
 	drivers_on_start.clear()
 	game_views.reset_views()
 	game_reactor.drivers_finished.clear()
-
 	game_levels = Sts.game_levels
-	level_index += 1
+	level_index += level_index_add
 	_spawn_level(level_index)
 
 	final_level_data["level_profile"] = level_profile
@@ -145,7 +144,7 @@ func set_game():
 	# kamere
 	for camera in get_tree().get_nodes_in_group(Rfs.group_player_cameras):
 		if Sts.one_screen_mode:
-			if not camera.is_connected( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field"):
+			if not camera.playing_field.is_connected( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field"):
 				camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
 		if level_profile["rank_by"] == Pfs.RANK_BY.POINTS:
 			camera.playing_field.enable_playing_field(true, true)
@@ -266,6 +265,7 @@ func _spawn_level(new_level_index: int):
 			var bus_index: int = AudioServer.get_bus_index("GameSfx")
 			AudioServer.set_bus_mute(bus_index, false)
 	if game_level: # če level že obstaja, ga najprej moram zbrisat
+		game_level.set_process(false)
 		game_level.set_physics_process(false)
 		game_level.queue_free()
 
