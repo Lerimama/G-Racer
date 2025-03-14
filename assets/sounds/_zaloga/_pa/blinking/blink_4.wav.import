@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/blink_4.wav-0b1b3a1a1ad6cd8a4705f3801fe1c014.sample"
+
+[deps]
+
+source_file="res://assets/sounds/_zaloga/_pa/blinking/blink_4.wav"
+dest_files=[ "res://.import/blink_4.wav-0b1b3a1a1ad6cd8a4705f3801fe1c014.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

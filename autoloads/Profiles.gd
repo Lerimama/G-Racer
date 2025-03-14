@@ -89,7 +89,7 @@ enum WEAPON_STAT { # int ... +/- delta ... PRENOSNA
 
 func __drivers(): pass # ------------------------------------------------------------
 
-var avatars: Array = [preload("res://home/avatar_david.tres"), preload("res://home/avatar_magnum.tres"), preload("res://home/avatar_marty.tres"), preload("res://home/avatar_mrt.tres"), preload("res://home/avatar_ai.tres")]
+var avatars: Array = [preload("res://home/drivers/avatar_david.tres"), preload("res://home/drivers/avatar_magnum.tres"), preload("res://home/drivers/avatar_marty.tres"), preload("res://home/drivers/avatar_mrt.tres"), preload("res://home/drivers/avatar_ai.tres")]
 var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
 var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
@@ -99,7 +99,7 @@ enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 var driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 var default_driver_profile: Dictionary = {
 	"driver_name_obs": "PLAJER", # samo še home
-	"driver_avatar": preload("res://home/avatar_david.tres"),
+	"driver_avatar": preload("res://home/drivers/avatar_david.tres"),
 	"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"vehicle_type": VEHICLE.BASIC,
@@ -108,7 +108,7 @@ var default_driver_profile: Dictionary = {
 	}
 var ai_profile: Dictionary = {
 	"driver_scene": preload("res://game/vehicle/ControlAI.tscn"),
-	"ai_avatar": preload("res://home/avatar_ai.tres"),
+	"ai_avatar": preload("res://home/drivers/avatar_ai.tres"),
 	"controller_type": AI_TYPE.DEFAULT,
 	"ai_type": AI_TYPE.DEFAULT, # obs
 	"ai_name": "STEINY",
@@ -252,7 +252,7 @@ var level_profiles: Dictionary = {
 		"level_name": "dafault",
 		"level_desc": "jajsjdsjdj",
 		"level_scene": preload("res://game/levels/Level.tscn"),
-		"level_thumb": preload("res://home/thumb_level_race.tres"),
+		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 2,
 		"level_record": ["00:00.00", "player"]
@@ -264,7 +264,7 @@ var level_profiles: Dictionary = {
 		"level_name": "first drive",
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
-		"level_thumb": preload("res://home/thumb_level_race.tres"),
+		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
@@ -276,7 +276,7 @@ var level_profiles: Dictionary = {
 		"level_name": "first drive shorty",
 		"level_desc": "SMall",
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
-		"level_thumb": preload("res://home/thumb_level_race.tres"),
+		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 5,
 		"level_laps": 1, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
@@ -288,7 +288,7 @@ var level_profiles: Dictionary = {
 		"level_name": "SETUP",
 		"level_desc": "SMall",
 		"level_scene": preload("res://game/levels/LevelAISetup.tscn"),
-		"level_thumb": preload("res://home/thumb_level_race.tres"),
+		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
@@ -301,7 +301,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "xxx",
 #		"level_path": "res://game/levels/LevelTraining.tscn",
 		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
-		"level_thumb": preload("res://home/thumb_level_training.tres"),
+		"level_thumb": preload("res://home/levels/thumb_level_training.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0,
 		"level_record": [100, "player"]
@@ -312,7 +312,7 @@ var level_profiles: Dictionary = {
 		"level_name": "staff",
 		"level_desc": "xxx",
 		"level_scene": preload("res://game/levels/LevelStaff.tscn"),
-		"level_thumb": preload("res://home/thumb_level_mission.tres"),
+		"level_thumb": preload("res://home/levels/thumb_level_mission.tres"),
 		"level_time_limit": 60,
 		"level_laps": 1,
 		"level_record": [100, "player"]

@@ -2,11 +2,11 @@
 
 [ext_resource path="res://game/level/objects/BrickMagnet.gd" type="Script" id=1]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=3]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=4]
-[ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=7]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/burst/burst.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sounds/level/teleport_loop_v2.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sounds/hits_collisions/hit_stray_v2.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sounds/level/teleport_out_v2.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sounds/level/teleport_in_v2.wav" type="AudioStream" id=7]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=8]
 [ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=9]
 

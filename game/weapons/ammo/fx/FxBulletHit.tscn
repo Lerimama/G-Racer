@@ -2,7 +2,7 @@
 
 [ext_resource path="res://common/tex/circo_8.png" type="Texture" id=1]
 [ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=2]
-[ext_resource path="res://assets/sounds/sfx/hit_wall.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sounds/hits_collisions/hit_wall.wav" type="AudioStream" id=3]
 
 [sub_resource type="Gradient" id=6]
 offsets = PoolRealArray( 0.175676, 0.396396 )

@@ -3,8 +3,8 @@
 [ext_resource path="res://game/gui/hud/GameTimer.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=2]
 [ext_resource path="res://assets/theme/fonts/body_font_slanted.tres" type="DynamicFont" id=3]
-[ext_resource path="res://game/gui/sounds/countdown-a.ogg" type="AudioStream" id=4]
-[ext_resource path="res://game/gui/sounds/countdown-b.ogg" type="AudioStream" id=5]
+[ext_resource path="res://assets/sounds/gui/countdown-a.ogg" type="AudioStream" id=4]
+[ext_resource path="res://assets/sounds/gui/countdown-b.ogg" type="AudioStream" id=5]
 
 [node name="GameTimer" type="HBoxContainer"]
 margin_left = -163.0

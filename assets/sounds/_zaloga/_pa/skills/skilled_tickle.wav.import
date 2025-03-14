@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/skilled_tickle.wav-7dbee10ddf2f29ae7f6d1633986db444.sample"
+
+[deps]
+
+source_file="res://assets/sounds/_zaloga/_pa/skills/skilled_tickle.wav"
+dest_files=[ "res://.import/skilled_tickle.wav-7dbee10ddf2f29ae7f6d1633986db444.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=1]
-[ext_resource path="res://assets/sounds/sfx/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=2]
+[ext_resource path="res://assets/sounds/weapons/bullet_shoot___658823__3dj__battlefield-7.wav" type="AudioStream" id=2]
 
 [sub_resource type="AudioStreamRandomPitch" id=2]
 audio_stream = ExtResource( 2 )

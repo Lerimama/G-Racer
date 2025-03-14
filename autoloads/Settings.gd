@@ -142,7 +142,7 @@ func _apply_debug_settings():
 #			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 1:
 			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_red
-			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/avatar_marty.tres")
+			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
 			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
 #			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:

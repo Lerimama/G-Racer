@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=1]
-[ext_resource path="res://assets/sounds/sfx/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=2]
+[ext_resource path="res://assets/sounds/weapons/detect_ping___383147__jomellejager__alarm.wav" type="AudioStream" id=2]
 
 [node name="FxHommerDetect" type="Node2D"]
 script = ExtResource( 1 )

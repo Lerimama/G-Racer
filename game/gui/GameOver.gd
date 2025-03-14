@@ -52,7 +52,7 @@ func open(game_manager: Game):
 	fade_in.tween_callback(self, "show")
 	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)
 	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
-	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)
+	#	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)
 
 
 func _set_for_level_finished(level_index: int, levels_count: int):

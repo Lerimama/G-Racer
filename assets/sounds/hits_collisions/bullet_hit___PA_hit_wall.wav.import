@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/bullet_hit___PA_hit_wall.wav-86245a9f9bff36f1ca4c44fd7f24f4cd.sample"
+
+[deps]
+
+source_file="res://assets/sounds/hits_collisions/bullet_hit___PA_hit_wall.wav"
+dest_files=[ "res://.import/bullet_hit___PA_hit_wall.wav-86245a9f9bff36f1ca4c44fd7f24f4cd.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

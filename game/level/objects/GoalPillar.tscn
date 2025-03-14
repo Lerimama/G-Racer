@@ -1,12 +1,12 @@
 [gd_scene load_steps=20 format=2]
 
-[ext_resource path="res://assets/sounds/sfx/_pa/burst/burst.wav" type="AudioStream" id=1]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/burst/burst.wav" type="AudioStream" id=1]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/level/objects/GoalPillar.gd" type="Script" id=4]
-[ext_resource path="res://assets/sounds/sfx/hit_stray_v2.wav" type="AudioStream" id=5]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_out_v2.wav" type="AudioStream" id=6]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_in_v2.wav" type="AudioStream" id=8]
-[ext_resource path="res://assets/sounds/sfx/_pa/skills/teleport_loop_v2.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/sounds/hits_collisions/hit_stray_v2.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sounds/level/teleport_out_v2.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sounds/level/teleport_in_v2.wav" type="AudioStream" id=8]
+[ext_resource path="res://assets/sounds/level/teleport_loop_v2.wav" type="AudioStream" id=9]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=10]
 
 [sub_resource type="StreamTexture" id=573]

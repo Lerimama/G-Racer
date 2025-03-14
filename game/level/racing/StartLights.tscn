@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://game/level/racing/StartLights.gd" type="Script" id=2]
-[ext_resource path="res://assets/sounds/sfx/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/sounds/level/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=3]
 
 [node name="StartLights" type="Node2D"]
 z_index = 4

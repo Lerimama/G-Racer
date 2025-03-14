@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/nitro_start.wav-ab68985eb98701482a6fab0f24ac2842.sample"
+
+[deps]
+
+source_file="res://assets/sounds/nitro/nitro_start.wav"
+dest_files=[ "res://.import/nitro_start.wav-ab68985eb98701482a6fab0f24ac2842.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0
