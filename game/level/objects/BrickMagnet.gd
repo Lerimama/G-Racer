@@ -4,7 +4,7 @@ extends StaticBody2D
 export var height: float = 40 # PRO
 export var elevation: float = 20 # PRO
 
-var magnet_color_on: Color = Rfs.color_brick_magnet_on # opredeli se v animaciji
+var magnet_color_on: Color = Refs.color_brick_magnet_on # opredeli se v animaciji
 var magnet_on: bool
 var def_particle_speed: float = 0.5
 var time: float = 0
@@ -12,11 +12,11 @@ var off_time: float = 2
 var on_time: float = 2
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
-#onready var elevation: float = Pfs.level_object_profiles[level_object_key]["elevation"]
-onready var reward_points: float = Pfs.level_object_profiles[level_object_key]["value"]
-onready var target_rank: int = Pfs.level_object_profiles[level_object_key]["target_rank"]
-onready var magnet_color_off: Color = Pfs.level_object_profiles[level_object_key]["color"]
-onready var magnet_gravity_force: float = Pfs.level_object_profiles[level_object_key]["gravity_force"]
+#onready var elevation: float = Pros.level_object_profiles[level_object_key]["elevation"]
+onready var reward_points: float = Pros.level_object_profiles[level_object_key]["value"]
+onready var target_rank: int = Pros.level_object_profiles[level_object_key]["target_rank"]
+onready var magnet_color_off: Color = Pros.level_object_profiles[level_object_key]["color"]
+onready var magnet_gravity_force: float = Pros.level_object_profiles[level_object_key]["gravity_force"]
 onready var forcefield: Area2D = $ForceField
 onready var forcefield_collision: CollisionShape2D = $ForceField/CollisionShape2D
 onready var sprite: Sprite = $Sprite

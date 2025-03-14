@@ -14,7 +14,7 @@ extends Control
 #
 #func start_countdown():
 #
-#	if Rfs.game_manager.game_settings["start_countdown"]:
+#	if Refs.game_manager.game_settings["start_countdown"]:
 #		modulate.a = 0
 #		visible = true
 #		animation_player.play("countdown_3")

@@ -89,12 +89,12 @@ func _ready() -> void:
 
 func _apply_debug_settings():
 
-#	game_levels = [Pfs.LEVELS.TRAINING]
-#	game_levels = [Pfs.LEVELS.DEFAULT]
-#	game_levels = [Pfs.LEVELS.STAFF]
-#	game_levels = [Pfs.LEVELS.FIRST_DRIVE, Pfs.LEVELS.FIRST_DRIVE]
-	game_levels = [Pfs.LEVELS.FIRST_DRIVE_SHORT, Pfs.LEVELS.FIRST_DRIVE_SHORT]
-#	game_levels = [Pfs.LEVELS.SETUP]
+#	game_levels = [Pros.LEVELS.TRAINING]
+#	game_levels = [Pros.LEVELS.DEFAULT]
+#	game_levels = [Pros.LEVELS.STAFF]
+#	game_levels = [Pros.LEVELS.FIRST_DRIVE, Pros.LEVELS.FIRST_DRIVE]
+	game_levels = [Pros.LEVELS.FIRST_DRIVE_SHORT, Pros.LEVELS.FIRST_DRIVE_SHORT]
+#	game_levels = [Pros.LEVELS.SETUP]
 
 
 	camera_zoom_range = Vector2(2, 2.3)
@@ -123,7 +123,7 @@ func _apply_debug_settings():
 
 
 	drivers_on_game_start = [ "JOU", "MOU", "ROU"]#, "heh"]#, "RO", "eh"]
-	drivers_on_game_start = [ "JOU", "MOU"]
+#	drivers_on_game_start = [ "JOU", "MOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]#, "RO", "eh"]
 #	drivers_on_game_start = [ "JOU"]
 
@@ -132,28 +132,28 @@ func _apply_debug_settings():
 	if max_wins_is_level_count:
 		wins_goal_count = game_levels.size()
 
-	Pfs.driver_profiles = {}
+	Pros.driver_profiles = {}
 	for driver_id in drivers_on_game_start:
-		Pfs.driver_profiles[driver_id] = Pfs.default_driver_profile.duplicate()
-		Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
+		Pros.driver_profiles[driver_id] = Pros.default_driver_profile.duplicate()
+		Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 		if drivers_on_game_start.find(driver_id) == 0:
-			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
-			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_blue
-#			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_blue
+#			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 1:
-			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_red
-			Pfs.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
-			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.WASD
-#			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
+			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_red
+			Pros.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
+			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
+#			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
-#			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
-			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_green
+#			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_green
 		elif drivers_on_game_start.find(driver_id) == 3:
-			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.ARROWS
-#			Pfs.driver_profiles[driver_id]["controller_type"] = Pfs.CONTROLLER_TYPE.JP2
-#			Pfs.driver_profiles[driver_id]["driver_type"] = Pfs.DRIVER_TYPE.AI
-			Pfs.driver_profiles[driver_id]["driver_color"] = Rfs.color_yellow
+			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+#			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.JP2
+#			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_yellow
 
 
 func start_debug():
@@ -162,8 +162,8 @@ func start_debug():
 	_apply_debug_settings()
 	_set_game_settings_per_level()
 
-#	Rfs.main_node._home_in()
-	Rfs.main_node._game_in()
+#	Refs.main_node._home_in()
+	Refs.main_node._game_in()
 
 
 
@@ -178,9 +178,9 @@ func _set_game_settings_per_level(selected_level_index: int = 0):
 	match current_level:
 		# racing
 		# duel
-		Pfs.LEVELS.STAFF:
+		Pros.LEVELS.STAFF:
 			pass
-		Pfs.LEVELS.FIRST_DRIVE:
+		Pros.LEVELS.FIRST_DRIVE:
 			pass
 
 

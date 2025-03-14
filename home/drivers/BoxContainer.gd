@@ -10,7 +10,7 @@ onready var activated_driver_boxes: Array
 func _ready() -> void:
 
 	# reset in template
-	driver_box_template = Mts.remove_chidren_and_get_template(get_children())
+	driver_box_template = Mets.remove_chidren_and_get_template(get_children())
 
 
 #func add_new_driver_box(driver_index: int):

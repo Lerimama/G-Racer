@@ -11,7 +11,7 @@ func _process(delta: float) -> void:
 
 	# beleženje prisotnosti
 	drivers_in_game = []
-	for driver in get_tree().get_nodes_in_group(Rfs.group_drivers):
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		if is_instance_valid(driver) and driver.is_active and not driver.is_queued_for_deletion():
 			drivers_in_game.append(driver)
 
@@ -22,10 +22,10 @@ func _process(delta: float) -> void:
 			_update_ranking()
 
 		# camera leader
-		if Sts.one_screen_mode:
+		if Sets.one_screen_mode:
 			var new_camera_leader: Node2D = null
 			for driver in drivers_in_game:
-				if driver.is_in_group(Rfs.group_players):
+				if driver.is_in_group(Refs.group_players):
 					new_camera_leader = driver
 					break
 			game.camera_leader = new_camera_leader
@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 		yield(get_tree(), "idle_frame")
 
 		for driver in drivers_in_game:
-			driver.update_stat(Pfs.STATS.LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
+			driver.update_stat(Pros.STATS.LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
 
 
 func _update_ranking():
@@ -44,9 +44,9 @@ func _update_ranking():
 	var drivers_ranked: Array = []
 
 	# RACING
-	if game.level_profile["rank_by"] == Pfs.RANK_BY.TIME:
+	if game.level_profile["rank_by"] == Pros.RANK_BY.TIME:
 		# tracking
-		if game_level.level_track:
+		if game_level.level_track.is_enabled:
 			# najprej rangiram trackerje
 			var all_driver_trackers: Array = []
 			for unranked_driver in unranked_drivers: all_driver_trackers.append(unranked_driver.driver_tracker)
@@ -71,15 +71,15 @@ func _update_ranking():
 	var allready_finished_count: int = game.game_reactor.drivers_finished.size() # adaptacija ranka, ker so tisti v cilju neaktivni
 	var players_ranked: Array = []
 	for ranked_driver in drivers_ranked:
-		var prev_rank: int = ranked_driver.driver_stats[Pfs.STATS.LEVEL_RANK]
+		var prev_rank: int = ranked_driver.driver_stats[Pros.STATS.LEVEL_RANK]
 		var new_rank: int = drivers_ranked.find(ranked_driver) + 1 + allready_finished_count
 		if not new_rank == prev_rank:
-			ranked_driver.update_stat(Pfs.STATS.LEVEL_RANK, new_rank)
-		if ranked_driver.is_in_group(Rfs.group_players):
+			ranked_driver.update_stat(Pros.STATS.LEVEL_RANK, new_rank)
+		if ranked_driver.is_in_group(Refs.group_players):
 			players_ranked.append(ranked_driver)
 
 	# camera leader
-#	if Sts.one_screen_mode:
+#	if Sets.one_screen_mode:
 ##	if not players_ranked[0] == game.camera_leader:
 #		game.camera_leader = players_ranked[0]
 
@@ -93,8 +93,8 @@ func _update_ranking():
 func _sort_drivers_by_laps(driver_1: Node2D, driver_2: Node2D): # desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var driver_1_lap_count: int = driver_1.driver_stats[Pfs.STATS.LAP_COUNT].size()
-	var driver_2_lap_count: int = driver_2.driver_stats[Pfs.STATS.LAP_COUNT].size()
+	var driver_1_lap_count: int = driver_1.driver_stats[Pros.STATS.LAP_COUNT].size()
+	var driver_2_lap_count: int = driver_2.driver_stats[Pros.STATS.LAP_COUNT].size()
 	if driver_1_lap_count > driver_2_lap_count:
 		return true
 	return false
@@ -121,8 +121,8 @@ func _sort_drivers_by_goals_reached(driver_1: Node2D, driver_2: Node2D):# desc
 func _sort_drivers_by_points(driver_1: Node2D, driver_2: Node2D):# desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var driver_1_points: int = driver_1.driver_stats[Pfs.STATS.POINTS]
-	var driver_2_points: int = driver_2.driver_stats[Pfs.STATS.POINTS]
+	var driver_1_points: int = driver_1.driver_stats[Pros.STATS.POINTS]
+	var driver_2_points: int = driver_2.driver_stats[Pros.STATS.POINTS]
 	if driver_1_points > driver_2_points:
 		return true
 	return false

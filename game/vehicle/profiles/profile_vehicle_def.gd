@@ -37,7 +37,7 @@ func _set_default_parameters(managed_vehicle: Vehicle):
 	managed_vehicle.front_mass.linear_damp = 0
 	managed_vehicle.rear_mass.linear_damp = 0
 
-	if managed_vehicle.is_in_group(Rfs.group_ai):
+	if managed_vehicle.is_in_group(Refs.group_ai):
 		motion_manager.max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 		managed_vehicle.angular_damp = 16
 	else:

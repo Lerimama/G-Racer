@@ -18,7 +18,7 @@ onready var shock_shader: ColorRect = $ShockShader
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var active_timer: Timer = $ActiveTimer
 
-onready var weapon_profile: Dictionary = Pfs.ammo_profiles[Pfs.AMMO.SHOCKER]
+onready var weapon_profile: Dictionary = Pros.ammo_profiles[Pros.AMMO.SHOCKER]
 onready var reload_time: float = weapon_profile["reload_time"]
 onready var hit_damage: float = weapon_profile["hit_damage"]
 onready var speed: float = weapon_profile["speed"]
@@ -29,7 +29,7 @@ onready var direction_start_range: Array = weapon_profile["direction_start_range
 
 func _ready() -> void:
 	print("Shocker")
-	add_to_group(Rfs.group_shockers)
+	add_to_group(Refs.group_shockers)
 	modulate = spawner_color
 
 	drop_direction = -transform.x # rikverc na osi x

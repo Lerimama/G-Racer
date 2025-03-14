@@ -3,14 +3,14 @@ extends Area2D
 
 signal reached_by
 
-export var is_active: bool = true setget _change_activity
+var is_enabled: bool = false setget _change_enabled # is enabled se opredeli, če je povezan v level goals
 
 
-func _change_activity(new_acive: bool):
+func _change_enabled(new_enabled: bool):
 
-	is_active = new_acive
+	is_enabled = new_enabled
 
-	if is_active:
+	if is_enabled:
 		set_deferred("monitoring", true)
 		show()
 	else:
@@ -20,5 +20,5 @@ func _change_activity(new_acive: bool):
 
 func _on_Checkpoint_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_drivers):
+	if body.is_in_group(Refs.group_drivers):
 		emit_signal("reached_by", self, body)

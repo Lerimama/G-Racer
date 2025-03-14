@@ -4,24 +4,24 @@ class_name Level
 signal level_is_set(navigation, spawn_positions, other_)
 
 export (NodePath) var camera_limits_rect_path: String # lahko ga tudi ni ... potem ni meja
-export (NodePath) var level_finish_path: String # lahko ga tudi ni
-export (NodePath) var level_track_path: String # lahko ga tudi ni
 export (Array, NodePath) var level_goals_paths: Array = [] # lahko jih tudi ni
 export var reach_goals_in_sequence: bool = false
 
-var level_finish: Node2D
-var level_track: Path2D
-var level_goals: Array = []
+var available_pickable_positions: Array = []
+var level_goals: Array = [] # pobere povezane
 
-var goal_reached_signal: String = "reached_by" # vsak goal more met to
-var available_pickable_positions: Array = [] # tole je bolje delovalo, dokler sem uporabljal tilemap
+var camera_limits_rect: Panel # če ga ni, kamera nima limita
+onready var camera_position_node: Position2D = $Tracking/StartCameraPosition
 
+onready var level_track: Path2D = $Tracking/LevelTrack
+onready var level_finish: Node2D = $Tracking/FinishLine
+onready var level_start: Node2D = $Tracking/StartLine
 onready var level_navigation: NavigationPolygonInstance = $Tracking/LevelNavigation
 onready var tilemap_objects: TileMap = $Objects/Objects
-onready var camera_limits_rect: Panel # = $CameraLimits
 
-# start
-onready var level_start: Node2D = $Tracking/LevelStart
+onready var start_positions_holder: Node2D = $Tracking/StartPositions
+onready var level_start_position_node: Position2D = $Tracking/StartLine/StartPosition
+var level_start_positions: Array = []
 
 
 func _ready() -> void:
@@ -31,36 +31,43 @@ func _ready() -> void:
 	$__ScreenSize.hide()
 	$__Labels.hide()
 	$__WorldMeters.hide()
+	camera_position_node.hide()
 
-	Rfs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
+	Refs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
 
+	start_positions_holder.position_count = 4
 
 func set_level():
 
-	# camera limits
+	# camera
 	if camera_limits_rect_path:
 		 camera_limits_rect = get_node(camera_limits_rect_path)
-	# tracking curve
-	if level_track_path:
-		 level_track = get_node(level_track_path)
-	# finish
-	if level_finish_path:
-		level_finish = get_node(level_finish_path)
-		level_finish.is_active = true # def je ugasnjen
-	# goals
-	if not level_track_path:
-		for goal_path in level_goals_paths:
-			var current_goal: Node2D = get_node(goal_path)
-			if current_goal.has_signal(goal_reached_signal):
-				level_goals.append(get_node(goal_path))
-			get_node(goal_path).show()
 
-	# set type
+	# start positions
+	if level_start.is_enabled:
+		start_positions_holder.global_position = level_start_position_node.global_position
+
+	for driver_position in start_positions_holder.get_child(0).get_children():
+		print(driver_position)
+		var curr_driver_position: Vector2 = driver_position.get_child(0).global_position
+		level_start_positions.append(curr_driver_position)
+
+	# goals
+	var goal_reached_signal_name: String = "reached_by" # vsak goal more met to
+	for goal_path in level_goals_paths:
+		var current_goal: Node2D = get_node(goal_path)
+		if current_goal.has_signal(goal_reached_signal_name):
+			if "is_enabled" in current_goal:
+				current_goal.is_enabled = true
+			level_goals.append(current_goal)
+		current_goal.show()
+
+	# rank type
 	var level_ranking_type: int = 0
-	if level_finish or not level_goals.empty():
-		level_ranking_type = Pfs.RANK_BY.TIME
+	if level_finish.is_enabled or not level_goals.empty():
+		level_ranking_type = Pros.RANK_BY.TIME
 	else:
-		level_ranking_type = Pfs.RANK_BY.POINTS
+		level_ranking_type = Pros.RANK_BY.POINTS
 
 	_set_level_objects()
 	available_pickable_positions = level_navigation.level_navigation_points.duplicate()
@@ -71,9 +78,10 @@ func set_level():
 	emit_signal(
 		"level_is_set",
 		level_ranking_type,
-		level_start.start_positions_holder.get_children(),
+		level_start_positions,
+#		level_start.start_positions_holder.get_children(),
 		camera_limits_rect,
-		level_start.camera_position_node,
+		camera_position_node,
 		level_goals
 		)
 
@@ -97,27 +105,27 @@ func _set_level_objects():
 		var level_object_key: int = -1
 		match cell_index:
 			41: # brick ghost
-				level_object_key = Pfs.LEVEL_OBJECT.BRICK_GHOST
+				level_object_key = Pros.LEVEL_OBJECT.BRICK_GHOST
 				spawn_tile_offset = brick_tile_offset
 			42: # brick magnet
-				level_object_key = Pfs.LEVEL_OBJECT.BRICK_MAGNET
+				level_object_key = Pros.LEVEL_OBJECT.BRICK_MAGNET
 				spawn_tile_offset = brick_tile_offset
 			43: # brick target
-				level_object_key = Pfs.LEVEL_OBJECT.BRICK_TARGET
+				level_object_key = Pros.LEVEL_OBJECT.BRICK_TARGET
 				spawn_tile_offset = brick_tile_offset
 			44: # brick bouncer
-				level_object_key = Pfs.LEVEL_OBJECT.BRICK_BOUNCER
+				level_object_key = Pros.LEVEL_OBJECT.BRICK_BOUNCER
 				spawn_tile_offset = brick_tile_offset
 			45: # brick light
-				level_object_key = Pfs.LEVEL_OBJECT.FLATLIGHT
+				level_object_key = Pros.LEVEL_OBJECT.FLATLIGHT
 				spawn_tile_offset = brick_tile_offset
 			6: # goal pillar
-				level_object_key = Pfs.LEVEL_OBJECT.GOAL_PILLAR
+				level_object_key = Pros.LEVEL_OBJECT.GOAL_PILLAR
 				spawn_tile_offset = pillar_tile_offset
 
 		if level_object_key > -1: # preskok celic, ki imajo druge id-je
 			tilemap_objects.set_cellv(cell, -1)
-			var scene_to_spawn: PackedScene = Pfs.level_object_profiles[level_object_key]["object_scene"]
+			var scene_to_spawn: PackedScene = Pros.level_object_profiles[level_object_key]["object_scene"]
 			var new_object_scene = scene_to_spawn.instance()
 			new_object_scene.position = cell_global_position + spawn_tile_offset
 			new_object_scene.level_object_key = level_object_key
@@ -129,7 +137,7 @@ func spawn_pickable(pickable_key: int = -1):
 	if not available_pickable_positions.empty():
 
 		if pickable_key == -1: # random pickable
-			pickable_key = Pfs.pickable_profiles.keys().pick_random()
+			pickable_key = Pros.pickable_profiles.keys().pick_random()
 
 		var random_cell_position: Vector2 = available_pickable_positions.pick_random()
 		var NewPickable: PackedScene = preload("res://game/level/pickables/Pickable.tscn")

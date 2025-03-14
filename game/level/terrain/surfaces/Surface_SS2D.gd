@@ -1,16 +1,16 @@
 extends Area2D
 # vehicle zazna podlago in prilagodi vožnjo glede na tip poglage
 
-#export (Pfs.SURFACE) var surface_type: int = 0
+#export (Pros.SURFACE) var surface_type: int = 0
 export var surface_type: int = 0 # preverim, da je isto kot v profilih SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 
 var bodies_to_influence: Array = []
 onready var surface_shape: Node2D = $SS2D_Shape_Closed
-onready var engine_power_addon = Pfs.surface_type_profiles[surface_type]["engine_power_addon"]
+onready var engine_power_addon = Pros.surface_type_profiles[surface_type]["engine_power_addon"]
 
 
 func _ready() -> void:
-#	printt ("SURFACE", Pfs.SURFACE.keys()[surface_type])
+#	printt ("SURFACE", Pros.SURFACE.keys()[surface_type])
 	pass
 
 

@@ -30,7 +30,7 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	Rfs.ultimate_popup = self
+	Refs.ultimate_popup = self
 
 
 func open_popup(confirm_mode: bool = false):

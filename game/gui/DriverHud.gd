@@ -25,7 +25,7 @@ onready var visibility_notifier: VisibilityNotifier2D = $VisibilityNotifier2D
 
 func _ready() -> void:
 
-	item_counter_template = Mts.remove_chidren_and_get_template(selector.get_children())
+	item_counter_template = Mets.remove_chidren_and_get_template(selector.get_children())
 	hide()
 
 
@@ -34,8 +34,8 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 	hud_driver = driver_node
 	drivers_viewport = view.get_node("Viewport")
 
-	if hud_driver.driver_stats[Pfs.STATS.GAS] > hud_driver.gas_tank_size:
-		hud_driver.gas_tank_size = hud_driver.driver_stats[Pfs.STATS.GAS]
+	if hud_driver.driver_stats[Pros.STATS.GAS] > hud_driver.gas_tank_size:
+		hud_driver.gas_tank_size = hud_driver.driver_stats[Pros.STATS.GAS]
 
 	_update_hud_position()
 
@@ -44,7 +44,7 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 	if for_ai:
 		driver_is_ai = true
 		is_set = true
-		if Sts.ai_gas_on:
+		if Sets.ai_gas_on:
 			gas_bar.show()
 		else:
 			gas_bar.hide()
@@ -81,19 +81,19 @@ func _process(delta: float) -> void:
 
 		# manage health bar
 		if health_bar.visible:
-			health_bar_line.rect_scale.x = hud_driver.driver_stats[Pfs.STATS.HEALTH]
+			health_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STATS.HEALTH]
 			if health_bar_line.rect_scale.x <= 0.5:
-				health_bar_line.color = Rfs.color_red
+				health_bar_line.color = Refs.color_red
 			else:
-				health_bar_line.color = Rfs.color_blue
+				health_bar_line.color = Refs.color_blue
 
 		# manage gas bar
 		if gas_bar.visible:
-			gas_bar_line.rect_scale.x = hud_driver.driver_stats[Pfs.STATS.GAS] / hud_driver.gas_tank_size
+			gas_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STATS.GAS] / hud_driver.gas_tank_size
 			if gas_bar_line.rect_scale.x <= 0.5:
-				gas_bar_line.color = Rfs.color_red
+				gas_bar_line.color = Refs.color_red
 			else:
-				gas_bar_line.color = Rfs.color_yellow
+				gas_bar_line.color = Refs.color_yellow
 
 		# items
 		if driver_is_ai:

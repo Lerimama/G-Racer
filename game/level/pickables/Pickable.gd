@@ -7,7 +7,7 @@ signal reached_by
 export var height: float = 0
 export var elevation: float = 10
 export var pickable_key: int = 0 # OPT... določen za primer, če ga dam manualno v level ... zaporedje iz profilov
-#export (Pfs.PICKABLE) var new_pickable_key: int = 0 # ne dela
+#export (Pros.PICKABLE) var new_pickable_key: int = 0 # ne dela
 #var pickable_key: int = placed_pickable_key # če je spawnan v igro, ga poda spawner
 export (AudioStream) var picked_sound_stream: AudioStream
 
@@ -25,11 +25,11 @@ onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 func _ready() -> void:
 
-	add_to_group(Rfs.group_pickables)
+	add_to_group(Refs.group_pickables)
 
-	target_rank = Pfs.pickable_profiles[pickable_key]["target_rank"]
-	pickable_color = Pfs.pickable_profiles[pickable_key]["color"]
-	pickable_value = Pfs.pickable_profiles[pickable_key]["value"]
+	target_rank = Pros.pickable_profiles[pickable_key]["target_rank"]
+	pickable_color = Pros.pickable_profiles[pickable_key]["color"]
+	pickable_value = Pros.pickable_profiles[pickable_key]["value"]
 	modulate = pickable_color
 
 	if picked_sound_stream:
@@ -39,15 +39,15 @@ func _ready() -> void:
 
 
 func _on_Item_body_entered(body: Node) -> void:
-#		printt("pickable", Pfs.PICKABLE.keys()[pickable_key])
+#		printt("pickable", Pros.PICKABLE.keys()[pickable_key])
 
-	if body.is_in_group(Rfs.group_drivers):
+	if body.is_in_group(Refs.group_drivers):
 		emit_signal("reached_by", self, body)
 		picked_sound.play()
-		if pickable_key == Pfs.PICKABLE.PICKABLE_RANDOM:
-			var random_range: int = Pfs.pickable_profiles.keys().size() - 1 # izloči random
+		if pickable_key == Pros.PICKABLE.PICKABLE_RANDOM:
+			var random_range: int = Pros.pickable_profiles.keys().size() - 1 # izloči random
 			var random_pickable_index = randi() % random_range
-			pickable_key = Pfs.pickable_profiles.keys()[random_pickable_index]
+			pickable_key = Pros.pickable_profiles.keys()[random_pickable_index]
 
 		body.on_item_picked(pickable_key)
 		collision_shape.set_deferred("disabled", true)

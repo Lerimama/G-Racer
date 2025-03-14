@@ -36,7 +36,7 @@ func open(game_manager: Game):
 	var level_record: Array = level_data["level_profile"]["level_record"]
 
 	if not level_record[0] == 0:
-		var level_record_clock_time: String = Mts.get_clock_time_string(level_record[0])
+		var level_record_clock_time: String = Mets.get_clock_time_string(level_record[0])
 		level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(level_record[1])
 		level_record_label.show()
 	else:
@@ -57,11 +57,11 @@ func open(game_manager: Game):
 
 func _set_for_level_finished(level_index: int, levels_count: int):
 
-	var finished_level_key: int = Sts.game_levels[level_index]
-	var finished_level_name: String = Pfs.level_profiles[finished_level_key]["level_name"]
+	var finished_level_key: int = Sets.game_levels[level_index]
+	var finished_level_name: String = Pros.level_profiles[finished_level_key]["level_name"]
 
 	title.text = finished_level_name.to_upper() + " FINISHED"
-	title.modulate = Rfs.color_green
+	title.modulate = Refs.color_green
 
 	if restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
 		restart_btn.disconnect("pressed", self, "_on_restart_game_pressed")
@@ -74,10 +74,10 @@ func _set_for_game_finished(is_success: bool):
 
 	if is_success:
 		title.text = "GAME FINISHED"
-		title.modulate = Rfs.color_green
+		title.modulate = Refs.color_green
 	else:
 		title.text = "GAME OVER"
-		title.modulate = Rfs.color_red
+		title.modulate = Refs.color_red
 
 	if restart_btn.is_connected("pressed", self, "_on_next_pressed"):
 		restart_btn.disconnect("pressed", self, "_on_next_pressed")

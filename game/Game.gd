@@ -15,13 +15,14 @@ var fast_start_window_on: bool = false # driver ga čekira in reagira
 var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
 var level_index: int = 0
-var start_position_nodes: Array # dobi od levela
+#var start_position_nodes: Array # dobi od levela
+var level_start_positions: Array = []
 
 # shadows
-onready var game_shadows_length_factor: float = Sts.game_shadows_length_factor # set_game seta iz profilov
-onready var game_shadows_alpha: float = Sts.game_shadows_alpha # set_game seta iz profilov
-onready var game_shadows_color: Color = Sts.game_shadows_color # set_game seta iz profilov
-onready var game_shadows_rotation_deg: float = Sts.game_shadows_rotation_deg # set_game seta iz profilov
+onready var game_shadows_length_factor: float = Sets.game_shadows_length_factor # set_game seta iz profilov
+onready var game_shadows_alpha: float = Sets.game_shadows_alpha # set_game seta iz profilov
+onready var game_shadows_color: Color = Sets.game_shadows_color # set_game seta iz profilov
+onready var game_shadows_rotation_deg: float = Sets.game_shadows_rotation_deg # set_game seta iz profilov
 
 # main nodes
 # _temp... za tele ne rabim signalov?
@@ -36,7 +37,7 @@ var game_levels: Array = []
 var drivers_on_start: Array = [] # to so nodeti
 var camera_leader: Node2D = null setget _change_camera_leader
 onready var curr_game_settings: Dictionary = {
-	"max_wins_count": Sts.wins_goal_count
+	"max_wins_count": Sets.wins_goal_count
 	#var game_levels: Array = []
 	}
 var final_level_data: Dictionary = {
@@ -56,9 +57,9 @@ var final_drivers_data: Dictionary = {
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"):
-		get_tree().set_group(Rfs.group_shadows, "imitate_3d", true)
+		get_tree().set_group(Refs.group_shadows, "imitate_3d", true)
 	elif Input.is_action_just_pressed("no2"):
-		get_tree().set_group(Rfs.group_shadows, "imitate_3d", false)
+		get_tree().set_group(Refs.group_shadows, "imitate_3d", false)
 	elif Input.is_action_just_pressed("no3"):
 		game_reactor.animate_day_night()
 
@@ -67,7 +68,7 @@ func _ready() -> void:
 #	printt("GM")
 	printt("game in", Time.get_ticks_msec())
 
-#	Rfs.game_manager = self
+#	Refs.game_manager = self
 	modulate = Color.black
 
 	# nodeti, ki želijo glavni signal
@@ -92,7 +93,7 @@ func set_game(level_index_add: int = 0):
 	drivers_on_start.clear()
 	game_views.reset_views()
 	game_reactor.drivers_finished.clear()
-	game_levels = Sts.game_levels
+	game_levels = Sets.game_levels
 	level_index += level_index_add
 	_spawn_level(level_index)
 
@@ -105,24 +106,24 @@ func set_game(level_index_add: int = 0):
 
 	# drivers
 	if level_index == 0:
-		for driver_id in Sts.drivers_on_game_start:
+		for driver_id in Sets.drivers_on_game_start:
 			final_drivers_data[driver_id] = {}
-			final_drivers_data[driver_id]["driver_profile"] = Pfs.driver_profiles[driver_id]
-			_spawn_vehicle(driver_id, Sts.drivers_on_game_start.find(driver_id))
+			final_drivers_data[driver_id]["driver_profile"] = Pros.driver_profiles[driver_id]
+			_spawn_vehicle(driver_id, Sets.drivers_on_game_start.find(driver_id))
 	else:
 		var start_position_index: int = 0
 		for driver_id in final_drivers_data:
-			if not final_drivers_data[driver_id]["driver_stats"][Pfs.STATS.LEVEL_RANK] == -1:
+			if not final_drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK] == -1:
 				_spawn_vehicle(driver_id, start_position_index)
 				start_position_index += 1
-
 		# prenos stats v vehicle iz prejšnega levela in reset ... tihi, ker hud še ni spawnan
 		for driver in drivers_on_start:
 			# driver stats
-			var stats_to_reset: Array = [Pfs.STATS.BEST_LAP_TIME, Pfs.STATS.LAP_TIME, Pfs.STATS.LAP_COUNT, Pfs.STATS.LEVEL_TIME, Pfs.STATS.LEVEL_RANK]
 			var prev_level_stats: Dictionary = final_drivers_data[driver.driver_id]["driver_stats"]
 			for stat in prev_level_stats:
-				if not stat in stats_to_reset:
+				if stat in [Pros.STATS.BEST_LAP_TIME, Pros.STATS.LAP_TIME, Pros.STATS.LAP_COUNT, Pros.STATS.LEVEL_TIME, Pros.STATS.LEVEL_RANK]:
+					driver.driver_stats[stat] = Pros.start_driver_stats[stat]
+				else:
 					driver.driver_stats[stat] = prev_level_stats[stat]
 			final_drivers_data[driver.driver_id].erase("driver_stats")
 			# weapon stats
@@ -137,29 +138,29 @@ func set_game(level_index_add: int = 0):
 	# game views & cameras
 	var drivers_with_views: Array = []
 	for driver in drivers_on_start:
-		if driver.is_in_group(Rfs.group_players):
+		if driver.is_in_group(Refs.group_players):
 			drivers_with_views.append(driver)
-	game_views.set_game_views(drivers_with_views, Sts.one_screen_mode)
+	game_views.set_game_views(drivers_with_views, Sets.one_screen_mode)
 
 	# kamere
-	for camera in get_tree().get_nodes_in_group(Rfs.group_player_cameras):
-		if Sts.one_screen_mode:
+	for camera in get_tree().get_nodes_in_group(Refs.group_player_cameras):
+		if Sets.one_screen_mode:
 			if not camera.playing_field.is_connected( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field"):
 				camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
-		if level_profile["rank_by"] == Pfs.RANK_BY.POINTS:
+		if level_profile["rank_by"] == Pros.RANK_BY.POINTS:
 			camera.playing_field.enable_playing_field(true, true)
 		else:
 			camera.playing_field.enable_playing_field(true)
 
 	# senčke
-	get_tree().call_group(Rfs.group_shadows, "update_shadow_parameters", self)
+	get_tree().call_group(Refs.group_shadows, "update_shadow_parameters", self)
 
 
 func _game_intro():
 
 	# camera targets
-	if not Sts.one_screen_mode:
-		for player in get_tree().get_nodes_in_group(Rfs.group_players):
+	if not Sets.one_screen_mode:
+		for player in get_tree().get_nodes_in_group(Refs.group_players):
 			player.vehicle_camera.follow_target = player
 
 	# pokažem sceno
@@ -186,7 +187,7 @@ func _game_intro():
 func _start_game():
 
 	# start countdown
-	if Sts.start_countdown and level_profile["rank_by"] == Pfs.RANK_BY.TIME:
+	if Sets.start_countdown and level_profile["rank_by"] == Pros.RANK_BY.TIME:
 		game_level.level_start.start_lights.start_countdown() # če je skrit, pošlje signal takoj
 		yield(game_level.level_start.start_lights, "countdown_finished")
 
@@ -208,17 +209,19 @@ func _change_game_stage(new_game_stage: int):
 		GAME_STAGE.READY:
 			if not game_sound.intro_jingle.is_playing(): # _temp
 				game_sound.intro_jingle.play()
-			Rfs.ultimate_popup.hide() # skrijem pregame
+			Refs.ultimate_popup.hide() # skrijem pregame
 			gui.set_gui()
 			_game_intro()
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
+
 			game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
-			if not level_profile["rank_by"] == Pfs.RANK_BY.TIME: # zaženem vsakič, tudi po pavzi
+			if not level_profile["rank_by"] == Pros.RANK_BY.TIME: # zaženem vsakič, tudi po pavzi
 				game_reactor.spawn_random_pickables()
 
 			gui.on_game_start()
-			for driver in get_tree().get_nodes_in_group(Rfs.group_drivers):
+
+			for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 				driver.controller.on_game_start(game_level)
 
 		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
@@ -231,9 +234,9 @@ func _change_game_stage(new_game_stage: int):
 			final_level_data["level_profile"] = level_profile
 			#			print("final_drivers_data")
 			#			print(final_drivers_data)
-			#			yield(get_tree().create_timer(Sts.get_it_time), "timeout")
+			#			yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 			#			if not game_reactor.drivers_finished.empty(): # zmaga
-			#				game_reactor.drivers_finished[0].update_stat(Pfs.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
+			#				game_reactor.drivers_finished[0].update_stat(Pros.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
 
 			gui.open_game_over()
 
@@ -242,7 +245,7 @@ func _change_game_stage(new_game_stage: int):
 				# looping sounds stop
 				# navigacija AI
 				# kvefri elementov, ki so v areni
-			get_tree().set_group(Rfs.group_player_cameras, "follow_target", null)
+			get_tree().set_group(Refs.group_player_cameras, "follow_target", null)
 			#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
 			#			AudioServer.set_bus_mute(bus_index, true)
 
@@ -251,7 +254,7 @@ func _change_camera_leader(new_camera_leader: Node2D):
 
 	if not new_camera_leader == camera_leader:
 		camera_leader = new_camera_leader
-		get_tree().set_group(Rfs.group_player_cameras, "follow_target", camera_leader)
+		get_tree().set_group(Refs.group_player_cameras, "follow_target", camera_leader)
 
 
 # SPAWNING ---------------------------------------------------------------------------------------------
@@ -270,7 +273,7 @@ func _spawn_level(new_level_index: int):
 		game_level.queue_free()
 
 	var new_level_key: int = game_levels[new_level_index]
-	level_profile = Pfs.level_profiles[new_level_key]
+	level_profile = Pros.level_profiles[new_level_key]
 
 	# spawn
 	var level_spawn_parent: Node = game_views.get_child(0).get_node("Viewport") # VP node
@@ -283,8 +286,8 @@ func _spawn_level(new_level_index: int):
 	new_level.connect("level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	for node_path in new_level.level_goals_paths:
 		new_level.get_node(node_path).connect("reached_by", game_reactor, "_on_goal_reached")
-	if new_level.level_finish_path:
-		new_level.get_node(new_level.level_finish_path).connect("reached_by", game_reactor, "_on_finish_crossed")
+	if new_level.level_finish.is_enabled:
+		new_level.level_finish.connect("reached_by", game_reactor, "_on_finish_crossed")
 
 	new_level.set_level()
 
@@ -294,18 +297,19 @@ func _spawn_level(new_level_index: int):
 func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 
 	var scene_name: String = "vehicle_scene"
-	var vehicle_type: int = Pfs.VEHICLE.values()[0]
+	var vehicle_type: int = Pros.VEHICLE.values()[0]
 
-	var NewVehicleInstance: PackedScene = Pfs.vehicle_profiles[vehicle_type][scene_name]
+	var NewVehicleInstance: PackedScene = Pros.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
 
 	new_vehicle.modulate.a = 0 # za intro
 	new_vehicle.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
-	new_vehicle.global_position = start_position_nodes[spawned_position_index].global_position
+	new_vehicle.global_position = level_start_positions[spawned_position_index]
+#	new_vehicle.global_position = start_position_nodes[spawned_position_index].global_position
 
 	new_vehicle.driver_id = driver_id
-	new_vehicle.default_vehicle_profile = Pfs.vehicle_profiles[vehicle_type].duplicate()
-	new_vehicle.driver_profile = Pfs.driver_profiles[driver_id].duplicate()
+	new_vehicle.default_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
+	new_vehicle.driver_profile = Pros.driver_profiles[driver_id].duplicate()
 	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
 
 	# stats
@@ -316,23 +320,23 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 		new_weapon_stats = final_drivers_data[driver_id]["weapon_stats"].duplicate()
 	else:
 		# weapon stats se napolnijo ob setanju weaponow
-		new_driver_stats = Pfs.start_driver_stats.duplicate()
+		new_driver_stats = Pros.start_driver_stats.duplicate()
 
 		# reset notranji arrayev ... da so unique
-		new_driver_stats[Pfs.STATS.WINS] = []
-		new_driver_stats[Pfs.STATS.LAP_COUNT] = []
-		new_driver_stats[Pfs.STATS.GOALS_REACHED] = []
+		new_driver_stats[Pros.STATS.WINS] = []
+		new_driver_stats[Pros.STATS.LAP_COUNT] = []
+		new_driver_stats[Pros.STATS.GOALS_REACHED] = []
 	new_vehicle.driver_stats = new_driver_stats
 	new_vehicle.weapon_stats = new_weapon_stats
 
-	Rfs.node_creation_parent.add_child(new_vehicle)
+	Refs.node_creation_parent.add_child(new_vehicle)
 
 	# ai navigation
-	if Pfs.driver_profiles[driver_id]["driver_type"] == Pfs.DRIVER_TYPE.AI:
+	if Pros.driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI:
 		new_vehicle.controller.level_navigation = game_level.level_navigation
 	# trackers
-	if game_level.level_track:
-		new_vehicle.driver_tracker = game_level.level_track.set_new_tracker(new_vehicle)
+	if game_level.level_track.is_enabled:
+		new_vehicle.driver_tracker = game_level.level_track.spawn_new_tracker(new_vehicle)
 	# goals
 	new_vehicle.controller.goals_to_reach = game_level.level_goals.duplicate()
 	# connect
@@ -349,8 +353,9 @@ func _on_level_is_set(rank_by: int, start_positions: Array, camera_limits: Contr
 
 	level_profile["rank_by"] = rank_by # do tukaj ga ni v slovarju
 	level_profile["level_goals"] = level_goals # do tukaj ga ni v slovarju
-	start_position_nodes = start_positions.duplicate()
-	get_tree().call_group(Rfs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)
+	level_start_positions = start_positions.duplicate()
+#	start_position_nodes = start_positions.duplicate()
+	get_tree().call_group(Refs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)
 
 
 func _on_views_are_set():

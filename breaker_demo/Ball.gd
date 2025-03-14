@@ -62,8 +62,8 @@ func _on_Ball_body_entered(body: Node) -> void:
 		var collision_position: Vector2 = body_state.get_contact_collider_position(0)
 		collision_position = position # OPT ... bolj natančen vektor
 		var force_position: Vector2 = collision_position - velocity * velocity_multiplier
-#		Mts.spawn_indikator(collision_position, Color.blue)
-#		Mts.spawn_indikator(force_position, Color.red)
+#		Mets.spawn_indikator(collision_position, Color.blue)
+#		Mets.spawn_indikator(force_position, Color.red)
 		modulate = Color.red
 		body.modulate = Color.red
 		var blend_tween = get_tree().create_tween()

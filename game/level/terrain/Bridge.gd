@@ -21,7 +21,7 @@ func _ready() -> void:
 	else:
 		node_to_bridge = self
 
-	var top_coll_layer_bit: int = Mts.get_all_named_collision_layers().keys().max()
+	var top_coll_layer_bit: int = Mets.get_all_named_collision_layers().keys().max()
 	vertical_walls_coll_layer_bit = top_coll_layer_bit
 	horizontal_walls_coll_layer_bit = vertical_walls_coll_layer_bit + 1
 

@@ -134,7 +134,7 @@ func on_hit(hitter: Node2D, hit_global_position: Vector2): # shape je lahko: pol
 		intersection_point = closest_point_to_hit_start
 	break_origin_global = intersection_point + global_position
 
-	#	Mts.spawn_line_2d(intersection_vector_start + position, intersection_vector_end + position, get_parent())
+	#	Mets.spawn_line_2d(intersection_vector_start + position, intersection_vector_end + position, get_parent())
 
 	# break
 	var transformed_hit_polygon: PoolVector2Array = operator.adapt_transforms_and_add_origin(hit_by_polygon, break_origin_global, hit_shape_scale)

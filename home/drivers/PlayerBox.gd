@@ -20,18 +20,18 @@ onready var avatar_btn: TextureButton = $Content/AvatarBtn
 
 func _ready() -> void:
 
-	driver_profile = Pfs.default_driver_profile.duplicate()
+	driver_profile = Pros.default_driver_profile.duplicate()
 	if driver_profile: # debug za tiste, ki so ne spawnani in se na redi spucajo
 		if is_ai:
-			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
-			driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
-			driver_profile["driver_name_obs"] = Pfs.ai_profile["ai_name"]
-			driver_profile["driver_color"] = Pfs.colors[driver_index]
+			driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
+			driver_profile["driver_avatar"] = Pros.ai_profile["ai_avatar"]
+			driver_profile["driver_name_obs"] = Pros.ai_profile["ai_name"]
+			driver_profile["driver_color"] = Pros.colors[driver_index]
 		else:
-			driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
-			driver_profile["driver_name_obs"] = Pfs.names[driver_index]
-			driver_profile["driver_avatar"] = Pfs.avatars[driver_index]
-			driver_profile["driver_color"] = Pfs.colors[driver_index]
+			driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
+			driver_profile["driver_name_obs"] = Pros.names[driver_index]
+			driver_profile["driver_avatar"] = Pros.avatars[driver_index]
+			driver_profile["driver_color"] = Pros.colors[driver_index]
 
 		_set_driver_box()
 
@@ -67,19 +67,19 @@ func _set_driver_box():
 
 func _set_driver_controller():
 
-	var btn_template: Button = Mts.remove_chidren_and_get_template(controllers_node.get_children())
-	var ai_controller_index: int = Pfs.CONTROLLER_TYPE.values().back()
+	var btn_template: Button = Mets.remove_chidren_and_get_template(controllers_node.get_children())
+	var ai_controller_index: int = Pros.CONTROLLER_TYPE.values().back()
 
 	if is_ai:
 		var new_btn = btn_template
-		new_btn.text = "AI" #Pfs.CONTROLLER_TYPE.keys().back()
+		new_btn.text = "AI" #Pros.CONTROLLER_TYPE.keys().back()
 		controllers_node.add_child(new_btn)
 		new_btn.disabled = true
 		new_btn.focus_mode = Control.FOCUS_NONE
 	else:
-		for ctrl_type in Pfs.CONTROLLER_TYPE.values():
+		for ctrl_type in Pros.CONTROLLER_TYPE.values():
 			var new_btn: Button = btn_template.duplicate()
-			new_btn.text = Pfs.CONTROLLER_TYPE.keys()[ctrl_type]
+			new_btn.text = Pros.CONTROLLER_TYPE.keys()[ctrl_type]
 			controllers_node.add_child(new_btn)
 			new_btn.disabled = false
 			new_btn.focus_mode = Control.FOCUS_ALL
@@ -92,11 +92,11 @@ func _set_driver_controller():
 
 func _set_driver_vehicle():
 
-	var btn_template: Button = Mts.remove_chidren_and_get_template(drivers_node.get_children())
+	var btn_template: Button = Mets.remove_chidren_and_get_template(drivers_node.get_children())
 
-	for vehicle_type in Pfs.VEHICLE.values():
+	for vehicle_type in Pros.VEHICLE.values():
 		var new_btn: Button = btn_template.duplicate()
-		new_btn.text = Pfs.VEHICLE.keys()[vehicle_type]
+		new_btn.text = Pros.VEHICLE.keys()[vehicle_type]
 		drivers_node.add_child(new_btn)
 		new_btn.connect("pressed", self, "_on_driver_btn_pressed", [new_btn])
 
@@ -142,14 +142,14 @@ func _on_TransformBtn_pressed() -> void:
 	is_ai = not is_ai
 
 	if is_ai:
-		driver_profile["driver_type"] = Pfs.DRIVER_TYPE.AI
-		driver_profile["driver_avatar"] = Pfs.ai_profile["ai_avatar"]
-		driver_profile["driver_name_obs"] = Pfs.ai_profile["ai_name"]
+		driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
+		driver_profile["driver_avatar"] = Pros.ai_profile["ai_avatar"]
+		driver_profile["driver_name_obs"] = Pros.ai_profile["ai_name"]
 	else:
-		driver_profile["driver_type"] = Pfs.DRIVER_TYPE.PLAYER
-		driver_profile["driver_name_obs"] = Pfs.names[driver_index]
-		driver_profile["driver_avatar"] = Pfs.avatars[driver_index]
-		driver_profile["driver_color"] = Pfs.colors[driver_index]
+		driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
+		driver_profile["driver_name_obs"] = Pros.names[driver_index]
+		driver_profile["driver_avatar"] = Pros.avatars[driver_index]
+		driver_profile["driver_color"] = Pros.colors[driver_index]
 	_set_driver_box()
 
 
@@ -160,11 +160,11 @@ func _on_LineEdit_text_changed(new_text: String) -> void:
 
 func _on_AvatarBtn_pressed() -> void:
 
-	var next_avatar_index: int = Pfs.avatars.find(driver_profile["driver_avatar"]) + 1
-	if next_avatar_index > Pfs.avatars.size() - 1:
+	var next_avatar_index: int = Pros.avatars.find(driver_profile["driver_avatar"]) + 1
+	if next_avatar_index > Pros.avatars.size() - 1:
 		next_avatar_index = 0
 
-	driver_profile["driver_avatar"] = Pfs.avatars[next_avatar_index]
+	driver_profile["driver_avatar"] = Pros.avatars[next_avatar_index]
 	avatar_btn.texture_normal = driver_profile["driver_avatar"]
 
 

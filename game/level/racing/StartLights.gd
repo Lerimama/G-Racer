@@ -14,7 +14,7 @@ onready var countdown_b: AudioStreamPlayer = $Sounds/CountdownB
 
 func _ready() -> void:
 
-	visible = Sts.start_countdown
+	visible = Sets.start_countdown
 
 	for light in off_lights:
 		light.show()

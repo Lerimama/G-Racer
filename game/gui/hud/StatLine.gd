@@ -16,9 +16,9 @@ var icon_off_color: Color = Color(Color.white, 0.3)
 var icon_on_color: Color = Color(Color.white, 1)
 var digits_size_string: String = "%" + "d"
 
-onready var def_stat_color: Color = Rfs.color_hud_base
-onready var minus_color: Color = Rfs.color_red
-onready var plus_color: Color = Rfs.color_green
+onready var def_stat_color: Color = Refs.color_hud_base
+onready var minus_color: Color = Refs.color_red
+onready var plus_color: Color = Refs.color_green
 
 onready var mid_separator: VSeparator = $VSeparator
 onready var stat_icon: TextureRect = $Icon

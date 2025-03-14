@@ -26,7 +26,7 @@ func _ready() -> void:
 		TAG_TYPE.TIME:
 			label.show()
 			var time_to_write: float = content_to_show
-			label.text = Mts.get_clock_time_string(time_to_write)
+			label.text = Mets.get_clock_time_string(time_to_write)
 		TAG_TYPE.ICON:
 			label.show()
 

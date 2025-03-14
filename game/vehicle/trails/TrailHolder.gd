@@ -17,7 +17,7 @@ func spawn_new_trail():
 	new_vehicle_trail.modulate.a = vehicle_trail_alpha
 	new_vehicle_trail.z_index = z_index
 	new_vehicle_trail.width = 20
-	Rfs.node_creation_parent.add_child(new_vehicle_trail)
+	Refs.node_creation_parent.add_child(new_vehicle_trail)
 
 	# signal za deaktivacijo, če ni bila že prej
 	new_vehicle_trail.connect("trail_exiting", self, "_on_trail_exiting")

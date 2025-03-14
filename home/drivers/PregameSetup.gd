@@ -45,19 +45,19 @@ func _on_AddBtn_pressed() -> void:
 
 func _on_PlayBtn_pressed() -> void:
 
-	Sts.drivers_on_game_start = []
-	Pfs.driver_profiles = {}
+	Sets.drivers_on_game_start = []
+	Pros.driver_profiles = {}
 
 	for driver_box in box_container.activated_driver_boxes:
 		var driver_index = box_container.activated_driver_boxes.find(driver_box)
-		Pfs.driver_profiles[driver_index] = driver_box.driver_profile#.duplicate()
-		Sts.drivers_on_game_start.append(driver_index)
-		#		printt("profile", Pfs.driver_profiles[driver_index])
-		#	print("drivers ", Sts.drivers_on_game_start)
+		Pros.driver_profiles[driver_index] = driver_box.driver_profile#.duplicate()
+		Sets.drivers_on_game_start.append(driver_index)
+		#		printt("profile", Pros.driver_profiles[driver_index])
+		#	print("drivers ", Sets.drivers_on_game_start)
 
-	Rfs.ultimate_popup.open_popup()
+	Refs.ultimate_popup.open_popup()
 	yield(get_tree().create_timer(0.1),"timeout")
-	Rfs.main_node.call_deferred("home_out")
+	Refs.main_node.call_deferred("home_out")
 
 
 func _on_BackBtn_pressed() -> void:

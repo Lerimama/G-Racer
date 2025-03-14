@@ -44,8 +44,8 @@ func set_equipment(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče veh
 
 	equipment_owner = owner_node
 
-	reload_time = 0 #Pfs.ammo_profiles[weapon_ammo]["reload_time"]
-	equipment_stat_key = 0 # Pfs.ammo_profiles[weapon_ammo]["stat_key"]
+	reload_time = 0 #Pros.ammo_profiles[weapon_ammo]["reload_time"]
+	equipment_stat_key = 0 # Pros.ammo_profiles[weapon_ammo]["stat_key"]
 	equipment_count = equipment_owner.driver_stats[equipment_stat_key]
 
 	# upošteva setano, razen, če je določena od spawnerja

@@ -46,7 +46,7 @@ func _change_is_cast(is_enabled: bool):
 
 func _ready() -> void:
 
-	add_to_group(Rfs.group_shadows)
+	add_to_group(Refs.group_shadows)
 
 	# nodes setup
 	if shadow_caster_paths:

@@ -4,8 +4,8 @@ extends Node2D
 var managed_vehicle: Node2D  # = get_parent()
 
 enum MOTION {DISSABLED, IDLE, IDLE_LEFT, IDLE_RIGHT, FWD, FWD_LEFT, FWD_RIGHT, REV, REV_LEFT, REV_RIGHT, DISSARAY}#, OFF}
-var motion: int = MOTION.DISSABLED setget _change_motion # idla ga turn on, disejbla ga turn off
-#var motion: int = MOTION.IDLE setget _change_motion
+#var motion: int = MOTION.DISSABLED setget _change_motion # idla ga turn on, disejbla ga turn off
+var motion: int = MOTION.IDLE setget _change_motion
 
 enum ROTATION_MOTION {
 	DEFAULT,
@@ -90,11 +90,11 @@ func _process(delta: float) -> void:
 
 
 func _motion_machine():
-#	if is_ai:
-#		print(motion)
+#	if not is_ai:
+#		prints("motion", motion,force_rotation, force_on_vehicle)
 	# vigl vagl brez vpliva na silo
-	#	if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
-	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+	#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
 	#		if damage_effect_scale > 0:
 	#			var vigl_limit: float = deg2rad(10)
 	#			if not is_vigling:
@@ -118,8 +118,8 @@ func _motion_machine():
 			else:
 				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				# vigl vagl z vplivom na silo
-				#				if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
-				#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+				#				if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+				#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
 				#					if damage_effect_scale > 0:
 				#						var vigl_limit: float = deg2rad(10)
 				#						if not is_vigling:
@@ -146,9 +146,12 @@ func _motion_machine():
 			current_engine_power = 0
 			force_rotation = 0
 			force_on_vehicle = Vector2.ZERO
+#	force_on_vehicle = Vector2.ZERO
+#	prints ("force_on_vehicle", force_on_vehicle)
 
-#	if Sts.HEALTH_EFFECTS.MOTION in Sts.health_effects:
-#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+
+#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
 #		if damage_effect_scale > 0:
 #			_drive_vigl_vagl(damage_effect_scale)
 #
@@ -167,15 +170,15 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 		engine_power_percentage = 0
 
 	# dmg fx
-	if Sts.HEALTH_EFFECTS.POWER in Sts.health_effects:
+	if Sets.HEALTH_EFFECTS.POWER in Sets.health_effects:
 		var adapt_factor: float = 0.001
-		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pfs.STATS.HEALTH])
+		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 #		if managed_vehicle.driver_id == "MOU":
 #			printt( "POWER DMG", current_engine_power, damaged_engine_power)
 		current_engine_power = damaged_engine_power
 
-	return current_engine_power * Sts.world_hsp_power_factor
+	return current_engine_power * Sets.world_hsp_power_factor
 
 
 func _change_motion(new_motion):
@@ -366,14 +369,14 @@ func boost_vehicle(added_power: float = 0, boosting_time: float = 0):
 		managed_vehicle.engines.boost_engines() # fx
 
 		if added_power == 0:
-			added_power = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["nitro_power_addon"]
+			added_power = Pros.equipment_profiles[Pros.EQUIPMENT.NITRO]["nitro_power_addon"]
 		engine_power_addon += added_power
 
 		if boosting_time > 0:
 			yield(get_tree().create_timer(boosting_time),"timeout")
 		else:
 			managed_vehicle.engines.boost_engines(false)
-			boosting_time = Pfs.equipment_profiles[Pfs.EQUIPMENT.NITRO]["time"]
+			boosting_time = Pros.equipment_profiles[Pros.EQUIPMENT.NITRO]["time"]
 
 		engine_power_addon -= added_power
 		is_boosting = false

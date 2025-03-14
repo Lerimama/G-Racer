@@ -40,7 +40,7 @@ func on_game_start():
 
 func open_game_over():
 
-	yield(get_tree().create_timer(Sts.get_it_time), "timeout")
+	yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 
 	# pseudo fejdout
 	var fade_tween = get_tree().create_tween()
@@ -69,7 +69,7 @@ func set_gui():
 	if game_manager.level_profile["level_time_limit"] > 0:
 		if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
 			hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")
-	driver_huds_holder.set_driver_huds(game_manager, Sts.one_screen_mode)
+	driver_huds_holder.set_driver_huds(game_manager, Sets.one_screen_mode)
 
 	# fejdin
 	var fade_tween = get_tree().create_tween()
@@ -110,9 +110,9 @@ func close_game(close_to: int, delay_time: float = 0):
 
 	match close_to:
 		-1:
-			Rfs.main_node.game_out()
+			Refs.main_node.game_out()
 		0:
-			Rfs.main_node.reload_game()
+			Refs.main_node.reload_game()
 			#			game_manager.set_game(0)
 		1:
 			game_manager.set_game(1)
@@ -133,9 +133,9 @@ func _update_final_data():
 		if driver_vehicle:
 			var distance_needed_part: float = driver_vehicle.driver_tracker.unit_offset
 			if distance_needed_part == 0: # če obtiči na štartu ... verjetno nikoli
-				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time
+				driver_vehicle.driver_stats[Pros.STATS.LEVEL_TIME] = current_game_time
 			else:
-				driver_vehicle.driver_stats[Pfs.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
+				driver_vehicle.driver_stats[Pros.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
 			game_manager.final_drivers_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 
 	if not unfinished_driver_ids.empty():

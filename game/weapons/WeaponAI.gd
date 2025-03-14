@@ -15,7 +15,7 @@ var ai_enabled: bool = false
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("left_click"):
-		var indi_target = Mts.spawn_indikator(get_global_mouse_position(), Color(Color.blue, 0), 0, Rfs.node_creation_parent)
+		var indi_target = Mets.spawn_indikator(get_global_mouse_position(), Color(Color.blue, 0), 0, Refs.node_creation_parent)
 		self.aim_target = indi_target
 	if Input.is_action_just_pressed("no3"): # idle
 		self.aim_target = null
@@ -53,9 +53,9 @@ func _process(delta: float) -> void:
 			ray_angle = deg2rad(0) + 0.5
 		else:
 			ray_angle += delta * ray_rotating_speed# - get_parent().global_rotation
-			var target_in_reach: Node2D = Mts.get_rotating_raycast_collision(self, Vector2.RIGHT.rotated(ray_angle), aim_distance)
+			var target_in_reach: Node2D = Mets.get_rotating_raycast_collision(self, Vector2.RIGHT.rotated(ray_angle), aim_distance)
 			if target_in_reach:
-				if target_in_reach.is_in_group(Rfs.group_drivers) or target_in_reach.is_in_group(Rfs.group_ai):
+				if target_in_reach.is_in_group(Refs.group_drivers) or target_in_reach.is_in_group(Refs.group_ai):
 					available_targets[target_in_reach] = global_position.distance_to(target_in_reach.global_position)
 			# nov krog
 			if ray_angle >= deg2rad(360):

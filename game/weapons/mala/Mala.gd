@@ -27,11 +27,11 @@ onready var collision_poly: CollisionPolygon2D = $CollisionPolygon2D
 
 func _ready() -> void:
 
-	add_to_group(Rfs.group_male)
+	add_to_group(Refs.group_male)
 
 	collision_poly.set_deferred("disabled", true)
 	monitoring = false
-	_spawn_fx(travel_fx, false, Rfs.node_creation_parent)
+	_spawn_fx(travel_fx, false, Refs.node_creation_parent)
 
 
 func _physics_process(delta: float) -> void:
@@ -55,7 +55,7 @@ func _on_detect_collision(body):
 		if not body in influenced_bodies:
 			influenced_bodies.append(body)
 
-		_spawn_fx(hit_fx, true, Rfs.node_creation_parent)
+		_spawn_fx(hit_fx, true, Refs.node_creation_parent)
 
 
 func _on_weapon_triggered(trigger_owner: Node2D):
@@ -83,7 +83,7 @@ func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D
 			add_child(new_fx)
 			# connect
 			if not self_destruct:
-				new_fx.connect("finished", Rfs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
+				new_fx.connect("finished", Refs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
 		else:
 			# spawn
 			new_fx.global_position = fx_pos
@@ -92,7 +92,7 @@ func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D
 			new_fx.start_fx(self_destruct) # znotraj urejeno
 			# connect
 			if not self_destruct:
-				new_fx.connect("fx_finished", Rfs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
+				new_fx.connect("fx_finished", Refs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
 
 		spawned_fx.append(new_fx)
 

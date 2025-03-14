@@ -117,7 +117,7 @@ func _on_focus_entered(control: Control):
 
 	if allow_gui_sfx:
 		pass
-#		Rfs.sound_manager.play_gui_sfx("btn_focus_change")
+#		Refs.sound_manager.play_gui_sfx("btn_focus_change")
 	else:
 		set_deferred("allow_ui_sfx", true)
 
@@ -146,10 +146,10 @@ func _on_btn_toggled(button_pressed: bool, button: Button) -> void:
 
 	if button_pressed:
 		pass
-#		Rfs.sound_manager.play_gui_sfx("btn_confirm")
+#		Refs.sound_manager.play_gui_sfx("btn_confirm")
 	else:
 		pass
-#		Rfs.sound_manager.play_gui_sfx("btn_cancel")
+#		Refs.sound_manager.play_gui_sfx("btn_cancel")
 
 
 
@@ -167,12 +167,12 @@ func _on_Slider_value_changed(slider_value: float, slider_node: HSlider):
 	var pitch_normalized: float = pitch_percent * (pitch_max_value - pitch_min_value)
 	var new_pitch: float = pitch_normalized + pitch_min_value
 
-#	Rfs.sound_manager.play_gui_sfx("btn_confirm", new_pitch)
+#	Refs.sound_manager.play_gui_sfx("btn_confirm", new_pitch)
 
 
 
 func _on_TouchBtn_pressed(touch_btn: TouchScreenButton):
 
 	if touch_btn.is_in_group(group_touch_sound_btns):
-#		Rfs.sound_manager.play_gui_sfx("btn_confirm")
+#		Refs.sound_manager.play_gui_sfx("btn_confirm")
 		pass

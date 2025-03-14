@@ -8,7 +8,7 @@ var vehicle: Vehicle # temp ... Vehicle class
 var controller_type: int
 var motion_manager: Node2D
 
-onready var controller_actions: Dictionary = Pfs.controller_profiles[controller_type]
+onready var controller_actions: Dictionary = Pros.controller_profiles[controller_type]
 onready var fwd_action: String = controller_actions["fwd_action"]
 onready var rev_action: String = controller_actions["rev_action"]
 onready var left_action: String = controller_actions["left_action"]
@@ -85,7 +85,7 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	vehicle.add_to_group(Rfs.group_players)
+	vehicle.add_to_group(Refs.group_players)
 	# player coližn lejer
 	vehicle.set_collision_layer_bit(4, true)
 
@@ -101,7 +101,7 @@ func _set_driving_motion(pressed_actions: Array):
 				motion_manager.motion = motion_manager.MOTION.FWD
 			if fast_start_window_is_open:
 				vehicle.engines.revup()
-				motion_manager.boost_vehicle(motion_manager.fast_start_power_addon, Sts.fast_start_time)
+				motion_manager.boost_vehicle(motion_manager.fast_start_power_addon, Sets.fast_start_time)
 		elif rev_action in pressed_actions:
 			if left_action in pressed_actions:
 				motion_manager.motion = motion_manager.MOTION.REV_LEFT
@@ -126,7 +126,7 @@ func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_
 func on_game_start(game_level: Node2D): # od GMja
 
 	fast_start_window_is_open = true
-	yield(get_tree().create_timer(Sts.fast_start_time), "timeout")
+	yield(get_tree().create_timer(Sets.fast_start_time), "timeout")
 	fast_start_window_is_open = false
 	#	game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
 	##		game_is_on = false

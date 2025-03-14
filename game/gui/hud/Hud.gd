@@ -51,7 +51,7 @@ func set_hud(game_manager: Game):
 
 	var level_time_limit: int = game_manager.level_profile["level_time_limit"]
 
-	if level_profile["rank_by"] == Pfs.RANK_BY.TIME:
+	if level_profile["rank_by"] == Pros.RANK_BY.TIME:
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
@@ -82,7 +82,7 @@ func set_hud(game_manager: Game):
 	# level rekord
 	level_record = game_manager.level_profile["level_record"]
 	if not level_record[0] == 0:
-		var level_record_clock_time: String = Mts.get_clock_time_string(level_record[0])
+		var level_record_clock_time: String = Mets.get_clock_time_string(level_record[0])
 		level_record_label.text = "LEVEL RECORD " + level_record_clock_time + " by " + str(level_record[1])
 		level_record_label.get_parent().get_parent().show()
 
@@ -146,7 +146,7 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 
 	if all_statboxes_count == 1:
 		statbox_type = STATBOX_TYPE.VER_STRICT
-	elif Sts.one_screen_mode:
+	elif Sets.one_screen_mode:
 		if all_statboxes_count <= 4:
 			statbox_type = STATBOX_TYPE.BOX
 		elif all_statboxes_count <= 10:
@@ -186,15 +186,15 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
-	if Pfs.driver_profiles[driver_id]["driver_type"] == Pfs.DRIVER_TYPE.AI and Sts.ai_gets_record:
-		if stat_key == Pfs.STATS.BEST_LAP_TIME and not stat_value == 0:
+	if Pros.driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI and Sets.ai_gets_record:
+		if stat_key == Pros.STATS.BEST_LAP_TIME and not stat_value == 0:
 			if stat_value < level_record[0] and not level_record[0] == 0:
 				var new_level_record: Array = [stat_value, driver_id]
-				var level_record_clock_time: String = Mts.get_clock_time_string(new_level_record[0])
+				var level_record_clock_time: String = Mets.get_clock_time_string(new_level_record[0])
 				level_profile["level_record"] = new_level_record
 				level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(new_level_record[1])
 				level_record_label.get_parent().get_parent().show()
-				level_record_label.modulate = Rfs.color_green
+				level_record_label.modulate = Refs.color_green
 				yield(get_tree().create_timer(time_still_time), "timeout")
 				level_record_label.modulate = Color.white
 	else:
@@ -208,40 +208,40 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			return
 
 		# stat_to_change ... STAT key string
-		var current_key_index: int = Pfs.STATS.values().find(stat_key)
-		var current_key: String = Pfs.STATS.keys()[current_key_index]
+		var current_key_index: int = Pros.STATS.values().find(stat_key)
+		var current_key: String = Pros.STATS.keys()[current_key_index]
 		var stat_to_change: Control = statbox_to_change.get(current_key)
 
 		match stat_key:
 
 			# stat_value = Int, Float
-			Pfs.STATS.GAS:
+			Pros.STATS.GAS:
 				stat_to_change.stat_value = stat_value
-			Pfs.STATS.HEALTH: # ENERGY BAR
+			Pros.STATS.HEALTH: # ENERGY BAR
 				# 10 = 100 % v pseudo-bar
 				var curr_health_percent: int = round(stat_value * 10)
 				stat_to_change.stat_value = [curr_health_percent, 10]
-			Pfs.STATS.LIFE:
+			Pros.STATS.LIFE:
 				stat_to_change.stat_value = [stat_value, 3]
-			Pfs.STATS.CASH:
+			Pros.STATS.CASH:
 				stat_to_change.stat_value = stat_value
-			Pfs.STATS.POINTS: # default
+			Pros.STATS.POINTS: # default
 				stat_to_change.stat_value = stat_value
 
 			# stat_value = Array
-			Pfs.STATS.GOALS_REACHED:
+			Pros.STATS.GOALS_REACHED:
 				stat_to_change.stat_value = [stat_value.size(), level_goals.size()]
-			Pfs.STATS.WINS:
+			Pros.STATS.WINS:
 				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-				#			stat_to_change.stat_value = [stat_value.size(), Sts.wins_goal_count]
+				#			stat_to_change.stat_value = [stat_value.size(), Sets.wins_goal_count]
 				stat_to_change.stat_value = stat_value.size()
 
 			# level
-			Pfs.STATS.LEVEL_RANK:
+			Pros.STATS.LEVEL_RANK:
 				stat_to_change.stat_value = stat_value
-			Pfs.STATS.LEVEL_TIME:
+			Pros.STATS.LEVEL_TIME:
 				stat_to_change.stat_value = stat_value
-			Pfs.STATS.LAP_COUNT: # vsakič, ko gre čez finish
+			Pros.STATS.LAP_COUNT: # vsakič, ko gre čez finish
 				stat_to_change.stat_value = [stat_value.size(), level_lap_count]
 				# apdejtam tudi LAP TIME prikaz
 				var time_stat: Control = statbox_to_change.get("LAP_TIME")
@@ -251,34 +251,34 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 					if not time_stat.stat_value == 0:
 						var time_still_stat: Control = statbox_to_change.get("lap_time_still")
 						time_still_stat.stat_value = time_stat.stat_value
-						time_still_stat.modulate = Rfs.color_red # zeleno ga obarva BEST LAP event
+						time_still_stat.modulate = Refs.color_red # zeleno ga obarva BEST LAP event
 						time_stat.hide()
 						time_still_stat.show()
 						yield(get_tree().create_timer(time_still_time), "timeout")
 						time_still_stat.hide()
 						time_stat.show()
-			Pfs.STATS.BEST_LAP_TIME:
+			Pros.STATS.BEST_LAP_TIME:
 				if stat_value == 0:
 					stat_to_change.stat_value = 0
 					stat_to_change.get_parent().get_parent().hide()
 				else:
 					# statičen čas zapišem kot string
-					var stat_to_change_clock_time: String = Mts.get_clock_time_string(stat_value)
+					var stat_to_change_clock_time: String = Mets.get_clock_time_string(stat_value)
 					stat_to_change.stat_value = stat_to_change_clock_time
 					stat_to_change.get_parent().get_parent().show()
 					# obarvam stoječi prikaz časa kroga
-					statbox_to_change.get("lap_time_still").modulate = Rfs.color_green
+					statbox_to_change.get("lap_time_still").modulate = Refs.color_green
 					# je tudi rekord levela?
 					if stat_value < level_record[0] and not level_record[0] == 0:
 						var new_level_record: Array = [stat_value, driver_id]
-						var level_record_clock_time: String = Mts.get_clock_time_string(new_level_record[0])
+						var level_record_clock_time: String = Mets.get_clock_time_string(new_level_record[0])
 						level_profile["level_record"] = new_level_record
 						level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(new_level_record[1])
 						level_record_label.get_parent().get_parent().show()
-						level_record_label.modulate = Rfs.color_green
+						level_record_label.modulate = Refs.color_green
 						yield(get_tree().create_timer(time_still_time), "timeout")
 						level_record_label.modulate = Color.white
-			Pfs.STATS.LAP_TIME: # za uro med krogom ... vsak frejm
+			Pros.STATS.LAP_TIME: # za uro med krogom ... vsak frejm
 				stat_to_change.stat_value = stat_value
 			_: # ammo, ...
 				#				stat_to_change.stat_value = stat_value
@@ -292,12 +292,12 @@ func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: boo
 	# če je zadnji krog njegov čas ostane na liniji
 	new_floating_tag.global_position = tag_owner.global_position
 	new_floating_tag.tag_owner = tag_owner
-	new_floating_tag.scale = Vector2.ONE * Sts.game_camera_zoom_factor
+	new_floating_tag.scale = Vector2.ONE * Sets.game_camera_zoom_factor
 
 	new_floating_tag.content_to_show = lap_time
 	new_floating_tag.tag_type = new_floating_tag.TAG_TYPE.TIME
-	Rfs.node_creation_parent.add_child(new_floating_tag) # OPT ... floating bi raje v hudu
+	Refs.node_creation_parent.add_child(new_floating_tag) # OPT ... floating bi raje v hudu
 	if best_lap == true:
-		new_floating_tag.modulate = Rfs.color_green
+		new_floating_tag.modulate = Refs.color_green
 	else:
-		new_floating_tag.modulate = Rfs.color_red
+		new_floating_tag.modulate = Refs.color_red

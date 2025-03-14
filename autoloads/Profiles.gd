@@ -90,7 +90,7 @@ enum WEAPON_STAT { # int ... +/- delta ... PRENOSNA
 func __drivers(): pass # ------------------------------------------------------------
 
 var avatars: Array = [preload("res://home/drivers/avatar_david.tres"), preload("res://home/drivers/avatar_magnum.tres"), preload("res://home/drivers/avatar_marty.tres"), preload("res://home/drivers/avatar_mrt.tres"), preload("res://home/drivers/avatar_ai.tres")]
-var colors: Array = [Rfs.color_blue, Rfs.color_green, Rfs.color_yellow, Rfs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
+var colors: Array = [Refs.color_blue, Refs.color_green, Refs.color_yellow, Refs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
 var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
 enum DRIVER_TYPE {PLAYER, AI}
@@ -100,7 +100,7 @@ var driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CA
 var default_driver_profile: Dictionary = {
 	"driver_name_obs": "PLAJER", # samo še home
 	"driver_avatar": preload("res://home/drivers/avatar_david.tres"),
-	"driver_color": Rfs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
+	"driver_color": Refs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"vehicle_type": VEHICLE.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
@@ -113,7 +113,7 @@ var ai_profile: Dictionary = {
 	"ai_type": AI_TYPE.DEFAULT, # obs
 	"ai_name": "STEINY",
 	"random_start_range": "", # še na nodu
-	"driver_color": Rfs.color_red,
+	"driver_color": Refs.color_red,
 	"target_rank": 0, # prepiše vehicle target_rank
 	}
 
@@ -277,7 +277,7 @@ var level_profiles: Dictionary = {
 		"level_desc": "SMall",
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
-		"level_time_limit": 5,
+		"level_time_limit": 0,
 		"level_laps": 1, # če so goalsi delajo isto kot čekpointi
 		"level_record": [1000, "player"]
 		# določeno ob spawnu
@@ -325,7 +325,7 @@ enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATL
 var level_object_profiles: Dictionary = {
 	# ne rabiš povsod istih vsebin, ker element vleče samo postavke, ki jih rabi
 	LEVEL_OBJECT.BRICK_GHOST: {
-		"color": Rfs.color_brick_ghost,
+		"color": Refs.color_brick_ghost,
 		"value": 30,
 		"speed_brake_div": 10,
 		"elevation": 5,
@@ -333,7 +333,7 @@ var level_object_profiles: Dictionary = {
 		"target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
-		"color": Rfs.color_brick_bouncer,
+		"color": Refs.color_brick_bouncer,
 		"value": 10,
 		"bounce_strength": 2,
 		"elevation": 5,
@@ -341,7 +341,7 @@ var level_object_profiles: Dictionary = {
 		"target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
-		"color": Rfs.color_brick_magnet_off,
+		"color": Refs.color_brick_magnet_off,
 		"value": 0,
 		"gravity_force": 300.0,
 		"elevation": 5,
@@ -349,14 +349,14 @@ var level_object_profiles: Dictionary = {
 		"target_rank": 0, # 0 pomeni, da se izogneš
 	},
 	LEVEL_OBJECT.BRICK_TARGET: {
-		"color": Rfs.color_brick_target,
+		"color": Refs.color_brick_target,
 		"value": 100,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickTarget.tscn"),
 		"target_rank": 0,
 	},
 	LEVEL_OBJECT.FLATLIGHT: {
-		"color": Rfs.color_brick_light_off,
+		"color": Refs.color_brick_light_off,
 		"value": 10,
 		"elevation": 0,
 		"object_scene": preload("res://game/level/objects/FlatLight.tscn"),
@@ -412,56 +412,56 @@ enum PICKABLE{
 	}
 var pickable_profiles: Dictionary = {
 	PICKABLE.PICKABLE_BULLET: {
-		"color": Rfs.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 20,
 		"elevation": 3,
 		"target_rank": 3,
 		"driver_stat": WEAPON_STAT.BULLET_COUNT,
 	},
 	PICKABLE.PICKABLE_MISILE: {
-		"color": Rfs.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 2,
 		"elevation": 3,
 		"target_rank": 3,
 		"driver_stat": WEAPON_STAT.MISILE_COUNT,
 	},
 	PICKABLE.PICKABLE_MINA: {
-		"color": Rfs.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 3,
 		"elevation": 3,
 		"target_rank": 3,
 		"driver_stat": WEAPON_STAT.MINA_COUNT,
 	},
 	PICKABLE.PICKABLE_HEALTH: {
-		"color": Rfs.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 0.3,
 		"elevation": 3,
 		"target_rank": 3,
 		"driver_stat": STATS.HEALTH,
 	},
 	PICKABLE.PICKABLE_LIFE: {
-		"color": Rfs.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 1,
 		"elevation": 3,
 		"target_rank": 3,
 		"driver_stat": STATS.LIFE,
 	},
 	PICKABLE.PICKABLE_GAS: {
-		"color": Rfs.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 200,
 		"elevation": 3,
 		"target_rank": 3,
 		"driver_stat": STATS.GAS,
 	},
 	PICKABLE.PICKABLE_CASH: {
-		"color": Rfs.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 50,
 		"elevation": 3,
 		"target_rank": 0,
 		"driver_stat": STATS.CASH,
 	},
 	PICKABLE.PICKABLE_POINTS: {
-		"color": Rfs.color_pickable_stat,
+		"color": Refs.color_pickable_stat,
 		"value": 100,
 		"elevation": 3,
 		"target_rank": 2,
@@ -469,19 +469,19 @@ var pickable_profiles: Dictionary = {
 	},
 	# NO STATS ...instants
 	PICKABLE.PICKABLE_SHIELD: {
-		"color": Rfs.color_pickable_ammo,
+		"color": Refs.color_pickable_ammo,
 		"value": 1,
 		"elevation": 3,
 		"target_rank": 3,
 	},
 	PICKABLE.PICKABLE_NITRO: {
-		"color": Rfs.color_pickable_feature,
+		"color": Refs.color_pickable_feature,
 		"value": 2, # factor
 		"elevation": 3,
 		"target_rank": 10,
 	},
 	PICKABLE.PICKABLE_RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
-		"color": Rfs.color_pickable_random,
+		"color": Refs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
 		"elevation": 3,
 		"target_rank": 9,

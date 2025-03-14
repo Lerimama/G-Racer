@@ -40,7 +40,6 @@ func _ready() -> void:
 func fade_sounds(sound_1: AudioStreamPlayer, sound_2: AudioStreamPlayer = null, pause_instead: bool = false, in_parallel: bool = false, fade_time: float = 1):
 
 	var sound_1_def_volume: float = sound_1.volume_db
-	printt ("fading", sound_1, sound_2, sound_1_def_volume)
 	var fade_tween = get_tree().create_tween()
 
 	# out

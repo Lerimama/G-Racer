@@ -3,31 +3,36 @@ extends Node2D
 
 signal reached_by
 
-export var is_active: bool = false setget _change_activity
+export var is_enabled: bool = false setget _change_enabled
 
-onready var finish_line: Area2D = $FinishLine
 onready var drive_out_position_node: Position2D = $DriveOutPosition
 
 
 func _ready() -> void:
 
 	drive_out_position_node.hide()
-	self.is_active = is_active
+	self.is_enabled = is_enabled
+#	if is_enabled:
+#		$FinishArea.set_deferred("monitoring", true)
+#		show()
+#	else:
+#		$FinishArea.set_deferred("monitoring", false)
+#		hide()
 
 
-func _change_activity(new_acive: bool):
+func _change_enabled(new_enabled: bool):
 
-	is_active = new_acive
+	is_enabled = new_enabled
 
-	if is_active:
-		finish_line.set_deferred("monitoring", true)
+	if is_enabled:
+		$FinishArea.set_deferred("monitoring", true)
 		show()
 	else:
-		finish_line.set_deferred("monitoring", false)
+		$FinishArea.set_deferred("monitoring", false)
 		hide()
 
 
 func _on_FinishLine_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_drivers):
+	if body.is_in_group(Refs.group_drivers):
 		emit_signal("reached_by", body)

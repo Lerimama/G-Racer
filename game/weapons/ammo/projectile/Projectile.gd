@@ -28,7 +28,7 @@ var homming_mode: bool = false # sledilka mode (ko zagleda tarčo v dometu)
 var use_vision_for_collision: bool = false
 var delete_on_out_of_screen: bool = false
 var spawner: Node
-var is_active: bool = false
+var is_enabled: bool = false
 var misile_time: float = 0
 var detect_target: Node2D
 var is_out_of_screen: bool = false
@@ -64,7 +64,7 @@ var homming_delay: float = 1
 
 func _ready() -> void:
 
-	add_to_group(Rfs.group_projectiles)
+	add_to_group(Refs.group_projectiles)
 
 	#	if use_vision_for_collision:
 	vision_ray.enabled = true
@@ -81,7 +81,7 @@ func _ready() -> void:
 	collision_shape.disabled = true
 
 	# fx
-	_spawn_and_start_fx(ShootFx, true, Rfs.node_creation_parent)
+	_spawn_and_start_fx(ShootFx, true, Refs.node_creation_parent)
 	flight_fx = _spawn_and_start_fx(FlighFx, false, self, trail_position.position)
 
 	# rotation
@@ -107,9 +107,9 @@ func _ready() -> void:
 		trail.position = trail_position.position
 		trail.z_index = trail_position.z_index - 1
 		trail.modulate.a = 0
-		Rfs.node_creation_parent.add_child(trail)
+		Refs.node_creation_parent.add_child(trail)
 
-	is_active = true
+	is_enabled = true
 
 
 func _physics_process(delta: float) -> void:
@@ -129,7 +129,7 @@ func _physics_process(delta: float) -> void:
 	if vision_ray.get_collider():
 		_on_vision_collision()
 
-	if is_active:
+	if is_enabled:
 
 		# pospeševanje
 		if misile_time < lifetime or lifetime == 0:
@@ -160,7 +160,7 @@ func _physics_process(delta: float) -> void:
 		# off screen
 		if is_out_of_screen:
 			var distance_from_origin: float = (global_position - modify_intensity_origin).length()
-			var fx_zero_intensity_distance: float = Sts.fx_zero_intensity_distance
+			var fx_zero_intensity_distance: float = Sets.fx_zero_intensity_distance
 			#			fx_zero_intensity_distance = 100000
 			var distance_to_zero_part: float = distance_from_origin / fx_zero_intensity_distance
 			if distance_to_zero_part < 1:
@@ -182,7 +182,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 func _on_vision_collision():
 
 	vision_ray.force_raycast_update() # mogoče deluje, ker je drugič v parih korakih
-	Rfs.game_reactor.apply_slomo(self, vision_ray.get_collider())
+	Refs.game_reactor.apply_slomo(self, vision_ray.get_collider())
 
 	if use_vision_for_collision:
 		var pseudo_close_distance: float = max_thrust_power# / 3
@@ -211,7 +211,7 @@ func _on_contact_collision(body_state: Physics2DDirectBodyState):
 
 func _dissarm():
 
-	is_active = false
+	is_enabled = false
 
 	# misile drop
 	#	var new_drop_tween = get_tree().create_tween()
@@ -221,7 +221,7 @@ func _dissarm():
 	# drop particles
 	if flight_fx:
 		flight_fx.stop_fx()
-	_spawn_and_start_fx(DissarmFx, true, Rfs.node_creation_parent)
+	_spawn_and_start_fx(DissarmFx, true, Refs.node_creation_parent)
 	queue_free()
 
 	if trail and not trail.in_decay:
@@ -234,9 +234,9 @@ func _explode(collision_position: Vector2, collision_normal: Vector2 = Vector2.Z
 		print ("more bit bolj potihem")
 
 	if collision_normal == Vector2.ZERO: # misisle ... pomoje tole ni potrebno ločeno
-		_spawn_and_start_fx(HitFx, true, Rfs.node_creation_parent, collision_position)
+		_spawn_and_start_fx(HitFx, true, Refs.node_creation_parent, collision_position)
 	else:
-		_spawn_and_start_fx(HitFx, true, Rfs.node_creation_parent, collision_position, deg2rad(180) + collision_normal.angle()) # 180 dodatek omogča, da ni na vertikalah naroben kot
+		_spawn_and_start_fx(HitFx, true, Refs.node_creation_parent, collision_position, deg2rad(180) + collision_normal.angle()) # 180 dodatek omogča, da ni na vertikalah naroben kot
 
 	if trail and not trail.in_decay:
 		trail.start_decay(collision_position)
@@ -257,7 +257,7 @@ func _spawn_and_start_fx(EventFx: PackedScene, self_destruct: bool = true, spawn
 		new_fx.global_rotation = fx_rot
 		spawn_parent.add_child(new_fx)
 		new_fx.start_fx(self_destruct)
-		new_fx.connect("fx_finished", Rfs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
+		new_fx.connect("fx_finished", Refs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
 		return new_fx
 	else:
 		return null
@@ -309,7 +309,7 @@ func _exit_tree() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_drivers) and body != spawner:
+	if body.is_in_group(Refs.group_drivers) and body != spawner:
 		if not detect_target or not is_instance_valid(detect_target):
 			detect_fx = _spawn_and_start_fx(DetecFx, false)
 			detect_target = body

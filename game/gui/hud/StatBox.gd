@@ -60,7 +60,7 @@ func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kli
 		show_all_available_stats()
 		return
 
-	if rank_by == Pfs.RANK_BY.TIME:
+	if rank_by == Pros.RANK_BY.TIME:
 		for stat in rank_by_time_stat:
 			if stat == BEST_LAP_TIME:# or stat == LEVEL_TIME:
 				stat.get_parent().get_parent().hide()

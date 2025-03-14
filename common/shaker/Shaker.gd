@@ -6,7 +6,7 @@ export (Array, NodePath) var shaking_nodes_paths: Array = []
 
 export (Resource) var shake_profile setget _change_shake_profile# presetan resource ... povozi spodnje nastavitve
 
-var is_active: bool = false
+var is_enabled: bool = false
 var current_trauma: float = 0.5 # current
 var time: float = 0
 var in_decay: bool = false
@@ -30,7 +30,7 @@ onready var texture_button: TextureButton = $VisualizerLayer/VBoxContainer/Textu
 
 #func _input(event: InputEvent) -> void:
 #
-#	if is_active:
+#	if is_enabled:
 #		if Input.is_action_pressed("ui_accept"):
 #			shake_it(add_trauma)
 
@@ -61,13 +61,13 @@ func _ready() -> void:
 func activate():
 
 	texture_button.texture_normal.noise = used_noise
-	is_active = true
+	is_enabled = true
 
 
 func _process(delta):
 
 	# shake
-	if is_active:
+	if is_enabled:
 
 		if one_shaking_node:
 			_shake_node(one_shaking_node)

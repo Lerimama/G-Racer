@@ -7,7 +7,7 @@ onready var setup_layer_line: HBoxContainer = $SetupLayerLine
 
 func _ready() -> void:
 
-	#	Rfs.debug_setup_layer = self
+	#	Refs.debug_setup_layer = self
 	setup_layer_line.hide()
 
 

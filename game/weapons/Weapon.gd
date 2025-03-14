@@ -85,7 +85,7 @@ func _shoot():
 	new_ammo.global_rotation = shooting_position.global_rotation
 	new_ammo.spawner = weapon_owner
 	new_ammo.z_index = shooting_position.z_index - 1 # _temp
-	Rfs.node_creation_parent.add_child(new_ammo)
+	Refs.node_creation_parent.add_child(new_ammo)
 
 	# reload
 	if reload_time > 0:

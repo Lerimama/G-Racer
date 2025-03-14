@@ -11,8 +11,8 @@ var turned_on: bool = false
 var drivers_in_light_area: Array = []
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
-onready var reward_points: float = Pfs.level_object_profiles[level_object_key]["value"]
-onready var target_rank: int = Pfs.level_object_profiles[level_object_key]["target_rank"]
+onready var reward_points: float = Pros.level_object_profiles[level_object_key]["value"]
+onready var target_rank: int = Pros.level_object_profiles[level_object_key]["target_rank"]
 onready var light_2d: Light2D = $Light2D
 onready var sprite: Sprite = $Sprite
 
@@ -29,12 +29,12 @@ func light_reached(vehicle: Vehicle):
 		turned_on = true
 		light_2d.color = on_color
 		sprite.modulate = Color.white
-		vehicle.update_stat(Pfs.STATS.POINTS, reward_points)
+		vehicle.update_stat(Pros.STATS.POINTS, reward_points)
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Rfs.group_drivers):
+	if body.is_in_group(Refs.group_drivers):
 		light_reached(body)
 
 

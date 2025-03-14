@@ -63,7 +63,7 @@ func _get_navigation_points(): # density ...  na koliko
 
 	# adaptacija na pozicijo navigation nodeta
 	for nav_point in navigation_nav_points:
-		#		Mts.spawn_indikator(nav_point, Color.red, 0, self)
+		#		Mets.spawn_indikator(nav_point, Color.red, 0, self)
 		nav_point += global_position
 
 	level_navigation_points = navigation_nav_points

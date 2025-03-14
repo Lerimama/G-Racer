@@ -10,15 +10,15 @@ onready var game_scene_path: String = "res://game/Game.tscn"
 #func _input(event: InputEvent) -> void:
 #
 #	if Input.is_action_just_pressed("no0"):
-#		Mts.hide_helper_nodes()
+#		Mets.hide_helper_nodes()
 
 
 func _ready() -> void:
 
-	Rfs.main_node = self
+	Refs.main_node = self
 
 	if OS.is_debug_build():
-		Sts.start_debug()
+		Sets.start_debug()
 	else:
 		_home_in()
 	#	_game_in()
@@ -61,8 +61,8 @@ func home_out():
 
 	$Sounds/MenuFade.play()
 
-	#	if not Rfs.sound_manager.menu_music_set_to_off: # če muzka ni setana na off
-	#		Rfs.sound_manager.stop_music("menu_music")
+	#	if not Refs.sound_manager.menu_music_set_to_off: # če muzka ni setana na off
+	#		Refs.sound_manager.stop_music("menu_music")
 
 	var fade_out = get_tree().create_tween()
 	fade_out.tween_callback(self, "release_scene", [current_scene])

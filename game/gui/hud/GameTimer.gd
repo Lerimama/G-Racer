@@ -31,7 +31,7 @@ onready var game_coundown_sound_b: AudioStreamPlayer = $Sounds/GameCoundownB
 func _ready() -> void:
 
 	# večino setam ob štartu tajmerja
-	modulate = Rfs.color_hud_base
+	modulate = Refs.color_hud_base
 
 
 func _process(delta: float) -> void:
@@ -61,7 +61,7 @@ func _process(delta: float) -> void:
 				mins_label.text = "00"
 				secs_label.text = "00"
 				hunds_label.text = "00"
-				modulate = Rfs.color_red
+				modulate = Refs.color_red
 				game_coundown_sound_a.play()
 				emit_signal("time_is_up") # pošlje se v hud, ki javi GM
 			# GO countdown
@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 				# za vsakič, ko mine sekunda
 				game_coundown_sound_b.play()
 				countdown_start_time -= 1
-				modulate = Rfs.color_yellow
+				modulate = Refs.color_yellow
 			elif sudden_death_mode and game_time_left < sudden_death_start_time:
 				pass
 
@@ -80,9 +80,9 @@ func reset_timer(timer_limit: float = game_time_limit):
 
 	# setup
 	game_time_limit = timer_limit
-	sudden_death_mode = Sts.sudden_death_mode
-	countdown_start_time = Sts.countdown_start_time # čas, ko je obarvan in se sliši bip bip
-	sudden_death_start_time = Sts.sudden_death_start_time # čas, ko je obarvan in se sliši bip bip
+	sudden_death_mode = Sets.sudden_death_mode
+	countdown_start_time = Sets.countdown_start_time # čas, ko je obarvan in se sliši bip bip
+	sudden_death_start_time = Sets.sudden_death_start_time # čas, ko je obarvan in se sliši bip bip
 	if game_time_limit == 0:
 		timer_mode = TIMER_MODE.COUNT_UP
 	else:
@@ -93,7 +93,7 @@ func reset_timer(timer_limit: float = game_time_limit):
 		hunds_label.get_parent().hide()
 
 	# reset
-	modulate = Rfs.color_hud_base
+	modulate = Refs.color_hud_base
 	start_timer_os_msecs = -1
 	game_time_secs = 0
 	game_time_hunds = 0
@@ -126,4 +126,4 @@ func unpause_timer():
 func stop_timer():
 
 	timer_state = TIMER_STATE.STOPPED
-	modulate = Rfs.color_red
+	modulate = Refs.color_red

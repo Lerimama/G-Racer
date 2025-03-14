@@ -11,7 +11,7 @@ var shake_camera_on: bool = true
 var dynamic_zoom_on: bool = true
 
 # dinamic zoom in offset
-var camera_zoom_range: Vector2 = Sts.camera_zoom_range # [1, 1.5]
+var camera_zoom_range: Vector2 = Sets.camera_zoom_range # [1, 1.5]
 var camera_zoom_lerp_factor: float = 0.01
 var min_zoom_target_speed: float = 1000
 var max_zoom_target_speed: float = 1500
@@ -28,14 +28,14 @@ onready var shaker: Node = $Shaker
 #func _input(event: InputEvent) -> void:
 #
 #	if Input.is_action_pressed("ui_accept"):
-#		shake_camera(Rfs.game_manager)
+#		shake_camera(Refs.game_manager)
 
 
 func _ready():
 
-	add_to_group(Rfs.group_player_cameras)
+	add_to_group(Refs.group_player_cameras)
 
-	shake_camera_on = Sts.camera_shake_on
+	shake_camera_on = Sets.camera_shake_on
 	zoom = Vector2.ONE
 
 	playing_field.hide()
@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 
 		# zoom ... dinamic
 		if dynamic_zoom_on:
-			if follow_target.is_in_group(Rfs.group_drivers) and not follow_target.velocity == Vector2.ZERO:
+			if follow_target.is_in_group(Refs.group_drivers) and not follow_target.velocity == Vector2.ZERO:
 				# samo, če je nad minimumom limit
 				if follow_target.velocity.length() > min_zoom_target_speed:
 					var max_zoom_velocity_span: float = abs(max_zoom_target_speed - min_zoom_target_speed)
@@ -101,9 +101,9 @@ func shake_camera(source: Node):
 
 	if shake_camera_on:
 		var shake_trauma: float = 0
-		if source.is_in_group(Rfs.group_projectiles) and shake_profile_projectile:
+		if source.is_in_group(Refs.group_projectiles) and shake_profile_projectile:
 			shaker.shake_profile = shake_profile_projectile
-		if source.is_in_group(Rfs.group_drivers) and shake_profile_vehicle:
+		if source.is_in_group(Refs.group_drivers) and shake_profile_vehicle:
 			shaker.shake_profile = shake_profile_vehicle
 		elif source is Game and shake_profile_game:
 			shaker.shake_profile = shake_profile_game
@@ -141,7 +141,7 @@ func _change_follow_target(new_follow_target: Node):
 	if not new_follow_target == follow_target:
 		#		print ("change camera target")
 		#		smoothing_enabled = false
-		##		if new_follow_target.is_in_group(Rfs.group_drivers):# or Rfs.game_manager game_on: # RFK ... kamera - hitrost setanja poizicije
+		##		if new_follow_target.is_in_group(Refs.group_drivers):# or Refs.game_manager game_on: # RFK ... kamera - hitrost setanja poizicije
 		#		var transition_tween = get_tree().create_tween()
 		##			transition_tween.tween_property(self, "position", new_follow_target.position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 		#		transition_tween.tween_property(self, "position", follow_target.global_position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
