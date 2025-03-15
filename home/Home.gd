@@ -11,14 +11,19 @@ onready var select_games: Control = $Gui/SelectGames
 onready var play_btn: Button = $Gui/MainMenu/PlayBtn
 onready var focus_btn: Button = play_btn
 
+onready var home_sound: Node = $Sounds
+
 
 func _ready() -> void:
 
 	focus_btn.grab_focus()
+	home_sound.menu_music.play()
+
 
 func open_from_game():
 
 	modulate = Color.black
+
 
 func to_main_menu():
 

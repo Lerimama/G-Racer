@@ -75,7 +75,6 @@ var sudden_death_start_time: int = 20
 # ON START -----------------------------------------------------------------------------------
 
 
-var drivers_on_game_start: Array # = [0]# samo 1. level ... seta se iz home
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
 
@@ -118,42 +117,47 @@ func _apply_debug_settings():
 #	one_screen_mode = false
 #	hide_view_on_player_deactivated = true
 	time_game_heal_rate_factor = 0
-	health_effects = [HEALTH_EFFECTS.POWER, HEALTH_EFFECTS.GAS, HEALTH_EFFECTS.MOTION]
-	health_effects = [HEALTH_EFFECTS.MOTION]
-
-
-	drivers_on_game_start = [ "JOU", "MOU", "ROU"]#, "heh"]#, "RO", "eh"]
-#	drivers_on_game_start = [ "JOU", "MOU"]
-#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]#, "RO", "eh"]
-#	drivers_on_game_start = [ "JOU"]
-
+#	health_effects = [HEALTH_EFFECTS.POWER, HEALTH_EFFECTS.GAS, HEALTH_EFFECTS.MOTION]
+#	health_effects = [HEALTH_EFFECTS.MOTION]
+	health_effects = []
 	# max wins is level count
 	var max_wins_is_level_count: bool = true
 	if max_wins_is_level_count:
 		wins_goal_count = game_levels.size()
 
-	Pros.driver_profiles = {}
+
+	var drivers_on_game_start: Array = ["JOU"]
+#	drivers_on_game_start = [ "JOU", "MOU"]
+	drivers_on_game_start = [ "JOU", "MOU", "ROU"]
+#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
+#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]
+
+
+	Pros.start_driver_profiles = {}
 	for driver_id in drivers_on_game_start:
-		Pros.driver_profiles[driver_id] = Pros.default_driver_profile.duplicate()
-		Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.PLAYER
+		Pros.start_driver_profiles[driver_id] = Pros.default_driver_profile.duplicate()
+
+	for driver_id in drivers_on_game_start:
+		Pros.start_driver_profiles[driver_id] = Pros.default_driver_profile.duplicate()
+		Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 		if drivers_on_game_start.find(driver_id) == 0:
-			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
-			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_blue
-#			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_blue
+#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 1:
-			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_red
-			Pros.driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
-			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
-#			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_red
+			Pros.start_driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
+			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
+#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
-#			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
-			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
-			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_green
+#			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_green
 		elif drivers_on_game_start.find(driver_id) == 3:
-			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
-#			Pros.driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.JP2
-#			Pros.driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
-			Pros.driver_profiles[driver_id]["driver_color"] = Refs.color_yellow
+			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+#			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.JP2
+#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_yellow
 
 
 func start_debug():

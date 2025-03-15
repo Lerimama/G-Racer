@@ -3,6 +3,8 @@ extends Control
 var is_open: bool = false
 var drivers_limit: int = 4
 var start_drivers_count: int = 2
+var driver_box_template: Control
+var activated_driver_boxes: Array = []
 
 onready var box_container: HBoxContainer = $BoxContainer
 onready var focus_btn: Button = $Menu/PlayBtn
@@ -18,8 +20,14 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 
 	hide()
+
+	# reset in template
+	driver_box_template = Mets.remove_chidren_and_get_template(box_container.get_children())
+
+#	yield(get_tree(), "idle_frame")
 	for driver_count in start_drivers_count:
-		box_container.add_new_driver_box(driver_count)
+		add_new_driver_box(driver_count)
+
 
 func open():
 
@@ -35,25 +43,44 @@ func close():
 	hide()
 
 
+func add_new_driver_box(driver_index):
+
+	var new_driver_box: Control = driver_box_template.duplicate()
+	new_driver_box.driver_index = driver_index
+	if driver_index == 0:
+		new_driver_box.is_ai = false
+	box_container.add_child(new_driver_box)
+
+	# prvi je human in ga ne moreš odstranit
+	if driver_index == 0:
+		new_driver_box.remove_btn.get_parent().hide()
+	else:
+		new_driver_box.remove_btn.connect("pressed", self, "_on_driver_remove_pressed", [new_driver_box])
+
+	activated_driver_boxes.append(new_driver_box)
+
+
+func _on_driver_remove_pressed(driver_box_to_remove: Control):
+
+	activated_driver_boxes.erase(driver_box_to_remove)
+	driver_box_to_remove.queue_free()
+
+
 func _on_AddBtn_pressed() -> void:
 
-	if box_container.activated_driver_boxes.size() < drivers_limit:
+	if activated_driver_boxes.size() < drivers_limit:
 #		var added_driver_index: int = box_container.activated_driver_boxes.size()
-		var added_driver_index = box_container.activated_driver_boxes.size()
-		box_container.add_new_driver_box(added_driver_index)
+		var added_driver_index = activated_driver_boxes.size()
+		add_new_driver_box(added_driver_index)
 
 
 func _on_PlayBtn_pressed() -> void:
 
-	Sets.drivers_on_game_start = []
-	Pros.driver_profiles = {}
+	Pros.start_driver_profiles = {}
 
-	for driver_box in box_container.activated_driver_boxes:
-		var driver_index = box_container.activated_driver_boxes.find(driver_box)
-		Pros.driver_profiles[driver_index] = driver_box.driver_profile#.duplicate()
-		Sets.drivers_on_game_start.append(driver_index)
-		#		printt("profile", Pros.driver_profiles[driver_index])
-		#	print("drivers ", Sets.drivers_on_game_start)
+	for driver_box in activated_driver_boxes:
+		var driver_id: String = driver_box.driver_profile["driver_name_id"]
+		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile#.duplicate()
 
 	Refs.ultimate_popup.open_popup()
 	yield(get_tree().create_timer(0.1),"timeout")

@@ -9,19 +9,18 @@ export var reach_goals_in_sequence: bool = false
 
 var available_pickable_positions: Array = []
 var level_goals: Array = [] # pobere povezane
+var level_start_positions: Array = []
 
 var camera_limits_rect: Panel # če ga ni, kamera nima limita
 onready var camera_position_node: Position2D = $Tracking/StartCameraPosition
 
-onready var level_track: Path2D = $Tracking/LevelTrack
-onready var level_finish: Node2D = $Tracking/FinishLine
-onready var level_start: Node2D = $Tracking/StartLine
+onready var start_positions_holder: Node2D = $Tracking/StartPositions
+onready var start_line_position_node: Position2D = $Tracking/StartLine/StartPosition
+onready var race_track: Path2D = $Tracking/RaceTrack
+onready var finish_line: Node2D = $Tracking/FinishLine
+onready var start_line: Node2D = $Tracking/StartLine
 onready var level_navigation: NavigationPolygonInstance = $Tracking/LevelNavigation
 onready var tilemap_objects: TileMap = $Objects/Objects
-
-onready var start_positions_holder: Node2D = $Tracking/StartPositions
-onready var level_start_position_node: Position2D = $Tracking/StartLine/StartPosition
-var level_start_positions: Array = []
 
 
 func _ready() -> void:
@@ -35,7 +34,8 @@ func _ready() -> void:
 
 	Refs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
 
-	start_positions_holder.position_count = 4
+	set_start_positions(4)
+
 
 func set_level():
 
@@ -44,8 +44,8 @@ func set_level():
 		 camera_limits_rect = get_node(camera_limits_rect_path)
 
 	# start positions
-	if level_start.is_enabled:
-		start_positions_holder.global_position = level_start_position_node.global_position
+	if start_line.is_enabled:
+		start_positions_holder.global_position = start_line_position_node.global_position
 
 	for driver_position in start_positions_holder.get_child(0).get_children():
 		print(driver_position)
@@ -64,7 +64,7 @@ func set_level():
 
 	# rank type
 	var level_ranking_type: int = 0
-	if level_finish.is_enabled or not level_goals.empty():
+	if finish_line.is_enabled or not level_goals.empty():
 		level_ranking_type = Pros.RANK_BY.TIME
 	else:
 		level_ranking_type = Pros.RANK_BY.POINTS
@@ -78,12 +78,21 @@ func set_level():
 	emit_signal(
 		"level_is_set",
 		level_ranking_type,
-		level_start_positions,
-#		level_start.start_positions_holder.get_children(),
 		camera_limits_rect,
 		camera_position_node,
 		level_goals
 		)
+
+func set_start_positions(new_positions_count: int):
+
+	level_start_positions.clear()
+	start_positions_holder.position_count = new_positions_count
+
+	for count in new_positions_count:
+		var new_driver_position: Vector2 = start_positions_holder.get_child(0).get_child(count).get_child(0).global_position
+		level_start_positions.append(new_driver_position)
+
+	return level_start_positions
 
 
 func _set_level_objects():

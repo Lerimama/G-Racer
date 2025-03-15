@@ -46,7 +46,7 @@ func _update_ranking():
 	# RACING
 	if game.level_profile["rank_by"] == Pros.RANK_BY.TIME:
 		# tracking
-		if game_level.level_track.is_enabled:
+		if game_level.race_track.is_enabled:
 			# najprej rangiram trackerje
 			var all_driver_trackers: Array = []
 			for unranked_driver in unranked_drivers: all_driver_trackers.append(unranked_driver.driver_tracker)

@@ -1,7 +1,8 @@
 extends SoundManager
 
 
-onready var nitro_menu: AudioStreamPlayer = $Music/NitroMenu
+onready var menu_music: AudioStreamPlayer = $Music/NitroMenu
+
 onready var typing_holder: Node2D = $Typing
 onready var btn_focus: AudioStreamPlayer = $BtnFocus
 onready var btn_confirm: AudioStreamPlayer = $BtnConfirm
@@ -23,7 +24,7 @@ func _ready() -> void:
 	sfx_set_to_mute = AudioServer.is_bus_mute(sfx_bus_index)
 
 	if available_music_tracks.empty():
-		available_music_tracks = [nitro_menu]
+		available_music_tracks = [menu_music]
 
 
 

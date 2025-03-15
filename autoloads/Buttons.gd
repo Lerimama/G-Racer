@@ -69,7 +69,12 @@ func _connect_interactive_control(node: Node): # and apply start lnf
 		else:
 			node.connect("pressed", self, "_on_btn_pressed")
 
-	elif node is HSlider or node is LineEdit:
+	if node is LineEdit:
+		# focus
+		node.connect("mouse_entered", self, "_on_mouse_entered", [node])
+		node.connect("focus_entered", self, "_on_focus_entered", [node])
+		node.connect("focus_exited", self, "_on_focus_exited", [node])
+	elif node is HSlider:
 		# focus
 		node.connect("mouse_entered", self, "_on_mouse_entered", [node])
 		node.connect("focus_entered", self, "_on_focus_entered", [node])

@@ -1,7 +1,7 @@
-[gd_scene load_steps=47 format=2]
+[gd_scene load_steps=58 format=2]
 
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://home/drivers/PregameSetup.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/design/truckhunt_kv.png" type="Texture" id=4]
 [ext_resource path="res://assets/sounds/nitro/nitro_game.wav" type="AudioStream" id=5]
@@ -38,6 +38,11 @@
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/menu_fade.wav" type="AudioStream" id=36]
 [ext_resource path="res://home/levels/thumb_level_training.tres" type="Texture" id=37]
 [ext_resource path="res://home/levels/thumb_level_race.tres" type="Texture" id=38]
+[ext_resource path="res://home/drivers/avatar_david.tres" type="Texture" id=39]
+[ext_resource path="res://home/drivers/BoxContainer.gd" type="Script" id=40]
+[ext_resource path="res://home/drivers/PlayerBox.gd" type="Script" id=41]
+[ext_resource path="res://assets/theme/fonts/button_small_slanted.tres" type="DynamicFont" id=42]
+[ext_resource path="res://home/drivers/PregameSetup.gd" type="Script" id=43]
 [ext_resource path="res://assets/theme/fonts/button_big.tres" type="DynamicFont" id=44]
 
 [sub_resource type="Gradient" id=825]
@@ -65,6 +70,48 @@ colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
 
 [sub_resource type="GradientTexture2D" id=816]
 gradient = SubResource( 815 )
+fill_from = Vector2( 0.4875, 1 )
+fill_to = Vector2( 0.470833, 0 )
+
+[sub_resource type="StyleBoxFlat" id=830]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.976471, 0.172549, 0, 1 )
+expand_margin_left = 16.0
+expand_margin_right = 16.0
+
+[sub_resource type="StyleBoxFlat" id=829]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 1, 0.960938, 0, 1 )
+expand_margin_left = 16.0
+expand_margin_right = 16.0
+
+[sub_resource type="StyleBoxFlat" id=821]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+expand_margin_left = 16.0
+expand_margin_right = 16.0
+
+[sub_resource type="ShaderMaterial" id=831]
+shader = ExtResource( 34 )
+shader_param/saturation = 1.0
+
+[sub_resource type="Gradient" id=832]
+colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
+
+[sub_resource type="GradientTexture2D" id=833]
+gradient = SubResource( 832 )
 fill_from = Vector2( 0.4875, 1 )
 fill_to = Vector2( 0.470833, 0 )
 
@@ -277,8 +324,286 @@ mouse_default_cursor_shape = 2
 size_flags_horizontal = 4
 text = "QUIT"
 
-[node name="PregameSetup" parent="Gui" instance=ExtResource( 2 )]
+[node name="PregameSetup" type="Control" parent="Gui"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+theme = ExtResource( 3 )
+script = ExtResource( 43 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 128.0, 1312.0 ],
+"_edit_vertical_guides_": [ 2432.0 ]
+}
+
+[node name="TextureRect" type="TextureRect" parent="Gui/PregameSetup"]
+material = SubResource( 824 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -4056.0
+margin_top = -1960.0
+margin_right = -4056.0
+margin_bottom = -1960.0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 4 )
+expand = true
+
+[node name="ColorRect" type="ColorRect" parent="Gui/PregameSetup"]
 visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.67451 )
+
+[node name="Grad" type="TextureRect" parent="Gui/PregameSetup"]
+modulate = Color( 1, 1, 1, 0.74902 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 816 )
+expand = true
+flip_v = true
+
+[node name="Label" type="Label" parent="Gui/PregameSetup"]
+visible = false
+modulate = Color( 1, 1, 1, 0.52549 )
+margin_left = 1086.0
+margin_top = 249.0
+margin_right = 1451.0
+margin_bottom = 344.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 44 )
+text = "Drivers"
+uppercase = true
+
+[node name="MenuBox" type="CenterContainer" parent="Gui/PregameSetup"]
+visible = false
+margin_left = 70.0
+margin_top = 1003.0
+margin_right = 664.0
+margin_bottom = 1416.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Undi" type="ColorRect" parent="Gui/PregameSetup/MenuBox"]
+margin_left = 297.0
+margin_top = 206.0
+margin_right = 297.0
+margin_bottom = 206.0
+color = Color( 0, 0, 0, 0.862745 )
+
+[node name="Hover" type="Panel" parent="Gui/PregameSetup/MenuBox"]
+visible = false
+margin_left = 297.0
+margin_top = 206.0
+margin_right = 297.0
+margin_bottom = 206.0
+
+[node name="BoxContainer" type="HBoxContainer" parent="Gui/PregameSetup"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -2368.0
+margin_top = -592.0
+margin_right = -192.0
+margin_bottom = 304.0
+script = ExtResource( 40 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayerBox" type="Control" parent="Gui/PregameSetup/BoxContainer"]
+margin_right = 2176.0
+margin_bottom = 896.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 41 )
+
+[node name="Undi" type="ColorRect" parent="Gui/PregameSetup/BoxContainer/PlayerBox"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.862745 )
+
+[node name="Hover" type="Panel" parent="Gui/PregameSetup/BoxContainer/PlayerBox"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Content" type="VBoxContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -4.0
+margin_top = -320.0
+margin_bottom = 368.0
+grow_horizontal = 2
+custom_constants/separation = 24
+
+[node name="ColorRect" type="ColorRect" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content"]
+margin_left = 930.0
+margin_right = 1250.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 320, 24 )
+size_flags_horizontal = 4
+
+[node name="AvatarBtn" type="TextureButton" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content"]
+margin_left = 930.0
+margin_top = 48.0
+margin_right = 1250.0
+margin_bottom = 368.0
+rect_min_size = Vector2( 320, 320 )
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource( 39 )
+expand = true
+
+[node name="LineEdit" type="LineEdit" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content"]
+margin_left = 945.0
+margin_top = 392.0
+margin_right = 1235.0
+margin_bottom = 472.0
+rect_min_size = Vector2( 290, 80 )
+focus_neighbour_top = NodePath("../AvatarBtn")
+size_flags_horizontal = 4
+custom_styles/read_only = SubResource( 830 )
+custom_styles/focus = SubResource( 829 )
+custom_styles/normal = SubResource( 821 )
+text = "HASSELHOFF"
+align = 1
+max_length = 14
+virtual_keyboard_type = 1
+
+[node name="Properties" type="HBoxContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content"]
+margin_top = 496.0
+margin_right = 2180.0
+margin_bottom = 578.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+custom_constants/separation = 40
+alignment = 1
+
+[node name="Drivers" type="VBoxContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties"]
+margin_left = 923.0
+margin_right = 1057.0
+margin_bottom = 82.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties/Drivers"]
+margin_right = 134.0
+margin_bottom = 39.0
+custom_fonts/font = ExtResource( 2 )
+text = "Bolt type"
+align = 1
+
+[node name="Types" type="VBoxContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties/Drivers"]
+margin_top = 43.0
+margin_right = 134.0
+margin_bottom = 82.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Bolt" type="Button" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties/Drivers/Types"]
+margin_right = 134.0
+margin_bottom = 39.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 42 )
+toggle_mode = true
+text = "YYY"
+
+[node name="Controllers" type="VBoxContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties"]
+margin_left = 1097.0
+margin_right = 1257.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 160, 0 )
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties/Controllers"]
+margin_right = 160.0
+margin_bottom = 39.0
+custom_fonts/font = ExtResource( 2 )
+text = "Controller"
+align = 1
+
+[node name="Types" type="VBoxContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties/Controllers"]
+margin_top = 43.0
+margin_right = 160.0
+margin_bottom = 82.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Controller" type="Button" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Properties/Controllers/Types"]
+margin_right = 160.0
+margin_bottom = 39.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 42 )
+text = "XXX"
+
+[node name="Menu" type="HFlowContainer" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content"]
+margin_top = 630.0
+margin_right = 2180.0
+margin_bottom = 688.0
+size_flags_vertical = 10
+custom_constants/hseparation = 40
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="TransformBtn" type="Button" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Menu"]
+margin_left = 781.0
+margin_right = 1139.0
+margin_bottom = 58.0
+custom_colors/font_color = Color( 1, 1, 1, 0.313726 )
+text = "MAKE HUMAN"
+
+[node name="RemoveBtn" type="Button" parent="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Menu"]
+margin_left = 1179.0
+margin_right = 1399.0
+margin_bottom = 58.0
+custom_colors/font_color = Color( 1, 1, 1, 0.313726 )
+text = "REMOVE"
+
+[node name="Menu" type="VBoxContainer" parent="Gui/PregameSetup"]
+margin_left = 200.0
+margin_top = 1083.0
+margin_right = 907.0
+margin_bottom = 1341.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayBtn" type="Button" parent="Gui/PregameSetup/Menu"]
+margin_right = 192.0
+margin_bottom = 86.0
+focus_neighbour_left = NodePath("../BackBtn")
+size_flags_horizontal = 0
+custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 44 )
+text = "PLAY"
+align = 0
+
+[node name="AddBtn" type="Button" parent="Gui/PregameSetup/Menu"]
+margin_top = 86.0
+margin_right = 467.0
+margin_bottom = 172.0
+rect_min_size = Vector2( 0, 80 )
+size_flags_horizontal = 0
+custom_fonts/font = ExtResource( 44 )
+text = "ADD DRIVER"
+
+[node name="BackBtn" type="Button" parent="Gui/PregameSetup/Menu"]
+margin_top = 172.0
+margin_right = 211.0
+margin_bottom = 252.0
+rect_min_size = Vector2( 0, 80 )
+focus_neighbour_right = NodePath("../PlayBtn")
+size_flags_horizontal = 0
+text = "CANCEL"
+align = 0
 
 [node name="SelectGames" type="Control" parent="Gui"]
 visible = false
@@ -290,7 +615,7 @@ script = ExtResource( 35 )
 
 [node name="TextureRect" type="TextureRect" parent="Gui/SelectGames"]
 visible = false
-material = SubResource( 824 )
+material = SubResource( 831 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -4056.0
@@ -310,7 +635,7 @@ color = Color( 0, 0, 0, 0.439216 )
 modulate = Color( 1, 1, 1, 0.756863 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = SubResource( 816 )
+texture = SubResource( 833 )
 expand = true
 flip_v = true
 
@@ -529,6 +854,14 @@ bus = "GameSfx"
 [connection signal="pressed" from="Gui/MainMenu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/LevelsBtn" to="." method="_on_LevelsBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="focus_entered" from="Gui/PregameSetup/BoxContainer/PlayerBox/Content/AvatarBtn" to="Gui/PregameSetup/BoxContainer/PlayerBox" method="_on_AvatarBtn_focus_entered"]
+[connection signal="focus_exited" from="Gui/PregameSetup/BoxContainer/PlayerBox/Content/AvatarBtn" to="Gui/PregameSetup/BoxContainer/PlayerBox" method="_on_AvatarBtn_focus_exited"]
+[connection signal="pressed" from="Gui/PregameSetup/BoxContainer/PlayerBox/Content/AvatarBtn" to="Gui/PregameSetup/BoxContainer/PlayerBox" method="_on_AvatarBtn_pressed"]
+[connection signal="text_changed" from="Gui/PregameSetup/BoxContainer/PlayerBox/Content/LineEdit" to="Gui/PregameSetup/BoxContainer/PlayerBox" method="_on_LineEdit_text_changed"]
+[connection signal="pressed" from="Gui/PregameSetup/BoxContainer/PlayerBox/Content/Menu/TransformBtn" to="Gui/PregameSetup/BoxContainer/PlayerBox" method="_on_TransformBtn_pressed"]
+[connection signal="pressed" from="Gui/PregameSetup/Menu/PlayBtn" to="Gui/PregameSetup" method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Gui/PregameSetup/Menu/AddBtn" to="Gui/PregameSetup" method="_on_AddBtn_pressed"]
+[connection signal="pressed" from="Gui/PregameSetup/Menu/BackBtn" to="Gui/PregameSetup" method="_on_BackBtn_pressed"]
 [connection signal="pressed" from="Gui/SelectGames/Menu/PlayBtn" to="Gui/SelectGames" method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Gui/SelectGames/Menu/BackBtn" to="Gui/SelectGames" method="_on_BackBtn_pressed"]
 

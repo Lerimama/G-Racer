@@ -383,16 +383,16 @@ __meta__ = {
 text = "drive out
 direction"
 
-[node name="LevelTrack" type="Path2D" parent="Tracking"]
+[node name="RaceTrack" type="Path2D" parent="Tracking"]
 curve = SubResource( 13454 )
 script = ExtResource( 24 )
 
-[node name="Tracker" type="PathFollow2D" parent="Tracking/LevelTrack"]
+[node name="Tracker" type="PathFollow2D" parent="Tracking/RaceTrack"]
 position = Vector2( 0, 735 )
 rotation = -1.42654
 script = ExtResource( 20 )
 
-[node name="CrossIndicator" type="Sprite" parent="Tracking/LevelTrack/Tracker"]
+[node name="CrossIndicator" type="Sprite" parent="Tracking/RaceTrack/Tracker"]
 scale = Vector2( 30, 30 )
 texture = ExtResource( 1 )
 

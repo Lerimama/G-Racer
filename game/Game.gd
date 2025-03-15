@@ -16,7 +16,6 @@ var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
 var level_index: int = 0
 #var start_position_nodes: Array # dobi od levela
-var level_start_positions: Array = []
 
 # shadows
 onready var game_shadows_length_factor: float = Sets.game_shadows_length_factor # set_game seta iz profilov
@@ -34,7 +33,6 @@ onready var game_views: Control = $GameViews
 onready var game_sound: Node = $Sound
 
 var game_levels: Array = []
-var drivers_on_start: Array = [] # to so nodeti
 var camera_leader: Node2D = null setget _change_camera_leader
 onready var curr_game_settings: Dictionary = {
 	"max_wins_count": Sets.wins_goal_count
@@ -57,7 +55,7 @@ var final_drivers_data: Dictionary = {
 func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no1"):
-		get_tree().set_group(Refs.group_shadows, "imitate_3d", true)
+		get_tree().set_group(Refs.group_shadows, "imit1ate_3d", true)
 	elif Input.is_action_just_pressed("no2"):
 		get_tree().set_group(Refs.group_shadows, "imitate_3d", false)
 	elif Input.is_action_just_pressed("no3"):
@@ -90,31 +88,40 @@ func set_game(level_index_add: int = 0):
 	self.game_stage = GAME_STAGE.SETTING_UP
 
 	# reset
-	drivers_on_start.clear()
 	game_views.reset_views()
 	game_reactor.drivers_finished.clear()
+
+	# level
 	game_levels = Sets.game_levels
 	level_index += level_index_add
 	_spawn_level(level_index)
-
 	final_level_data["level_profile"] = level_profile
-
-	yield(get_tree(), "idle_frame") # da lhko sodim po motion aman
-
 	game_reactor.game_level = game_level
 	game_tracker.game_level = game_level
 
+	yield(get_tree(), "idle_frame")
+
 	# drivers
+	var drivers_on_start: Array = [] # to so nodeti
 	if level_index == 0:
-		for driver_id in Sets.drivers_on_game_start:
-			final_drivers_data[driver_id] = {}
-			final_drivers_data[driver_id]["driver_profile"] = Pros.driver_profiles[driver_id]
-			_spawn_vehicle(driver_id, Sets.drivers_on_game_start.find(driver_id))
+		var level_start_positions: Array = game_level.set_start_positions(Pros.start_driver_profiles.size())
+		for driver_id_as_profile_key in Pros.start_driver_profiles:
+			var new_drivers_profile: Dictionary = Pros.start_driver_profiles[driver_id_as_profile_key]
+			final_drivers_data[driver_id_as_profile_key] = {}
+			final_drivers_data[driver_id_as_profile_key]["driver_profile"] = new_drivers_profile
+			var profile_index: int = Pros.start_driver_profiles.keys().find(driver_id_as_profile_key)
+
+
+
+			var new_driver: Vehicle = _spawn_vehicle(driver_id_as_profile_key, level_start_positions[profile_index])
+			drivers_on_start.append(new_driver)
 	else:
+		var level_start_positions: Array = game_level.set_start_positions(drivers_on_start.size())
 		var start_position_index: int = 0
 		for driver_id in final_drivers_data:
 			if not final_drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK] == -1:
-				_spawn_vehicle(driver_id, start_position_index)
+				var new_driver: Vehicle = _spawn_vehicle(driver_id,  level_start_positions[start_position_index])
+				drivers_on_start.append(new_driver)
 				start_position_index += 1
 		# prenos stats v vehicle iz prejšnega levela in reset ... tihi, ker hud še ni spawnan
 		for driver in drivers_on_start:
@@ -132,10 +139,9 @@ func set_game(level_index_add: int = 0):
 				driver.weapon_stats[stat] = prev_level_stats[stat]
 			final_drivers_data[driver.driver_id].erase("weapon_stats")
 
+	yield(get_tree(), "idle_frame")
 
-	yield(get_tree(), "idle_frame") # da lhko sodim po motion aman
-
-	# game views & cameras
+	# game views
 	var drivers_with_views: Array = []
 	for driver in drivers_on_start:
 		if driver.is_in_group(Refs.group_players):
@@ -155,6 +161,9 @@ func set_game(level_index_add: int = 0):
 	# senčke
 	get_tree().call_group(Refs.group_shadows, "update_shadow_parameters", self)
 
+	# gui
+	gui.set_gui(drivers_on_start)
+
 
 func _game_intro():
 
@@ -172,10 +181,10 @@ func _game_intro():
 
 	# drivers drive-in
 	var drive_in_time: float = 2
-	for driver in drivers_on_start:
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		var drive_in_position: Vector2 = Vector2.ZERO
-		if game_level.level_start:
-			drive_in_position = game_level.level_start.drive_in_position_node.global_position
+		if game_level.start_line:
+			drive_in_position = game_level.start_line.drive_in_position_node.global_position
 			driver.motion_manager.drive_in(drive_in_position, drive_in_time)
 
 	# počakam, da odpelje
@@ -188,8 +197,8 @@ func _start_game():
 
 	# start countdown
 	if Sets.start_countdown and level_profile["rank_by"] == Pros.RANK_BY.TIME:
-		game_level.level_start.start_lights.start_countdown() # če je skrit, pošlje signal takoj
-		yield(game_level.level_start.start_lights, "countdown_finished")
+		game_level.start_line.start_lights.start_countdown() # če je skrit, pošlje signal takoj
+		yield(game_level.start_line.start_lights, "countdown_finished")
 
 	self.game_stage = GAME_STAGE.PLAYING
 
@@ -210,7 +219,6 @@ func _change_game_stage(new_game_stage: int):
 			if not game_sound.intro_jingle.is_playing(): # _temp
 				game_sound.intro_jingle.play()
 			Refs.ultimate_popup.hide() # skrijem pregame
-			gui.set_gui()
 			_game_intro()
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
@@ -286,15 +294,15 @@ func _spawn_level(new_level_index: int):
 	new_level.connect("level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	for node_path in new_level.level_goals_paths:
 		new_level.get_node(node_path).connect("reached_by", game_reactor, "_on_goal_reached")
-	if new_level.level_finish.is_enabled:
-		new_level.level_finish.connect("reached_by", game_reactor, "_on_finish_crossed")
+	if new_level.finish_line.is_enabled:
+		new_level.finish_line.connect("reached_by", game_reactor, "_on_finish_crossed")
 
 	new_level.set_level()
 
 	game_level = new_level
 
 
-func _spawn_vehicle(driver_id: String, spawned_position_index: int):
+func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 
 	var scene_name: String = "vehicle_scene"
 	var vehicle_type: int = Pros.VEHICLE.values()[0]
@@ -303,13 +311,13 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 	var new_vehicle = NewVehicleInstance.instance()
 
 	new_vehicle.modulate.a = 0 # za intro
-	new_vehicle.rotation_degrees = game_level.level_start.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
-	new_vehicle.global_position = level_start_positions[spawned_position_index]
+	new_vehicle.rotation_degrees = game_level.start_line.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_vehicle.global_position = spawned_position
 #	new_vehicle.global_position = start_position_nodes[spawned_position_index].global_position
 
 	new_vehicle.driver_id = driver_id
 	new_vehicle.default_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
-	new_vehicle.driver_profile = Pros.driver_profiles[driver_id].duplicate()
+	new_vehicle.driver_profile = Pros.start_driver_profiles[driver_id].duplicate()
 	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
 
 	# stats
@@ -332,29 +340,27 @@ func _spawn_vehicle(driver_id: String, spawned_position_index: int):
 	Refs.node_creation_parent.add_child(new_vehicle)
 
 	# ai navigation
-	if Pros.driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI:
+	if Pros.start_driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI:
 		new_vehicle.controller.level_navigation = game_level.level_navigation
 	# trackers
-	if game_level.level_track.is_enabled:
-		new_vehicle.driver_tracker = game_level.level_track.spawn_new_tracker(new_vehicle)
+	if game_level.race_track.is_enabled:
+		new_vehicle.driver_tracker = game_level.race_track.spawn_new_tracker(new_vehicle)
 	# goals
 	new_vehicle.controller.goals_to_reach = game_level.level_goals.duplicate()
 	# connect
 	new_vehicle.connect("stat_changed", gui.hud, "_on_driver_stat_changed")
 	new_vehicle.connect("vehicle_deactivated", game_reactor, "_on_vehicle_deactivated")
 
-	drivers_on_start.append(new_vehicle)
+	return new_vehicle
 
 
 # SIGNALI ---------------------------------------------------------------------------------------------
 
 
-func _on_level_is_set(rank_by: int, start_positions: Array, camera_limits: Control, camera_start_position_node: Position2D, level_goals: Array):
+func _on_level_is_set(rank_by: int, camera_limits: Control, camera_start_position_node: Position2D, level_goals: Array):
 
 	level_profile["rank_by"] = rank_by # do tukaj ga ni v slovarju
 	level_profile["level_goals"] = level_goals # do tukaj ga ni v slovarju
-	level_start_positions = start_positions.duplicate()
-#	start_position_nodes = start_positions.duplicate()
 	get_tree().call_group(Refs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)
 
 

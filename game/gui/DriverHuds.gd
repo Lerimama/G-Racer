@@ -14,7 +14,7 @@ func _ready() -> void:
 		$ViewImitator/DriverHud.queue_free()
 
 
-func set_driver_huds(game_manager: Game, one_screen_mode: bool):
+func set_driver_huds(game_manager: Game, drivers_on_start: Array, one_screen_mode: bool):
 
 	var views_with_drivers: Dictionary = game_manager.game_views.views_with_drivers
 
@@ -27,7 +27,7 @@ func set_driver_huds(game_manager: Game, one_screen_mode: bool):
 
 	if one_screen_mode:
 		var imitated_view: ViewportContainer = views_with_drivers.keys()[0]
-		for driver in game_manager.drivers_on_start:
+		for driver in drivers_on_start:
 			var new_driver_hud: Control = DriverHud.instance()
 			view_imitator.add_child(new_driver_hud)
 			if driver.motion_manager.is_ai:

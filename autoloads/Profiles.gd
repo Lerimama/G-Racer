@@ -89,6 +89,7 @@ enum WEAPON_STAT { # int ... +/- delta ... PRENOSNA
 
 func __drivers(): pass # ------------------------------------------------------------
 
+# za default plejerje (ko ga dodaš) ... glede na index
 var avatars: Array = [preload("res://home/drivers/avatar_david.tres"), preload("res://home/drivers/avatar_magnum.tres"), preload("res://home/drivers/avatar_marty.tres"), preload("res://home/drivers/avatar_mrt.tres"), preload("res://home/drivers/avatar_ai.tres")]
 var colors: Array = [Refs.color_blue, Refs.color_green, Refs.color_yellow, Refs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
 var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
@@ -96,9 +97,9 @@ var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 enum DRIVER_TYPE {PLAYER, AI}
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 
-var driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
+var start_driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
 var default_driver_profile: Dictionary = {
-	"driver_name_obs": "PLAJER", # samo še home
+	"driver_name_id": "PLAJER", # uporaba tudi za player id
 	"driver_avatar": preload("res://home/drivers/avatar_david.tres"),
 	"driver_color": Refs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
@@ -107,11 +108,11 @@ var default_driver_profile: Dictionary = {
 	"target_rank": 10, # prepiše vehicle target_rank
 	}
 var ai_profile: Dictionary = {
+	"ai_name_id": "STEINY",
 	"driver_scene": preload("res://game/vehicle/ControlAI.tscn"),
 	"ai_avatar": preload("res://home/drivers/avatar_ai.tres"),
 	"controller_type": AI_TYPE.DEFAULT,
 	"ai_type": AI_TYPE.DEFAULT, # obs
-	"ai_name": "STEINY",
 	"random_start_range": "", # še na nodu
 	"driver_color": Refs.color_red,
 	"target_rank": 0, # prepiše vehicle target_rank

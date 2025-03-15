@@ -2,8 +2,8 @@ extends Control
 
 
 var is_ai: bool = true # spawner prvega spremeni v human
-var driver_index: int = 0
-#var driver_index
+var driver_index: int = 0 # za izbiro default vrednosti avatarja, imena, ...
+
 var driver_profile: Dictionary = {}
 
 var transform_btn_text: String = "MAKE HUMAN"
@@ -25,11 +25,11 @@ func _ready() -> void:
 		if is_ai:
 			driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
 			driver_profile["driver_avatar"] = Pros.ai_profile["ai_avatar"]
-			driver_profile["driver_name_obs"] = Pros.ai_profile["ai_name"]
+			driver_profile["driver_name_id"] = Pros.ai_profile["ai_name_id"]
 			driver_profile["driver_color"] = Pros.colors[driver_index]
 		else:
 			driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
-			driver_profile["driver_name_obs"] = Pros.names[driver_index]
+			driver_profile["driver_name_id"] = Pros.names[driver_index]
 			driver_profile["driver_avatar"] = Pros.avatars[driver_index]
 			driver_profile["driver_color"] = Pros.colors[driver_index]
 
@@ -40,7 +40,7 @@ func _set_driver_box():
 
 	color_rect.color = driver_profile["driver_color"]
 	avatar_btn.texture_normal = driver_profile["driver_avatar"]
-	line_edit.text = driver_profile["driver_name_obs"]
+	line_edit.text = driver_profile["driver_name_id"]
 
 	if is_ai:
 		avatar_btn.modulate = Color.red
@@ -123,7 +123,6 @@ func _on_controller_btn_pressed(btn: Button):
 	btn.hide()
 
 
-
 func _on_driver_btn_pressed(btn: Button):
 
 	var next_btn_index: int = drivers_node.get_children().find(btn) + 1
@@ -136,7 +135,6 @@ func _on_driver_btn_pressed(btn: Button):
 	btn.hide()
 
 
-
 func _on_TransformBtn_pressed() -> void:
 
 	is_ai = not is_ai
@@ -144,10 +142,10 @@ func _on_TransformBtn_pressed() -> void:
 	if is_ai:
 		driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
 		driver_profile["driver_avatar"] = Pros.ai_profile["ai_avatar"]
-		driver_profile["driver_name_obs"] = Pros.ai_profile["ai_name"]
+		driver_profile["driver_name_id"] = Pros.ai_profile["ai_name_id"]
 	else:
 		driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
-		driver_profile["driver_name_obs"] = Pros.names[driver_index]
+		driver_profile["driver_name_id"] = Pros.names[driver_index]
 		driver_profile["driver_avatar"] = Pros.avatars[driver_index]
 		driver_profile["driver_color"] = Pros.colors[driver_index]
 	_set_driver_box()
@@ -155,7 +153,7 @@ func _on_TransformBtn_pressed() -> void:
 
 func _on_LineEdit_text_changed(new_text: String) -> void:
 
-	driver_profile["driver_name_obs"] = new_text
+	driver_profile["driver_name_id"] = new_text
 
 
 func _on_AvatarBtn_pressed() -> void:
@@ -172,6 +170,7 @@ func _on_AvatarBtn_focus_exited() -> void:
 
 #	avatar_btn.get_node("Edge").hide()
 	pass
+
 
 func _on_AvatarBtn_focus_entered() -> void:
 

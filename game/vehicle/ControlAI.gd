@@ -652,9 +652,8 @@ func on_game_start(game_level: Node2D): # od GMja
 		self.ai_state = AI_STATE.RACE_TRACK
 	elif not goals_to_reach.empty():
 		self.ai_state = AI_STATE.RACE_TO_GOAL
-#	elif game_level.level_finish:
-	elif game_level.level_finish.is_enabled:
-		ai_target = game_level.level_finish
+	elif game_level.finish_line.is_enabled:
+		ai_target = game_level.finish_line
 		self.ai_state = AI_STATE.RACE_TO_GOAL
 	else:
 		self.ai_state = AI_STATE.SEARCH

@@ -181,10 +181,9 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					has_finished_level = true
 				if has_finished_level:
 					# to finish
-#					if game_level.level_finish:
-					if game_level.level_finish.is_enabled:
+					if game_level.finish_line.is_enabled:
 						game.game_sound.little_horn.play()
-						reaching_driver.controller.on_goal_reached(reached_goal, game_level.level_finish)
+						reaching_driver.controller.on_goal_reached(reached_goal, game_level.finish_line)
 					# all goals reached and finished
 					else:
 						game.game_sound.big_horn.play()
@@ -218,12 +217,11 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 
 
 		# ček track čekpoints
-		if game_level.level_track.is_enabled and game_level.level_track.checkpoints_count > 0: #  vsaj 1 čekpoint je normalno tudi za 1 krog
+		if game_level.race_track.is_enabled and game_level.race_track.checkpoints_count > 0: #  vsaj 1 čekpoint je normalno tudi za 1 krog
 			if crossing_driver.driver_tracker.all_checkpoints_reached:
 				crossing_driver.driver_tracker.checkpoints_reached.clear()
 			else:
 				all_goals_reached = false
-
 
 
 
@@ -240,9 +238,8 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 				crossing_driver.update_stat(Pros.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
-#				if game_level.level_finish.si:
-				if game_level.level_finish.is_enabled:
-					drive_out_position = game_level.level_finish.drive_out_position_node.global_position
+				if game_level.finish_line.is_enabled:
+					drive_out_position = game_level.finish_line.drive_out_position_node.global_position
 				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
 			else:
 				game.game_sound.little_horn.play()

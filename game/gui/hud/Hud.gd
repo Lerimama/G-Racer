@@ -42,7 +42,7 @@ func _ready() -> void:
 			child.queue_free()
 
 
-func set_hud(game_manager: Game):
+func set_hud(game_manager: Game, drivers_on_start: Array):
 
 	level_profile = game_manager.level_profile
 	level_lap_count = game_manager.level_profile["level_laps"]
@@ -73,7 +73,7 @@ func set_hud(game_manager: Game):
 
 	# new statboxes
 	var viewed_drivers: Array = []
-	for driver in game_manager.drivers_on_start:
+	for driver in drivers_on_start:
 		if not driver.motion_manager.is_ai:
 			viewed_drivers.append(driver)
 	for viewed_driver in viewed_drivers:
@@ -186,7 +186,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
-	if Pros.driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI and Sets.ai_gets_record:
+	if Pros.start_driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI and Sets.ai_gets_record:
 		if stat_key == Pros.STATS.BEST_LAP_TIME and not stat_value == 0:
 			if stat_value < level_record[0] and not level_record[0] == 0:
 				var new_level_record: Array = [stat_value, driver_id]
