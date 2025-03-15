@@ -23,7 +23,7 @@
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=21]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/tutorial_stage_a_NFF-glocken-bad.wav" type="AudioStream" id=22]
 [ext_resource path="res://assets/sounds/nitro/nitro_game_intro.wav" type="AudioStream" id=23]
-[ext_resource path="res://home/SoundHome.gd" type="Script" id=24]
+[ext_resource path="res://home/HomeSound.gd" type="Script" id=24]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_1.wav" type="AudioStream" id=25]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_4.wav" type="AudioStream" id=26]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=27]
@@ -802,54 +802,63 @@ bus = "GameMusic"
 stream = ExtResource( 25 )
 volume_db = -15.0
 pitch_scale = 0.6
+bus = "GuiSfx"
 
 [node name="Key2" type="AudioStreamPlayer" parent="Sounds/Typing"]
 stream = ExtResource( 10 )
 volume_db = -15.0
 pitch_scale = 0.6
+bus = "GuiSfx"
 
 [node name="Key3" type="AudioStreamPlayer" parent="Sounds/Typing"]
 stream = ExtResource( 11 )
 volume_db = -15.0
 pitch_scale = 0.6
+bus = "GuiSfx"
 
 [node name="Key4" type="AudioStreamPlayer" parent="Sounds/Typing"]
 stream = ExtResource( 26 )
 volume_db = -15.0
 pitch_scale = 0.6
+bus = "GuiSfx"
 
 [node name="Key5" type="AudioStreamPlayer" parent="Sounds/Typing"]
 stream = ExtResource( 20 )
 volume_db = -15.0
 pitch_scale = 0.6
+bus = "GuiSfx"
 
 [node name="BtnFocus" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 18 )
-volume_db = -30.0
-pitch_scale = 0.7
+volume_db = -20.0
+bus = "GuiSfx"
 
 [node name="BtnConfirm" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 17 )
-volume_db = -25.0
+volume_db = -20.0
+bus = "GuiSfx"
 
 [node name="BtnCancel" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 21 )
-volume_db = -25.0
+volume_db = -20.0
+bus = "GuiSfx"
 
 [node name="ScreenSlide" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 31 )
 pitch_scale = 0.9
+bus = "GuiSfx"
 
 [node name="TutorialStageDone" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 22 )
 volume_db = -13.0
 pitch_scale = 1.1
+bus = "GuiSfx"
 
 [node name="MenuFade" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource( 36 )
 volume_db = -15.0
 pitch_scale = 0.93
-bus = "GameSfx"
+bus = "GuiSfx"
 
 [connection signal="pressed" from="Gui/MainMenu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/LevelsBtn" to="." method="_on_LevelsBtn_pressed"]

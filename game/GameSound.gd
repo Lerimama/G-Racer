@@ -20,10 +20,11 @@ onready var nitro_menu: AudioStreamPlayer = $Music/NitroMenu
 onready var nitro_win: AudioStreamPlayer = $Music/NitroWin
 onready var nitro_lose: AudioStreamPlayer = $Music/NitroLose
 onready var nitro_intro: AudioStreamPlayer = $Music/NitroIntro
+onready var nitro_start: AudioStreamPlayer = $Music/NitroStart
 
 # called vars
 onready var game_music: AudioStreamPlayer = nitro
-onready var intro_jingle: AudioStreamPlayer = nitro_intro
+onready var intro_jingle: AudioStreamPlayer = nitro_start
 onready var win_jingle: AudioStreamPlayer = nitro_win
 onready var lose_jingle: AudioStreamPlayer = nitro_lose
 onready var menu_music: AudioStreamPlayer = nitro_menu

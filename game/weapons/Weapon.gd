@@ -32,7 +32,7 @@ export var start_load_count: int = 50
 export var start_magazines_count: int = 1
 # uni vars
 export (Texture) var load_icon: Texture = null
-var load_count: int = start_load_count  * start_magazines_count # _temp.. ime naj bo univerzalno za item
+var load_count: int = start_load_count  * start_magazines_count setget _change_load_count # _temp.. ime naj bo univerzalno za item
 
 
 func _ready() -> void:
@@ -47,7 +47,7 @@ func _ready() -> void:
 func set_weapon(owner_node: Node2D, with_ai: bool = use_ai): # kliče vehil
 
 	weapon_owner = owner_node
-	weapon_owner.weapon_stats[self] = load_count # bolje če raje pobere vehicle ob spawnu?
+	# weapon_stats[load_count] zapiše vehicle po setanju
 
 	# upošteva setano, razen, če je določena od spawnerja
 	if with_ai:
@@ -63,8 +63,7 @@ func _on_weapon_triggered(): # kliče controller, za prepoznavanje "triggering_w
 	if is_set:
 		if load_count > 0 and weapon_reloaded:
 			_shoot()
-			load_count -= 1
-			weapon_owner.weapon_stats[self] = load_count
+			self.load_count -= 1
 
 
 func _shoot():
@@ -93,6 +92,13 @@ func _shoot():
 		reload_timer.start(reload_time)
 
 
+func _change_load_count(add_load_count: int): # da se vedno apdejta tudi weapon stats
+
+	load_count += add_load_count
+	weapon_owner.weapon_stats[self] = load_count
+
+
 func _on_ReloadTimer_timeout() -> void:
 
 	weapon_reloaded = true
+

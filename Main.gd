@@ -59,8 +59,6 @@ func _game_in():
 
 func home_out():
 
-	$Sounds/MenuFade.play()
-
 	#	if not Refs.sound_manager.menu_music_set_to_off: # če muzka ni setana na off
 	#		Refs.sound_manager.stop_music("menu_music")
 
@@ -70,8 +68,6 @@ func home_out():
 
 
 func game_out():
-
-	$Sounds/MenuFade.play()
 
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(current_scene, "modulate", Color.black, fade_time)
@@ -83,8 +79,6 @@ func reload_game():
 	# game out z drugačnim zaključkom
 
 	get_viewport().set_disable_input(true) # anti dablklik
-
-	$Sounds/ScreenSlide.play()
 
 	var fade_out = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_out.tween_property(current_scene, "modulate", Color.black, fade_time)

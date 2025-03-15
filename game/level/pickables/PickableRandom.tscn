@@ -26,7 +26,6 @@ margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
 [node name="PickableRandom" instance=ExtResource( 1 )]
-pickable_key = 10
 
 [node name="Icon" parent="." index="2"]
 texture = SubResource( 2 )

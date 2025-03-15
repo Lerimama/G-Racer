@@ -28,6 +28,7 @@ func open_from_game():
 func to_main_menu():
 
 	if not home_screen == HOME_SCREEN.MAIN:
+		home_sound.menu_transition.play()
 		match home_screen:
 			HOME_SCREEN.LEVELS:
 				main_menu.show()
@@ -39,7 +40,7 @@ func to_main_menu():
 
 func _on_PlayBtn_pressed() -> void:
 
-
+	home_sound.menu_transition.play()
 	home_screen = HOME_SCREEN.PREGAME
 	pregame_setup.open()
 	main_menu.hide()
@@ -47,6 +48,7 @@ func _on_PlayBtn_pressed() -> void:
 
 func _on_LevelsBtn_pressed() -> void:
 
+	home_sound.menu_transition.play()
 	home_screen = HOME_SCREEN.LEVELS
 	select_games.open()
 	main_menu.hide()

@@ -51,7 +51,7 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 	else:
 		# items
 		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
-		for item in hud_driver.triggering_equipment:
+		for item in hud_driver.enabled_triggering_equipment:
 			_add_item_counter(item)
 		is_set = true
 		_on_item_selected(0)

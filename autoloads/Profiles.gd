@@ -70,23 +70,6 @@ var start_driver_stats: Dictionary = {
 	STATS.LAP_TIME: 0,
 	}
 
-enum WEAPON_STAT { # int ... +/- delta ... PRENOSNA
-	BULLET_COUNT,
-	MISILE_COUNT,
-	MINA_COUNT,
-	SMALL_COUNT,
-	HOMER_COUNT,
-	}
-#var start_weapon_stats: Dictionary = { # tole ne uporabljam v zadnji varianti
-#	# weapons
-#	WEAPON_STAT.BULLET_COUNT: 100,
-#	WEAPON_STAT.MISILE_COUNT: 5,
-#	WEAPON_STAT.SMALL_COUNT: 500,
-#	WEAPON_STAT.MINA_COUNT: 3,
-#	WEAPON_STAT.HOMER_COUNT: 50,
-#	}
-
-
 func __drivers(): pass # ------------------------------------------------------------
 
 # za default plejerje (ko ga dodaš) ... glede na index
@@ -210,35 +193,30 @@ var ammo_profiles : Dictionary = {
 		"reload_time": 0.2,
 		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"stat_key": WEAPON_STAT.BULLET_COUNT,
 		"mag_size": 10,
 	},
 	AMMO.MISILE: {
 		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"scene": preload("res://game/weapons/ammo/ProjectileHomer.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
-		"stat_key": WEAPON_STAT.MISILE_COUNT,
 		"mag_size": 1,
 	},
 	AMMO.MINA: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/MinaExplode.tscn"),
 		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
-		"stat_key": WEAPON_STAT.MINA_COUNT,
 		"mag_size": 3,
 	},
 	AMMO.SMALL: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"stat_key": WEAPON_STAT.SMALL_COUNT,
 		"mag_size": 100,
 	},
 	AMMO.HOMER: {
 		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"stat_key": WEAPON_STAT.HOMER_COUNT,
 		"mag_size": 100,
 	},
 	}
@@ -404,87 +382,87 @@ var surface_type_profiles: Dictionary = {
 
 func __pickables(): pass # ------------------------------------------------------------
 
-enum PICKABLE{
-	PICKABLE_BULLET, PICKABLE_MISILE, PICKABLE_MINA,
-	PICKABLE_SHIELD, PICKABLE_HEALTH, PICKABLE_LIFE,
-	PICKABLE_GAS, PICKABLE_CASH, PICKABLE_NITRO,
-	PICKABLE_POINTS,
-	PICKABLE_RANDOM
+enum PICKABLE{ # enako kot na pickable
+	RANDOM,
+	# stats
+	LIFE,
+	HEALTH,
+	POINTS,
+	GAS,
+	CASH,
+	# equipment
+	NITRO,
+	SHIELD,
+	# weapons
+	GUN, TURRET, LAUNCHER, DROPPER, MALA, # kot na weapons ... napolni vsa orožja tega tipa
+	BULLET, MISILE, MINA,
 	}
 var pickable_profiles: Dictionary = {
-	PICKABLE.PICKABLE_BULLET: {
-		"color": Refs.color_pickable_ammo,
+	PICKABLE.GUN: {
+		"color": Refs.color_pickable_ammo, # _temp ... color daš v pickable export var
 		"value": 20,
-		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": WEAPON_STAT.BULLET_COUNT,
 	},
-	PICKABLE.PICKABLE_MISILE: {
+	PICKABLE.TURRET: {
 		"color": Refs.color_pickable_ammo,
 		"value": 2,
-		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": WEAPON_STAT.MISILE_COUNT,
 	},
-	PICKABLE.PICKABLE_MINA: {
+	PICKABLE.LAUNCHER: {
 		"color": Refs.color_pickable_ammo,
 		"value": 3,
-		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": WEAPON_STAT.MINA_COUNT,
 	},
-	PICKABLE.PICKABLE_HEALTH: {
+	PICKABLE.DROPPER: {
+		"color": Refs.color_pickable_ammo,
+		"value": 3,
+		"target_rank": 3,
+	},
+	PICKABLE.MALA: {
+		"color": Refs.color_pickable_ammo,
+		"value": 3,
+		"target_rank": 3,
+	},
+	PICKABLE.HEALTH: {
 		"color": Refs.color_pickable_stat,
 		"value": 0.3,
-		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": STATS.HEALTH,
 	},
-	PICKABLE.PICKABLE_LIFE: {
+	PICKABLE.LIFE: {
 		"color": Refs.color_pickable_stat,
 		"value": 1,
-		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": STATS.LIFE,
 	},
-	PICKABLE.PICKABLE_GAS: {
+	PICKABLE.GAS: {
 		"color": Refs.color_pickable_stat,
 		"value": 200,
-		"elevation": 3,
 		"target_rank": 3,
-		"driver_stat": STATS.GAS,
 	},
-	PICKABLE.PICKABLE_CASH: {
+	PICKABLE.CASH: {
 		"color": Refs.color_pickable_stat,
 		"value": 50,
-		"elevation": 3,
 		"target_rank": 0,
-		"driver_stat": STATS.CASH,
 	},
-	PICKABLE.PICKABLE_POINTS: {
+	PICKABLE.POINTS: {
 		"color": Refs.color_pickable_stat,
 		"value": 100,
-		"elevation": 3,
 		"target_rank": 2,
-		"driver_stat": STATS.POINTS,
+#		"driver_stat": STATS.POINTS,
 	},
 	# NO STATS ...instants
-	PICKABLE.PICKABLE_SHIELD: {
+	PICKABLE.SHIELD: {
 		"color": Refs.color_pickable_ammo,
 		"value": 1,
-		"elevation": 3,
 		"target_rank": 3,
 	},
-	PICKABLE.PICKABLE_NITRO: {
+	PICKABLE.NITRO: {
 		"color": Refs.color_pickable_feature,
 		"value": 2, # factor
-		"elevation": 3,
 		"target_rank": 10,
 	},
-	PICKABLE.PICKABLE_RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
+	PICKABLE.RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
 		"color": Refs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
-		"elevation": 3,
 		"target_rank": 9,
 	},
 	}

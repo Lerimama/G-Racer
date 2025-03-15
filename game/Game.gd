@@ -102,7 +102,8 @@ func set_game(level_index_add: int = 0):
 	yield(get_tree(), "idle_frame")
 
 	# drivers
-	var drivers_on_start: Array = [] # to so nodeti
+	var drivers_on_start: Array = []
+
 	if level_index == 0:
 		var level_start_positions: Array = game_level.set_start_positions(Pros.start_driver_profiles.size())
 		for driver_id_as_profile_key in Pros.start_driver_profiles:
@@ -110,19 +111,19 @@ func set_game(level_index_add: int = 0):
 			final_drivers_data[driver_id_as_profile_key] = {}
 			final_drivers_data[driver_id_as_profile_key]["driver_profile"] = new_drivers_profile
 			var profile_index: int = Pros.start_driver_profiles.keys().find(driver_id_as_profile_key)
-
-
-
 			var new_driver: Vehicle = _spawn_vehicle(driver_id_as_profile_key, level_start_positions[profile_index])
 			drivers_on_start.append(new_driver)
+
 	else:
-		var level_start_positions: Array = game_level.set_start_positions(drivers_on_start.size())
-		var start_position_index: int = 0
+		var starting_driver_ids: Array = []
 		for driver_id in final_drivers_data:
 			if not final_drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK] == -1:
-				var new_driver: Vehicle = _spawn_vehicle(driver_id,  level_start_positions[start_position_index])
-				drivers_on_start.append(new_driver)
-				start_position_index += 1
+				starting_driver_ids.append(driver_id)
+		var level_start_positions: Array = game_level.set_start_positions(starting_driver_ids.size())
+		for driver_id in starting_driver_ids:
+			var new_driver: Vehicle = _spawn_vehicle(driver_id,  level_start_positions[starting_driver_ids.find(driver_id)])
+			drivers_on_start.append(new_driver)
+
 		# prenos stats v vehicle iz prejšnega levela in reset ... tihi, ker hud še ni spawnan
 		for driver in drivers_on_start:
 			# driver stats

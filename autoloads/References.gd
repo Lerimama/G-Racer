@@ -5,28 +5,27 @@ func global_nodes(): pass # ----------------------------------------------------
 
 var main_node: Node = null
 var game_reactor: Node = null
-var sound_manager: Node = null
 var node_creation_parent: Node2D = null # NCP ... ven?
 var ultimate_popup: Popup = null
 
 func groups(): pass # ------------------------------------------------------------
 
-var group_agents = "agents"
-var group_vehicles = "vehicles"
-var group_players = "players"
-var group_ai = "ais"
-var group_drivers = "drivers"
+var group_agents: String = "agents"
+var group_vehicles: String = "vehicles"
+var group_players: String = "players"
+var group_ai: String = "ais"
+var group_drivers: String = "drivers"
 
-var group_pickables = "pickables"
-var group_shadows = "shadows"
-var group_projectiles = "projectiles"
-var group_mine = "mine"
-var group_male = "male"
-var group_player_cameras = "player_cameras"
-#var group_misiles = "misiles"
-#var group_bullets = "bullets"
-#var group_menu_confirm_btns = "Menu confirm btns"
-#var group_menu_cancel_btns = "Menu cancel btns"
+var group_pickables: String = "pickables"
+var group_shadows: String = "shadows"
+var group_projectiles: String = "projectiles"
+var group_mine: String = "mine"
+var group_male: String = "male"
+var group_player_cameras: String = "player_cameras"
+
+var group_accept_btns: String = "accept_btns"
+var group_cancel_btns: String = "cancel_btns"
+var group_transition_btns: String = "transition_btns"
 
 
 func colors(): pass # ------------------------------------------------------------

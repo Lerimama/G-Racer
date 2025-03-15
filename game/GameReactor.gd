@@ -219,7 +219,7 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 		# ček track čekpoints
 		if game_level.race_track.is_enabled and game_level.race_track.checkpoints_count > 0: #  vsaj 1 čekpoint je normalno tudi za 1 krog
 			if crossing_driver.driver_tracker.all_checkpoints_reached:
-				crossing_driver.driver_tracker.checkpoints_reached.clear()
+				crossing_driver.driver_tracker.checked_checkpoints.clear()
 			else:
 				all_goals_reached = false
 

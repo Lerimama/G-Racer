@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 				game_over.score_table.update_scorelines(game_manager.final_drivers_data)
 
 
-func close_game(close_to: int, delay_time: float = 0):
+func close_game(transition_to: int, delay_time: float = 0):
 
 	get_tree().paused = true # proces, fp, input ... pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
 
@@ -108,7 +108,7 @@ func close_game(close_to: int, delay_time: float = 0):
 	get_tree().paused = false # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
 	get_viewport().set_disable_input(false)
 
-	match close_to:
+	match transition_to:
 		-1:
 			Refs.main_node.game_out()
 		0:

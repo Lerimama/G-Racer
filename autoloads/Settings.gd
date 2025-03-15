@@ -166,8 +166,8 @@ func start_debug():
 	_apply_debug_settings()
 	_set_game_settings_per_level()
 
-#	Refs.main_node._home_in()
-	Refs.main_node._game_in()
+	Refs.main_node._home_in()
+#	Refs.main_node._game_in()
 
 
 

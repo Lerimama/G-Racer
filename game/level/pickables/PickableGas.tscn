@@ -27,7 +27,7 @@ margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
 [node name="PickableGas" instance=ExtResource( 3 )]
-pickable_key = 6
+pickable_key = 4
 picked_sound_stream = ExtResource( 4 )
 
 [node name="Icon" parent="." index="2"]

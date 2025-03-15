@@ -31,26 +31,26 @@ func _input(event: InputEvent) -> void:
 		# select weapon
 		if Input.is_action_just_pressed(selector_action):
 			selected_item_index += 1
-			if selected_item_index > vehicle.triggering_equipment.size() - 1: # poskrbi tudi za primer, da je samo en item
+			if selected_item_index > vehicle.enabled_triggering_equipment.size() - 1: # poskrbi tudi za primer, da je samo en item
 				selected_item_index = 0
 			elif selected_item_index < 0:
-				selected_item_index = vehicle.triggering_equipment.size() - 1
+				selected_item_index = vehicle.enabled_triggering_equipment.size() - 1
 			emit_signal("item_selected", selected_item_index)
 			# weapon ai on/ off
-			var selected_weapon: Node2D = vehicle.triggering_equipment[selected_item_index]
+			var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
 			if selected_weapon.use_ai:
 				selected_weapon.weapon_ai.ai_enabled = true
 			else:
-				for weapon in vehicle.triggering_equipment:
+				for weapon in vehicle.enabled_triggering_equipment:
 					weapon.weapon_ai.ai_enabled = false
 		# shoot
 		if Input.is_action_pressed(shoot_action):
-			var selected_weapon: Node2D = vehicle.triggering_equipment[selected_item_index]
+			var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
 			if selected_weapon.has_method("_on_weapon_triggered"):
 				selected_weapon._on_weapon_triggered()
 			# še vsa orožja istega tipa
 			if vehicle.group_weapons_by_type:
-				for weapon in vehicle.weapons.get_children():
+				for weapon in vehicle.weapons_holder.get_children():
 					if weapon.weapon_type == selected_weapon.weapon_type:
 						weapon._on_weapon_triggered()
 

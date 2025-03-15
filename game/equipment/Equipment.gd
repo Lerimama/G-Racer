@@ -37,59 +37,59 @@ func _ready() -> void:
 	#	fire_cover_particles.emitting = false
 
 
-func set_equipment(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče vehicle
-
-## še ne uporabljam kode
-
-
-	equipment_owner = owner_node
-
-	reload_time = 0 #Pros.ammo_profiles[weapon_ammo]["reload_time"]
-	equipment_stat_key = 0 # Pros.ammo_profiles[weapon_ammo]["stat_key"]
-	equipment_count = equipment_owner.driver_stats[equipment_stat_key]
-
-	# upošteva setano, razen, če je določena od spawnerja
-	if with_ai:
-		ai_enabled = with_ai
-		equipment_ai.set_ai(equipment_owner)
-
-	show()
-	is_set = true
-
-
-func _process(delta: float) -> void:
-
-	if is_set:
-		equipment_count = equipment_owner.driver_stats[equipment_stat_key]
-
-func _on_weapon_triggered():
-
-	if is_set:
-		if equipment_count > 0 and equipment_reloaded:
-			_use()
-
-
-func _use():
-
-	if fx_enabled:
-		smoke_particles.one_shot = true
-		fire_particles.one_shot = true
-		smoke_particles.emitting = true
-		fire_particles.emitting = true
-		fire_cover_particles.one_shot = true
-		fire_cover_particles.emitting = true
-		var current_weapon_animation: String = animation_player.get_animation_list()[1] # 0 je RESET
-		animation_player.play(current_weapon_animation)
-
-	# reload
-	if reload_time > 0:
-		equipment_reloaded = false
-		reload_timer.start(reload_time)
-
-	# odštejem samo v glavnem slovarju, ker se tukaj kopira v procesu
-	emit_signal("equipment_used", equipment_stat_key, -1)
-
-
-func _on_ReloadTimer_timeout() -> void:
-
-	equipment_reloaded = true
+#func set_equipment(owner_node: Node2D, with_ai: bool = ai_enabled): # kliče vehicle
+#
+### še ne uporabljam kode
+#
+#
+#	equipment_owner = owner_node
+#
+#	reload_time = 0
+#	equipment_stat_key = 0
+#	equipment_count = equipment_owner.driver_stats[equipment_stat_key]
+#
+#	# upošteva setano, razen, če je določena od spawnerja
+#	if with_ai:
+#		ai_enabled = with_ai
+#		equipment_ai.set_ai(equipment_owner)
+#
+#	show()
+#	is_set = true
+#
+#
+#func _process(delta: float) -> void:
+#
+#	if is_set:
+#		equipment_count = equipment_owner.driver_stats[equipment_stat_key]
+#
+#func _on_weapon_triggered():
+#
+#	if is_set:
+#		if equipment_count > 0 and equipment_reloaded:
+#			_use()
+#
+#
+#func _use():
+#
+#	if fx_enabled:
+#		smoke_particles.one_shot = true
+#		fire_particles.one_shot = true
+#		smoke_particles.emitting = true
+#		fire_particles.emitting = true
+#		fire_cover_particles.one_shot = true
+#		fire_cover_particles.emitting = true
+#		var current_weapon_animation: String = animation_player.get_animation_list()[1] # 0 je RESET
+#		animation_player.play(current_weapon_animation)
+#
+#	# reload
+#	if reload_time > 0:
+#		equipment_reloaded = false
+#		reload_timer.start(reload_time)
+#
+#	# odštejem samo v glavnem slovarju, ker se tukaj kopira v procesu
+#	emit_signal("equipment_used", equipment_stat_key, -1)
+#
+#
+#func _on_ReloadTimer_timeout() -> void:
+#
+#	equipment_reloaded = true

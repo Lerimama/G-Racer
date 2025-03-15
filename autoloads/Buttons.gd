@@ -1,75 +1,85 @@
 extends Node
 
 
+# KAJ DODAM?
 # vsak hover, postane focus
 # dodam sounde na focus
 # dodam sounde na confirm, cancel, quit
 # dodam modulate na Checkbutton focus
 
-# ---
-
+# KAJ POČNEM?
 # kadar je hover, je tudi fokus
-# sounds + omejitve > focus, confirm, cancel, toggle
-# colors > non-btn focus, confirm, cancel, toggle
-
-## first screen focus sfx off:
-# - ko klikne "kritični" gumb > se soundi ugasnejo
-# - ko se fokusira kontrola, če so soundi ugasnjeni, se po fokusu spet prižgejo soundi
-# - grab_focus_nofx() je za izredne primere
-
-## direct-call play_gui_sfx("btn_confirm")
-# - confirm popup selection
-# - name_input key confirm / cancel
-
-## direct-call grab_focus_nofx direct()
-# - HOF on update or publish finished
-# - name_input on open ... confirm
-# - publish popup open ... publish
-# - pauza ... play resume btn
+# focus, confirm, cancel, toggle, slide, ...
+# btn SFX + omejitve na fokus
+# btn VFX
 
 
 var allow_focus_sfx: bool = false # focus sounds
-var allow_gui_sfx: bool = false
-var group_critical_btns = "Critical btns" # input off group
-var group_cancel_btns = "Cancel btns" # cancel sound group
-var group_touch_sound_btns = "Touch sound btns" # cancel sound group
+
+onready var btn_cancel_sound_stream: AudioStream = preload("res://assets/sounds/_zaloga/_pa/gui/btn_cancel_NFF-home-switch-off.wav")
+onready var btn_accept_sound_stream: AudioStream = preload("res://assets/sounds/_zaloga/_pa/gui/btn_confirm_NFF-home-switch-on.wav")
+onready var btn_focus_sound_stream: AudioStream = preload("res://assets/sounds/_zaloga/_pa/gui/btn_focus_change.wav")
+
+var btn_accept_sound: AudioStreamPlayer = AudioStreamPlayer.new()
+var btn_cancel_sound: AudioStreamPlayer = AudioStreamPlayer.new()
+var btn_focus_sound: AudioStreamPlayer = AudioStreamPlayer.new()
+var btn_toggle_on_sound: AudioStreamPlayer = AudioStreamPlayer.new()
+var btn_toggle_off_sound: AudioStreamPlayer = AudioStreamPlayer.new()
 
 
+# povežem "vse node added" signal iz že obstojećih interaktivih kontrol
 func _ready():
 
-	# na ready se povežem z vsemi interaktivnimmi kontorlami, ki že obstajajo
+	# _temp zaenkrat seta home sounds
+	#	btn_accept_sound.stream = btn_accept_sound_stream
+	#	btn_cancel_sound.stream = btn_cancel_sound_stream
+	#	btn_toggle_on_sound.stream = btn_accept_sound_stream
+	#	btn_toggle_off_sound.stream = btn_cancel_sound_stream
+	#	btn_focus_sound.stream = btn_focus_sound_stream
+
 	for child in get_tree().root.get_children():
-		if child is BaseButton or child is HSlider or child is TouchScreenButton or child is LineEdit:
+		if child is BaseButton\
+		or child is HSlider\
+		or child is TouchScreenButton\
+		or child is LineEdit:
 			_connect_interactive_control(child)
 
 	# signal iz drevesa na vsak node, ki pride v igro
-	get_tree().connect("node_added", self, "_on_SceneTree_node_added")
+	get_tree().connect("node_added", self, "_node_added_to_scene_tree")
 
 
-func _on_SceneTree_node_added(node: Node): # na ready
+# vsak dodan node povežem s potrebnimi signali
+# dodanim nodetom opredelim kurzor ikono
+func _node_added_to_scene_tree(added_node: Node):
+#	prints("added_node", added_node.name)
 
-	if node is BaseButton or node is HSlider or node is TouchScreenButton or node is LineEdit:
-		_connect_interactive_control(node)
-	if node is Button or node is HSlider:
-		node.set_default_cursor_shape(2) # CURSOR_POINTING_HAND
+	if added_node is BaseButton\
+	or added_node is HSlider\
+	or added_node is TouchScreenButton\
+	or added_node is LineEdit:
+		_connect_interactive_control(added_node)
+
+	if added_node is Button\
+	or added_node is HSlider:
+		added_node.set_default_cursor_shape(2) # CURSOR_POINTING_HAND
 
 
 func _connect_interactive_control(node: Node): # and apply start lnf
+#	prints("connected_node", node.name, node.get_class())
 
 	if node is BaseButton:
+#	if node is Button:
 		# focus
 		node.connect("focus_entered", self, "_on_focus_entered", [node])
 		node.connect("focus_exited", self, "_on_focus_exited", [node])
 		node.connect("mouse_entered", self, "_on_mouse_entered", [node])
 		node.connect("mouse_exited", self, "_on_mouse_exited", [node])
 		# toggle
-		if node.has_signal("toggled"):
-			node.connect("toggled", self, "_on_btn_toggled", [node])
+		node.connect("toggled", self, "_on_btn_toggled", [node])
 		# press
-		else:
-			node.connect("pressed", self, "_on_btn_pressed")
-
-	if node is LineEdit:
+		prints("btn", node.name, node.get_class())
+		node.connect("pressed", self, "_on_btn_pressed", [node])
+	elif node is LineEdit:
 		# focus
 		node.connect("mouse_entered", self, "_on_mouse_entered", [node])
 		node.connect("focus_entered", self, "_on_focus_entered", [node])
@@ -88,15 +98,16 @@ func _connect_interactive_control(node: Node): # and apply start lnf
 	#	_set_unfocused_state(node)
 
 
+# grab_focus_nofx outside call
 func grab_focus_nofx(control: Control):
 
 	# reset na fokus
-	allow_gui_sfx = false
+	allow_focus_sfx = false
 	control.grab_focus()
-	set_deferred("allow_ui_sfx", true)
+	set_deferred("allow_focus_sfx", true)
 
 
-# SIGNALS ---------------------------------------------------------------------------------------------------------
+# SIGNALI INTERAKTIVNIH KONTROL ----------------------------------------------------------------
 
 
 func _on_mouse_entered(control: Control):
@@ -105,7 +116,7 @@ func _on_mouse_entered(control: Control):
 	# imitira fokus
 #	control.emit_signal("focus_entered")
 	if not control.has_focus() and not control.focus_mode == control.FOCUS_NONE: # and not control is ColorRect
-#		allow_gui_sfx = true # mouse focus je zmeraj s sonundom
+		allow_focus_sfx = true # mouse focus je zmeraj s sonundom
 		control.grab_focus()
 
 
@@ -113,21 +124,19 @@ func _on_mouse_exited(control: Control):
 #	printt("control un-hoverd", control)
 	# imitira fokus
 #	control.emit_signal("focus_exited")
-
 	pass
 
 
 func _on_focus_entered(control: Control):
-#	printt("control focused", control)
+#	printt("control focused", control, btn_focus_sound.is_playing(), btn_focus_sound.volume_db)
 
-	if allow_gui_sfx:
-		pass
-#		Refs.sound_manager.play_gui_sfx("btn_focus_change")
-	else:
-		set_deferred("allow_ui_sfx", true)
+	if allow_focus_sfx:
+		btn_focus_sound.play()
+	else: # ob tranziciji disejblam fokus sound, enejblam, ga ob naslednjem fokusu
+		allow_focus_sfx = true
 
 
-func _on_focus_exited(control: Control):
+func _on_focus_exited(control: Control): # a rabm?
 
 	control.release_focus()
 
@@ -135,27 +144,24 @@ func _on_focus_exited(control: Control):
 func _on_btn_pressed(button: BaseButton):
 #	printt("btn pressed", button)
 
-
-	if button.is_in_group(group_cancel_btns):
-		pass
+	if button.is_in_group(Refs.group_accept_btns):
+		btn_accept_sound.play()
 	else:
-		pass
+		btn_cancel_sound.play()
 
-	if button.is_in_group(group_critical_btns):
-		set_deferred("allow_ui_sfx", false)
-		get_viewport().set_disable_input(true)
+	# ob tranziciji disejblam fokus sound, enejblam, ga ob naslednjem fokusu
+	if button.is_in_group(Refs.group_transition_btns):
+		set_deferred("allow_focus_sfx", false)
+		#		get_viewport().set_disable_input(true)
 
 
 func _on_btn_toggled(button_pressed: bool, button: Button) -> void:
 #	printt("btn toggled",button_pressed, button)
 
 	if button_pressed:
-		pass
-#		Refs.sound_manager.play_gui_sfx("btn_confirm")
+		btn_toggle_on_sound.play()
 	else:
-		pass
-#		Refs.sound_manager.play_gui_sfx("btn_cancel")
-
+		btn_toggle_off_sound.play()
 
 
 func _on_Slider_value_changed(slider_value: float, slider_node: HSlider):
@@ -172,12 +178,12 @@ func _on_Slider_value_changed(slider_value: float, slider_node: HSlider):
 	var pitch_normalized: float = pitch_percent * (pitch_max_value - pitch_min_value)
 	var new_pitch: float = pitch_normalized + pitch_min_value
 
-#	Refs.sound_manager.play_gui_sfx("btn_confirm", new_pitch)
-
+	btn_toggle_on_sound.play()
+	# ... dodaj vairable pitch for sliding ... ex.sound_manager.play_gui_sfx("btn_confirm", new_pitch)
 
 
 func _on_TouchBtn_pressed(touch_btn: TouchScreenButton):
 
-	if touch_btn.is_in_group(group_touch_sound_btns):
+#	if touch_btn.is_in_group(group_touch_sound_btns):
 #		Refs.sound_manager.play_gui_sfx("btn_confirm")
 		pass

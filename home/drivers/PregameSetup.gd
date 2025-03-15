@@ -76,6 +76,14 @@ func _on_AddBtn_pressed() -> void:
 
 func _on_PlayBtn_pressed() -> void:
 
+	home.home_sound.screen_transition.play()
+	home.home_sound.fade_sounds(home.home_sound.menu_music, home.home_sound.screen_transition)
+	yield(home.home_sound.screen_transition, "finished")
+	home.home_sound.nitro_intro.play()
+	yield(get_tree().create_timer(5), "timeout")
+	home.home_sound.fade_sounds(home.home_sound.nitro_intro, 5)
+	yield(home.home_sound.nitro_intro, "finished")
+
 	Pros.start_driver_profiles = {}
 
 	for driver_box in activated_driver_boxes:

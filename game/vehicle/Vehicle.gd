@@ -40,14 +40,13 @@ var body_state: Physics2DDirectBodyState
 var driver_tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
 
 # drugo ...
-var triggering_equipment: Array = []
+var enabled_triggering_equipment: Array = []
 var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
 onready var controller: Node2D = $Controller # zamenja se ob spawnu AI/PLAYER
 onready var motion_manager: Node2D = $Motion
 
 onready var equip_positions: Node2D = $EquipPositions
-onready var weapons: Node2D = $Weapons
 onready var equipment: Node2D = $Equipment
 onready var shape_poly: Polygon2D = $ShapePoly
 onready var engines: Node2D = get_node(engines_path)
@@ -70,6 +69,7 @@ var debug_trail: Line2D
 
 # neu
 export var vehicle_motion_profile: Resource = null
+onready var weapons_holder: Node2D = $Weapons
 var masa: float
 var heal_rate: float
 var rank_by: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
@@ -266,7 +266,7 @@ func _change_activity(new_is_active: bool):
 func _set_weapons_and_staff():
 
 	# set weapons
-	for weapon in weapons.get_children():
+	for weapon in weapons_holder.get_children():
 		# če je opremljeno na pozicijo
 		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
 		var legit: bool = true
@@ -279,12 +279,12 @@ func _set_weapons_and_staff():
 			if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
 				used_for_triggering = false
 			if group_weapons_by_type:
-				for trigg_weapon in triggering_equipment:
+				for trigg_weapon in enabled_triggering_equipment:
 					if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
 						used_for_triggering = false
 			if used_for_triggering:
 				if weapon.has_method("_on_weapon_triggered"):
-					triggering_equipment.append(weapon)
+					enabled_triggering_equipment.append(weapon)
 		else:
 			weapon.hide()
 
@@ -466,18 +466,30 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
 func on_item_picked(pickable_key: int):
 
+	var pickable_key_index: int = Pros.PICKABLE.values().find(pickable_key)
+	var pickable_key_name: String = Pros.PICKABLE.keys()[pickable_key_index]
+
 	match pickable_key:
-		Pros.PICKABLE.PICKABLE_SHIELD:
+		Pros.PICKABLE.SHIELD:
 			_spawn_shield()
-		Pros.PICKABLE.PICKABLE_NITRO:
+		Pros.PICKABLE.NITRO:
 			motion_manager.boost_vehicle()
-		_:
-			# če spreminja statistiko
-			if "driver_stat" in Pros.pickable_profiles[pickable_key].keys():
+		# weapons
+		Pros.PICKABLE.GUN, Pros.PICKABLE.TURRET, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER, Pros.PICKABLE.MALA: # ... "GUN", "TURRET", "LAUNCHER", "DROPPER", "MALA":
+			# med aktivnimi orožji poišče vse enakega tipa, kot je pickable key
+			for weapon in enabled_triggering_equipment:
+				var weapon_type_index: int = weapon.WEAPON_TYPE.keys().find(pickable_key_name)
+				var weapon_type: int = weapon.WEAPON_TYPE.values()[weapon_type_index]
+				if weapon.weapon_type == weapon_type:
+					weapon.load_count = Pros.pickable_profiles[pickable_key]["value"]
+					break
+		_: # stats
+			# poiščem STAT z enakim "key", kot je pickable key
+			var stat_key_index: int = Pros.STATS.keys().find(pickable_key_name)
+			if stat_key_index > -1:
 				var change_value: float = Pros.pickable_profiles[pickable_key]["value"]
-				var change_stat_key: int = Pros.pickable_profiles[pickable_key]["driver_stat"]
-				if not change_stat_key in Pros.WEAPON_STAT:
-					update_stat(change_stat_key, change_value)
+				var change_stat_key: int = Pros.STATS.values()[stat_key_index]
+				update_stat(change_stat_key, Pros.pickable_profiles[pickable_key]["value"])
 
 
 
