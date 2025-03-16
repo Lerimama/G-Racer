@@ -1,9 +1,10 @@
-[gd_resource type="Theme" load_steps=13 format=2]
+[gd_resource type="Theme" load_steps=17 format=2]
 
 [ext_resource path="res://assets/theme/fonts/body_small_font.tres" type="DynamicFont" id=1]
 [ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://assets/theme/fonts/button_basic_slanted.tres" type="DynamicFont" id=3]
 [ext_resource path="res://assets/theme/fonts/input_label.tres" type="DynamicFont" id=4]
+[ext_resource path="res://assets/theme/fonts/button_basic.tres" type="DynamicFont" id=5]
 
 [sub_resource type="StyleBoxEmpty" id=2]
 
@@ -14,6 +15,12 @@
 [sub_resource type="StyleBoxEmpty" id=10]
 
 [sub_resource type="StyleBoxEmpty" id=11]
+
+[sub_resource type="StyleBoxEmpty" id=14]
+
+[sub_resource type="StyleBoxEmpty" id=13]
+
+[sub_resource type="StyleBoxEmpty" id=15]
 
 [sub_resource type="StyleBoxLine" id=5]
 color = Color( 1, 1, 1, 1 )
@@ -33,7 +40,7 @@ border_color = Color( 1, 1, 1, 1 )
 [resource]
 default_font = ExtResource( 1 )
 Button/colors/font_color = Color( 1, 1, 1, 1 )
-Button/colors/font_color_disabled = Color( 0, 0, 0, 0.533333 )
+Button/colors/font_color_disabled = Color( 1, 1, 1, 0.537255 )
 Button/colors/font_color_focus = Color( 1, 0.960938, 0, 1 )
 Button/colors/font_color_hover = Color( 1, 0.960938, 0, 1 )
 Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
@@ -45,6 +52,14 @@ Button/styles/normal = SubResource( 10 )
 Button/styles/pressed = SubResource( 11 )
 CheckBox/icons/checked = null
 CheckBox/icons/unchecked = null
+CheckButton/colors/font_color_focus = Color( 1, 0.960938, 0, 1 )
+CheckButton/colors/font_color_hover = Color( 1, 0.960938, 0, 1 )
+CheckButton/colors/font_color_hover_pressed = Color( 0.976471, 0.172549, 0, 1 )
+CheckButton/colors/font_color_pressed = Color( 0, 1, 0, 1 )
+CheckButton/fonts/font = ExtResource( 5 )
+CheckButton/styles/focus = SubResource( 14 )
+CheckButton/styles/hover = SubResource( 13 )
+CheckButton/styles/hover_pressed = SubResource( 15 )
 HSeparator/styles/separator = SubResource( 5 )
 Label/colors/font_color = Color( 1, 1, 1, 1 )
 Label/colors/font_color_shadow = Color( 0, 0, 0, 0 )

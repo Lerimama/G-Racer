@@ -229,7 +229,7 @@ enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP} # 
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
 		"level_name": "dafault",
-		"level_desc": "jajsjdsjdj",
+		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
 		"level_scene": preload("res://game/levels/Level.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
@@ -241,7 +241,7 @@ var level_profiles: Dictionary = {
 		},
 	LEVELS.FIRST_DRIVE: {
 		"level_name": "first drive",
-		"level_desc": "xxx",
+		"level_desc": "Join an Exclusive Development Community.",
 		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
@@ -253,7 +253,7 @@ var level_profiles: Dictionary = {
 		},
 	LEVELS.FIRST_DRIVE_SHORT: {
 		"level_name": "first drive shorty",
-		"level_desc": "SMall",
+		"level_desc": "Cut Development Time with Unity C# Tools, Assets and Scripts.",
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
@@ -265,7 +265,7 @@ var level_profiles: Dictionary = {
 		},
 	LEVELS.SETUP: {
 		"level_name": "SETUP",
-		"level_desc": "SMall",
+		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
 		"level_scene": preload("res://game/levels/LevelAISetup.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
@@ -277,8 +277,7 @@ var level_profiles: Dictionary = {
 		},
 	LEVELS.TRAINING: {
 		"level_name": "training",
-		"level_desc": "xxx",
-#		"level_path": "res://game/levels/LevelTraining.tscn",
+		"level_desc": "Join an Exclusive Development Community.",
 		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_training.tres"),
 		"level_time_limit": 0,
@@ -289,7 +288,7 @@ var level_profiles: Dictionary = {
 		},
 	LEVELS.STAFF: {
 		"level_name": "staff",
-		"level_desc": "xxx",
+		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
 		"level_scene": preload("res://game/levels/LevelStaff.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_mission.tres"),
 		"level_time_limit": 60,

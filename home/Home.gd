@@ -6,8 +6,8 @@ var home_screen: int = HOME_SCREEN.MAIN
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var main_menu: VBoxContainer = $Gui/MainMenu
-onready var pregame_setup: Control = $Gui/PregameSetup
-onready var select_games: Control = $Gui/SelectGames
+onready var pregame_setup: Control = $Gui/Drivers
+onready var select_games: Control = $Gui/Levels
 onready var play_btn: Button = $Gui/MainMenu/PlayBtn
 onready var focus_btn: Button = play_btn
 
@@ -32,9 +32,9 @@ func play_game():
 		var driver_id: String = driver_box.driver_profile["driver_name_id"]
 		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile#.duplicate()
 
-	for level_btn in select_games.level_menu.get_children():
+	for level_btn in select_games.level_cards.get_children():
 		if level_btn in select_games.selected_level_btns:
-			var all_levels_level_value: int = select_games.level_menu.get_children().find(level_btn)
+			var all_levels_level_value: int = select_games.level_cards.get_children().find(level_btn)
 			Sets.game_levels.append(all_levels_level_value)
 
 	Refs.ultimate_popup.open_popup()

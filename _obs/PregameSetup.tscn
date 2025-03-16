@@ -1,0 +1,344 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://assets/theme/fonts/button_small_slanted.tres" type="DynamicFont" id=1]
+[ext_resource path="res://home/drivers/avatar_david.tres" type="Texture" id=4]
+[ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=5]
+[ext_resource path="res://assets/design/truckhunt_kv.png" type="Texture" id=6]
+[ext_resource path="res://home/drivers/Drivers.gd" type="Script" id=8]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=10]
+[ext_resource path="res://assets/theme/fonts/button_big.tres" type="DynamicFont" id=11]
+[ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=12]
+[ext_resource path="res://home/drivers/DriverBox.gd" type="Script" id=13]
+[ext_resource path="res://_obs/BoxContainer.gd" type="Script" id=14]
+
+[sub_resource type="ShaderMaterial" id=824]
+shader = ExtResource( 12 )
+shader_param/saturation = 1.0
+
+[sub_resource type="Gradient" id=815]
+colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
+
+[sub_resource type="GradientTexture2D" id=816]
+gradient = SubResource( 815 )
+fill_from = Vector2( 0.4875, 1 )
+fill_to = Vector2( 0.470833, 0 )
+
+[sub_resource type="StyleBoxFlat" id=830]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.976471, 0.172549, 0, 1 )
+expand_margin_left = 16.0
+expand_margin_right = 16.0
+
+[sub_resource type="StyleBoxFlat" id=829]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 1, 0.960938, 0, 1 )
+expand_margin_left = 16.0
+expand_margin_right = 16.0
+
+[sub_resource type="StyleBoxFlat" id=821]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+expand_margin_left = 16.0
+expand_margin_right = 16.0
+
+[node name="PregameSetup" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+theme = ExtResource( 10 )
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 128.0, 1312.0 ],
+"_edit_vertical_guides_": [ 2432.0 ]
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+material = SubResource( 824 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -4056.0
+margin_top = -1960.0
+margin_right = -4056.0
+margin_bottom = -1960.0
+rect_scale = Vector2( 4, 4 )
+texture = ExtResource( 6 )
+expand = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.67451 )
+
+[node name="Grad" type="TextureRect" parent="."]
+modulate = Color( 1, 1, 1, 0.74902 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = SubResource( 816 )
+expand = true
+flip_v = true
+
+[node name="Label" type="Label" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.52549 )
+margin_left = 1086.0
+margin_top = 249.0
+margin_right = 1451.0
+margin_bottom = 344.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 11 )
+text = "Drivers"
+uppercase = true
+
+[node name="MenuBox" type="CenterContainer" parent="."]
+visible = false
+margin_left = 70.0
+margin_top = 1003.0
+margin_right = 664.0
+margin_bottom = 1416.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Undi" type="ColorRect" parent="MenuBox"]
+margin_left = 297.0
+margin_top = 206.0
+margin_right = 297.0
+margin_bottom = 206.0
+color = Color( 0, 0, 0, 0.862745 )
+
+[node name="Hover" type="Panel" parent="MenuBox"]
+visible = false
+margin_left = 297.0
+margin_top = 206.0
+margin_right = 297.0
+margin_bottom = 206.0
+
+[node name="BoxContainer" type="HBoxContainer" parent="."]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -2368.0
+margin_top = -592.0
+margin_right = -192.0
+margin_bottom = 304.0
+script = ExtResource( 14 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayerBox" type="Control" parent="BoxContainer"]
+margin_right = 2176.0
+margin_bottom = 896.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 13 )
+
+[node name="Undi" type="ColorRect" parent="BoxContainer/PlayerBox"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.862745 )
+
+[node name="Hover" type="Panel" parent="BoxContainer/PlayerBox"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Content" type="VBoxContainer" parent="BoxContainer/PlayerBox"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -4.0
+margin_top = -320.0
+margin_bottom = 368.0
+grow_horizontal = 2
+custom_constants/separation = 24
+
+[node name="ColorRect" type="ColorRect" parent="BoxContainer/PlayerBox/Content"]
+margin_left = 930.0
+margin_right = 1250.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 320, 24 )
+size_flags_horizontal = 4
+
+[node name="AvatarBtn" type="TextureButton" parent="BoxContainer/PlayerBox/Content"]
+margin_left = 930.0
+margin_top = 48.0
+margin_right = 1250.0
+margin_bottom = 368.0
+rect_min_size = Vector2( 320, 320 )
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource( 4 )
+expand = true
+
+[node name="LineEdit" type="LineEdit" parent="BoxContainer/PlayerBox/Content"]
+margin_left = 945.0
+margin_top = 392.0
+margin_right = 1235.0
+margin_bottom = 472.0
+rect_min_size = Vector2( 290, 80 )
+focus_neighbour_top = NodePath("../AvatarBtn")
+size_flags_horizontal = 4
+custom_styles/read_only = SubResource( 830 )
+custom_styles/focus = SubResource( 829 )
+custom_styles/normal = SubResource( 821 )
+text = "HASSELHOFF"
+align = 1
+max_length = 14
+virtual_keyboard_type = 1
+
+[node name="Properties" type="HBoxContainer" parent="BoxContainer/PlayerBox/Content"]
+margin_top = 496.0
+margin_right = 2180.0
+margin_bottom = 578.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+custom_constants/separation = 40
+alignment = 1
+
+[node name="Drivers" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties"]
+margin_left = 923.0
+margin_right = 1057.0
+margin_bottom = 82.0
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="BoxContainer/PlayerBox/Content/Properties/Drivers"]
+margin_right = 134.0
+margin_bottom = 39.0
+custom_fonts/font = ExtResource( 5 )
+text = "Bolt type"
+align = 1
+
+[node name="Types" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties/Drivers"]
+margin_top = 43.0
+margin_right = 134.0
+margin_bottom = 82.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Bolt" type="Button" parent="BoxContainer/PlayerBox/Content/Properties/Drivers/Types"]
+margin_right = 134.0
+margin_bottom = 39.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 1 )
+toggle_mode = true
+text = "YYY"
+
+[node name="Controllers" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties"]
+margin_left = 1097.0
+margin_right = 1257.0
+margin_bottom = 82.0
+rect_min_size = Vector2( 160, 0 )
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="BoxContainer/PlayerBox/Content/Properties/Controllers"]
+margin_right = 160.0
+margin_bottom = 39.0
+custom_fonts/font = ExtResource( 5 )
+text = "Controller"
+align = 1
+
+[node name="Types" type="VBoxContainer" parent="BoxContainer/PlayerBox/Content/Properties/Controllers"]
+margin_top = 43.0
+margin_right = 160.0
+margin_bottom = 82.0
+custom_constants/separation = 32
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Controller" type="Button" parent="BoxContainer/PlayerBox/Content/Properties/Controllers/Types"]
+margin_right = 160.0
+margin_bottom = 39.0
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "XXX"
+
+[node name="Menu" type="HFlowContainer" parent="BoxContainer/PlayerBox/Content"]
+margin_top = 630.0
+margin_right = 2180.0
+margin_bottom = 688.0
+size_flags_vertical = 10
+custom_constants/hseparation = 40
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="TransformBtn" type="Button" parent="BoxContainer/PlayerBox/Content/Menu"]
+margin_left = 781.0
+margin_right = 1139.0
+margin_bottom = 58.0
+custom_colors/font_color = Color( 1, 1, 1, 0.313726 )
+text = "MAKE HUMAN"
+
+[node name="RemoveBtn" type="Button" parent="BoxContainer/PlayerBox/Content/Menu"]
+margin_left = 1179.0
+margin_right = 1399.0
+margin_bottom = 58.0
+custom_colors/font_color = Color( 1, 1, 1, 0.313726 )
+text = "REMOVE"
+
+[node name="Menu" type="VBoxContainer" parent="."]
+margin_left = 200.0
+margin_top = 1083.0
+margin_right = 907.0
+margin_bottom = 1341.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayBtn" type="Button" parent="Menu"]
+margin_right = 192.0
+margin_bottom = 86.0
+focus_neighbour_left = NodePath("../BackBtn")
+size_flags_horizontal = 0
+custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 11 )
+text = "PLAY"
+align = 0
+
+[node name="AddBtn" type="Button" parent="Menu"]
+margin_top = 86.0
+margin_right = 467.0
+margin_bottom = 172.0
+rect_min_size = Vector2( 0, 80 )
+size_flags_horizontal = 0
+custom_fonts/font = ExtResource( 11 )
+text = "ADD DRIVER"
+
+[node name="BackBtn" type="Button" parent="Menu"]
+margin_top = 172.0
+margin_right = 211.0
+margin_bottom = 252.0
+rect_min_size = Vector2( 0, 80 )
+focus_neighbour_right = NodePath("../PlayBtn")
+size_flags_horizontal = 0
+text = "CANCEL"
+align = 0
+
+[connection signal="focus_entered" from="BoxContainer/PlayerBox/Content/AvatarBtn" to="BoxContainer/PlayerBox" method="_on_AvatarBtn_focus_entered"]
+[connection signal="focus_exited" from="BoxContainer/PlayerBox/Content/AvatarBtn" to="BoxContainer/PlayerBox" method="_on_AvatarBtn_focus_exited"]
+[connection signal="pressed" from="BoxContainer/PlayerBox/Content/AvatarBtn" to="BoxContainer/PlayerBox" method="_on_AvatarBtn_pressed"]
+[connection signal="text_changed" from="BoxContainer/PlayerBox/Content/LineEdit" to="BoxContainer/PlayerBox" method="_on_LineEdit_text_changed"]
+[connection signal="pressed" from="BoxContainer/PlayerBox/Content/Menu/TransformBtn" to="BoxContainer/PlayerBox" method="_on_TransformBtn_pressed"]
+[connection signal="pressed" from="Menu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Menu/AddBtn" to="." method="_on_AddBtn_pressed"]
+[connection signal="pressed" from="Menu/BackBtn" to="." method="_on_BackBtn_pressed"]
