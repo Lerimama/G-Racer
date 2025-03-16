@@ -76,23 +76,24 @@ func _on_AddBtn_pressed() -> void:
 
 func _on_PlayBtn_pressed() -> void:
 
-	home.home_sound.screen_transition.play()
-	home.home_sound.fade_sounds(home.home_sound.menu_music, home.home_sound.screen_transition)
-	yield(home.home_sound.screen_transition, "finished")
-	home.home_sound.nitro_intro.play()
-	yield(get_tree().create_timer(5), "timeout")
-	home.home_sound.fade_sounds(home.home_sound.nitro_intro, 5)
-	yield(home.home_sound.nitro_intro, "finished")
-
-	Pros.start_driver_profiles = {}
-
-	for driver_box in activated_driver_boxes:
-		var driver_id: String = driver_box.driver_profile["driver_name_id"]
-		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile#.duplicate()
-
-	Refs.ultimate_popup.open_popup()
-	yield(get_tree().create_timer(0.1),"timeout")
-	Refs.main_node.call_deferred("home_out")
+	home.play_game()
+#	home.home_sound.screen_transition.play()
+#	home.home_sound.fade_sounds(home.home_sound.menu, home.home_sound.screen_transition)
+#	yield(home.home_sound.screen_transition, "finished")
+#	home.home_sound.nitro_intro.play()
+#	yield(get_tree().create_timer(5), "timeout")
+#	home.home_sound.fade_sounds(home.home_sound.nitro_intro, 5)
+#	yield(home.home_sound.nitro_intro, "finished")
+#
+#	Pros.start_driver_profiles = {}
+#
+#	for driver_box in activated_driver_boxes:
+#		var driver_id: String = driver_box.driver_profile["driver_name_id"]
+#		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile#.duplicate()
+#
+#	Refs.ultimate_popup.open_popup()
+#	yield(get_tree().create_timer(0.1),"timeout")
+#	Refs.main_node.call_deferred("home_out")
 
 
 func _on_BackBtn_pressed() -> void:

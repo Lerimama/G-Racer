@@ -25,6 +25,31 @@ func open_from_game():
 	modulate = Color.black
 
 
+func play_game():
+
+	Pros.start_driver_profiles = {}
+	for driver_box in pregame_setup.activated_driver_boxes:
+		var driver_id: String = driver_box.driver_profile["driver_name_id"]
+		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile#.duplicate()
+
+	for level_btn in select_games.level_menu.get_children():
+		if level_btn in select_games.selected_level_btns:
+			var all_levels_level_value: int = select_games.level_menu.get_children().find(level_btn)
+			Sets.game_levels.append(all_levels_level_value)
+
+	Refs.ultimate_popup.open_popup()
+
+	home_sound.screen_transition.play()
+	home_sound.fade_sounds(home_sound.menu_music, home_sound.screen_transition)
+	yield(home_sound.screen_transition, "finished")
+	home_sound.nitro_intro.play()
+	yield(get_tree().create_timer(1), "timeout")
+	home_sound.fade_sounds(home_sound.nitro_intro, 3)
+	yield(home_sound.nitro_intro, "finished")
+
+	Refs.main_node.call_deferred("home_out")
+
+
 func to_main_menu():
 
 	if not home_screen == HOME_SCREEN.MAIN:
@@ -40,10 +65,7 @@ func to_main_menu():
 
 func _on_PlayBtn_pressed() -> void:
 
-	home_sound.menu_transition.play()
-	home_screen = HOME_SCREEN.PREGAME
-	pregame_setup.open()
-	main_menu.hide()
+	play_game()
 
 
 func _on_LevelsBtn_pressed() -> void:
@@ -57,3 +79,11 @@ func _on_LevelsBtn_pressed() -> void:
 func _on_QuitBtn_pressed() -> void:
 
 	get_tree().quit()
+
+
+func _on_PlayersBtn_pressed() -> void:
+
+	home_sound.menu_transition.play()
+	home_screen = HOME_SCREEN.PREGAME
+	pregame_setup.open()
+	main_menu.hide()

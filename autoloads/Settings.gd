@@ -77,6 +77,7 @@ var sudden_death_start_time: int = 20
 
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
+#var game_levels: Array = [Pros.LEVELS.FIRST_DRIVE_SHORT, Pros.LEVELS.FIRST_DRIVE_SHORT]
 
 var default_game_settings_resource: Resource = preload("res://game/game_settings_def.tres")
 
@@ -94,7 +95,7 @@ func _apply_debug_settings():
 #	game_levels = [Pros.LEVELS.FIRST_DRIVE, Pros.LEVELS.FIRST_DRIVE]
 	game_levels = [Pros.LEVELS.FIRST_DRIVE_SHORT, Pros.LEVELS.FIRST_DRIVE_SHORT]
 #	game_levels = [Pros.LEVELS.SETUP]
-
+	print("game_levels", game_levels)
 
 	camera_zoom_range = Vector2(2, 2.3)
 	camera_zoom_range *= 1.1 # 2 plejers > 3

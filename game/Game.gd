@@ -61,6 +61,15 @@ func _input(event: InputEvent) -> void:
 	elif Input.is_action_just_pressed("no3"):
 		game_reactor.animate_day_night()
 
+	var zoom_delta: float = 0.1
+	if Input.is_action_just_pressed("plus"):
+		for cam in get_tree().get_nodes_in_group(Refs.group_player_cameras):
+			cam.zoom += Vector2.ONE * zoom_delta
+	elif Input.is_action_just_pressed("minus"):
+		for cam in get_tree().get_nodes_in_group(Refs.group_player_cameras):
+			cam.zoom -= Vector2.ONE * zoom_delta
+
+
 
 func _ready() -> void:
 #	printt("GM")

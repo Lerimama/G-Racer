@@ -398,18 +398,18 @@ bus = "GameSfx"
 
 [node name="BtnFocus" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs"]
 stream = ExtResource( 38 )
-volume_db = -30.0
+volume_db = -20.0
 pitch_scale = 0.7
 bus = "GameSfx"
 
 [node name="BtnConfirm" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs"]
 stream = ExtResource( 36 )
-volume_db = -25.0
+volume_db = -20.0
 bus = "GameSfx"
 
 [node name="BtnCancel" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs"]
 stream = ExtResource( 48 )
-volume_db = -25.0
+volume_db = -20.0
 bus = "GameSfx"
 
 [node name="Events" type="Node2D" parent="Sound/GuiSfx"]

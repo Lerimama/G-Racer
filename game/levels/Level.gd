@@ -48,7 +48,6 @@ func set_level():
 		start_positions_holder.global_position = start_line_position_node.global_position
 
 	for driver_position in start_positions_holder.get_child(0).get_children():
-		print(driver_position)
 		var curr_driver_position: Vector2 = driver_position.get_child(0).global_position
 		level_start_positions.append(curr_driver_position)
 

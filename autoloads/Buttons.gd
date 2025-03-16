@@ -77,7 +77,6 @@ func _connect_interactive_control(node: Node): # and apply start lnf
 		# toggle
 		node.connect("toggled", self, "_on_btn_toggled", [node])
 		# press
-		prints("btn", node.name, node.get_class())
 		node.connect("pressed", self, "_on_btn_pressed", [node])
 	elif node is LineEdit:
 		# focus

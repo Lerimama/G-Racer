@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=2]
+[gd_scene load_steps=57 format=2]
 
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/theme/fonts/body_font.tres" type="DynamicFont" id=2]
@@ -31,7 +31,6 @@
 [ext_resource path="res://assets/sounds/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=29]
 [ext_resource path="res://assets/sounds/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=30]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/screen_slide.wav" type="AudioStream" id=31]
-[ext_resource path="res://home/levels/LevelMenu.gd" type="Script" id=32]
 [ext_resource path="res://assets/sounds/nitro/nitro_win.wav" type="AudioStream" id=33]
 [ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=34]
 [ext_resource path="res://home/levels/SelectGames.gd" type="Script" id=35]
@@ -117,6 +116,9 @@ fill_to = Vector2( 0.470833, 0 )
 
 [node name="Home" type="Node2D"]
 script = ExtResource( 6 )
+__meta__ = {
+"_edit_vertical_guides_": [ 1280.0 ]
+}
 
 [node name="Graphics" type="Node2D" parent="."]
 
@@ -279,9 +281,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -270.0
-margin_top = 350.0
+margin_top = 302.0
 margin_right = 269.0
-margin_bottom = 643.0
+margin_bottom = 664.0
 theme = ExtResource( 3 )
 custom_constants/separation = 8
 alignment = 1
@@ -291,9 +293,8 @@ __meta__ = {
 
 [node name="PlayBtn" type="Button" parent="Gui/MainMenu"]
 margin_left = 173.0
-margin_top = 12.0
 margin_right = 365.0
-margin_bottom = 98.0
+margin_bottom = 86.0
 grow_horizontal = 2
 rect_min_size = Vector2( 0, 80 )
 mouse_default_cursor_shape = 2
@@ -301,23 +302,35 @@ size_flags_horizontal = 4
 custom_fonts/font = ExtResource( 44 )
 text = "PLAY"
 
-[node name="LevelsBtn" type="Button" parent="Gui/MainMenu"]
-margin_left = 4.0
-margin_top = 106.0
-margin_right = 534.0
-margin_bottom = 192.0
+[node name="PlayersBtn" type="Button" parent="Gui/MainMenu"]
+margin_left = 102.0
+margin_top = 94.0
+margin_right = 436.0
+margin_bottom = 180.0
 grow_horizontal = 2
 rect_min_size = Vector2( 0, 80 )
 mouse_default_cursor_shape = 2
 size_flags_horizontal = 4
 custom_fonts/font = ExtResource( 44 )
-text = "SELECT GAME"
+text = "DRIVERS"
+
+[node name="LevelsBtn" type="Button" parent="Gui/MainMenu"]
+margin_left = 128.0
+margin_top = 188.0
+margin_right = 411.0
+margin_bottom = 274.0
+grow_horizontal = 2
+rect_min_size = Vector2( 0, 80 )
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 44 )
+text = "LEVELS"
 
 [node name="QuitBtn" type="Button" parent="Gui/MainMenu"]
 margin_left = 206.0
-margin_top = 200.0
+margin_top = 282.0
 margin_right = 333.0
-margin_bottom = 280.0
+margin_bottom = 362.0
 grow_horizontal = 2
 rect_min_size = Vector2( 0, 80 )
 mouse_default_cursor_shape = 2
@@ -325,6 +338,7 @@ size_flags_horizontal = 4
 text = "QUIT"
 
 [node name="PregameSetup" type="Control" parent="Gui"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -606,7 +620,6 @@ text = "CANCEL"
 align = 0
 
 [node name="SelectGames" type="Control" parent="Gui"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -653,28 +666,44 @@ text = "Games"
 align = 1
 uppercase = true
 
+[node name="SelectedLevels" type="Label" parent="Gui/SelectGames"]
+modulate = Color( 1, 1, 1, 0.52549 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 384.0
+margin_top = 1104.0
+margin_right = 687.0
+margin_bottom = 1152.0
+text = "Levels: "
+uppercase = true
+
+[node name="WinsLimit" type="Label" parent="Gui/SelectGames"]
+modulate = Color( 1, 1, 1, 0.52549 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 382.0
+margin_top = 1202.0
+margin_right = 685.0
+margin_bottom = 1250.0
+text = "Wins mode: "
+uppercase = true
+
 [node name="LevelMenu" type="HBoxContainer" parent="Gui/SelectGames"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -684.0
-margin_top = -280.0
-margin_right = 684.0
-margin_bottom = 280.0
-grow_horizontal = 2
+margin_left = -220.0
+margin_top = -272.0
+margin_right = 2540.0
+margin_bottom = 288.0
 custom_constants/separation = 24
-alignment = 2
-script = ExtResource( 32 )
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="LevelBtn" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
 margin_bottom = 560.0
-focus_mode = 2
-toggle_mode = false
-enabled_focus_mode = 2
 
 [node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn" index="2"]
 texture = ExtResource( 37 )
@@ -683,9 +712,6 @@ texture = ExtResource( 37 )
 margin_left = 464.0
 margin_right = 904.0
 margin_bottom = 560.0
-focus_mode = 2
-toggle_mode = false
-enabled_focus_mode = 2
 
 [node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn2" index="2"]
 texture = ExtResource( 38 )
@@ -698,13 +724,58 @@ to race"
 margin_top = -53.0
 margin_bottom = 70.0
 
-[node name="LevelBtn3" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+[node name="LevelBtn2_2" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
 margin_left = 928.0
 margin_right = 1368.0
 margin_bottom = 560.0
-focus_mode = 2
-toggle_mode = false
-enabled_focus_mode = 2
+
+[node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn2_2" index="2"]
+texture = ExtResource( 38 )
+
+[node name="Title" parent="Gui/SelectGames/LevelMenu/LevelBtn2_2/Focused" index="3"]
+text = "Earn
+to race"
+
+[node name="Desc" parent="Gui/SelectGames/LevelMenu/LevelBtn2_2/Focused" index="4"]
+margin_top = -53.0
+margin_bottom = 70.0
+
+[node name="LevelBtn2_3" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+margin_left = 1392.0
+margin_right = 1832.0
+margin_bottom = 560.0
+
+[node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn2_3" index="2"]
+texture = ExtResource( 38 )
+
+[node name="Title" parent="Gui/SelectGames/LevelMenu/LevelBtn2_3/Focused" index="3"]
+text = "Earn
+to race"
+
+[node name="Desc" parent="Gui/SelectGames/LevelMenu/LevelBtn2_3/Focused" index="4"]
+margin_top = -53.0
+margin_bottom = 70.0
+
+[node name="LevelBtn2_4" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+margin_left = 1856.0
+margin_right = 2296.0
+margin_bottom = 560.0
+
+[node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn2_4" index="2"]
+texture = ExtResource( 38 )
+
+[node name="Title" parent="Gui/SelectGames/LevelMenu/LevelBtn2_4/Focused" index="3"]
+text = "Earn
+to race"
+
+[node name="Desc" parent="Gui/SelectGames/LevelMenu/LevelBtn2_4/Focused" index="4"]
+margin_top = -53.0
+margin_bottom = 70.0
+
+[node name="LevelBtn3" parent="Gui/SelectGames/LevelMenu" instance=ExtResource( 16 )]
+margin_left = 2320.0
+margin_right = 2760.0
+margin_bottom = 560.0
 
 [node name="TextureRect" parent="Gui/SelectGames/LevelMenu/LevelBtn3" index="2"]
 texture = ExtResource( 14 )
@@ -861,6 +932,7 @@ pitch_scale = 0.93
 bus = "GuiSfx"
 
 [connection signal="pressed" from="Gui/MainMenu/PlayBtn" to="." method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Gui/MainMenu/PlayersBtn" to="." method="_on_PlayersBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/LevelsBtn" to="." method="_on_LevelsBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
 [connection signal="focus_entered" from="Gui/PregameSetup/BoxContainer/PlayerBox/Content/AvatarBtn" to="Gui/PregameSetup/BoxContainer/PlayerBox" method="_on_AvatarBtn_focus_entered"]
@@ -876,4 +948,7 @@ bus = "GuiSfx"
 
 [editable path="Gui/SelectGames/LevelMenu/LevelBtn"]
 [editable path="Gui/SelectGames/LevelMenu/LevelBtn2"]
+[editable path="Gui/SelectGames/LevelMenu/LevelBtn2_2"]
+[editable path="Gui/SelectGames/LevelMenu/LevelBtn2_3"]
+[editable path="Gui/SelectGames/LevelMenu/LevelBtn2_4"]
 [editable path="Gui/SelectGames/LevelMenu/LevelBtn3"]

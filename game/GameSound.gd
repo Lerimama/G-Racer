@@ -29,6 +29,10 @@ onready var win_jingle: AudioStreamPlayer = nitro_win
 onready var lose_jingle: AudioStreamPlayer = nitro_lose
 onready var menu_music: AudioStreamPlayer = nitro_menu
 
+onready var btn_focus: AudioStreamPlayer = $GuiSfx/Inputs/BtnFocus
+onready var btn_accept: AudioStreamPlayer = $GuiSfx/Inputs/BtnConfirm
+onready var btn_cancel: AudioStreamPlayer = $GuiSfx/Inputs/BtnCancel
+
 
 func _ready() -> void:
 
@@ -44,3 +48,9 @@ func _ready() -> void:
 	if available_music_tracks.empty():
 		available_music_tracks = [nitro, track, track_2]
 
+	# temp, bolje je da iima btns svoje?
+	Buts.btn_accept_sound = btn_accept
+	Buts.btn_cancel_sound = btn_cancel
+	Buts.btn_toggle_on_sound = btn_accept
+	Buts.btn_toggle_off_sound = btn_cancel
+	Buts.btn_focus_sound = btn_focus
