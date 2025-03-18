@@ -38,9 +38,10 @@ var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
 #var camera_zoom_range: Array = [1, 1.5]
 var camera_zoom_range: Vector2 = Vector2(1, 1.5)
 var camera_shake_on: bool = true
-var enemies_mode: bool = false
-var wins_goal_count: int = 5 # kdo pride prej do tega števila zmag
-var one_screen_mode: bool = true
+
+# že povezano v home
+var mono_view_mode: bool = true
+var wins_needed: int = 5 # kdo pride prej do tega števila zmag
 
 
 # PER LEVEL STYLE --------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ var countdown_start_time: int = 3
 var pickables_count_limit: int = 5
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
-var life_as_life_taken: bool = true
+var life_as_scalp: bool = true
 var ranking_cash_rewards: Array = [5000, 3000, 1000]
 
 # daytime params
@@ -68,9 +69,9 @@ var health_effects: Array = []
 var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damiđa da ma vehicle lahko med 0 in 1
 var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
 var ai_gets_record: bool = true
-#enum DAMAGE_EFFECTS
 var sudden_death_start_time: int = 20
-
+# ni v def game profilu
+var heal_rate_factor: float = 0
 
 # ON START -----------------------------------------------------------------------------------
 
@@ -111,20 +112,20 @@ func _apply_debug_settings():
 	# obratne vrednosti
 	start_countdown = false
 	easy_mode = true
-	enemies_mode = true
 	camera_shake_on = false
 	slomo_fx_on = false
 #	full_equip_mode = true
-#	one_screen_mode = false
+#	mono_view_mode = false
 #	hide_view_on_player_deactivated = true
-	time_game_heal_rate_factor = 0
+#	heal_rate_factor = time_game_heal_rate_factor # 0.01
+	heal_rate_factor = points_game_heal_rate_factor # 0
 #	health_effects = [HEALTH_EFFECTS.POWER, HEALTH_EFFECTS.GAS, HEALTH_EFFECTS.MOTION]
 #	health_effects = [HEALTH_EFFECTS.MOTION]
 	health_effects = []
 	# max wins is level count
 	var max_wins_is_level_count: bool = true
 	if max_wins_is_level_count:
-		wins_goal_count = game_levels.size()
+		wins_needed = game_levels.size()
 
 
 	var drivers_on_game_start: Array = ["JOU"]
@@ -167,8 +168,8 @@ func start_debug():
 	_apply_debug_settings()
 	_set_game_settings_per_level()
 
-	Refs.main_node._home_in()
-#	Refs.main_node._game_in()
+#	Refs.main_node._home_in()
+	Refs.main_node._game_in()
 
 
 
@@ -203,7 +204,7 @@ func load_saved_game_settings(saved_game_settings: Resource):
 	pickables_count_limit = saved_game_settings.pickables_count_limit
 	pull_gas_penalty = saved_game_settings.pull_gas_penalty
 	drifting_mode = saved_game_settings.drifting_mode
-	life_as_life_taken = saved_game_settings.life_as_life_taken
+	life_as_scalp = saved_game_settings.life_as_scalp
 	ranking_cash_rewards = saved_game_settings.ranking_cash_rewards
 
 	# daytime params

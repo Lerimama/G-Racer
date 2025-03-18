@@ -305,6 +305,7 @@ size_flags_horizontal = 4
 text = "QUIT"
 
 [node name="Drivers" type="Control" parent="Gui"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -405,8 +406,8 @@ __meta__ = {
 [node name="PlayBtn" type="Button" parent="Gui/Drivers/Menu"]
 margin_right = 192.0
 margin_bottom = 86.0
-focus_neighbour_left = NodePath("../../AddBtn")
-focus_neighbour_right = NodePath("../../AddBtn")
+focus_neighbour_left = NodePath("../../SubMenu/AddBtn")
+focus_neighbour_right = NodePath("../../SubMenu/AddBtn")
 size_flags_horizontal = 0
 custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
 custom_fonts/font = ExtResource( 44 )
@@ -417,8 +418,8 @@ align = 0
 margin_top = 86.0
 margin_right = 283.0
 margin_bottom = 172.0
-focus_neighbour_left = NodePath("../../AddBtn")
-focus_neighbour_right = NodePath("../../AddBtn")
+focus_neighbour_left = NodePath("../../SubMenu/AddBtn")
+focus_neighbour_right = NodePath("../../SubMenu/AddBtn")
 size_flags_horizontal = 0
 custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
 custom_fonts/font = ExtResource( 44 )
@@ -430,42 +431,65 @@ margin_top = 172.0
 margin_right = 211.0
 margin_bottom = 252.0
 rect_min_size = Vector2( 0, 80 )
-focus_neighbour_left = NodePath("../../AddBtn")
-focus_neighbour_right = NodePath("../../AddBtn")
+focus_neighbour_left = NodePath("../../SubMenu/AddBtn")
+focus_neighbour_right = NodePath("../../SubMenu/AddBtn")
 focus_neighbour_bottom = NodePath("../PlayBtn")
 size_flags_horizontal = 0
 text = "CANCEL"
 align = 0
 
-[node name="AddBtn" type="Button" parent="Gui/Drivers"]
-margin_left = 1904.0
-margin_top = 1080.0
-margin_right = 2371.0
-margin_bottom = 1166.0
+[node name="SubMenu" type="VBoxContainer" parent="Gui/Drivers"]
+margin_left = 1608.0
+margin_top = 1083.0
+margin_right = 2373.0
+margin_bottom = 1341.0
+grow_horizontal = 0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AddBtn" type="Button" parent="Gui/Drivers/SubMenu"]
+margin_left = 298.0
+margin_right = 765.0
+margin_bottom = 86.0
 rect_min_size = Vector2( 0, 80 )
-focus_neighbour_left = NodePath("../Menu/PlayBtn")
-focus_neighbour_right = NodePath("../Menu/PlayBtn")
-size_flags_horizontal = 0
+focus_neighbour_left = NodePath("../../Menu/PlayBtn")
+focus_neighbour_right = NodePath("../../Menu/PlayBtn")
+size_flags_horizontal = 8
 custom_fonts/font = ExtResource( 44 )
 text = "ADD DRIVER"
 align = 2
 
-[node name="DriversCountBtn" type="Button" parent="Gui/Drivers"]
-margin_left = 1720.0
-margin_top = 1168.0
-margin_right = 2368.0
-margin_bottom = 1254.0
+[node name="DriversCountBtn" type="Button" parent="Gui/Drivers/SubMenu"]
+margin_top = 86.0
+margin_right = 765.0
+margin_bottom = 172.0
 grow_horizontal = 0
 rect_min_size = Vector2( 0, 80 )
-focus_neighbour_left = NodePath("../Menu/PlayBtn")
-focus_neighbour_right = NodePath("../Menu/PlayBtn")
-size_flags_horizontal = 0
+focus_neighbour_left = NodePath("../../Menu/PlayBtn")
+focus_neighbour_right = NodePath("../../Menu/PlayBtn")
+size_flags_horizontal = 8
 custom_fonts/font = ExtResource( 44 )
 text = "DRIVERS COUNT: 00"
 align = 2
 
+[node name="ViewModeBtn" type="Button" parent="Gui/Drivers/SubMenu"]
+margin_left = 23.0
+margin_top = 172.0
+margin_right = 765.0
+margin_bottom = 258.0
+grow_horizontal = 0
+rect_min_size = Vector2( 0, 80 )
+focus_neighbour_left = NodePath("../../Menu/PlayBtn")
+focus_neighbour_right = NodePath("../../Menu/PlayBtn")
+focus_neighbour_bottom = NodePath("../AddBtn")
+size_flags_horizontal = 8
+custom_fonts/font = ExtResource( 44 )
+text = "VIEW MODE: MONO"
+align = 2
+
 [node name="Levels" type="Control" parent="Gui"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -785,8 +809,9 @@ bus = "GuiSfx"
 [connection signal="pressed" from="Gui/Drivers/Menu/PlayBtn" to="Gui/Drivers" method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/Menu/LevelsBtn" to="Gui/Drivers" method="_on_LevelsBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/Menu/BackBtn" to="Gui/Drivers" method="_on_BackBtn_pressed"]
-[connection signal="pressed" from="Gui/Drivers/AddBtn" to="Gui/Drivers" method="_on_AddBtn_pressed"]
-[connection signal="pressed" from="Gui/Drivers/DriversCountBtn" to="Gui/Drivers" method="_on_DriversCountBtn_pressed"]
+[connection signal="pressed" from="Gui/Drivers/SubMenu/AddBtn" to="Gui/Drivers" method="_on_AddBtn_pressed"]
+[connection signal="pressed" from="Gui/Drivers/SubMenu/DriversCountBtn" to="Gui/Drivers" method="_on_DriversCountBtn_pressed"]
+[connection signal="pressed" from="Gui/Drivers/SubMenu/ViewModeBtn" to="Gui/Drivers" method="_on_ViewModeBtn_pressed"]
 [connection signal="pressed" from="Gui/Levels/WinsLimitBtn" to="Gui/Levels" method="_on_WinsLimit_pressed"]
 [connection signal="pressed" from="Gui/Levels/EasyModeBtn" to="Gui/Levels" method="_on_EasyModeBtn_pressed"]
 [connection signal="pressed" from="Gui/Levels/Menu/PlayBtn" to="Gui/Levels" method="_on_PlayBtn_pressed"]

@@ -1,0 +1,644 @@
+[gd_scene load_steps=38 format=2]
+
+[ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
+[ext_resource path="res://game/level/elements/LevelStart.gd" type="Script" id=2]
+[ext_resource path="res://game/level/elements/StartPositions.gd" type="Script" id=3]
+[ext_resource path="res://game/level/elements/Navigation.gd" type="Script" id=4]
+[ext_resource path="res://game/level/elements/DriverPosition.tscn" type="PackedScene" id=5]
+[ext_resource path="res://_obs/StartPosition.tscn" type="PackedScene" id=6]
+[ext_resource path="res://game/level/elements/LevelFinish.gd" type="Script" id=7]
+[ext_resource path="res://game/level/Level.gd" type="Script" id=8]
+[ext_resource path="res://game/level/elements/LevelTrack.gd" type="Script" id=9]
+[ext_resource path="res://assets/materials/ground_linart.material" type="Material" id=10]
+[ext_resource path="res://common/tex/noise/7547.jpg" type="Texture" id=11]
+[ext_resource path="res://assets/materials/ground_dirt.material" type="Material" id=12]
+[ext_resource path="res://common/shader_rect/ShaderCanvasRect.tscn" type="PackedScene" id=13]
+[ext_resource path="res://game/level/tileset_level_objects.tres" type="TileSet" id=14]
+[ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=15]
+[ext_resource path="res://common/EditorRectLabel.tscn" type="PackedScene" id=16]
+[ext_resource path="res://common/shader_rect/ShaderTextureRect.tscn" type="PackedScene" id=17]
+[ext_resource path="res://game/level/elements/DriverTracker.gd" type="Script" id=18]
+[ext_resource path="res://assets/turn_curves.png" type="Texture" id=20]
+[ext_resource path="res://common/tex/cross.png" type="Texture" id=21]
+[ext_resource path="res://_obs/nitro_music.mp3" type="AudioStream" id=22]
+[ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=23]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=24]
+[ext_resource path="res://game/level/elements/StartLights.tscn" type="PackedScene" id=25]
+[ext_resource path="res://assets/materials/ground_dust.material" type="Material" id=26]
+[ext_resource path="res://game/level/LevelEnvironment.tscn" type="PackedScene" id=27]
+
+[sub_resource type="OpenSimplexNoise" id=10546]
+seed = 7
+octaves = 5
+period = 208.6
+persistence = 0.341
+lacunarity = 2.1
+
+[sub_resource type="NoiseTexture" id=10547]
+width = 2000
+height = 2000
+seamless = true
+noise = SubResource( 10546 )
+
+[sub_resource type="RectangleShape2D" id=622]
+extents = Vector2( 144, 4 )
+
+[sub_resource type="Image" id=13459]
+data = {
+"data": PoolByteArray( 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255 ),
+"format": "RGBA8",
+"height": 32,
+"mipmaps": false,
+"width": 32
+}
+
+[sub_resource type="ImageTexture" id=11379]
+flags = 3
+flags = 3
+image = SubResource( 13459 )
+size = Vector2( 32, 32 )
+script = ExtResource( 1 )
+atlas = ExtResource( 15 )
+region = Rect2( 0, 0, 32, 32 )
+margin = Rect2( 0, 0, 0, 0 )
+margin_color = Color( 1, 0, 0, 0 )
+repeat = true
+
+[sub_resource type="RectangleShape2D" id=2923]
+extents = Vector2( 512, 24 )
+
+[sub_resource type="Curve2D" id=13454]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 0, 735, 0, 0, 0, 0, 138, -215, 0, 0, 0, 0, -69, -631, 0, 0, 0, 0, -525, -712, 365.587, 617.302, -365.587, -617.302, -1631, -1078, 0, 0, 0, 0, -1812, -2985, 0, 0, 0, 0, 1107, -3347, 0, 0, 0, 0, 3200, -2560, 0, 0, 0, 0, 2674, -797, 0, 0, 0, 0, 2776, 672, 0, 0, 0, 0, 2704, 1852, 0, 0, 0, 0, 582, 2368, 0, 0, 0, 0, -1761, 2422, 0, 0, 0, 0, -2049, 1247, 0, 0, 0, 0, -572, 869 )
+}
+
+[sub_resource type="NavigationPolygon" id=13453]
+vertices = PoolVector2Array( -2520.2, -396.158, -2505, -4019, 3688, -3810, 3923, -2311, 3767, 3124, -2524, 511, -2662, 2917 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4, 5 ), PoolIntArray( 5, 4, 6 ) ]
+outlines = [ PoolVector2Array( -2505, -4019, -2520.2, -396.158, -2524, 511, -2662, 2917, 3767, 3124, 3923, -2311, 3688, -3810 ) ]
+
+[sub_resource type="RectangleShape2D" id=13456]
+extents = Vector2( 150.247, 2410.25 )
+
+[sub_resource type="RectangleShape2D" id=13458]
+extents = Vector2( 5080, 245.75 )
+
+[sub_resource type="DynamicFont" id=13452]
+size = 100
+extra_spacing_top = 16
+font_data = ExtResource( 23 )
+
+[node name="Level" type="Node2D"]
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_vertical_guides_": [ 4078.0 ],
+"_editor_description_": "Z INDEX
+- background = -10
+- ground terrain < -1
+- flat objects and default = 0
+- not flat or floating object = 1 - 9
+- sky > 10"
+}
+
+[node name="LevelOriginPosition" type="Position2D" parent="."]
+rotation = -0.785397
+__meta__ = {
+"_edit_lock_": true,
+"_gizmo_extents_": 500.0
+}
+
+[node name="Background" type="Node2D" parent="."]
+z_index = -10
+
+[node name="Background" type="ColorRect" parent="Background"]
+visible = false
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 31.0
+margin_top = 25.0
+margin_right = 3031.0
+margin_bottom = 2049.0
+color = Color( 0.882353, 0.85098, 0.835294, 1 )
+
+[node name="Background2" type="ColorRect" parent="Background"]
+visible = false
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 31.0
+margin_top = 25.0
+margin_right = 3031.0
+margin_bottom = 2049.0
+color = Color( 0.882353, 0.85098, 0.835294, 1 )
+
+[node name="Ground" type="Node2D" parent="."]
+z_index = -1
+
+[node name="BackColor" type="ColorRect" parent="Ground"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -3272.0
+margin_top = -4976.0
+margin_right = 4984.0
+margin_bottom = 4208.0
+color = Color( 0.490196, 0.443137, 0.423529, 1 )
+
+[node name="ShaderCanvasRect_SidewalkDirt" parent="Ground" instance=ExtResource( 13 )]
+visible = false
+modulate = Color( 0.764706, 0.717647, 0.694118, 1 )
+material = ExtResource( 12 )
+margin_left = 4834.0
+margin_top = 641.0
+margin_right = 6915.0
+margin_bottom = 2466.0
+
+[node name="ShaderTextureRect_LineartTerrain" parent="Ground" instance=ExtResource( 17 )]
+visible = false
+material = ExtResource( 10 )
+margin_left = 2554.0
+margin_top = -1473.0
+margin_right = 4554.0
+margin_bottom = 527.0
+texture = SubResource( 10547 )
+
+[node name="ShaderTextureRect_Dust" parent="Ground" instance=ExtResource( 17 )]
+visible = false
+material = ExtResource( 26 )
+margin_left = 1842.0
+margin_top = -1513.0
+margin_right = 3842.0
+margin_bottom = 2215.0
+texture = ExtResource( 11 )
+
+[node name="Surfaces" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Objects" type="Node2D" parent="."]
+z_index = 1
+
+[node name="Objects" type="TileMap" parent="Objects"]
+position = Vector2( -3, 0 )
+tile_set = ExtResource( 14 )
+bake_navigation = true
+format = 1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Pickables" type="Node2D" parent="."]
+
+[node name="Buiildings" type="Node2D" parent="."]
+
+[node name="Elements" type="Node" parent="."]
+
+[node name="StartLine" type="Node2D" parent="Elements"]
+position = Vector2( 9, 23 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StartLights" parent="Elements/StartLine" instance=ExtResource( 25 )]
+position = Vector2( -7.62939e-06, -120 )
+
+[node name="StartArea" type="Area2D" parent="Elements/StartLine"]
+monitoring = false
+monitorable = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Elements/StartLine/StartArea"]
+visible = false
+position = Vector2( 0, 4 )
+shape = SubResource( 622 )
+disabled = true
+
+[node name="ColorRect" type="ColorRect" parent="Elements/StartLine/StartArea"]
+margin_left = -496.0
+margin_top = -24.0
+margin_right = 496.0
+margin_bottom = 24.0
+grow_horizontal = 2
+
+[node name="DriveInPosition" type="Position2D" parent="Elements/StartLine"]
+position = Vector2( 0, 1024 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EditorRectLabel" parent="Elements/StartLine/DriveInPosition" instance=ExtResource( 16 )]
+text = "drive in
+distance"
+
+[node name="StartPosition" type="Position2D" parent="Elements/StartLine"]
+position = Vector2( -8, 105 )
+rotation = -1.5708
+__meta__ = {
+"_gizmo_extents_": 200.0
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Elements/StartLine/StartPosition"]
+show_behind_parent = true
+position = Vector2( -136, 9.15527e-05 )
+color = Color( 0.313726, 0.317647, 1, 0.92549 )
+polygon = PoolVector2Array( -104, -56.0004, 96.0002, -55.9998, 112, -39.9996, 112, 40.0004, 95.9998, 56.0002, -104, 55.9996, -104, 0 )
+
+[node name="StartPositions" type="Node2D" parent="Elements/StartLine"]
+visible = false
+modulate = Color( 1, 1, 1, 0.470588 )
+position = Vector2( 0, 192 )
+
+[node name="StartPosition1" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( -335, 5 )
+
+[node name="StartPosition2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( -104, 0 )
+
+[node name="StartPosition3" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( 104, 0 )
+
+[node name="StartPosition4" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( 312, 0 )
+
+[node name="StartPosition1_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( -335, 285 )
+
+[node name="StartPosition2_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( -104, 280 )
+
+[node name="StartPosition3_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( 104, 280 )
+
+[node name="StartPosition4_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
+position = Vector2( 312, 280 )
+
+[node name="StartPositions" type="Node2D" parent="Elements"]
+modulate = Color( 1, 1, 1, 0.470588 )
+position = Vector2( -27, 656 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PositionsFlow" type="HFlowContainer" parent="Elements/StartPositions"]
+margin_left = -84.0
+margin_right = 84.0
+margin_bottom = 1120.0
+grow_horizontal = 2
+rect_min_size = Vector2( 168, 0 )
+custom_constants/vseparation = 32
+custom_constants/hseparation = 32
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="DriverPosition" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
+margin_left = 12.0
+margin_right = 156.0
+
+[node name="DriverPosition_2" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
+margin_left = 12.0
+margin_top = 288.0
+margin_right = 156.0
+margin_bottom = 544.0
+
+[node name="DriverPosition_3" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
+margin_left = 12.0
+margin_top = 576.0
+margin_right = 156.0
+margin_bottom = 832.0
+
+[node name="DriverPosition_4" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
+margin_left = 12.0
+margin_top = 864.0
+margin_right = 156.0
+margin_bottom = 1120.0
+
+[node name="FinishLine" type="Node2D" parent="Elements"]
+position = Vector2( -1918, 1843 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="FinishArea" type="Area2D" parent="Elements/FinishLine"]
+monitorable = false
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Line" type="TextureRect" parent="Elements/FinishLine/FinishArea"]
+margin_left = -512.0
+margin_top = -24.0
+margin_right = 512.0
+margin_bottom = 24.0
+grow_horizontal = 2
+texture = SubResource( 11379 )
+stretch_mode = 2
+
+[node name="CollisionPolygon2D" type="CollisionShape2D" parent="Elements/FinishLine/FinishArea"]
+shape = SubResource( 2923 )
+
+[node name="DriveOutPosition" type="Position2D" parent="Elements/FinishLine"]
+position = Vector2( 0, -1024 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EditorRectLabel" parent="Elements/FinishLine/DriveOutPosition" instance=ExtResource( 16 )]
+text = "drive out
+direction"
+
+[node name="TrackingLine" type="Path2D" parent="Elements"]
+curve = SubResource( 13454 )
+script = ExtResource( 9 )
+
+[node name="Tracker" type="PathFollow2D" parent="Elements/TrackingLine"]
+position = Vector2( 0, 735 )
+rotation = -1.42654
+script = ExtResource( 18 )
+
+[node name="CrossIndicator" type="Sprite" parent="Elements/TrackingLine/Tracker"]
+scale = Vector2( 30, 30 )
+texture = ExtResource( 21 )
+
+[node name="LevelNavigation" type="NavigationPolygonInstance" parent="Elements"]
+visible = false
+z_index = 10
+navpoly = SubResource( 13453 )
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PositionTarget" type="Position2D" parent="Elements/LevelNavigation"]
+scale = Vector2( 30, 30 )
+
+[node name="CrossIndicator" type="Sprite" parent="Elements/LevelNavigation/PositionTarget"]
+modulate = Color( 0, 1, 0, 1 )
+position = Vector2( 1, 1 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 21 )
+
+[node name="StartCameraPosition" type="Position2D" parent="Elements"]
+position = Vector2( 9, 23 )
+
+[node name="EditorRectLabel" parent="Elements/StartCameraPosition" instance=ExtResource( 16 )]
+text = "camera
+position"
+
+[node name="NCP" type="Node2D" parent="."]
+z_index = 1
+
+[node name="CameraLimits" type="Panel" parent="."]
+modulate = Color( 1, 0.960938, 0, 1 )
+margin_left = -3904.0
+margin_top = -5159.0
+margin_right = 5536.0
+margin_bottom = 4048.0
+theme = ExtResource( 24 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EdgeL" type="ColorRect" parent="CameraLimits"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -160.0
+margin_right = 320.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 320, 320 )
+
+[node name="VerEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeL"]
+position = Vector2( -300, 160 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraLimits/EdgeL/VerEdgeBody"]
+scale = Vector2( 2, 2 )
+shape = SubResource( 13456 )
+disabled = true
+
+[node name="EdgeT" type="ColorRect" parent="CameraLimits"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -160.0
+margin_right = 160.0
+margin_bottom = 320.0
+rect_min_size = Vector2( 320, 320 )
+
+[node name="HorEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeT"]
+position = Vector2( 168, -246 )
+collision_layer = 0
+collision_mask = 16
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraLimits/EdgeT/HorEdgeBody"]
+shape = SubResource( 13458 )
+disabled = true
+
+[node name="EdgeR" type="ColorRect" parent="CameraLimits"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -320.0
+margin_top = -160.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 320, 320 )
+
+[node name="VerEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeR"]
+position = Vector2( 620, 160 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraLimits/EdgeR/VerEdgeBody"]
+scale = Vector2( 2, 2 )
+shape = SubResource( 13456 )
+disabled = true
+
+[node name="EdgeB" type="ColorRect" parent="CameraLimits"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -160.0
+margin_top = -320.0
+margin_right = 160.0
+rect_min_size = Vector2( 320, 320 )
+
+[node name="HorEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeB"]
+position = Vector2( 166, 566 )
+collision_layer = 0
+collision_mask = 16
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraLimits/EdgeB/HorEdgeBody"]
+shape = SubResource( 13458 )
+disabled = true
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="NitroMusic" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 22 )
+bus = "GameMusic"
+
+[node name="WorldEnvironment" parent="." instance=ExtResource( 27 )]
+
+[node name="__Labels" type="Node2D" parent="."]
+position = Vector2( -4670, 34 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Label4" type="Label" parent="__Labels"]
+margin_left = 3996.0
+margin_top = 549.0
+margin_right = 5893.0
+margin_bottom = 1642.0
+theme = ExtResource( 24 )
+custom_fonts/font = SubResource( 13452 )
+text = "NAVODILA
+- make unique
+     - LevelNavigation
+     - LevelTrack
+- linija se more začet pred štartom (ai)
+- poveži: camera limits, goals, track, finish"
+
+[node name="_note" type="Label" parent="__Labels"]
+margin_left = 5227.0
+margin_top = -1359.0
+margin_right = 5877.0
+margin_bottom = -1056.0
+theme = ExtResource( 24 )
+text = "Z INDEX
+- background = -10
+- ground terrain < -1
+- flat objects and default = 0
+- not flat or floating object = 1 - 9
+- sky > 10"
+
+[node name="Label" type="Label" parent="__Labels"]
+margin_left = 5234.0
+margin_top = -971.0
+margin_right = 6751.0
+margin_bottom = -770.0
+theme = ExtResource( 24 )
+text = "Surfaces
+- plain podlagi podaš SURFACE_TYPE za lastnosti
+- plain podlaga je inherit parent (lahko tudi samo menjaš material v exportu)
+- bolt zazna na kateri podlagi je in prilagodi vožnjo "
+
+[node name="Label2" type="Label" parent="__Labels"]
+margin_left = 5223.0
+margin_top = -707.0
+margin_right = 6633.0
+margin_bottom = -464.0
+theme = ExtResource( 24 )
+text = "Čekpojnts
+- player beleži prevožene čekpointe (čekpoint mu pošlje samo sebe)
+- če je čekpoint že zabeležen za ta krog, se ne zgodi nič
+- ko plejer prevozi ciljno črto, GM preveri, če so vsi čekpointi prevoženi"
+
+[node name="Label3" type="Label" parent="__Labels"]
+margin_left = 5227.0
+margin_top = -413.0
+margin_right = 6168.0
+margin_bottom = -229.0
+theme = ExtResource( 24 )
+text = "Pikables
+- ob pobiranju kliče na plejerju on item picked 
+- pleyer aplicira posledice glede na PICKABLE"
+
+[node name="TurnCurves" type="Sprite" parent="__Labels"]
+position = Vector2( 5404.09, 99.3499 )
+scale = Vector2( 0.552754, 0.552754 )
+texture = ExtResource( 20 )
+
+[node name="__ScreenSize" type="ReferenceRect" parent="."]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+margin_right = 2560.0
+margin_bottom = 1440.0
+border_width = 5.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="__ScreenSize2" type="ReferenceRect" parent="__ScreenSize"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 328.0
+margin_right = -328.0
+border_width = 5.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="__WorldMeters" type="Control" parent="."]
+margin_left = -1128.0
+margin_top = -1600.0
+margin_right = -824.0
+margin_bottom = -964.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="Label" type="Label" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = 86.0
+margin_right = 1153.0
+margin_bottom = 768.0
+theme = ExtResource( 24 )
+custom_fonts/font = SubResource( 13452 )
+text = "1m = 64px
+1km = 64000px
+100km/h = 1,67 km/min
+= 106666,67 px/min
+= 1777,78 px/s"
+
+[node name="1m" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 240.0
+margin_top = -64.0
+margin_right = 304.0
+color = Color( 0, 1, 0, 1 )
+
+[node name="10m" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 160.0
+margin_top = -640.0
+margin_right = 224.0
+color = Color( 0, 1, 0, 1 )
+
+[node name="100m" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 80.0
+margin_top = -6400.0
+margin_right = 144.0
+color = Color( 0, 1, 0, 1 )
+
+[node name="1km" type="ColorRect" parent="__WorldMeters"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -64000.0
+margin_right = 64.0
+color = Color( 0, 1, 0, 1 )
+
+[connection signal="body_entered" from="Elements/FinishLine/FinishArea" to="Elements/FinishLine" method="_on_FinishLine_body_entered"]

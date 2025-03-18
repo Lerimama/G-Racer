@@ -14,16 +14,14 @@ onready var focused_display: Control = $Focused
 onready var unselected_display: Panel = $Deactivated
 onready var selected_display: Panel = $Activated
 
-var level_laps: int = 2
 var level_laps_limit: int = 10
-var mirror_mode: bool = false
 onready var laps_btn: Button = $LapsBtn
+
+var mirror_mode: bool = false
 onready var mirror_btn: Button = $MirrorBtn
 onready var level_preview: ColorRect = $LevelPreview
 
-
 var is_selected: bool = false setget _change_selected
-
 
 func _ready() -> void:
 
@@ -48,11 +46,12 @@ func _ready() -> void:
 	if thumb_texture:
 		$TextureRect.texture = thumb_texture
 
-	# set btns
-	level_laps -= 1
-	mirror_mode = not mirror_mode
-	_on_MirrorBtn_pressed()
-	_on_LapsBtn_pressed()
+	# btn state
+	laps_btn.text = "LAPS: %02d" % level_profile["level_laps"]
+	if mirror_mode:
+		mirror_btn.text = "MIRROR: ON"
+	else:
+		mirror_btn.text = "MIRROR: OFF"
 
 
 func _change_selected(new_is_selected: bool):
@@ -82,11 +81,11 @@ func _on_LevelBtn_focus_exited() -> void:
 
 func _on_LapsBtn_pressed() -> void:
 
-	level_laps += 1
+	level_profile["level_laps"] += 1
 
-	if level_laps > level_laps_limit:
-		level_laps = 0
-	laps_btn.text = "LAPS: %02d" % level_laps
+	if level_profile["level_laps"] > level_laps_limit:
+		level_profile["level_laps"] = 0
+	laps_btn.text = "LAPS: %02d" % level_profile["level_laps"]
 
 
 func _on_MirrorBtn_pressed() -> void:

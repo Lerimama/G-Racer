@@ -87,14 +87,14 @@ func _process(delta: float) -> void:
 		zoom.y = zoom.x
 
 
-func set_camera(limits_rect: Control, camera_position_node: Node2D):
+func set_camera(limits_rect: Control, camera_position_2d: Position2D):
 
 	if limits_rect:
 		_set_camera_limits(limits_rect)
 	else:
 		_release_camera_limits()
 
-	follow_target = camera_position_node
+	follow_target = camera_position_2d
 
 
 func shake_camera(source: Node):

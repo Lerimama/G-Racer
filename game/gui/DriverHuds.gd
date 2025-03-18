@@ -14,7 +14,7 @@ func _ready() -> void:
 		$ViewImitator/DriverHud.queue_free()
 
 
-func set_driver_huds(game_manager: Game, drivers_on_start: Array, one_screen_mode: bool):
+func set_driver_huds(game_manager: Game, drivers_on_start: Array, mono_view_mode: bool):
 
 	var views_with_drivers: Dictionary = game_manager.game_views.views_with_drivers
 
@@ -25,12 +25,13 @@ func set_driver_huds(game_manager: Game, drivers_on_start: Array, one_screen_mod
 	view_imitators_with_driver_ids.clear()
 
 
-	if one_screen_mode:
+	if mono_view_mode:
 		var imitated_view: ViewportContainer = views_with_drivers.keys()[0]
 		for driver in drivers_on_start:
 			var new_driver_hud: Control = DriverHud.instance()
 			view_imitator.add_child(new_driver_hud)
-			if driver.motion_manager.is_ai:
+			if driver.is_in_group(Refs.group_ai):
+#			if driver.motion_manager.is_ai:
 				new_driver_hud.set_driver_hud(driver, imitated_view, true)
 			else:
 				new_driver_hud.set_driver_hud(driver, imitated_view)
@@ -58,7 +59,8 @@ func set_driver_huds(game_manager: Game, drivers_on_start: Array, one_screen_mod
 			view_imitators_with_driver_ids[new_view_imitator] = driver_id
 			# ai huds
 			for ai_driver in game_manager.drivers_on_start:
-				if ai_driver.motion_manager.is_ai:
+				if driver.is_in_group(Refs.group_ai):
+#				if ai_driver.motion_manager.is_ai:
 					var new_ai_hud: Control = DriverHud.instance()
 					new_view_imitator.add_child(new_ai_hud)
 					new_ai_hud.set_driver_hud(ai_driver, view, true)

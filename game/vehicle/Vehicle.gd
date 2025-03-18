@@ -132,10 +132,7 @@ func _process(delta: float) -> void:
 	if is_active:
 		if engines.engines_on: update_stat(Pros.STATS.GAS, gas_usage)
 		if driver_stats[Pros.STATS.HEALTH] < 1:
-			if rank_by == Pros.RANK_BY.TIME:
-				update_stat(Pros.STATS.HEALTH, heal_rate * Sets.time_game_heal_rate_factor)
-			else:
-				update_stat(Pros.STATS.HEALTH, heal_rate * Sets.points_game_heal_rate_factor)
+			update_stat(Pros.STATS.HEALTH, heal_rate * Sets.heal_rate_factor)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
@@ -173,30 +170,25 @@ func _die(with_explode: bool = true):
 			self.is_active = false
 			queue_free()
 		else:
-			if rank_by == Pros.RANK_BY.TIME:
+			# no life count
+			if Sets.life_as_scalp or driver_stats[Pros.STATS.LIFE] == -1: # -1 pomeni, da se ne šteje
 				turn_off()
 				controller.set_process_input(false)
 				call_deferred("set_physics_process", false)
 				call_deferred("set_process", false)
 				revive_timer.start(revive_time)
+			# life counts
 			else:
-				if Sets.life_as_life_taken:
+				update_stat(Pros.STATS.LIFE, - 1)
+				if driver_stats[Pros.STATS.LIFE] > 0: # life je array current/max
 					turn_off()
 					controller.set_process_input(false)
 					call_deferred("set_physics_process", false)
 					call_deferred("set_process", false)
 					revive_timer.start(revive_time)
 				else:
-					update_stat(Pros.STATS.LIFE, - 1)
-					if driver_stats[Pros.STATS.LIFE] > 0: # life je array current/max
-						turn_off()
-						controller.set_process_input(false)
-						call_deferred("set_physics_process", false)
-						call_deferred("set_process", false)
-						revive_timer.start(revive_time)
-					else:
-						self.is_active = false
-						queue_free()
+					self.is_active = false
+					queue_free()
 	else:
 		self.is_active = false
 
@@ -459,8 +451,8 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		if vehicle_camera:
 			vehicle_camera.shake_camera(hit_by)
 
-		if Sets.life_as_life_taken and driver_stats[Pros.STATS.HEALTH] <= 0:
-			if "spawner" in hit_by: # debug zaradi debug no2
+		if Sets.life_as_scalp and driver_stats[Pros.STATS.HEALTH] <= 0:
+			if "spawner" in hit_by:
 				hit_by.spawner.update_stat(Pros.STATS.LIFE, 1)
 
 
@@ -490,7 +482,6 @@ func on_item_picked(pickable_key: int):
 				var change_value: float = Pros.pickable_profiles[pickable_key]["value"]
 				var change_stat_key: int = Pros.STATS.values()[stat_key_index]
 				update_stat(change_stat_key, Pros.pickable_profiles[pickable_key]["value"])
-
 
 
 # UTILITI ------------------------------------------------------------------------------------------------

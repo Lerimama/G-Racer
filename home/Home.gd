@@ -6,8 +6,8 @@ var home_screen: int = HOME_SCREEN.MAIN
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var main_menu: VBoxContainer = $Gui/MainMenu
-onready var pregame_setup: Control = $Gui/Drivers
-onready var select_games: Control = $Gui/Levels
+onready var drivers: Control = $Gui/Drivers
+onready var levels: Control = $Gui/Levels
 onready var play_btn: Button = $Gui/MainMenu/PlayBtn
 onready var focus_btn: Button = play_btn
 
@@ -27,14 +27,18 @@ func open_from_game():
 
 func play_game():
 
-	Pros.start_driver_profiles = {}
-	for driver_box in pregame_setup.activated_driver_boxes:
-		var driver_id: String = driver_box.driver_profile["driver_name_id"]
-		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile#.duplicate()
+	# apply game settings
 
-	for level_btn in select_games.level_cards.get_children():
-		if level_btn in select_games.selected_level_btns:
-			var all_levels_level_value: int = select_games.level_cards.get_children().find(level_btn)
+	# drivers
+	Pros.start_driver_profiles = {}
+	for driver_box in drivers.activated_driver_boxes:
+		var driver_id: String = driver_box.driver_profile["driver_name_id"]
+		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile # .duplicate()
+
+	# levels
+	for level_btn in levels.level_cards.get_children():
+		if level_btn in levels.selected_level_btns:
+			var all_levels_level_value: int = levels.level_cards.get_children().find(level_btn)
 			Sets.game_levels.append(all_levels_level_value)
 
 	Refs.ultimate_popup.open_popup()
@@ -72,7 +76,7 @@ func _on_LevelsBtn_pressed() -> void:
 
 	home_sound.menu_transition.play()
 	home_screen = HOME_SCREEN.LEVELS
-	select_games.open()
+	levels.open()
 	main_menu.hide()
 
 
@@ -85,5 +89,5 @@ func _on_PlayersBtn_pressed() -> void:
 
 	home_sound.menu_transition.play()
 	home_screen = HOME_SCREEN.PREGAME
-	pregame_setup.open()
+	drivers.open()
 	main_menu.hide()

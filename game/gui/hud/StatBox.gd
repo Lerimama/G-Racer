@@ -40,13 +40,12 @@ onready var invisibles: MarginContainer = $Invisibles
 onready var driver_id: MarginContainer = $DriverId
 
 
-
 func _ready() -> void:
 
 	pass
 
 
-func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kliče HUD
+func set_statbox_elements(rank_by: int, lap_count: int, goal_count: int, single_player: bool, one_life_mode: bool): # kliče HUD
 
 	# reset
 	for stat_holder in get_children():
@@ -60,19 +59,53 @@ func set_statbox_elements(rank_by: int, single_driver_mode: bool = false): # kli
 		show_all_available_stats()
 		return
 
+	# by_rank visibility
 	if rank_by == Pros.RANK_BY.TIME:
 		for stat in rank_by_time_stat:
+			stat.get_parent().get_parent().show()
 			if stat == BEST_LAP_TIME:# or stat == LEVEL_TIME:
 				stat.get_parent().get_parent().hide()
-			else:
-				stat.get_parent().get_parent().show()
-	else:
+	elif rank_by == Pros.RANK_BY.POINTS:
 		for stat in rank_by_points_stats:
 			stat.get_parent().get_parent().show()
+	else:
+		for stat in rank_by_time_stat:
+			stat.get_parent().get_parent().hide()
+		for stat in rank_by_points_stats:
+			stat.get_parent().get_parent().hide()
 
-	if single_driver_mode:
-		LEVEL_RANK.get_parent().get_parent().hide()
-	GOALS_REACHED.hide() # temp
+	# specials visibility
+
+	# en plejer ne kaže ranka
+	# perverja, če je v drevesu kot samostojen stat
+	if single_player:
+		if get_node("Rank") in get_children():
+			get_node("Rank").hide()
+		else:
+			LEVEL_RANK.hide()
+
+	# en start lajf ne kaže lajfa
+	if one_life_mode:
+		if get_node("Life") in get_children():
+			get_node("Life").hide()
+		else:
+			LIFE.hide()
+
+	# lap_count in goal count sta v istem kontejnerju
+	# če ni laps niti goals ... skrijem cel kontejner če obstaja
+	if lap_count < 1 and goal_count == 0:
+		if get_node("LapGoalCount") in get_children():
+			get_node("LapGoalCount").hide()
+		else:
+			LAP_COUNT.hide()
+			GOALS_REACHED.hide()
+	# če je eno ali drugo, pedenam samo stast
+	elif lap_count > 1 and goal_count == 0:
+		LAP_COUNT.show()
+		GOALS_REACHED.hide()
+	elif lap_count < 1 and goal_count > 0:
+		LAP_COUNT.hide()
+		GOALS_REACHED.show()
 
 
 func show_all_available_stats(): # kliče HUD

@@ -66,7 +66,7 @@ var start_driver_stats: Dictionary = {
 	STATS.LEVEL_TIME: 0,
 	STATS.BEST_LAP_TIME: 0,
 	STATS.LAP_COUNT: [], # lap time
-	STATS.GOALS_REACHED: [], # goal node duplicate?
+	STATS.GOALS_REACHED: [], # goal names
 	STATS.LAP_TIME: 0,
 	}
 
@@ -224,20 +224,37 @@ var ammo_profiles : Dictionary = {
 
 func __levels(): pass # ------------------------------------------------------------
 
-enum RANK_BY {TIME, POINTS} # BATTLE JE PRVI ALI NEDEFINED
+enum RANK_BY {NONE, TIME, POINTS} # level opredeli glede na vsebino in ga doda v svoj profile
 enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP} # to zaporedje upošteva zapordje home gumbov
+enum LEVEL_TYPE {
+	# seta on level ... export var
+	# uporablja smamo level, da ve kaj ugasnit in prižgat
+	# lahko bi "bolje", a tako je bolj jasno katere oblike so mogoče
+	FREE_RIDE,
+	# rank_by time
+	RACING_TRACK, # start-line > race-track > finish-line
+	RACING_GOALS, # start-line > goals > finish-line
+	RACING_FREE, # start-line > finish-line
+	# rank_by points
+	BATTLE_GOALS, # start-positions > goals
+	BATTLE_SCALPS, # start-positions
+	# no ranking
+	MISSION, # goals
+	}
+
 var level_profiles: Dictionary = {
 	LEVELS.DEFAULT: {
 		"level_name": "dafault",
 		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
-		"level_scene": preload("res://game/levels/Level.tscn"),
+		"level_scene": preload("res://game/level/Level.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 2,
-		"level_record": ["00:00.00", "player"]
-		# določeno ob spawnu
-#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
-#		"level_goals": [],
+		"level_record": [0, ""], # pogreba sejvanega
+		# opredeli level ob spawnu
+		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
+		# "rank_by": RANK_BY.NONE,
+		# "level_goals": [],
 		},
 	LEVELS.FIRST_DRIVE: {
 		"level_name": "first drive",
@@ -246,10 +263,11 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
-		"level_record": [1000, "player"]
-		# določeno ob spawnu
-#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
-#		"level_goals": [],
+		"level_record": [0, ""], # pogreba sejvanega
+		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
+		# opredeli level ob spawnu
+		# "rank_by": RANK_BY.NONE,
+		# "level_goals": [],
 		},
 	LEVELS.FIRST_DRIVE_SHORT: {
 		"level_name": "first drive shorty",
@@ -258,10 +276,11 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 1, # če so goalsi delajo isto kot čekpointi
-		"level_record": [1000, "player"]
-		# določeno ob spawnu
-#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
-#		"level_goals": [],
+		"level_record": [0, ""], # pogreba sejvanega
+		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
+		# opredeli level ob spawnu
+		# "rank_by": RANK_BY.NONE,
+		# "level_goals": [],
 		},
 	LEVELS.SETUP: {
 		"level_name": "SETUP",
@@ -270,10 +289,11 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
 		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
-		"level_record": [1000, "player"]
-		# določeno ob spawnu
-#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
-#		"level_goals": [],
+		"level_record": [0, ""], # pogreba sejvanega
+		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
+		# opredeli level ob spawnu
+		# "rank_by": RANK_BY.NONE,
+		# "level_goals": [],
 		},
 	LEVELS.TRAINING: {
 		"level_name": "training",
@@ -282,9 +302,11 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/levels/thumb_level_training.tres"),
 		"level_time_limit": 0,
 		"level_laps": 0,
-		"level_record": [100, "player"]
-#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
-#		"level_goals": [],
+		"level_record": [0, ""], # pogreba sejvanega
+		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
+		# opredeli level ob spawnu
+		# "rank_by": RANK_BY.NONE,
+		# "level_goals": [],
 		},
 	LEVELS.STAFF: {
 		"level_name": "staff",
@@ -293,9 +315,11 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://home/levels/thumb_level_mission.tres"),
 		"level_time_limit": 60,
 		"level_laps": 1,
-		"level_record": [100, "player"]
-#		"rank_by": "ob spawnu levela", # tole povozi level na spawn glede na njegove elemente
-#		"level_goals": [],
+		"level_record": [0, ""], # pogreba sejvanega
+		# opredeli level ob spawnu
+		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
+		# "rank_by": RANK_BY.NONE,
+		# "level_goals": [],
 		},
 	}
 

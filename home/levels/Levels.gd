@@ -1,7 +1,6 @@
 extends Control
 
 
-var wins_limit: int = 3
 var is_open: bool = false
 var focused_level_btn_index: int = 0 # da vem levo/desno
 var selected_level_btns: Array = [] # referenca za game_levels on play()
@@ -17,9 +16,9 @@ onready var LevelCard: PackedScene = preload("res://home/levels/LevelCard.tscn")
 # neu
 onready var wins_limit_btn: Button = $WinsLimitBtn
 var wins_needed_limit: int = 5
-var wins_needed: int = 0
 onready var easy_mode_btn: Button = $EasyModeBtn
 onready var play_btn: Button = $Menu/PlayBtn
+var easy_mode: bool = false
 
 
 func _input(event: InputEvent) -> void:
@@ -30,8 +29,21 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	_set_levels_menu()
 	hide()
+
+	_set_levels_menu()
+
+	# btn states
+	if Sets.easy_mode:
+		easy_mode_btn.text = "EASY MODE ON    ... all players advance"
+	else:
+		easy_mode_btn.text = "EASY MODE OFF ... only qualified advance"
+	if selected_level_btns.size() == 1:
+		wins_limit_btn.text = "WINS NEEDED: %d    ... Single level tournament wins needed" % Sets.wins_needed
+		wins_limit_btn.disabled = false
+	else:
+		wins_limit_btn.text = "WINS NEEDED only in single level mode"
+		wins_limit_btn.disabled = true
 
 
 func open(focus_btn_index: int = focused_level_btn_index):
@@ -77,11 +89,6 @@ func _set_levels_menu() -> void: # tole gre na starša
 			if level_value_index < selected_level_btns.size() - 1:
 				selected_levels_label.text += " . "
 
-	# wins
-	wins_needed -= 1 # ker funkcija eno prišteje
-	_on_WinsLimit_pressed()
-
-	# easy mode
 
 func _on_level_btn_pressed(btn: Button):
 
@@ -99,20 +106,12 @@ func _on_level_btn_pressed(btn: Button):
 		if selected_level_btns.find(selected_btn) < selected_level_btns.size() - 1:
 			selected_levels_label.text += " . "
 
-	# iberi prveg, če ni izbran noben
+	# izberi prvega, če ni izbran noben
 	if selected_level_btns.empty():
 		_on_level_btn_pressed(level_cards.get_child(0))
 		_on_level_btn_focused(level_cards.get_child(0))
 		var slide_to_start_tween = get_tree().create_tween()
 		slide_to_start_tween.tween_property(level_cards, "rect_position:x", default_level_menu_position.x, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
-
-	if selected_level_btns.size() == 1:
-		wins_limit_btn.text = "WINS NEEDED: %d    ... Single level tournament wins needed" % wins_needed
-		wins_limit_btn.disabled = false
-
-	else:
-		wins_limit_btn.text = "WINS NEEDED only in single level mode"
-		wins_limit_btn.disabled = true
 
 
 func _on_level_btn_focused(btn: Button):
@@ -146,30 +145,25 @@ func _on_PlayBtn_pressed() -> void:
 func _on_DriversBtn_pressed() -> void:
 	# _temp ... cross home screens btns
 
-	close() # zankret more bit  tukej
+	close() # zaenkrat more bit tukej
 	home._on_PlayersBtn_pressed()
 
 
-func _on_EasyMode_toggled(button_pressed: bool) -> void:
-	pass # Replace with function body.
-
-var easy_mode: bool = false
-
 func _on_WinsLimit_pressed() -> void:
 
-	wins_needed += 1
+	Sets.wins_needed += 1
 
-	if wins_needed > wins_needed_limit:
-		wins_needed = 0
+	if Sets.wins_needed > wins_needed_limit:
+		Sets.wins_needed = 0
 
-	wins_limit_btn.text = "WINS NEEDED: %d    ... Single level tournament wins needed" % wins_needed
+	wins_limit_btn.text = "WINS NEEDED: %d    ... Single level tournament wins needed" % Sets.wins_needed
 
 
 func _on_EasyModeBtn_pressed() -> void:
 
-	easy_mode = not easy_mode
+	Sets.easy_mode = not Sets.easy_mode
 
-	if easy_mode:
+	if Sets.easy_mode:
 		easy_mode_btn.text = "EASY MODE ON    ... all players advance"
 	else:
 		easy_mode_btn.text = "EASY MODE OFF ... only qualified advance"

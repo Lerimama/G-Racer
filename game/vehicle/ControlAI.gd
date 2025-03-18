@@ -54,7 +54,15 @@ var motion_manager: Node2D
 var fast_start_window_is_open: bool = false
 var random_start_range: Array = [0.1, 1]
 var curr_side: Vector2
+var level_navigation_points: Array = [] # zapiše prvič na SEARCH
 onready var debug_label: Label = $__Label
+# trenutno ne uporabljam? ker dela brez?
+var track_target_prediction: float = 500
+var prev_tracker_offset: float = 0
+# battler
+onready var battler: Node = $Battler
+
+
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
@@ -82,11 +90,12 @@ func _ready() -> void:
 
 	randomize()
 	vehicle = get_parent()
+	battler.vehicle = get_parent()
 
 	vehicle.add_to_group(Refs.group_ai)
 	vehicle.add_to_group(Refs.group_drivers)
 
-	motion_manager.is_ai = true
+	motion_manager._is_ai = true
 
 	ai_navigation_line = Line2D.new()
 	Refs.node_creation_parent.add_child(ai_navigation_line)
@@ -342,6 +351,14 @@ func _update_vision():
 		return
 
 
+func _change_ai_state_on_change_target(new_ai_target: Node2D):
+
+	match new_ai_target:
+		null: pass
+
+
+
+
 func _change_ai_state(new_ai_state: int):
 #	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
@@ -363,14 +380,17 @@ func _change_ai_state(new_ai_state: int):
 			navigation_agent.set_target_location(ai_target.global_position)
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.FOLLOW:
+			# ai_target seta state mašina
 			target_ray.enabled = true
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.HUNT:
+			# ai_target seta state mašina
 			target_ray.enabled = true
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.RACE_TO_GOAL:
 			if not goals_to_reach.empty():
 				ai_target = goals_to_reach[0]
+			# po pobranju novi ai_target postane next goal
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.MOUSE_CLICK:
 			motion_manager.motion = motion_manager.MOTION.FWD
@@ -486,12 +506,12 @@ func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null):
 
 	goals_to_reach.erase(goal_reached)
 
+
 	if extra_target: # level finish, ...
 		ai_target = extra_target
 	elif not goals_to_reach.empty():
 		ai_target = goals_to_reach.front()
 	else:
-		ai_target = null
 		self.ai_state = AI_STATE.OFF
 
 
@@ -536,8 +556,12 @@ func _get_better_targets(current_target: Node2D):
 
 func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
 
-	var level_navigation_points: Array = level_navigation.level_navigation_points
+	# samo prvič ... pri dirkanju nikoli
+	# ... preveri če se pozna na performance
+	if level_navigation_points.empty():
+		level_navigation_points = level_navigation.get_navigation_points()
 
+	# če level nima navigacije
 	if level_navigation_points.empty():
 		return null
 
@@ -594,9 +618,6 @@ func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0
 
 	return level_navigation.nav_position_target
 
-# trenutno ne uporabljam
-var track_target_prediction: float = 500
-var prev_tracker_offset: float = 0
 
 func _get_tracking_position(position_tracker: PathFollow2D):
 	# tracker offset je vehilu najbližja točka na liniji
@@ -643,18 +664,26 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 
 func on_game_start(game_level: Node2D): # od GMja
 
+	goals_to_reach = game_level.level_goals#.duplicate()
+	if game_level.finish_line.is_enabled:
+		goals_to_reach.append(game_level.finish_line)
+
 	# random start
 	randomize()
 	var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
 	yield(get_tree().create_timer(random_start_delay), "timeout")
-	# level type
+
+	# level track
 	if vehicle.driver_tracker:
 		self.ai_state = AI_STATE.RACE_TRACK
+	# level goals
 	elif not goals_to_reach.empty():
 		self.ai_state = AI_STATE.RACE_TO_GOAL
-	elif game_level.finish_line.is_enabled:
-		ai_target = game_level.finish_line
-		self.ai_state = AI_STATE.RACE_TO_GOAL
+	# level finish
+#	elif game_level.finish_line.is_enabled:
+#		ai_target = game_level.finish_line
+#		self.ai_state = AI_STATE.RACE_TO_GOAL
+	# free
 	else:
 		self.ai_state = AI_STATE.SEARCH
 

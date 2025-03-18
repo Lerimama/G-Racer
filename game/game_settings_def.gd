@@ -16,7 +16,7 @@ export var sudden_death_start_time: int = 20
 export var pickables_count_limit: int = 5
 export var pull_gas_penalty: float = -20
 export var drifting_mode: bool = true # drift ali tilt?
-export var life_as_life_taken: bool = true
+export var life_as_scalp: bool = true
 export var ranking_cash_rewards: Array = [5000, 3000, 1000]
 export var ai_gets_record: bool = true
 

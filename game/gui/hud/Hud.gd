@@ -3,10 +3,10 @@ extends Control
 
 enum STATBOX_TYPE{BOX, BOX_MINIMAL, VER, VER_STRICT, VER_MINIMAL, HOR, MINIMAL}
 
-var level_lap_count: int
-var level_goals: Array = []
+#var level_lap_count: int
+#var level_rank_by: int
+#var level_goals: Array = []
 var level_record: Array # [value, owner]
-var max_wins_count: int
 var time_still_time: float = 1.5
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
 
@@ -45,22 +45,15 @@ func _ready() -> void:
 func set_hud(game_manager: Game, drivers_on_start: Array):
 
 	level_profile = game_manager.level_profile
-	level_lap_count = game_manager.level_profile["level_laps"]
-	level_goals = game_manager.level_profile["level_goals"]
-	max_wins_count = game_manager.curr_game_settings["max_wins_count"]
-
-	var level_time_limit: int = game_manager.level_profile["level_time_limit"]
 
 	if level_profile["rank_by"] == Pros.RANK_BY.TIME:
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
 
-	level_name_label.text = level_profile["level_name"]
-
 	# game stats
 	game_timer.stop_timer()
-	game_timer.reset_timer(level_time_limit)
+	game_timer.reset_timer(level_profile["level_time_limit"])
 	game_timer.get_parent().get_parent().show()
 	level_record_label.get_parent().get_parent().hide()
 	for section in sections_holder.get_children():
@@ -74,17 +67,29 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 	# new statboxes
 	var viewed_drivers: Array = []
 	for driver in drivers_on_start:
-		if not driver.motion_manager.is_ai:
+		if not driver.is_in_group(Refs.group_ai):
+#		if not driver.motion_manager.is_ai:
 			viewed_drivers.append(driver)
 	for viewed_driver in viewed_drivers:
-		set_driver_statbox(viewed_driver, viewed_drivers.find(viewed_driver), viewed_drivers.size(), game_manager.level_profile["rank_by"])
+		var driver_index: int = viewed_drivers.find(viewed_driver)
+		_set_driver_statbox(viewed_driver, driver_index, viewed_drivers.size())
 
 	# level rekord
-	level_record = game_manager.level_profile["level_record"]
-	if not level_record[0] == 0:
-		var level_record_clock_time: String = Mets.get_clock_time_string(level_record[0])
-		level_record_label.text = "LEVEL RECORD " + level_record_clock_time + " by " + str(level_record[1])
-		level_record_label.get_parent().get_parent().show()
+	var level_record_value: int = level_profile["level_record"][0]
+	var level_record_owner: String = level_profile["level_record"][1]
+	if not level_record_value == 0:
+		if level_profile["rank_by"] == Pros.RANK_BY.TIME:
+			var level_record_clock_time: String = Mets.get_clock_time_string(level_record_value)
+			level_record_label.text = "RECORD TIME: " + level_record_clock_time + " by " + str(level_record_owner)
+			level_record_label.get_parent().get_parent().show()
+		elif level_profile["rank_by"] == Pros.RANK_BY.POINTS:
+			level_record_label.text = "RECORD POINTS: " + str(level_record_value) + " by " + str(level_record_owner)
+			level_record_label.get_parent().get_parent().show()
+		else:
+			level_record_label.get_parent().get_parent().hide()
+
+	# level name
+	level_name_label.text = level_profile["level_name"]
 
 
 func on_game_start():
@@ -98,7 +103,7 @@ func on_game_over():
 		section.hide()
 
 
-func set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int, rank_by: int): # kliče GM
+func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
 
 	var NewStatBox: PackedScene #= StatBox
 	NewStatBox = _get_statbox_by_type(statbox_index, all_statboxes_count)
@@ -111,18 +116,27 @@ func set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbox
 
 	statboxes_with_drivers[new_statbox] = statbox_driver.driver_id
 
-	var driver_stats: Dictionary = statbox_driver.driver_stats
-	var driver_profile: Dictionary = statbox_driver.driver_profile
+#	var driver_stats: Dictionary = statbox_driver.driver_stats
+#	var driver_profile: Dictionary = statbox_driver.driver_profile
 
 	# driver line
 	new_statbox.driver_name_label.text = str(statbox_driver.driver_id)
-	new_statbox.driver_name_label.modulate = driver_profile["driver_color"]
-	new_statbox.driver_avatar.set_texture(driver_profile["driver_avatar"])
+	new_statbox.driver_name_label.modulate = statbox_driver.driver_profile["driver_color"]
+	new_statbox.driver_avatar.set_texture(statbox_driver.driver_profile["driver_avatar"])
 
-	if all_statboxes_count == 1: # single player
-		new_statbox.set_statbox_elements(rank_by, true)
-	else:
-		new_statbox.set_statbox_elements(rank_by)
+	# statbox needs
+	var rank_by: int = level_profile["rank_by"]
+	var laps_count: int = level_profile["level_laps"]
+	var goals_count: int = level_profile["level_goals"].size()
+	# one life (glede na start life)
+	var one_life_mode: bool = false
+	if statbox_driver.driver_stats[Pros.STATS.LIFE] == 1 and not Sets.life_as_scalp:
+		one_life_mode = true
+	# single player
+	var single_player_mode: bool = false
+	if all_statboxes_count == 1:
+		single_player_mode = true
+	new_statbox.set_statbox_elements(rank_by, laps_count, goals_count, single_player_mode, one_life_mode)
 
 	# določim zadnje v sekcijah ... spawnani so levo, denos, levo, desno, ...
 	var left_side_statboxes_count: int = ceil(all_statboxes_count / 2)
@@ -132,8 +146,8 @@ func set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbox
 		new_statbox.set_statbox_align(statbox_index)
 
 	# driver stats
-	for stat in driver_stats:
-		_on_driver_stat_changed(statbox_driver.driver_id, stat, driver_stats[stat])
+	for stat in statbox_driver.driver_stats:
+		_on_driver_stat_changed(statbox_driver.driver_id, stat, statbox_driver.driver_stats[stat])
 
 	new_statbox.show()
 
@@ -146,9 +160,10 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 
 	if all_statboxes_count == 1:
 		statbox_type = STATBOX_TYPE.VER_STRICT
-	elif Sets.one_screen_mode:
+	elif Sets.mono_view_mode:
 		if all_statboxes_count <= 4:
-			statbox_type = STATBOX_TYPE.BOX
+#			statbox_type = STATBOX_TYPE.BOX
+			statbox_type = STATBOX_TYPE.VER
 		elif all_statboxes_count <= 10:
 			statbox_type = STATBOX_TYPE.BOX_MINIMAL
 		else:
@@ -188,7 +203,8 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 
 	if Pros.start_driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI and Sets.ai_gets_record:
 		if stat_key == Pros.STATS.BEST_LAP_TIME and not stat_value == 0:
-			if stat_value < level_record[0] and not level_record[0] == 0:
+			var level_record_value = level_profile["level_record"][0]
+			if stat_value < level_record_value and not level_record_value == 0:
 				var new_level_record: Array = [stat_value, driver_id]
 				var level_record_clock_time: String = Mets.get_clock_time_string(new_level_record[0])
 				level_profile["level_record"] = new_level_record
@@ -230,10 +246,11 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 
 			# stat_value = Array
 			Pros.STATS.GOALS_REACHED:
-				stat_to_change.stat_value = [stat_value.size(), level_goals.size()]
+				# _temp ... gaols stat se pokaže ob prvem pobiranju
+				stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
 			Pros.STATS.WINS:
 				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-				#			stat_to_change.stat_value = [stat_value.size(), Sets.wins_goal_count]
+				#			stat_to_change.stat_value = [stat_value.size(), Sets.wins_needed]
 				stat_to_change.stat_value = stat_value.size()
 
 			# level
@@ -242,7 +259,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			Pros.STATS.LEVEL_TIME:
 				stat_to_change.stat_value = stat_value
 			Pros.STATS.LAP_COUNT: # vsakič, ko gre čez finish
-				stat_to_change.stat_value = [stat_value.size(), level_lap_count]
+				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
 				# apdejtam tudi LAP TIME prikaz
 				var time_stat: Control = statbox_to_change.get("LAP_TIME")
 				if not stat_value.empty():

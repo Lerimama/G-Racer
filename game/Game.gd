@@ -15,7 +15,6 @@ var fast_start_window_on: bool = false # driver ga čekira in reagira
 var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
 var level_index: int = 0
-#var start_position_nodes: Array # dobi od levela
 
 # shadows
 onready var game_shadows_length_factor: float = Sets.game_shadows_length_factor # set_game seta iz profilov
@@ -28,16 +27,12 @@ onready var game_shadows_rotation_deg: float = Sets.game_shadows_rotation_deg # 
 # njim podelim tudi self
 onready var gui: CanvasLayer = $Gui
 onready var game_tracker: Node = $Tracker
-onready var game_reactor: Node = $Reactor
+#onready var game_reactor: Node = $Reactor
 onready var game_views: Control = $GameViews
 onready var game_sound: Node = $Sound
 
 var game_levels: Array = []
 var camera_leader: Node2D = null setget _change_camera_leader
-onready var curr_game_settings: Dictionary = {
-	"max_wins_count": Sets.wins_goal_count
-	#var game_levels: Array = []
-	}
 var final_level_data: Dictionary = {
 	#	"level_time": 100,
 	#	level_profile: {},
@@ -59,7 +54,7 @@ func _input(event: InputEvent) -> void:
 	elif Input.is_action_just_pressed("no2"):
 		get_tree().set_group(Refs.group_shadows, "imitate_3d", false)
 	elif Input.is_action_just_pressed("no3"):
-		game_reactor.animate_day_night()
+		game_tracker.animate_day_night()
 
 	var zoom_delta: float = 0.1
 	if Input.is_action_just_pressed("plus"):
@@ -84,7 +79,7 @@ func _ready() -> void:
 
 	gui.game_manager = self
 	game_tracker.game = self
-	game_reactor.game = self
+#	game_reactor.game = self
 	game_views.game_manager = self
 	game_sound.game_manager = self
 
@@ -98,14 +93,14 @@ func set_game(level_index_add: int = 0):
 
 	# reset
 	game_views.reset_views()
-	game_reactor.drivers_finished.clear()
+	game_tracker.drivers_finished.clear()
 
 	# level
 	game_levels = Sets.game_levels
 	level_index += level_index_add
 	_spawn_level(level_index)
 	final_level_data["level_profile"] = level_profile
-	game_reactor.game_level = game_level
+#	game_reactor.game_level = game_level
 	game_tracker.game_level = game_level
 
 	yield(get_tree(), "idle_frame")
@@ -156,18 +151,16 @@ func set_game(level_index_add: int = 0):
 	for driver in drivers_on_start:
 		if driver.is_in_group(Refs.group_players):
 			drivers_with_views.append(driver)
-	game_views.set_game_views(drivers_with_views, Sets.one_screen_mode)
+	game_views.set_game_views(drivers_with_views, Sets.mono_view_mode)
 
 	# kamere
 	for camera in get_tree().get_nodes_in_group(Refs.group_player_cameras):
-		if Sets.one_screen_mode:
-			if not camera.playing_field.is_connected( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field"):
-				camera.playing_field.connect( "body_exited_playing_field", game_reactor, "_on_body_exited_playing_field")
-		if level_profile["rank_by"] == Pros.RANK_BY.POINTS:
-			camera.playing_field.enable_playing_field(true, true)
-		else:
+		if Sets.mono_view_mode:
+			if not camera.playing_field.is_connected( "body_exited_playing_field", game_tracker, "_on_body_exited_playing_field"):
+				camera.playing_field.connect( "body_exited_playing_field", game_tracker, "_on_body_exited_playing_field")
 			camera.playing_field.enable_playing_field(true)
-
+		else:
+			camera.playing_field.enable_playing_field(false)
 	# senčke
 	get_tree().call_group(Refs.group_shadows, "update_shadow_parameters", self)
 
@@ -178,7 +171,7 @@ func set_game(level_index_add: int = 0):
 func _game_intro():
 
 	# camera targets
-	if not Sets.one_screen_mode:
+	if not Sets.mono_view_mode:
 		for player in get_tree().get_nodes_in_group(Refs.group_players):
 			player.vehicle_camera.follow_target = player
 
@@ -194,7 +187,7 @@ func _game_intro():
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		var drive_in_position: Vector2 = Vector2.ZERO
 		if game_level.start_line:
-			drive_in_position = game_level.start_line.drive_in_position_node.global_position
+			drive_in_position = game_level.start_line.drive_in_position_2d.global_position
 			driver.motion_manager.drive_in(drive_in_position, drive_in_time)
 
 	# počakam, da odpelje
@@ -206,9 +199,11 @@ func _game_intro():
 func _start_game():
 
 	# start countdown
-	if Sets.start_countdown and level_profile["rank_by"] == Pros.RANK_BY.TIME:
-		game_level.start_line.start_lights.start_countdown() # če je skrit, pošlje signal takoj
-		yield(game_level.start_line.start_lights, "countdown_finished")
+	if game_level.start_line.is_enabled:
+#		yield(get_tree().create_timer(1), "timeout")
+		game_level.start_line.start_lights.start_countdown()
+		var semaphore_lights_count: int = 3
+		yield(get_tree().create_timer(semaphore_lights_count), "timeout") # neodvisen od countdown signala
 
 	self.game_stage = GAME_STAGE.PLAYING
 
@@ -234,8 +229,6 @@ func _change_game_stage(new_game_stage: int):
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 
 			game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
-			if not level_profile["rank_by"] == Pros.RANK_BY.TIME: # zaženem vsakič, tudi po pavzi
-				game_reactor.spawn_random_pickables()
 
 			gui.on_game_start()
 
@@ -253,8 +246,8 @@ func _change_game_stage(new_game_stage: int):
 			#			print("final_drivers_data")
 			#			print(final_drivers_data)
 			#			yield(get_tree().create_timer(Sets.get_it_time), "timeout")
-			#			if not game_reactor.drivers_finished.empty(): # zmaga
-			#				game_reactor.drivers_finished[0].update_stat(Pros.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
+			#			if not game_tracker.drivers_finished.empty(): # zmaga
+			#				game_tracker.drivers_finished[0].update_stat(Pros.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
 
 			gui.open_game_over()
 
@@ -303,9 +296,9 @@ func _spawn_level(new_level_index: int):
 	# setup
 	new_level.connect("level_is_set", self, "_on_level_is_set") # nujno pred add child, ker ga level sproži že na ready
 	for node_path in new_level.level_goals_paths:
-		new_level.get_node(node_path).connect("reached_by", game_reactor, "_on_goal_reached")
+		new_level.get_node(node_path).connect("reached_by", game_tracker, "_on_goal_reached")
 	if new_level.finish_line.is_enabled:
-		new_level.finish_line.connect("reached_by", game_reactor, "_on_finish_crossed")
+		new_level.finish_line.connect("reached_by", game_tracker, "_on_finish_crossed")
 
 	new_level.set_level()
 
@@ -323,7 +316,6 @@ func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 	new_vehicle.modulate.a = 0 # za intro
 	new_vehicle.rotation_degrees = game_level.start_line.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_vehicle.global_position = spawned_position
-#	new_vehicle.global_position = start_position_nodes[spawned_position_index].global_position
 
 	new_vehicle.driver_id = driver_id
 	new_vehicle.default_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
@@ -353,13 +345,14 @@ func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 	if Pros.start_driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI:
 		new_vehicle.controller.level_navigation = game_level.level_navigation
 	# trackers
-	if game_level.race_track.is_enabled:
-		new_vehicle.driver_tracker = game_level.race_track.spawn_new_tracker(new_vehicle)
+	if game_level.tracking_line.is_enabled:
+		new_vehicle.driver_tracker = game_level.tracking_line.spawn_new_tracker(new_vehicle)
+
 	# goals
-	new_vehicle.controller.goals_to_reach = game_level.level_goals.duplicate()
+#	new_vehicle.controller.goals_to_reach = game_level.level_goals.duplicate()
 	# connect
 	new_vehicle.connect("stat_changed", gui.hud, "_on_driver_stat_changed")
-	new_vehicle.connect("vehicle_deactivated", game_reactor, "_on_vehicle_deactivated")
+	new_vehicle.connect("vehicle_deactivated", game_tracker, "_on_vehicle_deactivated")
 
 	return new_vehicle
 
@@ -367,11 +360,11 @@ func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 # SIGNALI ---------------------------------------------------------------------------------------------
 
 
-func _on_level_is_set(rank_by: int, camera_limits: Control, camera_start_position_node: Position2D, level_goals: Array):
+func _on_level_is_set(rank_by: int, camera_limits: Control, camera_start_position_2d: Position2D, level_goals: Array):
 
 	level_profile["rank_by"] = rank_by # do tukaj ga ni v slovarju
 	level_profile["level_goals"] = level_goals # do tukaj ga ni v slovarju
-	get_tree().call_group(Refs.group_player_cameras, "set_camera", camera_limits, camera_start_position_node)
+	get_tree().call_group(Refs.group_player_cameras, "set_camera", camera_limits, camera_start_position_2d)
 
 
 func _on_views_are_set():

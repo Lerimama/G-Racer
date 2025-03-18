@@ -75,8 +75,6 @@ random_pitch = 1.05
 script = ExtResource( 2 )
 main_signal_connecting_paths = [ NodePath("Gui") ]
 
-[node name="Node" type="Node" parent="."]
-
 [node name="Reactor" type="Node" parent="."]
 script = ExtResource( 30 )
 

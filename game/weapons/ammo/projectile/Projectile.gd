@@ -182,7 +182,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 func _on_vision_collision():
 
 	vision_ray.force_raycast_update() # mogoče deluje, ker je drugič v parih korakih
-	Refs.game_reactor.apply_slomo(self, vision_ray.get_collider())
+	Refs.game_tracker.apply_slomo(self, vision_ray.get_collider())
 
 	if use_vision_for_collision:
 		var pseudo_close_distance: float = max_thrust_power# / 3

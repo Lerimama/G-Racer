@@ -83,7 +83,7 @@ func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D
 			add_child(new_fx)
 			# connect
 			if not self_destruct:
-				new_fx.connect("finished", Refs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
+				new_fx.connect("finished", Refs.game_tracker, "_on_fx_finished", [], CONNECT_ONESHOT)
 		else:
 			# spawn
 			new_fx.global_position = fx_pos
@@ -92,7 +92,7 @@ func _spawn_fx(fx_array: Array, self_destruct: bool = true, spawn_parent: Node2D
 			new_fx.start_fx(self_destruct) # znotraj urejeno
 			# connect
 			if not self_destruct:
-				new_fx.connect("fx_finished", Refs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
+				new_fx.connect("fx_finished", Refs.game_tracker, "_on_fx_finished", [], CONNECT_ONESHOT)
 
 		spawned_fx.append(new_fx)
 

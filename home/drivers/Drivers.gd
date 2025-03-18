@@ -11,6 +11,7 @@ onready var DriverBox: PackedScene = preload("res://home/drivers/DriverBox.tscn"
 onready var play_btn: Button = $Menu/PlayBtn
 onready var add_btn: Button = $AddBtn
 onready var drivers_count_btn: Button = $DriversCountBtn
+onready var view_mode_btn: Button = $ViewModeBtn
 
 
 func _input(event: InputEvent) -> void:
@@ -21,14 +22,21 @@ func _input(event: InputEvent) -> void:
 
 func _ready() -> void:
 
-	hide()
-
 	# debug reset
 	for box in driver_boxes.get_children():
 		box.queue_free()
 
 	for driver_count in drivers_count:
 		_add_new_driver_box(driver_count)
+
+	hide()
+
+	# btn states
+	drivers_count_btn.text = "DRIVERS COUNT: %d" % drivers_count
+	if Sets.mono_view_mode:
+		view_mode_btn.text = "VIEW MODE: SPLIT"
+	else:
+		view_mode_btn.text = "VIEW MODE: MONO"
 
 
 func open():
@@ -38,36 +46,7 @@ func open():
 	show()
 
 
-func _check_for_duplicate_ids():
-
-	# če vsa imena niso uniqe
-	var activated_players_ids: Array = []
-	for driver_box in activated_driver_boxes:
-		activated_players_ids.append(driver_box.driver_profile["driver_name_id"])
-	var duplicated_players_ids: Array = []
-	for driver_id in activated_players_ids:
-		if activated_players_ids.count(driver_id) > 1:
-			printerr("Duplicate driver names found: ", driver_id)
-			if not driver_id in duplicated_players_ids:
-				duplicated_players_ids.append(driver_id)
-	# vsakemu duplikatu dodam index med vsemi driverji
-#	for driver_id in duplicated_players_ids:
-#		# ta prvi ne dodam nič
-#		var first_id_index: int = duplicated_players_ids.find(driver_id)
-#		var first_id: String = duplicated_players_ids[first_id_index]
-#		if not driver_id == first_id
-#		driver_id +=
-#		if activated_players_ids.count(driver_id) > 1:
-#			printerr("Duplicate driver names found: ", driver_id)
-#			if not driver_id in duplicated_players_ids:
-#				duplicated_players_ids.append(driver_id)
-
-
-
 func close():
-
-
-	_check_for_duplicate_ids()
 
 	home.to_main_menu()
 	is_open = false
@@ -85,6 +64,7 @@ func _add_new_driver_box(driver_index):
 	# prvi je human in ga ne moreš odstranit
 	if driver_index == 0:
 		new_driver_box.remove_btn.get_parent().hide()
+	# ostale povežeš z remove gumbom
 	else:
 		new_driver_box.remove_btn.connect("pressed", self, "_on_driver_remove_pressed", [new_driver_box])
 
@@ -97,12 +77,26 @@ func _on_driver_remove_pressed(driver_box_to_remove: Control):
 	driver_box_to_remove.queue_free()
 
 
+func _check_for_duplicate_ids(): # ne rabim zaenkrat
+	# ne dela, ker pravi da A in A nista enaka
+	# izgleda, da ndeluje super tudi z duplikati
+
+	var activated_players_ids: Array = []
+	for driver_box in activated_driver_boxes:
+		var curr_name_id: String = driver_box.driver_profile["driver_name_id"]
+		# če je enak name_id že notri, mu dodam zaporedno številko enakega idja
+		# spremembo apliciram v driver profil in driver box
+		if curr_name_id in activated_players_ids:
+			var same_name_ids_count: int = activated_players_ids.count(curr_name_id)
+			curr_name_id += "_%d" % same_name_ids_count
+			driver_box.driver_profile["driver_name_id"] = curr_name_id
+			printerr("Duplicate driver_id turned to uniq: ", curr_name_id, " ", driver_box.driver_profile["driver_name_id"])
+		activated_players_ids.append(curr_name_id)
+
+
 func _on_AddBtn_pressed() -> void:
 
 	_on_DriversCountBtn_pressed()
-#	if activated_driver_boxes.size() < drivers_limit:
-#		var added_driver_index = activated_driver_boxes.size()
-#		_add_new_driver_box(added_driver_index)
 
 
 func _on_PlayBtn_pressed() -> void:
@@ -128,6 +122,7 @@ func _on_DriversCountBtn_pressed() -> void:
 	if drivers_count <= drivers_count_limit:
 		var added_driver_index = activated_driver_boxes.size()
 		_add_new_driver_box(added_driver_index)
+	# reset na 1, če je več kot limit
 	else:
 		# zbrišem vse razen prve
 		for box in driver_boxes.get_children():
@@ -136,3 +131,13 @@ func _on_DriversCountBtn_pressed() -> void:
 				box.queue_free()
 		drivers_count = 1
 	drivers_count_btn.text = "DRIVERS COUNT: %d" % drivers_count
+
+
+func _on_ViewModeBtn_pressed() -> void:
+
+	Sets.mono_view_mode = not Sets.mono_view_mode
+
+	if Sets.mono_view_mode:
+		view_mode_btn.text = "VIEW MODE: SPLIT"
+	else:
+		view_mode_btn.text = "VIEW MODE: MONO"

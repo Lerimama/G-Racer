@@ -23,7 +23,7 @@ const AKA_ZERO_MASS: float = 1.0 # malo vpliva vseeno more met vsaka od mas
 # lahko zamštraš indexe, kasneje to seta igra
 export (int) var selected_rotation_motion: int = ROTATION_MOTION.DEFAULT
 export (int) var selected_idle_rotation: int = ROTATION_MOTION.SPIN
-var is_ai: bool = false
+var _is_ai: bool = false
 
 var force_on_vehicle: Vector2 = Vector2.ZERO
 var torque_on_vehicle: float = 0
@@ -111,7 +111,7 @@ func _motion_machine():
 
 	match motion:
 		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
-			if is_ai:
+			if _is_ai:
 				# force_rotation = proti tarči AI ... določa AI
 #				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
 				pass
@@ -132,7 +132,7 @@ func _motion_machine():
 				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 #			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
-			if is_ai:
+			if _is_ai:
 				# force_rotation = proti tarči AI ... določa AI
 				force_on_vehicle = Vector2.LEFT.rotated(force_rotation) * _accelarate_to_engine_power()
 			else:
@@ -297,7 +297,7 @@ func _set_default_parameters(): # fizični, ne vsebinski22
 			managed_vehicle.front_mass.linear_damp = 0
 			managed_vehicle.rear_mass.linear_damp = 0
 
-			if is_ai:
+			if _is_ai:
 				max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 				managed_vehicle.angular_damp = 16
 			else:

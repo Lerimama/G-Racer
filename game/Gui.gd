@@ -67,9 +67,9 @@ func set_gui(drivers_on_start: Array):
 
 	hud.set_hud(game_manager, drivers_on_start)
 	if game_manager.level_profile["level_time_limit"] > 0:
-		if not hud.game_timer.is_connected("time_is_up", game_manager.game_reactor, "_on_game_time_is_up"):
-			hud.game_timer.connect("time_is_up", game_manager.game_reactor, "_on_game_time_is_up")
-	driver_huds_holder.set_driver_huds(game_manager, drivers_on_start, Sets.one_screen_mode)
+		if not hud.game_timer.is_connected("time_is_up", game_manager.game_tracker, "_on_game_time_is_up"):
+			hud.game_timer.connect("time_is_up", game_manager.game_tracker, "_on_game_time_is_up")
+	driver_huds_holder.set_driver_huds(game_manager, drivers_on_start, Sets.mono_view_mode)
 
 	# fejdin
 	var fade_tween = get_tree().create_tween()
