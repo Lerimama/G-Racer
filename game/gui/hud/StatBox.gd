@@ -1,10 +1,12 @@
 tool
-#extends VBoxContainer
 extends BoxContainer # lahko je ver in hor
 
-# id
+export var use_level_progress_bar: bool = true
+
 onready var driver_name_label: Label = find_node("Name")
 onready var driver_avatar: TextureRect = find_node("Avatar")
+onready var lap_time_still: HBoxContainer = find_node("StatLapTime_Still")
+onready var level_progress_bar: Panel = $LevelProgress/ProgressBarHolder/LevelProgressBar
 
 # driver
 onready var LIFE: HBoxContainer = find_node("StatLife")
@@ -19,9 +21,9 @@ onready var GOALS_REACHED: HBoxContainer = find_node("GoalReached")
 # time
 onready var LAP_COUNT: HBoxContainer = find_node("StatLapCount")
 onready var LAP_TIME: HBoxContainer = find_node("StatLapTime")
-onready var lap_time_still: HBoxContainer = find_node("StatLapTime_Still")
 onready var BEST_LAP_TIME: HBoxContainer = find_node("StatBestLap")
 onready var LEVEL_TIME: HBoxContainer = find_node("StatLevelTime")
+
 #onready var lap_time_still: HBoxContainer = $LapTime/BoxContainer/StatLapTime_Still
 
 # on driver hud
@@ -42,6 +44,9 @@ onready var driver_id: MarginContainer = $DriverId
 
 func _ready() -> void:
 
+#	if use_level_progress_bar:
+#		level_progress_bar.show()
+#
 	pass
 
 
@@ -91,7 +96,13 @@ func set_statbox_elements(rank_by: int, lap_count: int, goal_count: int, single_
 		else:
 			LIFE.hide()
 
-	# lap_count in goal count sta v istem kontejnerju
+	# lap_count in goal count
+	if use_level_progress_bar:
+		get_node("LevelProgress").show()
+	else:
+		get_node("LevelProgress").hide()
+#		get_node("LapGoalCount").hide()
+#	else:
 	# če ni laps niti goals ... skrijem cel kontejner če obstaja
 	if lap_count < 1 and goal_count == 0:
 		if get_node("LapGoalCount") in get_children():

@@ -80,23 +80,23 @@ onready var collision_sound: AudioStreamPlayer = $Sounds/Collision
 
 
 
-#func _input(event: InputEvent) -> void:
-#
-#	if Input.is_action_pressed("no1"): # idle
-#		if driver_id == "MOU":
-#			_revive()
-#		else:
-#			motion_manager.boost_vehicle()
-#	if Input.is_action_pressed("no2"): # race
-##		if driver_id == "JOU":
-#		update_stat(Pros.STATS.HEALTH, -0.1)
-#
-#	if Input.is_action_pressed("no3"): # race
-#		update_stat(Pros.STATS.HEALTH, 0.1)
-#	if Input.is_action_pressed("no4"): # race
-#		update_stat(Pros.STATS.GAS, -100)
-#	if Input.is_action_pressed("no5"): # race
-#		update_stat(Pros.STATS.GAS, 100)
+func _input(event: InputEvent) -> void:
+
+	if Input.is_action_pressed("no1"): # idle
+		if driver_id == "MOU":
+			_revive()
+		else:
+			motion_manager.boost_vehicle()
+	if Input.is_action_pressed("no2"): # race
+#		if driver_id == "JOU":
+		update_stat(Pros.STATS.HEALTH, -0.1)
+
+	if Input.is_action_pressed("no3"): # race
+		update_stat(Pros.STATS.HEALTH, 0.1)
+	if Input.is_action_pressed("no4"): # race
+		update_stat(Pros.STATS.GAS, -100)
+	if Input.is_action_pressed("no5"): # race
+		update_stat(Pros.STATS.GAS, 100)
 
 
 func _ready() -> void:
@@ -206,9 +206,9 @@ func _revive():
 
 
 func turn_on():
+	# turn_on ne vpliva na motion
 
 	engines.start_engines()
-	motion_manager.motion = motion_manager.MOTION.IDLE
 	turned_on = true
 
 	var turn_tween = get_tree().create_tween()
@@ -216,6 +216,7 @@ func turn_on():
 
 
 func turn_off():
+	# turn_off motion disejbla
 
 	trail_source.decay() # zazih
 
@@ -234,22 +235,21 @@ func _change_activity(new_is_active: bool):
 	# nima veze z motion
 	# kontrole so kompletno off
 
-	if not new_is_active == is_active:
-		is_active = new_is_active
+	is_active = new_is_active
 
-		# postane znan igri, ni pa nujno prižgan
-		if is_active:
-			_load_vehicle_parameters()
-			controller.set_process_input(true)
-			call_deferred("set_physics_process", true)
-			call_deferred("set_process", true)
-		else:
-			turn_off()
-			_save_vehicle_parameters()
-			controller.set_process_input(false)
-			call_deferred("set_physics_process", false)
-			call_deferred("set_process", false)
-			emit_signal("vehicle_deactivated", self)
+	# postane znan igri, ni pa nujno prižgan
+	if is_active:
+		_load_vehicle_parameters()
+		controller.set_process_input(true)
+		call_deferred("set_physics_process", true)
+		call_deferred("set_process", true)
+	else:
+		turn_off()
+		_save_vehicle_parameters()
+		controller.set_process_input(false)
+		call_deferred("set_physics_process", false)
+		call_deferred("set_process", false)
+		emit_signal("vehicle_deactivated", self)
 
 
 # SET -------------------------------------------------------------------------------------------------

@@ -52,10 +52,11 @@ enum STATS {
 		LEVEL_TIME,
 		LAP_TIME,
 		}
+
 var start_driver_stats: Dictionary = {
 	# driver
 	STATS.WINS: [], # level index in game levels
-	STATS.LIFE: 0, # life have/taken
+	STATS.LIFE: 0, # 0 = ni lajfa, 1 = 1 lajf, ni prikazan stat, n > 1 = normal, life as scalp
 	STATS.CASH: 0,
 	STATS.POINTS :0,
 	# vehicle
@@ -234,7 +235,7 @@ enum LEVEL_TYPE {
 	# rank_by time
 	RACING_TRACK, # start-line > race-track > finish-line
 	RACING_GOALS, # start-line > goals > finish-line
-	RACING_FREE, # start-line > finish-line
+#	RACING_FREE, # start-line > finish-line
 	# rank_by points
 	BATTLE_GOALS, # start-positions > goals
 	BATTLE_SCALPS, # start-positions
@@ -275,7 +276,7 @@ var level_profiles: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
-		"level_laps": 1, # če so goalsi delajo isto kot čekpointi
+		"level_laps": 2, # če so goalsi delajo isto kot čekpointi
 		"level_record": [0, ""], # pogreba sejvanega
 		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
 		# opredeli level ob spawnu

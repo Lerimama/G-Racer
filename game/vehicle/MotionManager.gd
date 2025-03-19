@@ -4,8 +4,7 @@ extends Node2D
 var managed_vehicle: Node2D  # = get_parent()
 
 enum MOTION {DISSABLED, IDLE, IDLE_LEFT, IDLE_RIGHT, FWD, FWD_LEFT, FWD_RIGHT, REV, REV_LEFT, REV_RIGHT, DISSARAY}#, OFF}
-#var motion: int = MOTION.DISSABLED setget _change_motion # idla ga turn on, disejbla ga turn off
-var motion: int = MOTION.IDLE setget _change_motion
+var motion: int = MOTION.DISSABLED setget _change_motion # idle postane on game start, disejbla ga turn off, ali ukaz "od zgoraj"
 
 enum ROTATION_MOTION {
 	DEFAULT,
@@ -19,7 +18,7 @@ var rotation_motion: int = ROTATION_MOTION.DEFAULT
 
 const AKA_ZERO_MASS: float = 1.0 # malo vpliva vseeno more met vsaka od mas
 
-# debug ...
+# debug ... oblika za export
 # lahko zamštraš indexe, kasneje to seta igra
 export (int) var selected_rotation_motion: int = ROTATION_MOTION.DEFAULT
 export (int) var selected_idle_rotation: int = ROTATION_MOTION.SPIN
@@ -90,8 +89,7 @@ func _process(delta: float) -> void:
 
 
 func _motion_machine():
-#	if not is_ai:
-#		prints("motion", motion,force_rotation, force_on_vehicle)
+#	prints("motion", motion)
 	# vigl vagl brez vpliva na silo
 	#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
 	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
@@ -182,66 +180,67 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 
 
 func _change_motion(new_motion):
-#	printt("motion", MOTION.keys()[motion])
 
-	if not motion == new_motion:
-		motion = new_motion
+	motion = new_motion
 
-		match motion: # edini rotation_dir setter
-			MOTION.FWD, MOTION.REV, MOTION.IDLE, MOTION.DISSABLED:
-				rotation_dir = 0
-			MOTION.FWD_LEFT, MOTION.REV_LEFT, MOTION.IDLE_LEFT:
-				rotation_dir = -1
-			MOTION.FWD_RIGHT, MOTION.REV_RIGHT, MOTION.IDLE_RIGHT:
-				rotation_dir = 1
+	match motion: # edini rotation_dir setter
+		MOTION.FWD, MOTION.REV, MOTION.IDLE, MOTION.DISSABLED:
+			rotation_dir = 0
+		MOTION.FWD_LEFT, MOTION.REV_LEFT, MOTION.IDLE_LEFT:
+			rotation_dir = -1
+		MOTION.FWD_RIGHT, MOTION.REV_RIGHT, MOTION.IDLE_RIGHT:
+			rotation_dir = 1
 
-		if vehicle_motion_profile:
-			vehicle_motion_profile._set_motion_parameters(managed_vehicle, motion)
+	if vehicle_motion_profile:
+		vehicle_motion_profile._set_motion_parameters(managed_vehicle, motion)
 
-		else:
-			torque_on_vehicle = 0
-			_set_default_parameters()
+	else:
+		torque_on_vehicle = 0
+		_set_default_parameters()
 
-			match motion:
-				MOTION.FWD, MOTION.REV:
-					managed_vehicle.angular_damp = 14
-					managed_vehicle.front_mass.linear_damp = 0
-					managed_vehicle.rear_mass.linear_damp = 4
-				MOTION.FWD_LEFT:
-					rotation_motion = selected_rotation_motion
-					managed_vehicle.angular_damp = 14
-					managed_vehicle.front_mass.linear_damp = 0
-					managed_vehicle.rear_mass.linear_damp = 4
-				MOTION.FWD_RIGHT:
-					rotation_motion = selected_rotation_motion
-					managed_vehicle.angular_damp = 14
-					managed_vehicle.front_mass.linear_damp = 0
-					managed_vehicle.rear_mass.linear_damp = 4
-				MOTION.REV_LEFT:
-					rotation_motion = selected_rotation_motion
-					managed_vehicle.angular_damp = 14
-					managed_vehicle.front_mass.linear_damp = 4
-					managed_vehicle.rear_mass.linear_damp = 0
-				MOTION.REV_RIGHT:
-					rotation_motion = selected_rotation_motion
-					managed_vehicle.angular_damp = 14
-					managed_vehicle.front_mass.linear_damp = 4
-					managed_vehicle.rear_mass.linear_damp = 0
-				MOTION.IDLE:
-					managed_vehicle.angular_damp = 1
-				MOTION.IDLE_LEFT:
-					rotation_motion = selected_idle_rotation
-					managed_vehicle.angular_damp = 3
-				MOTION.IDLE_RIGHT:
-					rotation_motion = selected_idle_rotation
-					managed_vehicle.angular_damp = 3
-				MOTION.DISSABLED:
-					pass
-				MOTION.DISSARAY:
-					pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
+		match motion:
+			MOTION.FWD, MOTION.REV:
+				managed_vehicle.angular_damp = 14
+				managed_vehicle.front_mass.linear_damp = 0
+				managed_vehicle.rear_mass.linear_damp = 4
+			MOTION.FWD_LEFT:
+				rotation_motion = selected_rotation_motion
+				managed_vehicle.angular_damp = 14
+				managed_vehicle.front_mass.linear_damp = 0
+				managed_vehicle.rear_mass.linear_damp = 4
+			MOTION.FWD_RIGHT:
+				rotation_motion = selected_rotation_motion
+				managed_vehicle.angular_damp = 14
+				managed_vehicle.front_mass.linear_damp = 0
+				managed_vehicle.rear_mass.linear_damp = 4
+			MOTION.REV_LEFT:
+				rotation_motion = selected_rotation_motion
+				managed_vehicle.angular_damp = 14
+				managed_vehicle.front_mass.linear_damp = 4
+				managed_vehicle.rear_mass.linear_damp = 0
+			MOTION.REV_RIGHT:
+				rotation_motion = selected_rotation_motion
+				managed_vehicle.angular_damp = 14
+				managed_vehicle.front_mass.linear_damp = 4
+				managed_vehicle.rear_mass.linear_damp = 0
+			MOTION.IDLE:
+				managed_vehicle.angular_damp = 1
+			MOTION.IDLE_LEFT:
+				rotation_motion = selected_idle_rotation
+				managed_vehicle.angular_damp = 3
+			MOTION.IDLE_RIGHT:
+				rotation_motion = selected_idle_rotation
+				managed_vehicle.angular_damp = 3
+			MOTION.DISSABLED:
+				# kadar je na tleh, al pa mu igra ukaže
+				# ne spremeni nič ... setani ostanejo default parametri
+				# je zato, da driving ne deluje
+				pass
+			MOTION.DISSARAY:
+				pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 
-			if not rotation_dir == 0:
-				_set_rotation_parameters(rotation_dir)
+		if not rotation_dir == 0:
+			_set_rotation_parameters(rotation_dir)
 
 
 func _set_rotation_parameters(is_reverse: bool = false):
@@ -329,6 +328,8 @@ func _drive_vigl_vagl(vigl_vagl_amount: float):
 
 
 func drive_in(drive_in_position: Vector2, drive_in_time: float = 1):
+
+	motion = MOTION.DISSABLED
 
 	managed_vehicle.collision_shape.set_deferred("disabled", true) # lahko pride iz stene
 	managed_vehicle.modulate.a = 1

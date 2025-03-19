@@ -321,13 +321,13 @@ size_flags_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Invisibles"]
 show_behind_parent = true
-margin_right = 179.0
-margin_bottom = 526.0
+margin_right = 354.0
+margin_bottom = 785.0
 color = Color( 0, 0, 0, 0.235294 )
 
 [node name="BoxContainer" type="VBoxContainer" parent="Invisibles"]
-margin_right = 179.0
-margin_bottom = 526.0
+margin_right = 354.0
+margin_bottom = 785.0
 size_flags_vertical = 5
 custom_constants/separation = 16
 __meta__ = {
@@ -402,6 +402,9 @@ margin_bottom = 56.0
 margin_right = 148.0
 rect_min_size = Vector2( 100, 0 )
 text = "LLLL"
+
+[node name="Hunds" parent="Invisibles/BoxContainer/StatGas/TimeLabel/Hunds" index="1"]
+percent_visible = 1.0
 
 [node name="CountIcons" parent="Invisibles/BoxContainer/StatGas" index="5"]
 margin_left = 148.0

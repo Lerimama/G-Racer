@@ -257,7 +257,7 @@ func _spawn_and_start_fx(EventFx: PackedScene, self_destruct: bool = true, spawn
 		new_fx.global_rotation = fx_rot
 		spawn_parent.add_child(new_fx)
 		new_fx.start_fx(self_destruct)
-		new_fx.connect("fx_finished", Refs.game_reactor, "_on_fx_finished", [], CONNECT_ONESHOT)
+		new_fx.connect("fx_finished", Refs.game_tracker, "_on_fx_finished", [], CONNECT_ONESHOT)
 		return new_fx
 	else:
 		return null

@@ -82,7 +82,7 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 
 func on_hit(hitting_node: Node2D, hit_global_position: Vector2): # shape je lahko: polygon2D, coližn shape poly, ... če se kaj pojavi vneseš tukaj
 #	break_origin_global = Vector2.ZERO
-	printt ("origin", break_origin_global, hitting_node.position, hitting_node.global_position)
+	printt("origin", break_origin_global, hitting_node.position, hitting_node.global_position)
 
 	# opredelim data za celotno slajsanje: origin, smer, območje vpliva in moč
 
@@ -159,7 +159,7 @@ func on_hit(hitting_node: Node2D, hit_global_position: Vector2): # shape je lahk
 		simplify_round_count = 1
 
 	var simple_hit_polygon = operator.simplify_outline(hit_by_polygon, simplify_round_count)
-	printt ("rad", influence_radius_per_unit, influence_radius / Sets.unit_one)
+	printt("rad", influence_radius_per_unit, influence_radius / Sets.unit_one)
 #		0:
 #			pass
 

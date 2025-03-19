@@ -19,7 +19,8 @@ onready var selector_action: String = controller_actions["selector_action"]
 # neu
 var pressed_driving_actions: Array = []
 var selected_item_index = 0
-var fast_start_window_is_open: bool = true
+var fast_start_window_is_open: bool = true # odprt tudi pred štartom, da dela revup
+
 
 func _input(event: InputEvent) -> void:
 	# ta del inputa je kar razdelan, ampak ko enkrat registrira vse možnosti ga lahko "pozabim"
@@ -117,19 +118,11 @@ func _set_driving_motion(pressed_actions: Array):
 				motion_manager.motion = motion_manager.MOTION.IDLE
 
 
-#func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null): # next_target je za ai zaenkrat
-#
-#	goals_to_reach.erase(goal_reached)
-#	pass
-
 func on_game_start(game_level: Node2D): # od GMja
+
+	motion_manager.motion = motion_manager.MOTION.IDLE
 
 	fast_start_window_is_open = true
 	yield(get_tree().create_timer(Sets.fast_start_time), "timeout")
 	fast_start_window_is_open = false
-	#	game_manager.GAME_STAGE.END_SUCCESS,game_manager.GAME_STAGE.END_FAIL:
-	##		game_is_on = false
-	#		if vehicle.is_active: # zazih
-	#			vehicle.is_active = false
-	#			print ("disejblam", " _prepozno")
 

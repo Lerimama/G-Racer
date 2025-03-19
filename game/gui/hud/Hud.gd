@@ -6,7 +6,7 @@ enum STATBOX_TYPE{BOX, BOX_MINIMAL, VER, VER_STRICT, VER_MINIMAL, HOR, MINIMAL}
 #var level_lap_count: int
 #var level_rank_by: int
 #var level_goals: Array = []
-var level_record: Array # [value, owner]
+var level_record: Array = [0, ""]# [value, owner]
 var time_still_time: float = 1.5
 var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
 
@@ -116,23 +116,18 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 
 	statboxes_with_drivers[new_statbox] = statbox_driver.driver_id
 
-#	var driver_stats: Dictionary = statbox_driver.driver_stats
-#	var driver_profile: Dictionary = statbox_driver.driver_profile
-
 	# driver line
 	new_statbox.driver_name_label.text = str(statbox_driver.driver_id)
 	new_statbox.driver_name_label.modulate = statbox_driver.driver_profile["driver_color"]
 	new_statbox.driver_avatar.set_texture(statbox_driver.driver_profile["driver_avatar"])
 
-	# statbox needs
+	# statbox
 	var rank_by: int = level_profile["rank_by"]
 	var laps_count: int = level_profile["level_laps"]
 	var goals_count: int = level_profile["level_goals"].size()
-	# one life (glede na start life)
 	var one_life_mode: bool = false
 	if statbox_driver.driver_stats[Pros.STATS.LIFE] == 1 and not Sets.life_as_scalp:
 		one_life_mode = true
-	# single player
 	var single_player_mode: bool = false
 	if all_statboxes_count == 1:
 		single_player_mode = true
@@ -246,7 +241,12 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 
 			# stat_value = Array
 			Pros.STATS.GOALS_REACHED:
-				# _temp ... gaols stat se pokaže ob prvem pobiranju
+				if statbox_to_change.use_level_progress_bar:
+					if level_profile["level_goals"].empty():
+						statbox_to_change.level_progress_bar.total_progress_unit = 0
+					else:
+						statbox_to_change.level_progress_bar.total_progress_unit = stat_value.size() / level_profile["level_goals"].size()
+#				else:
 				stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
 			Pros.STATS.WINS:
 				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
@@ -259,6 +259,12 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			Pros.STATS.LEVEL_TIME:
 				stat_to_change.stat_value = stat_value
 			Pros.STATS.LAP_COUNT: # vsakič, ko gre čez finish
+				if statbox_to_change.use_level_progress_bar:
+					if level_profile["level_laps"] < 2:
+						statbox_to_change.level_progress_bar.total_progress_unit = 0
+					else:
+						statbox_to_change.level_progress_bar.total_progress_unit = stat_value.size() / level_profile["level_laps"]
+#				else:
 				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
 				# apdejtam tudi LAP TIME prikaz
 				var time_stat: Control = statbox_to_change.get("LAP_TIME")

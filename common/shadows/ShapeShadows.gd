@@ -356,34 +356,30 @@ func _detect_owner_change(): # vedno spreminja vse sence
 func _change_shadow_rotation(new_rotation_deg: float): # game setting
 	#	print("setget _change_shadow_rotation")
 
-	if not shadow_rotation_deg == new_rotation_deg: # OPT preverjanje trenutno nekaj zjebe ... popravi
-		shadow_rotation_deg = new_rotation_deg
-		update_all_shadows()
+	shadow_rotation_deg = new_rotation_deg
+	update_all_shadows()
 
 
 func _change_shadows_length_factor(new_length_factor: float): # game setting
 	#	printt("setget _change_shadows_length_factor")
 
-	if not shadows_length_factor == new_length_factor:
-		shadows_length_factor = new_length_factor
-		update_all_shadows()
+	shadows_length_factor = new_length_factor
+	update_all_shadows()
 
 
 func _change_shadows_color(new_color: Color): # game setting
 	#	printt("setget _change_shadows_color")
 
-	if not shadows_color == new_color:
-		shadows_color = new_color
-		for shadow in _get_all_shadow_shapes():
-			shadow.color = shadows_color
+	shadows_color = new_color
+	for shadow in _get_all_shadow_shapes():
+		shadow.color = shadows_color
 
 
 func _change_shadows_alpha(new_alpha: float): # game setting
 	#	printt("setget _change_shadows_alpha")
 
-	if not shadows_alpha == new_alpha:
-		shadows_alpha = new_alpha
-		modulate.a = shadows_alpha
+	shadows_alpha = new_alpha
+	modulate.a = shadows_alpha
 
 
 # SIGNALI -----------------------------------------------------------------------------------------------

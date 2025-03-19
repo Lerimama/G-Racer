@@ -72,6 +72,7 @@ func set_game_views(drivers_for_views: Array = [], mono_screen: bool = false):
 		if drivers_for_views.size() == 1:
 			emit_signal("views_are_set")
 		else:
+			# signal pošlje spodnja funkcija
 			_tile_views(drivers_for_views.size())
 
 

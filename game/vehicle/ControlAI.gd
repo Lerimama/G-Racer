@@ -78,12 +78,12 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 ##		wanted_speed = -1
 #		motion_manager.boost_vehicle()
 
-	elif Input.is_action_just_pressed("left_click"): # follow leader
-		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(global_position, level_navigation.get_local_mouse_position())
-		ai_target = Mets.spawn_indikator(nav_path_points[0], Color(Color.blue, 0), 0, Refs.node_creation_parent)
-		navigation_agent.set_target_location(nav_path_points[0])
-		ai_state = AI_STATE.MOUSE_CLICK
-		current_mouse_follow_point = nav_path_points[nav_path_points.size()-1]
+#	elif Input.is_action_just_pressed("left_click"): # follow leader
+#		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(global_position, level_navigation.get_local_mouse_position())
+#		ai_target = Mets.spawn_indikator(nav_path_points[0], Color(Color.blue, 0), 0, Refs.node_creation_parent)
+#		navigation_agent.set_target_location(nav_path_points[0])
+#		ai_state = AI_STATE.MOUSE_CLICK
+#		current_mouse_follow_point = nav_path_points[nav_path_points.size()-1]
 
 
 func _ready() -> void:
@@ -502,17 +502,14 @@ func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
 	return true
 
 
-func on_goal_reached(goal_reached: Node2D, extra_target: Node2D = null):
+func on_goal_reached(goal_reached: Node2D):
 
 	goals_to_reach.erase(goal_reached)
-
-
-	if extra_target: # level finish, ...
-		ai_target = extra_target
-	elif not goals_to_reach.empty():
-		ai_target = goals_to_reach.front()
-	else:
+	prints("ai goal", goals_to_reach)
+	if goals_to_reach.empty():
 		self.ai_state = AI_STATE.OFF
+	else:
+		ai_target = goals_to_reach.front()
 
 
 # HELPERS ----------------------------------------------------------------------------------------------
@@ -665,8 +662,6 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 func on_game_start(game_level: Node2D): # od GMja
 
 	goals_to_reach = game_level.level_goals#.duplicate()
-	if game_level.finish_line.is_enabled:
-		goals_to_reach.append(game_level.finish_line)
 
 	# random start
 	randomize()

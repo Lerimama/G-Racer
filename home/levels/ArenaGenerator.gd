@@ -17,7 +17,7 @@ export var empty_side_cell_limit = 5
 func _ready() -> void:
 	randomize() # izključi za pedenanje in debugging
 	generate_level()
-	print ("world_in")
+	print("world_in")
 
 func generate_level():
 	# spawnamo walker skript
@@ -82,7 +82,7 @@ func cleanup_map():
 							continue
 #				else:
 
-#			print (empty_cell_counter)
+#			print(empty_cell_counter)
 
 		arena_tilemap.update_bitmask_region(borders.position, borders.end)
 

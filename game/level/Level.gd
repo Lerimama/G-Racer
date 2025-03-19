@@ -8,7 +8,7 @@ enum LEVEL_TYPE { # enako v profilih
 	# rank_by time
 	RACING_TRACK, # start-line > race-track > finish-line
 	RACING_GOALS, # start-line > goals > finish-line
-	RACING_FREE, # start-line > finish-line
+#	RACING_FREE, # start-line > finish-line
 	# rank_by points
 	BATTLE_GOALS, # start-positions > goals
 	BATTLE_SCALPS, # start-positions
@@ -24,6 +24,7 @@ export var reach_goals_in_sequence: bool = false
 var available_pickable_positions: Array = []
 var level_goals: Array = [] # pobere povezane
 var level_start_positions: Array = []
+var level_rank_type: int = 0
 
 var camera_limits: Control # če ga ni, kamera nima limita
 onready var camera_position_2d: Position2D = $Elements/StartCameraPosition
@@ -49,23 +50,15 @@ func _ready() -> void:
 
 	Refs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
 
-	set_start_positions(4)
+	get_start_positions(4)
 
 
 func set_level():
 
-	# camera
-	if camera_limits_path:
-		camera_limits = get_node(camera_limits_path)
-		for edge_rect in camera_limits:
-			var edge_collision: CollisionShape2D = edge_rect.get_child(0).get_child(0)
-			edge_collision.disabled = false # def je disabled
-
-	var level_ranking_type: int = 0
 	match level_type:
 
 		LEVEL_TYPE.FREE_RIDE:
-			level_ranking_type = Pros.RANK_BY.NONE
+			level_rank_type = Pros.RANK_BY.NONE
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false
@@ -74,7 +67,7 @@ func set_level():
 			_spawn_random_pickables()
 
 		LEVEL_TYPE.RACING_TRACK:
-			level_ranking_type = Pros.RANK_BY.TIME
+			level_rank_type = Pros.RANK_BY.TIME
 			start_line.is_enabled = true
 			tracking_line.is_enabled = true
 			finish_line.is_enabled = true
@@ -82,52 +75,22 @@ func set_level():
 			start_positions_holder.global_position = start_line_position_2d.global_position
 
 		LEVEL_TYPE.RACING_GOALS:
-			level_ranking_type = Pros.RANK_BY.TIME
+			level_rank_type = Pros.RANK_BY.TIME
 			start_line.is_enabled = true
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = true
-			# vsak goal more met signal
-			var goal_reached_signal_name: String = "reached_by"
-			for goal_path in level_goals_paths:
-				var current_goal: Node2D = get_node(goal_path)
-				if current_goal.has_signal(goal_reached_signal_name): # vsak goal more met signal
-					level_goals.append(current_goal)
-					if "is_enabled" in current_goal:
-						current_goal.is_enabled = true
-				current_goal.show()
-#				var goal: Node2D = get_node(goal_path)
-#				var goal_name: String = goal.name
-#				if goal.has_signal(goal_reached_signal_name): # vsak goal more met signal
-#					if "is_enabled" in get_node(goal_path):
-#						goal.is_enabled = true
-#					level_goals.append(goal_name)
-#				goal.show()
-
-		LEVEL_TYPE.RACING_FREE:
-			level_ranking_type = Pros.RANK_BY.TIME
-			start_line.is_enabled = true
-			tracking_line.is_enabled = false
-			finish_line.is_enabled = true
-			level_goals.clear()
-			start_positions_holder.global_position = start_line_position_2d.global_position
+			set_level_goals()
+			level_goals.append(finish_line)
 
 		LEVEL_TYPE.BATTLE_GOALS:
-			level_ranking_type = Pros.RANK_BY.POINTS
+			level_rank_type = Pros.RANK_BY.POINTS
 			start_line.is_enabled = false
 			finish_line.is_enabled = false
 			tracking_line.is_enabled = false
-			# vsak goal more met signal
-			var goal_reached_signal_name: String = "reached_by"
-			for goal_path in level_goals_paths:
-				var current_goal: Node2D = get_node(goal_path)
-				if current_goal.has_signal(goal_reached_signal_name): # vsak goal more met signal
-					level_goals.append(current_goal)
-					if "is_enabled" in current_goal:
-						current_goal.is_enabled = true
-				current_goal.show()
+			set_level_goals()
 
 		LEVEL_TYPE.BATTLE_SCALPS:
-			level_ranking_type = Pros.RANK_BY.POINTS
+			level_rank_type = Pros.RANK_BY.POINTS
 			start_line.is_enabled = false
 			finish_line.is_enabled = false
 			tracking_line.is_enabled = false
@@ -136,19 +99,20 @@ func set_level():
 			_spawn_random_pickables()
 
 		LEVEL_TYPE.MISSION:
-			level_ranking_type = Pros.RANK_BY.NONE
+			level_rank_type = Pros.RANK_BY.NONE
 			start_line.is_enabled = false
 			finish_line.is_enabled = false
 			tracking_line.is_enabled = false
-			# vsak goal more met signal
-			var goal_reached_signal_name: String = "reached_by"
-			for goal_path in level_goals_paths:
-				var current_goal: Node2D = get_node(goal_path)
-				if current_goal.has_signal(goal_reached_signal_name): # vsak goal more met signal
-					level_goals.append(current_goal)
-					if "is_enabled" in current_goal:
-						current_goal.is_enabled = true
-				current_goal.show()
+			set_level_goals()
+
+	yield(get_tree(), "idle_frame") # za "completed"
+
+	# camera
+	if camera_limits_path:
+		camera_limits = get_node(camera_limits_path)
+		for edge_rect in camera_limits:
+			var edge_collision: CollisionShape2D = edge_rect.get_child(0).get_child(0)
+			edge_collision.disabled = false # def je disabled
 
 	# set start positions
 	for driver_position in start_positions_holder.get_child(0).get_children():
@@ -158,17 +122,24 @@ func set_level():
 	_set_level_objects()
 	_resize_to_level_size()
 
-	# pošljem
-	emit_signal(
-		"level_is_set",
-		level_ranking_type,
-		camera_limits,
-		camera_position_2d,
-		level_goals
-		)
+
+func set_level_goals(): # kliče tudi GM na nov krog
+
+	level_goals.clear()
+	var goal_reached_signal_name: String = "reached_by"
+	for goal_path in level_goals_paths:
+		var goal: Node2D = get_node(goal_path)
+		if goal.has_signal(goal_reached_signal_name): # vsak goal more met signal
+			level_goals.append(goal)
+			if "is_enabled" in goal:
+				goal.is_enabled = true
+			goal.show()
+		else:
+			goal.hide()
 
 
-func set_start_positions(new_positions_count: int):
+
+func get_start_positions(new_positions_count: int):
 
 	level_start_positions.clear()
 	start_positions_holder.position_count = new_positions_count
@@ -226,7 +197,7 @@ func _set_level_objects():
 			$Objects.add_child(new_object_scene)
 
 
-func _spawn_random_pickables(): # SCALPS in FREE
+func _spawn_random_pickables(): # SCALPS and FREE
 
 	if get_tree().get_nodes_in_group(Refs.group_pickables).size() <= Sets.pickables_count_limit - 1:
 		var random_pickable: Pickable = _spawn_pickable(Pros.pickable_profiles.keys().pick_random())

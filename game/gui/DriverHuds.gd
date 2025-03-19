@@ -59,7 +59,7 @@ func set_driver_huds(game_manager: Game, drivers_on_start: Array, mono_view_mode
 			view_imitators_with_driver_ids[new_view_imitator] = driver_id
 			# ai huds
 			for ai_driver in game_manager.drivers_on_start:
-				if driver.is_in_group(Refs.group_ai):
+				if ai_driver.is_in_group(Refs.group_ai):
 #				if ai_driver.motion_manager.is_ai:
 					var new_ai_hud: Control = DriverHud.instance()
 					new_view_imitator.add_child(new_ai_hud)

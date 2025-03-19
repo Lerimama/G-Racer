@@ -26,8 +26,9 @@ func select_item():
 			weapon.weapon_ai.ai_enabled = false
 
 
-func use_selected_item(selected_item_index: int):
+func use_selected_item(new_selected_item_index: int):
 
+	selected_item_index = new_selected_item_index
 	var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
 	if selected_weapon.has_method("_on_weapon_triggered"):
 		selected_weapon._on_weapon_triggered()

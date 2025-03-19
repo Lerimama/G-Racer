@@ -5,7 +5,6 @@ var is_open: bool = false
 var focused_level_btn_index: int = 0 # da vem levo/desno
 var selected_level_btns: Array = [] # referenca za game_levels on play()
 
-
 onready var home: Node = $"../.."
 onready var level_cards: HBoxContainer = $LevelCards
 onready var default_level_menu_position: Vector2 = level_cards.rect_position

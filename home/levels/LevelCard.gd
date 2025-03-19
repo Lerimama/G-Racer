@@ -56,16 +56,14 @@ func _ready() -> void:
 
 func _change_selected(new_is_selected: bool):
 
-	if not new_is_selected == is_selected:
+	is_selected = new_is_selected
 
-		is_selected = new_is_selected
-
-		if is_selected:
-			unselected_display.hide()
-			selected_display.show()
-		else:
-			unselected_display.show()
-			selected_display.hide()
+	if is_selected:
+		unselected_display.hide()
+		selected_display.show()
+	else:
+		unselected_display.show()
+		selected_display.hide()
 
 
 func _on_LevelBtn_focus_entered() -> void:
