@@ -1,7 +1,7 @@
 extends Node2D
 class_name Level
 
-signal level_is_set(navigation, spawn_positions, other_)
+#signal level_is_set(navigation, spawn_positions, other_)
 
 enum LEVEL_TYPE { # enako v profilih
 	FREE_RIDE,

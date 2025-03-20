@@ -265,16 +265,22 @@ margin_bottom = 1420.0
 size_flags_horizontal = 3
 
 [node name="StatBox_Boxed" parent="HudSections/Right" instance=ExtResource( 1 )]
+margin_left = 313.0
 margin_right = 840.0
 margin_bottom = 530.0
+size_flags_horizontal = 8
 
 [node name="StatBox_Boxed_2" parent="HudSections/Right" instance=ExtResource( 1 )]
+margin_left = 313.0
 margin_top = 534.0
 margin_right = 840.0
 margin_bottom = 1064.0
+size_flags_horizontal = 8
 
 [node name="StatBox_Boxed_3" parent="HudSections/Right" instance=ExtResource( 1 )]
+margin_left = 313.0
 margin_top = 1068.0
 margin_right = 840.0
 margin_bottom = 1420.0
+size_flags_horizontal = 8
 size_flags_vertical = 8

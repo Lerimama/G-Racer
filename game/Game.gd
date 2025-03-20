@@ -97,12 +97,13 @@ func set_game(level_index_add: int = 0):
 	# level
 	game_levels = Sets.game_levels
 	level_index += level_index_add
+
 	yield(_spawn_level(level_index), "completed")
 
 	final_level_data["level_profile"] = level_profile
 	game_tracker.game_level = game_level
 
-	yield(get_tree(), "idle_frame")
+	#	yield(get_tree(), "idle_frame")
 
 	# drivers
 	var drivers_on_start: Array = []
@@ -132,7 +133,7 @@ func set_game(level_index_add: int = 0):
 			# driver stats
 			var prev_level_stats: Dictionary = final_drivers_data[driver.driver_id]["driver_stats"]
 			for stat in prev_level_stats:
-				if stat in [Pros.STATS.BEST_LAP_TIME, Pros.STATS.LAP_TIME, Pros.STATS.LAP_COUNT, Pros.STATS.LEVEL_TIME, Pros.STATS.LEVEL_RANK]:
+				if stat in [Pros.STATS.LEVEL_PROGRESS, Pros.STATS.BEST_LAP_TIME, Pros.STATS.LAP_TIME, Pros.STATS.LAP_COUNT, Pros.STATS.LEVEL_TIME, Pros.STATS.LEVEL_RANK]:
 					driver.driver_stats[stat] = Pros.start_driver_stats[stat]
 				else:
 					driver.driver_stats[stat] = prev_level_stats[stat]
@@ -157,8 +158,8 @@ func set_game(level_index_add: int = 0):
 	for camera in get_tree().get_nodes_in_group(Refs.group_player_cameras):
 		if Sets.mono_view_mode:
 			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, true)
-			if not camera.playing_field.is_connected( "body_exited_playing_field", game_tracker, "_on_body_exited_playing_field"):
-				camera.playing_field.connect( "body_exited_playing_field", game_tracker, "_on_body_exited_playing_field")
+			if not camera.playing_field.is_connected( "body_exited_playing_field", game_tracker, "_on_player_exited_playing_field"):
+				camera.playing_field.connect( "body_exited_playing_field", game_tracker, "_on_player_exited_playing_field")
 		else:
 			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, false)
 	# senčke
@@ -284,24 +285,24 @@ func _spawn_level(new_level_index:int = 0):
 	level_spawn_parent.move_child(new_level, 0)
 
 	yield(new_level.set_level(), "completed")
-	#	print("2 ... _spawn_levele continue")
-	# setup
-#	for node_path in new_level.level_goals_paths:
-#		new_level.get_node(node_path).connect("reached_by", game_tracker, "_on_goal_reached")
 
-	# če so goali in je finishe line, je ta med goali
+	# setup
+
+	# če so goali je lahko med njimi finish line
+	level_profile["level_goals"] = []
 	for goal in new_level.level_goals:
 		if goal.has_signal("reached_by"):
 			if not goal == new_level.finish_line:
 				goal.connect("reached_by", game_tracker, "_on_goal_reached")
+				goal.connect("tree_exiting", game_tracker, "_on_goal_exiting_tree", [goal])
+				level_profile["level_goals"].append(goal.name)
 
-	# če je samo finishe line je lahko tracking ali free racing
+	# finish line povežem posebej, ker drugače ne dela ok
 	if new_level.finish_line.is_enabled:
 		new_level.finish_line.connect("reached_by", game_tracker, "_on_finish_crossed")
 
 	# novo v level profilu
 	level_profile["rank_by"] = new_level.level_rank_type
-	level_profile["level_goals"] = new_level.level_goals # do tukaj ga ni v slovarju
 
 	#	prints("3 ... _spawn_levele finished", level_profile)
 	game_level = new_level
@@ -333,11 +334,11 @@ func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 	else:
 		# weapon stats se napolnijo ob setanju weaponow
 		new_driver_stats = Pros.start_driver_stats.duplicate()
-
-		# reset notranji arrayev ... da so unique
+		# reset za unique
 		new_driver_stats[Pros.STATS.WINS] = []
 		new_driver_stats[Pros.STATS.LAP_COUNT] = []
 		new_driver_stats[Pros.STATS.GOALS_REACHED] = []
+
 	new_vehicle.driver_stats = new_driver_stats
 	new_vehicle.weapon_stats = new_weapon_stats
 
@@ -350,8 +351,6 @@ func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 	if game_level.tracking_line.is_enabled:
 		new_vehicle.driver_tracker = game_level.tracking_line.spawn_new_tracker(new_vehicle)
 
-	# goals
-#	new_vehicle.controller.goals_to_reach = game_level.level_goals.duplicate()
 	# connect
 	new_vehicle.connect("stat_changed", gui.hud, "_on_driver_stat_changed")
 	new_vehicle.connect("vehicle_deactivated", game_tracker, "_on_vehicle_deactivated")

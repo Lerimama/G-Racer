@@ -45,6 +45,7 @@ enum STATS {
 		GAS,
 		CASH,
 		# level (reset on level)
+		LEVEL_PROGRESS,
 		LEVEL_RANK,
 		LAP_COUNT,
 		GOALS_REACHED,
@@ -63,6 +64,7 @@ var start_driver_stats: Dictionary = {
 	STATS.HEALTH: 1.0, # percetnage
 	STATS.GAS: 2000,
 	# level (reset per level)
+	STATS.LEVEL_PROGRESS: 0.0, # percetnage
 	STATS.LEVEL_RANK: 0,
 	STATS.LEVEL_TIME: 0,
 	STATS.BEST_LAP_TIME: 0,
@@ -276,7 +278,7 @@ var level_profiles: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
-		"level_laps": 2, # če so goalsi delajo isto kot čekpointi
+		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
 		"level_record": [0, ""], # pogreba sejvanega
 		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
 		# opredeli level ob spawnu

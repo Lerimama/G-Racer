@@ -7,7 +7,7 @@ export (STAT_TYPE) var stat_type: int = STAT_TYPE.COUNT
 export var icon_texture: Texture = null
 export var stat_name: String = ""
 export var name_as_icon: bool = true
-export (int, 0, 10) var count_digits_size: int = 0
+export (int, 0, 10) var count_digits_size: int = 0 # če je 1 vpliva na timer > kaže eno hunds decimalko
 
 var stat_value = 0 setget _on_stat_change # : razno
 var color_blink_time: float = 0.5
@@ -78,6 +78,7 @@ func _ready() -> void:
 			stat_count_label.hide()
 			count_icons_holder.hide()
 		STAT_TYPE.ICONS:
+			stat_time_label.hide()
 			stat_count_label.hide()
 			stat_icon.hide()
 			if name_as_icon:
@@ -191,6 +192,14 @@ func _write_clock_time(hundreds: int, time_label: HBoxContainer): # cele stotink
 	time_label.get_node("MinSec/Mins").text = "%02d" % rounded_minutes
 	time_label.get_node("MinSec/Secs").text = "%02d" % rounded_seconds_leftover
 	time_label.get_node("Hunds/Hunds").text = "%02d" % rounded_hundreds_leftover
+
+	# hunds display settings
+	if count_digits_size == 1:
+		time_label.get_node("Hunds").rect_min_size.x = 44
+		time_label.get_node("Hunds/Hunds").visible_characters = 1
+	else:
+		time_label.get_node("Hunds").rect_min_size.x = 68
+		time_label.get_node("Hunds/Hunds").visible_characters = -1
 
 
 func _on_BlinkTimer_timeout() -> void:

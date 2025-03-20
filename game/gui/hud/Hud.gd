@@ -25,7 +25,7 @@ onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn"
 
 onready var StatBox_Boxed: PackedScene = preload("res://game/gui/hud/StatBox_Boxed.tscn")
 onready var StatBox_Boxed_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Boxed_Minimal.tscn")
-onready var StatBox_Hor: PackedScene = preload("res://game/gui/hud/StatBox_Hor.tscn")
+onready var StatBox_Hor: PackedScene = preload("res://game/gui/hud/StatBox_Hor_temp.tscn")
 onready var StatBox_Ver: PackedScene = preload("res://game/gui/hud/StatBox_Ver.tscn")
 onready var StatBox_Ver_Strict: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Strict.tscn")
 onready var StatBox_Ver_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Minimal.tscn")
@@ -103,7 +103,7 @@ func on_game_over():
 		section.hide()
 
 
-func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
+func _set_driver_statbox_old(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
 
 	var NewStatBox: PackedScene #= StatBox
 	NewStatBox = _get_statbox_by_type(statbox_index, all_statboxes_count)
@@ -112,7 +112,9 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 	if statbox_index % 2 == 0:
 		left_section.add_child(new_statbox)
 	else:
+		new_statbox.alignment
 		right_section.add_child(new_statbox)
+
 
 	statboxes_with_drivers[new_statbox] = statbox_driver.driver_id
 
@@ -131,7 +133,7 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 	var single_player_mode: bool = false
 	if all_statboxes_count == 1:
 		single_player_mode = true
-	new_statbox.set_statbox_elements(rank_by, laps_count, goals_count, single_player_mode, one_life_mode)
+	new_statbox.set_statbox_stats(rank_by, laps_count, goals_count, single_player_mode, one_life_mode)
 
 	# določim zadnje v sekcijah ... spawnani so levo, denos, levo, desno, ...
 	var left_side_statboxes_count: int = ceil(all_statboxes_count / 2)
@@ -139,6 +141,76 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 		new_statbox.set_statbox_align(statbox_index, true)
 	else:
 		new_statbox.set_statbox_align(statbox_index)
+
+	# levo / desno
+	if statbox_index % 2 == 0:
+		# zadnja na desni je predzadnja skupno
+		if statbox_index + 1 == all_statboxes_count - 1:
+			new_statbox.set_statbox_align(-1, true)
+		else:
+			new_statbox.set_statbox_align(-1)
+	else:
+		# zadnja na levi je zadnja skupno
+		if statbox_index + 1 == all_statboxes_count:
+			new_statbox.set_statbox_align(1, true)
+		else:
+			new_statbox.set_statbox_align(1)
+
+#	func set_statbox_align(statbox_section: int, index_in_section: int, is_last_in_section: bool = false):
+
+	# driver stats
+	for stat in statbox_driver.driver_stats:
+		_on_driver_stat_changed(statbox_driver.driver_id, stat, statbox_driver.driver_stats[stat])
+
+	new_statbox.show()
+
+	statbox_index += 1 # pred idle, ker je na vrsti že naslednja
+
+
+func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
+
+	var NewStatBox: PackedScene #= StatBox
+	NewStatBox = _get_statbox_by_type(statbox_index, all_statboxes_count)
+
+	var new_statbox: BoxContainer = NewStatBox.instance()
+	if statbox_index % 2 == 0:
+		left_section.add_child(new_statbox)
+	else:
+		right_section.add_child(new_statbox)
+
+	statboxes_with_drivers[new_statbox] = statbox_driver.driver_id
+
+	# driver line
+	new_statbox.driver_name_label.text = str(statbox_driver.driver_id)
+	new_statbox.driver_avatar.set_texture(statbox_driver.driver_profile["driver_avatar"])
+	new_statbox.driver_name_label.modulate = statbox_driver.driver_profile["driver_color"]
+	new_statbox.statbox_color = statbox_driver.driver_profile["driver_color"]
+
+	# statbox
+	var one_life_mode: bool = false
+	if statbox_driver.driver_stats[Pros.STATS.LIFE] == 1 and not Sets.life_as_scalp:
+		one_life_mode = true
+	new_statbox.set_statbox_stats( \
+		level_profile["rank_by"],
+		level_profile["level_laps"],
+		level_profile["level_goals"].size(),
+		all_statboxes_count,
+		one_life_mode
+		)
+
+	# levo / desno
+	if statbox_index % 2 == 0:
+		# zadnja na desni je predzadnja skupno
+		if statbox_index + 1 == all_statboxes_count - 1:
+			new_statbox.set_statbox_align(-1, true)
+		else:
+			new_statbox.set_statbox_align(-1)
+	else:
+		# zadnja na levi je zadnja skupno
+		if statbox_index + 1 == all_statboxes_count:
+			new_statbox.set_statbox_align(1, true)
+		else:
+			new_statbox.set_statbox_align(1)
 
 	# driver stats
 	for stat in statbox_driver.driver_stats:
@@ -157,8 +229,8 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 		statbox_type = STATBOX_TYPE.VER_STRICT
 	elif Sets.mono_view_mode:
 		if all_statboxes_count <= 4:
-#			statbox_type = STATBOX_TYPE.BOX
-			statbox_type = STATBOX_TYPE.VER
+			statbox_type = STATBOX_TYPE.BOX
+#			statbox_type = STATBOX_TYPE.VER
 		elif all_statboxes_count <= 10:
 			statbox_type = STATBOX_TYPE.BOX_MINIMAL
 		else:
@@ -243,11 +315,17 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			Pros.STATS.GOALS_REACHED:
 				if statbox_to_change.use_level_progress_bar:
 					if level_profile["level_goals"].empty():
-						statbox_to_change.level_progress_bar.total_progress_unit = 0
+						printerr ("Prazni goali ne smejo prit do huda")
 					else:
-						statbox_to_change.level_progress_bar.total_progress_unit = stat_value.size() / level_profile["level_goals"].size()
-#				else:
-				stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
+						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_goals"].size())
+				#				else:
+				var no_finish_line_goals_count: int = level_profile["level_goals"].size()
+				prints ("je fnihs line", level_profile["level_goals"].back())
+				if level_profile["level_goals"].back() == "FinishLine":
+					print ("je fnihs line")
+					no_finish_line_goals_count = level_profile["level_goals"].size() - 1
+				stat_to_change.stat_value = [stat_value.size(), no_finish_line_goals_count]
+
 			Pros.STATS.WINS:
 				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
 				#			stat_to_change.stat_value = [stat_value.size(), Sets.wins_needed]
@@ -260,10 +338,11 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				stat_to_change.stat_value = stat_value
 			Pros.STATS.LAP_COUNT: # vsakič, ko gre čez finish
 				if statbox_to_change.use_level_progress_bar:
-					if level_profile["level_laps"] < 2:
-						statbox_to_change.level_progress_bar.total_progress_unit = 0
-					else:
-						statbox_to_change.level_progress_bar.total_progress_unit = stat_value.size() / level_profile["level_laps"]
+#					prints (stat_value.size(), level_profile["level_laps"])
+#					if level_profile["level_laps"] < 2:
+#						statbox_to_change.level_progress_bar.progress_unit = 0
+#					else:
+					statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
 #				else:
 				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
 				# apdejtam tudi LAP TIME prikaz
@@ -272,7 +351,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 					time_stat.stat_value = stat_value.back()
 					# stoječi prikaz časa kroga
 					if not time_stat.stat_value == 0:
-						var time_still_stat: Control = statbox_to_change.get("lap_time_still")
+						var time_still_stat: Control = statbox_to_change.lap_time_still_display
 						time_still_stat.stat_value = time_stat.stat_value
 						time_still_stat.modulate = Refs.color_red # zeleno ga obarva BEST LAP event
 						time_stat.hide()
@@ -290,7 +369,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 					stat_to_change.stat_value = stat_to_change_clock_time
 					stat_to_change.get_parent().get_parent().show()
 					# obarvam stoječi prikaz časa kroga
-					statbox_to_change.get("lap_time_still").modulate = Refs.color_green
+					statbox_to_change.lap_time_still_display.modulate = Refs.color_green
 					# je tudi rekord levela?
 					if stat_value < level_record[0] and not level_record[0] == 0:
 						var new_level_record: Array = [stat_value, driver_id]
@@ -303,6 +382,9 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 						level_record_label.modulate = Color.white
 			Pros.STATS.LAP_TIME: # za uro med krogom ... vsak frejm
 				stat_to_change.stat_value = stat_value
+			Pros.STATS.LEVEL_PROGRESS:
+#				statbox_to_change.level_progress_bar.progress_unit = 0
+				stat_to_change.progress_unit = stat_value
 			_: # ammo, ...
 				#				stat_to_change.stat_value = stat_value
 				pass

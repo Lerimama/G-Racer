@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
 [ext_resource path="res://assets/design/atlas_home.png" type="Texture" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://assets/icons/icon_hud_best_lap_time_VRSA.tres" type="Texture" id=15]
 [ext_resource path="res://game/gui/hud/StatLine.tscn" type="PackedScene" id=16]
 [ext_resource path="res://assets/icons/icon_misile_VRSA.tres" type="Texture" id=17]
+[ext_resource path="res://game/gui/ProgressBar.tscn" type="PackedScene" id=18]
 
 [sub_resource type="Image" id=3]
 data = {
@@ -38,6 +39,8 @@ region = Rect2( 0, 0, 128, 128 )
 margin = Rect2( 0, 0, 0, 0 )
 margin_color = Color( 1, 1, 1, 0 )
 repeat = false
+
+[sub_resource type="StyleBoxEmpty" id=4]
 
 [node name="StatBox_Boxed" type="VBoxContainer"]
 margin_right = 527.0
@@ -116,10 +119,35 @@ margin_right = 403.0
 margin_bottom = 64.0
 custom_constants/separation = -4
 
-[node name="Driver" type="MarginContainer" parent="."]
+[node name="LevelProgress" type="MarginContainer" parent="."]
 margin_top = 72.0
+margin_right = 192.0
+margin_bottom = 96.0
+rect_min_size = Vector2( 0, 16 )
+size_flags_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="LevelProgress"]
+visible = false
+show_behind_parent = true
+margin_right = 192.0
+margin_bottom = 24.0
+color = Color( 1, 0, 0, 0.392157 )
+
+[node name="ControlSeparator" type="Control" parent="LevelProgress"]
+margin_right = 192.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 192, 24 )
+
+[node name="ProgressBar" parent="LevelProgress/ControlSeparator" instance=ExtResource( 18 )]
+anchor_right = 1.0
+margin_right = 0.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 4 )
+
+[node name="Driver" type="MarginContainer" parent="."]
+margin_top = 104.0
 margin_right = 527.0
-margin_bottom = 136.0
+margin_bottom = 168.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -167,9 +195,9 @@ margin_right = 527.0
 margin_bottom = 64.0
 
 [node name="Vehicle" type="MarginContainer" parent="."]
-margin_top = 144.0
+margin_top = 176.0
 margin_right = 527.0
-margin_bottom = 208.0
+margin_bottom = 240.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -218,9 +246,9 @@ margin_right = 527.0
 margin_bottom = 64.0
 
 [node name="LapTime" type="MarginContainer" parent="."]
-margin_top = 216.0
+margin_top = 248.0
 margin_right = 354.0
-margin_bottom = 280.0
+margin_bottom = 312.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 
@@ -268,9 +296,9 @@ margin_bottom = 64.0
 custom_constants/separation = 0
 
 [node name="BestLapTime" type="MarginContainer" parent="."]
-margin_top = 288.0
+margin_top = 320.0
 margin_right = 185.0
-margin_bottom = 352.0
+margin_bottom = 384.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 0
 

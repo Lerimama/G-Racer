@@ -307,6 +307,7 @@ run/main_scene="res://Main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="user_data"
 run/delta_sync_after_draw=true
+boot_splash/bg_color=Color( 0.141176, 0.141176, 0.141176, 1 )
 config/icon="res://assets/icon.png"
 <<<<<<<HEADconfig/name="G-Racer"
 
@@ -641,7 +642,7 @@ quality/intended_usage/framebuffer_allocation=0
 2d/snapping/use_gpu_pixel_snap=true
 limits/buffers/canvas_polygon_buffer_size_kb=512
 limits/buffers/canvas_polygon_index_buffer_size_kb=512
-environment/default_clear_color=Color( 0, 0, 0, 1 )
+environment/default_clear_color=Color( 0.443137, 0.443137, 0.443137, 1 )
 
 [world]
 

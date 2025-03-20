@@ -1,40 +1,47 @@
 extends Panel
 
 
-export (int, 1, 100) var stage_count: int = 1 setget _change_stage_count # checkpoints, laps or goals
-export (float, 0, 1, 0.01) var total_progress_unit: float = 0 setget _change_total_progress
+var stage_count: int = 1 setget _change_stage_count # checkpoints, laps or goals
+var progress_unit: float = 0 setget _change_total_progress
 
-var ticks_on_units: Array = []
+var ticks_x_positions: Array = [] # x
 
-onready var ticks_holder: HBoxContainer = $Ticks
+onready var ticks_holder: Control = $Ticks
 onready var bar: Panel = $Bar
-onready var bar_background: TextureRect = $Bar/TextureRect
-onready var bar_separators: Array = [$Ticks/VSeparator, $Ticks/VSeparator_2]
+onready var bar_text_background: TextureRect = $Bar/TextureRect
+onready var bar_color_background: ColorRect = $Bar/ColorRect
+
+onready var progress_bar_width: float = rect_size.x
+var bar_color: Color = Color.purple
 
 
 func _ready() -> void:
 
 	# debug reset count icon
 	for child in ticks_holder.get_children():
-		if not child in bar_separators and not child == ticks_holder.get_child(1):
+		if not child == ticks_holder.get_child(0):
 			child.queue_free()
 
 
-func _change_total_progress(new_total_progress: float):
+func _change_total_progress(new_progress_unit: float):
 
 	# debug
 	if not bar:
 		return
 
-	var curr_bar_scale_unit: float = bar.rect_size.x / rect_size.x
-	total_progress_unit = new_total_progress
-	var new_bar_scale_unit: float = total_progress_unit * rect_size.x
-	bar.rect_size.x = new_bar_scale_unit
+	progress_unit = new_progress_unit
 
-	bar_background.rect_size.x = rect_size.x
+	var curr_bar_scale_unit: float = bar.rect_size.x / progress_bar_width
+	var new_bar_scale_unit: float = progress_unit * progress_bar_width
+
+	bar.rect_size.x = new_bar_scale_unit
+	bar_text_background.rect_size.x = progress_bar_width
+	bar_color_background.rect_size.x = progress_bar_width
+	bar_color_background.color = bar_color
 
 
 func _change_stage_count(new_stage_count: int):
+
 
 	# debug
 	if get_parent():#is MarginContainer:
@@ -43,13 +50,11 @@ func _change_stage_count(new_stage_count: int):
 	if not ticks_holder: # debug export
 		return
 
+	progress_bar_width = rect_size.x
 	stage_count = new_stage_count
 
 	# reset
 	var current_ticks: Array = ticks_holder.get_children()
-	# separatorji
-	current_ticks.pop_front().hide()
-	current_ticks.pop_back().hide()
 	# template (ga nikoli ne pokažem)
 	var template_tick: Control = current_ticks.pop_front()
 	template_tick.hide()
@@ -62,25 +67,23 @@ func _change_stage_count(new_stage_count: int):
 
 		for count in stage_count - 1:
 			var new_tick: Control = template_tick.duplicate()
+			var separation_width: float = progress_bar_width/stage_count
+			new_tick.rect_position.x = separation_width * (count + 1)
 			ticks_holder.add_child(new_tick)
-			ticks_holder.move_child(new_tick, ticks_holder.get_child_count() - 2)
 			current_ticks.append(new_tick)
-
-		# separators
-		#		yield(get_tree(),"idle_frame")
-		#		var sepa_separation: float = (rect_size.x / current_ticks.size()) / 2
-		#		if stage_count > 2:
-		#			for sepa in bar_separators:
-		#				var ticks_position_separation: int = abs(current_ticks[0].rect_position.x - current_ticks[1].rect_position.x)
-		#				sepa.rect_min_size.x = sepa_separation
-		#				sepa.rect_size.x = sepa_separation
-		#				sepa.show()
 
 		for tick in current_ticks:
 			tick.show()
 
-		# ticks on units na novo
-		#	ticks_on_units.clear()
-		#	for tick in current_ticks:
-		#		ticks_on_units.append(tick.rect_position.x)
+	# ticks on units na novo
+	ticks_x_positions.clear()
+	for tick in current_ticks:
+		ticks_x_positions.append(tick.rect_position.x)
+	# dodam še full width pozicijo, čeprav tam ni tika ... za zadnjo fazo
+	ticks_x_positions.append(progress_bar_width)
 
+
+func _on_ProgressBar_resized() -> void:
+	# vsakič kose resiza, se ticksi preuredijo
+
+	self.stage_count = stage_count

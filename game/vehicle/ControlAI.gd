@@ -505,11 +505,12 @@ func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
 func on_goal_reached(goal_reached: Node2D):
 
 	goals_to_reach.erase(goal_reached)
-	prints("ai goal", goals_to_reach)
 	if goals_to_reach.empty():
 		self.ai_state = AI_STATE.OFF
 	else:
 		ai_target = goals_to_reach.front()
+
+	prints("ai reacheed goal", goals_to_reach)
 
 
 # HELPERS ----------------------------------------------------------------------------------------------

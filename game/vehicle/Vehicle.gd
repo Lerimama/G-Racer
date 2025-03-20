@@ -376,63 +376,66 @@ func update_stat(stat_key: int, stat_value):
 	#	end value ... driver_stats = change_value
 	# 	trenuten čas
 
-	match stat_key:
-		# vehicle
-		Pros.STATS.GAS:
-			if is_in_group(Refs.group_players) or Sets.ai_gas_on:
-				# dmg fx
-				if Sets.HEALTH_EFFECTS.GAS in Sets.health_effects:
-					var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pros.STATS.HEALTH])
-					var damaged_gas_usage: float = stat_value + stat_value * damage_effect_scale
-					stat_value = damaged_gas_usage
-
+	if not stat_value == null: # da lahko apdejtam samo prikaz brez vrednosti
+		match stat_key:
+			# vehicle
+			Pros.STATS.GAS:
+				if is_in_group(Refs.group_players) or Sets.ai_gas_on:
+					# dmg fx
+					if Sets.HEALTH_EFFECTS.GAS in Sets.health_effects:
+						var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pros.STATS.HEALTH])
+						var damaged_gas_usage: float = stat_value + stat_value * damage_effect_scale
+						stat_value = damaged_gas_usage
+					# stat
+					driver_stats[stat_key] += stat_value
+					if driver_stats[Pros.STATS.GAS] <= 0:
+						driver_stats[Pros.STATS.GAS] = 0
+						_die(false)
+					elif driver_stats[Pros.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
+						gas_tank_size = driver_stats[Pros.STATS.GAS]
+			Pros.STATS.HEALTH:
+				driver_stats[stat_key] += stat_value # change_value je + ali -
+				driver_stats[Pros.STATS.HEALTH] = clamp(driver_stats[Pros.STATS.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
+				if driver_stats[Pros.STATS.HEALTH] == 0:
+					_die()
+			# driver
+			Pros.STATS.LIFE:
 				driver_stats[stat_key] += stat_value
-				if driver_stats[Pros.STATS.GAS] <= 0:
-					driver_stats[Pros.STATS.GAS] = 0
-					_die(false)
-				elif driver_stats[Pros.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
-					gas_tank_size = driver_stats[Pros.STATS.GAS]
-		Pros.STATS.HEALTH:
-			driver_stats[stat_key] += stat_value # change_value je + ali -
-			driver_stats[Pros.STATS.HEALTH] = clamp(driver_stats[Pros.STATS.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
-			if driver_stats[Pros.STATS.HEALTH] == 0:
-				_die()
-		# driver
-		Pros.STATS.LIFE:
-			driver_stats[stat_key] += stat_value
-		Pros.STATS.GOALS_REACHED: # goal nodes names or duplicate?
-			driver_stats[stat_key].append(stat_value)
-		Pros.STATS.WINS: # level names
-			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-			driver_stats[stat_key].append(stat_value)
-			#			driver_stats[stat_key] += stat_value
-		# level
-		Pros.STATS.LEVEL_RANK:
-			driver_stats[stat_key] = stat_value
-		Pros.STATS.LEVEL_TIME: # na finished
-			driver_stats[stat_key] = stat_value
-		Pros.STATS.LAP_COUNT:
-			# dobiš level time in odšteješ prev lap level time
-			var lap_time: int = stat_value - prev_lap_level_time
-			prev_lap_level_time = stat_value
-			driver_stats[stat_key].append(lap_time)
-			# best lap
-			var curr_best_lap_time: float = driver_stats[Pros.STATS.BEST_LAP_TIME]
-			if not lap_time == 0:
-				if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
-					driver_stats[Pros.STATS.BEST_LAP_TIME] = lap_time
-					call_deferred("emit_signal", "stat_changed", driver_id, Pros.STATS.BEST_LAP_TIME, lap_time) # deferred da je za lap time signalom
-		Pros.STATS.LAP_TIME: # vsak frejm
-			var curr_game_time: float = stat_value
-			var lap_time: float = curr_game_time - prev_lap_level_time
-			driver_stats[stat_key] = lap_time
+			Pros.STATS.GOALS_REACHED: # goal nodes names or duplicate?
+				driver_stats[stat_key].append(stat_value)
+			Pros.STATS.WINS: # level names
+				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
+				driver_stats[stat_key].append(stat_value)
+				#			driver_stats[stat_key] += stat_value
+			# level
+			Pros.STATS.LEVEL_PROGRESS:
+				driver_stats[stat_key] = stat_value
+			Pros.STATS.LEVEL_RANK:
+				driver_stats[stat_key] = stat_value
+			Pros.STATS.LEVEL_TIME: # na finished
+				driver_stats[stat_key] = stat_value
+			Pros.STATS.LAP_COUNT:
+				# dobiš level time in odšteješ prev lap level time
+				var lap_time: int = stat_value - prev_lap_level_time
+				prev_lap_level_time = stat_value
+				driver_stats[stat_key].append(lap_time)
+				# best lap
+				var curr_best_lap_time: float = driver_stats[Pros.STATS.BEST_LAP_TIME]
+				if not lap_time == 0:
+					if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
+						driver_stats[Pros.STATS.BEST_LAP_TIME] = lap_time
+						call_deferred("emit_signal", "stat_changed", driver_id, Pros.STATS.BEST_LAP_TIME, lap_time) # deferred da je za lap time signalom
+			Pros.STATS.LAP_TIME: # vsak frejm
+				var curr_game_time: float = stat_value
+				var lap_time: float = curr_game_time - prev_lap_level_time
+				driver_stats[stat_key] = lap_time
 
-		_: # default
-			if stat_key in driver_stats:
-				driver_stats[stat_key] += stat_value
-			else:
-				print("stat is not legit: ", stat_key)
-				return
+			_: # default
+				if stat_key in driver_stats:
+					driver_stats[stat_key] += stat_value
+				else:
+					print("stat is not legit: ", stat_key)
+					return
 
 	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
 

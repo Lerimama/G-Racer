@@ -1,31 +1,36 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://game/gui/hud/ProgressBar.gd" type="Script" id=1]
-[ext_resource path="res://assets/gradient/progress_gradient.tres" type="Gradient" id=2]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=9]
 
 [sub_resource type="StyleBoxEmpty" id=8]
 
-[sub_resource type="GradientTexture" id=4]
-gradient = ExtResource( 2 )
+[sub_resource type="Gradient" id=10]
+offsets = PoolRealArray( 0, 0.4047, 0.493473, 0.5953, 1 )
+colors = PoolColorArray( 0.785156, 0, 0, 1, 0.988633, 0.905237, 0, 1, 1, 0.955809, 0, 1, 0.953608, 0.942456, 0.00266305, 1, 0, 0.667969, 0.0574036, 1 )
+
+[sub_resource type="GradientTexture" id=11]
+gradient = SubResource( 10 )
 width = 100
 
-[sub_resource type="StyleBoxEmpty" id=6]
-
 [node name="ProgressBar" type="Panel"]
-margin_top = 8.0
 margin_right = 376.0
-margin_bottom = 48.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 8, 8 )
+theme = ExtResource( 3 )
+custom_styles/panel = SubResource( 9 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
-stage_count = 3
 
 [node name="Undi" type="ColorRect" parent="."]
 show_behind_parent = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.235294 )
+color = Color( 0, 0, 0, 0.431373 )
 
 [node name="Bar" type="Panel" parent="."]
 show_behind_parent = true
@@ -39,50 +44,49 @@ custom_styles/panel = SubResource( 8 )
 
 [node name="TextureRect" type="TextureRect" parent="Bar"]
 show_behind_parent = true
-margin_right = 336.0
-margin_bottom = 32.0
+anchor_bottom = 1.0
+margin_right = 80.0
 rect_min_size = Vector2( 0, 8 )
 size_flags_horizontal = 0
-texture = SubResource( 4 )
+texture = SubResource( 11 )
 expand = true
 
-[node name="Ticks" type="HBoxContainer" parent="."]
+[node name="ColorRect" type="ColorRect" parent="Bar"]
+show_behind_parent = true
+anchor_bottom = 1.0
+margin_right = 80.0
+rect_min_size = Vector2( 0, 8 )
+mouse_filter = 1
+size_flags_horizontal = 0
+color = Color( 0.721569, 0.0862745, 0.0862745, 1 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Ticks" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-alignment = 1
-
-[node name="VSeparator" type="VSeparator" parent="Ticks"]
-margin_bottom = 40.0
-custom_constants/separation = 0
-custom_styles/separator = SubResource( 6 )
 
 [node name="Tick" type="ColorRect" parent="Ticks"]
 show_behind_parent = true
-margin_left = 60.0
-margin_right = 68.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 8, 8 )
-size_flags_horizontal = 6
+anchor_bottom = 1.0
+margin_right = 1.0
+rect_min_size = Vector2( 1.5, 8 )
 
 [node name="Tick_2" type="ColorRect" parent="Ticks"]
 show_behind_parent = true
+anchor_bottom = 1.0
 margin_left = 184.0
 margin_right = 192.0
-margin_bottom = 40.0
 rect_min_size = Vector2( 8, 8 )
 size_flags_horizontal = 6
 
 [node name="Tick_4" type="ColorRect" parent="Ticks"]
 show_behind_parent = true
+anchor_bottom = 1.0
 margin_left = 308.0
 margin_right = 316.0
-margin_bottom = 40.0
 rect_min_size = Vector2( 8, 8 )
 size_flags_horizontal = 6
 
-[node name="VSeparator_2" type="VSeparator" parent="Ticks"]
-margin_left = 376.0
-margin_right = 376.0
-margin_bottom = 40.0
-custom_constants/separation = 0
-custom_styles/separator = SubResource( 6 )
+[connection signal="resized" from="." to="." method="_on_ProgressBar_resized"]
