@@ -3,7 +3,7 @@ extends Node2D
 
 #signal weapon_triggered
 
-enum AI_STATE {OFF, RACE_TRACK, SEARCH, FOLLOW, HUNT, RACE_TO_GOAL, MOUSE_CLICK} # ai je možgan (driver in ne vehicle
+enum AI_STATE {OFF, ON_TRACK, SEARCH, FOLLOW, HUNT, REACH_GOAL, MOUSE_CLICK} # ai je možgan (driver in ne vehicle
 var ai_state: int = AI_STATE.OFF setget _change_ai_state
 
 enum BATTLE_STATE {NONE, BULLET, MISILE, MINA, TIME_BOMB, MALA, HOMER}
@@ -69,7 +69,7 @@ func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("no0"): # idle
 		self.ai_state = AI_STATE.OFF
 #	if Input.is_action_just_pressed("no1"): # idle
-#		self.ai_state = AI_STATE.RACE_TRACK
+#		self.ai_state = AI_STATE.ON_TRACK
 #	if Input.is_action_just_pressed("no2"): # race
 #		self.ai_state = AI_STATE.SEARCH
 #	if Input.is_action_pressed("no3"):
@@ -135,7 +135,7 @@ func _physics_process(delta: float) -> void:
 		if not Input.is_action_pressed("no1") and not Input.is_action_pressed("no2"): # debug ai on rotation
 
 			# target position
-			if ai_state == AI_STATE.RACE_TRACK:
+			if ai_state == AI_STATE.ON_TRACK:
 				vector_to_target = _get_tracking_position(ai_target) - global_position
 			elif ai_target:
 				vector_to_target = ai_target.global_position - global_position
@@ -184,7 +184,7 @@ func _drive_as_player(follow_mouse: bool = false): # _temp func
 		target_pos = get_global_mouse_position()
 	else:
 		# force on vehicle
-		if ai_state == AI_STATE.RACE_TRACK:
+		if ai_state == AI_STATE.ON_TRACK:
 			target_pos = _get_tracking_position(ai_target)
 #				vector_to_target = _get_tracking_position(ai_target) - global_position
 		elif ai_target:
@@ -246,7 +246,7 @@ func _state_machine(delta: float):
 		AI_STATE.OFF:
 			pass
 
-		AI_STATE.RACE_TRACK: # šiba po najbližji poti do tarče
+		AI_STATE.ON_TRACK: # šiba po najbližji poti do tarče
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				var driver_tracker_position: Vector2 = _get_tracking_position(ai_target)
 				navigation_agent.set_target_location(driver_tracker_position)
@@ -280,7 +280,7 @@ func _state_machine(delta: float):
 			_react_to_target(ai_target)
 			motion_manager.current_engine_power = motion_manager.max_engine_power
 
-		AI_STATE.RACE_TO_GOAL: # šiba do cilja po najbližji poti
+		AI_STATE.REACH_GOAL: # šiba do cilja po najbližji poti
 			# _temp ... se zgodi manjko tarče ... setaj goal tarčo drugje kot zdaj
 			if not navigation_agent.get_target_location() == ai_target.global_position:
 				navigation_agent.set_target_location(ai_target.global_position)
@@ -351,14 +351,6 @@ func _update_vision():
 		return
 
 
-func _change_ai_state_on_change_target(new_ai_target: Node2D):
-
-	match new_ai_target:
-		null: pass
-
-
-
-
 func _change_ai_state(new_ai_state: int):
 #	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
@@ -369,7 +361,7 @@ func _change_ai_state(new_ai_state: int):
 		AI_STATE.OFF:
 			ai_target = null
 			motion_manager.motion = motion_manager.MOTION.IDLE
-		AI_STATE.RACE_TRACK:
+		AI_STATE.ON_TRACK:
 			ai_target = vehicle.driver_tracker
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.SEARCH:
@@ -387,7 +379,7 @@ func _change_ai_state(new_ai_state: int):
 			# ai_target seta state mašina
 			target_ray.enabled = true
 			motion_manager.motion = motion_manager.MOTION.FWD
-		AI_STATE.RACE_TO_GOAL:
+		AI_STATE.REACH_GOAL:
 			if not goals_to_reach.empty():
 				ai_target = goals_to_reach[0]
 			# po pobranju novi ai_target postane next goal
@@ -502,15 +494,16 @@ func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
 	return true
 
 
-func on_goal_reached(goal_reached: Node2D):
+func on_goal_reached(goal_reached: Node2D, level_finish_line: Node2D):
 
 	goals_to_reach.erase(goal_reached)
 	if goals_to_reach.empty():
-		self.ai_state = AI_STATE.OFF
+		if level_finish_line.is_enabled:
+			ai_target = level_finish_line
+		else:
+			self.ai_state = AI_STATE.OFF
 	else:
 		ai_target = goals_to_reach.front()
-
-	prints("ai reacheed goal", goals_to_reach)
 
 
 # HELPERS ----------------------------------------------------------------------------------------------
@@ -662,24 +655,23 @@ func _sort_objects_by_ai_rank(stuff_1, stuff_2): # descending ... večji index j
 
 func on_game_start(game_level: Node2D): # od GMja
 
-	goals_to_reach = game_level.level_goals#.duplicate()
-
 	# random start
 	randomize()
 	var random_start_delay: float = rand_range(random_start_range[0], random_start_range[1])
 	yield(get_tree().create_timer(random_start_delay), "timeout")
 
-	# level track
+	# RACING_TRACK
 	if vehicle.driver_tracker:
-		self.ai_state = AI_STATE.RACE_TRACK
-	# level goals
-	elif not goals_to_reach.empty():
-		self.ai_state = AI_STATE.RACE_TO_GOAL
-	# level finish
-#	elif game_level.finish_line.is_enabled:
-#		ai_target = game_level.finish_line
-#		self.ai_state = AI_STATE.RACE_TO_GOAL
-	# free
+		self.ai_state = AI_STATE.ON_TRACK
+	# RACING_GOALS, BATTLE_GOALS
+	elif not game_level.level_goals.empty():
+		goals_to_reach = game_level.level_goals.duplicate()
+		self.ai_state = AI_STATE.REACH_GOAL
+	# BATTLE_GOALS
+	elif game_level.finish_line.is_enabled:
+		ai_target = game_level.finish_line
+		self.ai_state = AI_STATE.REACH_GOAL
+	# FREE_RIDE, BATTLE_
 	else:
 		self.ai_state = AI_STATE.SEARCH
 

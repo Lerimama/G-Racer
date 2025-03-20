@@ -16,9 +16,10 @@ uppercase = true
 [node name="Rect" type="ColorRect" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -50.0
-margin_top = -120.0
-margin_right = 50.0
-margin_bottom = -20.0
-rect_pivot_offset = Vector2( 50, 50 )
-color = Color( 0.827451, 0, 1, 1 )
+margin_left = -25.0
+margin_top = -96.0
+margin_right = 23.0
+margin_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_pivot_offset = Vector2( 48, 48 )

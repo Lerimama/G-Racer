@@ -98,8 +98,9 @@ func set_game(level_index_add: int = 0):
 	game_levels = Sets.game_levels
 	level_index += level_index_add
 
-	yield(_spawn_level(level_index), "completed")
-
+	yield(_spawn_level(level_index, Pros.start_driver_profiles.size()), "completed")
+#	yield(_spawn_level(level_index), "completed")
+#	yield(get_tree(), "idle_frame")
 	final_level_data["level_profile"] = level_profile
 	game_tracker.game_level = game_level
 
@@ -107,9 +108,10 @@ func set_game(level_index_add: int = 0):
 
 	# drivers
 	var drivers_on_start: Array = []
+	var level_start_positions: Dictionary = {}
 
 	if level_index == 0:
-		var level_start_positions: Array = game_level.get_start_positions(Pros.start_driver_profiles.size())
+		level_start_positions = game_level.level_start_positions # _get_start_positions(Pros.start_driver_profiles.size())
 		for driver_id_as_profile_key in Pros.start_driver_profiles:
 			var new_drivers_profile: Dictionary = Pros.start_driver_profiles[driver_id_as_profile_key]
 			final_drivers_data[driver_id_as_profile_key] = {}
@@ -123,9 +125,10 @@ func set_game(level_index_add: int = 0):
 		for driver_id in final_drivers_data:
 			if not final_drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK] == -1:
 				starting_driver_ids.append(driver_id)
-		var level_start_positions: Array = game_level.get_start_positions(starting_driver_ids.size())
+		level_start_positions = game_level.level_start_positions
+#		level_start_positions = game_level._get_start_positions(starting_driver_ids.size())
 		for driver_id in starting_driver_ids:
-			var new_driver: Vehicle = _spawn_vehicle(driver_id,  level_start_positions[starting_driver_ids.find(driver_id)])
+			var new_driver: Vehicle = _spawn_vehicle(driver_id, level_start_positions[starting_driver_ids.find(driver_id)])
 			drivers_on_start.append(new_driver)
 
 		# prenos stats v vehicle iz prejšnega levela in reset ... tihi, ker hud še ni spawnan
@@ -168,8 +171,12 @@ func set_game(level_index_add: int = 0):
 	# gui
 	gui.set_gui(drivers_on_start)
 
+	_game_intro(drivers_on_start, level_start_positions)
 
-func _game_intro():
+
+func _game_intro(starting_drivers: Array, driver_start_positions: Dictionary):
+
+	self.game_stage = GAME_STAGE.READY
 
 	# camera targets
 	if not Sets.mono_view_mode:
@@ -185,11 +192,13 @@ func _game_intro():
 
 	# drivers drive-in
 	var drive_in_time: float = 2
-	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
-		var drive_in_position: Vector2 = Vector2.ZERO
-		if game_level.start_line:
-			drive_in_position = game_level.start_line.drive_in_position_2d.global_position
-			driver.motion_manager.drive_in(drive_in_position, drive_in_time)
+	for driver in starting_drivers: # alt ... če bi čakal gameviews signal ... get_tree().get_nodes_in_group(Refs.group_drivers):
+		var driver_start_position: Vector2 = driver_start_positions[starting_drivers.find(driver)][0]
+		driver_start_position = Vector2.ZERO
+#		var drive_in_rotation: float = drive_in_positions[starting_drivers.find(driver)][1]
+#		driver.motion_manager.drive_in(drive_in_position, drive_in_rotation, 5)
+#		driver.motion_manager.drive_in(Vector2.ZERO, 0, drive_in_time)
+		driver.motion_manager.drive_in(driver_start_position, 0, drive_in_time)
 
 	# počakam, da odpelje
 	yield(get_tree().create_timer(drive_in_time),"timeout")
@@ -225,7 +234,7 @@ func _change_game_stage(new_game_stage: int):
 			if not game_sound.intro_jingle.is_playing(): # _temp
 				game_sound.intro_jingle.play()
 			Refs.ultimate_popup.hide() # skrijem pregame
-			_game_intro()
+#			_game_intro()
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 
@@ -262,7 +271,7 @@ func _change_game_stage(new_game_stage: int):
 			#			AudioServer.set_bus_mute(bus_index, true)
 
 
-func _spawn_level(new_level_index:int = 0):
+func _spawn_level(new_level_index:int, drivers_count: int):
 
 	# curr level off
 	if new_level_index > 0:
@@ -284,7 +293,7 @@ func _spawn_level(new_level_index:int = 0):
 	level_spawn_parent.add_child(new_level)
 	level_spawn_parent.move_child(new_level, 0)
 
-	yield(new_level.set_level(), "completed")
+	yield(new_level.set_level(drivers_count), "completed")
 
 	# setup
 
@@ -295,9 +304,11 @@ func _spawn_level(new_level_index:int = 0):
 			if not goal == new_level.finish_line:
 				goal.connect("reached_by", game_tracker, "_on_goal_reached")
 				goal.connect("tree_exiting", game_tracker, "_on_goal_exiting_tree", [goal])
+				# dodam tudi finish line rabim max pri statsih
+				# za prepoznavanje ali je v uporabi ali ne je bolje da je notri ali ni
 				level_profile["level_goals"].append(goal.name)
 
-	# finish line povežem posebej, ker drugače ne dela ok
+	# finish line povežem posebej, da ima posebej funkcijo
 	if new_level.finish_line.is_enabled:
 		new_level.finish_line.connect("reached_by", game_tracker, "_on_finish_crossed")
 
@@ -308,17 +319,23 @@ func _spawn_level(new_level_index:int = 0):
 	game_level = new_level
 
 
-func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
+func _spawn_vehicle(driver_id: String, start_position: Array):
 
 	var scene_name: String = "vehicle_scene"
 	var vehicle_type: int = Pros.VEHICLE.values()[0]
+	var spawn_position: Vector2 = start_position[0]
+	var spawn_rotation: float = start_position[1]
 
 	var NewVehicleInstance: PackedScene = Pros.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
 
 	new_vehicle.modulate.a = 0 # za intro
-	new_vehicle.rotation_degrees = game_level.start_line.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
-	new_vehicle.global_position = spawned_position
+#	new_vehicle.global_position = spawn_position
+#	new_vehicle.rotation_degrees = spawn_rotation - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_vehicle.global_position = spawn_position
+#	new_vehicle.rotation_degrees = game_level.start_line.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
+	new_vehicle.global_rotation = spawn_rotation# - deg2rad(90) # ob rotaciji 0 je default je obrnjen navzgor
+#	new_vehicle.global_rotation = game_level.start_positions_holder.global_rotation - deg2rad(90) # ob rotaciji 0 je default je obrnjen navzgor
 
 	new_vehicle.driver_id = driver_id
 	new_vehicle.default_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
@@ -363,4 +380,5 @@ func _spawn_vehicle(driver_id: String, spawned_position: Vector2):
 
 func _on_views_are_set():
 
-	self.game_stage = GAME_STAGE.READY
+#	self.game_stage = GAME_STAGE.READY
+	pass

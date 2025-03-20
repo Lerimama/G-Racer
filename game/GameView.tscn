@@ -21,6 +21,9 @@ render_target_update_mode = 3
 [node name="GameCamera" parent="Viewport" instance=ExtResource( 4 )]
 smoothing_speed = 20.0
 
+[node name="VisualizerLayer" parent="Viewport/GameCamera/Shaker" index="0"]
+visible = false
+
 [node name="HudHolder_obs" type="Control" parent="Viewport"]
 margin_right = 2560.0
 margin_bottom = 1440.0

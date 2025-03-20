@@ -23,7 +23,7 @@ export var reach_goals_in_sequence: bool = false
 
 var available_pickable_positions: Array = []
 var level_goals: Array = [] # pobere povezane
-var level_start_positions: Array = []
+var level_start_positions: Dictionary = {} # [global_position, global_rotation]
 var level_rank_type: int = 0
 
 var camera_limits: Control # če ga ni, kamera nima limita
@@ -50,10 +50,8 @@ func _ready() -> void:
 
 	Refs.node_creation_parent = $NCP # rabim, da lahko hitro vse spucam in resetiram level
 
-	get_start_positions(4)
 
-
-func set_level():
+func set_level(drivers_count: int):
 
 	match level_type:
 
@@ -72,28 +70,28 @@ func set_level():
 			tracking_line.is_enabled = true
 			finish_line.is_enabled = true
 			level_goals.clear()
-			start_positions_holder.global_position = start_line_position_2d.global_position
+#			start_positions_holder.global_position = start_line_position_2d.global_position
+#			start_positions_holder.global_rotation = start_line_position_2d.global_rotation
 
 		LEVEL_TYPE.RACING_GOALS:
 			level_rank_type = Pros.RANK_BY.TIME
 			start_line.is_enabled = true
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = true
-			set_level_goals()
-			level_goals.append(finish_line)
+			_set_level_goals()
 
 		LEVEL_TYPE.BATTLE_GOALS:
 			level_rank_type = Pros.RANK_BY.POINTS
 			start_line.is_enabled = false
-			finish_line.is_enabled = false
 			tracking_line.is_enabled = false
-			set_level_goals()
+			finish_line.is_enabled = false
+			_set_level_goals()
 
 		LEVEL_TYPE.BATTLE_SCALPS:
 			level_rank_type = Pros.RANK_BY.POINTS
 			start_line.is_enabled = false
-			finish_line.is_enabled = false
 			tracking_line.is_enabled = false
+			finish_line.is_enabled = false
 			level_goals.clear()
 			available_pickable_positions = level_navigation.get_navigation_points()
 			_spawn_random_pickables()
@@ -101,11 +99,11 @@ func set_level():
 		LEVEL_TYPE.MISSION:
 			level_rank_type = Pros.RANK_BY.NONE
 			start_line.is_enabled = false
-			finish_line.is_enabled = false
 			tracking_line.is_enabled = false
-			set_level_goals()
+			finish_line.is_enabled = false
+			_set_level_goals()
 
-	yield(get_tree(), "idle_frame") # za "completed"
+	#	yield(get_tree(), "idle_frame") # za "completed" ... ne rabim ker yildam spodaj
 
 	# camera
 	if camera_limits_path:
@@ -114,16 +112,12 @@ func set_level():
 			var edge_collision: CollisionShape2D = edge_rect.get_child(0).get_child(0)
 			edge_collision.disabled = false # def je disabled
 
-	# set start positions
-	for driver_position in start_positions_holder.get_child(0).get_children():
-		var curr_driver_position: Vector2 = driver_position.get_child(0).global_position
-		level_start_positions.append(curr_driver_position)
-
 	_set_level_objects()
-	_resize_to_level_size()
+	_set_to_level_size()
+	yield(_set_start_positions(drivers_count), "completed")
 
 
-func set_level_goals(): # kliče tudi GM na nov krog
+func _set_level_goals(): # kliče tudi GM na nov krog
 
 	level_goals.clear()
 	var goal_reached_signal_name: String = "reached_by"
@@ -138,17 +132,30 @@ func set_level_goals(): # kliče tudi GM na nov krog
 			goal.hide()
 
 
-
-func get_start_positions(new_positions_count: int):
+func _set_start_positions(new_positions_count: int):
+	# naredim slovar start pozicij z rotacijo
 
 	level_start_positions.clear()
 	start_positions_holder.position_count = new_positions_count
 
-	for count in new_positions_count:
-		var new_driver_position: Vector2 = start_positions_holder.get_child(0).get_child(count).get_child(0).global_position
-		level_start_positions.append(new_driver_position)
+	yield(get_tree(), "idle_frame")
 
-	return level_start_positions
+	for count in new_positions_count:
+		var driver_position_2d: Position2D = start_positions_holder.active_position_2ds[count]
+		var new_driver_position: Vector2 = driver_position_2d.global_position
+		var new_driver_rotation: float = driver_position_2d.global_rotation
+		# pozicije na gridu ni potrenbo adaptirat ... nevemzakaj
+		if not start_positions_holder.positions_shape == start_positions_holder.POSITIONS_SHAPE.GRID:
+			new_driver_position += start_positions_holder.global_position
+			new_driver_position += start_positions_holder.current_positions_holder.rect_position
+		level_start_positions[count] = [new_driver_position, new_driver_rotation]
+
+#	yield(get_tree(), "idle_frame")
+##	yield(get_tree(), "idle_frame")
+#	for pos in start_positions_holder.active_position_2ds:
+#		Mets.spawn_indikator(pos.global_position + Vector2.RIGHT * 100 * start_positions_holder.active_position_2ds.find(pos), Color.red, 0, Refs.node_creation_parent)
+
+#	return level_start_positions
 
 
 func _set_level_objects():
@@ -197,6 +204,22 @@ func _set_level_objects():
 			$Objects.add_child(new_object_scene)
 
 
+func _set_to_level_size():
+
+	if camera_limits: # OPT najdi rešitev če ni
+
+		# naberem rektangle za risajzat
+		var nodes_to_resize: Array = []
+		nodes_to_resize.append_array($Background.get_children())
+
+		# resize and set
+		for node in nodes_to_resize:
+			node.rect_position = camera_limits.rect_position
+			node.rect_size = camera_limits.rect_size
+			if node.material:
+				node.material.set_shader_param("node_size", camera_limits.rect_size)
+
+
 func _spawn_random_pickables(): # SCALPS and FREE
 
 	if get_tree().get_nodes_in_group(Refs.group_pickables).size() <= Sets.pickables_count_limit - 1:
@@ -235,30 +258,3 @@ func _on_random_pickable_exited(pickable_position: Vector2): # samo za random ty
 	_spawn_pickable(Pros.pickable_profiles.keys().pick_random())
 
 
-func _resize_to_level_size():
-
-	if camera_limits: # OPT najdi rešitev če ni
-
-		# naberem rektangle za risajzat
-		var nodes_to_resize: Array = []
-		nodes_to_resize.append_array($Background.get_children())
-
-		# resize and set
-		for node in nodes_to_resize:
-			node.rect_position = camera_limits.rect_position
-			node.rect_size = camera_limits.rect_size
-			if node.material:
-				node.material.set_shader_param("node_size", camera_limits.rect_size)
-
-
-func _get_tilemap_cells(tilemap: TileMap):
-	# kadar me zanimajo tudi prazne celice
-
-	var tilemap_cells: Array = [] # celice v gridu
-
-	for x in tilemap.get_used_rect().size.x:
-		for y in tilemap.get_used_rect().size.y:
-			var cell: Vector2 = Vector2(x, y)
-			tilemap_cells.append(cell)
-
-	return tilemap_cells

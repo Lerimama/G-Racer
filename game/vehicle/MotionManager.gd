@@ -56,7 +56,7 @@ var mass_manipulate_part: float = 0.5
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no0"): # idle
-		motion = MOTION.DISSARAY
+		self.motion = MOTION.DISSARAY
 
 
 func _ready() -> void:
@@ -327,9 +327,9 @@ func _drive_vigl_vagl(vigl_vagl_amount: float):
 
 
 
-func drive_in(drive_in_position: Vector2, drive_in_time: float = 1):
+func drive_in(drive_in_position: Vector2, drive_in_rotation: float = 0, drive_in_time: float = 1):
 
-	motion = MOTION.DISSABLED
+	self.motion = MOTION.DISSABLED
 
 	managed_vehicle.collision_shape.set_deferred("disabled", true) # lahko pride iz stene
 	managed_vehicle.modulate.a = 1
@@ -338,11 +338,12 @@ func drive_in(drive_in_position: Vector2, drive_in_time: float = 1):
 	managed_vehicle.turn_on()
 
 	# premaknem ga nazaj in zapeljem do štartne pozicije na katero je spawnan
-	var vector_to_drive_in_position: Vector2 = - Vector2.RIGHT.rotated(global_rotation) * (drive_in_position - global_position).length()
-	managed_vehicle.body_state.transform.origin = global_position + vector_to_drive_in_position
-	var drive_in_tween = get_tree().create_tween()
-	drive_in_tween.tween_property(managed_vehicle.body_state, "transform:origin", global_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	yield(drive_in_tween, "finished")
+#	var vector_to_drive_in_position: Vector2 = Vector2.RIGHT.rotated(global_rotation) * global_position.length()
+#	managed_vehicle.body_state.transform.origin = global_position - vector_to_drive_in_position
+#	# animiram do orig pozicije
+#	var drive_in_tween = get_tree().create_tween()
+#	drive_in_tween.tween_property(managed_vehicle.body_state, "transform:origin", global_position, drive_in_time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+#	yield(drive_in_tween, "finished")
 
 	managed_vehicle.collision_shape.set_deferred("disabled", false)
 
@@ -352,7 +353,7 @@ func drive_out(drive_out_position: Vector2, drive_out_time: float = 1):
 	managed_vehicle.collision_shape.set_deferred("disabled", true)
 	managed_vehicle.is_active = false
 
-	motion = MOTION.FWD
+	self.motion = MOTION.FWD
 
 	force_rotation = Vector2.RIGHT.angle_to_point(drive_out_position)
 	force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()

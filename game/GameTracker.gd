@@ -253,7 +253,7 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 			# dodam med dosežene
 			reaching_driver.update_stat(Pros.STATS.GOALS_REACHED, reached_goal)
 			if reaching_driver.controller.has_method("on_goal_reached"):# is_in_group(Refs.group_ai):
-				reaching_driver.controller.on_goal_reached(reached_goal)
+				reaching_driver.controller.on_goal_reached(reached_goal, game.game_level.finish_line)
 
 			# preverim če so doseženi vsi cilji ... razen finish line
 			var all_goals_reached: bool = true
@@ -282,53 +282,34 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 
 
-func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
+func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
 #	prints("over finish lined", crossing_driver)
 
-	if game.game_stage >= game.GAME_STAGE.PLAYING:# and crossing_driver.is_active == true: # > ai lahko pride v cilj po igri
-	#		print("crossed", game_level.level_goals.size())
+	if game.game_stage >= game.GAME_STAGE.PLAYING:# >= da ai lahko pride v cilj po igri
 
+		# LAP
 		var has_lap_conditions: bool = false
-
-		# goals
-		if game_level.level_type == game_level.LEVEL_TYPE.RACING_GOALS:
-			if game_level.level_goals.size() == 1 and game_level.level_goals[0] == game_level.finish_line:
-				# goali (razen finiša) so doseženi in kvefrijani ... razen finish line
+		if crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED].size() >= game_level.level_goals.size(): # lahko ji ima več ker se goali lahko kvefrijajo
+			# če ni igra z goali je 0 == 0 => true
+			has_lap_conditions = true
+		if game_level.tracking_line.is_enabled:
+			if game_level.tracking_line.checkpoints_count == 0:
 				has_lap_conditions = true
-			elif crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED].size() == game_level.level_goals.size() - 1: # -1 za finish line
-				# goali (razen finiša) so doseženi in še obstajajo
+			elif crossing_driver.driver_tracker.all_checkpoints_reached:
 				has_lap_conditions = true
-
-		# track
-		elif game_level.level_type == game_level.LEVEL_TYPE.RACING_TRACK:
-			# tracking čekpoints
-			if game_level.tracking_line.checkpoints_count == 0: #  vsaj 1 čekpoint je normalno tudi za 1 krog
-				has_lap_conditions = true
-			else:
-				if crossing_driver.driver_tracker.all_checkpoints_reached:
-					crossing_driver.driver_tracker.checked_checkpoints.clear()
-					has_lap_conditions = true
 
 		if has_lap_conditions:
-		#			prints("is legit", game.level_profile["level_laps"], crossing_driver.driver_stats[Pros.STATS.LAP_COUNT])
-
 			crossing_driver.update_stat(Pros.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
 
+			# FINISH
 			var all_laps_finished: bool = false
-
-			if game_level.level_type == game_level.LEVEL_TYPE.RACING_GOALS:
-				crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED] = []
-				if crossing_driver.controller.has_method("on_goal_reached"): # AI
-					crossing_driver.controller.on_goal_reached(game_level.finish_line)
-				# če ni več ciljev razen finish line, tudi ni več krogov
-				if game_level.level_goals.size() - 1:
-					all_laps_finished = true
-					game_level.level_goals.clear() # ni nujno
-
-			# če ni krogov je lap count, da stat ve za prehod cilja
+			if game_level.level_type == game_level.LEVEL_TYPE.RACING_GOALS and game_level.level_goals.empty():
+				# če so bili vsi cilji kvefrijani, ni več krogov ...
+				# možnost tega ni dobra praksa ... pazi pri postavljanju levelov
+				all_laps_finished = true
 			if crossing_driver.driver_stats[Pros.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 				all_laps_finished = true
-
+			# cilj
 			if all_laps_finished:
 				game.game_sound.big_horn.play()
 				crossing_driver.update_stat(Pros.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
@@ -337,8 +318,13 @@ func _on_finish_crossed(crossing_driver: Vehicle): # sproži finish line  # temp
 				if game_level.finish_line.is_enabled:
 					drive_out_position = game_level.finish_line.drive_out_position_2d.global_position
 				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
+			# nov krog
 			else:
 				game.game_sound.little_horn.play()
+				# restirajo za nov krog
+				crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED] = []
+#				crossing_driver.driver_tracker.checked_checkpoints.clear()
+
 
 func _on_goal_exiting_tree(exiting_goal: Node2D):
 	# brišem iz level_goals na levelu, ker uporabljam tracking igre

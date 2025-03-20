@@ -5,7 +5,6 @@
 [ext_resource path="res://game/level/elements/StartPositions.gd" type="Script" id=3]
 [ext_resource path="res://game/level/elements/Navigation.gd" type="Script" id=4]
 [ext_resource path="res://game/level/elements/DriverPosition.tscn" type="PackedScene" id=5]
-[ext_resource path="res://_obs/StartPosition.tscn" type="PackedScene" id=6]
 [ext_resource path="res://game/level/elements/LevelFinish.gd" type="Script" id=7]
 [ext_resource path="res://game/level/Level.gd" type="Script" id=8]
 [ext_resource path="res://game/level/elements/LevelTrack.gd" type="Script" id=9]
@@ -26,6 +25,7 @@
 [ext_resource path="res://game/level/elements/StartLights.tscn" type="PackedScene" id=25]
 [ext_resource path="res://assets/materials/ground_dust.material" type="Material" id=26]
 [ext_resource path="res://game/level/LevelEnvironment.tscn" type="PackedScene" id=27]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=28]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
 seed = 7
@@ -133,6 +133,7 @@ margin_bottom = 2049.0
 color = Color( 0.882353, 0.85098, 0.835294, 1 )
 
 [node name="Ground" type="Node2D" parent="."]
+visible = false
 z_index = -1
 
 [node name="BackColor" type="ColorRect" parent="Ground"]
@@ -195,11 +196,8 @@ __meta__ = {
 [node name="Elements" type="Node" parent="."]
 
 [node name="StartLine" type="Node2D" parent="Elements"]
-position = Vector2( 9, 23 )
+position = Vector2( 1, 23 )
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="StartLights" parent="Elements/StartLine" instance=ExtResource( 25 )]
 position = Vector2( -7.62939e-06, -120 )
@@ -231,93 +229,113 @@ __meta__ = {
 }
 
 [node name="EditorRectLabel" parent="Elements/StartLine/DriveInPosition" instance=ExtResource( 16 )]
+modulate = Color( 1, 0, 0.984314, 1 )
 text = "drive in
 distance"
 
 [node name="StartPosition" type="Position2D" parent="Elements/StartLine"]
-position = Vector2( -8, 105 )
-rotation = -1.5708
+position = Vector2( -1, 24 )
 __meta__ = {
+"_edit_group_": true,
 "_gizmo_extents_": 200.0
 }
 
-[node name="Polygon2D" type="Polygon2D" parent="Elements/StartLine/StartPosition"]
+[node name="DriverPosition" type="Control" parent="Elements/StartLine/StartPosition"]
 show_behind_parent = true
-position = Vector2( -136, 9.15527e-05 )
-color = Color( 0.313726, 0.317647, 1, 0.92549 )
+margin_left = -159.999
+margin_top = 0.00183105
+margin_right = 160.001
+margin_bottom = 400.002
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 320, 400 )
+rect_pivot_offset = Vector2( 399, 536 )
+theme = ExtResource( 28 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Panel" type="Panel" parent="Elements/StartLine/StartPosition/DriverPosition"]
+modulate = Color( 0.313726, 0.317647, 1, 0.92549 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CenterSetter" type="Control" parent="Elements/StartLine/StartPosition/DriverPosition"]
+modulate = Color( 0.313726, 0.317647, 1, 0.92549 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 20.0
+margin_bottom = 20.0
+
+[node name="StartPosition" type="Position2D" parent="Elements/StartLine/StartPosition/DriverPosition/CenterSetter"]
+position = Vector2( 20, 20 )
+rotation = -1.5708
+__meta__ = {
+"_gizmo_extents_": 120.0
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Elements/StartLine/StartPosition/DriverPosition/CenterSetter/StartPosition"]
+show_behind_parent = true
 polygon = PoolVector2Array( -104, -56.0004, 96.0002, -55.9998, 112, -39.9996, 112, 40.0004, 95.9998, 56.0002, -104, 55.9996, -104, 0 )
 
-[node name="StartPositions" type="Node2D" parent="Elements/StartLine"]
-visible = false
-modulate = Color( 1, 1, 1, 0.470588 )
-position = Vector2( 0, 192 )
-
-[node name="StartPosition1" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( -335, 5 )
-
-[node name="StartPosition2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( -104, 0 )
-
-[node name="StartPosition3" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( 104, 0 )
-
-[node name="StartPosition4" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( 312, 0 )
-
-[node name="StartPosition1_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( -335, 285 )
-
-[node name="StartPosition2_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( -104, 280 )
-
-[node name="StartPosition3_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( 104, 280 )
-
-[node name="StartPosition4_2" parent="Elements/StartLine/StartPositions" instance=ExtResource( 6 )]
-position = Vector2( 312, 280 )
+[node name="Rect" type="ColorRect" parent="Elements/StartLine/StartPosition/DriverPosition"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -16.0
+margin_top = -15.0
+margin_right = 16.0
+margin_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_pivot_offset = Vector2( -0.00109863, -0.00183105 )
+color = Color( 0.12549, 0, 1, 0.92549 )
 
 [node name="StartPositions" type="Node2D" parent="Elements"]
-modulate = Color( 1, 1, 1, 0.470588 )
-position = Vector2( -27, 656 )
+modulate = Color( 1, 1, 1, 0.560784 )
+position = Vector2( 0, 479 )
 script = ExtResource( 3 )
-__meta__ = {
-"_edit_group_": true
-}
+position_count = 3
 
-[node name="PositionsFlow" type="HFlowContainer" parent="Elements/StartPositions"]
-margin_left = -84.0
-margin_right = 84.0
-margin_bottom = 1120.0
+[node name="DriverPosition" parent="Elements/StartPositions" instance=ExtResource( 5 )]
+visible = false
+margin_left = 0.0
+margin_top = 0.0
+margin_right = 144.0
+margin_bottom = 256.0
+rect_pivot_offset = Vector2( 399, 536 )
+
+[node name="PositionsGrid" type="HFlowContainer" parent="Elements/StartPositions"]
+margin_right = 728.0
+margin_bottom = 2128.0
 grow_horizontal = 2
 rect_min_size = Vector2( 168, 0 )
-custom_constants/vseparation = 32
-custom_constants/hseparation = 32
+custom_constants/vseparation = 320
+custom_constants/hseparation = 320
 alignment = 1
-__meta__ = {
-"_edit_group_": true
-}
 
-[node name="DriverPosition" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
-margin_left = 12.0
-margin_right = 156.0
+[node name="PositionsRandom" type="Panel" parent="Elements/StartPositions"]
+margin_left = -776.0
+margin_top = -568.0
+margin_right = 784.0
+margin_bottom = 569.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource( 28 )
 
-[node name="DriverPosition_2" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
-margin_left = 12.0
-margin_top = 288.0
-margin_right = 156.0
-margin_bottom = 544.0
+[node name="PositionsCirco" type="Panel" parent="Elements/StartPositions"]
+margin_left = -496.0
+margin_top = -71.0
+margin_right = 1340.0
+margin_bottom = 1746.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource( 28 )
 
-[node name="DriverPosition_3" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
-margin_left = 12.0
-margin_top = 576.0
-margin_right = 156.0
-margin_bottom = 832.0
-
-[node name="DriverPosition_4" parent="Elements/StartPositions/PositionsFlow" instance=ExtResource( 5 )]
-margin_left = 12.0
-margin_top = 864.0
-margin_right = 156.0
-margin_bottom = 1120.0
+[node name="PositionsCustom" type="Control" parent="Elements/StartPositions"]
 
 [node name="FinishLine" type="Node2D" parent="Elements"]
 position = Vector2( -1918, 1843 )
@@ -386,14 +404,18 @@ scale = Vector2( 2, 2 )
 texture = ExtResource( 21 )
 
 [node name="StartCameraPosition" type="Position2D" parent="Elements"]
-position = Vector2( 9, 23 )
+position = Vector2( 0, 135 )
 
 [node name="EditorRectLabel" parent="Elements/StartCameraPosition" instance=ExtResource( 16 )]
+modulate = Color( 0, 0.905882, 0.886275, 1 )
 text = "camera
 position"
 
 [node name="NCP" type="Node2D" parent="."]
 z_index = 1
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="CameraLimits" type="Panel" parent="."]
 modulate = Color( 1, 0.960938, 0, 1 )
@@ -403,7 +425,8 @@ margin_right = 5536.0
 margin_bottom = 4048.0
 theme = ExtResource( 24 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="EdgeL" type="ColorRect" parent="CameraLimits"]
@@ -497,6 +520,7 @@ bus = "GameMusic"
 [node name="WorldEnvironment" parent="." instance=ExtResource( 27 )]
 
 [node name="__Labels" type="Node2D" parent="."]
+visible = false
 position = Vector2( -4670, 34 )
 __meta__ = {
 "_edit_lock_": true

@@ -116,6 +116,19 @@ func get_absolute_z_index(target: Node2D) -> int:
 	return z_index
 
 
+func get_tilemap_cells(tilemap: TileMap):
+	# kadar me zanimajo tudi prazne celice
+
+	var tilemap_cells: Array = [] # celice v gridu
+
+	for x in tilemap.get_used_rect().size.x:
+		for y in tilemap.get_used_rect().size.y:
+			var cell: Vector2 = Vector2(x, y)
+			tilemap_cells.append(cell)
+
+	return tilemap_cells
+
+
 func remove_chidren_and_get_template(node_with_children: Array, delete_all: bool = false):
 
 	# grab template
@@ -221,7 +234,7 @@ var all_indikator_lines_spawned: Array = []
 onready var indikator: PackedScene = preload("res://common/debug/DebugIndikator.tscn")
 
 
-func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false, scale_by: float = 10):
+func spawn_indikator(pos: Vector2, col: Color = Color.red, rot: float = 0, parent_node = get_tree().root, clear_spawned_before: bool = false, scale_by: float = 50):
 
 	if clear_spawned_before:
 		for indi in all_indikators_spawned:

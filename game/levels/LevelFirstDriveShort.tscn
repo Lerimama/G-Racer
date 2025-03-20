@@ -23,7 +23,7 @@ __meta__ = {
 - sky > 10"
 }
 level_type = 2
-level_goals_paths = [ NodePath("PickableBullet"), NodePath("PickableMina"), NodePath("PickableGas"), NodePath("PickableCash"), NodePath("PickableBullet2") ]
+level_goals_paths = [ NodePath("PickableBullet"), NodePath("PickableBullet2") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0
@@ -36,6 +36,33 @@ visible = false
 points = PoolVector2Array( 20, -470, 1280, -746, 168, -1446, -1552, -1838, -1176, -2726, 596, -2662, 1024, -1934, -84, -1475, -1348, -1384, -1486, -838, -37, -473 )
 default_color = Color( 1, 0.960938, 0, 1 )
 
+[node name="StartPosition" parent="Elements/StartLine" index="3"]
+position = Vector2( -1, 776 )
+
+[node name="StartPositions" parent="Elements" index="1"]
+position_count = 1
+positions_shape = 3
+
+[node name="PositionsGrid" parent="Elements/StartPositions" index="1"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -320.0
+margin_top = 353.0
+margin_right = 1376.0
+margin_bottom = 1066.0
+
+[node name="PositionsRandom" parent="Elements/StartPositions" index="2"]
+margin_left = -1168.0
+margin_top = -247.0
+margin_right = 320.0
+margin_bottom = 1329.0
+
+[node name="PositionsCirco" parent="Elements/StartPositions" index="3"]
+margin_left = -1512.0
+margin_top = 1129.0
+margin_right = -368.0
+margin_bottom = 2345.0
+
 [node name="FinishLine" parent="Elements" index="2"]
 position = Vector2( -4, -808 )
 
@@ -45,12 +72,6 @@ curve = SubResource( 1 )
 [node name="Tracker" parent="Elements/TrackingLine" index="0"]
 position = Vector2( -7, 64 )
 rotation = -1.58973
-
-[node name="CameraLimits" parent="." index="11"]
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
 
 [node name="__ScreenSize" parent="." index="15"]
 visible = false

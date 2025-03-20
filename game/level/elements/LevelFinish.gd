@@ -35,4 +35,5 @@ func _change_enabled(new_enabled: bool):
 func _on_FinishLine_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Refs.group_drivers):
-		emit_signal("reached_by", body)
+#		emit_signal("reached_by", body)
+		emit_signal("reached_by", self, body)
