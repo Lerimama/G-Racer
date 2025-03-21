@@ -41,8 +41,8 @@ func _ready():
 	playing_field.hide()
 
 	test_ui.hide()
-	if OS.is_debug_build():
-		test_ui.show()
+#	if OS.is_debug_build():
+#		test_ui.show()
 
 
 func _process(delta: float) -> void:

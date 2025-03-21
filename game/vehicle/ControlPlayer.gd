@@ -31,11 +31,34 @@ func _input(event: InputEvent) -> void:
 		# select weapon
 		if Input.is_action_just_pressed(selector_action):
 			selected_item_index += 1
-			if selected_item_index > vehicle.enabled_triggering_equipment.size() - 1: # poskrbi tudi za primer, da je samo en item
-				selected_item_index = 0
-			elif selected_item_index < 0:
-				selected_item_index = vehicle.enabled_triggering_equipment.size() - 1
-			emit_signal("item_selected", selected_item_index)
+
+			var selectable_items_count = vehicle.enabled_triggering_equipment.size()
+			if vehicle.group_equipment_by_type:
+				# adaptiram index izbranega counterja
+				var uniq_weapon_types: Array = []
+				for equipment in vehicle.enabled_triggering_equipment:
+					if not equipment.weapon_type in uniq_weapon_types:
+						uniq_weapon_types.append(equipment.weapon_type)
+				var grouped_selectable_items_count = uniq_weapon_types.size()
+				if selected_item_index > selectable_items_count - 1: # poskrbi tudi za primer, da je samo en item
+					selected_item_index = 0
+				elif selected_item_index < 0:
+					selected_item_index = selectable_items_count - 1
+				# adaptiram index izbranega equipmenta
+				# normalno je izbran nasldnji index, v tem primeru pa ponovno izberem index prvega
+#				for equipment in vehicle.enabled_triggering_equipment:
+#					if not equipment.weapon_type in uniq_weapon_types:
+#						uniq_weapon_types.append(equipment.weapon_type)
+				emit_signal("item_selected", selected_item_index)
+			else:
+				if selected_item_index > selectable_items_count - 1: # poskrbi tudi za primer, da je samo en item
+					selected_item_index = 0
+				elif selected_item_index < 0:
+					selected_item_index = selectable_items_count - 1
+				emit_signal("item_selected", selected_item_index)
+
+
+
 			# weapon ai on/ off
 			var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
 			if selected_weapon.use_ai:
@@ -44,15 +67,19 @@ func _input(event: InputEvent) -> void:
 				for weapon in vehicle.enabled_triggering_equipment:
 					weapon.weapon_ai.ai_enabled = false
 		# shoot
-		if Input.is_action_pressed(shoot_action):
+#		if Input.is_action_pressed(shoot_action):
+		if Input.is_action_just_pressed(shoot_action):
+#			return
 			var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
-			if selected_weapon.has_method("_on_weapon_triggered"):
-				selected_weapon._on_weapon_triggered()
-			# še vsa orožja istega tipa
-			if vehicle.group_weapons_by_type:
-				for weapon in vehicle.weapons_holder.get_children():
+			if vehicle.group_equipment_by_type:
+#				for weapon in vehicle.weapons_holder.get_children():
+#					if weapon.weapon_type == selected_weapon.weapon_type:
+#						weapon._on_weapon_triggered()
+				for weapon in vehicle.enabled_triggering_equipment:
 					if weapon.weapon_type == selected_weapon.weapon_type:
 						weapon._on_weapon_triggered()
+			else:
+				selected_weapon._on_weapon_triggered()
 
 		# revup
 #		if motion_manager.motion == motion_manager.MOTION.DISSABLED:

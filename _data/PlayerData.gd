@@ -2,7 +2,7 @@ extends Resource
 class_name PlayerData
 
 
-#var default_driver_profile: Dictionary = {
+#var def_driver_profile: Dictionary = {
 #	"driver_avatar": preload("res://home/avatar_david.tres"),
 #	"driver_color": Refs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 #	"controller_type": CONTROLLER_TYPE.ARROWS,

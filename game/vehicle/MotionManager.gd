@@ -22,7 +22,6 @@ const AKA_ZERO_MASS: float = 1.0 # malo vpliva vseeno more met vsaka od mas
 # lahko zamštraš indexe, kasneje to seta igra
 export (int) var selected_rotation_motion: int = ROTATION_MOTION.DEFAULT
 export (int) var selected_idle_rotation: int = ROTATION_MOTION.SPIN
-var _is_ai: bool = false
 
 var force_on_vehicle: Vector2 = Vector2.ZERO
 var torque_on_vehicle: float = 0
@@ -52,12 +51,30 @@ var max_engine_power_rotation_adapt: float = 1.1
 var front_mass_bias: float = 0.5
 var mass_manipulate_part: float = 0.5
 
+var is_rotating: bool = false
+var is_viglvagl: bool = false
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
-	if Input.is_action_just_pressed("no0"): # idle
-		self.motion = MOTION.DISSARAY
+	if Input.is_action_just_pressed("no1"): # idle
+		is_viglvagl = true
+		torque_on_vehicle = -100_00000
+	elif Input.is_action_just_pressed("no2"): # idle
+		is_viglvagl = true
+		torque_on_vehicle = 100_00000
+	elif Input.is_action_just_released("no1") or Input.is_action_just_released("no2"): # idle
+		is_viglvagl = false
+		torque_on_vehicle = 0
 
+	if Input.is_action_just_pressed("no3"): # idle
+		is_rotating = true
+		torque_on_vehicle = -100_00000
+	elif Input.is_action_just_pressed("no4"): # idle
+		is_rotating = true
+		torque_on_vehicle = 100_00000
+	elif Input.is_action_just_released("no3") or Input.is_action_just_released("no4"): # idle
+		is_rotating = false
+		torque_on_vehicle = 0
 
 func _ready() -> void:
 
@@ -109,28 +126,40 @@ func _motion_machine():
 
 	match motion:
 		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
-			if _is_ai:
+			if managed_vehicle.driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
 				# force_rotation = proti tarči AI ... določa AI
 #				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
 				pass
 			else:
-				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
-				# vigl vagl z vplivom na silo
-				#				if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
-				#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
-				#					if damage_effect_scale > 0:
-				#						var vigl_limit: float = deg2rad(10)
-				#						if not is_vigling:
-				#							is_vigling = true
-				#							var vigl_tween = get_tree().create_tween()
-				#							vigl_tween.tween_property(self, "force_rotation", vigl_limit / 3* predznak, 0.1).as_relative()
-				#							yield(vigl_tween, "finished")
-				#							predznak = - predznak
-				#							is_vigling = false
-				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
+#				force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+				if is_viglvagl:
+					var angle_diff: float = force_rotation - (managed_vehicle.global_rotation - deg2rad(90))
+					force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+					force_rotation -= angle_diff
+					force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
+				elif is_rotating:
+					var angle_diff: float = force_rotation - (managed_vehicle.global_rotation - deg2rad(90))
+					force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+					force_rotation -= angle_diff
+					# vigl vagl z vplivom na silo
+					#				if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+					#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
+					#					if damage_effect_scale > 0:
+					#						var vigl_limit: float = deg2rad(10)
+					#						if not is_vigling:
+					#							is_vigling = true
+					#							var vigl_tween = get_tree().create_tween()
+					#							vigl_tween.tween_property(self, "force_rotation", vigl_limit / 3* predznak, 0.1).as_relative()
+					#							yield(vigl_tween, "finished")
+					#							predznak = - predznak
+					#							is_vigling = false
+					force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
+				else:
+					force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
+					force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 #			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
-			if _is_ai:
+			if managed_vehicle.driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
 				# force_rotation = proti tarči AI ... določa AI
 				force_on_vehicle = Vector2.LEFT.rotated(force_rotation) * _accelarate_to_engine_power()
 			else:
@@ -276,7 +305,7 @@ func _set_rotation_parameters(is_reverse: bool = false):
 			max_engine_rotation_deg = 90
 		ROTATION_MOTION.SLIDE:
 			#				force_on_vehicle = Vector2.DOWN.rotated(managed_vehicle.rotation) * rotation_dir
-			#				linear_damp = managed_vehicle.default_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
+			#				linear_damp = managed_vehicle.def_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
 			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
 
@@ -296,7 +325,7 @@ func _set_default_parameters(): # fizični, ne vsebinski22
 			managed_vehicle.front_mass.linear_damp = 0
 			managed_vehicle.rear_mass.linear_damp = 0
 
-			if _is_ai:
+			if managed_vehicle.driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
 				max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 				managed_vehicle.angular_damp = 16
 			else:

@@ -20,12 +20,12 @@ onready var avatar_btn: TextureButton = $Content/AvatarBtn
 
 func _ready() -> void:
 
-	driver_profile = Pros.default_driver_profile.duplicate()
+	driver_profile = Pros.def_driver_profile.duplicate()
 	if driver_profile: # debug za tiste, ki so ne spawnani in se na redi spucajo
 		if is_ai:
 			driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
-			driver_profile["driver_avatar"] = Pros.ai_profile["ai_avatar"]
-			driver_profile["driver_name_id"] = Pros.ai_profile["ai_name_id"]
+			driver_profile["driver_avatar"] = Pros.def_ai_driver_profile["ai_avatar"]
+			driver_profile["driver_name_id"] = Pros.def_ai_driver_profile["ai_name_id"]
 			driver_profile["driver_color"] = Pros.colors[driver_index]
 		else:
 			driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
@@ -141,8 +141,8 @@ func _on_TransformBtn_pressed() -> void:
 
 	if is_ai:
 		driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
-		driver_profile["driver_avatar"] = Pros.ai_profile["ai_avatar"]
-		driver_profile["driver_name_id"] = Pros.ai_profile["ai_name_id"]
+		driver_profile["driver_avatar"] = Pros.def_ai_driver_profile["ai_avatar"]
+		driver_profile["driver_name_id"] = Pros.def_ai_driver_profile["ai_name_id"]
 	else:
 		driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 		driver_profile["driver_name_id"] = Pros.names[driver_index]

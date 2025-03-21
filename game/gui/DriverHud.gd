@@ -5,12 +5,12 @@ var hud_driver: Vehicle
 var is_set: bool = false
 var driver_is_ai: bool = false
 
-var counters_with_items: Dictionary = {} # item in njegovo orožja
+var counters_with_items: Dictionary = {} # {counter: item_1 node}
 var item_counter_template: Control
 var drivers_viewport: Viewport
 var always_open: bool = true
 var selector_open_time: float = 0
-var hide_empty: bool = false
+var hide_on_empty: bool = false
 
 onready var selector: Control = $Selector
 onready var local_offset: Vector2 = Vector2(- selector.rect_size.x, 100)
@@ -49,10 +49,24 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 		else:
 			gas_bar.hide()
 	else:
-		# items
 		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
-		for item in hud_driver.enabled_triggering_equipment:
-			_add_item_counter(item)
+
+		if hud_driver.group_equipment_by_type:
+			var added_weapon_types: Array = [] # separirano, dokler weapo in eq ne združim
+			var added_equipment_types: Array = []
+			for item in hud_driver.enabled_triggering_equipment:
+				if "weapon_type" in item:
+					if not item.weapon_type in added_weapon_types:
+						added_weapon_types.append(item.weapon_type)
+						_add_item_counter(item)
+				elif "equipment_type" in item:
+					if not item.equipment_type in added_equipment_types:
+						added_equipment_types.append(item.equipment_type)
+						_add_item_counter(item)
+		else:
+			for item in hud_driver.enabled_triggering_equipment:
+				_add_item_counter(item)
+
 		is_set = true
 		_on_item_selected(0)
 
@@ -100,13 +114,30 @@ func _process(delta: float) -> void:
 			if selector.visible:
 				selector.hide()
 		else:
-			for counter in counters_with_items:
-				counter.get_node("CountLabel").text = "%02d" % counters_with_items[counter].load_count
-				if hide_empty:
-					if counters_with_items[counter].load_count > 0:
-						show()
-					else:
+			if hud_driver.group_equipment_by_type:
+				# naberem tipe za vsako equped zadevo
+				var all_items_types: Array = []
+				for weapon in hud_driver.enabled_triggering_equipment:
+					all_items_types.append(weapon.weapon_type)
+				# za vsako tip med counterji, preverim koliko je enakih med equipanimi tipi
+				for counter in counters_with_items:
+					# množim/delim stat vrednosti s številom
+					var grouped_wepons_count: int = all_items_types.count(counters_with_items[counter].weapon_type)
+					var total_load_count: int = counters_with_items[counter].load_count * grouped_wepons_count
+					counter.get_node("CountLabel").text = "%02d" % total_load_count
+					# skrijem če je prazno?
+					if hide_on_empty and counters_with_items[counter].load_count <= 0:
 						hide()
+					elif not visible:
+						show()
+			else:
+				for counter in counters_with_items:
+					counter.get_node("CountLabel").text = "%02d" % counters_with_items[counter].load_count
+					# skrijem če je prazno?
+					if hide_on_empty and counters_with_items[counter].load_count <= 0:
+						hide()
+					elif not visible:
+						show()
 
 
 func _add_item_counter(new_item: Node2D):
@@ -119,12 +150,11 @@ func _add_item_counter(new_item: Node2D):
 	new_selector_item.get_node("Icon").texture = new_item.load_icon
 
 
-func _remove_item_counter(item_to_remove: Control):
+func _remove_counter(counter_to_remove: Control): # ni v uporabi
 
-	counters_with_items.erase(item_to_remove)
-	item_to_remove.queue_free()
+	counters_with_items.erase(counter_to_remove)
+	counter_to_remove.queue_free()
 
-#var selected_item: Node2D # index znotraj aktivnih orožij
 
 func _on_item_selected(selected_index: int):
 
@@ -144,11 +174,11 @@ func _on_item_selected(selected_index: int):
 #			selected_item = counters_with_items[new_selected_item]
 
 			# LNF
-			for item in counters_with_items:
-				if item == new_selected_item:
-					item.modulate.a = 1
+			for counter in counters_with_items:
+				if counter == new_selected_item:
+					counter.modulate.a = 1
 				else:
-					item.modulate.a = 0.32
+					counter.modulate.a = 0.32
 		# timer
 		if not always_open:
 			selector_timer.start(selector_open_time)

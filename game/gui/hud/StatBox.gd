@@ -69,7 +69,11 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 	elif rank_by == Pros.RANK_BY.POINTS:
 		for stat in rank_by_points_stats:
 			stat.get_parent().get_parent().show()
-	else:
+	elif rank_by == Pros.RANK_BY.NONE:
+		use_level_progress_bar = false
+		lap_count = 0
+		goal_count = 0
+		LEVEL_PROGRESS.get_parent().get_parent().show()
 		for stat in rank_by_time_stat:
 			stat.get_parent().get_parent().hide()
 		for stat in rank_by_points_stats:
@@ -90,18 +94,17 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 			LIFE.hide()
 
 	# progress bar
+	var level_progress_container: MarginContainer = LEVEL_PROGRESS.get_parent().get_parent()
 	if use_level_progress_bar:
-		# resize to node
-		var level_progress_container: MarginContainer = LEVEL_PROGRESS.get_parent().get_parent()
+		# resize to node ... on top se ravna po prvem POD, ostali po prvem NAD
 		var above_or_below_index: int = 0
-		# on top se ravna po prvem POD, ostali po prvem NAD
 		if level_progress_container == get_child(0):
 			above_or_below_index = 1
 		else:
 			above_or_below_index = get_children().find(level_progress_container) - 1
 		var measuring_node: Control = get_child(above_or_below_index)
 		measuring_node.connect("resized", self, "_on_measure_by_resized", [level_progress_container, measuring_node])
-
+		# update
 		if goal_count > 0: # goals se kažejo tudi če so krogi
 			if rank_by == Pros.RANK_BY.TIME:
 				goal_count += 1 # dodam finish line kot končen cilj
@@ -111,6 +114,8 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 		LEVEL_PROGRESS.bar_color = statbox_color
 
 		level_progress_container.show()
+	else:
+		level_progress_container.hide()
 
 	# lap / goal counters ------------
 

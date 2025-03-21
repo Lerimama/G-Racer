@@ -323,7 +323,7 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 				game.game_sound.little_horn.play()
 				# restirajo za nov krog
 				crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED] = []
-#				crossing_driver.driver_tracker.checked_checkpoints.clear()
+				crossing_driver.driver_tracker.checked_checkpoints.clear()
 
 
 func _on_goal_exiting_tree(exiting_goal: Node2D):
@@ -381,16 +381,10 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	_check_for_game_end()
 
 
-
-
-#		driver.call_deferred("update_stat", Pros.STATS.GOALS_REACHED, null)
-#		driver.update_stat(Pros.STATS.GOALS_REACHED, 0) # 0 pomeni apdejt displaya, ne pa vrednosti
-
-
 # SORTERS ------------------------------------------------------------------------------------------------------------
 
 
-func _sort_drivers_by_laps(driver_1: Node2D, driver_2: Node2D): # desc
+func _sort_drivers_by_laps(driver_1: Vehicle, driver_2: Vehicle): # desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
 	var driver_1_lap_count: int = driver_1.driver_stats[Pros.STATS.LAP_COUNT].size()
@@ -400,16 +394,15 @@ func _sort_drivers_by_laps(driver_1: Node2D, driver_2: Node2D): # desc
 	return false
 
 
-func _sort_trackers_by_offset(driver_tracker_1, driver_tracker_2): # asc
-	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
+func _sort_trackers_by_offset(driver_tracker_1: PathFollow2D, driver_tracker_2: PathFollow2D): # desc ... TRUE = A before B
 
 	if driver_tracker_1.offset > driver_tracker_2.offset:
 		return true
 	return false
 
 
-func _sort_drivers_by_goals_reached(driver_1: Node2D, driver_2: Node2D):# asc
-	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
+func _sort_drivers_by_goals_reached(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
+	# if TRUE, A before B
 
 	var driver_1_goals_reached_count: int = driver_1.driver_stats[Pros.STATS.GOALS_REACHED].size()
 	var driver_2_goals_reached_count: int = driver_2.driver_stats[Pros.STATS.GOALS_REACHED].size()
@@ -418,18 +411,10 @@ func _sort_drivers_by_goals_reached(driver_1: Node2D, driver_2: Node2D):# asc
 	return false
 
 
-func _sort_drivers_by_points(driver_1: Node2D, driver_2: Node2D):# desc
-	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
+func _sort_drivers_by_points(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
 
 	var driver_1_points: int = driver_1.driver_stats[Pros.STATS.POINTS]
 	var driver_2_points: int = driver_2.driver_stats[Pros.STATS.POINTS]
 	if driver_1_points > driver_2_points:
 		return true
-	return false
-
-
-func _sort_drivers_by_speed(driver_1 , driver_2): # desc ... ne uporabljam
-
-	if driver_1.velocity.length() > driver_2.velocity.length():
-	    return true
 	return false

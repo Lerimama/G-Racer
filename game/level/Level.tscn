@@ -295,13 +295,12 @@ rect_pivot_offset = Vector2( -0.00109863, -0.00183105 )
 color = Color( 0.12549, 0, 1, 0.92549 )
 
 [node name="StartPositions" type="Node2D" parent="Elements"]
-modulate = Color( 1, 1, 1, 0.560784 )
+visible = false
+modulate = Color( 1, 1, 1, 0 )
 position = Vector2( 0, 479 )
 script = ExtResource( 3 )
-position_count = 3
 
 [node name="DriverPosition" parent="Elements/StartPositions" instance=ExtResource( 5 )]
-visible = false
 margin_left = 0.0
 margin_top = 0.0
 margin_right = 144.0
@@ -591,6 +590,7 @@ scale = Vector2( 0.552754, 0.552754 )
 texture = ExtResource( 20 )
 
 [node name="__ScreenSize" type="ReferenceRect" parent="."]
+visible = false
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 margin_right = 2560.0
 margin_bottom = 1440.0
@@ -611,6 +611,7 @@ __meta__ = {
 }
 
 [node name="__WorldMeters" type="Control" parent="."]
+visible = false
 margin_left = -1128.0
 margin_top = -1600.0
 margin_right = -824.0

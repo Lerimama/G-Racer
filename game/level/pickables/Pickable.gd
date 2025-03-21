@@ -37,7 +37,7 @@ onready var detect_area: CollisionShape2D = $CollisionShape2D
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var picked_sound: AudioStreamPlayer = $Sounds/Picked
 onready var collision_shape: CollisionShape2D = $CollisionShape2D
-
+onready var label: Label = $Label
 
 
 func _ready() -> void:
@@ -52,7 +52,7 @@ func _ready() -> void:
 		picked_sound.stream = picked_sound_stream
 	#	icon.texture = icon_texture
 	#	animation_player.play("edge_rotate")
-
+	label.text = label.text % target_rank
 
 func _on_Item_body_entered(body: Node) -> void:
 #		printt("pickable", Pros.PICKABLE.keys()[pickable_key])

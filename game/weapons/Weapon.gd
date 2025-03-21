@@ -1,7 +1,5 @@
 extends Node2D
-class_name Weapon
-
-#signal weapon_shot
+#class_name Weapon
 
 enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER, MALA}
 enum WEAPON_AMMO {BULLET, MISILE, MINA, SMALL, HOMER} # kot v profilih
@@ -22,7 +20,6 @@ onready var fire_particles: Particles2D = $WeaponSprite/FireParticles
 onready var fire_cover_particles: Particles2D = $WeaponSprite/FireCoverParticles
 onready var smoke_particles: Particles2D = $WeaponSprite/SmokeParticles
 onready var weapon_ai: RayCast2D = $WeaponAI
-
 
 # neu
 export (float, 0, 1, 0.1) var power_usage: float = 0 # še ni implementirano
@@ -63,7 +60,7 @@ func _on_weapon_triggered(): # kliče controller, za prepoznavanje "triggering_w
 	if is_set:
 		if load_count > 0 and weapon_reloaded:
 			_shoot()
-			self.load_count -= 1
+			self.load_count = -1
 
 
 func _shoot():

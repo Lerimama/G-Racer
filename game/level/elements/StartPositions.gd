@@ -11,9 +11,10 @@ enum ROTATION_TYPE {NONE, RANDOM, FOLLOW_LEFT, FOLLOW_RIGHT, LOOK_AWAY, TO_CENTE
 export (ROTATION_TYPE) var circle_rotation_type: int = 0 setget _change_rotation_type
 
 var active_position_2ds: Array = []
+var current_positions_holder: Control # za adaptiranje ob grebanju iz levela
+
 onready var driver_position_template: Control = $DriverPosition
 
-var current_positions_holder: Control # za adaptiranje ob grebanju iz levela
 
 func _ready() -> void:
 
@@ -23,7 +24,6 @@ func _ready() -> void:
 
 
 func _change_positions_count(new_positions_count: int):
-
 	if not is_node_ready(): # za tool mora bit včasih off
 		return
 
@@ -38,12 +38,15 @@ func _change_positions_count(new_positions_count: int):
 	match positions_shape:
 
 		POSITIONS_SHAPE.GRID:
-			current_positions_holder = $PositionsGrid # za tool je node
+			# pokažem grid ... če je skrit, potem container imajo vsi pozicij 0
+			# na koncu ga spet skrijem
+			show()
+			current_positions_holder = $PositionsGrid # za tool
 			for count in position_count: # template je že notri
 				var new_start_position: Control = driver_position_template.duplicate()
 				var start_position_2d: Position2D = new_start_position.get_child(0).get_child(0)
-				start_position_2d.global_rotation = _get_rotatation_by_type(rotation_per_position_deg * count)
 				current_positions_holder.add_child(new_start_position)
+				start_position_2d.global_rotation = _get_rotatation_by_type(rotation_per_position_deg * count)
 				active_position_2ds.append(start_position_2d)
 				new_start_position.show() # za tool ... itak je v igri cel node skrit
 
@@ -90,6 +93,34 @@ func _change_positions_count(new_positions_count: int):
 				new_start_position.show() # za tool ... itak je v igri cel node skrit
 
 		POSITIONS_SHAPE.CUSTOM: pass # ročno postavljanje v editorju
+
+	# skrijem na koncu, da ima grid svoje pozicije
+	call_deferred("hide")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 func _get_rotatation_by_type(rotation_angle: float):

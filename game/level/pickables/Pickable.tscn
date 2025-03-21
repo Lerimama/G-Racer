@@ -1,11 +1,13 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/textures/atlas_pickables.png" type="Texture" id=3]
 [ext_resource path="res://game/level/pickables/Pickable.gd" type="Script" id=4]
 [ext_resource path="res://assets/sounds/pickables/pickup___39026__wildweasel__keypickup.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=6]
 [ext_resource path="res://common/tex/light_2.png" type="Texture" id=7]
+[ext_resource path="res://assets/theme/fonts/big_font.tres" type="DynamicFont" id=8]
 
 [sub_resource type="Image" id=577]
 data = {
@@ -123,6 +125,17 @@ shadow_color = Color( 0.976471, 0, 0, 0.807843 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/RESET = SubResource( 571 )
 anims/edge_rotate = SubResource( 569 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = -64.0
+margin_top = 56.0
+margin_right = 72.0
+margin_bottom = 104.0
+grow_horizontal = 2
+theme = ExtResource( 6 )
+custom_fonts/font = ExtResource( 8 )
+text = "TRANK: %02d"
+align = 1
 
 [connection signal="body_entered" from="." to="." method="_on_Item_body_entered"]
 [connection signal="finished" from="Sounds/Picked" to="." method="_on_Picked_finished"]

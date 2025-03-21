@@ -75,13 +75,14 @@ alignment = 1
 margin_left = 18.0
 margin_right = 82.0
 margin_bottom = 98.0
+grow_horizontal = 2
 
 [node name="Icon" type="TextureRect" parent="Selector/Feature"]
 margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
+size_flags_horizontal = 4
 texture = ExtResource( 3 )
-expand = true
 
 [node name="CountLabel" type="Label" parent="Selector/Feature"]
 margin_top = 68.0
@@ -92,6 +93,7 @@ rect_min_size = Vector2( 48, 0 )
 custom_fonts/font = ExtResource( 2 )
 text = "000"
 align = 1
+percent_visible = -0.333333
 __meta__ = {
 "_editor_description_": ""
 }

@@ -80,7 +80,7 @@ var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse
 var game_levels: Array = []
 #var game_levels: Array = [Pros.LEVELS.FIRST_DRIVE_SHORT, Pros.LEVELS.FIRST_DRIVE_SHORT]
 
-var default_game_settings_resource: Resource = preload("res://game/game_settings_def.tres")
+var def_game_settings_resource: Resource = preload("res://game/game_settings_def.tres")
 
 
 func _ready() -> void:
@@ -129,18 +129,18 @@ func _apply_debug_settings():
 
 
 	var drivers_on_game_start: Array = ["JOU"]
-#	drivers_on_game_start = [ "JOU", "MOU"]
+	drivers_on_game_start = [ "JOU", "MOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU"]
-	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
+#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]
 
 
 	Pros.start_driver_profiles = {}
 	for driver_id in drivers_on_game_start:
-		Pros.start_driver_profiles[driver_id] = Pros.default_driver_profile.duplicate()
+		Pros.start_driver_profiles[driver_id] = Pros.def_driver_profile.duplicate()
 
 	for driver_id in drivers_on_game_start:
-		Pros.start_driver_profiles[driver_id] = Pros.default_driver_profile.duplicate()
+		Pros.start_driver_profiles[driver_id] = Pros.def_driver_profile.duplicate()
 		Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 		if drivers_on_game_start.find(driver_id) == 0:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
@@ -150,7 +150,7 @@ func _apply_debug_settings():
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_red
 			Pros.start_driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
-#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 2:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
 #			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
@@ -164,7 +164,7 @@ func _apply_debug_settings():
 
 func start_debug():
 
-	load_saved_game_settings(default_game_settings_resource) # _temp ... loas sevad game bo na game reload
+	load_saved_game_settings(def_game_settings_resource) # _temp ... loas sevad game bo na game reload
 	_apply_debug_settings()
 	_set_game_settings_per_level()
 

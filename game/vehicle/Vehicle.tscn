@@ -92,7 +92,6 @@ contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 7 )
 engines_path = NodePath("Engines")
-group_weapons_by_type = false
 vehicle_motion_profile = ExtResource( 1 )
 
 [node name="Controller" type="Node2D" parent="."]

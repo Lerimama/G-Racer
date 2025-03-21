@@ -22,8 +22,7 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
-level_type = 2
-level_goals_paths = [ NodePath("PickableBullet"), NodePath("PickableBullet2") ]
+level_goals_paths = [ NodePath("PickableGas") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0
@@ -39,29 +38,24 @@ default_color = Color( 1, 0.960938, 0, 1 )
 [node name="StartPosition" parent="Elements/StartLine" index="3"]
 position = Vector2( -1, 776 )
 
-[node name="StartPositions" parent="Elements" index="1"]
-position_count = 1
-positions_shape = 3
-
 [node name="PositionsGrid" parent="Elements/StartPositions" index="1"]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -320.0
-margin_top = 353.0
-margin_right = 1376.0
-margin_bottom = 1066.0
+margin_left = -848.0
+margin_right = 848.0
+margin_bottom = 713.0
 
 [node name="PositionsRandom" parent="Elements/StartPositions" index="2"]
-margin_left = -1168.0
-margin_top = -247.0
-margin_right = 320.0
-margin_bottom = 1329.0
+margin_left = -752.0
+margin_top = -1175.0
+margin_right = 736.0
+margin_bottom = 401.0
 
 [node name="PositionsCirco" parent="Elements/StartPositions" index="3"]
-margin_left = -1512.0
-margin_top = 1129.0
-margin_right = -368.0
-margin_bottom = 2345.0
+margin_left = -544.0
+margin_top = -983.0
+margin_right = 600.0
+margin_bottom = 233.0
 
 [node name="FinishLine" parent="Elements" index="2"]
 position = Vector2( -4, -808 )
@@ -74,7 +68,6 @@ position = Vector2( -7, 64 )
 rotation = -1.58973
 
 [node name="__ScreenSize" parent="." index="15"]
-visible = false
 margin_left = -2565.0
 margin_top = -2900.0
 margin_right = -5.0
@@ -82,19 +75,19 @@ margin_bottom = -1460.0
 rect_scale = Vector2( 2, 2 )
 
 [node name="PickableBullet" parent="." index="16" instance=ExtResource( 2 )]
-position = Vector2( 219, -438 )
+position = Vector2( 584, -352 )
 
 [node name="PickableMina" parent="." index="17" instance=ExtResource( 4 )]
-position = Vector2( -212, -822 )
+position = Vector2( -248, -1128 )
 
 [node name="PickableBullet2" parent="." index="18" instance=ExtResource( 2 )]
-position = Vector2( -378, -443 )
+position = Vector2( -1136, -1176 )
 
 [node name="PickableCash" parent="." index="19" instance=ExtResource( 6 )]
-position = Vector2( -582, -667 )
+position = Vector2( 600, -1096 )
 
 [node name="PickableGas" parent="." index="20" instance=ExtResource( 12 )]
-position = Vector2( -657, -467 )
+position = Vector2( -1128, -184 )
 
 [node name="__WorldMeters" parent="." index="21"]
 margin_left = -982.0

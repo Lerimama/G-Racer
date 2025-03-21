@@ -7,7 +7,6 @@ enum WEAPON_TYPE {GUN, TURRET, LAUNCHER, DROPPER, MALA}
 
 export (WEAPON_TYPE) var weapon_type: int = 4
 
-
 enum DAMAGE_TYPE {EXPLODE, CUT, HIT, TRAVEL} # enako kot breaker
 export (DAMAGE_TYPE) var damage_type = DAMAGE_TYPE.HIT
 
@@ -17,10 +16,12 @@ export var hit_damage: float = 1
 export (Array, PackedScene) var travel_fx: Array
 export (Array, PackedScene) var hit_fx: Array
 export (Texture) var load_icon: Texture = null # uni ime
+
+var spawner: Node # more bti isto ime kot ga ima ammo
 var load_count: int = 1 # da ni errorja pri preverjanju štetja
 
 var influenced_bodies: Array = []
-var mala_owner: Node2D
+var weapon_owner: Node2D
 var is_set: bool = false
 onready var collision_poly: CollisionPolygon2D = $CollisionPolygon2D
 
@@ -42,8 +43,8 @@ func _physics_process(delta: float) -> void:
 
 func set_weapon(owner_node: Node2D):
 
-	mala_owner = owner_node
-	elevation = mala_owner.elevation + elevation
+	weapon_owner = owner_node
+	elevation = weapon_owner.elevation + elevation
 	collision_poly.set_deferred("disabled", false)
 	monitoring = true
 	is_set = true
@@ -51,19 +52,15 @@ func set_weapon(owner_node: Node2D):
 
 func _on_detect_collision(body):
 
-	if body.has_method("on_hit") and not body == mala_owner:
+	if body.has_method("on_hit") and not body == weapon_owner:
 		if not body in influenced_bodies:
 			influenced_bodies.append(body)
 
 		_spawn_fx(hit_fx, true, Refs.node_creation_parent)
 
 
-func _on_weapon_triggered(trigger_owner: Node2D):
-	pass
+func _shoot():
 
-
-func _shoot(weapon_owner: Node2D):
-#
 	var no_use_disabled = true
 
 

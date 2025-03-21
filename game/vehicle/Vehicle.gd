@@ -8,7 +8,7 @@ signal stat_changed (stats_owner_id, driver_stats) # vehicle in damage
 export var height: float = 0 # na redi potegne iz pro
 export var elevation: float = 0
 export (NodePath) var engines_path: String  # _temp ... engines
-export var group_weapons_by_type: bool = true
+export var group_equipment_by_type: bool = true
 
 var is_active: bool = false setget _change_activity # predvsem za pošiljanje signala GMju
 var velocity: Vector2 = Vector2.ZERO
@@ -18,7 +18,7 @@ var driver_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
 var weapon_stats: Dictionary
-var default_vehicle_profile: Dictionary
+var def_vehicle_profile: Dictionary
 var vehicle_camera: Camera2D # spawner
 
 # iz vehicle profila
@@ -33,7 +33,7 @@ var health_effect_factor: float
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 
 # tracking
-var target_rank: int
+var target_rank: int = 0
 var revive_time: float = 2
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 var body_state: Physics2DDirectBodyState
@@ -84,19 +84,25 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_pressed("no1"): # idle
 		if driver_id == "MOU":
-			_revive()
-		else:
-			motion_manager.boost_vehicle()
-	if Input.is_action_pressed("no2"): # race
-#		if driver_id == "JOU":
-		update_stat(Pros.STATS.HEALTH, -0.1)
+#			print("transform:origin", body_state.get_angular_velocity())
+#			var xform = body_state.get_transform()
+#			xform = xform.rotated(deg2rad(1))
+##			xform.origin = Vector2.ONE
+#			body_state.set_transform(xform)
+#			set_applied_torque(10000000000)
+#			transform.origin *= 10
+			print("after", body_state.get_angular_velocity())
 
-	if Input.is_action_pressed("no3"): # race
-		update_stat(Pros.STATS.HEALTH, 0.1)
-	if Input.is_action_pressed("no4"): # race
-		update_stat(Pros.STATS.GAS, -100)
-	if Input.is_action_pressed("no5"): # race
-		update_stat(Pros.STATS.GAS, 100)
+#	if Input.is_action_pressed("no2"): # race
+##		if driver_id == "JOU":
+#		update_stat(Pros.STATS.HEALTH, -0.1)
+#
+#	if Input.is_action_pressed("no3"): # race
+#		update_stat(Pros.STATS.HEALTH, 0.1)
+#	if Input.is_action_pressed("no4"): # race
+#		update_stat(Pros.STATS.GAS, -100)
+#	if Input.is_action_pressed("no5"): # race
+#		update_stat(Pros.STATS.GAS, 100)
 
 
 func _ready() -> void:
@@ -117,13 +123,16 @@ func _ready() -> void:
 		target_rank = driver_profile["target_rank"]
 
 	_load_vehicle_parameters()
-	motion_manager.set_script(default_vehicle_profile["motion_manager_path"])
+	motion_manager.set_script(def_vehicle_profile["motion_manager_path"])
 	_spawn_driver_controller()
-	_set_weapons_and_staff()
+	_set_equipment()
 
 
 func _process(delta: float) -> void:
 
+#	if driver_id == "JOU":
+#		print("---------------")
+#		print(weapon_stats)
 	# debug trail
 	_drawing_trail_controls(delta)
 
@@ -255,30 +264,28 @@ func _change_activity(new_is_active: bool):
 # SET -------------------------------------------------------------------------------------------------
 
 
-func _set_weapons_and_staff():
+func _set_equipment():
 
 	# set weapons
 	for weapon in weapons_holder.get_children():
 		# če je opremljeno na pozicijo
 		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
-		var legit: bool = true
+#		var legit: bool = true
 		if weapon in equip_positions.positions_equiped.values():
 			weapon.set_weapon(self)
 			weapon_stats[weapon] = weapon.load_count
-
-			# on set
-			var used_for_triggering: bool = true
-			if weapon.weapon_type == weapon.WEAPON_TYPE.MALA: # temp MALA not used for trggering
-				used_for_triggering = false
-			if group_weapons_by_type:
-				for trigg_weapon in enabled_triggering_equipment:
-					if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
-						used_for_triggering = false
-			if used_for_triggering:
-				if weapon.has_method("_on_weapon_triggered"):
-					enabled_triggering_equipment.append(weapon)
+			if not weapon.weapon_type == weapon.WEAPON_TYPE.MALA:
+				enabled_triggering_equipment.append(weapon)
 		else:
 			weapon.hide()
+
+	# set grouped
+#	if group_equipment_by_type:
+#		for trigg_weapon in enabled_triggering_equipment:
+#			if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
+#				used_for_triggering = false
+
+
 
 	# set equipement
 	for equip in equipment.get_children():
@@ -294,7 +301,6 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 
 	if vehicle_motion_profile:
 		# vehicle
-		# vehicle_motion_profile.target_rank = target_rank ker je drivejrev
 		vehicle_motion_profile.height = height
 		vehicle_motion_profile.driving_elevation = driving_elevation
 		vehicle_motion_profile.gas_tank_size = gas_tank_size
@@ -302,7 +308,7 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 		# vehicle_motion_profile.gas_usage_idle = gas_usage_idle
 		# vehicle_motion_profile.masa = masa
 		vehicle_motion_profile.on_hit_disabled_time = on_hit_disabled_time
-		vehicle_motion_profile.group_weapons_by_type = group_weapons_by_type
+		vehicle_motion_profile.group_equipment_by_type = group_equipment_by_type
 		vehicle_motion_profile.health_effect_factor = health_effect_factor
 		vehicle_motion_profile.heal_rate = heal_rate
 		# motion manager
@@ -311,15 +317,14 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 		vehicle_motion_profile.fast_start_power_addon = motion_manager.fast_start_power_addon
 		vehicle_motion_profile.max_engine_power_rotation_adapt = motion_manager.max_engine_power_rotation_adapt
 	else:
-		default_vehicle_profile["health_effect_factor"] = health_effect_factor
-		default_vehicle_profile["heal_rate"] = heal_rate
-		default_vehicle_profile["on_hit_disabled_time"] = on_hit_disabled_time
-		default_vehicle_profile["target_rank"] = target_rank
-		default_vehicle_profile["height"] = height
-		default_vehicle_profile["driving_elevation"] = driving_elevation
-		default_vehicle_profile["gas_tank_size"] = gas_tank_size
-		default_vehicle_profile["gas_usage"] = gas_usage
-		default_vehicle_profile["gas_usage_idle"] = gas_usage_idle
+		def_vehicle_profile["health_effect_factor"] = health_effect_factor
+		def_vehicle_profile["heal_rate"] = heal_rate
+		def_vehicle_profile["on_hit_disabled_time"] = on_hit_disabled_time
+		def_vehicle_profile["height"] = height
+		def_vehicle_profile["driving_elevation"] = driving_elevation
+		def_vehicle_profile["gas_tank_size"] = gas_tank_size
+		def_vehicle_profile["gas_usage"] = gas_usage
+		def_vehicle_profile["gas_usage_idle"] = gas_usage_idle
 
 
 func _load_vehicle_parameters(): # vsebinski, ne fizični
@@ -328,29 +333,27 @@ func _load_vehicle_parameters(): # vsebinski, ne fizični
 		health_effect_factor = vehicle_motion_profile.health_effect_factor
 		heal_rate = vehicle_motion_profile.heal_rate
 		on_hit_disabled_time = vehicle_motion_profile.on_hit_disabled_time
-		target_rank = vehicle_motion_profile.target_rank
 		height = vehicle_motion_profile.height
 		driving_elevation = vehicle_motion_profile.driving_elevation
 		gas_tank_size = vehicle_motion_profile.gas_tank_size
 		gas_usage = vehicle_motion_profile.gas_usage
 		gas_usage_idle = vehicle_motion_profile.gas_usage_idle
 	else:
-		health_effect_factor = default_vehicle_profile["health_effect_factor"]
-		heal_rate = default_vehicle_profile["heal_rate"]
-		on_hit_disabled_time = default_vehicle_profile["on_hit_disabled_time"]
-		target_rank = default_vehicle_profile["target_rank"]
-		height = default_vehicle_profile["height"]
-		driving_elevation = default_vehicle_profile["driving_elevation"]
-		gas_tank_size = default_vehicle_profile["gas_tank_size"]
-		gas_usage = default_vehicle_profile["gas_usage"]
-		gas_usage_idle = default_vehicle_profile["gas_usage_idle"]
+		health_effect_factor = def_vehicle_profile["health_effect_factor"]
+		heal_rate = def_vehicle_profile["heal_rate"]
+		on_hit_disabled_time = def_vehicle_profile["on_hit_disabled_time"]
+		height = def_vehicle_profile["height"]
+		driving_elevation = def_vehicle_profile["driving_elevation"]
+		gas_tank_size = def_vehicle_profile["gas_tank_size"]
+		gas_usage = def_vehicle_profile["gas_usage"]
+		gas_usage_idle = def_vehicle_profile["gas_usage_idle"]
 
 
 func _spawn_driver_controller():
 
 	var DriverController: PackedScene
 	if driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
-		DriverController = Pros.ai_profile["driver_scene"]
+		DriverController = Pros.def_ai_driver_profile["driver_scene"]
 	else:
 		var drivers_driver_profile: Dictionary = Pros.controller_profiles[driver_profile["controller_type"]]
 		DriverController = drivers_driver_profile["driver_scene"]
@@ -457,6 +460,17 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		if Sets.life_as_scalp and driver_stats[Pros.STATS.HEALTH] <= 0:
 			if "spawner" in hit_by:
 				hit_by.spawner.update_stat(Pros.STATS.LIFE, 1)
+
+	if driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
+		# projektil, mina
+		if "spawner" in hit_by:
+			controller.react_on_hit(hit_by.spawner)
+		# mala, ...
+		elif "weapon_owner" in hit_by:
+			controller.react_on_hit(hit_by.weapon_owner)
+		else: # ne sme prit do tega not gud
+			print ("hit by brez ownerja: ", hit_by)
+			controller.react_on_hit(hit_by)
 
 
 func on_item_picked(pickable_key: int):

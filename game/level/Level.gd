@@ -70,8 +70,6 @@ func set_level(drivers_count: int):
 			tracking_line.is_enabled = true
 			finish_line.is_enabled = true
 			level_goals.clear()
-#			start_positions_holder.global_position = start_line_position_2d.global_position
-#			start_positions_holder.global_rotation = start_line_position_2d.global_rotation
 
 		LEVEL_TYPE.RACING_GOALS:
 			level_rank_type = Pros.RANK_BY.TIME
@@ -149,13 +147,6 @@ func _set_start_positions(new_positions_count: int):
 			new_driver_position += start_positions_holder.global_position
 			new_driver_position += start_positions_holder.current_positions_holder.rect_position
 		level_start_positions[count] = [new_driver_position, new_driver_rotation]
-
-#	yield(get_tree(), "idle_frame")
-##	yield(get_tree(), "idle_frame")
-#	for pos in start_positions_holder.active_position_2ds:
-#		Mets.spawn_indikator(pos.global_position + Vector2.RIGHT * 100 * start_positions_holder.active_position_2ds.find(pos), Color.red, 0, Refs.node_creation_parent)
-
-#	return level_start_positions
 
 
 func _set_level_objects():

@@ -84,16 +84,16 @@ enum DRIVER_TYPE {PLAYER, AI}
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 
 var start_driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
-var default_driver_profile: Dictionary = {
+var def_driver_profile: Dictionary = {
 	"driver_name_id": "PLAJER", # uporaba tudi za player id
 	"driver_avatar": preload("res://home/drivers/avatar_david.tres"),
 	"driver_color": Refs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"vehicle_type": VEHICLE.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
-	"target_rank": 10, # prepiše vehicle target_rank
+	"target_rank": 0, # prepiše vehicle target_rank
 	}
-var ai_profile: Dictionary = {
+var def_ai_driver_profile: Dictionary = {
 	"ai_name_id": "STEINY",
 	"driver_scene": preload("res://game/vehicle/ControlAI.tscn"),
 	"ai_avatar": preload("res://home/drivers/avatar_ai.tres"),
@@ -157,11 +157,10 @@ var vehicle_profiles: Dictionary = {
 		"elevation": 7,
 		"gas_usage": -0.1, # per HSP?
 		"gas_usage_idle": -0.05, # per HSP?
-		"target_rank": 5, # 10 je najpomembnejša
 		"gas_tank_size": 200, # liters
 
 		# neu
-		"group_weapons_by_type": "", # < zakaj string? kako da ni nč? ... grdo
+		"group_equipment_by_type": "", # < zakaj string? kako da ni nč? ... grdo
 		"health_effect_factor": 1, # vpliva na to koliko škode od planirane naredi neka zadeva
 		"on_hit_disabled_time": 1,
 		"heal_rate": 0.01, # lerp rate

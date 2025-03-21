@@ -338,7 +338,7 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 #	new_vehicle.global_rotation = game_level.start_positions_holder.global_rotation - deg2rad(90) # ob rotaciji 0 je default je obrnjen navzgor
 
 	new_vehicle.driver_id = driver_id
-	new_vehicle.default_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
+	new_vehicle.def_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
 	new_vehicle.driver_profile = Pros.start_driver_profiles[driver_id].duplicate()
 	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
 

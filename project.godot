@@ -239,11 +239,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://_zaloga ... ni v uporabi/Walker.gd"
 }, {
-"base": "Node2D",
-"class": "Weapon",
-"language": "GDScript",
-"path": "res://game/weapons/Weapon.gd"
-}, {
 "base": "Control",
 "class": "________________",
 "language": "GDScript",
@@ -296,7 +291,6 @@ _global_script_class_icons={
 "Vehicle": "",
 "VersatileAtlasTexture": "res://addons/versatile_atlas/icon_x.svg",
 "Walker": "",
-"Weapon": "",
 "________________": ""
 }
 

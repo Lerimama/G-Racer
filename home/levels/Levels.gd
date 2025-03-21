@@ -7,7 +7,7 @@ var selected_level_btns: Array = [] # referenca za game_levels on play()
 
 onready var home: Node = $"../.."
 onready var level_cards: HBoxContainer = $LevelCards
-onready var default_level_menu_position: Vector2 = level_cards.rect_position
+onready var def_level_menu_position: Vector2 = level_cards.rect_position
 onready var selected_levels_label: Label = $SelectedLevels
 onready var wins_limit_label: Label = $WinsLimit
 onready var LevelCard: PackedScene = preload("res://home/levels/LevelCard.tscn")
@@ -110,7 +110,7 @@ func _on_level_btn_pressed(btn: Button):
 		_on_level_btn_pressed(level_cards.get_child(0))
 		_on_level_btn_focused(level_cards.get_child(0))
 		var slide_to_start_tween = get_tree().create_tween()
-		slide_to_start_tween.tween_property(level_cards, "rect_position:x", default_level_menu_position.x, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+		slide_to_start_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
 
 
 func _on_level_btn_focused(btn: Button):
@@ -128,7 +128,7 @@ func _on_level_btn_focused(btn: Button):
 			right_edge_margin_adapt = 0
 		var slide_distance: float = (new_focused_btn_index - slide_on_index) * (btn.rect_size.x + level_cards.get_constant("hseparation"))
 		var slide_tween = get_tree().create_tween()
-		slide_tween.tween_property(level_cards, "rect_position:x", default_level_menu_position.x - slide_distance - right_edge_margin_adapt, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+		slide_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x - slide_distance - right_edge_margin_adapt, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
 
 
 func _on_BackBtn_pressed() -> void:

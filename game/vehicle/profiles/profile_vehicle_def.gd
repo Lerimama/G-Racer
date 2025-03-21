@@ -11,12 +11,11 @@ export (float, 0, 50, 0.5) var height: float = 10
 export (float, 0, 100, 0.5) var driving_elevation: float =  7
 export (float, -1, 0, 0.05) var gas_usage: float =  -0.1 # per HSP?
 export (float, -0.1, 0, 0.01) var gas_usage_idle: float = -0.05 # per HSP?
-export (int, 0, 10) var target_rank: float = 5
 export (float, 0, 0.5) var on_hit_disabled_time: float = 2
 export (float, 0, 0.5) var gas_tank_size: float = 200 # liters
 
 # neu
-export var group_weapons_by_type: bool = true
+export var group_equipment_by_type: bool = true
 export (float, 0, 1, 0.1) var heal_rate: float = 0.5
 export (float, 0, 1, 0.1) var health_effect_factor: float = 1
 
@@ -130,6 +129,6 @@ func _set_rotation_parameters(managed_vehicle: Vehicle, is_reverse: bool = false
 			motion_manager.max_engine_rotation_deg = 90
 		motion_manager.ROTATION_MOTION.SLIDE:
 			#				force_on_vehicle = Vector2.DOWN.rotated(managed_vehicle.rotation) * rotation_dir
-			#				linear_damp = managed_vehicle.default_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
+			#				linear_damp = managed_vehicle.def_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
 			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
