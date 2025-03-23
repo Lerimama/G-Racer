@@ -29,61 +29,6 @@ func _ready() -> void:
 	hide()
 
 
-func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool = false):
-
-	hud_driver = driver_node
-	drivers_viewport = view.get_node("Viewport")
-
-	if hud_driver.driver_stats[Pros.STATS.GAS] > hud_driver.gas_tank_size:
-		hud_driver.gas_tank_size = hud_driver.driver_stats[Pros.STATS.GAS]
-
-	_update_hud_position()
-
-	visibility_notifier.rect.size = rect_size
-
-	if for_ai:
-		driver_is_ai = true
-		is_set = true
-		if Sets.ai_gas_on:
-			gas_bar.show()
-		else:
-			gas_bar.hide()
-	else:
-		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
-
-		if hud_driver.group_equipment_by_type:
-			var added_weapon_types: Array = [] # separirano, dokler weapo in eq ne združim
-			var added_equipment_types: Array = []
-			for item in hud_driver.enabled_triggering_equipment:
-				if "weapon_type" in item:
-					if not item.weapon_type in added_weapon_types:
-						added_weapon_types.append(item.weapon_type)
-						_add_item_counter(item)
-				elif "equipment_type" in item:
-					if not item.equipment_type in added_equipment_types:
-						added_equipment_types.append(item.equipment_type)
-						_add_item_counter(item)
-		else:
-			for item in hud_driver.enabled_triggering_equipment:
-				_add_item_counter(item)
-
-		is_set = true
-		_on_item_selected(0)
-
-	show()
-
-
-func _update_hud_position():
-
-	rect_position = drivers_viewport.canvas_transform * hud_driver.global_position
-	rect_position.x += local_offset.x
-	rect_position.y += local_offset.y / drivers_viewport.get_node("GameCamera").zoom.y + 50
-	if driver_is_ai:
-		rect_position.x += 160
-	else:
-		rect_position.x -= 30
-
-
 func _process(delta: float) -> void:
 
 	# manage positions and rotation
@@ -114,30 +59,109 @@ func _process(delta: float) -> void:
 			if selector.visible:
 				selector.hide()
 		else:
+			for counter in counters_with_items:
+				var weapon_type: int = counters_with_items[counter].weapon_type
+				var counter_load_count: int = counters_with_items[counter].load_count
+				if hud_driver.group_equipment_by_type:
+					var grouped_weapons_count: int = hud_driver.weapons_types_with_weapons[weapon_type].size()
+					counter_load_count = counters_with_items[counter].load_count * grouped_weapons_count
+				counter.get_node("CountLabel").text = "%02d" % counter_load_count
+				# skrijem če je prazno?
+				if hide_on_empty and counter_load_count <= 0:
+					hide()
+				elif not visible:
+					show()
+
+
+#			for weapon_type in hud_driver.weapons_types_with_weapons:
+#				if hud_driver.group_equipment_by_type:
+#					var first_item: Node2D = hud_driver.weapons_types_with_weapons[weapon_type].front()
+#					_add_item_counter(first_item)
+#				else:
+#					for item in hud_driver.weapons_types_with_weapons[weapon_type]:
+#						_add_item_counter(item)
+
+
+#			if hud_driver.group_equipment_by_type:
+#				# naberem tipe za vsako equped zadevo
+#				var all_items_types: Array = []
+#				for weapon in hud_driver.enabled_triggering_equipment:
+#					all_items_types.append(weapon.weapon_type)
+#				# za vsako tip med counterji, preverim koliko je enakih med equipanimi tipi
+#				for counter in counters_with_items:
+#					# množim/delim stat vrednosti s številom
+#					var grouped_wepons_count: int = all_items_types.count(counters_with_items[counter].weapon_type)
+#					var total_load_count: int = counters_with_items[counter].load_count * grouped_wepons_count
+#					counter.get_node("CountLabel").text = "%02d" % total_load_count
+#					# skrijem če je prazno?
+#					if hide_on_empty and counters_with_items[counter].load_count <= 0:
+#						hide()
+#					elif not visible:
+#						show()
+#			else:
+
+
+
+func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool = false):
+
+	hud_driver = driver_node
+	drivers_viewport = view.get_node("Viewport")
+
+	if hud_driver.driver_stats[Pros.STATS.GAS] > hud_driver.gas_tank_size:
+		hud_driver.gas_tank_size = hud_driver.driver_stats[Pros.STATS.GAS]
+
+	_update_hud_position()
+
+	visibility_notifier.rect.size = rect_size
+
+	if for_ai:
+		driver_is_ai = true
+		is_set = true
+		if Sets.ai_gas_on:
+			gas_bar.show()
+		else:
+			gas_bar.hide()
+	else:
+		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
+
+#		if hud_driver.group_equipment_by_type:
+#			var added_weapon_types: Array = [] # separirano, dokler weapo in eq ne združim
+#			var added_equipment_types: Array = []
+#			for item in hud_driver.enabled_triggering_equipment:
+#				if "weapon_type" in item:
+#					if not item.weapon_type in added_weapon_types:
+#						added_weapon_types.append(item.weapon_type)
+#						_add_item_counter(item)
+#				elif "equipment_type" in item:
+#					if not item.equipment_type in added_equipment_types:
+#						added_equipment_types.append(item.equipment_type)
+#						_add_item_counter(item)
+#		else:
+		for weapon_type in hud_driver.weapons_types_with_weapons:
 			if hud_driver.group_equipment_by_type:
-				# naberem tipe za vsako equped zadevo
-				var all_items_types: Array = []
-				for weapon in hud_driver.enabled_triggering_equipment:
-					all_items_types.append(weapon.weapon_type)
-				# za vsako tip med counterji, preverim koliko je enakih med equipanimi tipi
-				for counter in counters_with_items:
-					# množim/delim stat vrednosti s številom
-					var grouped_wepons_count: int = all_items_types.count(counters_with_items[counter].weapon_type)
-					var total_load_count: int = counters_with_items[counter].load_count * grouped_wepons_count
-					counter.get_node("CountLabel").text = "%02d" % total_load_count
-					# skrijem če je prazno?
-					if hide_on_empty and counters_with_items[counter].load_count <= 0:
-						hide()
-					elif not visible:
-						show()
+				var first_item: Node2D = hud_driver.weapons_types_with_weapons[weapon_type].front()
+				_add_item_counter(first_item)
 			else:
-				for counter in counters_with_items:
-					counter.get_node("CountLabel").text = "%02d" % counters_with_items[counter].load_count
-					# skrijem če je prazno?
-					if hide_on_empty and counters_with_items[counter].load_count <= 0:
-						hide()
-					elif not visible:
-						show()
+				for item in hud_driver.weapons_types_with_weapons[weapon_type]:
+					_add_item_counter(item)
+#		for item in hud_driver.enabled_triggering_equipment:
+#			_add_item_counter(item)
+
+		is_set = true
+		_on_item_selected(0)
+
+	show()
+
+
+func _update_hud_position():
+
+	rect_position = drivers_viewport.canvas_transform * hud_driver.global_position
+	rect_position.x += local_offset.x
+	rect_position.y += local_offset.y / drivers_viewport.get_node("GameCamera").zoom.y + 50
+	if driver_is_ai:
+		rect_position.x += 160
+	else:
+		rect_position.x -= 30
 
 
 func _add_item_counter(new_item: Node2D):

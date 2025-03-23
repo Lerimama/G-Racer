@@ -91,7 +91,6 @@ var def_driver_profile: Dictionary = {
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"vehicle_type": VEHICLE.BASIC,
 	"driver_type": DRIVER_TYPE.PLAYER,
-	"target_rank": 0, # prepiše vehicle target_rank
 	}
 var def_ai_driver_profile: Dictionary = {
 	"ai_name_id": "STEINY",
@@ -101,8 +100,8 @@ var def_ai_driver_profile: Dictionary = {
 	"ai_type": AI_TYPE.DEFAULT, # obs
 	"random_start_range": "", # še na nodu
 	"driver_color": Refs.color_red,
-	"target_rank": 0, # prepiše vehicle target_rank
 	}
+
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
 var controller_profiles: Dictionary = {
@@ -334,7 +333,6 @@ var level_object_profiles: Dictionary = {
 		"speed_brake_div": 10,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickGhost.tscn"),
-		"target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_BOUNCER: {
 		"color": Refs.color_brick_bouncer,
@@ -342,7 +340,6 @@ var level_object_profiles: Dictionary = {
 		"bounce_strength": 2,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickBouncer.tscn"),
-		"target_rank": 0,
 	},
 	LEVEL_OBJECT.BRICK_MAGNET: {
 		"color": Refs.color_brick_magnet_off,
@@ -350,27 +347,23 @@ var level_object_profiles: Dictionary = {
 		"gravity_force": 300.0,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickMagnet.tscn"),
-		"target_rank": 0, # 0 pomeni, da se izogneš
 	},
 	LEVEL_OBJECT.BRICK_TARGET: {
 		"color": Refs.color_brick_target,
 		"value": 100,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/BrickTarget.tscn"),
-		"target_rank": 0,
 	},
 	LEVEL_OBJECT.FLATLIGHT: {
 		"color": Refs.color_brick_light_off,
 		"value": 10,
 		"elevation": 0,
 		"object_scene": preload("res://game/level/objects/FlatLight.tscn"),
-		"target_rank": 3,
 	},
 	LEVEL_OBJECT.GOAL_PILLAR: {
 		"value": 1000,
 		"elevation": 5,
 		"object_scene": preload("res://game/level/objects/GoalPillar.tscn"),
-		"target_rank": 5,
 	},
 	}
 
@@ -426,68 +419,55 @@ var pickable_profiles: Dictionary = {
 	PICKABLE.GUN: {
 		"color": Refs.color_pickable_ammo, # _temp ... color daš v pickable export var
 		"value": 20,
-		"target_rank": 3,
 	},
 	PICKABLE.TURRET: {
 		"color": Refs.color_pickable_ammo,
 		"value": 2,
-		"target_rank": 3,
 	},
 	PICKABLE.LAUNCHER: {
 		"color": Refs.color_pickable_ammo,
 		"value": 3,
-		"target_rank": 3,
 	},
 	PICKABLE.DROPPER: {
 		"color": Refs.color_pickable_ammo,
 		"value": 3,
-		"target_rank": 3,
 	},
 	PICKABLE.MALA: {
 		"color": Refs.color_pickable_ammo,
 		"value": 3,
-		"target_rank": 3,
 	},
 	PICKABLE.HEALTH: {
 		"color": Refs.color_pickable_stat,
 		"value": 0.3,
-		"target_rank": 3,
 	},
 	PICKABLE.LIFE: {
 		"color": Refs.color_pickable_stat,
 		"value": 1,
-		"target_rank": 3,
 	},
 	PICKABLE.GAS: {
 		"color": Refs.color_pickable_stat,
 		"value": 200,
-		"target_rank": 3,
 	},
 	PICKABLE.CASH: {
 		"color": Refs.color_pickable_stat,
 		"value": 50,
-		"target_rank": 0,
 	},
 	PICKABLE.POINTS: {
 		"color": Refs.color_pickable_stat,
 		"value": 100,
-		"target_rank": 2,
 #		"driver_stat": STATS.POINTS,
 	},
 	# NO STATS ...instants
 	PICKABLE.SHIELD: {
 		"color": Refs.color_pickable_ammo,
 		"value": 1,
-		"target_rank": 3,
 	},
 	PICKABLE.NITRO: {
 		"color": Refs.color_pickable_feature,
 		"value": 2, # factor
-		"target_rank": 10,
 	},
 	PICKABLE.RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
 		"color": Refs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
-		"target_rank": 9,
 	},
 	}

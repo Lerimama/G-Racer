@@ -33,7 +33,6 @@ var health_effect_factor: float
 var pseudo_stop_speed: float = 15 # hitrost pri kateri ga kar ustavim
 
 # tracking
-var target_rank: int = 0
 var revive_time: float = 2
 var is_shielded: bool = false # OPT ... ne rabiš, shield naj deluje s fiziko ... ne rabiš
 var body_state: Physics2DDirectBodyState
@@ -120,7 +119,6 @@ func _ready() -> void:
 
 	if driver_profile:
 		vehicle_color = driver_profile["driver_color"] # driver barva ...
-		target_rank = driver_profile["target_rank"]
 
 	_load_vehicle_parameters()
 	motion_manager.set_script(def_vehicle_profile["motion_manager_path"])
@@ -264,30 +262,42 @@ func _change_activity(new_is_active: bool):
 # SET -------------------------------------------------------------------------------------------------
 
 
+var weapons_types_with_weapons: Dictionary = {}
 func _set_equipment():
 
-	# set weapons
+	weapons_types_with_weapons.clear()
+
 	for weapon in weapons_holder.get_children():
-		# če je opremljeno na pozicijo
-		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
-#		var legit: bool = true
 		if weapon in equip_positions.positions_equiped.values():
 			weapon.set_weapon(self)
-			weapon_stats[weapon] = weapon.load_count
-			if not weapon.weapon_type == weapon.WEAPON_TYPE.MALA:
+			if "load_count" in weapon: # če ma ammo ali več kosov ... ni mala
+				weapon_stats[weapon] = weapon.load_count
 				enabled_triggering_equipment.append(weapon)
+				if not weapon.weapon_type in weapons_types_with_weapons:
+					weapons_types_with_weapons[weapon.weapon_type] = [weapon]
+				else:
+					weapons_types_with_weapons[weapon.weapon_type].append(weapon)
+			else:
+				weapon_stats[weapon] = 0
 		else:
 			weapon.hide()
 
-	# set grouped
-#	if group_equipment_by_type:
-#		for trigg_weapon in enabled_triggering_equipment:
-#			if "weapon_type" in trigg_weapon and trigg_weapon.weapon_type == weapon.weapon_type:
-#				used_for_triggering = false
+	if driver_id == "JOU":
+		print(weapons_types_with_weapons)
 
+#	# weapons ... samo eno orožje na tip
+#	for weapon in weapons_holder.get_children():
+#		# če je opremljeno na pozicijo
+#		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
+#		if weapon in equip_positions.positions_equiped.values():
+#			weapon.set_weapon(self)
+#			weapon_stats[weapon] = weapon.load_count
+#			if not weapon.weapon_type == weapon.WEAPON_TYPE.MALA:
+#				enabled_triggering_equipment.append(weapon)
+#		else:
+#			weapon.hide()
 
-
-	# set equipement
+	# equipement
 	for equip in equipment.get_children():
 		if equip in equip_positions.positions_equiped.values():
 			print ("equipment")

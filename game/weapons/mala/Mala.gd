@@ -18,7 +18,6 @@ export (Array, PackedScene) var hit_fx: Array
 export (Texture) var load_icon: Texture = null # uni ime
 
 var spawner: Node # more bti isto ime kot ga ima ammo
-var load_count: int = 1 # da ni errorja pri preverjanju štetja
 
 var influenced_bodies: Array = []
 var weapon_owner: Node2D

@@ -12,7 +12,6 @@ onready var brick_color: Color = Pros.level_object_profiles[level_object_key]["c
 onready var reward_points: float = Pros.level_object_profiles[level_object_key]["value"]
 onready var speed_brake_div: float = Pros.level_object_profiles[level_object_key]["speed_brake_div"]
 
-onready var target_rank: int = Pros.level_object_profiles[level_object_key]["target_rank"]
 
 onready var detect_area: Area2D = $DetectArea
 onready var animation_player: AnimationPlayer = $AnimationPlayer

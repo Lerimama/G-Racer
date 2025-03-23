@@ -12,7 +12,6 @@ var brick_health: int = 1
 onready var brick_color: Color = Pros.level_object_profiles[level_object_key]["color"]
 #onready var elevation: float = Pros.level_object_profiles[level_object_key]["elevation"]
 onready var reward_points: float = Pros.level_object_profiles[level_object_key]["value"]
-onready var target_rank: int = Pros.level_object_profiles[level_object_key]["target_rank"]
 onready var explode_particles: Particles2D = $ExplodeParticles
 onready var sprite: Sprite = $Sprite
 onready var animation_player: AnimationPlayer = $AnimationPlayer

@@ -12,7 +12,6 @@ var drivers_in_goal_area: Array = []
 var level_object_key: int # poda spawner, uravnava vse ostalo
 
 onready var reward_points: float = Pros.level_object_profiles[level_object_key]["value"]
-onready var target_rank: int = Pros.level_object_profiles[level_object_key]["target_rank"]
 onready var light_poly: Polygon2D = $LightPoly
 
 

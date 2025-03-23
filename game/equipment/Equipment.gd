@@ -62,7 +62,7 @@ func _ready() -> void:
 #	if is_set:
 #		equipment_count = equipment_owner.driver_stats[equipment_stat_key]
 #
-#func _on_weapon_triggered():
+#func on_weapon_triggered():
 #
 #	if is_set:
 #		if equipment_count > 0 and equipment_reloaded:

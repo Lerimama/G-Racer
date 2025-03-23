@@ -33,12 +33,12 @@ func use_selected_item():
 	if shooting_weapons.empty():
 		var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
 #	selected_item_index = new_selected_item_index
-#	if selected_weapon.has_method("_on_weapon_triggered"):
-#		selected_weapon._on_weapon_triggered()
+#	if selected_weapon.has_method("on_weapon_triggered"):
+#		selected_weapon.on_weapon_triggered()
 		pass
 
 	for weapon in shooting_weapons:
-		weapon._on_weapon_triggered()
+		weapon.on_weapon_triggered()
 
 
 
@@ -101,11 +101,11 @@ func select_item():
 #
 #	selected_item_index = new_selected_item_index
 #	var selected_weapon: Node2D = vehicle.enabled_triggering_equipment[selected_item_index]
-#	if selected_weapon.has_method("_on_weapon_triggered"):
-#		selected_weapon._on_weapon_triggered()
+#	if selected_weapon.has_method("on_weapon_triggered"):
+#		selected_weapon.on_weapon_triggered()
 #
 #	# še vsa orožja istega tipa
 #	if vehicle.group_equipment_by_type:
 #		for weapon in vehicle.weapons_holder.get_children():
 #			if weapon.weapon_type == selected_weapon.weapon_type:
-#				weapon._on_weapon_triggered()
+#				weapon.on_weapon_triggered()

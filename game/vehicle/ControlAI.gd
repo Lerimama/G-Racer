@@ -347,7 +347,7 @@ func _state_machine(delta: float):
 
 
 func _change_ai_state(new_ai_state: int):
-	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
+#	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
 	scanning_ray.enabled = false
 	target_ray.enabled = false
@@ -387,7 +387,6 @@ func _change_ai_state(new_ai_state: int):
 
 func react_on_hit(hit_owner: Node2D):
 
-#	hit_owner.target_rank = 5
 	ai_target = hit_owner
 	self.ai_state = AI_STATE.HUNT
 #	ai_state = AI_STATE.REACH_GOAL
@@ -397,6 +396,33 @@ func react_on_hit(hit_owner: Node2D):
 
 # TARGET ------------------------------------------------------------------------------------------------
 
+func _get_targets_rank(unranked_target: Node2D):
+
+		var targets_rank: int = 0
+
+		if "level_object_key" in unranked_target:
+			match unranked_target.level_object_key:
+				Pros.LEVEL_OBJECT.BRICK_GHOST, Pros.LEVEL_OBJECT.BRICK_BOUNCER, Pros.LEVEL_OBJECT.BRICK_MAGNET, Pros.LEVEL_OBJECT.BRICK_TARGET:
+					targets_rank = 5
+				Pros.LEVEL_OBJECT.FLATLIGHT:
+					targets_rank = 3
+		elif "pickable_key" in unranked_target:
+			match unranked_target.pickable_key:
+				Pros.PICKABLE.CASH, Pros.PICKABLE.POINTS:
+					targets_rank = 10
+				Pros.PICKABLE.SHIELD:
+					targets_rank = 5
+				Pros.PICKABLE.GUN, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER:
+					targets_rank = 4
+				Pros.PICKABLE.HEALTH, Pros.PICKABLE.LIFE, Pros.PICKABLE.GAS:
+					targets_rank = 3
+				Pros.PICKABLE.NITRO, Pros.PICKABLE.RANDOM, Pros.LEVEL_OBJECT.GOAL_PILLAR:
+					targets_rank = 2
+		elif unranked_target.is_in_group(Refs.group_players):
+			targets_rank = 10
+
+		return targets_rank
+
 
 func _get_better_targets(current_target: Node2D):
 
@@ -405,24 +431,26 @@ func _get_better_targets(current_target: Node2D):
 	possible_targets.append_array(scanning_area.get_overlapping_areas())
 	possible_targets.erase(vehicle) # izločim sebe
 
-	# naberem ai tarče
-	var legit_targets: Array = []
+	# izfiltriram ai tarče
+	var posssible_targets_with_rank: Array = []
 	for possible_target in possible_targets:
-		if "target_rank" in possible_target: # zazih ... scen se odvija samo na področju ai_targets
-			if possible_target.target_rank > 0:
-				legit_targets.append(possible_target)
+		var targets_rank: int = _get_targets_rank(possible_target)
+		if targets_rank > 0:
+			posssible_targets_with_rank.append([possible_target, targets_rank])
 
-	# naberem samo vidne
+	# izfiltriram samo vidne (ray colajda samo starčo)
 	var targets_in_sight: Array = []
-	for legit_target in legit_targets:
-		if not Mets.get_directed_raycast_collision(scanning_ray, legit_target.global_position):
-			targets_in_sight.append(legit_target)
+	for target_and_rank in posssible_targets_with_rank:
+		if not Mets.get_directed_raycast_collision(scanning_ray, target_and_rank[0].global_position):
+			targets_in_sight.append(target_and_rank[0])
 
-
-	var sorted_targets: Array = []
-	sorted_targets = _sort_targets_by(targets_in_sight, SELECT_TARGET_BY.TARGET_RANK)
-	sorted_targets = _sort_targets_by(targets_in_sight, SELECT_TARGET_BY.LEVEL_RANK)
+	# sortiram
+	var sorted_targets: Array = targets_in_sight # nesortirano
+	# po ranku, level ranku ali distanci
+	#	sorted_targets = _sort_targets_by(posssible_targets_with_rank, SELECT_TARGET_BY.TARGET_RANK)
+	#	sorted_targets = _sort_targets_by(targets_in_sight, SELECT_TARGET_BY.LEVEL_RANK)
 	sorted_targets = _sort_targets_by(targets_in_sight, SELECT_TARGET_BY.DISTANCE)
+
 
 	if sorted_targets.empty():
 		return current_target # če je null gre v search
@@ -434,7 +462,14 @@ func _sort_targets_by(available_targets: Array, select_target_by: int):
 
 	match select_target_by:
 		SELECT_TARGET_BY.TARGET_RANK:
-			available_targets.sort_custom(self, "_sort_targets_by_rank")
+			# available_targets = array arrayev
+			available_targets.sort_custom(self, "_sort_targets_by_rank_array")
+			# tarče v zaporedju rank arrays
+			var ranked_targets: Array = []
+			for rank_array in available_targets:
+				ranked_targets.append(rank_array[0])
+			available_targets = ranked_targets
+			available_targets.sort_custom(self, "_sort_targets_by_rank_array")
 		SELECT_TARGET_BY.LEVEL_RANK, SELECT_TARGET_BY.GAME_RANK:
 			var targets_with_level_rank: Array
 			for target in available_targets:
@@ -720,9 +755,9 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 # SORTERS ----------------------------------------------------------------------------------------------
 
 
-func _sort_targets_by_rank(target_1: Node2D, target_2: Node2D): # desc ... TRUE = A before B
+func _sort_targets_by_rank_array(target_array_1: Array, target_array_2: Array): # asc ... TRUE = A before B
 
-	if target_1.target_rank > target_2.target_rank:
+	if target_array_1[1] < target_array_2[1]:
 	    return true
 	return false
 

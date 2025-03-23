@@ -28,7 +28,6 @@ export (PICKABLE) var pickable_key: int = 0 # ne dela
 #var pickable_key: int = placed_pickable_key # če je spawnan v igro, ga poda spawner
 export (AudioStream) var picked_sound_stream: AudioStream
 
-var target_rank: int = 3
 var pickable_value: float = 0
 var pickable_color: Color = Color.white
 
@@ -43,7 +42,6 @@ onready var label: Label = $Label
 func _ready() -> void:
 	add_to_group(Refs.group_pickables)
 
-	target_rank = Pros.pickable_profiles[pickable_key]["target_rank"]
 	pickable_color = Pros.pickable_profiles[pickable_key]["color"]
 	pickable_value = Pros.pickable_profiles[pickable_key]["value"]
 	modulate = pickable_color
@@ -52,7 +50,6 @@ func _ready() -> void:
 		picked_sound.stream = picked_sound_stream
 	#	icon.texture = icon_texture
 	#	animation_player.play("edge_rotate")
-	label.text = label.text % target_rank
 
 func _on_Item_body_entered(body: Node) -> void:
 #		printt("pickable", Pros.PICKABLE.keys()[pickable_key])

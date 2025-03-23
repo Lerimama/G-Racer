@@ -55,7 +55,7 @@ func set_weapon(owner_node: Node2D, with_ai: bool = use_ai): # kliče vehil
 	is_set = true
 
 
-func _on_weapon_triggered(): # kliče controller, za prepoznavanje "triggering_weapon"
+func on_weapon_triggered(): # kliče controller, za prepoznavanje "triggering_weapon"
 
 	if is_set:
 		if load_count > 0 and weapon_reloaded:
