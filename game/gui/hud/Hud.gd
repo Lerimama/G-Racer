@@ -201,7 +201,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
-	if Pros.start_driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI and Sets.ai_gets_record:
+	if Pros.start_driver_profiles[driver_id]["controller_type"] == -1 and Sets.ai_gets_record:
 		if stat_key == Pros.STATS.BEST_LAP_TIME and not stat_value == 0:
 			var level_record_value = level_profile["level_record"][0]
 			if stat_value < level_record_value and not level_record_value == 0:

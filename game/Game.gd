@@ -362,7 +362,7 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 	Refs.node_creation_parent.add_child(new_vehicle)
 
 	# ai navigation
-	if Pros.start_driver_profiles[driver_id]["driver_type"] == Pros.DRIVER_TYPE.AI:
+	if Pros.start_driver_profiles[driver_id]["controller_type"] == -1:
 		new_vehicle.controller.level_navigation = game_level.level_navigation
 	# trackers
 	if game_level.tracking_line.is_enabled:

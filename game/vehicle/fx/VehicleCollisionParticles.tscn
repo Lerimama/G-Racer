@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://game/vehicle/fx/VehicleCollisionParticles.gd" type="Script" id=1]
 
 [sub_resource type="CanvasItemMaterial" id=3]
 blend_mode = 4
@@ -23,3 +25,6 @@ gravity = Vector2( 0, 0 )
 initial_velocity = 20.0
 initial_velocity_random = 0.55
 color_ramp = SubResource( 2 )
+script = ExtResource( 1 )
+
+[connection signal="tree_exiting" from="." to="." method="_on_BoltCollisionParticles_tree_exiting"]

@@ -22,7 +22,7 @@ var is_enabled = false
 var drop_direction: Vector2 = -transform.x # rikverc na osi x
 var drop_time: float = 1.0 # opredeli dolžino meta
 
-var spawner: Node
+var weapon_owner: Node2D
 var spawner_color: Color
 onready var detect_area: Area2D = $DetectArea
 onready var active_timer: Timer = $ActiveTimer
@@ -103,7 +103,7 @@ func _on_ActiveTimer_timeout() -> void:
 
 	_explode()
 	for body in detect_area.get_overlapping_bodies():
-		if body.has_method("on_hit") and body != spawner:
+		if body.has_method("on_hit") and body != weapon_owner:
 			body.on_hit(self, global_position)
 
 
@@ -116,7 +116,7 @@ func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
 func _on_DetectArea_body_entered(body: Node) -> void:
 
 	# ustavi ob trku s telesom
-	if body != spawner:
+	if body != weapon_owner:
 		drop_direction = Vector2.ZERO
 
 		if body.has_method("on_hit"):

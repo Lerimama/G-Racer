@@ -17,8 +17,6 @@ export (Array, PackedScene) var travel_fx: Array
 export (Array, PackedScene) var hit_fx: Array
 export (Texture) var load_icon: Texture = null # uni ime
 
-var spawner: Node # more bti isto ime kot ga ima ammo
-
 var influenced_bodies: Array = []
 var weapon_owner: Node2D
 var is_set: bool = false
@@ -37,7 +35,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 
 	for influenced_body in influenced_bodies:
-		influenced_body.on_hit(self, global_position)
+		if not influenced_body.is_queued_for_deletion():
+			influenced_body.on_hit(self, global_position)
 
 
 func set_weapon(owner_node: Node2D):

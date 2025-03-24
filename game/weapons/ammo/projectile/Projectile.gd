@@ -27,7 +27,7 @@ var DissarmFx: PackedScene
 var homming_mode: bool = false # sledilka mode (ko zagleda tarčo v dometu)
 var use_vision_for_collision: bool = false
 var delete_on_out_of_screen: bool = false
-var spawner: Node
+var weapon_owner: Node
 var is_enabled: bool = false
 var misile_time: float = 0
 var detect_target: Node2D
@@ -38,7 +38,7 @@ var thrust_power: float = 0
 var direction: Vector2 # za variacijo smeri (ob izstrelitvi in med letom)
 var acceleration_time = 1.0
 var dissarm_thrust_power_drop: float = 3 # v kvadratno funkcijo
-var spawner_speed_factor: float = 10
+var weapon_owner_speed_factor: float = 10
 var thrust_power_to_spawner_factor: float = 100 # pomnoži max power in current power vse power elemente
 var modify_intensity_origin: Vector2 # od tu se meri razdalja def
 
@@ -68,15 +68,15 @@ func _ready() -> void:
 
 	#	if use_vision_for_collision:
 	vision_ray.enabled = true
-	if spawner:
-		vision_ray.add_exception(spawner)
+	if weapon_owner:
+		vision_ray.add_exception(weapon_owner)
 
 	if projectile_profile:
 		self.projectile_profile = projectile_profile
 		yield(get_tree(), "idle_frame")
 
 	hit_inertia *= 3
-	elevation = spawner.elevation + elevation
+	elevation = weapon_owner.elevation + elevation
 	mass = masa
 	collision_shape.disabled = true
 
@@ -91,12 +91,12 @@ func _ready() -> void:
 	direction = Vector2.RIGHT.rotated(rotation) # Vector2(cos(rotation), sin(rotation))
 
 	# power
-	var spawner_speed: float = 0
-	if spawner.is_class("RigidBody2D"):
-		spawner_speed = spawner.get_linear_velocity().length()
+	var weapon_owner_speed: float = 0
+	if weapon_owner.is_class("RigidBody2D"):
+		weapon_owner_speed = weapon_owner.get_linear_velocity().length()
 	if start_thrust_power > max_thrust_power:
 		start_thrust_power = max_thrust_power
-	thrust_power = start_thrust_power * thrust_power_to_spawner_factor + spawner_speed * 10
+	thrust_power = start_thrust_power * thrust_power_to_spawner_factor + weapon_owner_speed * 10
 
 	detect_area.set_deferred("monitoring", false)
 	# če je homming jo prižge v procesu
@@ -203,7 +203,7 @@ func _on_contact_collision(body_state: Physics2DDirectBodyState):
 	var collision_global_position: Vector2 = body_state.get_contact_local_position(0) + global_position
 	var collision_global_normal: Vector2 = body_state.get_contact_local_normal(0) + Vector2.RIGHT.rotated(global_rotation)
 
-	if not contact_collider == spawner: # sam sebe lahko ubiješ
+	if not contact_collider == weapon_owner: # sam sebe lahko ubiješ
 		_explode(body_state.get_contact_local_position(0), collision_global_normal)
 		if contact_collider.has_method("on_hit"):
 			contact_collider.on_hit(self, collision_global_position) # pošljem node z vsemi podatki in kolizijo
@@ -309,7 +309,7 @@ func _exit_tree() -> void:
 
 func _on_DetectArea_body_entered(body: Node) -> void:
 
-	if body.is_in_group(Refs.group_drivers) and body != spawner:
+	if body.is_in_group(Refs.group_drivers) and body != weapon_owner:
 		if not detect_target or not is_instance_valid(detect_target):
 			detect_fx = _spawn_and_start_fx(DetecFx, false)
 			detect_target = body
@@ -325,7 +325,7 @@ func _on_DetectArea_body_exited(body: Node) -> void:
 
 func _on_ShapeArea_body_exited(body: Node) -> void:
 
-	if body == spawner:
+	if body == weapon_owner:
 		collision_shape.set_deferred("disabled", false)
 		shape_area.set_deferred("monitoring", false)
 

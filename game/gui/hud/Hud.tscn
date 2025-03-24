@@ -78,22 +78,22 @@ margin_bottom = -16.0
 
 [node name="Left" type="VBoxContainer" parent="HudSections"]
 margin_right = 840.0
-margin_bottom = 1420.0
+margin_bottom = 1548.0
 size_flags_horizontal = 3
 
 [node name="StatBox_Boxed" parent="HudSections/Left" instance=ExtResource( 1 )]
 margin_right = 840.0
-margin_bottom = 352.0
+margin_bottom = 384.0
 
 [node name="StatBox_Boxed_2" parent="HudSections/Left" instance=ExtResource( 1 )]
-margin_top = 356.0
+margin_top = 388.0
 margin_right = 840.0
-margin_bottom = 708.0
+margin_bottom = 772.0
 
 [node name="StatBox_Boxed_4" parent="HudSections/Left" instance=ExtResource( 1 )]
-margin_top = 712.0
+margin_top = 776.0
 margin_right = 840.0
-margin_bottom = 1064.0
+margin_bottom = 1160.0
 
 [node name="StatBox_Boxed_5" parent="HudSections/Left" instance=ExtResource( 1 )]
 visible = false
@@ -102,22 +102,22 @@ margin_right = 840.0
 margin_bottom = 1132.0
 
 [node name="StatBox_Boxed_3" parent="HudSections/Left" instance=ExtResource( 1 )]
-margin_top = 1068.0
+margin_top = 1164.0
 margin_right = 840.0
-margin_bottom = 1420.0
+margin_bottom = 1548.0
 size_flags_vertical = 8
 
 [node name="Center" type="VBoxContainer" parent="HudSections"]
 margin_left = 844.0
 margin_right = 1684.0
-margin_bottom = 1420.0
+margin_bottom = 1548.0
 grow_horizontal = 2
 size_flags_horizontal = 3
 
 [node name="Top" type="VBoxContainer" parent="HudSections/Center"]
 margin_left = 123.0
 margin_right = 716.0
-margin_bottom = 708.0
+margin_bottom = 772.0
 grow_horizontal = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -207,18 +207,18 @@ margin_bottom = 64.0
 
 [node name="Btm" type="VBoxContainer" parent="HudSections/Center"]
 margin_left = 293.0
-margin_top = 712.0
+margin_top = 776.0
 margin_right = 547.0
-margin_bottom = 1420.0
+margin_bottom = 1548.0
 grow_horizontal = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 alignment = 2
 
 [node name="LevelId" type="MarginContainer" parent="HudSections/Center/Btm"]
-margin_top = 644.0
+margin_top = 708.0
 margin_right = 254.0
-margin_bottom = 708.0
+margin_bottom = 772.0
 rect_min_size = Vector2( 0, 64 )
 size_flags_horizontal = 5
 
@@ -261,26 +261,26 @@ margin_bottom = 64.0
 [node name="Right" type="VBoxContainer" parent="HudSections"]
 margin_left = 1688.0
 margin_right = 2528.0
-margin_bottom = 1420.0
+margin_bottom = 1548.0
 size_flags_horizontal = 3
 
 [node name="StatBox_Boxed" parent="HudSections/Right" instance=ExtResource( 1 )]
 margin_left = 313.0
 margin_right = 840.0
-margin_bottom = 530.0
+margin_bottom = 578.0
 size_flags_horizontal = 8
 
 [node name="StatBox_Boxed_2" parent="HudSections/Right" instance=ExtResource( 1 )]
 margin_left = 313.0
-margin_top = 534.0
+margin_top = 582.0
 margin_right = 840.0
-margin_bottom = 1064.0
+margin_bottom = 1160.0
 size_flags_horizontal = 8
 
 [node name="StatBox_Boxed_3" parent="HudSections/Right" instance=ExtResource( 1 )]
 margin_left = 313.0
-margin_top = 1068.0
+margin_top = 1164.0
 margin_right = 840.0
-margin_bottom = 1420.0
+margin_bottom = 1548.0
 size_flags_horizontal = 8
 size_flags_vertical = 8

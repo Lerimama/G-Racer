@@ -73,35 +73,6 @@ func _process(delta: float) -> void:
 					show()
 
 
-#			for weapon_type in hud_driver.weapons_types_with_weapons:
-#				if hud_driver.group_equipment_by_type:
-#					var first_item: Node2D = hud_driver.weapons_types_with_weapons[weapon_type].front()
-#					_add_item_counter(first_item)
-#				else:
-#					for item in hud_driver.weapons_types_with_weapons[weapon_type]:
-#						_add_item_counter(item)
-
-
-#			if hud_driver.group_equipment_by_type:
-#				# naberem tipe za vsako equped zadevo
-#				var all_items_types: Array = []
-#				for weapon in hud_driver.enabled_triggering_equipment:
-#					all_items_types.append(weapon.weapon_type)
-#				# za vsako tip med counterji, preverim koliko je enakih med equipanimi tipi
-#				for counter in counters_with_items:
-#					# množim/delim stat vrednosti s številom
-#					var grouped_wepons_count: int = all_items_types.count(counters_with_items[counter].weapon_type)
-#					var total_load_count: int = counters_with_items[counter].load_count * grouped_wepons_count
-#					counter.get_node("CountLabel").text = "%02d" % total_load_count
-#					# skrijem če je prazno?
-#					if hide_on_empty and counters_with_items[counter].load_count <= 0:
-#						hide()
-#					elif not visible:
-#						show()
-#			else:
-
-
-
 func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool = false):
 
 	hud_driver = driver_node
@@ -123,20 +94,6 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 			gas_bar.hide()
 	else:
 		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
-
-#		if hud_driver.group_equipment_by_type:
-#			var added_weapon_types: Array = [] # separirano, dokler weapo in eq ne združim
-#			var added_equipment_types: Array = []
-#			for item in hud_driver.enabled_triggering_equipment:
-#				if "weapon_type" in item:
-#					if not item.weapon_type in added_weapon_types:
-#						added_weapon_types.append(item.weapon_type)
-#						_add_item_counter(item)
-#				elif "equipment_type" in item:
-#					if not item.equipment_type in added_equipment_types:
-#						added_equipment_types.append(item.equipment_type)
-#						_add_item_counter(item)
-#		else:
 		for weapon_type in hud_driver.weapons_types_with_weapons:
 			if hud_driver.group_equipment_by_type:
 				var first_item: Node2D = hud_driver.weapons_types_with_weapons[weapon_type].front()
@@ -144,8 +101,6 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 			else:
 				for item in hud_driver.weapons_types_with_weapons[weapon_type]:
 					_add_item_counter(item)
-#		for item in hud_driver.enabled_triggering_equipment:
-#			_add_item_counter(item)
 
 		is_set = true
 		_on_item_selected(0)

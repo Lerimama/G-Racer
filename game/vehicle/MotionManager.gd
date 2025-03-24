@@ -54,27 +54,27 @@ var mass_manipulate_part: float = 0.5
 var is_rotating: bool = false
 var is_viglvagl: bool = false
 
-func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
-
-	if Input.is_action_just_pressed("no1"): # idle
-		is_viglvagl = true
-		torque_on_vehicle = -100_00000
-	elif Input.is_action_just_pressed("no2"): # idle
-		is_viglvagl = true
-		torque_on_vehicle = 100_00000
-	elif Input.is_action_just_released("no1") or Input.is_action_just_released("no2"): # idle
-		is_viglvagl = false
-		torque_on_vehicle = 0
-
-	if Input.is_action_just_pressed("no3"): # idle
-		is_rotating = true
-		torque_on_vehicle = -100_00000
-	elif Input.is_action_just_pressed("no4"): # idle
-		is_rotating = true
-		torque_on_vehicle = 100_00000
-	elif Input.is_action_just_released("no3") or Input.is_action_just_released("no4"): # idle
-		is_rotating = false
-		torque_on_vehicle = 0
+#func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
+#
+#	if Input.is_action_just_pressed("no1"): # idle
+#		is_viglvagl = true
+#		torque_on_vehicle = -100_00000
+#	elif Input.is_action_just_pressed("no2"): # idle
+#		is_viglvagl = true
+#		torque_on_vehicle = 100_00000
+#	elif Input.is_action_just_released("no1") or Input.is_action_just_released("no2"): # idle
+#		is_viglvagl = false
+#		torque_on_vehicle = 0
+#
+#	if Input.is_action_just_pressed("no3"): # idle
+#		is_rotating = true
+#		torque_on_vehicle = -100_00000
+#	elif Input.is_action_just_pressed("no4"): # idle
+#		is_rotating = true
+#		torque_on_vehicle = 100_00000
+#	elif Input.is_action_just_released("no3") or Input.is_action_just_released("no4"): # idle
+#		is_rotating = false
+#		torque_on_vehicle = 0
 
 func _ready() -> void:
 
@@ -126,7 +126,7 @@ func _motion_machine():
 
 	match motion:
 		MOTION.FWD, MOTION.FWD_LEFT, MOTION.FWD_RIGHT:
-			if managed_vehicle.driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
+			if managed_vehicle.driver_profile["controller_type"] == -1:
 				# force_rotation = proti tarči AI ... določa AI
 #				force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
 				pass
@@ -159,7 +159,7 @@ func _motion_machine():
 					force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 #			force_on_vehicle = Vector2.RIGHT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 		MOTION.REV, MOTION.REV_LEFT, MOTION.REV_RIGHT:
-			if managed_vehicle.driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
+			if managed_vehicle.driver_profile["controller_type"] == -1:
 				# force_rotation = proti tarči AI ... določa AI
 				force_on_vehicle = Vector2.LEFT.rotated(force_rotation) * _accelarate_to_engine_power()
 			else:
@@ -325,7 +325,7 @@ func _set_default_parameters(): # fizični, ne vsebinski22
 			managed_vehicle.front_mass.linear_damp = 0
 			managed_vehicle.rear_mass.linear_damp = 0
 
-			if managed_vehicle.driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
+			if managed_vehicle.driver_profile["controller_type"] == -1:
 				max_engine_power = start_max_engine_power + ai_power_equlizer_addon
 				managed_vehicle.angular_damp = 16
 			else:

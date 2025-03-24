@@ -33,7 +33,8 @@ var load_count: int = start_load_count  * start_magazines_count setget _change_l
 
 
 func _ready() -> void:
-
+#	for weapon_type in WEAPON_TYPE:
+#		print("weapon_type", weapon_type)
 	hide()
 
 	smoke_particles.emitting = false
@@ -79,7 +80,7 @@ func _shoot():
 	var new_ammo = Ammo.instance()
 	new_ammo.global_position = shooting_position.global_position
 	new_ammo.global_rotation = shooting_position.global_rotation
-	new_ammo.spawner = weapon_owner
+	new_ammo.weapon_owner = weapon_owner
 	new_ammo.z_index = shooting_position.z_index - 1 # _temp
 	Refs.node_creation_parent.add_child(new_ammo)
 

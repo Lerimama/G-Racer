@@ -23,12 +23,10 @@ func _ready() -> void:
 	driver_profile = Pros.def_driver_profile.duplicate()
 	if driver_profile: # debug za tiste, ki so ne spawnani in se na redi spucajo
 		if is_ai:
-			driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
-			driver_profile["driver_avatar"] = Pros.def_ai_driver_profile["ai_avatar"]
-			driver_profile["driver_name_id"] = Pros.def_ai_driver_profile["ai_name_id"]
+			driver_profile["driver_avatar"] = Pros.def_ai_driver_profile["driver_avatar"]
+			driver_profile["driver_name_id"] = Pros.def_ai_driver_profile["driver_name_id"]
 			driver_profile["driver_color"] = Pros.colors[driver_index]
 		else:
-			driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 			driver_profile["driver_name_id"] = Pros.names[driver_index]
 			driver_profile["driver_avatar"] = Pros.avatars[driver_index]
 			driver_profile["driver_color"] = Pros.colors[driver_index]
@@ -85,7 +83,6 @@ func _set_driver_controller():
 			new_btn.focus_mode = Control.FOCUS_ALL
 			new_btn.modulate = Color.white
 			new_btn.connect("pressed", self, "_on_controller_btn_pressed", [new_btn])
-
 			if not driver_profile["controller_type"] == ctrl_type:
 				new_btn.hide()
 
@@ -140,11 +137,9 @@ func _on_TransformBtn_pressed() -> void:
 	is_ai = not is_ai
 
 	if is_ai:
-		driver_profile["driver_type"] = Pros.DRIVER_TYPE.AI
-		driver_profile["driver_avatar"] = Pros.def_ai_driver_profile["ai_avatar"]
-		driver_profile["driver_name_id"] = Pros.def_ai_driver_profile["ai_name_id"]
+		driver_profile["driver_avatar"] = Pros.def_ai_driver_profile["driver_avatar"]
+		driver_profile["driver_name_id"] = Pros.def_ai_driver_profile["driver_name_id"]
 	else:
-		driver_profile["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 		driver_profile["driver_name_id"] = Pros.names[driver_index]
 		driver_profile["driver_avatar"] = Pros.avatars[driver_index]
 		driver_profile["driver_color"] = Pros.colors[driver_index]

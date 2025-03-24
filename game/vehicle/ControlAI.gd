@@ -8,7 +8,7 @@ var ai_state: int = AI_STATE.OFF setget _change_ai_state
 
 # seta spawner
 var vehicle: Vehicle # temp ... Vehicle class
-var driver_type: int # _temp da drugi vejo? ... ne vem zakaj bi mel zares ... se pa ob spawnu seta
+var controller_type: int
 
 # navigacija
 var ai_target: Node2D = null
@@ -17,6 +17,7 @@ onready var navigation_agent = $NavigationAgent2D
 var level_navigation: NavigationPolygonInstance # poda spawner
 
 # motion
+var motion_manager: Node2D
 var ai_navigation_target_range: Array = [600, 800] # min dist 0 pomeni iskanje najbližja možna
 var braking_velocity: Vector2
 var breaking_distance_factor: float = 0.5 # kako daleč je ovira preden bremza
@@ -25,6 +26,7 @@ var breaking_factor_near: float = 0.95
 var breaking_factor_keep: float = 0.68 # nežno se ustavi
 var engine_power_factor_keep: float = 0
 var engine_power_factor_search: float = 0.5
+var random_start_range: Array = [0.1, 1]
 
 # vision
 onready var vision: Node2D = $Vision
@@ -32,55 +34,38 @@ var keep_distance: float = 500
 var near_distance: float = 800
 
 # ai targets
+var goals_to_reach: Array = [] # lovi jih v zaporedju, ko so ujeti se zbrišejo, če obstaja cilj je na koncu
 var search_target_reached: bool = false
 onready var target_ray: RayCast2D = $TargetRay # čekira "locked on" ... col_layer ai targets, vision brakers > bodies, areas
-onready var scanning_ray = $ScanningRay # skenira za vision brake ... col_layer vision brakers > bodies, areas
-onready var scanning_area: Area2D = $ScanningArea # objekti na tem območju so podvrženi inšpekciji
+onready var battler: Node2D = $Battler
 
 # debug
+var current_mouse_follow_point: Vector2 = Vector2.ZERO
 onready var target_line: Line2D = $TargetLine
 onready var force_direction_line: Line2D = $DirectionLine
-var current_mouse_follow_point: Vector2 = Vector2.ZERO# debug za mouseclick
-
-# neu ... za zrihtat
-var goals_to_reach: Array = []# lovi jih v zaporedju, ko so ujeti se zbrišejo, če obstaja cilj je na koncu
-var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
-var mina_released: bool # trenutno ne uporabljam ... če je že odvržen v trenutni ožini
-var power_speed_factor: float # delež engine_power, ki manipulira z engine powerjem in imitira hitrost
-var motion_manager: Node2D
-var fast_start_window_is_open: bool = false
-var random_start_range: Array = [0.1, 1]
-var curr_side: Vector2
-var level_navigation_points: Array = [] # zapiše prvič na SEARCH
 onready var debug_label: Label = $__Label
-# trenutno ne uporabljam? ker dela brez?
-var track_target_prediction: float = 500
-var prev_tracker_offset: float = 0
-# battler
-onready var battler: Node = $Battler
-enum SELECT_TARGET_BY {TARGET_RANK, LEVEL_RANK, GAME_RANK, DISTANCE, DEFENCE}
 
 
 func _input(event: InputEvent) -> void:#input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("no0"): # idle
 		self.ai_state = AI_STATE.OFF
-#	if Input.is_action_just_pressed("no1"): # idle
-#		self.ai_state = AI_STATE.ON_TRACK
-#	if Input.is_action_just_pressed("no2"): # race
-#		self.ai_state = AI_STATE.SEARCH
-#	if Input.is_action_pressed("no3"):
-#		wanted_speed = 900
-#	if Input.is_action_just_pressed("no4"): # follow leader
-##		wanted_speed = -1
-#		motion_manager.boost_vehicle()
+		#	if Input.is_action_just_pressed("no1"): # idle
+		#		self.ai_state = AI_STATE.ON_TRACK
+		#	if Input.is_action_just_pressed("no2"): # race
+		#		self.ai_state = AI_STATE.SEARCH
+		#	if Input.is_action_pressed("no3"):
+		#		wanted_speed = 900
+		#	if Input.is_action_just_pressed("no4"): # follow leader
+		##		wanted_speed = -1
+		#		motion_manager.boost_vehicle()
 
-#	elif Input.is_action_just_pressed("left_click"): # follow leader
-#		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(global_position, level_navigation.get_local_mouse_position())
-#		ai_target = Mets.spawn_indikator(nav_path_points[0], Color(Color.blue, 0), 0, Refs.node_creation_parent)
-#		navigation_agent.set_target_location(nav_path_points[0])
-#		ai_state = AI_STATE.MOUSE_CLICK
-#		current_mouse_follow_point = nav_path_points[nav_path_points.size()-1]
+		#	elif Input.is_action_just_pressed("left_click"): # follow leader
+		#		var nav_path_points: PoolVector2Array = level_navigation._update_navigation_path(global_position, level_navigation.get_local_mouse_position())
+		#		ai_target = Mets.spawn_indikator(nav_path_points[0], Color(Color.blue, 0), 0, Refs.node_creation_parent)
+		#		navigation_agent.set_target_location(nav_path_points[0])
+		#		ai_state = AI_STATE.MOUSE_CLICK
+		#		current_mouse_follow_point = nav_path_points[nav_path_points.size()-1]
 
 
 func _ready() -> void:
@@ -99,7 +84,7 @@ func _ready() -> void:
 	ai_navigation_line.z_index = 10
 
 	# ray exceptions
-	scanning_ray.add_exception(vehicle)
+	battler.scanning_ray.add_exception(vehicle)
 	target_ray.add_exception(vehicle)
 	for ray in vision.get_children():
 		ray.add_exception(vehicle)
@@ -166,73 +151,6 @@ func _physics_process(delta: float) -> void:
 		target_line.set_point_position(1, vector_to_target.rotated(- vehicle.global_rotation))
 
 
-func _drive_as_player(follow_mouse: bool = false): # _temp func
-	# dela vse, samo ne obrne se vedno do pravega kota oz rotacije
-
-	#	motion_manager.current_engine_power /= 2
-	#	motion_manager.torque_on_vehicle = 0
-	#	vehicle.angular_damp = 1000
-	#	vehicle.angular_damp = 100
-
-	var target_pos: Vector2
-	if follow_mouse:
-		target_pos = get_global_mouse_position()
-	else:
-		# force on vehicle
-		if ai_state == AI_STATE.ON_TRACK:
-			target_pos = _get_tracking_position(ai_target)
-#				vector_to_target = _get_tracking_position(ai_target) - global_position
-		elif ai_target:
-			target_pos = ai_target.global_position
-#				vector_to_target = ai_target.global_position - global_position
-
-		# on mouse follow
-		var new_target_side: Vector2 = _get_target_position_side(target_pos)
-		curr_side = new_target_side
-		match curr_side:
-			Vector2.RIGHT:
-				motion_manager.motion = motion_manager.MOTION.IDLE_RIGHT
-			Vector2.LEFT:
-				motion_manager.motion = motion_manager.MOTION.IDLE_LEFT
-			Vector2.ZERO:
-				motion_manager.motion = motion_manager.MOTION.IDLE
-
-		# FWD?
-		var vehicle_fwd_vector: Vector2 = Vector2.RIGHT.rotated(global_rotation) * 300
-		var vehicle_to_target_vector: Vector2 = global_position + vehicle_fwd_vector
-		var angle_to_target_vector: float = Vector2.RIGHT.rotated(global_rotation).angle_to(target_pos)
-		var angle_to_target_vector_deg: float = rad2deg(angle_to_target_vector)
-		var limit_deg: float = 50
-		if angle_to_target_vector_deg > -limit_deg and angle_to_target_vector_deg < limit_deg:
-			print("angle in ..........................", rad2deg(angle_to_target_vector))
-			motion_manager.engine_rotation_speed = 0.01
-			motion_manager.motion = motion_manager.MOTION.FWD
-			if rad2deg(angle_to_target_vector) < 0:
-				motion_manager.motion = motion_manager.MOTION.FWD_RIGHT
-			elif rad2deg(angle_to_target_vector) > 0:
-				motion_manager.motion = motion_manager.MOTION.FWD_LEFT
-			else:
-				motion_manager.motion = motion_manager.MOTION.FWD
-#				match motion_manager.rotation_dir:
-#					1:
-#						motion_manager.motion = motion_manager.MOTION.FWD_RIGHT
-#					-1:
-#						motion_manager.motion = motion_manager.MOTION.FWD_LEFT
-#					0:
-#						motion_manager.motion = motion_manager.MOTION.FWD
-
-		# force
-		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, motion_manager.rotation_dir * angle_to_target_vector, motion_manager.engine_rotation_speed)
-		var angle_to_target = Vector2.RIGHT.rotated(global_rotation).angle_to(target_pos)
-		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, angle_to_target, motion_manager.engine_rotation_speed)
-		motion_manager.force_on_vehicle = Vector2.RIGHT.rotated(motion_manager.force_rotation + global_rotation) * motion_manager._accelarate_to_engine_power()
-
-		# debug
-		force_direction_line.set_as_toplevel(true)
-		force_direction_line.set_point_position(0, global_position)
-		force_direction_line.set_point_position(1, vehicle_to_target_vector)
-
-
 func _update_vision():
 	# zazanava tudi surrounded
 	# stranski so samo za opredeljvanje smeri
@@ -275,7 +193,7 @@ func _update_vision():
 				#				printt("going nowhere")
 			1: # left
 				max_collision_distance_position = vision_ray_left.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
-				Mets.spawn_indikator(max_collision_distance_position, Color.pink)
+#				Mets.spawn_indikator(max_collision_distance_position, Color.pink)
 				braking_velocity = vehicle.velocity * braking_power_factor
 				rotation_adapt = -1
 				#				printt("turning left")
@@ -283,7 +201,7 @@ func _update_vision():
 				max_collision_distance_position = vision_ray_right.get_collision_point() #+ vision_ray_right.get_collision_normal() * 100
 				braking_velocity = vehicle.velocity * braking_power_factor
 				rotation_adapt = 1
-				Mets.spawn_indikator(max_collision_distance_position, Color.orange)
+#				Mets.spawn_indikator(max_collision_distance_position, Color.orange)
 				#				printerr("turning right")
 
 		return max_collision_distance_position
@@ -307,7 +225,8 @@ func _state_machine(delta: float):
 				motion_manager.current_engine_power = motion_manager.max_engine_power
 
 		AI_STATE.SEARCH: # vozi po točkah navigacije in išče novo tarčo, dokler je ne najde
-			var new_ai_target: Node2D = _get_better_targets(ai_target)
+#			var new_ai_target: Node2D = _get_better_targets(ai_target)
+			var new_ai_target: Node2D = battler._get_better_targets(ai_target)
 			# če je našel legitimno tarčo, ga dam v hunt
 			if not new_ai_target == ai_target:
 				ai_target = new_ai_target
@@ -318,7 +237,8 @@ func _state_machine(delta: float):
 			motion_manager.current_engine_power = motion_manager.max_engine_power
 
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
-			ai_target = _get_better_targets(ai_target)
+			ai_target = battler._get_better_targets(ai_target)
+#			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				navigation_agent.set_target_location(ai_target.global_position)
 #			_react_to_target(ai_target, true)
@@ -345,11 +265,10 @@ func _state_machine(delta: float):
 			_react_to_target(ai_target)
 
 
-
 func _change_ai_state(new_ai_state: int):
 #	printt ("_change_ai_state", AI_STATE.keys()[new_ai_state])
 
-	scanning_ray.enabled = false
+	battler.scanning_ray.enabled = false
 	target_ray.enabled = false
 
 	match new_ai_state:
@@ -361,9 +280,10 @@ func _change_ai_state(new_ai_state: int):
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.SEARCH:
 			search_target_reached = false
-			scanning_ray.enabled = true
+			battler.scanning_ray.enabled = true
 			ai_target = level_navigation.nav_position_target
-			var nav_position_target: Node2D = _get_nav_position_target(global_position, ai_navigation_target_range)
+#			var nav_position_target: Node2D = _get_nav_position_target(global_position, ai_navigation_target_range)
+			var nav_position_target: Node2D = battler._get_nav_position_target(global_position, ai_navigation_target_range)
 			navigation_agent.set_target_location(ai_target.global_position)
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.FOLLOW:
@@ -391,161 +311,6 @@ func react_on_hit(hit_owner: Node2D):
 	self.ai_state = AI_STATE.HUNT
 #	ai_state = AI_STATE.REACH_GOAL
 	pass
-
-
-
-# TARGET ------------------------------------------------------------------------------------------------
-
-func _get_targets_rank(unranked_target: Node2D):
-
-		var targets_rank: int = 0
-
-		if "level_object_key" in unranked_target:
-			match unranked_target.level_object_key:
-				Pros.LEVEL_OBJECT.BRICK_GHOST, Pros.LEVEL_OBJECT.BRICK_BOUNCER, Pros.LEVEL_OBJECT.BRICK_MAGNET, Pros.LEVEL_OBJECT.BRICK_TARGET:
-					targets_rank = 5
-				Pros.LEVEL_OBJECT.FLATLIGHT:
-					targets_rank = 3
-		elif "pickable_key" in unranked_target:
-			match unranked_target.pickable_key:
-				Pros.PICKABLE.CASH, Pros.PICKABLE.POINTS:
-					targets_rank = 10
-				Pros.PICKABLE.SHIELD:
-					targets_rank = 5
-				Pros.PICKABLE.GUN, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER:
-					targets_rank = 4
-				Pros.PICKABLE.HEALTH, Pros.PICKABLE.LIFE, Pros.PICKABLE.GAS:
-					targets_rank = 3
-				Pros.PICKABLE.NITRO, Pros.PICKABLE.RANDOM, Pros.LEVEL_OBJECT.GOAL_PILLAR:
-					targets_rank = 2
-		elif unranked_target.is_in_group(Refs.group_players):
-			targets_rank = 10
-
-		return targets_rank
-
-
-func _get_better_targets(current_target: Node2D):
-
-	# naberem vse možno v scanning območju
-	var possible_targets: Array = scanning_area.get_overlapping_bodies()
-	possible_targets.append_array(scanning_area.get_overlapping_areas())
-	possible_targets.erase(vehicle) # izločim sebe
-
-	# izfiltriram ai tarče
-	var posssible_targets_with_rank: Array = []
-	for possible_target in possible_targets:
-		var targets_rank: int = _get_targets_rank(possible_target)
-		if targets_rank > 0:
-			posssible_targets_with_rank.append([possible_target, targets_rank])
-
-	# izfiltriram samo vidne (ray colajda samo starčo)
-	var targets_in_sight: Array = []
-	for target_and_rank in posssible_targets_with_rank:
-		if not Mets.get_directed_raycast_collision(scanning_ray, target_and_rank[0].global_position):
-			targets_in_sight.append(target_and_rank[0])
-
-	# sortiram
-	var sorted_targets: Array = targets_in_sight # nesortirano
-	# po ranku, level ranku ali distanci
-	#	sorted_targets = _sort_targets_by(posssible_targets_with_rank, SELECT_TARGET_BY.TARGET_RANK)
-	#	sorted_targets = _sort_targets_by(targets_in_sight, SELECT_TARGET_BY.LEVEL_RANK)
-	sorted_targets = _sort_targets_by(targets_in_sight, SELECT_TARGET_BY.DISTANCE)
-
-
-	if sorted_targets.empty():
-		return current_target # če je null gre v search
-	else:
-		return sorted_targets.front()
-
-
-func _sort_targets_by(available_targets: Array, select_target_by: int):
-
-	match select_target_by:
-		SELECT_TARGET_BY.TARGET_RANK:
-			# available_targets = array arrayev
-			available_targets.sort_custom(self, "_sort_targets_by_rank_array")
-			# tarče v zaporedju rank arrays
-			var ranked_targets: Array = []
-			for rank_array in available_targets:
-				ranked_targets.append(rank_array[0])
-			available_targets = ranked_targets
-			available_targets.sort_custom(self, "_sort_targets_by_rank_array")
-		SELECT_TARGET_BY.LEVEL_RANK, SELECT_TARGET_BY.GAME_RANK:
-			var targets_with_level_rank: Array
-			for target in available_targets:
-				if target.is_in_group(Refs.group_drivers):
-					targets_with_level_rank.append(target)
-			targets_with_level_rank.sort_custom(self, "_sort_targets_by_level_rank")
-			available_targets = targets_with_level_rank
-		SELECT_TARGET_BY.DISTANCE:
-			available_targets.sort_custom(self, "_sort_targets_by_distance")
-
-	return available_targets
-
-
-func _get_nav_position_target(from_position: Vector2, distance_range: Array = [0, 50], in_front: bool = true):
-
-	# samo prvič ... pri dirkanju nikoli
-	# ... preveri če se pozna na performance
-	if level_navigation_points.empty():
-		level_navigation_points = level_navigation.get_navigation_points()
-
-	# če level nima navigacije
-	if level_navigation_points.empty():
-		return null
-
-	var selected_nav_position: Vector2 = Vector2.ZERO
-	var all_cells_for_random_selection: Array = []
-	var front_cells_for_random_selection: Array = []
-	var side_cells_for_random_selection: Array = []
-	var all_nav_pos_distances: Array = [] # zaloga, če je ne najde na distanci
-
-	if distance_range[0] > 0:
-		#		if not Mets.all_indikators_spawned.empty():
-		#			for n in Mets.all_indikators_spawned:
-		#				n.queue_free()
-		#			Mets.all_indikators_spawned.clear()
-		var current_min_cell_distance: float = 0
-		var current_min_cell_angle: float = 0
-
-		for nav_position in level_navigation_points:
-			var current_cell_distance: float = nav_position.distance_to(from_position)
-			all_nav_pos_distances.append(current_cell_distance) # zaloga, če je ne najde na distanci
-			# najprej izbere vse na predpisani dolžini
-			if current_cell_distance > distance_range[0] and current_cell_distance < distance_range[1]:
-				if in_front:
-					var vector_to_position: Vector2 = nav_position - global_position
-					var current_angle_to_vehicle_deg: float = rad2deg(vehicle.get_angle_to(nav_position))
-					# najbolj spredaj
-					if current_angle_to_vehicle_deg < 30 and current_angle_to_vehicle_deg > - 30 :
-						front_cells_for_random_selection.append(nav_position)
-					# na straneh
-					elif current_angle_to_vehicle_deg < 90 and current_angle_to_vehicle_deg > -90 :
-						side_cells_for_random_selection.append(nav_position)
-					# ni v razponu kota
-					else:
-						all_cells_for_random_selection.append(nav_position)
-				else:
-					all_cells_for_random_selection.append(nav_position)
-
-		# žrebam ... najprej iz sprednjih
-		if in_front:
-			if not front_cells_for_random_selection.empty():
-				selected_nav_position = front_cells_for_random_selection.pick_random()
-			elif not side_cells_for_random_selection.empty():
-				selected_nav_position = side_cells_for_random_selection.pick_random()
-		else:
-			selected_nav_position = all_cells_for_random_selection.pick_random()
-
-	# če ni našel primerne točke (ali je ni iskal, če je min_distance = 0)
-	if selected_nav_position == Vector2.ZERO:
-		var closest_position_index: int = all_nav_pos_distances.find_last(all_nav_pos_distances.min())
-		selected_nav_position = level_navigation_points[closest_position_index]
-
-	# nav target premaknem na željeno pozicijo
-	level_navigation.nav_position_target.global_position = selected_nav_position
-
-	return level_navigation.nav_position_target
 
 
 func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
@@ -592,31 +357,6 @@ func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_a
 		navigation_agent.set_target_location(global_position)
 
 
-func _get_target_position_side(target_position: Vector2):
-
-	var checker_vector_rotated: Vector2 = Vector2.RIGHT.rotated(global_rotation)
-	var vector_to_target: Vector2 = target_position - global_position
-	var is_target_on_right: float = checker_vector_rotated.cross(vector_to_target) # .dot doda 90 stopinj
-#	var is_target_on_right: int = checker_vector_rotated.dot(vector_to_target) # .dot doda 90 stopinj
-#	var is_target_on_right: float = checker_vector_rotated.dot(vector_to_target) # .dot doda 90 stopinj
-
-	# RIGHT
-	if is_target_on_right > 0:
-#		print ("kva je na RIGHT ", is_target_on_right)
-		return Vector2.RIGHT
-	# LEFT
-	elif is_target_on_right < 0:
-#		print ("kva je na LEFT ", is_target_on_right)
-		return Vector2.LEFT
-	# STREJT
-	else:
-#		print ("kva je na zero ", is_target_on_right)
-		return Vector2.ZERO
-
-
-# TRACKING ----------------------------------------------------------------------------------------------
-
-
 func _get_tracking_position(position_tracker: PathFollow2D):
 	# tracker offset je vehilu najbližja točka na liniji
 	# križanje ali bližina dveh delov krivulje povzroči preskok trackerja
@@ -642,41 +382,6 @@ func _get_tracking_position(position_tracker: PathFollow2D):
 	var point_global_position: Vector2 = driver_tracker_curve.interpolate_baked(target_total_offset)
 
 	return point_global_position
-
-
-func _avoid_obsticles(vector_to_target: Vector2 = Vector2.ZERO): # # _temp še ne dela
-
-	if ai_target:
-		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, motion_manager.driving_gear * _get_target_position_side(ai_target.global_position).x * deg2rad(motion_manager.max_engine_rotation_deg), motion_manager.engine_rotation_speed)
-		#		motion_manager.rotation_dir = _get_target_side(vector_to_target)
-
-	var roundabout_position = _update_vision()
-	if roundabout_position:# is Vector2:
-		vehicle.set_linear_velocity(braking_velocity)
-		if roundabout_position == Vector2.ZERO:
-			motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
-		else:
-			motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
-		navigation_agent.set_target_location(roundabout_position) # _temp?
-	else:
-		motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
-
-
-func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
-	# redko ... je pa dober obvod do poenotenja kontrole z agenti z različnimi močmi
-	# samo omejevanje, ker, če je ukaz navzgo, vehicle ne more preko svoje max moči ... logično
-
-	if wanted_speed == -1:
-		return false
-
-	if wanted_speed == 0:
-		motion_manager.current_engine_power = 0
-	else:
-		var current_speed: float = vehicle.body_state.get_linear_velocity().length()
-		if current_speed > wanted_speed:
-			motion_manager.current_engine_power = lerp(motion_manager.current_engine_power, 0, speed_change_rate)
-
-	return true
 
 
 func on_goal_reached(goal_reached: Node2D, level_finish_line: Node2D):
@@ -752,30 +457,135 @@ func _on_NavigationAgent2D_velocity_computed(safe_velocity: Vector2) -> void: # 
 	print("avoided")
 
 
-# SORTERS ----------------------------------------------------------------------------------------------
+
+#  LAB ------------------------------------------------------------------------------------------------------
 
 
-func _sort_targets_by_rank_array(target_array_1: Array, target_array_2: Array): # asc ... TRUE = A before B
-
-	if target_array_1[1] < target_array_2[1]:
-	    return true
-	return false
-
-
-func _sort_targets_by_level_rank(driver_1: Vehicle, driver_2: Vehicle): # asc ... TRUE = B before A
-
-	var driver_1_rank: int = driver_1.driver_stats[Pros.STATS.LEVEL_RANK]
-	var driver_2_rank: int = driver_2.driver_stats[Pros.STATS.LEVEL_RANK]
-	if driver_1_rank < driver_2_rank:
-		return true
-	return false
+var track_target_prediction: float = 500 # za preprečitve križanja ... trenutno ne uporabljam? ker dela brez?
+var prev_tracker_offset: float = 0
+var wanted_speed: float = -1 # -1 je brez intervencije, 0 se ustavi
+var curr_side: Vector2
 
 
-func _sort_targets_by_distance(target_1: Node2D, target_2: Node2D): # asc ... TRUE = B before A
+func _adjust_power_speed_limit(speed_change_rate: float = 0.1):
+	# redko ... je pa dober obvod do poenotenja kontrole z agenti z različnimi močmi
+	# samo omejevanje, ker, če je ukaz navzgo, vehicle ne more preko svoje max moči ... logično
 
-	var distance_to_target_1: float = (target_1.global_position - global_position).length()
-	var distance_to_target_2: float = (target_2.global_position - global_position).length()
-	if distance_to_target_1 < distance_to_target_2:
-		return true
-	return false
+	if wanted_speed == -1:
+		return false
 
+	if wanted_speed == 0:
+		motion_manager.current_engine_power = 0
+	else:
+		var current_speed: float = vehicle.body_state.get_linear_velocity().length()
+		if current_speed > wanted_speed:
+			motion_manager.current_engine_power = lerp(motion_manager.current_engine_power, 0, speed_change_rate)
+
+	return true
+
+
+func _get_target_position_side(target_position: Vector2):
+
+	var checker_vector_rotated: Vector2 = Vector2.RIGHT.rotated(global_rotation)
+	var vector_to_target: Vector2 = target_position - global_position
+	var is_target_on_right: float = checker_vector_rotated.cross(vector_to_target) # .dot doda 90 stopinj
+#	var is_target_on_right: int = checker_vector_rotated.dot(vector_to_target) # .dot doda 90 stopinj
+#	var is_target_on_right: float = checker_vector_rotated.dot(vector_to_target) # .dot doda 90 stopinj
+
+	# RIGHT
+	if is_target_on_right > 0:
+#		print ("kva je na RIGHT ", is_target_on_right)
+		return Vector2.RIGHT
+	# LEFT
+	elif is_target_on_right < 0:
+#		print ("kva je na LEFT ", is_target_on_right)
+		return Vector2.LEFT
+	# STREJT
+	else:
+#		print ("kva je na zero ", is_target_on_right)
+		return Vector2.ZERO
+
+
+func _avoid_obsticles(vector_to_target: Vector2 = Vector2.ZERO): # # _temp še ne dela
+
+	if ai_target:
+		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, motion_manager.driving_gear * _get_target_position_side(ai_target.global_position).x * deg2rad(motion_manager.max_engine_rotation_deg), motion_manager.engine_rotation_speed)
+		#		motion_manager.rotation_dir = _get_target_side(vector_to_target)
+
+	var roundabout_position = _update_vision()
+	if roundabout_position:# is Vector2:
+		vehicle.set_linear_velocity(braking_velocity)
+		if roundabout_position == Vector2.ZERO:
+			motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
+		else:
+			motion_manager.force_rotation = global_position.angle_to_point(roundabout_position)
+		navigation_agent.set_target_location(roundabout_position) # _temp?
+	else:
+		motion_manager.force_rotation = Vector2.RIGHT.angle_to_point(- vector_to_target)
+
+
+func _drive_as_player(follow_mouse: bool = false): # _temp func
+	# dela vse, samo ne obrne se vedno do pravega kota oz rotacije
+
+	#	motion_manager.current_engine_power /= 2
+	#	motion_manager.torque_on_vehicle = 0
+	#	vehicle.angular_damp = 1000
+	#	vehicle.angular_damp = 100
+
+	var target_pos: Vector2
+	if follow_mouse:
+		target_pos = get_global_mouse_position()
+	else:
+		# force on vehicle
+		if ai_state == AI_STATE.ON_TRACK:
+			target_pos = _get_tracking_position(ai_target)
+#				vector_to_target = _get_tracking_position(ai_target) - global_position
+		elif ai_target:
+			target_pos = ai_target.global_position
+#				vector_to_target = ai_target.global_position - global_position
+
+		# on mouse follow
+		var new_target_side: Vector2 = _get_target_position_side(target_pos)
+		curr_side = new_target_side
+		match curr_side:
+			Vector2.RIGHT:
+				motion_manager.motion = motion_manager.MOTION.IDLE_RIGHT
+			Vector2.LEFT:
+				motion_manager.motion = motion_manager.MOTION.IDLE_LEFT
+			Vector2.ZERO:
+				motion_manager.motion = motion_manager.MOTION.IDLE
+
+		# FWD?
+		var vehicle_fwd_vector: Vector2 = Vector2.RIGHT.rotated(global_rotation) * 300
+		var vehicle_to_target_vector: Vector2 = global_position + vehicle_fwd_vector
+		var angle_to_target_vector: float = Vector2.RIGHT.rotated(global_rotation).angle_to(target_pos)
+		var angle_to_target_vector_deg: float = rad2deg(angle_to_target_vector)
+		var limit_deg: float = 50
+		if angle_to_target_vector_deg > -limit_deg and angle_to_target_vector_deg < limit_deg:
+			print("angle in ..........................", rad2deg(angle_to_target_vector))
+			motion_manager.engine_rotation_speed = 0.01
+			motion_manager.motion = motion_manager.MOTION.FWD
+			if rad2deg(angle_to_target_vector) < 0:
+				motion_manager.motion = motion_manager.MOTION.FWD_RIGHT
+			elif rad2deg(angle_to_target_vector) > 0:
+				motion_manager.motion = motion_manager.MOTION.FWD_LEFT
+			else:
+				motion_manager.motion = motion_manager.MOTION.FWD
+#				match motion_manager.rotation_dir:
+#					1:
+#						motion_manager.motion = motion_manager.MOTION.FWD_RIGHT
+#					-1:
+#						motion_manager.motion = motion_manager.MOTION.FWD_LEFT
+#					0:
+#						motion_manager.motion = motion_manager.MOTION.FWD
+
+		# force
+		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, motion_manager.rotation_dir * angle_to_target_vector, motion_manager.engine_rotation_speed)
+		var angle_to_target = Vector2.RIGHT.rotated(global_rotation).angle_to(target_pos)
+		motion_manager.force_rotation = lerp_angle(motion_manager.force_rotation, angle_to_target, motion_manager.engine_rotation_speed)
+		motion_manager.force_on_vehicle = Vector2.RIGHT.rotated(motion_manager.force_rotation + global_rotation) * motion_manager._accelarate_to_engine_power()
+
+		# debug
+		force_direction_line.set_as_toplevel(true)
+		force_direction_line.set_point_position(0, global_position)
+		force_direction_line.set_point_position(1, vehicle_to_target_vector)

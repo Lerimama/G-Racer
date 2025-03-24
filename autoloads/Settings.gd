@@ -141,24 +141,20 @@ func _apply_debug_settings():
 
 	for driver_id in drivers_on_game_start:
 		Pros.start_driver_profiles[driver_id] = Pros.def_driver_profile.duplicate()
-		Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.PLAYER
 		if drivers_on_game_start.find(driver_id) == 0:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_blue
-#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 		elif drivers_on_game_start.find(driver_id) == 1:
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_red
 			Pros.start_driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
-			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
+			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 		elif drivers_on_game_start.find(driver_id) == 2:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
-#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_green
 		elif drivers_on_game_start.find(driver_id) == 3:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
 #			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.JP2
-#			Pros.start_driver_profiles[driver_id]["driver_type"] = Pros.DRIVER_TYPE.AI
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_yellow
 
 

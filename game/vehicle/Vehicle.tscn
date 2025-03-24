@@ -92,6 +92,7 @@ contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 7 )
 engines_path = NodePath("Engines")
+group_equipment_by_type = false
 vehicle_motion_profile = ExtResource( 1 )
 
 [node name="Controller" type="Node2D" parent="."]
@@ -654,8 +655,6 @@ z_index = 1000
 points = PoolVector2Array( 0, 0, 100, 0 )
 width = 4.0
 
-[node name="ReviveTimer" type="Timer" parent="."]
-
 [node name="Sounds" type="Node" parent="."]
 
 [node name="Dizzy" type="AudioStreamPlayer" parent="Sounds"]
@@ -682,5 +681,4 @@ bus = "GameSfx"
 anims/RESET = SubResource( 5284 )
 anims/gravel_shake = SubResource( 5280 )
 
-[connection signal="body_entered" from="." to="." method="_on_Vehicle_body_entered"]
-[connection signal="timeout" from="ReviveTimer" to="." method="_on_ReviveTimer_timeout"]
+[connection signal="body_entered" from="." to="." method="_on_Vehicle_collision"]

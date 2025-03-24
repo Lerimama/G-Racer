@@ -80,31 +80,34 @@ var avatars: Array = [preload("res://home/drivers/avatar_david.tres"), preload("
 var colors: Array = [Refs.color_blue, Refs.color_green, Refs.color_yellow, Refs.color_red, Color.red, Color.magenta, Color.green, Color.violet, Color.lightcoral, Color.orange]
 var names: Array = ["KNIGHT", " MAGNUM", "MARTY", "BARACUS"]
 
-enum DRIVER_TYPE {PLAYER, AI}
 enum AI_TYPE {DEFAULT, LAID_BACK, SMART, AGGRESSIVE}
 
 var start_driver_profiles: Dictionary = {} # ime profila ime igralca ... pazi da je CAPS, ker v kodi tega ne pedenam
+
 var def_driver_profile: Dictionary = {
 	"driver_name_id": "PLAJER", # uporaba tudi za player id
 	"driver_avatar": preload("res://home/drivers/avatar_david.tres"),
 	"driver_color": Refs.color_blue, # color_yellow, color_green, color_red ... pomembno da se nalagajo za Settingsi
 	"controller_type": CONTROLLER_TYPE.ARROWS,
 	"vehicle_type": VEHICLE.BASIC,
-	"driver_type": DRIVER_TYPE.PLAYER,
 	}
+
 var def_ai_driver_profile: Dictionary = {
-	"ai_name_id": "STEINY",
-	"driver_scene": preload("res://game/vehicle/ControlAI.tscn"),
-	"ai_avatar": preload("res://home/drivers/avatar_ai.tres"),
-	"controller_type": AI_TYPE.DEFAULT,
+	"driver_name_id": "STEINY",
+	"driver_avatar": preload("res://home/drivers/avatar_ai.tres"),
+	"driver_color": Refs.color_red,
+	"controller_scene": preload("res://game/vehicle/ControlAI.tscn"),
+	"controller_type": -1, # ko uvedem različne tipe AI, bo tole malo drugače
 	"ai_type": AI_TYPE.DEFAULT, # obs
 	"random_start_range": "", # še na nodu
-	"driver_color": Refs.color_red,
 	}
 
 
 enum CONTROLLER_TYPE {ARROWS, WASD, JP1, JP2}
 var controller_profiles: Dictionary = {
+	-1: {
+		"controller_scene": preload("res://game/vehicle/ControlAI.tscn"),
+		},
 	CONTROLLER_TYPE.ARROWS: {
 		fwd_action = "p1_fwd",
 		rev_action = "p1_rev",
@@ -112,7 +115,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p1_right",
 		shoot_action = "p1_shoot",
 		selector_action = "p1_selector",
-		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"), # more bit scena, ker ma ai stvari notri
+		"controller_scene": preload("res://game/vehicle/ControlPlayer.tscn"), # more bit scena, ker ma ai stvari notri
 		},
 	CONTROLLER_TYPE.WASD : {
 		fwd_action = "p2_fwd",
@@ -121,7 +124,7 @@ var controller_profiles: Dictionary = {
 		right_action = "p2_right",
 		shoot_action = "p2_shoot",
 		selector_action = "p2_selector",
-		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
+		"controller_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP1 : {
 		fwd_action = "jp1_fwd",
@@ -130,7 +133,7 @@ var controller_profiles: Dictionary = {
 		right_action = "jp1_right",
 		shoot_action = "jp1_shoot",
 		selector_action = "jp1_selector",
-		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
+		"controller_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
 	CONTROLLER_TYPE.JP2 : {
 		fwd_action = "jp2_fwd",
@@ -139,7 +142,7 @@ var controller_profiles: Dictionary = {
 		right_action = "jp2_right",
 		shoot_action = "jp2_shoot",
 		selector_action = "jp2_selector",
-		"driver_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
+		"controller_scene": preload("res://game/vehicle/ControlPlayer.tscn"),
 	},
 	}
 

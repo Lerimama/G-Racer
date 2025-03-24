@@ -39,7 +39,6 @@ var body_state: Physics2DDirectBodyState
 var driver_tracker: PathFollow2D # napolni se, ko se vehicle pripiše trackerju
 
 # drugo ...
-var enabled_triggering_equipment: Array = []
 var prev_lap_level_time: int = 0 # _temp tukaj na hitro z beleženje lap timeta
 
 onready var controller: Node2D = $Controller # zamenja se ob spawnu AI/PLAYER
@@ -51,7 +50,6 @@ onready var shape_poly: Polygon2D = $ShapePoly
 onready var engines: Node2D = get_node(engines_path)
 
 onready var collision_shape: CollisionPolygon2D = $CollisionPolygon2D
-onready var revive_timer: Timer = $ReviveTimer
 onready var trail_source: Position2D = $TrailSource
 onready var front_mass: RigidBody2D = $Mass/Front/FrontMass
 onready var rear_mass: RigidBody2D = $Mass/Rear/RearMass
@@ -76,7 +74,7 @@ var turned_on: bool = false	# neodvisen on aktivitja
 export (float, 5, 20, 0.5) var driving_elevation: float = 7
 # sounds
 onready var collision_sound: AudioStreamPlayer = $Sounds/Collision
-
+var weapons_types_with_weapons: Dictionary = {}
 
 
 func _input(event: InputEvent) -> void:
@@ -92,9 +90,10 @@ func _input(event: InputEvent) -> void:
 #			transform.origin *= 10
 			print("after", body_state.get_angular_velocity())
 
-#	if Input.is_action_pressed("no2"): # race
-##		if driver_id == "JOU":
-#		update_stat(Pros.STATS.HEALTH, -0.1)
+	if Input.is_action_pressed("no2"): # race
+#		update_stat(Pros.STATS.LIFE, 3)
+		if driver_id == "JOU":
+			update_stat(Pros.STATS.HEALTH, -0.1)
 #
 #	if Input.is_action_pressed("no3"): # race
 #		update_stat(Pros.STATS.HEALTH, 0.1)
@@ -166,10 +165,11 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 # LAJFLUP ----------------------------------------------------------------------------
 
 
-func _die(with_explode: bool = true):
+func _die(only_dissable: bool = false):
 
-	if with_explode:
-
+	if only_dissable:
+		self.is_active = false
+	else:
 		collision_shape.set_deferred("disabled", true)
 		_explode()
 
@@ -183,7 +183,8 @@ func _die(with_explode: bool = true):
 				controller.set_process_input(false)
 				call_deferred("set_physics_process", false)
 				call_deferred("set_process", false)
-				revive_timer.start(revive_time)
+				yield(get_tree().create_timer(revive_time), "timeout")
+				_revive()
 			# life counts
 			else:
 				update_stat(Pros.STATS.LIFE, - 1)
@@ -192,16 +193,16 @@ func _die(with_explode: bool = true):
 					controller.set_process_input(false)
 					call_deferred("set_physics_process", false)
 					call_deferred("set_process", false)
-					revive_timer.start(revive_time)
+					yield(get_tree().create_timer(revive_time), "timeout")
+					_revive()
 				else:
 					self.is_active = false
 					queue_free()
-	else:
-		self.is_active = false
 
 
 func _revive():
 
+	controller.set_process_input(true)
 	call_deferred("set_physics_process", true)
 	call_deferred("set_process", true)
 	collision_shape.set_deferred("disabled", false)
@@ -220,18 +221,19 @@ func turn_on():
 
 	var turn_tween = get_tree().create_tween()
 	turn_tween.tween_property(self, "elevation", driving_elevation, 2).from(0.0).set_ease(Tween.EASE_IN_OUT)
+	yield(turn_tween, "finished")
+	motion_manager.motion = motion_manager.MOTION.IDLE
 
 
 func turn_off():
 	# turn_off motion disejbla
 
 	trail_source.decay() # zazih
+	engines.stop_engines()
 
 	var turn_tween = get_tree().create_tween()
 	turn_tween.tween_property(self, "elevation", 0, 1).set_ease(Tween.EASE_IN_OUT)
 	yield(turn_tween, "finished")
-
-	engines.stop_engines()
 	motion_manager.motion = motion_manager.MOTION.DISSABLED
 	turned_on = false
 
@@ -262,7 +264,6 @@ func _change_activity(new_is_active: bool):
 # SET -------------------------------------------------------------------------------------------------
 
 
-var weapons_types_with_weapons: Dictionary = {}
 func _set_equipment():
 
 	weapons_types_with_weapons.clear()
@@ -272,7 +273,6 @@ func _set_equipment():
 			weapon.set_weapon(self)
 			if "load_count" in weapon: # če ma ammo ali več kosov ... ni mala
 				weapon_stats[weapon] = weapon.load_count
-				enabled_triggering_equipment.append(weapon)
 				if not weapon.weapon_type in weapons_types_with_weapons:
 					weapons_types_with_weapons[weapon.weapon_type] = [weapon]
 				else:
@@ -281,21 +281,6 @@ func _set_equipment():
 				weapon_stats[weapon] = 0
 		else:
 			weapon.hide()
-
-	if driver_id == "JOU":
-		print(weapons_types_with_weapons)
-
-#	# weapons ... samo eno orožje na tip
-#	for weapon in weapons_holder.get_children():
-#		# če je opremljeno na pozicijo
-#		# če ni uniq tip in bi moralo bit, ga ne dodam v trriggered
-#		if weapon in equip_positions.positions_equiped.values():
-#			weapon.set_weapon(self)
-#			weapon_stats[weapon] = weapon.load_count
-#			if not weapon.weapon_type == weapon.WEAPON_TYPE.MALA:
-#				enabled_triggering_equipment.append(weapon)
-#		else:
-#			weapon.hide()
 
 	# equipement
 	for equip in equipment.get_children():
@@ -361,22 +346,18 @@ func _load_vehicle_parameters(): # vsebinski, ne fizični
 
 func _spawn_driver_controller():
 
-	var DriverController: PackedScene
-	if driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
-		DriverController = Pros.def_ai_driver_profile["driver_scene"]
-	else:
-		var drivers_driver_profile: Dictionary = Pros.controller_profiles[driver_profile["controller_type"]]
-		DriverController = drivers_driver_profile["driver_scene"]
+	var drivers_driver_profile: Dictionary = Pros.controller_profiles[driver_profile["controller_type"]]
+	var DriverController: PackedScene = drivers_driver_profile["controller_scene"]
 
 	# spawn na vrh vehicleovega drevesa
 	controller = DriverController.instance()
 	controller.vehicle = self
 	controller.motion_manager = motion_manager
-	if not driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
-		controller.controller_type = driver_profile["controller_type"]
+	controller.controller_type = driver_profile["controller_type"]
 
 	call_deferred("add_child", controller)
 	call_deferred("move_child", controller, 0)
+
 
 # ON ------------------------------------------------------------------------------------------------
 
@@ -403,7 +384,7 @@ func update_stat(stat_key: int, stat_value):
 					driver_stats[stat_key] += stat_value
 					if driver_stats[Pros.STATS.GAS] <= 0:
 						driver_stats[Pros.STATS.GAS] = 0
-						_die(false)
+						_die(true)
 					elif driver_stats[Pros.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
 						gas_tank_size = driver_stats[Pros.STATS.GAS]
 			Pros.STATS.HEALTH:
@@ -468,15 +449,14 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 			vehicle_camera.shake_camera(hit_by)
 
 		if Sets.life_as_scalp and driver_stats[Pros.STATS.HEALTH] <= 0:
-			if "spawner" in hit_by:
-				hit_by.spawner.update_stat(Pros.STATS.LIFE, 1)
+			if "weapon_owner" in hit_by:
+				hit_by.weapon_owner.update_stat(Pros.STATS.LIFE, 1)
+			else: # ne sme prit do tega not gud
+				hit_by.update_stat(Pros.STATS.LIFE, 1)
 
-	if driver_profile["driver_type"] == Pros.DRIVER_TYPE.AI:
-		# projektil, mina
-		if "spawner" in hit_by:
-			controller.react_on_hit(hit_by.spawner)
-		# mala, ...
-		elif "weapon_owner" in hit_by:
+
+	if driver_profile["controller_type"] == -1:
+		if "weapon_owner" in hit_by:
 			controller.react_on_hit(hit_by.weapon_owner)
 		else: # ne sme prit do tega not gud
 			print ("hit by brez ownerja: ", hit_by)
@@ -494,14 +474,21 @@ func on_item_picked(pickable_key: int):
 		Pros.PICKABLE.NITRO:
 			motion_manager.boost_vehicle()
 		# weapons
-		Pros.PICKABLE.GUN, Pros.PICKABLE.TURRET, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER, Pros.PICKABLE.MALA: # ... "GUN", "TURRET", "LAUNCHER", "DROPPER", "MALA":
-			# med aktivnimi orožji poišče vse enakega tipa, kot je pickable key
-			for weapon in enabled_triggering_equipment:
-				var weapon_type_index: int = weapon.WEAPON_TYPE.keys().find(pickable_key_name)
-				var weapon_type: int = weapon.WEAPON_TYPE.values()[weapon_type_index]
-				if weapon.weapon_type == weapon_type:
-					weapon.load_count = Pros.pickable_profiles[pickable_key]["value"]
-					break
+		Pros.PICKABLE.GUN, Pros.PICKABLE.TURRET, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER, Pros.PICKABLE.MALA:
+			if not weapons_types_with_weapons.empty():
+				# vzamem tipe orožij s prvega orožja na voljo in poiščem enak key
+				var WEAPON_TYPE: Dictionary = weapons_types_with_weapons.values().front().front().WEAPON_TYPE
+				for weapon_type_key in WEAPON_TYPE:
+					if weapon_type_key == pickable_key_name:
+						var weapon_type: int = WEAPON_TYPE[weapon_type_key]
+						# če grupiram, apgrejdam samo prvo orožje ... count ga potem množi s številom enakih orožij
+						# če ne, apgrejdam vsa orožja ... ali kolikor hočem
+						if group_equipment_by_type:
+							weapons_types_with_weapons[weapon_type].front().load_count = Pros.pickable_profiles[pickable_key]["value"]
+						else:
+							for weapon in weapons_types_with_weapons[weapon_type]:
+								weapon.load_count = Pros.pickable_profiles[pickable_key]["value"]
+						break
 		_: # stats
 			# poiščem STAT z enakim "key", kot je pickable key
 			var stat_key_index: int = Pros.STATS.keys().find(pickable_key_name)
@@ -545,7 +532,7 @@ func _spawn_shield():
 
 
 func pull_on_screen(pull_position: Vector2): # kliče GM
-
+	return
 		# disejblam koližne
 	#	controller.set_process_input(false)
 	#	collision_shape.set_deferred("disabled", true)
@@ -602,12 +589,7 @@ func _drawing_trail_controls(delta: float):
 # SIGNALI ------------------------------------------------------------------------------------------------
 
 
-func _on_ReviveTimer_timeout() -> void:
-
-	_revive()
-
-
-func _on_Vehicle_body_entered(body: Node2D) -> void:
+func _on_Vehicle_collision(body: Node2D) -> void:
 
 	collision_sound.play()
 
@@ -618,7 +600,7 @@ func _on_Vehicle_body_entered(body: Node2D) -> void:
 		new_collision_particles.rotation = body_state.get_contact_local_normal(0).angle() # rotacija partiklov glede na normalo površine
 		new_collision_particles.amount = (velocity.length() + 15)/15 # količnik je korektor ... 15 dodam zato da amount ni nikoli nič
 		new_collision_particles.color = vehicle_color
-		new_collision_particles.set_emitting(true)
+		new_collision_particles.set_emitting(true) # ker je one-shot ne morem prednastaviti
 		Refs.node_creation_parent.add_child(new_collision_particles)
 
 	trail_source.decay()
@@ -630,3 +612,4 @@ func _exit_tree() -> void: # če ni samo za za debug je nekaj narobe ... da se b
 	#	self.is_active = false # zazih
 
 	pass
+
