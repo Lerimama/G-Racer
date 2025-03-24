@@ -73,11 +73,11 @@ func _on_PlayBtn_pressed() -> void:
 
 func _on_RestartBtn_pressed() -> void:
 
-	get_parent().close_game(0, 0)
+	get_parent().close_game(0)
 
 
 func _on_QuitBtn_pressed() -> void:
 
-	get_parent().close_game(-1, 0)
+	get_parent().close_game(-1)
 
 

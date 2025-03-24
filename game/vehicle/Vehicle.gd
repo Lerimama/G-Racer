@@ -95,10 +95,11 @@ func _input(event: InputEvent) -> void:
 		if driver_id == "JOU":
 			update_stat(Pros.STATS.HEALTH, -0.1)
 #
-#	if Input.is_action_pressed("no3"): # race
+	if Input.is_action_pressed("no3"): # race
+		if driver_id == "JOU":
+			update_stat(Pros.STATS.GAS, -100)
 #		update_stat(Pros.STATS.HEALTH, 0.1)
 #	if Input.is_action_pressed("no4"): # race
-#		update_stat(Pros.STATS.GAS, -100)
 #	if Input.is_action_pressed("no5"): # race
 #		update_stat(Pros.STATS.GAS, 100)
 

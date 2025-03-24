@@ -279,7 +279,7 @@ var level_profiles: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
 		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
 		"level_time_limit": 0,
-		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
+		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
 		"level_record": [0, ""], # pogreba sejvanega
 		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
 		# opredeli level ob spawnu

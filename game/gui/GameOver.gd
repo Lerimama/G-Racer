@@ -25,11 +25,11 @@ func open(game_manager: Game):
 	var levels_count: int = game_manager.game_levels.size()
 
 	# level or game finished
-	if level_index < levels_count - 1:
-		_set_for_level_finished(level_index, levels_count)
+	if game_manager.game_stage == game_manager.GAME_STAGE.END_FAIL:
+		_set_for_game_finished(false)
 	else:
-		if game_manager.game_stage == game_manager.GAME_STAGE.END_FAIL:
-			_set_for_game_finished(false)
+		if level_index < levels_count - 1:
+			_set_for_level_finished(level_index, levels_count)
 		else:
 			_set_for_game_finished(true)
 
@@ -48,11 +48,12 @@ func open(game_manager: Game):
 
 	$Menu/RestartBtn.grab_focus()
 
-	var fade_in = get_tree().create_tween()
-	fade_in.tween_callback(self, "show")
-	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)
-	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
+#	var fade_in = get_tree().create_tween()
+#	fade_in.tween_callback(self, "show")
+#	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)
+#	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
 	#	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)
+#	$Menu/RestartBtn.grab_focus()
 
 
 func _set_for_level_finished(level_index: int, levels_count: int):
@@ -88,20 +89,17 @@ func _set_for_game_finished(is_success: bool):
 
 func _on_next_pressed() -> void:
 
-	var read_time: float = 2
-	get_parent().close_game(1, read_time)
+	get_parent().close_game(1)
 
 
 func _on_restart_game_pressed() -> void:
 
-	var read_time: float = 2
-	get_parent().close_game(0, read_time)
+	get_parent().close_game(0)
 
 
 func _on_QuitBtn_pressed() -> void:
-
-	var read_time: float = 2
-	get_parent().close_game(-1, read_time)
+	print("click")
+	get_parent().close_game(-1)
 
 
 func _on_QuitGameBtn_pressed() -> void:

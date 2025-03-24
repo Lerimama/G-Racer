@@ -23,6 +23,7 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
+level_type = 1
 level_goals_paths = [ NodePath("PickableGas") ]
 
 [node name="BackColor" parent="Ground" index="0"]
@@ -59,7 +60,7 @@ margin_right = 600.0
 margin_bottom = 233.0
 
 [node name="FinishLine" parent="Elements" index="2"]
-position = Vector2( -4, -808 )
+position = Vector2( -4, -1888 )
 
 [node name="TrackingLine" parent="Elements" index="3"]
 curve = SubResource( 1 )

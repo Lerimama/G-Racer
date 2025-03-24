@@ -4,7 +4,8 @@ class_name Game
 
 signal game_stage_changed(game_manager)
 
-enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, END_FAIL}
+#enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, END_FAIL}
+enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_FAIL, END_SUCCESS}
 var game_stage: int = 0 setget _change_game_stage
 
 export (Array, NodePath) var main_signal_connecting_paths: Array = []
@@ -253,13 +254,16 @@ func _change_game_stage(new_game_stage: int):
 				game_sound.fade_sounds(game_sound.game_music, game_sound.lose_jingle)
 
 			final_level_data["level_profile"] = level_profile
+
+
 			#			print("final_drivers_data")
 			#			print(final_drivers_data)
 			#			yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 			#			if not game_tracker.drivers_finished.empty(): # zmaga
 			#				game_tracker.drivers_finished[0].update_stat(Pros.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
 
-			gui.open_game_over()
+#			gui.open_game_over()
+			gui.open_level_finished()
 
 			# ustavi elemente
 				# best lap stats reset

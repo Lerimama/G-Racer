@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=2]
+[gd_scene load_steps=53 format=2]
 
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/Game.gd" type="Script" id=2]
@@ -16,6 +16,7 @@
 [ext_resource path="res://assets/sounds/nitro/nitro_start.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sounds/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sounds/level/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=16]
+[ext_resource path="res://game/gui/LevelFinished.gd" type="Script" id=17]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/screen_slide.wav" type="AudioStream" id=20]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/menu_fade.wav" type="AudioStream" id=21]
 [ext_resource path="res://game/GameSound.gd" type="Script" id=22]
@@ -148,7 +149,6 @@ size_flags_horizontal = 3
 custom_styles/panel = SubResource( 18 )
 
 [node name="Gui" type="CanvasLayer" parent="."]
-pause_mode = 2
 script = ExtResource( 50 )
 
 [node name="DriverHuds" type="Control" parent="Gui"]
@@ -188,7 +188,94 @@ color = Color( 0, 0, 0, 1 )
 [node name="PauseGame" parent="Gui" instance=ExtResource( 7 )]
 visible = false
 
+[node name="LevelFinished" type="Control" parent="Gui"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+script = ExtResource( 17 )
+__meta__ = {
+"_edit_vertical_guides_": [ 320.0, 1280.0 ]
+}
+
+[node name="Background" type="ColorRect" parent="Gui/LevelFinished"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.784314 )
+
+[node name="Panel" type="Panel" parent="Gui/LevelFinished"]
+visible = false
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="Gui/LevelFinished"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -760.0
+margin_top = 144.0
+margin_right = 760.0
+margin_bottom = 362.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 43 )
+text = "GAME OVER"
+align = 1
+
+[node name="LevelRecord" type="Label" parent="Gui/LevelFinished"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -297.5
+margin_top = 372.0
+margin_right = 297.5
+margin_bottom = 427.0
+grow_horizontal = 2
+rect_min_size = Vector2( 160, 55 )
+size_flags_horizontal = 8
+text = "Level record  000 by xxx"
+align = 1
+valign = 1
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="ScoreTable" parent="Gui/LevelFinished" instance=ExtResource( 44 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -500.0
+margin_top = 513.0
+margin_right = 502.0
+margin_bottom = 1137.0
+
+[node name="Menu" type="HBoxContainer" parent="Gui/LevelFinished"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -206.0
+margin_top = -207.0
+margin_right = 209.0
+margin_bottom = -149.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+custom_constants/separation = 64
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="FinishBtn" type="Button" parent="Gui/LevelFinished/Menu"]
+margin_left = 119.0
+margin_right = 296.0
+margin_bottom = 58.0
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "FINISH"
+
 [node name="GameOver" type="Control" parent="Gui"]
+pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 3 )
@@ -239,14 +326,6 @@ uppercase = true
 __meta__ = {
 "_editor_description_": ""
 }
-
-[node name="Level" type="Control" parent="Gui/GameOver"]
-margin_right = 40.0
-margin_bottom = 40.0
-
-[node name="Game" type="Control" parent="Gui/GameOver"]
-margin_right = 40.0
-margin_bottom = 40.0
 
 [node name="ScoreTable" parent="Gui/GameOver" instance=ExtResource( 44 )]
 anchor_left = 0.5
@@ -488,5 +567,6 @@ stream = SubResource( 17 )
 volume_db = -10.0
 bus = "GameSfx"
 
+[connection signal="pressed" from="Gui/LevelFinished/Menu/FinishBtn" to="Gui/LevelFinished" method="_on_FinishBtn_pressed"]
 [connection signal="pressed" from="Gui/GameOver/Menu/QuitGameBtn" to="Gui/GameOver" method="_on_QuitGameBtn_pressed"]
 [connection signal="pressed" from="Gui/GameOver/Menu/QuitBtn" to="Gui/GameOver" method="_on_QuitBtn_pressed"]

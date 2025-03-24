@@ -201,10 +201,10 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 		var adapt_factor: float = 0.001
 		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
-#		if managed_vehicle.driver_id == "MOU":
-#			printt( "POWER DMG", current_engine_power, damaged_engine_power)
 		current_engine_power = damaged_engine_power
 
+	if managed_vehicle.driver_id == "MOU":
+		current_engine_power /= 15
 	return current_engine_power * Sets.world_hsp_power_factor
 
 

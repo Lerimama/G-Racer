@@ -378,7 +378,10 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	#			game.hud.driver_huds_holder.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
 	#			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
 
-	_check_for_game_end()
+	if game.game_stage == game.GAME_STAGE.PLAYING:
+		_check_for_game_end()
+	elif game.game_stage > game.GAME_STAGE.END_FAIL:
+		game.gui.call_deferred("_on_waiting_driver_finished", game.final_drivers_data, driver_vehicle)
 
 
 # SORTERS ------------------------------------------------------------------------------------------------------------

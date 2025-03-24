@@ -38,6 +38,7 @@ func _ready():
 	#	btn_focus_sound.stream = btn_focus_sound_stream
 
 	for child in get_tree().root.get_children():
+
 		if child is BaseButton\
 		or child is HSlider\
 		or child is TouchScreenButton\
@@ -177,7 +178,7 @@ func _on_Slider_value_changed(slider_value: float, slider_node: HSlider):
 	var pitch_normalized: float = pitch_percent * (pitch_max_value - pitch_min_value)
 	var new_pitch: float = pitch_normalized + pitch_min_value
 
-	btn_toggle_on_sound.play()
+	# ker testhud dela error		btn_toggle_on_sound.play()
 	# ... dodaj vairable pitch for sliding ... ex.sound_manager.play_gui_sfx("btn_confirm", new_pitch)
 
 
