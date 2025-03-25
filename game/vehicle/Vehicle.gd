@@ -74,7 +74,7 @@ var turned_on: bool = false	# neodvisen on aktivitja
 export (float, 5, 20, 0.5) var driving_elevation: float = 7
 # sounds
 onready var collision_sound: AudioStreamPlayer = $Sounds/Collision
-var weapons_types_with_weapons: Dictionary = {}
+var weapon_types_with_trigger_weapons: Dictionary = {}
 
 
 func _input(event: InputEvent) -> void:
@@ -267,17 +267,17 @@ func _change_activity(new_is_active: bool):
 
 func _set_equipment():
 
-	weapons_types_with_weapons.clear()
+	weapon_types_with_trigger_weapons.clear()
 
 	for weapon in weapons_holder.get_children():
 		if weapon in equip_positions.positions_equiped.values():
 			weapon.set_weapon(self)
 			if "load_count" in weapon: # če ma ammo ali več kosov ... ni mala
 				weapon_stats[weapon] = weapon.load_count
-				if not weapon.weapon_type in weapons_types_with_weapons:
-					weapons_types_with_weapons[weapon.weapon_type] = [weapon]
+				if not weapon.weapon_type in weapon_types_with_trigger_weapons:
+					weapon_types_with_trigger_weapons[weapon.weapon_type] = [weapon]
 				else:
-					weapons_types_with_weapons[weapon.weapon_type].append(weapon)
+					weapon_types_with_trigger_weapons[weapon.weapon_type].append(weapon)
 			else:
 				weapon_stats[weapon] = 0
 		else:
@@ -476,18 +476,18 @@ func on_item_picked(pickable_key: int):
 			motion_manager.boost_vehicle()
 		# weapons
 		Pros.PICKABLE.GUN, Pros.PICKABLE.TURRET, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER, Pros.PICKABLE.MALA:
-			if not weapons_types_with_weapons.empty():
+			if not weapon_types_with_trigger_weapons.empty():
 				# vzamem tipe orožij s prvega orožja na voljo in poiščem enak key
-				var WEAPON_TYPE: Dictionary = weapons_types_with_weapons.values().front().front().WEAPON_TYPE
+				var WEAPON_TYPE: Dictionary = weapon_types_with_trigger_weapons.values().front().front().WEAPON_TYPE
 				for weapon_type_key in WEAPON_TYPE:
 					if weapon_type_key == pickable_key_name:
 						var weapon_type: int = WEAPON_TYPE[weapon_type_key]
 						# če grupiram, apgrejdam samo prvo orožje ... count ga potem množi s številom enakih orožij
 						# če ne, apgrejdam vsa orožja ... ali kolikor hočem
 						if group_equipment_by_type:
-							weapons_types_with_weapons[weapon_type].front().load_count = Pros.pickable_profiles[pickable_key]["value"]
+							weapon_types_with_trigger_weapons[weapon_type].front().load_count = Pros.pickable_profiles[pickable_key]["value"]
 						else:
-							for weapon in weapons_types_with_weapons[weapon_type]:
+							for weapon in weapon_types_with_trigger_weapons[weapon_type]:
 								weapon.load_count = Pros.pickable_profiles[pickable_key]["value"]
 						break
 		_: # stats
@@ -533,18 +533,18 @@ func _spawn_shield():
 
 
 func pull_on_screen(pull_position: Vector2): # kliče GM
-	return
+
 		# disejblam koližne
 	#	controller.set_process_input(false)
 	#	collision_shape.set_deferred("disabled", true)
 
-	# reštartam trail
 	trail_source.decay()
 
 	var pull_time: float = 0.1
 	var pull_tween = get_tree().create_tween()
 	pull_tween.tween_property(body_state, "transform:origin", pull_position, pull_time).set_ease(Tween.EASE_OUT)
 	yield(pull_tween, "finished")
+
 	#	transform.origin = pull_position
 	#	collision_shape.set_deferred("disabled", false)
 	#	controller.set_process_input(true)

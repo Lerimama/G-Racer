@@ -63,7 +63,7 @@ func _process(delta: float) -> void:
 				var weapon_type: int = counters_with_items[counter].weapon_type
 				var counter_load_count: int = counters_with_items[counter].load_count
 				if hud_driver.group_equipment_by_type:
-					var grouped_weapons_count: int = hud_driver.weapons_types_with_weapons[weapon_type].size()
+					var grouped_weapons_count: int = hud_driver.weapon_types_with_trigger_weapons[weapon_type].size()
 					counter_load_count = counters_with_items[counter].load_count * grouped_weapons_count
 				counter.get_node("CountLabel").text = "%02d" % counter_load_count
 				# skrijem če je prazno?
@@ -94,12 +94,12 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 			gas_bar.hide()
 	else:
 		hud_driver.controller.connect("item_selected", self, "_on_item_selected")
-		for weapon_type in hud_driver.weapons_types_with_weapons:
+		for weapon_type in hud_driver.weapon_types_with_trigger_weapons:
 			if hud_driver.group_equipment_by_type:
-				var first_item: Node2D = hud_driver.weapons_types_with_weapons[weapon_type].front()
+				var first_item: Node2D = hud_driver.weapon_types_with_trigger_weapons[weapon_type].front()
 				_add_item_counter(first_item)
 			else:
-				for item in hud_driver.weapons_types_with_weapons[weapon_type]:
+				for item in hud_driver.weapon_types_with_trigger_weapons[weapon_type]:
 					_add_item_counter(item)
 
 		is_set = true

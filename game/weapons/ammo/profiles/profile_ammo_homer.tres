@@ -29,4 +29,3 @@ dissarm_fx = ExtResource( 4 )
 homming_mode = true
 use_vision_for_collision = false
 delete_on_out_of_screen = false
-magazine_size = 10

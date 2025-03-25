@@ -9,7 +9,7 @@
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, -7, 64, 0, 0, 0, 0, -58, -2629 )
+"points": PoolVector2Array( 0, 0, 0, 0, -7, 64, 0, 0, 0, 0, 0, -3528 )
 }
 
 [node name="LevelFirstDrive" instance=ExtResource( 1 )]
@@ -23,7 +23,6 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
-level_type = 1
 level_goals_paths = [ NodePath("PickableGas") ]
 
 [node name="BackColor" parent="Ground" index="0"]
@@ -60,14 +59,14 @@ margin_right = 600.0
 margin_bottom = 233.0
 
 [node name="FinishLine" parent="Elements" index="2"]
-position = Vector2( -4, -1888 )
+position = Vector2( -4, -3312 )
 
 [node name="TrackingLine" parent="Elements" index="3"]
 curve = SubResource( 1 )
 
 [node name="Tracker" parent="Elements/TrackingLine" index="0"]
 position = Vector2( -7, 64 )
-rotation = -1.58973
+rotation = -1.56885
 
 [node name="__ScreenSize" parent="." index="15"]
 margin_left = -2565.0

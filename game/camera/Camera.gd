@@ -15,9 +15,10 @@ var camera_zoom_range: Vector2 = Sets.camera_zoom_range # [1, 1.5]
 var camera_zoom_lerp_factor: float = 0.01
 var min_zoom_target_speed: float = 1000
 var max_zoom_target_speed: float = 1500
-var change_follow_target_time: float = 2
 var target_velocity_offset_factor: float = 1
 var target_velocity_lerp_factor: float = 0.2
+var transition_time: float = 0.5
+var transition_smooting_speed: int = 1
 
 onready var test_ui = $TestUI
 onready var playing_field: Node2D = $PlayingField
@@ -141,12 +142,8 @@ func _release_camera_limits():
 func _change_follow_target(new_follow_target: Node):
 
 	if not new_follow_target == follow_target:
-		#		print ("change camera target")
-		#		smoothing_enabled = false
-		##		if new_follow_target.is_in_group(Refs.group_drivers):# or Refs.game_manager game_on: # RFK ... kamera - hitrost setanja poizicije
-		#		var transition_tween = get_tree().create_tween()
-		##			transition_tween.tween_property(self, "position", new_follow_target.position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
-		#		transition_tween.tween_property(self, "position", follow_target.global_position, change_follow_target_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
-		#		yield(transition_tween, "finished")
-		#		smoothing_enabled = true
+		var pretransition_smoothing_speed: float = smoothing_speed
+		smoothing_speed = transition_smooting_speed
 		follow_target = new_follow_target
+		yield(get_tree().create_timer(transition_time), "timeout")
+		smoothing_speed = pretransition_smoothing_speed

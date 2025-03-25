@@ -8,7 +8,7 @@ onready var background: ColorRect = $Background
 onready var score_table: VBoxContainer = $ScoreTable
 onready var title: Label = $Title
 onready var level_record_label: Label = $LevelRecord
-onready var restart_btn: Button = $Menu/RestartBtn
+onready var finish_btn: Button = $Menu/FinishBtn
 
 
 # level finished for player(s)
@@ -52,7 +52,6 @@ func set_level_finished(game_manager: Game):
 
 	var background_fadein_transparency: float = 1
 
-	$Menu/FinishBtn.grab_focus()
 
 
 func _on_FinishBtn_pressed() -> void:

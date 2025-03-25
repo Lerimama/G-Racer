@@ -24,6 +24,7 @@ tracks/0/keys = {
 [node name="Launcher" instance=ExtResource( 1 )]
 weapon_type = 2
 weapon_ammo = 1
+reload_time = 3.0
 Ammo = ExtResource( 2 )
 load_icon = ExtResource( 3 )
 
@@ -53,5 +54,5 @@ scale = Vector2( 1.2, 1.2 )
 [node name="ShootingPosition" parent="WeaponSprite" index="4"]
 position = Vector2( 0, -4.00001 )
 
-[node name="AnimationPlayer" parent="." index="2"]
+[node name="AnimationPlayer" parent="." index="1"]
 anims/knockback = SubResource( 5278 )

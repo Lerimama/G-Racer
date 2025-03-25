@@ -33,10 +33,10 @@ noise = ExtResource( 1 )
 rotation = 3.14159
 rotating = true
 current = true
+limit_smoothed = true
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 smoothing_enabled = true
-smoothing_speed = 3.0
 drag_margin_left = 0.0
 drag_margin_top = 0.0
 drag_margin_right = 0.0
@@ -96,7 +96,7 @@ __meta__ = {
 }
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayingField/FieldEdge"]
-polygon = PoolVector2Array( -1600, -1072.01, -1600, -720.007, 1280, -720, 1280, 720, -1280, 720, -1280, -720.006, -1600, -688.007, -1600, 1039.99, 1600, 1040, 1600, -1072 )
+polygon = PoolVector2Array( -2241, -1472.01, -2241, -720.006, 1280, -720, 1280, 720, -1280, 720, -1280, -720.006, -1985, -712.005, -2241, -576.006, -2241, 1471.99, 2111, 1472.01, 2111, -1471.99 )
 disabled = true
 
 [node name="TestUI" type="CanvasLayer" parent="."]

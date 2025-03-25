@@ -5,6 +5,7 @@
 [ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=3]
 
 [node name="WeaponGun" instance=ExtResource( 1 )]
+reload_time = 0.5
 Ammo = ExtResource( 2 )
 load_icon = ExtResource( 3 )
 

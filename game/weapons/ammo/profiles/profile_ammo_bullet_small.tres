@@ -23,4 +23,3 @@ hit_fx = ExtResource( 2 )
 homming_mode = false
 use_vision_for_collision = true
 delete_on_out_of_screen = false
-magazine_size = 10

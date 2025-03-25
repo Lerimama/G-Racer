@@ -77,7 +77,7 @@ func _change_fx_intensity(new_fx_intensity: float = 1): # delež def intensity
 					child_fx.volume_db = -80
 			"Particles2D", "CPUParticles2D":
 				var def_amount: int = child_fx.amount * prev_intensity
-				child_fx.amount = def_amount * fx_intensity
+				child_fx.amount = max(1, def_amount * fx_intensity)
 			"AnimatedSprite", "AnimationPlayer":
 				pass
 

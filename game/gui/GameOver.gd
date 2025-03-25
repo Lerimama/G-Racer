@@ -46,8 +46,8 @@ func open(game_manager: Game):
 
 	var background_fadein_transparency: float = 1
 
-	$Menu/RestartBtn.grab_focus()
-
+	restart_btn.grab_focus()
+	print("get_focus_owner ", get_focus_owner())
 #	var fade_in = get_tree().create_tween()
 #	fade_in.tween_callback(self, "show")
 #	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)

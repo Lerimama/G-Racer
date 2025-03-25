@@ -188,8 +188,8 @@ func _motion_machine():
 func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_power):
 #	printt (current_engine_power , max_engine_power, force_on_vehicle.length())
 
-	#	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
-	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, pow(accelarate_speed, 2))
+	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
+#	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, pow(accelarate_speed, 2))
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
 	engine_power_percentage = current_engine_power / current_max_engine_power
@@ -203,8 +203,8 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 
-	if managed_vehicle.driver_id == "MOU":
-		current_engine_power /= 15
+#	if managed_vehicle.driver_id == "MOU":
+#		current_engine_power /= 15
 	return current_engine_power * Sets.world_hsp_power_factor
 
 
@@ -358,13 +358,13 @@ func _drive_vigl_vagl(vigl_vagl_amount: float):
 
 func drive_in(drive_in_position: Vector2, drive_in_rotation: float = 0, drive_in_time: float = 1):
 
-	self.motion = MOTION.DISSABLED
 
 	managed_vehicle.collision_shape.set_deferred("disabled", true) # lahko pride iz stene
 	managed_vehicle.modulate.a = 1
 
 	managed_vehicle.is_active = true
 	managed_vehicle.turn_on()
+	self.motion = MOTION.DISSABLED
 
 	# premaknem ga nazaj in zapeljem do štartne pozicije na katero je spawnan
 #	var vector_to_drive_in_position: Vector2 = Vector2.RIGHT.rotated(global_rotation) * global_position.length()

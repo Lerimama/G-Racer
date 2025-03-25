@@ -14,7 +14,6 @@ var is_set: bool = false
 var weapon_reloaded: bool = true
 
 onready var shooting_position: Position2D = $WeaponSprite/ShootingPosition
-onready var reload_timer: Timer = $ReloadTimer
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var fire_particles: Particles2D = $WeaponSprite/FireParticles
 onready var fire_cover_particles: Particles2D = $WeaponSprite/FireCoverParticles
@@ -23,13 +22,12 @@ onready var weapon_ai: RayCast2D = $WeaponAI
 
 # neu
 export (float, 0, 1, 0.1) var power_usage: float = 0 # še ni implementirano
-export (float, 0.1)var reload_time: float = 0
+export (float, 0.1 , 10, 0.1) var reload_time: float = 0
 export (PackedScene) var Ammo: PackedScene
 export var start_load_count: int = 50
-export var start_magazines_count: int = 1
 # uni vars
 export (Texture) var load_icon: Texture = null
-var load_count: int = start_load_count  * start_magazines_count setget _change_load_count # _temp.. ime naj bo univerzalno za item
+var load_count: int = start_load_count setget _change_load_count # _temp.. ime naj bo univerzalno za item
 
 
 func _ready() -> void:
@@ -87,16 +85,12 @@ func _shoot():
 	# reload
 	if reload_time > 0:
 		weapon_reloaded = false
-		reload_timer.start(reload_time)
+		yield(get_tree().create_timer(reload_time), "timeout")
+		weapon_reloaded = true
 
 
 func _change_load_count(add_load_count: int): # da se vedno apdejta tudi weapon stats
 
 	load_count += add_load_count
 	weapon_owner.weapon_stats[self] = load_count
-
-
-func _on_ReloadTimer_timeout() -> void:
-
-	weapon_reloaded = true
 

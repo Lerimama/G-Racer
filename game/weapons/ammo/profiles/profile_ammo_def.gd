@@ -32,4 +32,3 @@ export var delete_on_out_of_screen: bool = false
 
 # neu
 export var icon_texture: Texture = load("res://assets/icons/icon_bullet_VRSA.tres") # ... trenutno določim v weaponu
-export var magazine_size: int = 10

@@ -194,34 +194,25 @@ var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
 enum AMMO {BULLET, MISILE, MINA, SMALL, HOMER} # kot v orožjih
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
-		"reload_time": 0.2,
+		# "reload_time": 0.2,  ... določim v export var
 		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"mag_size": 10,
 	},
 	AMMO.MISILE: {
-		"reload_time": 3, # ga ne rabi, ker mora misila bit uničena
 		"scene": preload("res://game/weapons/ammo/ProjectileHomer.tscn"),
 		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
-		"mag_size": 1,
 	},
 	AMMO.MINA: {
-		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/MinaExplode.tscn"),
 		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
-		"mag_size": 3,
 	},
 	AMMO.SMALL: {
-		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"mag_size": 100,
 	},
 	AMMO.HOMER: {
-		"reload_time": 0.1, #
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
 		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
-		"mag_size": 100,
 	},
 	}
 

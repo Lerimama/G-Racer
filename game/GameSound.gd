@@ -8,7 +8,6 @@ var game_manager: Game # poda GM na ready
 onready var big_horn: AudioStreamPlayer = $LevelSfx/BigHorn
 onready var little_horn: AudioStreamPlayer = $LevelSfx/LittleHorn
 
-
 # MUSKA
 onready var track: AudioStreamPlayer = $Music/Track
 onready var track_2: AudioStreamPlayer = $Music/Track_2
@@ -32,6 +31,7 @@ onready var menu_music: AudioStreamPlayer = nitro_menu
 onready var btn_focus: AudioStreamPlayer = $GuiSfx/Inputs/BtnFocus
 onready var btn_accept: AudioStreamPlayer = $GuiSfx/Inputs/BtnConfirm
 onready var btn_cancel: AudioStreamPlayer = $GuiSfx/Inputs/BtnCancel
+onready var screen_slide: AudioStreamPlayer = $GuiSfx/ScreenSlide
 
 
 func _ready() -> void:

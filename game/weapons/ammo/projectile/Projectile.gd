@@ -48,7 +48,6 @@ var flight_fx: Node2D
 var detect_fx: Node2D
 
 onready var trail_position: Position2D = $TrailPosition
-onready var thrust_position: Position2D = $ThrustPosition
 onready var detect_area: Area2D = $DetectArea
 onready var collision_shape: CollisionShape2D = $CollisionShape2D
 onready var vision_ray: RayCast2D = $VisionRay
@@ -57,7 +56,6 @@ onready var shape_area: Area2D = $ShapeArea
 
 # neu
 export var icon_texture: Texture = load("res://assets/icons/icon_bullet_VRSA.tres")
-export var magazine_size: int = 10
 # ni v profilih
 var homming_delay: float = 1
 
@@ -141,8 +139,6 @@ func _physics_process(delta: float) -> void:
 			var decelaration_tween = get_tree().create_tween()
 			decelaration_tween.tween_property(self ,"thrust_power", min_thrust_power, acceleration_time)
 			yield(decelaration_tween, "finished")
-			#		thrust_power -= pow(dissarm_thrust_power_drop * 10 / thrust_power_to_spawner_factor, 1.0) # deactivated_thrust_power_drop na kvadrat
-			#		thrust_power = clamp(thrust_power, 0, thrust_power)
 			_dissarm()
 
 		# sledenje
@@ -292,7 +288,6 @@ func _change_projectile_profile(new_projectile_profile: Resource):
 	delete_on_out_of_screen = projectile_profile.delete_on_out_of_screen
 
 	icon_texture = projectile_profile.icon_texture
-	magazine_size = projectile_profile.magazine_size
 
 
 func _exit_tree() -> void:

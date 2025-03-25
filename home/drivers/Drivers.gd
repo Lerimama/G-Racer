@@ -9,9 +9,9 @@ onready var driver_boxes: HBoxContainer = $DriverBoxes
 onready var home: Node = $"../.."
 onready var DriverBox: PackedScene = preload("res://home/drivers/DriverBox.tscn")
 onready var play_btn: Button = $Menu/PlayBtn
-onready var add_btn: Button = $AddBtn
-onready var drivers_count_btn: Button = $DriversCountBtn
-onready var view_mode_btn: Button = $ViewModeBtn
+onready var drivers_count_btn: Button = $SubMenu/DriversCountBtn
+onready var view_mode_btn: Button = $SubMenu/ViewModeBtn
+onready var add_btn: Button = $SubMenu/AddBtn
 
 
 func _input(event: InputEvent) -> void:

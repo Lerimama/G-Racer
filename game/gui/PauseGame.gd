@@ -8,8 +8,9 @@ func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
 		var game_manager: Game = get_parent().game_manager
 		if game_manager:
 			if game_manager.game_stage == game_manager.GAME_STAGE.PLAYING or game_manager.game_stage == game_manager.GAME_STAGE.READY:
+				get_parent().game_manager.game_sound.screen_slide.play()
 				if visible:
-					play_on()
+					_on_PlayBtn_pressed()
 				else:
 					pause_game()
 
@@ -23,51 +24,40 @@ func pause_game():
 
 	get_parent().game_manager.game_sound.game_music.stream_paused = true
 	get_parent().game_manager.game_sound.menu_music.play()
-#	var mn_music = get_parent().game_manager.game_sound.menu_music
-#	var gm_music = get_parent().game_manager.game_sound.game_music
-#	get_parent().game_manager.game_sound.fade_sounds(gm_music, mn_music, true)
 
 	show()
-	get_viewport().set_disable_input(true) # anti dablklik
 	get_tree().set_pause(true)
-
-#	Global.game_sound.play_gui_sfx("screen_slide")
 	$Menu/PlayBtn.grab_focus()
+
+	get_viewport().set_disable_input(true) # anti dablklik
 	var pause_in_time: float = 0.32
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(self, "modulate:a", 1, pause_in_time).from(0.0).set_ease(Tween.EASE_IN)
-
 	yield(fade_tween, "finished")
-
 	get_viewport().set_disable_input(false)
 
 
 func play_on():
 
 	get_viewport().set_disable_input(true) # anti dablklik
-
-#	Global.game_sound.play_gui_sfx("screen_slide")
 	var pause_out_time: float = 0.5
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(self, "modulate:a", 0, pause_out_time).set_ease(Tween.EASE_IN)
-
 	yield(fade_tween, "finished")
+	get_viewport().set_disable_input(false)
 
-#	var gm_music = get_parent().game_manager.game_sound.game_music
-#	get_parent().game_manager.game_sound.fade_sounds(mn_music, gm_music)
 	get_parent().game_manager.game_sound.menu_music.stop()
 	get_parent().game_manager.game_sound.game_music.stream_paused = false
 
-	hide()
 	get_tree().set_pause(false)
-	get_viewport().set_disable_input(false)
+	hide()
 
 
 # MENU ---------------------------------------------------------------------------------------------
 
 
 func _on_PlayBtn_pressed() -> void:
-	print ("gumb ni povezan")
+
 	play_on()
 
 

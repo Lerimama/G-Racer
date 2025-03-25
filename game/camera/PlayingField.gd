@@ -23,8 +23,8 @@ func _process(delta: float) -> void:
 		global_position = camera_to_follow.get_camera_screen_center()
 		scale = camera_to_follow.zoom
 
-		for veh in vehicles_out_of_playing_screen:
-			emit_signal("body_exited_playing_field", veh)
+#		for veh in vehicles_out_of_playing_screen:
+#			emit_signal("body_exited_playing_field", veh)
 
 
 func enable_playing_field(enable: bool, with_edge: bool = false):
@@ -46,8 +46,10 @@ func enable_playing_field(enable: bool, with_edge: bool = false):
 
 func _on_FieldArea_player_exited(player_vehicle: Node) -> void:
 
-	if not player_vehicle in vehicles_out_of_playing_screen:
-		vehicles_out_of_playing_screen.append(player_vehicle)
+#	if not player_vehicle in vehicles_out_of_playing_screen:
+#		vehicles_out_of_playing_screen.append(player_vehicle)
+
+	emit_signal("body_exited_playing_field", player_vehicle)
 
 
 func _on_FieldArea_player_entered(player_vehicle: Node) -> void:

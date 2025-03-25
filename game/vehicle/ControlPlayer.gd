@@ -19,7 +19,7 @@ onready var selector_action: String = controller_actions["selector_action"]
 # neu
 var pressed_driving_actions: Array = []
 var selected_item_index = 0
-var fast_start_window_is_open: bool = true # odprt tudi pred štartom, da dela revup
+var fast_start_window_is_open: bool = false # odprt tudi pred štartom, da dela revup
 
 
 func _input(event: InputEvent) -> void:
@@ -30,62 +30,25 @@ func _input(event: InputEvent) -> void:
 
 		# select weapon
 		if Input.is_action_just_pressed(selector_action):
-
 			selected_item_index += 1
-
-			# vsa setana orožja, ne glede na tip
-			var all_equipment_ungrouped: Array = []
-			for weapon_type in vehicle.weapons_types_with_weapons:
-				for weapon in vehicle.weapons_types_with_weapons[weapon_type]:
-					all_equipment_ungrouped.append(weapon)
-
-			# ungrouped ... preštejem ves equipment
-			var selectable_items_count = all_equipment_ungrouped.size()
-			# grouped ... preštejem število tipov
-			if vehicle.group_equipment_by_type:
-				selectable_items_count = vehicle.weapons_types_with_weapons.size()
-
-			if selected_item_index > selectable_items_count - 1: # poskrbi tudi za primer, da je samo en item
-				selected_item_index = 0
-			elif selected_item_index < 0:
-				selected_item_index = selectable_items_count - 1
-			emit_signal("item_selected", selected_item_index)
-
-			# weapon ai ON/OFF
-			if vehicle.group_equipment_by_type:
-				var selected_weapon_group: Node2D = vehicle.vehicle.weapons_types_with_weapons.values()[selected_item_index]
-				for weapon in all_equipment_ungrouped:
-					if weapon in selected_weapon_group and weapon.use_ai:
-						weapon.weapon_ai.ai_enabled = true
-					else:
-						weapon.weapon_ai.ai_enabled = false
-			else:
-				var curr_weapon: Node2D = all_equipment_ungrouped[selected_item_index]
-				for weapon in all_equipment_ungrouped:
-					if weapon == curr_weapon and curr_weapon.use_ai:
-						curr_weapon.weapon_ai.ai_enabled = true
-					else:
-						weapon.weapon_ai.ai_enabled = false
-
+			_select_equipment()
 
 		# shoot
 		if Input.is_action_pressed(shoot_action):
-#		if Input.is_action_just_pressed(shoot_action):
 			if vehicle.group_equipment_by_type:
-				var selected_weapons_group: Array = vehicle.weapons_types_with_weapons.values()[selected_item_index]
+				var selected_weapons_group: Array = vehicle.weapon_types_with_trigger_weapons.values()[selected_item_index]
 				var selected_weapon: Node2D = selected_weapons_group.front()
 				for weapon in selected_weapons_group:
 					weapon.on_weapon_triggered()
 			else:
 				var ungrouped_equipment: Array = []
-				for weapon_type in vehicle.weapons_types_with_weapons:
-					for weapon in vehicle.weapons_types_with_weapons[weapon_type]:
+				for weapon_type in vehicle.weapon_types_with_trigger_weapons:
+					for weapon in vehicle.weapon_types_with_trigger_weapons[weapon_type]:
 						ungrouped_equipment.append(weapon)
 				ungrouped_equipment[selected_item_index].on_weapon_triggered()
 
 		# revup
-#		if motion_manager.motion == motion_manager.MOTION.DISSABLED:
-		if fast_start_window_is_open:
+		if motion_manager.motion == motion_manager.MOTION.DISSABLED:
 			if Input.is_action_just_pressed(fwd_action) or Input.is_action_just_pressed(rev_action):
 				vehicle.engines.revup()
 
@@ -117,6 +80,43 @@ func _ready() -> void:
 	vehicle.add_to_group(Refs.group_players)
 	# player coližn lejer
 	vehicle.set_collision_layer_bit(4, true)
+
+
+func _select_equipment():
+
+	# vsa setana orožja, ne glede na tip
+	var all_equipment_ungrouped: Array = []
+	for weapon_type in vehicle.weapon_types_with_trigger_weapons:
+		for weapon in vehicle.weapon_types_with_trigger_weapons[weapon_type]:
+			all_equipment_ungrouped.append(weapon)
+
+	# ungrouped ... preštejem ves equipment
+	var selectable_items_count = all_equipment_ungrouped.size()
+	# grouped ... preštejem število tipov
+	if vehicle.group_equipment_by_type:
+		selectable_items_count = vehicle.weapon_types_with_trigger_weapons.size()
+
+	if selected_item_index > selectable_items_count - 1: # poskrbi tudi za primer, da je samo en item
+		selected_item_index = 0
+	elif selected_item_index < 0:
+		selected_item_index = selectable_items_count - 1
+	emit_signal("item_selected", selected_item_index)
+
+	# weapon ai ON/OFF
+	if vehicle.group_equipment_by_type:
+		var selected_weapon_group: Array = vehicle.weapon_types_with_trigger_weapons.values()[selected_item_index]
+		for weapon in all_equipment_ungrouped:
+			if weapon in selected_weapon_group and weapon.use_ai:
+				weapon.weapon_ai.ai_enabled = true
+			else:
+				weapon.weapon_ai.ai_enabled = false
+	else:
+		var curr_weapon: Node2D = all_equipment_ungrouped[selected_item_index]
+		for weapon in all_equipment_ungrouped:
+			if weapon == curr_weapon and curr_weapon.use_ai:
+				curr_weapon.weapon_ai.ai_enabled = true
+			else:
+				weapon.weapon_ai.ai_enabled = false
 
 
 func _set_driving_motion(pressed_actions: Array):

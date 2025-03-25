@@ -100,12 +100,9 @@ func set_game(level_index_add: int = 0):
 	level_index += level_index_add
 
 	yield(_spawn_level(level_index, Pros.start_driver_profiles.size()), "completed")
-#	yield(_spawn_level(level_index), "completed")
-#	yield(get_tree(), "idle_frame")
+
 	final_level_data["level_profile"] = level_profile
 	game_tracker.game_level = game_level
-
-	#	yield(get_tree(), "idle_frame")
 
 	# drivers
 	var drivers_on_start: Array = []
@@ -127,7 +124,6 @@ func set_game(level_index_add: int = 0):
 			if not final_drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK] == -1:
 				starting_driver_ids.append(driver_id)
 		level_start_positions = game_level.level_start_positions
-#		level_start_positions = game_level._get_start_positions(starting_driver_ids.size())
 		for driver_id in starting_driver_ids:
 			var new_driver: Vehicle = _spawn_vehicle(driver_id, level_start_positions[starting_driver_ids.find(driver_id)])
 			drivers_on_start.append(new_driver)
@@ -211,7 +207,6 @@ func _start_game():
 
 	# start countdown
 	if game_level.start_line.is_enabled:
-#		yield(get_tree().create_timer(1), "timeout")
 		game_level.start_line.start_lights.start_countdown()
 		var semaphore_lights_count: int = 3
 		yield(get_tree().create_timer(semaphore_lights_count), "timeout") # neodvisen od countdown signala
@@ -239,7 +234,8 @@ func _change_game_stage(new_game_stage: int):
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
 
-			game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
+			if game_sound.intro_jingle.is_playing(): # če je pavza pred začetkom igre ... ob zapiranju zapleja gejm musko
+				game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
 
 			gui.on_game_start()
 

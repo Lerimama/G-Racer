@@ -24,11 +24,12 @@ tracks/0/keys = {
 weapon_type = 1
 weapon_ammo = 3
 use_ai = true
+reload_time = 0.3
 Ammo = ExtResource( 2 )
 load_icon = ExtResource( 3 )
 
 [node name="Polygon2D" parent="WeaponSprite" index="1"]
 polygon = PoolVector2Array( 32, -4, -8, -4, -8, 4, 0, 4, 32, 4, 32, 0 )
 
-[node name="AnimationPlayer" parent="." index="2"]
+[node name="AnimationPlayer" parent="." index="1"]
 anims/shake = SubResource( 1 )

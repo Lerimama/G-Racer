@@ -20,25 +20,36 @@ func _ready() -> void:
 
 func use_selected_item():
 
+	# debug ... battle stat setter
+	battle_state = BATTLE_STATE.GUN
+
 	var all_equipment_ungrouped: Array = []
 	var shooting_weapons: Array = []
 
 	if not battle_state == BATTLE_STATE.NONE:
 
 		var battle_state_key: String = BATTLE_STATE.find_key(battle_state)
+		var battle_state_index: int  = BATTLE_STATE.values().find(battle_state)
+
 		# naberem vsa setana orožja, ne glede na tip
-		for weapon_type in vehicle.weapons_types_with_weapons:
-			for weapon in vehicle.weapons_types_with_weapons[weapon_type]:
+		for weapon_type in vehicle.weapon_types_with_trigger_weapons:
+			for weapon in vehicle.weapon_types_with_trigger_weapons[weapon_type]:
 				all_equipment_ungrouped.append(weapon)
+
+		var WEAPON_TYPE: Dictionary = all_equipment_ungrouped.front().WEAPON_TYPE
+		var selected_weapon_type: int = WEAPON_TYPE[battle_state_key]
 
 		# če so grupirana, izbere vse v grupi
 		if vehicle.group_equipment_by_type:
-			for weapon in vehicle.weapons_types_with_weapons[battle_state_key]:
+#			var weapon_type_index: int = WEAPON_TYPE.keys().find(battle_state_key)
+#			var weapon_type: int = WEAPON_TYPE.values()[weapon_type_index]
+			for weapon in vehicle.weapon_types_with_trigger_weapons[selected_weapon_type]:
 				shooting_weapons.append(weapon)
+
+
 		else:
 		# če nispo grupirana, izbere prvega, ki še ima metke
-			var WEAPON_TYPE: Dictionary = all_equipment_ungrouped.front().WEAPON_TYPE
-			var selected_weapon_type: int = WEAPON_TYPE[battle_state_key]
+#			var selected_weapon_type: int = WEAPON_TYPE[battle_state_key]
 			for weapon in all_equipment_ungrouped:
 				if weapon.weapon_type == selected_weapon_type and weapon.load_count > 0:
 					shooting_weapons.append(weapon)
@@ -147,7 +158,7 @@ func _get_target_rank(unranked_target: Node2D):
 			Pros.PICKABLE.NITRO, Pros.PICKABLE.RANDOM, Pros.LEVEL_OBJECT.GOAL_PILLAR:
 				targets_rank = 2
 	elif unranked_target.is_in_group(Refs.group_players):
-		targets_rank = 1
+		targets_rank = 0
 
 	return targets_rank
 

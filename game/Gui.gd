@@ -40,6 +40,11 @@ func on_game_start():
 
 func open_level_finished():
 
+	# da bo miš delovala
+#	game_manager.set_process_input(false)
+#	get_viewport().set_disable_input(true)
+
+
 	# če je kakšen (ai) prazen, ga dodam med prazne
 	unfinished_driver_ids.clear()
 	for driver_id in game_manager.final_drivers_data:
@@ -53,10 +58,10 @@ func open_level_finished():
 	# pseudo fejdout
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(game_cover, "modulate:a", 0.8, 0.7)
+	fade_tween.tween_callback(level_finished.finish_btn, "grab_focus")
 	fade_tween.tween_callback(level_finished, "show")
 	fade_tween.tween_property(level_finished, "modulate:a", 1, 1).from(0.0)
 	yield(fade_tween, "finished")
-#	get_tree().set_pause(true)
 
 	hud.on_game_over()
 
@@ -72,34 +77,34 @@ func open_game_over():
 	if not unfinished_driver_ids.empty():
 		_update_final_data()
 
-	get_viewport().set_disable_input(false)
 	game_over.open(game_manager)
-	get_tree().paused = true # proces, fp, input ... pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
+	get_tree().set_pause(true) # proces, fp, input
 
+	print("get_focus_owner 2", game_over.get_focus_owner())
+	get_viewport().set_disable_input(true)
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(level_finished, "modulate:a", 0, 0.5)
 	fade_tween.tween_callback(level_finished, "hide")
 	fade_tween.tween_callback(game_over, "show")
+	fade_tween.tween_callback(game_over.restart_btn, "grab_focus")
 	fade_tween.tween_property(game_over, "modulate:a", 1, 0.5).from(0.0)
 	fade_tween.parallel().tween_property(game_cover, "color", Color.darkmagenta, 0.5)
+	yield(fade_tween, "finished")
+	get_viewport().set_disable_input(false)
 
 
 func close_game(transition_to: int):
-	print("CLOSE")
-#	get_tree().paused = true # proces, fp, input ... pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
 
 	game_manager.game_sound.fade_sounds(game_manager.game_sound.menu_music)
-#	if not unfinished_driver_ids.empty():
-#		_update_final_data()
 
+	get_viewport().set_disable_input(true)
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(game_over, "modulate:a", 0, 0.5)
 	fade_tween.tween_property(game_cover, "modulate:a", 1, 0.3)
 	yield(fade_tween, "finished")
-	game_over.hide()
-
-#	get_tree().paused = false # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
 	get_viewport().set_disable_input(false)
+
+	game_over.hide()
 
 	match transition_to:
 		-1:
@@ -108,7 +113,7 @@ func close_game(transition_to: int):
 			Refs.main_node.reload_game()
 			#			game_manager.set_game(0)
 		1:
-			get_tree().paused = false # pavza ga sama seta, mogoče ga lahko skozi cel GO proces?
+			get_tree().set_pause(false)
 			game_manager.set_game(1)
 
 

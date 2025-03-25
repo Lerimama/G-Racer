@@ -3,7 +3,7 @@ extends Node2D
 
 #signal weapon_triggered
 
-enum AI_STATE {OFF, ON_TRACK, SEARCH, FOLLOW, HUNT, REACH_GOAL, MOUSE_CLICK} # ai je možgan (driver in ne vehicle
+enum AI_STATE {OFF, ON_TRACK, SEARCH, FOLLOW, HUNT, REACH_GOAL, MOUSE_CLICK, BATTLE} # ai je možgan (driver in ne vehicle
 var ai_state: int = AI_STATE.OFF setget _change_ai_state
 
 # seta spawner
@@ -238,16 +238,13 @@ func _state_machine(delta: float):
 
 		AI_STATE.FOLLOW: # sledi tarči, dokler se ji ne približa (če je ne vidi ima problem)
 			ai_target = battler._get_better_targets(ai_target)
-#			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				navigation_agent.set_target_location(ai_target.global_position)
-#			_react_to_target(ai_target, true)
 			_react_to_target(ai_target)
 			motion_manager.current_engine_power = motion_manager.max_engine_power
 
 		AI_STATE.HUNT: # pobere tarčo, ki jo je videl ... ne izgubi pogleda, ne išče boljših
 			# preverjam za boljšo tarčo
-#			ai_target = _get_better_targets(ai_target)
 			if not navigation_agent.get_target_location() == ai_target.global_position: # setam novo pozicijo, če je drugačna
 				navigation_agent.set_target_location(ai_target.global_position)
 			_react_to_target(ai_target)
@@ -263,6 +260,9 @@ func _state_machine(delta: float):
 			navigation_agent.set_target_location(ai_target.global_position)
 			motion_manager.current_engine_power = motion_manager.max_engine_power / 3
 			_react_to_target(ai_target)
+
+		AI_STATE.BATTLE:
+			battle_with_target(ai_target)
 
 
 func _change_ai_state(new_ai_state: int):
@@ -301,6 +301,9 @@ func _change_ai_state(new_ai_state: int):
 			motion_manager.motion = motion_manager.MOTION.FWD
 		AI_STATE.MOUSE_CLICK:
 			motion_manager.motion = motion_manager.MOTION.FWD
+		AI_STATE.BATTLE:
+#			motion_manager.motion = motion_manager.MOTION.FWD
+			pass
 
 	ai_state = new_ai_state
 
@@ -308,9 +311,25 @@ func _change_ai_state(new_ai_state: int):
 func react_on_hit(hit_owner: Node2D):
 
 	ai_target = hit_owner
-	self.ai_state = AI_STATE.HUNT
-#	ai_state = AI_STATE.REACH_GOAL
-	pass
+	self.ai_state = AI_STATE.BATTLE
+
+
+func battle_with_target(battle_target: Node2D):
+
+	# najprej target ray preveri, če ga vidi
+	var any_collider = Mets.get_directed_raycast_collision(target_ray, battle_target.global_position)
+	var target_in_sight: bool = false
+	if any_collider and any_collider == battle_target and is_instance_valid(battle_target):
+		target_in_sight = true
+
+	var shooting_distance: float = 2000
+	if target_in_sight:
+		if global_position.distance_to(battle_target.global_position) > shooting_distance:
+			motion_manager.current_engine_power = motion_manager.max_engine_power / 4
+			motion_manager.motion = motion_manager.MOTION.FWD
+		else:
+			motion_manager.motion = motion_manager.MOTION.IDLE
+			battler.use_selected_item()
 
 
 func _react_to_target(react_target: Node2D, keep_on_distance: bool = false, be_aggressive: bool = false):
