@@ -46,9 +46,10 @@ func _process(delta: float) -> void:
 		# per frame RACING stats
 		if game.level_profile["rank_by"] == Pros.RANK_BY.TIME:
 			for driver in drivers_in_game:
-				driver.update_stat(Pros.STATS.LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
-				if game_level.tracking_line.is_enabled:
-					driver.update_stat(Pros.STATS.LEVEL_PROGRESS, driver.driver_tracker.unit_offset)
+				if driver.is_active and not driver in drivers_finished: # neha pošiljati, ko prevozi cilj
+					driver.update_stat(Pros.STAT.CURR_LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
+					if game_level.tracking_line.is_enabled:
+						driver.update_stat(Pros.STAT.LEVEL_PROGRESS, driver.driver_tracker.unit_offset)
 
 
 func _update_ranking():
@@ -86,10 +87,10 @@ func _update_ranking():
 	var allready_finished_count: int = drivers_finished.size() # adaptacija ranka, ker so tisti v cilju neaktivni
 	var players_ranked: Array = []
 	for ranked_driver in drivers_ranked:
-		var prev_rank: int = ranked_driver.driver_stats[Pros.STATS.LEVEL_RANK]
+		var prev_rank: int = ranked_driver.driver_stats[Pros.STAT.LEVEL_RANK]
 		var new_rank: int = drivers_ranked.find(ranked_driver) + 1 + allready_finished_count
 		if not new_rank == prev_rank:
-			ranked_driver.update_stat(Pros.STATS.LEVEL_RANK, new_rank)
+			ranked_driver.update_stat(Pros.STAT.LEVEL_RANK, new_rank)
 		if ranked_driver.is_in_group(Refs.group_players):
 			players_ranked.append(ranked_driver)
 
@@ -97,22 +98,22 @@ func _update_ranking():
 	drivers_in_game = drivers_ranked
 
 
-func _check_for_game_end():
+func _check_for_level_finished():
 	# igre je konec, ko so v cilju vsi plejerji, ki so še aktivni
 	# SUCCES je, če je vsaj en plejer v cilju
 	# FAIL je če ni nobenega
 
 	if game.game_stage == game.GAME_STAGE.PLAYING:
-		var continue_game: bool = false
 
 		# preverim, če kakšen plejer še dirka
+		var is_level_finished: bool = true
 		for player in get_tree().get_nodes_in_group(Refs.group_players):
 			if player.is_active and not player in drivers_finished:
-				continue_game = true
+				is_level_finished = false
 				break
 
 		# preverim succes, če je konec
-		if not continue_game:
+		if is_level_finished:
 			_update_camera_leader(null)
 			var is_successful: bool = false
 			for player in get_tree().get_nodes_in_group(Refs.group_players):
@@ -120,9 +121,9 @@ func _check_for_game_end():
 					is_successful = true
 					break
 			if is_successful:
-				game.game_stage = game.GAME_STAGE.END_SUCCESS
+				game.game_stage = game.GAME_STAGE.FINISHED_SUCCESS
 			else:
-				game.game_stage = game.GAME_STAGE.END_FAIL
+				game.game_stage = game.GAME_STAGE.FINISHED_FAIL
 
 
 # REAKT ------------------------------------------------------------------------------------------------------
@@ -144,14 +145,14 @@ func _pull_vehicle_on_field(vehicle_to_pull: Vehicle): # temp ... Vehicle class
 			vehicle_to_pull.pull_on_screen(pull_position)
 
 			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
-			var lap_count_diff: int = camera_leader.driver_stats[Pros.STATS.LAP_COUNT].size() - vehicle_to_pull.driver_stats[Pros.STATS.LAP_COUNT].size()
+			var lap_count_diff: int = camera_leader.driver_stats[Pros.STAT.LAP_COUNT].size() - vehicle_to_pull.driver_stats[Pros.STAT.LAP_COUNT].size()
 			for count in lap_count_diff:
 				var uncounted_lap_time: float = 0
-				vehicle_to_pull.update_stat(Pros.STATS.LAP_COUNT, uncounted_lap_time)
+				vehicle_to_pull.update_stat(Pros.STAT.LAP_COUNT, uncounted_lap_time)
 			# poenotim goals ... mogoče nebi mel ... bomo videli po testu
-			for goal in camera_leader.driver_stats[Pros.STATS.GOALS_REACHED]:
-				if not goal in vehicle_to_pull.driver_stats[Pros.STATS.GOALS_REACHED]:
-					vehicle_to_pull.update_stat(Pros.STATS.GOALS_REACHED, goal)
+			for goal in camera_leader.driver_stats[Pros.STAT.GOALS_REACHED]:
+				if not goal in vehicle_to_pull.driver_stats[Pros.STAT.GOALS_REACHED]:
+					vehicle_to_pull.update_stat(Pros.STAT.GOALS_REACHED, goal)
 
 
 func _get_pull_position(vehicle_to_pull_position: Vector2):
@@ -195,7 +196,7 @@ func apply_slomo(affector: Node2D, affectee: Node2D ):
 		var apply_slomo: bool = false
 		# če je driver pošlje driverja in se odloči glede na zdravje
 		if "driver_stats" in affectee:
-			if not affectee.driver_stats[Pros.STATS.HEALTH] - affector.hit_damage > 0:
+			if not affectee.driver_stats[Pros.STAT.HEALTH] - affector.hit_damage > 0:
 				apply_slomo = true
 		# drugače se odloča glede na vrsto
 		elif affectee.has_method("on_hit"):
@@ -230,7 +231,7 @@ func _on_game_time_is_up():
 	for driver in drivers_in_game:
 		driver.is_active = false
 
-	_check_for_game_end()
+	_check_for_level_finished()
 
 
 func _on_fx_finished(finished_fx: Node): # Node, ker je lahko audio
@@ -248,36 +249,36 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 
 		# če je goal med level goali in če ni že dosežen
 		if reached_goal.name in game.level_profile["level_goals"] \
-		and not reached_goal in reaching_driver.driver_stats[Pros.STATS.GOALS_REACHED]:
+		and not reached_goal in reaching_driver.driver_stats[Pros.STAT.GOALS_REACHED]:
 
 			# dodam med dosežene
-			reaching_driver.update_stat(Pros.STATS.GOALS_REACHED, reached_goal)
+			reaching_driver.update_stat(Pros.STAT.GOALS_REACHED, reached_goal)
 			if reaching_driver.controller.has_method("on_goal_reached"):# is_in_group(Refs.group_ai):
 				reaching_driver.controller.on_goal_reached(reached_goal, game.game_level.finish_line)
 
 			# preverim če so doseženi vsi cilji ... razen finish line
 			var all_goals_reached: bool = true
 			for goal in game_level.level_goals:
-				if not goal in reaching_driver.driver_stats[Pros.STATS.GOALS_REACHED]:
+				if not goal in reaching_driver.driver_stats[Pros.STAT.GOALS_REACHED]:
 					all_goals_reached = false
 					break
 
 			if not all_goals_reached:
 				game.game_sound.little_horn.play()
 			else:
-				reaching_driver.update_stat(Pros.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
+				reaching_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
 				var all_laps_finished: bool = false
-				if reaching_driver.driver_stats[Pros.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 					all_laps_finished = true
 				# goals reset for next lap
 				if not all_laps_finished:
-					reaching_driver.driver_stats[Pros.STATS.GOALS_REACHED] = []
+					reaching_driver.driver_stats[Pros.STAT.GOALS_REACHED] = []
 					game.game_sound.little_horn.play()
 				# finish level
 				else:
 
 					game.game_sound.big_horn.play()
-					reaching_driver.update_stat(Pros.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+					reaching_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 					drivers_finished.append(reaching_driver)
 					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 
@@ -289,7 +290,7 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 
 		# LAP
 		var has_lap_conditions: bool = false
-		if crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED].size() >= game_level.level_goals.size(): # lahko ji ima več ker se goali lahko kvefrijajo
+		if crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED].size() >= game_level.level_goals.size(): # lahko ji ima več ker se goali lahko kvefrijajo
 			# če ni igra z goali je 0 == 0 => true
 			has_lap_conditions = true
 		if game_level.tracking_line.is_enabled:
@@ -299,7 +300,7 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 				has_lap_conditions = true
 
 		if has_lap_conditions:
-			crossing_driver.update_stat(Pros.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
+			crossing_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
 
 			# FINISH
 			var all_laps_finished: bool = false
@@ -307,12 +308,12 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 				# če so bili vsi cilji kvefrijani, ni več krogov ...
 				# možnost tega ni dobra praksa ... pazi pri postavljanju levelov
 				all_laps_finished = true
-			if crossing_driver.driver_stats[Pros.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 				all_laps_finished = true
 			# cilj
 			if all_laps_finished:
 				game.game_sound.big_horn.play()
-				crossing_driver.update_stat(Pros.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+				crossing_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.finish_line.is_enabled:
@@ -322,7 +323,7 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 			else:
 				game.game_sound.little_horn.play()
 				# restirajo za nov krog
-				crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED] = []
+				crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED] = []
 				crossing_driver.driver_tracker.checked_checkpoints.clear()
 
 
@@ -352,17 +353,17 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	# finale data za vse ki so še v igri
 	if driver_vehicle in drivers_finished:
 		var finished_driver_rank: int = drivers_finished.size()
-		driver_vehicle.driver_stats[Pros.STATS.LEVEL_RANK] = finished_driver_rank
+		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = finished_driver_rank
 		# dodam zmago
 		if finished_driver_rank == 1: # zmaga
 			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-			driver_vehicle.update_stat(Pros.STATS.WINS, game.level_index)
-			#			driver_vehicle.update_stat(Pros.STATS.WINS, 1) # temp WINS pozicija
+			driver_vehicle.update_stat(Pros.STAT.WINS, game.level_index)
+			#			driver_vehicle.update_stat(Pros.STAT.WINS, 1) # temp WINS pozicija
 		# dodam cash nagrado
 		if not finished_driver_rank > Sets.ranking_cash_rewards.size() and not finished_driver_rank == -1:
-			driver_vehicle.update_stat(Pros.STATS.CASH, Sets.ranking_cash_rewards[finished_driver_rank - 1])
+			driver_vehicle.update_stat(Pros.STAT.CASH, Sets.ranking_cash_rewards[finished_driver_rank - 1])
 	else:
-		driver_vehicle.driver_stats[Pros.STATS.LEVEL_RANK] = -1
+		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
 
 	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 	game.final_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
@@ -379,8 +380,8 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	#			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
 
 	if game.game_stage == game.GAME_STAGE.PLAYING:
-		_check_for_game_end()
-	elif game.game_stage > game.GAME_STAGE.END_FAIL:
+		_check_for_level_finished()
+	elif game.game_stage > game.GAME_STAGE.FINISHED_FAIL:
 		game.gui.call_deferred("_on_waiting_driver_finished", game.final_drivers_data, driver_vehicle)
 
 
@@ -390,8 +391,8 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 func _sort_drivers_by_laps(driver_1: Vehicle, driver_2: Vehicle): # desc
 	# For two elements a and b, if the given method returns true, element b will be after element a in the array.
 
-	var driver_1_lap_count: int = driver_1.driver_stats[Pros.STATS.LAP_COUNT].size()
-	var driver_2_lap_count: int = driver_2.driver_stats[Pros.STATS.LAP_COUNT].size()
+	var driver_1_lap_count: int = driver_1.driver_stats[Pros.STAT.LAP_COUNT].size()
+	var driver_2_lap_count: int = driver_2.driver_stats[Pros.STAT.LAP_COUNT].size()
 	if driver_1_lap_count > driver_2_lap_count:
 		return true
 	return false
@@ -407,8 +408,8 @@ func _sort_trackers_by_offset(driver_tracker_1: PathFollow2D, driver_tracker_2: 
 func _sort_drivers_by_goals_reached(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
 	# if TRUE, A before B
 
-	var driver_1_goals_reached_count: int = driver_1.driver_stats[Pros.STATS.GOALS_REACHED].size()
-	var driver_2_goals_reached_count: int = driver_2.driver_stats[Pros.STATS.GOALS_REACHED].size()
+	var driver_1_goals_reached_count: int = driver_1.driver_stats[Pros.STAT.GOALS_REACHED].size()
+	var driver_2_goals_reached_count: int = driver_2.driver_stats[Pros.STAT.GOALS_REACHED].size()
 	if driver_1_goals_reached_count > driver_2_goals_reached_count:
 		return true
 	return false
@@ -416,8 +417,8 @@ func _sort_drivers_by_goals_reached(driver_1: Vehicle, driver_2: Vehicle):# desc
 
 func _sort_drivers_by_points(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
 
-	var driver_1_points: int = driver_1.driver_stats[Pros.STATS.POINTS]
-	var driver_2_points: int = driver_2.driver_stats[Pros.STATS.POINTS]
+	var driver_1_points: int = driver_1.driver_stats[Pros.STAT.POINTS]
+	var driver_2_points: int = driver_2.driver_stats[Pros.STAT.POINTS]
 	if driver_1_points > driver_2_points:
 		return true
 	return false

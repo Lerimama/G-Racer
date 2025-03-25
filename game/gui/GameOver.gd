@@ -25,7 +25,7 @@ func open(game_manager: Game):
 	var levels_count: int = game_manager.game_levels.size()
 
 	# level or game finished
-	if game_manager.game_stage == game_manager.GAME_STAGE.END_FAIL:
+	if game_manager.game_stage == game_manager.GAME_STAGE.FINISHED_FAIL:
 		_set_for_game_finished(false)
 	else:
 		if level_index < levels_count - 1:

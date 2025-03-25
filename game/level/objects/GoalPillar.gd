@@ -27,7 +27,7 @@ func _goal_reached(vehicle: Vehicle):
 	if not turned_on:
 		turned_on = true
 		light_poly.color = Refs.color_green
-		vehicle.update_stat(Pros.STATS.POINTS, reward_points)
+		vehicle.update_stat(Pros.STAT.POINTS, reward_points)
 		$AnimationPlayer.play("edge_rotate")
 
 

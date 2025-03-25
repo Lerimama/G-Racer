@@ -37,7 +37,7 @@ func update_scorelines(drivers_data):
 	# uvrščeni ... fixed
 	for driver_id in drivers_data:
 		if "driver_stats" in drivers_data[driver_id]:
-			var driver_rank: int = drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK]
+			var driver_rank: int = drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK]
 			if driver_rank > 0:
 				update_ranked_scoreline_data(get_child(driver_rank - 1), drivers_data, driver_id)
 				updated_scorelines_count += 1
@@ -55,26 +55,26 @@ func update_scorelines(drivers_data):
 	# diskvalificirani ... fixed
 	for driver_id in drivers_data:
 		if "driver_stats" in drivers_data[driver_id]:
-			var driver_rank: int = drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK]
+			var driver_rank: int = drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK]
 			if driver_rank == -1:
 				var updated_scoreline: Control = get_child(updated_scorelines_count)
 				updated_scoreline.get_node(rank_scoreline_path).text = "/"
 				updated_scoreline.get_node(avatar_scoreline_path).texture = drivers_data[driver_id]["driver_profile"]["driver_avatar"]
 				updated_scoreline.get_node(name_scoreline_path).text = str(driver_id)
 				updated_scoreline.get_node(result_scoreline_path).text = "OUT"
-				updated_scoreline.get_node(wins_scoreline_path).stat_value = [drivers_data[driver_id]["driver_stats"][Pros.STATS.WINS].size(), Sets.wins_needed]
-				updated_scoreline.get_node(reward_scoreline_path).text = "$%d" % drivers_data[driver_id]["driver_stats"][Pros.STATS.CASH]
+				updated_scoreline.get_node(wins_scoreline_path).stat_value = [drivers_data[driver_id]["driver_stats"][Pros.STAT.WINS].size(), Sets.wins_needed]
+				updated_scoreline.get_node(reward_scoreline_path).text = "$%d" % drivers_data[driver_id]["driver_stats"][Pros.STAT.CASH]
 				updated_scorelines_count += 1
 
 
 func update_ranked_scoreline_data(scoreline, drivers_data, ranked_driver_id):
 
 	var ranked_driver_data = drivers_data[ranked_driver_id]
-	var drivers_rank: int = ranked_driver_data["driver_stats"][Pros.STATS.LEVEL_RANK]
+	var drivers_rank: int = ranked_driver_data["driver_stats"][Pros.STAT.LEVEL_RANK]
 
 	scoreline.get_node(avatar_scoreline_path).texture = ranked_driver_data["driver_profile"]["driver_avatar"]
 	scoreline.get_node(rank_scoreline_path).text = str(drivers_rank)# + ". Place"
 	scoreline.get_node(name_scoreline_path).text = str(ranked_driver_id)
-	scoreline.get_node(result_scoreline_path).text = Mets.get_clock_time_string(ranked_driver_data["driver_stats"][Pros.STATS.LEVEL_TIME])
-	scoreline.get_node(wins_scoreline_path).stat_value = [ranked_driver_data["driver_stats"][Pros.STATS.WINS].size(), Sets.wins_needed]
-	scoreline.get_node(reward_scoreline_path).text = "$%d" % ranked_driver_data["driver_stats"][Pros.STATS.CASH]
+	scoreline.get_node(result_scoreline_path).text = Mets.get_clock_time_string(ranked_driver_data["driver_stats"][Pros.STAT.LEVEL_TIME])
+	scoreline.get_node(wins_scoreline_path).stat_value = [ranked_driver_data["driver_stats"][Pros.STAT.WINS].size(), Sets.wins_needed]
+	scoreline.get_node(reward_scoreline_path).text = "$%d" % ranked_driver_data["driver_stats"][Pros.STAT.CASH]

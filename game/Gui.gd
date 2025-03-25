@@ -35,7 +35,7 @@ func set_gui(drivers_on_start: Array):
 
 func on_game_start():
 
-	hud.on_game_start()
+	hud.game_timer.start_timer()
 
 
 func open_level_finished():
@@ -44,12 +44,15 @@ func open_level_finished():
 #	game_manager.set_process_input(false)
 #	get_viewport().set_disable_input(true)
 
-
 	# če je kakšen (ai) prazen, ga dodam med prazne
 	unfinished_driver_ids.clear()
 	for driver_id in game_manager.final_drivers_data:
 		if not "driver_stats" in game_manager.final_drivers_data[driver_id]:
 			unfinished_driver_ids.append(driver_id)
+
+	# če so deaktivirani vsi driverji, ustavim timer
+	if unfinished_driver_ids.empty():
+		hud.game_timer.stop_timer()
 
 	level_finished.set_level_finished(game_manager)
 
@@ -63,8 +66,6 @@ func open_level_finished():
 	fade_tween.tween_property(level_finished, "modulate:a", 1, 1).from(0.0)
 	yield(fade_tween, "finished")
 
-	hud.on_game_over()
-
 	if game_manager.game_sound.win_jingle.is_playing():
 		yield(game_manager.game_sound.win_jingle, "finished")
 	elif game_manager.game_sound.lose_jingle.is_playing():
@@ -76,7 +77,8 @@ func open_game_over():
 
 	if not unfinished_driver_ids.empty():
 		_update_final_data()
-
+	hud.game_timer.stop_timer()
+	#	hud.hide() ... itak ga pokrije cover
 	game_over.open(game_manager)
 	get_tree().set_pause(true) # proces, fp, input
 
@@ -138,9 +140,9 @@ func _update_final_data():
 		if driver_vehicle:
 			var distance_needed_part: float = driver_vehicle.driver_tracker.unit_offset
 			if distance_needed_part == 0: # če obtiči na štartu ... verjetno nikoli
-				driver_vehicle.driver_stats[Pros.STATS.LEVEL_TIME] = current_game_time
+				driver_vehicle.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time
 			else:
-				driver_vehicle.driver_stats[Pros.STATS.LEVEL_TIME] = current_game_time / distance_needed_part
+				driver_vehicle.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time / distance_needed_part
 			game_manager.final_drivers_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 			game_manager.final_drivers_data[driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
 

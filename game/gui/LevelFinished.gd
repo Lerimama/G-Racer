@@ -32,7 +32,7 @@ func set_level_finished(game_manager: Game):
 	var levels_count: int = game_manager.game_levels.size()
 
 	# level or game finished
-	if game_manager.game_stage == game_manager.GAME_STAGE.END_FAIL:
+	if game_manager.game_stage == game_manager.GAME_STAGE.FINISHED_FAIL:
 		title.text = "GAME OVER"
 		title.modulate = Refs.color_red
 	else:

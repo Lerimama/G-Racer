@@ -18,10 +18,39 @@ func _ready() -> void:
 	pass
 
 
+func _select_battle_state():
+	# tip izbranega orožja je izbrani battle state
+
+	# flter on empty
+	var not_empty_equipment: Array = []
+	for weapon_type in vehicle.weapon_types_with_trigger_weapons:
+		for weapon in vehicle.weapon_types_with_trigger_weapons[weapon_type]:
+			if weapon.load_count > 0:
+				if not weapon.weapon_type == weapon.WEAPON_TYPE.DROPPER: # _temp ... mine AI trenutno ne uporablja
+					not_empty_equipment.append(weapon)
+
+	# filter on loaded
+	var loaded_equipment: Array = []
+	for weapon in not_empty_equipment:
+		if weapon.weapon_reloaded:
+			loaded_equipment.append(weapon)
+
+	if loaded_equipment.empty():
+		battle_state = BATTLE_STATE.NONE
+	else:
+		loaded_equipment.sort_custom(self, "_sort_equipment_by_load_count")
+		var selected_equipment_type_key: String = loaded_equipment.front().WEAPON_TYPE.find_key(loaded_equipment.front().weapon_type)
+		var new_battle_state: int = BATTLE_STATE[selected_equipment_type_key]
+
+		battle_state = new_battle_state
+
+
 func use_selected_item():
 
 	# debug ... battle stat setter
 	battle_state = BATTLE_STATE.GUN
+
+	_select_battle_state()
 
 	var all_equipment_ungrouped: Array = []
 	var shooting_weapons: Array = []
@@ -29,7 +58,6 @@ func use_selected_item():
 	if not battle_state == BATTLE_STATE.NONE:
 
 		var battle_state_key: String = BATTLE_STATE.find_key(battle_state)
-		var battle_state_index: int  = BATTLE_STATE.values().find(battle_state)
 
 		# naberem vsa setana orožja, ne glede na tip
 		for weapon_type in vehicle.weapon_types_with_trigger_weapons:
@@ -41,15 +69,11 @@ func use_selected_item():
 
 		# če so grupirana, izbere vse v grupi
 		if vehicle.group_equipment_by_type:
-#			var weapon_type_index: int = WEAPON_TYPE.keys().find(battle_state_key)
-#			var weapon_type: int = WEAPON_TYPE.values()[weapon_type_index]
 			for weapon in vehicle.weapon_types_with_trigger_weapons[selected_weapon_type]:
-				shooting_weapons.append(weapon)
-
-
+				if weapon.load_count > 0: # če ma eden, majo vsi ... vsaj tako bi moralo biti
+					shooting_weapons.append(weapon)
 		else:
-		# če nispo grupirana, izbere prvega, ki še ima metke
-#			var selected_weapon_type: int = WEAPON_TYPE[battle_state_key]
+		# če niso grupirana, izbere prvega, ki še ima metke
 			for weapon in all_equipment_ungrouped:
 				if weapon.weapon_type == selected_weapon_type and weapon.load_count > 0:
 					shooting_weapons.append(weapon)
@@ -278,7 +302,14 @@ func _get_target_position_side(target_position: Vector2):
 # SORTERS ----------------------------------------------------------------------------------------------
 
 
-func _sort_targets_by_rank_array(target_array_1: Array, target_array_2: Array): # asc ... TRUE = A before B
+func _sort_equipment_by_load_count(equipment_1: Node2D, equipment_2: Node2D): # desc ... TRUE = A before B
+
+	if equipment_1.load_count > equipment_2.load_count:
+	    return true
+	return false
+
+
+func _sort_targets_by_rank_array(target_array_1: Array, target_array_2: Array): # asc ... TRUE = B before A
 
 	if target_array_1[1] < target_array_2[1]:
 	    return true
@@ -287,8 +318,8 @@ func _sort_targets_by_rank_array(target_array_1: Array, target_array_2: Array): 
 
 func _sort_targets_by_level_rank(driver_1: Vehicle, driver_2: Vehicle): # asc ... TRUE = B before A
 
-	var driver_1_rank: int = driver_1.driver_stats[Pros.STATS.LEVEL_RANK]
-	var driver_2_rank: int = driver_2.driver_stats[Pros.STATS.LEVEL_RANK]
+	var driver_1_rank: int = driver_1.driver_stats[Pros.STAT.LEVEL_RANK]
+	var driver_2_rank: int = driver_2.driver_stats[Pros.STAT.LEVEL_RANK]
 	if driver_1_rank < driver_2_rank:
 		return true
 	return false

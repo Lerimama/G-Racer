@@ -42,14 +42,14 @@ extends Node
 #			vehicle_to_pull.pull_on_screen(pull_position)
 #
 #			# poenotim level goals/laps stats ... če ni pulan točno preko cilja, pa bi moral bit
-#			var lap_count_diff: int = game.camera_leader.driver_stats[Pros.STATS.LAP_COUNT].size() - vehicle_to_pull.driver_stats[Pros.STATS.LAP_COUNT].size()
+#			var lap_count_diff: int = game.camera_leader.driver_stats[Pros.STAT.LAP_COUNT].size() - vehicle_to_pull.driver_stats[Pros.STAT.LAP_COUNT].size()
 #			for count in lap_count_diff:
 #				var uncounted_lap_time: float = 0
-#				vehicle_to_pull.update_stat(Pros.STATS.LAP_COUNT, uncounted_lap_time)
+#				vehicle_to_pull.update_stat(Pros.STAT.LAP_COUNT, uncounted_lap_time)
 #			# poenotim goals ... mogoče nebi mel ... bomo videli po testu
-#			for goal in game.camera_leader.driver_stats[Pros.STATS.GOALS_REACHED]:
-#				if not goal in vehicle_to_pull.driver_stats[Pros.STATS.GOALS_REACHED]:
-#					vehicle_to_pull.update_stat(Pros.STATS.GOALS_REACHED, goal)
+#			for goal in game.camera_leader.driver_stats[Pros.STAT.GOALS_REACHED]:
+#				if not goal in vehicle_to_pull.driver_stats[Pros.STAT.GOALS_REACHED]:
+#					vehicle_to_pull.update_stat(Pros.STAT.GOALS_REACHED, goal)
 #
 #
 #func animate_day_night():
@@ -71,7 +71,7 @@ extends Node
 #		var apply_slomo: bool = false
 #		# če je driver pošlje driverja in se odloči glede na zdravje
 #		if "driver_stats" in affectee:
-#			if not affectee.driver_stats[Pros.STATS.HEALTH] - affector.hit_damage > 0:
+#			if not affectee.driver_stats[Pros.STAT.HEALTH] - affector.hit_damage > 0:
 #				apply_slomo = true
 #		# drugače se odloča glede na vrsto
 #		elif affectee.has_method("on_hit"):
@@ -119,9 +119,9 @@ extends Node
 #					is_successful = true
 #					break
 #			if is_successful:
-#				game.game_stage = game.GAME_STAGE.END_SUCCESS
+#				game.game_stage = game.GAME_STAGE.FINISHED_SUCCESS
 #			else:
-#				game.game_stage = game.GAME_STAGE.END_FAIL
+#				game.game_stage = game.GAME_STAGE.FINISHED_FAIL
 #
 #
 ## SIGNALI ------------------------------------------------------------------------------------------------------
@@ -151,13 +151,13 @@ extends Node
 #		if not game_level.reach_goals_in_sequence or reached_goal == reaching_driver.goals_to_reach[0]:
 #
 #			# dodam med dosežene
-#			reaching_driver.update_stat(Pros.STATS.GOALS_REACHED, reached_goal.name)
+#			reaching_driver.update_stat(Pros.STAT.GOALS_REACHED, reached_goal.name)
 #
 #			# ček če so vsi cilji doseženi
 #			var all_goals_reached: bool = true
 #			for goal in game_level.level_goals:
 #				var goal_name: String = goal.name
-#				if not goal_name in reaching_driver.driver_stats[Pros.STATS.GOALS_REACHED]:
+#				if not goal_name in reaching_driver.driver_stats[Pros.STAT.GOALS_REACHED]:
 #					all_goals_reached = false
 #					break
 #
@@ -165,8 +165,8 @@ extends Node
 #			if all_goals_reached:
 #				var has_finished_level: bool = false
 #				# vsi krogi
-#				reaching_driver.update_stat(Pros.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
-#				if reaching_driver.driver_stats[Pros.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+#				reaching_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
+#				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 #					has_finished_level = true
 #				if has_finished_level:
 #					# to finish
@@ -176,14 +176,14 @@ extends Node
 #					# all goals reached and finished
 #					else:
 #						game.game_sound.big_horn.play()
-#						reaching_driver.update_stat(Pros.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+#						reaching_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 #						reaching_driver.controller.on_goal_reached(reached_goal)
 #						drivers_finished.append(reaching_driver)
 #						reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 #
 #				# new lap goals reset
 #				else:
-#					reaching_driver.driver_stats[Pros.STATS.GOALS_REACHED] = []
+#					reaching_driver.driver_stats[Pros.STAT.GOALS_REACHED] = []
 #					game.game_sound.little_horn.play()
 #			# next goal
 #			else:
@@ -199,7 +199,7 @@ extends Node
 #		var all_goals_reached: bool = true
 #		for goal in game_level.level_goals:
 #			var goal_name: String = goal.name
-#			if not goal_name in crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED]:
+#			if not goal_name in crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED]:
 #				all_goals_reached = false
 #				break
 #
@@ -216,15 +216,15 @@ extends Node
 #
 #		# ne registriram, če niso izpolnjeni pogoji v krogu oz dirki
 #		if all_goals_reached:
-#		#		if game_level.level_goals.empty() or crossing_driver.driver_stats[Pros.STATS.GOALS_REACHED] == game_level.level_goals:
+#		#		if game_level.level_goals.empty() or crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED] == game_level.level_goals:
 #			var has_finished_level: bool = false
 #			# če ni krogov je lap count da stat ve za prehod cilja
-#			crossing_driver.update_stat(Pros.STATS.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
-#			if crossing_driver.driver_stats[Pros.STATS.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+#			crossing_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
+#			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
 #				has_finished_level = true
 #			if has_finished_level:
 #				game.game_sound.big_horn.play()
-#				crossing_driver.update_stat(Pros.STATS.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+#				crossing_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 #				drivers_finished.append(crossing_driver)
 #				var drive_out_position: Vector2 = Vector2.ZERO
 #				if game_level.finish_line.is_enabled:
@@ -246,17 +246,17 @@ extends Node
 #	# finale data za vse ki so še v igri
 #	if driver_vehicle in drivers_finished:
 #		var finished_driver_rank: int = drivers_finished.size()
-#		driver_vehicle.driver_stats[Pros.STATS.LEVEL_RANK] = finished_driver_rank
+#		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = finished_driver_rank
 #		# dodam zmago
 #		if finished_driver_rank == 1: # zmaga
 #			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-#			driver_vehicle.update_stat(Pros.STATS.WINS, game.level_index)
-#			#			driver_vehicle.update_stat(Pros.STATS.WINS, 1) # temp WINS pozicija
+#			driver_vehicle.update_stat(Pros.STAT.WINS, game.level_index)
+#			#			driver_vehicle.update_stat(Pros.STAT.WINS, 1) # temp WINS pozicija
 #		# dodam cash nagrado
 #		if not finished_driver_rank > Sets.ranking_cash_rewards.size() and not finished_driver_rank == -1:
-#			driver_vehicle.update_stat(Pros.STATS.CASH, Sets.ranking_cash_rewards[finished_driver_rank - 1])
+#			driver_vehicle.update_stat(Pros.STAT.CASH, Sets.ranking_cash_rewards[finished_driver_rank - 1])
 #	else:
-#		driver_vehicle.driver_stats[Pros.STATS.LEVEL_RANK] = -1
+#		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
 #
 #	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 #	game.final_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()

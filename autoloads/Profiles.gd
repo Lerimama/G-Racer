@@ -36,7 +36,7 @@ func __stats(): pass # ---------------------------------------------------------
 #	Array ... lahko se računa current in max value
 #	PoolIntArray ... vedno
 
-enum STATS {
+enum STAT {
 		# driver
 		WINS,
 		LIFE,
@@ -51,26 +51,26 @@ enum STATS {
 		GOALS_REACHED,
 		BEST_LAP_TIME,
 		LEVEL_TIME,
-		LAP_TIME,
+		CURR_LAP_TIME,
 		}
 
 var start_driver_stats: Dictionary = {
 	# driver
-	STATS.WINS: [], # level index in game levels
-	STATS.LIFE: 0, # 0 = ni lajfa, 1 = 1 lajf, ni prikazan stat, n > 1 = normal, life as scalp
-	STATS.CASH: 0,
-	STATS.POINTS :0,
+	STAT.WINS: [], # level index in game levels
+	STAT.LIFE: 0, # 0 = ni lajfa, 1 = 1 lajf, ni prikazan stat, n > 1 = normal, life as scalp
+	STAT.CASH: 0,
+	STAT.POINTS :0,
 	# vehicle
-	STATS.HEALTH: 1.0, # percetnage
-	STATS.GAS: 2000,
+	STAT.HEALTH: 1.0, # percetnage
+	STAT.GAS: 2000,
 	# level (reset per level)
-	STATS.LEVEL_PROGRESS: 0.0, # percetnage
-	STATS.LEVEL_RANK: 0,
-	STATS.LEVEL_TIME: 0,
-	STATS.BEST_LAP_TIME: 0,
-	STATS.LAP_COUNT: [], # lap time
-	STATS.GOALS_REACHED: [], # goal names
-	STATS.LAP_TIME: 0,
+	STAT.LEVEL_PROGRESS: 0.0, # percetnage
+	STAT.LEVEL_RANK: 0,
+	STAT.LEVEL_TIME: 0,
+	STAT.BEST_LAP_TIME: 0,
+	STAT.LAP_COUNT: [], # lap time
+	STAT.GOALS_REACHED: [], # goal names
+	STAT.CURR_LAP_TIME: 0,
 	}
 
 func __drivers(): pass # ------------------------------------------------------------
@@ -449,9 +449,9 @@ var pickable_profiles: Dictionary = {
 	PICKABLE.POINTS: {
 		"color": Refs.color_pickable_stat,
 		"value": 100,
-#		"driver_stat": STATS.POINTS,
+#		"driver_stat": STAT.POINTS,
 	},
-	# NO STATS ...instants
+	# NO STAT ...instants
 	PICKABLE.SHIELD: {
 		"color": Refs.color_pickable_ammo,
 		"value": 1,

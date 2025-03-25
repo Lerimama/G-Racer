@@ -23,7 +23,7 @@ onready var GOALS_REACHED: HBoxContainer = find_node("GoalReached")
 # level
 onready var LEVEL_PROGRESS: Panel = find_node("ProgressBar") #$LevelProgress/ProgressBarHolder/LevelProgressBar
 onready var LAP_COUNT: HBoxContainer = find_node("StatLapCount")
-onready var LAP_TIME: HBoxContainer = find_node("StatLapTime")
+onready var CURR_LAP_TIME: HBoxContainer = find_node("StatLapTime")
 onready var BEST_LAP_TIME: HBoxContainer = find_node("StatBestLap")
 onready var LEVEL_TIME: HBoxContainer = find_node("StatLevelTime")
 
@@ -38,7 +38,7 @@ onready var rank_by_points_stats: Array = [WINS, CASH, LEVEL_RANK, GOALS_REACHED
 	]
 onready var rank_by_time_stat: Array = [WINS, CASH, LEVEL_RANK, GOALS_REACHED,
 	LAP_COUNT,
-	LAP_TIME,
+	CURR_LAP_TIME,
 	BEST_LAP_TIME,
 	]
 onready var invisibles: MarginContainer = $Invisibles
@@ -64,7 +64,7 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 	if rank_by == Pros.RANK_BY.TIME:
 		for stat in rank_by_time_stat:
 			stat.get_parent().get_parent().show()
-			if stat == BEST_LAP_TIME:# or stat == LEVEL_TIME:
+			if stat == BEST_LAP_TIME:
 				stat.get_parent().get_parent().hide()
 	elif rank_by == Pros.RANK_BY.POINTS:
 		for stat in rank_by_points_stats:

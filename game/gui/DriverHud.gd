@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 
 		# manage health bar
 		if health_bar.visible:
-			health_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STATS.HEALTH]
+			health_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STAT.HEALTH]
 			if health_bar_line.rect_scale.x <= 0.5:
 				health_bar_line.color = Refs.color_red
 			else:
@@ -48,7 +48,7 @@ func _process(delta: float) -> void:
 
 		# manage gas bar
 		if gas_bar.visible:
-			gas_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STATS.GAS] / hud_driver.gas_tank_size
+			gas_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STAT.GAS] / hud_driver.gas_tank_size
 			if gas_bar_line.rect_scale.x <= 0.5:
 				gas_bar_line.color = Refs.color_red
 			else:
@@ -78,8 +78,8 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 	hud_driver = driver_node
 	drivers_viewport = view.get_node("Viewport")
 
-	if hud_driver.driver_stats[Pros.STATS.GAS] > hud_driver.gas_tank_size:
-		hud_driver.gas_tank_size = hud_driver.driver_stats[Pros.STATS.GAS]
+	if hud_driver.driver_stats[Pros.STAT.GAS] > hud_driver.gas_tank_size:
+		hud_driver.gas_tank_size = hud_driver.driver_stats[Pros.STAT.GAS]
 
 	_update_hud_position()
 

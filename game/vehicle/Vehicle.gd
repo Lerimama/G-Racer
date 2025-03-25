@@ -91,17 +91,17 @@ func _input(event: InputEvent) -> void:
 			print("after", body_state.get_angular_velocity())
 
 	if Input.is_action_pressed("no2"): # race
-#		update_stat(Pros.STATS.LIFE, 3)
+#		update_stat(Pros.STAT.LIFE, 3)
 		if driver_id == "JOU":
-			update_stat(Pros.STATS.HEALTH, -0.1)
+			update_stat(Pros.STAT.HEALTH, -0.1)
 #
 	if Input.is_action_pressed("no3"): # race
 		if driver_id == "JOU":
-			update_stat(Pros.STATS.GAS, -100)
-#		update_stat(Pros.STATS.HEALTH, 0.1)
+			update_stat(Pros.STAT.GAS, -100)
+#		update_stat(Pros.STAT.HEALTH, 0.1)
 #	if Input.is_action_pressed("no4"): # race
 #	if Input.is_action_pressed("no5"): # race
-#		update_stat(Pros.STATS.GAS, 100)
+#		update_stat(Pros.STAT.GAS, 100)
 
 
 func _ready() -> void:
@@ -127,9 +127,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-
 #	if driver_id == "JOU":
-#		print("---------------")
 #		print(weapon_stats)
 	# debug trail
 	_drawing_trail_controls(delta)
@@ -137,9 +135,9 @@ func _process(delta: float) -> void:
 	trail_source.update_trail(velocity.length())
 
 	if is_active:
-		if engines.engines_on: update_stat(Pros.STATS.GAS, gas_usage)
-		if driver_stats[Pros.STATS.HEALTH] < 1:
-			update_stat(Pros.STATS.HEALTH, heal_rate * Sets.heal_rate_factor)
+		if engines.engines_on: update_stat(Pros.STAT.GAS, gas_usage)
+		if driver_stats[Pros.STAT.HEALTH] < 1:
+			update_stat(Pros.STAT.HEALTH, heal_rate * Sets.heal_rate_factor)
 
 
 func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in set forces
@@ -174,12 +172,12 @@ func _die(only_dissable: bool = false):
 		collision_shape.set_deferred("disabled", true)
 		_explode()
 
-		if driver_stats[Pros.STATS.GAS] <= 0: # manjko benza je permanentni die
+		if driver_stats[Pros.STAT.GAS] <= 0: # manjko benza je permanentni die
 			self.is_active = false
 			queue_free()
 		else:
 			# no life count
-			if Sets.life_as_scalp or driver_stats[Pros.STATS.LIFE] == -1: # -1 pomeni, da se ne šteje
+			if Sets.life_as_scalp or driver_stats[Pros.STAT.LIFE] == -1: # -1 pomeni, da se ne šteje
 				turn_off()
 				controller.set_process_input(false)
 				call_deferred("set_physics_process", false)
@@ -188,8 +186,8 @@ func _die(only_dissable: bool = false):
 				_revive()
 			# life counts
 			else:
-				update_stat(Pros.STATS.LIFE, - 1)
-				if driver_stats[Pros.STATS.LIFE] > 0: # life je array current/max
+				update_stat(Pros.STAT.LIFE, - 1)
+				if driver_stats[Pros.STAT.LIFE] > 0: # life je array current/max
 					turn_off()
 					controller.set_process_input(false)
 					call_deferred("set_physics_process", false)
@@ -211,7 +209,7 @@ func _revive():
 	turn_on()
 
 	# reset energije
-	update_stat(Pros.STATS.HEALTH, 1)
+	update_stat(Pros.STAT.HEALTH, 1)
 
 
 func turn_on():
@@ -364,7 +362,7 @@ func _spawn_driver_controller():
 
 
 func update_stat(stat_key: int, stat_value):
-#	print("stat key", Pros.STATS.keys()[stat_key])
+#	print("stat key", Pros.STAT.keys()[stat_key])
 	# statistika se preračuna in pošlje naprej nova vrednost
 	# change_value je lahko:
 	#	+/- delta value ... driver_stats += change_value >> default
@@ -374,53 +372,53 @@ func update_stat(stat_key: int, stat_value):
 	if not stat_value == null: # da lahko apdejtam samo prikaz brez vrednosti
 		match stat_key:
 			# vehicle
-			Pros.STATS.GAS:
+			Pros.STAT.GAS:
 				if is_in_group(Refs.group_players) or Sets.ai_gas_on:
 					# dmg fx
 					if Sets.HEALTH_EFFECTS.GAS in Sets.health_effects:
-						var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pros.STATS.HEALTH])
+						var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pros.STAT.HEALTH])
 						var damaged_gas_usage: float = stat_value + stat_value * damage_effect_scale
 						stat_value = damaged_gas_usage
 					# stat
 					driver_stats[stat_key] += stat_value
-					if driver_stats[Pros.STATS.GAS] <= 0:
-						driver_stats[Pros.STATS.GAS] = 0
+					if driver_stats[Pros.STAT.GAS] <= 0:
+						driver_stats[Pros.STAT.GAS] = 0
 						_die(true)
-					elif driver_stats[Pros.STATS.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
-						gas_tank_size = driver_stats[Pros.STATS.GAS]
-			Pros.STATS.HEALTH:
+					elif driver_stats[Pros.STAT.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
+						gas_tank_size = driver_stats[Pros.STAT.GAS]
+			Pros.STAT.HEALTH:
 				driver_stats[stat_key] += stat_value # change_value je + ali -
-				driver_stats[Pros.STATS.HEALTH] = clamp(driver_stats[Pros.STATS.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
-				if driver_stats[Pros.STATS.HEALTH] == 0:
+				driver_stats[Pros.STAT.HEALTH] = clamp(driver_stats[Pros.STAT.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
+				if driver_stats[Pros.STAT.HEALTH] == 0:
 					_die()
 			# driver
-			Pros.STATS.LIFE:
+			Pros.STAT.LIFE:
 				driver_stats[stat_key] += stat_value
-			Pros.STATS.GOALS_REACHED: # goal nodes names or duplicate?
+			Pros.STAT.GOALS_REACHED: # goal nodes names or duplicate?
 				driver_stats[stat_key].append(stat_value)
-			Pros.STATS.WINS: # level names
+			Pros.STAT.WINS: # level names
 				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
 				driver_stats[stat_key].append(stat_value)
 				#			driver_stats[stat_key] += stat_value
 			# level
-			Pros.STATS.LEVEL_PROGRESS:
+			Pros.STAT.LEVEL_PROGRESS:
 				driver_stats[stat_key] = stat_value
-			Pros.STATS.LEVEL_RANK:
+			Pros.STAT.LEVEL_RANK:
 				driver_stats[stat_key] = stat_value
-			Pros.STATS.LEVEL_TIME: # na finished
+			Pros.STAT.LEVEL_TIME: # na finished
 				driver_stats[stat_key] = stat_value
-			Pros.STATS.LAP_COUNT:
+			Pros.STAT.LAP_COUNT:
 				# dobiš level time in odšteješ prev lap level time
 				var lap_time: int = stat_value - prev_lap_level_time
 				prev_lap_level_time = stat_value
 				driver_stats[stat_key].append(lap_time)
 				# best lap
-				var curr_best_lap_time: float = driver_stats[Pros.STATS.BEST_LAP_TIME]
+				var curr_best_lap_time: float = driver_stats[Pros.STAT.BEST_LAP_TIME]
 				if not lap_time == 0:
 					if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
-						driver_stats[Pros.STATS.BEST_LAP_TIME] = lap_time
-						call_deferred("emit_signal", "stat_changed", driver_id, Pros.STATS.BEST_LAP_TIME, lap_time) # deferred da je za lap time signalom
-			Pros.STATS.LAP_TIME: # vsak frejm
+						driver_stats[Pros.STAT.BEST_LAP_TIME] = lap_time
+						call_deferred("emit_signal", "stat_changed", driver_id, Pros.STAT.BEST_LAP_TIME, lap_time) # deferred da je za lap time signalom
+			Pros.STAT.CURR_LAP_TIME: # vsak frejm
 				var curr_game_time: float = stat_value
 				var lap_time: float = curr_game_time - prev_lap_level_time
 				driver_stats[stat_key] = lap_time
@@ -429,7 +427,7 @@ func update_stat(stat_key: int, stat_value):
 				if stat_key in driver_stats:
 					driver_stats[stat_key] += stat_value
 				else:
-					print("stat is not legit: ", stat_key)
+					printerr("stat is not legit: ", stat_key)
 					return
 
 	emit_signal("stat_changed", driver_id, stat_key, driver_stats[stat_key])
@@ -439,7 +437,7 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
 	if not is_shielded:
 
-		update_stat(Pros.STATS.HEALTH, - hit_by.hit_damage)
+		update_stat(Pros.STAT.HEALTH, - hit_by.hit_damage)
 
 		if "hit_inertia" in hit_by:
 			var local_hit_position: Vector2 = hit_global_position - position
@@ -449,11 +447,11 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		if vehicle_camera:
 			vehicle_camera.shake_camera(hit_by)
 
-		if Sets.life_as_scalp and driver_stats[Pros.STATS.HEALTH] <= 0:
+		if Sets.life_as_scalp and driver_stats[Pros.STAT.HEALTH] <= 0:
 			if "weapon_owner" in hit_by:
-				hit_by.weapon_owner.update_stat(Pros.STATS.LIFE, 1)
+				hit_by.weapon_owner.update_stat(Pros.STAT.LIFE, 1)
 			else: # ne sme prit do tega not gud
-				hit_by.update_stat(Pros.STATS.LIFE, 1)
+				hit_by.update_stat(Pros.STAT.LIFE, 1)
 
 
 	if driver_profile["controller_type"] == -1:
@@ -492,10 +490,10 @@ func on_item_picked(pickable_key: int):
 						break
 		_: # stats
 			# poiščem STAT z enakim "key", kot je pickable key
-			var stat_key_index: int = Pros.STATS.keys().find(pickable_key_name)
+			var stat_key_index: int = Pros.STAT.keys().find(pickable_key_name)
 			if stat_key_index > -1:
 				var change_value: float = Pros.pickable_profiles[pickable_key]["value"]
-				var change_stat_key: int = Pros.STATS.values()[stat_key_index]
+				var change_stat_key: int = Pros.STAT.values()[stat_key_index]
 				update_stat(change_stat_key, Pros.pickable_profiles[pickable_key]["value"])
 
 
@@ -549,7 +547,7 @@ func pull_on_screen(pull_position: Vector2): # kliče GM
 	#	collision_shape.set_deferred("disabled", false)
 	#	controller.set_process_input(true)
 
-	update_stat(Pros.STATS.GAS, Sets.pull_gas_penalty)
+	update_stat(Pros.STAT.GAS, Sets.pull_gas_penalty)
 
 
 func screen_wrap(): # ne uporabljam

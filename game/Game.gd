@@ -4,8 +4,8 @@ class_name Game
 
 signal game_stage_changed(game_manager)
 
-#enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, END_FAIL}
-enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_FAIL, END_SUCCESS}
+#enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, FINISHED_FAIL}
+enum GAME_STAGE {SETTING_UP, READY, PLAYING, FINISHED_FAIL, FINISHED_SUCCESS}
 var game_stage: int = 0 setget _change_game_stage
 
 export (Array, NodePath) var main_signal_connecting_paths: Array = []
@@ -121,7 +121,7 @@ func set_game(level_index_add: int = 0):
 	else:
 		var starting_driver_ids: Array = []
 		for driver_id in final_drivers_data:
-			if not final_drivers_data[driver_id]["driver_stats"][Pros.STATS.LEVEL_RANK] == -1:
+			if not final_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK] == -1:
 				starting_driver_ids.append(driver_id)
 		level_start_positions = game_level.level_start_positions
 		for driver_id in starting_driver_ids:
@@ -133,7 +133,7 @@ func set_game(level_index_add: int = 0):
 			# driver stats
 			var prev_level_stats: Dictionary = final_drivers_data[driver.driver_id]["driver_stats"]
 			for stat in prev_level_stats:
-				if stat in [Pros.STATS.LEVEL_PROGRESS, Pros.STATS.BEST_LAP_TIME, Pros.STATS.LAP_TIME, Pros.STATS.LAP_COUNT, Pros.STATS.LEVEL_TIME, Pros.STATS.LEVEL_RANK]:
+				if stat in [Pros.STAT.LEVEL_PROGRESS, Pros.STAT.BEST_LAP_TIME, Pros.STAT.CURR_LAP_TIME, Pros.STAT.LAP_COUNT, Pros.STAT.LEVEL_TIME, Pros.STAT.LEVEL_RANK]:
 					driver.driver_stats[stat] = Pros.start_driver_stats[stat]
 				else:
 					driver.driver_stats[stat] = prev_level_stats[stat]
@@ -230,37 +230,21 @@ func _change_game_stage(new_game_stage: int):
 			if not game_sound.intro_jingle.is_playing(): # _temp
 				game_sound.intro_jingle.play()
 			Refs.ultimate_popup.hide() # skrijem pregame
-#			_game_intro()
 
 		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
-
 			if game_sound.intro_jingle.is_playing(): # če je pavza pred začetkom igre ... ob zapiranju zapleja gejm musko
 				game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
-
 			gui.on_game_start()
-
 			for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 				driver.controller.on_game_start(game_level)
 
-		GAME_STAGE.END_SUCCESS, GAME_STAGE.END_FAIL:
-
-			if game_stage == GAME_STAGE.END_SUCCESS:
+		GAME_STAGE.FINISHED_SUCCESS, GAME_STAGE.FINISHED_FAIL:
+			if game_stage == GAME_STAGE.FINISHED_SUCCESS:
 				game_sound.fade_sounds(game_sound.game_music, game_sound.win_jingle)
 			else:
 				game_sound.fade_sounds(game_sound.game_music, game_sound.lose_jingle)
-
 			final_level_data["level_profile"] = level_profile
-
-
-			#			print("final_drivers_data")
-			#			print(final_drivers_data)
-			#			yield(get_tree().create_timer(Sets.get_it_time), "timeout")
-			#			if not game_tracker.drivers_finished.empty(): # zmaga
-			#				game_tracker.drivers_finished[0].update_stat(Pros.STATS.WINS, level_profile["level_name"]) # temp WINS pozicija
-
-#			gui.open_game_over()
 			gui.open_level_finished()
-
 			# ustavi elemente
 				# best lap stats reset
 				# looping sounds stop
@@ -352,9 +336,9 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 		# weapon stats se napolnijo ob setanju weaponow
 		new_driver_stats = Pros.start_driver_stats.duplicate()
 		# reset za unique
-		new_driver_stats[Pros.STATS.WINS] = []
-		new_driver_stats[Pros.STATS.LAP_COUNT] = []
-		new_driver_stats[Pros.STATS.GOALS_REACHED] = []
+		new_driver_stats[Pros.STAT.WINS] = []
+		new_driver_stats[Pros.STAT.LAP_COUNT] = []
+		new_driver_stats[Pros.STAT.GOALS_REACHED] = []
 
 	new_vehicle.driver_stats = new_driver_stats
 	new_vehicle.weapon_stats = new_weapon_stats

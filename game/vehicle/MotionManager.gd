@@ -109,7 +109,7 @@ func _motion_machine():
 #	prints("motion", motion)
 	# vigl vagl brez vpliva na silo
 	#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
-	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
+	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 	#		if damage_effect_scale > 0:
 	#			var vigl_limit: float = deg2rad(10)
 	#			if not is_vigling:
@@ -143,7 +143,7 @@ func _motion_machine():
 					force_rotation -= angle_diff
 					# vigl vagl z vplivom na silo
 					#				if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
-					#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
+					#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 					#					if damage_effect_scale > 0:
 					#						var vigl_limit: float = deg2rad(10)
 					#						if not is_vigling:
@@ -178,7 +178,7 @@ func _motion_machine():
 
 
 #	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
-#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
+#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 #		if damage_effect_scale > 0:
 #			_drive_vigl_vagl(damage_effect_scale)
 #
@@ -199,7 +199,7 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 	# dmg fx
 	if Sets.HEALTH_EFFECTS.POWER in Sets.health_effects:
 		var adapt_factor: float = 0.001
-		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STATS.HEALTH])
+		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 

@@ -28,7 +28,7 @@ func light_reached(vehicle: Vehicle):
 		turned_on = true
 		light_2d.color = on_color
 		sprite.modulate = Color.white
-		vehicle.update_stat(Pros.STATS.POINTS, reward_points)
+		vehicle.update_stat(Pros.STAT.POINTS, reward_points)
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:

@@ -89,16 +89,6 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 	level_name_label.text = level_profile["level_name"]
 
 
-func on_game_start():
-
-	game_timer.start_timer()
-
-
-func on_game_over():
-
-	for section in sections_holder.get_children():
-		section.hide()
-
 
 func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
 
@@ -121,7 +111,7 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 
 	# statbox
 	var one_life_mode: bool = false
-	if statbox_driver.driver_stats[Pros.STATS.LIFE] == 1 and not Sets.life_as_scalp:
+	if statbox_driver.driver_stats[Pros.STAT.LIFE] == 1 and not Sets.life_as_scalp:
 		one_life_mode = true
 	new_statbox.set_statbox_stats( \
 		level_profile["rank_by"],
@@ -162,8 +152,8 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 		statbox_type = STATBOX_TYPE.VER_STRICT
 	elif Sets.mono_view_mode:
 		if all_statboxes_count <= 4:
-#			statbox_type = STATBOX_TYPE.BOX
-			statbox_type = STATBOX_TYPE.VER
+			statbox_type = STATBOX_TYPE.BOX
+#			statbox_type = STATBOX_TYPE.VER
 		elif all_statboxes_count <= 10:
 			statbox_type = STATBOX_TYPE.BOX_MINIMAL
 		else:
@@ -202,7 +192,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# tukaj se opredeli obliko zapisa
 
 	if Pros.start_driver_profiles[driver_id]["controller_type"] == -1 and Sets.ai_gets_record:
-		if stat_key == Pros.STATS.BEST_LAP_TIME and not stat_value == 0:
+		if stat_key == Pros.STAT.BEST_LAP_TIME and not stat_value == 0:
 			var level_record_value = level_profile["level_record"][0]
 			if stat_value < level_record_value and not level_record_value == 0:
 				var new_level_record: Array = [stat_value, driver_id]
@@ -212,7 +202,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				level_record_label.get_parent().get_parent().show()
 				level_record_label.modulate = Refs.color_green
 				yield(get_tree().create_timer(time_still_time), "timeout")
-				level_record_label.modulate = Color.white
+				level_record_label.modulate = Refs.color_hud_text
 	else:
 		# opredelim statbox
 		var statbox_to_change: Control
@@ -224,38 +214,38 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 			return
 
 		# stat_to_change ... STAT key string
-		var current_key_index: int = Pros.STATS.values().find(stat_key)
-		var current_key: String = Pros.STATS.keys()[current_key_index]
+		var current_key_index: int = Pros.STAT.values().find(stat_key)
+		var current_key: String = Pros.STAT.keys()[current_key_index]
 		var stat_to_change: Control = statbox_to_change.get(current_key)
 
 		match stat_key:
 
 			# driver
-			Pros.STATS.LIFE:
+			Pros.STAT.LIFE:
 				stat_to_change.stat_value = [stat_value, 3]
-			Pros.STATS.CASH:
+			Pros.STAT.CASH:
 				stat_to_change.stat_value = stat_value
-			Pros.STATS.POINTS: # default
+			Pros.STAT.POINTS: # default
 				stat_to_change.stat_value = stat_value
-			Pros.STATS.WINS:
+			Pros.STAT.WINS:
 				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
 				#			stat_to_change.stat_value = [stat_value.size(), Sets.wins_needed]
 				stat_to_change.stat_value = stat_value.size()
 			# vehicle
-			Pros.STATS.GAS:
+			Pros.STAT.GAS:
 				stat_to_change.stat_value = stat_value
-			Pros.STATS.HEALTH: # ENERGY BAR
+			Pros.STAT.HEALTH: # ENERGY BAR
 				# 10 = 100 % v pseudo-bar
 				var curr_health_percent: int = round(stat_value * 10)
 				stat_to_change.stat_value = [curr_health_percent, 10]
 			# level
-			Pros.STATS.LEVEL_RANK:
+			Pros.STAT.LEVEL_RANK:
 				stat_to_change.stat_value = stat_value
-			Pros.STATS.LEVEL_PROGRESS:
+			Pros.STAT.LEVEL_PROGRESS:
 				stat_to_change.progress_unit = stat_value
-			Pros.STATS.LEVEL_TIME: # on level finish
+			Pros.STAT.LEVEL_TIME: # on level finish
 				stat_to_change.stat_value = stat_value
-			Pros.STATS.GOALS_REACHED:
+			Pros.STAT.GOALS_REACHED:
 				# progress bar
 				if statbox_to_change.use_level_progress_bar:
 					# če so goali, ni per frame apdejtanja iz tracking line
@@ -269,7 +259,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 					statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
 				# goal counter
 				stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
-			Pros.STATS.LAP_COUNT:
+			Pros.STAT.LAP_COUNT:
 				# progress bar za kroge je opazen samo, če ni "tracking progress per frame "
 				if statbox_to_change.use_level_progress_bar:
 					# če so goali, je krog celoten progress bar
@@ -288,30 +278,35 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				# lap count counter
 				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
 				# lap time
-				var time_stat: Control = statbox_to_change.get("LAP_TIME")
+				var time_stat: Control = statbox_to_change.get("CURR_LAP_TIME")
 				if not stat_value.empty():
 					time_stat.stat_value = stat_value.back()
 					# stoječi prikaz časa kroga
 					if not time_stat.stat_value == 0:
 						var time_still_stat: Control = statbox_to_change.lap_time_still_display
 						time_still_stat.stat_value = time_stat.stat_value
-						time_still_stat.modulate = Refs.color_red # zeleno ga obarva BEST LAP event
 						time_stat.hide()
 						time_still_stat.show()
 						yield(get_tree().create_timer(time_still_time), "timeout")
 						time_still_stat.hide()
 						time_stat.show()
-			Pros.STATS.BEST_LAP_TIME:
+			Pros.STAT.BEST_LAP_TIME:
 				if stat_value == 0:
 					stat_to_change.stat_value = 0
 					stat_to_change.get_parent().get_parent().hide()
 				else:
-					# statičen čas zapišem kot string
-					var stat_to_change_clock_time: String = Mets.get_clock_time_string(stat_value)
-					stat_to_change.stat_value = stat_to_change_clock_time
-					stat_to_change.get_parent().get_parent().show()
-					# obarvam stoječi prikaz časa kroga
-					statbox_to_change.lap_time_still_display.modulate = Refs.color_green
+					# prikazujem samo če so krogi, ker drugače je dovolj curr level time urca
+					if level_profile["level_laps"] > 1:
+						# statičen čas zapišem kot string
+						var stat_to_change_clock_time: String = Mets.get_clock_time_string(stat_value)
+						stat_to_change.stat_value = stat_to_change_clock_time
+						stat_to_change.get_parent().get_parent().show()
+						# obarvam stoječi prikaz časa kroga
+						statbox_to_change.lap_time_still_display.modulate = Refs.color_green
+
+					else:
+						stat_to_change.get_parent().get_parent().hide()
+
 					# je tudi rekord levela?
 					if stat_value < level_record[0] and not level_record[0] == 0:
 						var new_level_record: Array = [stat_value, driver_id]
@@ -321,8 +316,9 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 						level_record_label.get_parent().get_parent().show()
 						level_record_label.modulate = Refs.color_green
 						yield(get_tree().create_timer(time_still_time), "timeout")
-						level_record_label.modulate = Color.white
-			Pros.STATS.LAP_TIME: # za uro med krogom ... vsak frejm
+						level_record_label.modulate = Refs.color_hud_text
+
+			Pros.STAT.CURR_LAP_TIME: # za uro med krogom ... vsak frejm
 				stat_to_change.stat_value = stat_value
 			_:
 				#				stat_to_change.stat_value = stat_value

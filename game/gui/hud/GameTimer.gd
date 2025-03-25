@@ -49,7 +49,8 @@ func _process(delta: float) -> void:
 			mins_label.text = "%02d" % floor(game_time_secs / 60)
 			secs_label.text = "%02d" % (floor(game_time_secs) - floor(game_time_secs / 60) * 60)
 			hunds_label.text = "%02d" % floor((game_time_secs - floor(game_time_secs)) * 100)
-		else:
+
+		elif timer_mode == TIMER_MODE.COUNT_DOWN:
 			var game_time_left: float = game_time_limit - game_time_secs
 			mins_label.text = "%02d" % (floor(game_time_left / 60))
 			secs_label.text = "%02d" % (floor(game_time_left) - floor(game_time_left / 60) * 60)
@@ -126,4 +127,4 @@ func unpause_timer():
 func stop_timer():
 
 	timer_state = TIMER_STATE.STOPPED
-	modulate = Refs.color_red
+	#	modulate = Refs.color_red

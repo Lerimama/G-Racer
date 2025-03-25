@@ -38,7 +38,7 @@ func on_hit(hit_by: Node, hit_global_position: Vector2):
 	if brick_health < 0:
 		modulate = Refs.color_red
 		animation_player.play("outro")
-		hit_by.update_stat(Pros.STATS.POINTS, reward_points)
+		hit_by.update_stat(Pros.STAT.POINTS, reward_points)
 
 
 func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:

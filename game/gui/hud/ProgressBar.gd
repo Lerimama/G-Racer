@@ -8,11 +8,14 @@ var ticks_x_positions: Array = [] # x
 
 onready var ticks_holder: Control = $Ticks
 onready var bar: Panel = $Bar
+var bar_color: Color = Color.white
+
+# lahko kažeš barvo ali teksturo
 onready var bar_text_background: TextureRect = $Bar/TextureRect
 onready var bar_color_background: ColorRect = $Bar/ColorRect
 
 onready var progress_bar_width: float = rect_size.x
-var bar_color: Color = Color.purple
+
 
 
 func _ready() -> void:
@@ -21,6 +24,8 @@ func _ready() -> void:
 	for child in ticks_holder.get_children():
 		if not child == ticks_holder.get_child(0):
 			child.queue_free()
+
+#	bar.rect_size.x = 0
 
 
 func _change_total_progress(new_progress_unit: float):
