@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://game/level/breakers/breaker_nepovezan_modular/Cracker.gd" type="Script" id=1]
+
+[node name="Cracker" type="Polygon2D"]
+polygon = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )
+script = ExtResource( 1 )
+
+[node name="Crack" type="Polygon2D" parent="."]
+show_behind_parent = true
+polygon = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )

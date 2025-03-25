@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://common/shadows/ShapeShadows.gd" type="Script" id=1]
+[ext_resource path="res://game/level/breakers/breaker_nepovezan_modular/ShapeShadows.gd" type="Script" id=1]
 
 [node name="ShapeShadows" type="Node2D"]
 modulate = Color( 1, 1, 1, 0.588235 )

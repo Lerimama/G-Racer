@@ -185,16 +185,17 @@ func _motion_machine():
 #		force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 #		force_on_vehicle = Vector2.LEFT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
 
-func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_power):
+func _accelarate_to_engine_power(to_engine_power: float = max_engine_power):
 #	printt (current_engine_power , max_engine_power, force_on_vehicle.length())
 
-	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, accelarate_speed)
-#	current_engine_power = lerp(current_engine_power, current_max_engine_power + engine_power_addon, pow(accelarate_speed, 2))
+	current_engine_power = lerp(current_engine_power, to_engine_power + engine_power_addon, accelarate_speed)
+#	current_engine_power = lerp(current_engine_power, to_engine_power + engine_power_addon, pow(accelarate_speed, 2))
 	current_engine_power = clamp(current_engine_power, 0, current_engine_power)
 
-	engine_power_percentage = current_engine_power / current_max_engine_power
-	if current_max_engine_power == 0:
+	if to_engine_power == 0:
 		engine_power_percentage = 0
+	else:
+		engine_power_percentage = current_engine_power / to_engine_power
 
 	# dmg fx
 	if Sets.HEALTH_EFFECTS.POWER in Sets.health_effects:
@@ -203,8 +204,9 @@ func _accelarate_to_engine_power(current_max_engine_power: float = max_engine_po
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 
-#	if managed_vehicle.driver_id == "MOU":
-#		current_engine_power /= 15
+	if managed_vehicle.driver_id == "MOU":
+		current_engine_power /= 5
+#		current_engine_power = 0
 	return current_engine_power * Sets.world_hsp_power_factor
 
 
@@ -379,14 +381,17 @@ func drive_in(drive_in_position: Vector2, drive_in_rotation: float = 0, drive_in
 
 func drive_out(drive_out_position: Vector2, drive_out_time: float = 1):
 
-	managed_vehicle.collision_shape.set_deferred("disabled", true)
 	managed_vehicle.is_active = false
 
-	self.motion = MOTION.FWD
+	self.motion = MOTION.IDLE
+#	self.motion = MOTION.DISSABLED
 
-	force_rotation = Vector2.RIGHT.angle_to_point(drive_out_position)
-	force_on_vehicle = Vector2.RIGHT.rotated(force_rotation) * _accelarate_to_engine_power()
-	yield(get_tree().create_timer(drive_out_time), "timeout")
+#	force_rotation = 0
+#	force_on_vehicle = Vector2.ZERO
+#	_accelarate_to_engine_power(0)
+	managed_vehicle.collision_shape.set_deferred("disabled", true)
+#	yield(get_tree().create_timer(drive_out_time), "timeout")
+#	motion
 #	managed_vehicle.modulate.a = 0
 	managed_vehicle.turn_off()
 

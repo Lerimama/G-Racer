@@ -128,7 +128,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 #	if driver_id == "JOU":
-#		print(weapon_stats)
+#		print(is_processing_input())
 	# debug trail
 	_drawing_trail_controls(delta)
 
@@ -179,7 +179,7 @@ func _die(only_dissable: bool = false):
 			# no life count
 			if Sets.life_as_scalp or driver_stats[Pros.STAT.LIFE] == -1: # -1 pomeni, da se ne šteje
 				turn_off()
-				controller.set_process_input(false)
+#				controller.set_process_input(false)
 				call_deferred("set_physics_process", false)
 				call_deferred("set_process", false)
 				yield(get_tree().create_timer(revive_time), "timeout")
@@ -217,11 +217,11 @@ func turn_on():
 
 	engines.start_engines()
 	turned_on = true
+	motion_manager.motion = motion_manager.MOTION.IDLE
 
 	var turn_tween = get_tree().create_tween()
 	turn_tween.tween_property(self, "elevation", driving_elevation, 2).from(0.0).set_ease(Tween.EASE_IN_OUT)
 	yield(turn_tween, "finished")
-	motion_manager.motion = motion_manager.MOTION.IDLE
 
 
 func turn_off():

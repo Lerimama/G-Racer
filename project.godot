@@ -49,6 +49,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://game/level/breakers/breaker/Operator.gd"
 }, {
+"base": "Node",
+"class": "Operator_nepovezan",
+"language": "GDScript",
+"path": "res://game/level/breakers/breaker_nepovezan_modular/Operator.gd"
+}, {
 "base": "Reference",
 "class": "Palette",
 "language": "GDScript",
@@ -253,6 +258,7 @@ _global_script_class_icons={
 "Gui": "",
 "Level": "",
 "Operator": "",
+"Operator_nepovezan": "",
 "Palette": "",
 "PaletteImporter": "",
 "Pickable": "",

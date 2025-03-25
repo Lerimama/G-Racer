@@ -581,7 +581,7 @@ func _drive_as_player(follow_mouse: bool = false): # _temp func
 		var angle_to_target_vector_deg: float = rad2deg(angle_to_target_vector)
 		var limit_deg: float = 50
 		if angle_to_target_vector_deg > -limit_deg and angle_to_target_vector_deg < limit_deg:
-			print("angle in ..........................", rad2deg(angle_to_target_vector))
+#			print("angle in ..........................", rad2deg(angle_to_target_vector))
 			motion_manager.engine_rotation_speed = 0.01
 			motion_manager.motion = motion_manager.MOTION.FWD
 			if rad2deg(angle_to_target_vector) < 0:

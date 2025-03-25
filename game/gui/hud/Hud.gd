@@ -152,8 +152,8 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 		statbox_type = STATBOX_TYPE.VER_STRICT
 	elif Sets.mono_view_mode:
 		if all_statboxes_count <= 4:
-			statbox_type = STATBOX_TYPE.BOX
-#			statbox_type = STATBOX_TYPE.VER
+#			statbox_type = STATBOX_TYPE.BOX
+			statbox_type = STATBOX_TYPE.VER
 		elif all_statboxes_count <= 10:
 			statbox_type = STATBOX_TYPE.BOX_MINIMAL
 		else:
@@ -264,13 +264,13 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				if statbox_to_change.use_level_progress_bar:
 					# če so goali, je krog celoten progress bar
 					if not level_profile["level_goals"].empty():
-						statbox_to_change.LEVEL_PROGRESS.progress_unit = 1
 						# reset za naslednji krog, če ni bi zadnji
 						if stat_value.size() < level_profile["level_laps"]:
 							yield(get_tree().create_timer(time_still_time), "timeout")
 							statbox_to_change.LEVEL_PROGRESS.progress_unit = 0
-					# če ni goalov in so krogi, je krog en tick, level finish pa je celoten progress bar
-					elif level_profile["level_laps"] > 1:
+					# če ni goalov, so krogi in ni zadnji krog
+					# en krog e tick, level finish pa je celoten progress bar
+					elif level_profile["level_laps"] > 1 and stat_value.size() < level_profile["level_laps"]:
 						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
 					# brez lapsov niti golaov
 					else:

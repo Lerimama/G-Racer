@@ -9,7 +9,7 @@
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, -7, 64, 0, 0, 0, 0, 0, -3528 )
+"points": PoolVector2Array( 0, 0, 0, 0, -7, 64, 0, 0, 0, 0, -16, -3312 )
 }
 
 [node name="LevelFirstDrive" instance=ExtResource( 1 )]
@@ -23,7 +23,8 @@ __meta__ = {
 - not flat or floating object = 1 - 9
 - sky > 10"
 }
-level_goals_paths = [ NodePath("PickableGas") ]
+level_type = 1
+level_goals_paths = [ NodePath("PickableGas"), NodePath("PickableBullet2"), NodePath("PickableMina"), NodePath("PickableBullet") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0
@@ -58,22 +59,31 @@ margin_top = -983.0
 margin_right = 600.0
 margin_bottom = 233.0
 
-[node name="FinishLine" parent="Elements" index="2"]
+[node name="FinishLine" parent="Elements" index="3"]
 position = Vector2( -4, -3312 )
 
-[node name="TrackingLine" parent="Elements" index="3"]
+[node name="TrackingLine" parent="Elements" index="4"]
 curve = SubResource( 1 )
 
 [node name="Tracker" parent="Elements/TrackingLine" index="0"]
 position = Vector2( -7, 64 )
-rotation = -1.56885
+rotation = -1.57346
 
-[node name="__ScreenSize" parent="." index="15"]
+[node name="__ScreenSize" parent="." index="14"]
 margin_left = -2565.0
 margin_top = -2900.0
 margin_right = -5.0
 margin_bottom = -1460.0
 rect_scale = Vector2( 2, 2 )
+
+[node name="__WorldMeters" parent="." index="15"]
+margin_left = -982.0
+margin_top = 3.0
+margin_right = -678.0
+margin_bottom = 3.0
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="PickableBullet" parent="." index="16" instance=ExtResource( 2 )]
 position = Vector2( 584, -352 )
@@ -92,12 +102,3 @@ position = Vector2( 600, -1096 )
 
 [node name="PickableGas" parent="." index="21" instance=ExtResource( 12 )]
 position = Vector2( -1128, -184 )
-
-[node name="__WorldMeters" parent="." index="22"]
-margin_left = -982.0
-margin_top = 3.0
-margin_right = -678.0
-margin_bottom = 3.0
-__meta__ = {
-"_edit_group_": true
-}

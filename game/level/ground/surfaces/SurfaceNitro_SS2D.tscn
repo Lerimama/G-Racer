@@ -1,78 +1,78 @@
 [gd_scene load_steps=17 format=2]
 
-[ext_resource path="res://game/level/terrain/surfaces/Surface_SS2D.tscn" type="PackedScene" id=1]
-[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=2]
-[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=3]
-[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=4]
-[ext_resource path="res://game/level/terrain/surfaces/surface_hole_SS2D.tres" type="Resource" id=5]
+[ext_resource path="res://game/level/ground/surfaces/Surface_SS2D.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/level/ground/surfaces/surface_nitro_SS2D.tres" type="Resource" id=2]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=5]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=7]
 
 [sub_resource type="Resource" id=1]
-script = ExtResource( 3 )
+script = ExtResource( 5 )
 texture_idx = 0
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=2]
-script = ExtResource( 4 )
+script = ExtResource( 7 )
 position = Vector2( 448, 256 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 1 )
 
 [sub_resource type="Resource" id=3]
-script = ExtResource( 3 )
+script = ExtResource( 5 )
 texture_idx = 0
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=4]
-script = ExtResource( 4 )
+script = ExtResource( 7 )
 position = Vector2( 448, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 3 )
 
 [sub_resource type="Resource" id=5]
-script = ExtResource( 3 )
+script = ExtResource( 5 )
 texture_idx = 0
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=6]
-script = ExtResource( 4 )
+script = ExtResource( 7 )
 position = Vector2( 0, 256 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 5 )
 
 [sub_resource type="Resource" id=7]
-script = ExtResource( 3 )
+script = ExtResource( 5 )
 texture_idx = 0
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=8]
-script = ExtResource( 4 )
+script = ExtResource( 7 )
 position = Vector2( 0, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 7 )
 
 [sub_resource type="Resource" id=9]
-script = ExtResource( 3 )
+script = ExtResource( 5 )
 texture_idx = 0
 flip = false
 width = 1.0
 
 [sub_resource type="Resource" id=10]
-script = ExtResource( 4 )
+script = ExtResource( 7 )
 position = Vector2( 448, 0 )
 point_in = Vector2( 0, 0 )
 point_out = Vector2( 0, 0 )
 properties = SubResource( 9 )
 
 [sub_resource type="Resource" id=11]
-script = ExtResource( 2 )
+script = ExtResource( 3 )
 _points = {
 4: SubResource( 2 ),
 5: SubResource( 4 ),
@@ -88,9 +88,12 @@ _next_key = 11
 _material_overrides = {
 }
 
-[node name="SurfaceHole" instance=ExtResource( 1 )]
-surface_type = 4
+[node name="SurfaceNitro" instance=ExtResource( 1 )]
+surface_type = 2
 
 [node name="SS2D_Shape_Closed" parent="." index="0"]
 _points = SubResource( 11 )
-shape_material = ExtResource( 5 )
+shape_material = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" parent="." index="1"]
+polygon = PoolVector2Array( 448.104, -0.103551, 448.104, 256.104, -0.103552, 256.104, -0.103552, -0.103552 )

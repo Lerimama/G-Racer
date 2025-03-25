@@ -254,7 +254,7 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 			# dodam med dosežene
 			reaching_driver.update_stat(Pros.STAT.GOALS_REACHED, reached_goal)
 			if reaching_driver.controller.has_method("on_goal_reached"):# is_in_group(Refs.group_ai):
-				reaching_driver.controller.on_goal_reached(reached_goal, game.game_level.finish_line)
+				reaching_driver.controller.on_goal_reached(reached_goal, game_level.finish_line)
 
 			# preverim če so doseženi vsi cilji ... razen finish line
 			var all_goals_reached: bool = true
@@ -263,9 +263,8 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					all_goals_reached = false
 					break
 
-			if not all_goals_reached:
-				game.game_sound.little_horn.play()
-			else:
+			# finish ali nov krog
+			if all_goals_reached and not game_level.finish_line.is_enabled:
 				reaching_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
 				var all_laps_finished: bool = false
 				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
@@ -274,13 +273,15 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 				if not all_laps_finished:
 					reaching_driver.driver_stats[Pros.STAT.GOALS_REACHED] = []
 					game.game_sound.little_horn.play()
-				# finish level
 				else:
-
+				# finish level
 					game.game_sound.big_horn.play()
 					reaching_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 					drivers_finished.append(reaching_driver)
 					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+			else:
+			# to next goal ali finish line
+				game.game_sound.little_horn.play()
 
 
 func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sproži finish line  # temp ... Vehicle class
@@ -382,7 +383,7 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 		_check_for_level_finished()
 	elif game.game_stage > game.GAME_STAGE.FINISHED_FAIL:
-		game.gui.call_deferred("_on_waiting_driver_finished", game.final_drivers_data, driver_vehicle)
+		game.gui.call_deferred("_on_waiting_driver_finished", driver_vehicle, game.final_drivers_data)
 
 
 # SORTERS ------------------------------------------------------------------------------------------------------------

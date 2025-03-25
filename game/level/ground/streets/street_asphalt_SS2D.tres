@@ -1,14 +1,14 @@
 [gd_resource type="Resource" load_steps=9 format=2]
 
-[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=1]
+[ext_resource path="res://assets/textures/tile_street.png" type="Texture" id=1]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=4]
-[ext_resource path="res://assets/textures/tile_street.png" type="Texture" id=5]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=5]
 
 [sub_resource type="Resource" id=10863]
 script = ExtResource( 3 )
-textures = [ ExtResource( 5 ) ]
+textures = [ ExtResource( 1 ) ]
 texture_normals = [  ]
 textures_corner_outer = [  ]
 textures_corner_inner = [  ]
@@ -30,7 +30,7 @@ distance = 360.0
 edgeRendering = Vector2( 0, 0 )
 
 [sub_resource type="Resource" id=10865]
-script = ExtResource( 1 )
+script = ExtResource( 5 )
 edge_material = SubResource( 10863 )
 normal_range = SubResource( 10864 )
 weld = true

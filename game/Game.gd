@@ -314,12 +314,8 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 	var new_vehicle = NewVehicleInstance.instance()
 
 	new_vehicle.modulate.a = 0 # za intro
-#	new_vehicle.global_position = spawn_position
-#	new_vehicle.rotation_degrees = spawn_rotation - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_vehicle.global_position = spawn_position
-#	new_vehicle.rotation_degrees = game_level.start_line.rotation_degrees - 90 # ob rotaciji 0 je default je obrnjen navzgor
 	new_vehicle.global_rotation = spawn_rotation# - deg2rad(90) # ob rotaciji 0 je default je obrnjen navzgor
-#	new_vehicle.global_rotation = game_level.start_positions_holder.global_rotation - deg2rad(90) # ob rotaciji 0 je default je obrnjen navzgor
 
 	new_vehicle.driver_id = driver_id
 	new_vehicle.def_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()

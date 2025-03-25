@@ -11,7 +11,7 @@ onready var drive_out_position_2d: Position2D = $DriveOutPosition
 func _ready() -> void:
 
 	drive_out_position_2d.hide()
-	self.is_enabled = is_enabled
+#	self.is_enabled = is_enabled
 #	if is_enabled:
 #		$FinishArea.set_deferred("monitoring", true)
 #		show()

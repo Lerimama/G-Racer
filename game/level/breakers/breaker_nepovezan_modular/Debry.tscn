@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=2]
+[ext_resource path="res://game/level/breakers/breaker_nepovezan_modular/Debry.gd" type="Script" id=3]
+
+[node name="Debry" type="Area2D"]
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ShapeShadows" parent="." instance=ExtResource( 1 )]
+shadow_caster_paths = [ NodePath("../DebryShape") ]
+
+[node name="DebryShape" type="Polygon2D" parent="."]
+texture = ExtResource( 2 )
+polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
+
+[node name="EdgeShape" type="Polygon2D" parent="DebryShape"]
+visible = false
+show_behind_parent = true
+color = Color( 0, 0, 0, 1 )
+polygon = PoolVector2Array( 0, 0, 0, 384, 384, 384, 384, 0 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PoolVector2Array( -0.542725, -0.281677, 384, 0, 384, 384, 0, 384 )
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

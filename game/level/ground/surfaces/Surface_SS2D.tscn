@@ -1,6 +1,6 @@
 [gd_scene load_steps=20 format=2]
 
-[ext_resource path="res://game/level/terrain/surfaces/Surface_SS2D.gd" type="Script" id=1]
+[ext_resource path="res://game/level/ground/surfaces/Surface_SS2D.gd" type="Script" id=1]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=3]
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=4]

@@ -100,13 +100,6 @@ __meta__ = {
 - sky > 10"
 }
 
-[node name="LevelOriginPosition" type="Position2D" parent="."]
-rotation = -0.785397
-__meta__ = {
-"_edit_lock_": true,
-"_gizmo_extents_": 500.0
-}
-
 [node name="Background" type="Node2D" parent="."]
 z_index = -10
 
@@ -194,6 +187,13 @@ __meta__ = {
 [node name="Buiildings" type="Node2D" parent="."]
 
 [node name="Elements" type="Node" parent="."]
+
+[node name="LevelOriginPosition" type="Position2D" parent="Elements"]
+rotation = -0.785397
+__meta__ = {
+"_edit_lock_": true,
+"_gizmo_extents_": 500.0
+}
 
 [node name="StartLine" type="Node2D" parent="Elements"]
 position = Vector2( 1, 23 )

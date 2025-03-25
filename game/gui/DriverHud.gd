@@ -13,7 +13,6 @@ var selector_open_time: float = 0
 var hide_on_empty: bool = false
 
 onready var selector: Control = $Selector
-onready var local_offset: Vector2 = Vector2(- selector.rect_size.x, 100)
 onready var selector_timer: Timer = $SelectorTimer
 onready var rotation_label: Label = $RotationLabel
 onready var health_bar: Control = $HealthBar
@@ -110,13 +109,18 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 
 func _update_hud_position():
 
+	# globalna pozicija
 	rect_position = drivers_viewport.canvas_transform * hud_driver.global_position
-	rect_position.x += local_offset.x
-	rect_position.y += local_offset.y / drivers_viewport.get_node("GameCamera").zoom.y + 50
-	if driver_is_ai:
-		rect_position.x += 160
-	else:
-		rect_position.x -= 30
+
+	# adaptacija na zoom
+	var offset_y: float = 200
+	rect_position.y += offset_y / drivers_viewport.get_node("GameCamera").zoom.y# + 50
+
+	# hor poravnava
+	if driver_is_ai: # na širino driver huda
+		rect_position.x -= rect_size.x/2
+	else: # na širino selectorja
+		rect_position.x -= selector.rect_size.x/2
 
 
 func _add_item_counter(new_item: Node2D):
@@ -171,6 +175,7 @@ func _on_SelectorTimer_timeout() -> void:
 func _on_VisibilityNotifier2D_screen_entered() -> void:
 #	print("SHOW")
 	show()
+
 
 func _on_VisibilityNotifier2D_screen_exited() -> void:
 #	print("HIDE")

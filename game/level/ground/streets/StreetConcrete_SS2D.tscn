@@ -1,10 +1,10 @@
 [gd_scene load_steps=13 format=2]
 
-[ext_resource path="res://game/level/terrain/streets/Street_SS2D.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/level/ground/streets/Street_SS2D.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=4]
-[ext_resource path="res://game/level/terrain/streets/street_concrete_SS2D.tres" type="Resource" id=5]
+[ext_resource path="res://game/level/ground/streets/street_concrete_SS2D.tres" type="Resource" id=5]
 
 [sub_resource type="Resource" id=1]
 script = ExtResource( 4 )

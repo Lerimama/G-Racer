@@ -23,9 +23,6 @@ enum PICKABLE{ # enako v profilih
 export var height: float = 0
 export var elevation: float = 3
 export (PICKABLE) var pickable_key: int = 0 # ne dela
-#export var pickable_key: int = 0 # OPT... določen za primer, če ga dam manualno v level ... zaporedje iz profilov
-#export (Pros.PICKABLE) var new_pickable_key: int = 0 # ne dela
-#var pickable_key: int = placed_pickable_key # če je spawnan v igro, ga poda spawner
 export (AudioStream) var picked_sound_stream: AudioStream
 
 var pickable_value: float = 0

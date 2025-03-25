@@ -2,7 +2,7 @@ extends CanvasLayer
 class_name Gui
 
 var game_manager: Game
-var unfinished_driver_ids: Array = []
+var unfinished_drivers: Array = []
 
 onready var hud: Control = $Hud
 onready var driver_huds_holder: Control = $DriverHuds
@@ -45,13 +45,13 @@ func open_level_finished():
 #	get_viewport().set_disable_input(true)
 
 	# če je kakšen (ai) prazen, ga dodam med prazne
-	unfinished_driver_ids.clear()
-	for driver_id in game_manager.final_drivers_data:
-		if not "driver_stats" in game_manager.final_drivers_data[driver_id]:
-			unfinished_driver_ids.append(driver_id)
+	unfinished_drivers.clear()
+	for driver in game_manager.game_tracker.drivers_in_game:
+		if driver.is_active:
+			unfinished_drivers.append(driver)
 
 	# če so deaktivirani vsi driverji, ustavim timer
-	if unfinished_driver_ids.empty():
+	if unfinished_drivers.empty():
 		hud.game_timer.stop_timer()
 
 	level_finished.set_level_finished(game_manager)
@@ -75,8 +75,9 @@ func open_level_finished():
 
 func open_game_over():
 
-	if not unfinished_driver_ids.empty():
+	if not unfinished_drivers.empty():
 		_update_final_data()
+
 	hud.game_timer.stop_timer()
 	#	hud.hide() ... itak ga pokrije cover
 	game_over.open(game_manager)
@@ -119,31 +120,31 @@ func close_game(transition_to: int):
 			game_manager.set_game(1)
 
 
-func _on_waiting_driver_finished(fdata, vehile):
+func _on_waiting_driver_finished(late_driver: Vehicle, drivers_final_data: Dictionary):
 
-	level_finished.score_table.update_scorelines(fdata)
-	unfinished_driver_ids.erase(vehile.driver_id)
+	level_finished.score_table.update_scorelines(drivers_final_data)
+	unfinished_drivers.erase(late_driver)
 
 
 func _update_final_data():
 	# dodam neuvrščene ai-je, ki vedno pridejo do konca
 	# izračun predvidenega časa je glede na prevožen procent
 
-	for driver_id in unfinished_driver_ids:
-		var driver_vehicle: Vehicle
-		for vehicle in game_manager.game_tracker.drivers_in_game:
-			if vehicle.driver_id == driver_id:
-				driver_vehicle = vehicle
-				break
-		# izračun časa
-		var current_game_time: int = hud.game_timer.game_time_hunds
-		if driver_vehicle:
-			var distance_needed_part: float = driver_vehicle.driver_tracker.unit_offset
+	var current_game_time: int = hud.game_timer.game_time_hunds
+	for driver in unfinished_drivers:
+		# če ma tarckerja upoštevam preostalo distanco
+		if driver.driver_tracker:
+			var distance_needed_part: float = driver.driver_tracker.unit_offset
 			if distance_needed_part == 0: # če obtiči na štartu ... verjetno nikoli
-				driver_vehicle.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time
+				driver.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time
 			else:
-				driver_vehicle.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time / distance_needed_part
-			game_manager.final_drivers_data[driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
-			game_manager.final_drivers_data[driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
+				driver.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time / distance_needed_part
+		else:
+		# če ni trackerja ... provizorij .. tolk da je večji čas od tistih v cilju
+			driver.driver_stats[Pros.STAT.LEVEL_TIME] = current_game_time * 1.5
 
+		game_manager.final_drivers_data[driver.driver_id]["driver_stats"] = driver.driver_stats.duplicate()
+		game_manager.final_drivers_data[driver.driver_id]["weapon_stats"] = driver.weapon_stats.duplicate()
+
+	unfinished_drivers.clear()
 	level_finished.score_table.update_scorelines(game_manager.final_drivers_data)

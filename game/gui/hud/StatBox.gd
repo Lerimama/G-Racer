@@ -104,6 +104,8 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 			above_or_below_index = get_children().find(level_progress_container) - 1
 		var measuring_node: Control = get_child(above_or_below_index)
 		measuring_node.connect("resized", self, "_on_measure_by_resized", [level_progress_container, measuring_node])
+		measuring_node.rect_size = rect_size # apdejt, da se poravna
+
 		# update
 		if goal_count > 0: # goals se kažejo tudi če so krogi
 			if rank_by == Pros.RANK_BY.TIME:
@@ -114,32 +116,38 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 		LEVEL_PROGRESS.bar_color = statbox_color
 
 		level_progress_container.show()
+		# skrijem lapo-goal counterje
+		if get_node("LapGoalCount") in get_children():
+			get_node("LapGoalCount").hide()
+		else:
+			LAP_COUNT.hide()
+			GOALS_REACHED.show()
 	else:
 		level_progress_container.hide()
 
-	# lap / goal counters ------------
+		# lap / goal counters ... če hočem ne glede na progress bar dam ven iz tega if-a
+		var no_goals_and_laps: bool = false
+		if lap_count < 1 and goal_count == 0:
+			no_goals_and_laps = true
 
-	var no_goals_and_laps: bool = false
-	if lap_count < 1 and goal_count == 0:
-		no_goals_and_laps = true
-
-	# če so counterji v svojem containerju
-	if get_node("LapGoalCount") in get_children():
-		if lap_count < 1 and goal_count == 0: # no_goals_and_laps
-			get_node("LapGoalCount").hide()
+		# če so counterji v svojem containerju
+		if get_node("LapGoalCount") in get_children():
+			if lap_count < 1 and goal_count == 0: # no_goals_and_laps
+				get_node("LapGoalCount").hide()
+			else:
+				get_node("LapGoalCount").show()
 		else:
-			get_node("LapGoalCount").show()
-	else:
-		if lap_count < 1 and goal_count == 0: # no_goals_and_laps
-			LAP_COUNT.hide()
-			GOALS_REACHED.hide()
-		# če je eno ali drugo, pedenam samo stast
-		elif goal_count == 0:
-			LAP_COUNT.show()
-			GOALS_REACHED.hide()
-		elif lap_count < 1:
-			LAP_COUNT.hide()
-			GOALS_REACHED.show()
+			if lap_count < 1 and goal_count == 0: # no_goals_and_laps
+				LAP_COUNT.hide()
+				GOALS_REACHED.hide()
+			# če je eno ali drugo, pedenam samo stast
+			elif goal_count == 0:
+				LAP_COUNT.show()
+				GOALS_REACHED.hide()
+			elif lap_count < 1:
+				LAP_COUNT.hide()
+				GOALS_REACHED.show()
+
 
 
 func _on_measure_by_resized(container_to_resize: Control, measure_by: Control):
