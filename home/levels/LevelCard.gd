@@ -47,7 +47,8 @@ func _ready() -> void:
 		$TextureRect.texture = thumb_texture
 
 	# btn state
-	laps_btn.text = "LAPS: %02d" % level_profile["level_laps"]
+	if not level_profile.empty():
+		laps_btn.text = "LAPS: %02d" % level_profile["level_laps"]
 	if mirror_mode:
 		mirror_btn.text = "MIRROR: ON"
 	else:

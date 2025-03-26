@@ -1,0 +1,92 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://game/level/Level.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/levels/materiali/Racetrack_Dubai.png" type="Texture" id=2]
+[ext_resource path="res://game/level/ground/streets/StreetAsphalt_SS2D.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=4]
+[ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=5]
+[ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=6]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 6 )
+texture_idx = 4
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 4 )
+position = Vector2( 4315.48, 5147.42 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 1 )
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 6 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 4 )
+position = Vector2( 540.798, -1129.89 )
+point_in = Vector2( -685.397, 2378.73 )
+point_out = Vector2( 685.397, -2378.73 )
+properties = SubResource( 3 )
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 6 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 4 )
+position = Vector2( 5557.99, -7279.42 )
+point_in = Vector2( 0, 0 )
+point_out = Vector2( 0, 0 )
+properties = SubResource( 5 )
+
+[sub_resource type="Resource" id=7]
+script = ExtResource( 6 )
+texture_idx = 0
+flip = false
+width = 1.0
+
+[sub_resource type="Resource" id=8]
+script = ExtResource( 4 )
+position = Vector2( 4461.89, -3654.68 )
+point_in = Vector2( -1521.98, 1199.44 )
+point_out = Vector2( 1521.98, -1199.44 )
+properties = SubResource( 7 )
+
+[sub_resource type="Resource" id=9]
+script = ExtResource( 5 )
+_points = {
+0: SubResource( 2 ),
+79: SubResource( 4 ),
+80: SubResource( 6 ),
+81: SubResource( 8 )
+}
+_point_order = [ 0, 79, 81, 80 ]
+_constraints = {
+}
+_next_key = 82
+_material_overrides = {
+}
+
+[node name="LevelGrandPrix" instance=ExtResource( 1 )]
+
+[node name="RacetrackDubai" type="Sprite" parent="." index="0"]
+position = Vector2( -768, 168 )
+scale = Vector2( 10, 10 )
+texture = ExtResource( 2 )
+
+[node name="StreetAsphalt" parent="Surfaces" index="0" instance=ExtResource( 3 )]
+
+[node name="StreetSS2D" parent="Surfaces/StreetAsphalt" index="0"]
+_points = SubResource( 9 )
+
+[node name="CollisionPolygon2D" parent="Surfaces/StreetAsphalt" index="1"]
+polygon = PoolVector2Array( 3972.65, 5511.39, 3272.84, 4851.72, 1784.64, 3218.02, 1019.56, 2181.45, 677.227, 1626.01, 386.293, 1061.45, 161.69, 494.983, 74.8028, 197.585, 13.0207, -94.9424, -22.9009, -389.06, -29.4844, -684.01, -2.92221, -978.236, 59.3194, -1264.72, 218.941, -1727.97, 405.892, -2113.75, 518.619, -2295.42, 635.598, -2454.87, 760.552, -2599.59, 892.687, -2729.61, 1030.88, -2845.08, 1181.06, -2951.1, 1466.35, -3109.24, 1763.79, -3229.27, 2060.55, -3318.1, 3172.72, -3571.27, 3423.46, -3650.29, 3671.36, -3751.67, 3913.28, -3881.1, 4150.64, -4045.99, 4365.33, -4240.37, 4544.68, -4453.09, 4694.7, -4683.72, 4817.98, -4929.33, 4916.53, -5186.01, 4990.39, -5441.28, 5084.08, -5975.04, 5112.55, -6456.95, 5101.88, -6848.2, 5060.86, -7225.97, 6055.12, -7332.88, 6099.63, -6915.25, 6112.42, -6440.64, 6077.29, -5858.65, 5964.7, -5216.07, 5864.53, -4867.74, 5732.51, -4524.81, 5561.73, -4185.47, 5347.25, -3856.53, 5084.7, -3545.74, 4773.15, -3263.38, 4435.86, -3028.5, 4097.73, -2847.11, 3763.73, -2709.96, 3434.31, -2606.09, 2314.7, -2350.94, 2093.59, -2285.22, 1896.35, -2206.42, 1713.72, -2104.78, 1641.09, -2052.84, 1564.5, -1988.88, 1490.32, -1915.9, 1417.9, -1831.97, 1346.86, -1735.04, 1281.39, -1630.53, 1143.18, -1346.17, 1022.28, -995.061, 985.569, -826.956, 969.963, -650.769, 974.475, -461.463, 999.394, -259.467, 1044.68, -46.0085, 1107.57, 170.47, 1296.59, 647.486, 1547.9, 1134.15, 1848.3, 1621.82, 2557.59, 2583.56, 3985.77, 4150.48, 4658.3, 4783.46 )
+
+[editable path="Surfaces/StreetAsphalt"]

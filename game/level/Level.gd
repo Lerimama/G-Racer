@@ -24,7 +24,7 @@ export var reach_goals_in_sequence: bool = false
 var available_pickable_positions: Array = []
 var level_goals: Array = [] # pobere povezane
 var level_start_positions: Dictionary = {} # [global_position, global_rotation]
-var level_rank_type: int = 0
+var level_rank_type: String
 
 var camera_limits: Control # če ga ni, kamera nima limita
 onready var camera_position_2d: Position2D = $Elements/StartCameraPosition
@@ -56,7 +56,7 @@ func set_level(drivers_count: int):
 	match level_type:
 
 		LEVEL_TYPE.FREE_RIDE:
-			level_rank_type = Pros.RANK_BY.NONE
+			level_rank_type = "NONE"
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false
@@ -65,28 +65,28 @@ func set_level(drivers_count: int):
 			_spawn_random_pickables()
 
 		LEVEL_TYPE.RACING_TRACK:
-			level_rank_type = Pros.RANK_BY.TIME
+			level_rank_type = "TIME"
 			start_line.is_enabled = true
 			tracking_line.is_enabled = true
 			finish_line.is_enabled = true
 			level_goals.clear()
 
 		LEVEL_TYPE.RACING_GOALS:
-			level_rank_type = Pros.RANK_BY.TIME
+			level_rank_type = "TIME"
 			start_line.is_enabled = true
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = true
 			_set_level_goals()
 
 		LEVEL_TYPE.BATTLE_GOALS:
-			level_rank_type = Pros.RANK_BY.POINTS
+			level_rank_type = "POINTS"
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false
 			_set_level_goals()
 
 		LEVEL_TYPE.BATTLE_SCALPS:
-			level_rank_type = Pros.RANK_BY.POINTS
+			level_rank_type = "POINTS"
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false
@@ -95,7 +95,7 @@ func set_level(drivers_count: int):
 			_spawn_random_pickables()
 
 		LEVEL_TYPE.MISSION:
-			level_rank_type = Pros.RANK_BY.NONE
+			level_rank_type = "NONE"
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false

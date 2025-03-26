@@ -4,7 +4,7 @@
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=4]
-[ext_resource path="res://assets/textures/pixel_style/mount_edge.png" type="Texture" id=5]
+[ext_resource path="res://assets/textures/levels/terrain/mount/mount_edge.png" type="Texture" id=5]
 
 [sub_resource type="StreamTexture" id=1814]
 flags = 2

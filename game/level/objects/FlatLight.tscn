@@ -1,11 +1,11 @@
 [gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
-[ext_resource path="res://common/tex/glow_light.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/fx/glow_light.png" type="Texture" id=2]
 [ext_resource path="res://game/level/objects/FlatLight.gd" type="Script" id=4]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/sounds/level/teleport_loop_v2.wav" type="AudioStream" id=6]
-[ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=7]
+[ext_resource path="res://assets/textures/levels/atlas_level.png" type="Texture" id=7]
 
 [sub_resource type="PhysicsMaterial" id=7]
 

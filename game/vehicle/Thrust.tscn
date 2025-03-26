@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://game/vehicle/Thrust.gd" type="Script" id=1]
-[ext_resource path="res://common/tex/circo_32.png" type="Texture" id=4]
+[ext_resource path="res://assets/textures/fx/circo_32.png" type="Texture" id=4]
 [ext_resource path="res://game/vehicle/fx/thrust_smoke_particles_material.tres" type="Material" id=6]
 [ext_resource path="res://game/vehicle/fx/thrust_fire_particles_material.tres" type="Material" id=7]
 

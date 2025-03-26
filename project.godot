@@ -315,6 +315,7 @@ config/icon="res://assets/icon.png"
 
 Sets="*res://autoloads/Settings.gd"
 Refs="*res://autoloads/References.gd"
+Levs="*res://autoloads/Levels.gd"
 Pros="*res://autoloads/Profiles.gd"
 Mets="*res://autoloads/Methods.gd"
 Buts="*res://autoloads/Buttons.gd"
@@ -333,9 +334,7 @@ gdscript/warnings/integer_division=false
 
 window/size/width=2560
 window/size/height=1440
-window/size/resizable=false
-window/size/borderless=true
-window/size/fullscreen=true
+window/size/always_on_top=true
 window/size/test_width=640
 window/size/test_height=360
 window/stretch/mode="2d"

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://game/level/_nav_server_test.gd" type="Script" id=1]
-[ext_resource path="res://assets/textures/road/road_corner_In.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/levels/road/road_corner_In.png" type="Texture" id=2]
 
 [sub_resource type="NavigationPolygon" id=13031]
 vertices = PoolVector2Array( 3542, 537, -767.481, 1316.63, -764, -675, 4856, -726, 4644, 4122, -772, 3902, -484, 1918 )

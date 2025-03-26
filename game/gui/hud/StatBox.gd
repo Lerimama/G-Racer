@@ -52,7 +52,7 @@ func _ready() -> void:
 	pass
 
 
-func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_count: int, one_life_mode: bool): # kliče HUD
+func set_statbox_stats(rank_by: String, lap_count: int, goal_count: int, players_count: int, one_life_mode: bool): # kliče HUD
 
 	# reset
 	for stat_holder in get_children():
@@ -61,15 +61,15 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 	lap_time_still_display.hide()
 
 	# by_rank visibility
-	if rank_by == Pros.RANK_BY.TIME:
+	if rank_by == "TIME":
 		for stat in rank_by_time_stat:
 			stat.get_parent().get_parent().show()
 			if stat == BEST_LAP_TIME:
 				stat.get_parent().get_parent().hide()
-	elif rank_by == Pros.RANK_BY.POINTS:
+	elif rank_by == "POINTS":
 		for stat in rank_by_points_stats:
 			stat.get_parent().get_parent().show()
-	elif rank_by == Pros.RANK_BY.NONE:
+	else:
 		use_level_progress_bar = false
 		lap_count = 0
 		goal_count = 0
@@ -108,7 +108,7 @@ func set_statbox_stats(rank_by: int, lap_count: int, goal_count: int, players_co
 
 		# update
 		if goal_count > 0: # goals se kažejo tudi če so krogi
-			if rank_by == Pros.RANK_BY.TIME:
+			if rank_by == "TIME":
 				goal_count += 1 # dodam finish line kot končen cilj
 			LEVEL_PROGRESS.stage_count = goal_count
 		else:

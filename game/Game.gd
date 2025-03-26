@@ -267,8 +267,9 @@ func _spawn_level(new_level_index:int, drivers_count: int):
 		game_level.set_physics_process(false)
 		game_level.queue_free()
 
-	var new_level_key: int = game_levels[new_level_index]
-	level_profile = Pros.level_profiles[new_level_key]
+#	var new_level_key: int = game_levels[new_level_index]
+#	level_profile = Pros.level_profiles[new_level_key]
+	level_profile = game_levels[new_level_index]
 
 	# spawn
 	var level_spawn_parent: Node = game_views.get_child(0).get_node("Viewport") # VP node
@@ -320,7 +321,7 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 	new_vehicle.driver_id = driver_id
 	new_vehicle.def_vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
 	new_vehicle.driver_profile = Pros.start_driver_profiles[driver_id].duplicate()
-	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
+#	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
 
 	# stats
 	var new_driver_stats: Dictionary = {}

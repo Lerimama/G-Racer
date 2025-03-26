@@ -8,7 +8,7 @@
 [ext_resource path="res://assets/sounds/level/teleport_out_v2.wav" type="AudioStream" id=6]
 [ext_resource path="res://assets/sounds/level/teleport_in_v2.wav" type="AudioStream" id=7]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=8]
-[ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=9]
+[ext_resource path="res://assets/textures/levels/atlas_level.png" type="Texture" id=9]
 
 [sub_resource type="PhysicsMaterial" id=20]
 absorbent = true

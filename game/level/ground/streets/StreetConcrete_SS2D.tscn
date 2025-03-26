@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=2]
 
-[ext_resource path="res://game/level/ground/streets/Street_SS2D.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/level/ground/streets/base/Street_SS2D.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=2]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=3]
 [ext_resource path="res://addons/rmsmartshape/vertex_properties.gd" type="Script" id=4]

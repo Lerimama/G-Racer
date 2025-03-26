@@ -5,8 +5,8 @@
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=3]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/skills/skill_cling.wav" type="AudioStream" id=4]
 [ext_resource path="res://game/level/objects/BrickTarget.gd" type="Script" id=5]
-[ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=6]
-[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=7]
+[ext_resource path="res://assets/textures/levels/atlas_level.png" type="Texture" id=6]
+[ext_resource path="res://assets/textures/fx/circo_8.png" type="Texture" id=7]
 
 [sub_resource type="PhysicsMaterial" id=14]
 

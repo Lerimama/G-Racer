@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://game/level/breakers/breaker/Operator.gd" type="Script" id=1]
-[ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=2]
+[ext_resource path="res://assets/textures/levels/materials/concrete.jpg" type="Texture" id=2]
 [ext_resource path="res://game/level/breakers/BreakerRigid.gd" type="Script" id=3]
 [ext_resource path="res://game/level/breakers/breaker/BreakerShape.gd" type="Script" id=4]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=5]

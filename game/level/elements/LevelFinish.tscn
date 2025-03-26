@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
-[ext_resource path="res://assets/textures/atlas_level.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/levels/atlas_level.png" type="Texture" id=2]
 [ext_resource path="res://game/level/elements/LevelFinish.gd" type="Script" id=3]
 [ext_resource path="res://common/EditorRectLabel.tscn" type="PackedScene" id=4]
 

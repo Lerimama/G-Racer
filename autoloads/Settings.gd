@@ -24,7 +24,7 @@ var world_hsp_power_factor: float = 1000 # engine power je 300 namesto 300000
 var power_vs_speed = "250 hsp > 100 kmh"
 var world_1kg_mass = 0.1 # masa ...
 var kg_per_unit_mass = 10
-
+var unit_one: float = 32 # samo breaker
 
 # GAME SETTINGS --------------------------------------------------------------------------------------------
 
@@ -78,7 +78,6 @@ var heal_rate_factor: float = 0
 
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
-#var game_levels: Array = [Pros.LEVELS.FIRST_DRIVE_SHORT, Pros.LEVELS.FIRST_DRIVE_SHORT]
 
 var def_game_settings_resource: Resource = preload("res://game/game_settings_def.tres")
 
@@ -90,12 +89,8 @@ func _ready() -> void:
 
 func _apply_debug_settings():
 
-#	game_levels = [Pros.LEVELS.TRAINING]
-#	game_levels = [Pros.LEVELS.DEFAULT]
-	game_levels = [Pros.LEVELS.STAFF]
-#	game_levels = [Pros.LEVELS.FIRST_DRIVE, Pros.LEVELS.FIRST_DRIVE]
-#	game_levels = [Pros.LEVELS.FIRST_DRIVE_SHORT, Pros.LEVELS.FIRST_DRIVE_SHORT]
-#	game_levels = [Pros.LEVELS.SETUP]
+#	game_levels = [Levs.GRAND_PRIX]
+	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
 	print("game_levels", game_levels)
 
 	camera_zoom_range = Vector2(2, 2.3)
@@ -173,17 +168,14 @@ func _set_game_settings_per_level(selected_level_index: int = 0):
 
 	# kliče GM pred spawnanjem levela
 	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
-	var current_level: int = game_levels[selected_level_index]
+	var current_level: int = -1 #game_levels[selected_level_index]
 
 
 	# debug
-	match current_level:
+#	match current_level:
 		# racing
 		# duel
-		Pros.LEVELS.STAFF:
-			pass
-		Pros.LEVELS.FIRST_DRIVE:
-			pass
+	pass
 
 
 func load_saved_game_settings(saved_game_settings: Resource):

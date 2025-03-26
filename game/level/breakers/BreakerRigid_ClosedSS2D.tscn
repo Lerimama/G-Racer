@@ -7,7 +7,7 @@
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=5]
 [ext_resource path="res://addons/rmsmartshape/shapes/shape_closed.gd" type="Script" id=6]
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=7]
-[ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=8]
+[ext_resource path="res://assets/textures/levels/materials/concrete.jpg" type="Texture" id=8]
 [ext_resource path="res://game/level/breakers/breaker/BreakerShape.gd" type="Script" id=10]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=11]
 

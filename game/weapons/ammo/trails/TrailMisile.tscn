@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://game/weapons/ammo/trails/TrailMisile.gd" type="Script" id=1]
-[ext_resource path="res://common/tex/gradline_8.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/fx/gradline_8.png" type="Texture" id=2]
 
 [sub_resource type="Curve" id=5]
 resource_local_to_scene = true

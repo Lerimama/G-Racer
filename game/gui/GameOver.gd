@@ -58,8 +58,7 @@ func open(game_manager: Game):
 
 func _set_for_level_finished(level_index: int, levels_count: int):
 
-	var finished_level_key: int = Sets.game_levels[level_index]
-	var finished_level_name: String = Pros.level_profiles[finished_level_key]["level_name"]
+	var finished_level_name: String = Sets.game_levels[level_index]["level_name"]
 
 	title.text = finished_level_name.to_upper() + " FINISHED"
 	title.modulate = Refs.color_green

@@ -1,13 +1,13 @@
 [gd_resource type="Resource" load_steps=12 format=2]
 
-[ext_resource path="res://assets/textures/building/tile_roof_edge_cornerR.png" type="Texture" id=1]
-[ext_resource path="res://assets/textures/building/tile_roof_top.png" type="Texture" id=2]
-[ext_resource path="res://assets/textures/building/tile_roof_edge_cornerL.png" type="Texture" id=3]
+[ext_resource path="res://assets/textures/levels/building/tile_roof_edge_cornerR.png" type="Texture" id=1]
+[ext_resource path="res://assets/textures/levels/building/tile_roof_top.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/levels/building/tile_roof_edge_cornerL.png" type="Texture" id=3]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=4]
 [ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=5]
 [ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=6]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=7]
-[ext_resource path="res://assets/textures/building/tile_roof_edge.png" type="Texture" id=8]
+[ext_resource path="res://assets/textures/levels/building/tile_roof_edge.png" type="Texture" id=8]
 
 [sub_resource type="Resource" id=8135]
 script = ExtResource( 4 )

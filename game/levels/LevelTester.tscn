@@ -1,0 +1,75 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/level/Level.tscn" type="PackedScene" id=1]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, -7, 64, 0, 0, 0, 0, -16, -3312 )
+}
+
+[node name="LevelTester" instance=ExtResource( 1 )]
+__meta__ = {
+"_edit_horizontal_guides_": [ -64026.0 ],
+"_edit_vertical_guides_": [ -1904.0, 1904.0, -9.0 ],
+"_editor_description_": "Z INDEX
+- background = -10
+- ground terrain < -1
+- flat objects and default = 0
+- not flat or floating object = 1 - 9
+- sky > 10"
+}
+level_type = 1
+
+[node name="BackColor" parent="Ground" index="0"]
+margin_top = -68248.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="StartPosition" parent="Elements/StartLine" index="3"]
+position = Vector2( -1, 776 )
+
+[node name="PositionsGrid" parent="Elements/StartPositions" index="1"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -848.0
+margin_right = 848.0
+margin_bottom = 713.0
+
+[node name="PositionsRandom" parent="Elements/StartPositions" index="2"]
+margin_left = -752.0
+margin_top = -1175.0
+margin_right = 736.0
+margin_bottom = 401.0
+
+[node name="PositionsCirco" parent="Elements/StartPositions" index="3"]
+margin_left = -544.0
+margin_top = -983.0
+margin_right = 600.0
+margin_bottom = 233.0
+
+[node name="FinishLine" parent="Elements" index="3"]
+position = Vector2( -4, -3312 )
+
+[node name="TrackingLine" parent="Elements" index="4"]
+curve = SubResource( 1 )
+
+[node name="Tracker" parent="Elements/TrackingLine" index="0"]
+position = Vector2( -7, 64 )
+rotation = -1.57346
+
+[node name="__ScreenSize" parent="." index="13"]
+margin_left = -2565.0
+margin_top = -2900.0
+margin_right = -5.0
+margin_bottom = -1460.0
+rect_scale = Vector2( 2, 2 )
+
+[node name="__WorldMeters" parent="." index="14"]
+margin_left = -982.0
+margin_top = 3.0
+margin_right = -678.0
+margin_bottom = 3.0
+__meta__ = {
+"_edit_group_": true
+}

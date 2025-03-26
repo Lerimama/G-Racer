@@ -55,7 +55,7 @@ onready var influence_area: Area2D = $InfluenceArea # poligon za brejker detect
 onready var shape_area: Area2D = $ShapeArea
 
 # neu
-export var icon_texture: Texture = load("res://assets/icons/icon_bullet_VRSA.tres")
+export var icon_texture: Texture = load("res://game/gui/icons/icon_bullet_VERS.tres")
 # ni v profilih
 var homming_delay: float = 1
 

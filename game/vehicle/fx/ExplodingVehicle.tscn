@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/vehicle/fx/ExplodingVehicle.gd" type="Script" id=1]
 [ext_resource path="res://game/vehicle/fx/explosion_blast_anim.tres" type="SpriteFrames" id=2]
-[ext_resource path="res://common/tex/circo_32.png" type="Texture" id=3]
+[ext_resource path="res://assets/textures/fx/circo_32.png" type="Texture" id=3]
 
 [sub_resource type="Gradient" id=1]
 offsets = PoolRealArray( 0.249071, 0.29368, 0.587361, 0.992565, 1 )

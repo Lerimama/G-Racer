@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/level/breakers/breaker_nepovezan_modular/Breaker.gd" type="Script" id=1]
 [ext_resource path="res://game/level/breakers/breaker_nepovezan_modular/Operator.gd" type="Script" id=2]
-[ext_resource path="res://assets/textures/concrete.jpg" type="Texture" id=3]
+[ext_resource path="res://assets/textures/levels/materials/concrete.jpg" type="Texture" id=3]
 [ext_resource path="res://common/shadows/ShapeShadows.tscn" type="PackedScene" id=4]
 
 [sub_resource type="PhysicsMaterial" id=1]

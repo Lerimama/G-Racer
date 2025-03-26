@@ -4,7 +4,7 @@
 [ext_resource path="res://game/weapons/WeaponAI.gd" type="Script" id=2]
 [ext_resource path="res://game/equipment/Equipment.gd" type="Script" id=3]
 [ext_resource path="res://assets/materials/fx/weapon_fire_particles_material.tres" type="Material" id=4]
-[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=6]
+[ext_resource path="res://assets/textures/fx/circo_8.png" type="Texture" id=6]
 
 [sub_resource type="CanvasItemMaterial" id=5267]
 

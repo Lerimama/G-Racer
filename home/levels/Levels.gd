@@ -70,16 +70,24 @@ func _set_levels_menu() -> void: # tole gre na starša
 	selected_levels_label.text = "SELECTED LEVELS: > "
 
 	# spawn btns
-	for level_value in Pros.LEVELS.values(): # po vrsti v LEVELS enum
+	var all_levels: Array = Levs.training_levels.duplicate()
+	all_levels.append_array(Levs.racing_levels)
+	all_levels.append_array(Levs.battle_levels)
+	all_levels.append_array(Levs.missions)
+
+	for level in all_levels: # po vrsti v LEVELS enum
+#	for level_value in Pros.LEVELS.values(): # po vrsti v LEVELS enum
 
 		var new_level_btn: Button = LevelCard.instance()
-		new_level_btn.level_profile = Pros.level_profiles[level_value]
+#		new_level_btn.level_profile = Pros.level_profiles[level_value]
+		new_level_btn.level_profile = level
 		level_cards.add_child(new_level_btn)
 
 		new_level_btn.connect("pressed", self, "_on_level_btn_pressed", [new_level_btn])
 		new_level_btn.connect("focus_entered", self, "_on_level_btn_focused", [new_level_btn])
 
-		var level_value_index: int = Pros.LEVELS.values().find(level_value)
+		var level_value_index: int = all_levels.find(level)
+#		var level_value_index: int = Pros.LEVELS.values().find(level_value)
 		if level_value_index in Sets.game_levels:
 			new_level_btn.is_selected = true
 			selected_level_btns.append(new_level_btn)

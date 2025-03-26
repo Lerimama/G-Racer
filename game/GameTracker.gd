@@ -29,7 +29,7 @@ func _process(delta: float) -> void:
 	# ranking
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 
-		if drivers_in_game.size() > 1 and not game.level_profile["rank_by"] == Pros.RANK_BY.NONE:
+		if drivers_in_game.size() > 1 and not game.level_profile["rank_by"] == "NONE":
 			_update_ranking()
 
 		# camera leader
@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 		yield(get_tree(), "idle_frame")
 
 		# per frame RACING stats
-		if game.level_profile["rank_by"] == Pros.RANK_BY.TIME:
+		if game.level_profile["rank_by"] == "TIME":
 			for driver in drivers_in_game:
 				if driver.is_active and not driver in drivers_finished: # neha pošiljati, ko prevozi cilj
 					driver.update_stat(Pros.STAT.CURR_LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
@@ -59,7 +59,7 @@ func _update_ranking():
 	var unranked_drivers: Array = drivers_in_game.duplicate()
 	var drivers_ranked: Array = []
 
-	if game.level_profile["rank_by"] == Pros.RANK_BY.TIME:
+	if game.level_profile["rank_by"] == "TIME":
 		# tracking
 		if game_level.tracking_line.is_enabled:
 			# najprej rangiram trackerje
@@ -78,7 +78,7 @@ func _update_ranking():
 		if game.level_profile["level_laps"] > 1:
 			drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
 
-	elif game.level_profile["rank_by"] == Pros.RANK_BY.POINTS:
+	elif game.level_profile["rank_by"] == "POINTS":
 		# rangiram po točkah
 		drivers_ranked = unranked_drivers
 		drivers_ranked.sort_custom(self, "_sort_drivers_by_points")

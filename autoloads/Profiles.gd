@@ -190,29 +190,29 @@ var equipment_profiles : Dictionary = {
 
 func __weapons(): pass # ------------------------------------------------------------
 
-var _temp_mala_icon = preload("res://assets/icons/icon_mala_VRSA.tres")
+var _temp_mala_icon = preload("res://game/gui/icons/icon_mala_VERS.tres")
 enum AMMO {BULLET, MISILE, MINA, SMALL, HOMER} # kot v orožjih
 var ammo_profiles : Dictionary = {
 	AMMO.BULLET: {
 		# "reload_time": 0.2,  ... določim v export var
 		"scene": preload("res://game/weapons/ammo/ProjectileBullet.tscn"),
-		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
+		"icon": preload("res://game/gui/icons/icon_bullet_VERS.tres"),
 	},
 	AMMO.MISILE: {
 		"scene": preload("res://game/weapons/ammo/ProjectileHomer.tscn"),
-		"icon": preload("res://assets/icons/icon_misile_VRSA.tres"),
+		"icon": preload("res://game/gui/icons/icon_misile_VERS.tres"),
 	},
 	AMMO.MINA: {
 		"scene": preload("res://game/weapons/ammo/MinaExplode.tscn"),
-		"icon": preload("res://assets/icons/icon_mina_VRSA.tres"),
+		"icon": preload("res://game/gui/icons/icon_mina_VERS.tres"),
 	},
 	AMMO.SMALL: {
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
-		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
+		"icon": preload("res://game/gui/icons/icon_bullet_VERS.tres"),
 	},
 	AMMO.HOMER: {
 		"scene": preload("res://game/weapons/ammo/ProjectileBulletSmall.tscn"),
-		"icon": preload("res://assets/icons/icon_bullet_VRSA.tres"),
+		"icon": preload("res://game/gui/icons/icon_bullet_VERS.tres"),
 	},
 	}
 
@@ -220,103 +220,10 @@ var ammo_profiles : Dictionary = {
 func __levels(): pass # ------------------------------------------------------------
 
 enum RANK_BY {NONE, TIME, POINTS} # level opredeli glede na vsebino in ga doda v svoj profile
-enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP} # to zaporedje upošteva zapordje home gumbov
-enum LEVEL_TYPE {
-	# seta on level ... export var
-	# uporablja smamo level, da ve kaj ugasnit in prižgat
-	# lahko bi "bolje", a tako je bolj jasno katere oblike so mogoče
-	FREE_RIDE,
-	# rank_by time
-	RACING_TRACK, # start-line > race-track > finish-line
-	RACING_GOALS, # start-line > goals > finish-line
-#	RACING_FREE, # start-line > finish-line
-	# rank_by points
-	BATTLE_GOALS, # start-positions > goals
-	BATTLE_SCALPS, # start-positions
-	# no ranking
-	MISSION, # goals
-	}
+enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP
+	GRAND_PRIX
+} # to zaporedje upošteva zapordje home gumbov
 
-var level_profiles: Dictionary = {
-	LEVELS.DEFAULT: {
-		"level_name": "dafault",
-		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
-		"level_scene": preload("res://game/level/Level.tscn"),
-		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
-		"level_time_limit": 0,
-		"level_laps": 2,
-		"level_record": [0, ""], # pogreba sejvanega
-		# opredeli level ob spawnu
-		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
-		# "rank_by": RANK_BY.NONE,
-		# "level_goals": [],
-		},
-	LEVELS.FIRST_DRIVE: {
-		"level_name": "first drive",
-		"level_desc": "Join an Exclusive Development Community.",
-		"level_scene": preload("res://game/levels/LevelFirstDrive.tscn"),
-		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
-		"level_time_limit": 0,
-		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
-		"level_record": [0, ""], # pogreba sejvanega
-		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
-		# opredeli level ob spawnu
-		# "rank_by": RANK_BY.NONE,
-		# "level_goals": [],
-		},
-	LEVELS.FIRST_DRIVE_SHORT: {
-		"level_name": "first drive shorty",
-		"level_desc": "Cut Development Time with Unity C# Tools, Assets and Scripts.",
-		"level_scene": preload("res://game/levels/LevelFirstDriveShort.tscn"),
-		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
-		"level_time_limit": 0,
-		"level_laps": 0, # če so goalsi delajo isto kot čekpointi
-		"level_record": [0, ""], # pogreba sejvanega
-		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
-		# opredeli level ob spawnu
-		# "rank_by": RANK_BY.NONE,
-		# "level_goals": [],
-		},
-	LEVELS.SETUP: {
-		"level_name": "SETUP",
-		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
-		"level_scene": preload("res://game/levels/LevelAISetup.tscn"),
-		"level_thumb": preload("res://home/levels/thumb_level_race.tres"),
-		"level_time_limit": 0,
-		"level_laps": 3, # če so goalsi delajo isto kot čekpointi
-		"level_record": [0, ""], # pogreba sejvanega
-		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
-		# opredeli level ob spawnu
-		# "rank_by": RANK_BY.NONE,
-		# "level_goals": [],
-		},
-	LEVELS.TRAINING: {
-		"level_name": "training",
-		"level_desc": "Join an Exclusive Development Community.",
-		"level_scene": preload("res://game/levels/LevelTraining.tscn"),
-		"level_thumb": preload("res://home/levels/thumb_level_training.tres"),
-		"level_time_limit": 0,
-		"level_laps": 0,
-		"level_record": [0, ""], # pogreba sejvanega
-		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
-		# opredeli level ob spawnu
-		# "rank_by": RANK_BY.NONE,
-		# "level_goals": [],
-		},
-	LEVELS.STAFF: {
-		"level_name": "staff",
-		"level_desc": "Access Comprehensive Guides, Roadmaps, and Templates.",
-		"level_scene": preload("res://game/levels/LevelStaff.tscn"),
-		"level_thumb": preload("res://home/levels/thumb_level_mission.tres"),
-		"level_time_limit": 60,
-		"level_laps": 1,
-		"level_record": [0, ""], # pogreba sejvanega
-		# opredeli level ob spawnu
-		# "level_type_enum": LEVEL_TYPE.FREE_RIDE,
-		# "rank_by": RANK_BY.NONE,
-		# "level_goals": [],
-		},
-	}
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
 var level_object_profiles: Dictionary = {

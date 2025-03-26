@@ -1,4 +1,4 @@
-[gd_scene load_steps=274 format=2]
+[gd_scene load_steps=282 format=2]
 
 [ext_resource path="res://addons/rmsmartshape/shapes/point_array.gd" type="Script" id=1]
 [ext_resource path="res://addons/rmsmartshape/shapes/point.gd" type="Script" id=2]
@@ -6,9 +6,9 @@
 [ext_resource path="res://game/level/breakers/BreakerConcrete.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=5]
 [ext_resource path="res://game/level/objects/GoalPillar.tscn" type="PackedScene" id=6]
-[ext_resource path="res://common/tex/cross.png" type="Texture" id=7]
+[ext_resource path="res://assets/textures/fx/cross.png" type="Texture" id=7]
 [ext_resource path="res://assets/materials/ground_dirt.material" type="Material" id=8]
-[ext_resource path="res://common/tex/noise/7547.jpg" type="Texture" id=9]
+[ext_resource path="res://assets/textures/levels/materials/7547.jpg" type="Texture" id=9]
 [ext_resource path="res://assets/materials/ground_linart.material" type="Material" id=10]
 [ext_resource path="res://addons/rmsmartshape/materials/shape_material.gd" type="Script" id=11]
 [ext_resource path="res://assets/tileset_pallete.png" type="Texture" id=12]
@@ -49,6 +49,10 @@
 [ext_resource path="res://game/level/pickables/PickableDropper.tscn" type="PackedScene" id=47]
 [ext_resource path="res://game/level/pickables/PickableGas.tscn" type="PackedScene" id=48]
 [ext_resource path="res://assets/turn_curves.png" type="Texture" id=49]
+[ext_resource path="res://assets/textures/levels/tile_street.png" type="Texture" id=50]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material.gd" type="Script" id=51]
+[ext_resource path="res://addons/rmsmartshape/normal_range.gd" type="Script" id=52]
+[ext_resource path="res://addons/rmsmartshape/materials/edge_material_metadata.gd" type="Script" id=53]
 
 [sub_resource type="OpenSimplexNoise" id=10546]
 seed = 7
@@ -143,6 +147,49 @@ _constraints = {
 _next_key = 79
 _material_overrides = {
 }
+
+[sub_resource type="Resource" id=10863]
+script = ExtResource( 51 )
+textures = [ ExtResource( 50 ) ]
+texture_normals = [  ]
+textures_corner_outer = [  ]
+textures_corner_inner = [  ]
+texture_normals_corner_outer = [  ]
+texture_normals_corner_inner = [  ]
+textures_taper_left = [  ]
+textures_taper_right = [  ]
+texture_normals_taper_left = [  ]
+texture_normals_taper_right = [  ]
+randomize_texture = false
+use_corner_texture = false
+use_taper_texture = false
+fit_mode = 0
+
+[sub_resource type="Resource" id=10864]
+script = ExtResource( 52 )
+begin = 0.0
+distance = 360.0
+edgeRendering = Vector2( 0, 0 )
+
+[sub_resource type="Resource" id=10865]
+script = ExtResource( 53 )
+edge_material = SubResource( 10863 )
+normal_range = SubResource( 10864 )
+weld = true
+render = true
+z_index = 0
+z_as_relative = true
+offset = 0.0
+
+[sub_resource type="Resource" id=13660]
+script = ExtResource( 11 )
+_edge_meta_materials = [ SubResource( 10865 ) ]
+fill_textures = [  ]
+fill_texture_normals = [  ]
+fill_texture_z_index = 0
+fill_texture_show_behind_parent = false
+fill_mesh_offset = 0.0
+render_offset = 0.0
 
 [sub_resource type="Resource" id=13462]
 script = ExtResource( 3 )
@@ -2346,6 +2393,7 @@ __meta__ = {
 
 [node name="StreetSS2D" parent="Ground/StreetAsphalt" index="0"]
 _points = SubResource( 13461 )
+shape_material = SubResource( 13660 )
 
 [node name="CollisionPolygon2D" parent="Ground/StreetAsphalt" index="1"]
 polygon = PoolVector2Array( -2641.65, 3233.01, -2339.93, 3242.98, -2033.19, 3232.61, -1662.83, 3193.04, -1263.58, 3109.47, -1081.48, 3052.32, -903.557, 2980.51, -741.397, 2896.1, -591.573, 2794.23, -534.497, 2746.38, -476.772, 2690.92, -424.52, 2632.41, -382.717, 2578.01, -335.717, 2497.09, -327.774, 2478.31, -320.321, 2457.21, -316.125, 2441.09, -314.096, 2428.92, -313.403, 2419.43, -313.572, 2411.14, -314.518, 2402.65, -316.48, 2392.76, -319.904, 2380.56, -322.67, 2372.12, -344.607, 2324.57, -371.073, 2279.58, -594.661, 1970.71, -663.253, 1862.55, -792.792, 1483.92, -806.085, 994.313, -792.125, 801.68, -766.988, 629.726, -729.912, 470.207, -680.964, 322.824, -621.561, 188.541, -546.059, 54.7991, -176.158, -430.178, -80.6963, -573.164, -57.4717, -655.863, -49.6309, -692.919, -43.8865, -732.003, -41.5017, -765.846, -41.7773, -795.008, -44.126, -820.247, -48.1423, -842.479, -53.6523, -862.699, -60.7263, -881.88, -69.6501, -900.88, -80.8586, -920.362, -94.8528, -940.76, -106.691, -956.066, -158.841, -1009.35, -221.429, -1058.75, -300.914, -1109.33, -396.371, -1159.14, -499.995, -1204.27, -762.27, -1291.64, -1043.04, -1357.9, -1662.67, -1444.29, -2222.92, -1475.51, -2803.9, -1470.47, -2812.14, -2470.43, -2199.06, -2475.23, -1565.48, -2439.56, -858.93, -2340.8, -489.225, -2253.64, -142.621, -2138.23, 34.8162, -2061.4, 200.685, -1974.43, 359.679, -1872.58, 509.611, -1753.1, 640.911, -1620.21, 708.924, -1535.69, 766.347, -1451.63, 817.732, -1361.91, 862.189, -1266.88, 898.895, -1167.09, 927.174, -1063.29, 946.568, -956.356, 956.861, -847.18, 958.07, -736.573, 950.392, -625.189, 934.139, -513.487, 907.659, -394.095, 823.712, -146.496, 643.251, 143.031, 289.877, 603.627, 273.202, 635.082, 251.868, 683.136, 232.771, 740.84, 215.742, 814.771, 201.965, 910.243, 193.455, 1024.62, 199.756, 1362.06, 204.9, 1366.25, 232.407, 1408.61, 466.294, 1732.94, 541.357, 1860.82, 603.366, 1994.68, 634.036, 2080.57, 657.319, 2165.35, 674.557, 2255.24, 684.527, 2349.52, 686.212, 2447.16, 678.919, 2546.9, 662.344, 2647.48, 636.542, 2747.75, 601.822, 2846.89, 554.642, 2952.35, 449.431, 3132.57, 347.873, 3267.56, 243.439, 3384.68, 132.325, 3491.59, 9.58179, 3593.36, -228.485, 3754.54, -484.071, 3888.27, -744.365, 3993.78, -1011.59, 4077.2, -1506.75, 4180.78, -1962.65, 4230.12, -2339, 4242.98, -2673.77, 4232.49 )

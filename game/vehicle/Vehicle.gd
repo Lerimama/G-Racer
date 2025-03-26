@@ -69,7 +69,7 @@ export var vehicle_motion_profile: Resource = null
 onready var weapons_holder: Node2D = $Weapons
 var masa: float
 var heal_rate: float
-var rank_by: int = 0 # ta podatek more vedet, da da ve kaj je namen obstoja
+#var rank_by: String # ta podatek more vedet, da da ve kaj je namen obstoja
 var turned_on: bool = false	# neodvisen on aktivitja
 export (float, 5, 20, 0.5) var driving_elevation: float = 7
 # sounds

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://game/weapons/Weapon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/weapons/ammo/ProjectileHomer.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/icons/icon_misile_VRSA.tres" type="Texture" id=3]
+[ext_resource path="res://game/gui/icons/icon_misile_VERS.tres" type="Texture" id=3]
 [ext_resource path="res://assets/materials/fx/misile_fire_particles_material.tres" type="Material" id=4]
 
 [sub_resource type="Animation" id=5278]

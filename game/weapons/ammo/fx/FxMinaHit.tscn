@@ -1,7 +1,7 @@
 [gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://game/weapons/ammo/fx/Fx.gd" type="Script" id=1]
-[ext_resource path="res://common/tex/circo_8.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/fx/circo_8.png" type="Texture" id=2]
 [ext_resource path="res://assets/sounds/weapons/misile_hit.wav" type="AudioStream" id=3]
 
 [sub_resource type="CanvasItemMaterial" id=126]

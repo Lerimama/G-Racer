@@ -14,8 +14,8 @@
 [ext_resource path="res://game/weapons/mala/Mala.tscn" type="PackedScene" id=12]
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-Black.ttf" type="DynamicFontData" id=13]
 [ext_resource path="res://assets/sounds/vehicle/engine_start___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=14]
-[ext_resource path="res://common/tex/burst_light.png" type="Texture" id=15]
-[ext_resource path="res://common/tex/glow_light.png" type="Texture" id=16]
+[ext_resource path="res://assets/textures/fx/burst_light.png" type="Texture" id=15]
+[ext_resource path="res://assets/textures/fx/glow_light.png" type="Texture" id=16]
 [ext_resource path="res://assets/sounds/vehicle/engine___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=17]
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=18]
 [ext_resource path="res://assets/sounds/vehicle/skilled_frcer.wav" type="AudioStream" id=19]
@@ -25,7 +25,7 @@
 [ext_resource path="res://assets/sounds/vehicle/engine_revup___62564__lonemonk__1951-mercury-warm-start-and-idle.wav" type="AudioStream" id=23]
 [ext_resource path="res://assets/sounds/vehicle/nitro_short___491407__samsterbirdies__jet-engine-startup.wav" type="AudioStream" id=24]
 [ext_resource path="res://assets/sounds/vehicle/hit_wall_dizzy_NFF-dizzyness.wav" type="AudioStream" id=26]
-[ext_resource path="res://assets/textures/bolt/bolt.png" type="Texture" id=27]
+[ext_resource path="res://assets/textures/vehicles/bolt.png" type="Texture" id=27]
 
 [sub_resource type="PhysicsMaterial" id=5260]
 friction = 0.5

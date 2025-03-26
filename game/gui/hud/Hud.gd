@@ -43,7 +43,7 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 
 	level_profile = game_manager.level_profile
 
-	if level_profile["rank_by"] == Pros.RANK_BY.TIME:
+	if level_profile["rank_by"] == "TIME":
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
@@ -75,11 +75,11 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 	var level_record_value: int = level_profile["level_record"][0]
 	var level_record_owner: String = level_profile["level_record"][1]
 	if not level_record_value == 0:
-		if level_profile["rank_by"] == Pros.RANK_BY.TIME:
+		if level_profile["rank_by"] == "TIME":
 			var level_record_clock_time: String = Mets.get_clock_time_string(level_record_value)
 			level_record_label.text = "RECORD TIME: " + level_record_clock_time + " by " + str(level_record_owner)
 			level_record_label.get_parent().get_parent().show()
-		elif level_profile["rank_by"] == Pros.RANK_BY.POINTS:
+		elif level_profile["rank_by"] == "POINTS":
 			level_record_label.text = "RECORD POINTS: " + str(level_record_value) + " by " + str(level_record_owner)
 			level_record_label.get_parent().get_parent().show()
 		else:
@@ -254,7 +254,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 					# BATTLE_GOAL ima finish_line disabled
 					# RACING_GOALS brez goalov ima samo finish line ... pedena ga LAP_COUNT stat
 					var adapted_max_count: float = level_profile["level_goals"].size()
-					if level_profile["rank_by"] == Pros.RANK_BY.TIME:
+					if level_profile["rank_by"] == "TIME":
 						adapted_max_count = level_profile["level_goals"].size() + 1
 					statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
 				# goal counter

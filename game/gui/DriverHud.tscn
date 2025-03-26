@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=1]
 [ext_resource path="res://assets/theme/fonts/agent_hud_font.tres" type="DynamicFont" id=2]
-[ext_resource path="res://assets/icons/icon_bullet_VRSA.tres" type="Texture" id=3]
+[ext_resource path="res://game/gui/icons/icon_bullet_VERS.tres" type="Texture" id=3]
 [ext_resource path="res://game/gui/DriverHud.gd" type="Script" id=4]
 
 [node name="AgentHud" type="VBoxContainer"]
