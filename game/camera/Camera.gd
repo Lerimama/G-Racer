@@ -11,7 +11,7 @@ var shake_camera_on: bool = true
 var dynamic_zoom_on: bool = true
 
 # dinamic zoom in offset
-var camera_zoom_range: Vector2 = Sets.camera_zoom_range # [1, 1.5]
+var camera_zoom_range: Vector2 = Sets.camera_zoom_range
 var camera_zoom_lerp_factor: float = 0.01
 var min_zoom_target_speed: float = 1000
 var max_zoom_target_speed: float = 1500
@@ -82,13 +82,21 @@ func _process(delta: float) -> void:
 			else:
 				zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor)
 
-		# default zoom ... lerp za mehkobo prehodov
-		zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor)
-		zoom.x = clamp(zoom.x, camera_zoom_range.x, camera_zoom_range.y)
+		# intro zoom
+		if zoom.x > camera_zoom_range.y:
+			zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor/1.5)
+		else:
+		# game zoom ... ko je enkrat znotraj mej ga klampam
+			prints ("zoom", zoom.x)
+			zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor) # za mehkobo prehodov
+			zoom.x = clamp(zoom.x, camera_zoom_range.x, camera_zoom_range.y)
 		zoom.y = zoom.x
 
 
-func set_camera(limits_rect: Control, camera_position_2d: Position2D, enable_playing_field: bool):
+func set_camera(limits_rect: Control, camera_position_2d: Position2D, enable_playing_field: bool, zoom_on_start: float = 1):
+
+	zoom.x = zoom_on_start # seta se na vsak level, ker se razlikujejo (ne še ... enkrat pa)
+	zoom.y = zoom_on_start
 
 	if limits_rect:
 		_set_camera_limits(limits_rect)

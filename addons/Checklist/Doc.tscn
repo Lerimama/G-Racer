@@ -1,0 +1,204 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://addons/Checklist/Doc.gd" type="Script" id=1]
+[ext_resource path="res://addons/Checklist/icons/CheckBox.svg" type="Texture" id=2]
+[ext_resource path="res://addons/Checklist/icons/Save.svg" type="Texture" id=3]
+[ext_resource path="res://addons/Checklist/settings/Settings.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/Checklist/icons/Edit.svg" type="Texture" id=5]
+[ext_resource path="res://addons/Checklist/icons/Remove.svg" type="Texture" id=6]
+[ext_resource path="res://addons/Checklist/Changelog.gd" type="Script" id=7]
+
+[sub_resource type="GDScript" id=2]
+script/source = "tool
+extends Button
+
+var progress := 0.0
+
+
+func _ready():
+	set_process(false)
+
+
+func _process(delta):
+	progress += delta
+	text = str(ceil(progress*20), \"%\")
+	if progress >= 5:
+		find_parent(\"Checklist\").get_parent().get_parent().delete_current_checklist()
+		reset()
+
+
+func _on_deletebtn_button_down():
+	set_process(true)
+
+
+func _on_deletebtn_button_up():
+	reset()
+
+func reset():
+	set_process(false)
+	progress = 0
+	text = \"\"
+
+
+"
+
+[sub_resource type="Animation" id=1]
+resource_name = "fade away"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("TabContainer/Changelog/HBoxContainer/Label:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1, 3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[node name="Checklist" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 200 )
+script = ExtResource( 1 )
+
+[node name="TabContainer" type="TabContainer" parent="."]
+margin_right = 1024.0
+margin_bottom = 600.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tab_align = 0
+use_hidden_tabs_for_min_size = true
+
+[node name="Checklist" type="MarginContainer" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="cont" type="VBoxContainer" parent="TabContainer/Checklist"]
+margin_right = 1016.0
+margin_bottom = 564.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btns" type="HBoxContainer" parent="TabContainer/Checklist/cont"]
+margin_right = 1016.0
+margin_bottom = 22.0
+
+[node name="uncheckbtn" type="Button" parent="TabContainer/Checklist/cont/btns"]
+margin_right = 102.0
+margin_bottom = 22.0
+size_flags_horizontal = 0
+text = "uncheck all"
+icon = ExtResource( 2 )
+
+[node name="OptionButton" type="OptionButton" parent="TabContainer/Checklist/cont/btns"]
+margin_left = 106.0
+margin_right = 926.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="NameEdit" type="LineEdit" parent="TabContainer/Checklist/cont/btns"]
+visible = false
+margin_left = 543.0
+margin_right = 976.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+placeholder_text = "Name"
+
+[node name="deletebtn" type="Button" parent="TabContainer/Checklist/cont/btns"]
+pause_mode = 2
+margin_left = 930.0
+margin_right = 958.0
+margin_bottom = 22.0
+icon = ExtResource( 6 )
+script = SubResource( 2 )
+
+[node name="Editbtn" type="Button" parent="TabContainer/Checklist/cont/btns"]
+margin_left = 962.0
+margin_right = 1016.0
+margin_bottom = 22.0
+toggle_mode = true
+text = "Edit"
+icon = ExtResource( 5 )
+
+[node name="Scroll" type="ScrollContainer" parent="TabContainer/Checklist/cont"]
+margin_top = 26.0
+margin_right = 1016.0
+margin_bottom = 564.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+
+[node name="list" type="VBoxContainer" parent="TabContainer/Checklist/cont/Scroll"]
+
+[node name="ListEdit" type="TextEdit" parent="TabContainer/Checklist/cont"]
+visible = false
+margin_top = 297.0
+margin_right = 1016.0
+margin_bottom = 564.0
+size_flags_vertical = 3
+wrap_enabled = true
+caret_blink = true
+
+[node name="Changelog" type="VBoxContainer" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+script = ExtResource( 7 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Changelog"]
+margin_right = 1016.0
+margin_bottom = 22.0
+
+[node name="savebtn" type="Button" parent="TabContainer/Changelog/HBoxContainer"]
+margin_right = 59.0
+margin_bottom = 22.0
+size_flags_horizontal = 0
+text = "save"
+icon = ExtResource( 3 )
+
+[node name="Label" type="Label" parent="TabContainer/Changelog/HBoxContainer"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 63.0
+margin_top = 4.0
+margin_right = 112.0
+margin_bottom = 18.0
+text = "saved..."
+
+[node name="edit" type="TextEdit" parent="TabContainer/Changelog"]
+margin_top = 26.0
+margin_right = 1016.0
+margin_bottom = 564.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+highlight_current_line = true
+show_line_numbers = true
+fold_gutter = true
+hiding_enabled = true
+caret_blink = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="TabContainer/Changelog"]
+root_node = NodePath("../../..")
+"anims/fade away" = SubResource( 1 )
+
+[node name="Settings" parent="TabContainer" instance=ExtResource( 4 )]
+visible = false
+
+[connection signal="tab_changed" from="TabContainer" to="." method="_on_TabContainer_tab_changed"]
+[connection signal="pressed" from="TabContainer/Checklist/cont/btns/uncheckbtn" to="." method="uncheck_checklist"]
+[connection signal="item_selected" from="TabContainer/Checklist/cont/btns/OptionButton" to="." method="_on_OptionButton_item_selected"]
+[connection signal="button_down" from="TabContainer/Checklist/cont/btns/deletebtn" to="TabContainer/Checklist/cont/btns/deletebtn" method="_on_deletebtn_button_down"]
+[connection signal="button_up" from="TabContainer/Checklist/cont/btns/deletebtn" to="TabContainer/Checklist/cont/btns/deletebtn" method="_on_deletebtn_button_up"]
+[connection signal="toggled" from="TabContainer/Checklist/cont/btns/Editbtn" to="." method="_on_Editbtn_toggled"]
+[connection signal="visibility_changed" from="TabContainer/Changelog" to="TabContainer/Changelog" method="_on_Changelog_visibility_changed"]
+[connection signal="pressed" from="TabContainer/Changelog/HBoxContainer/savebtn" to="TabContainer/Changelog" method="save_changelog"]

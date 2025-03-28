@@ -175,6 +175,6 @@ func _get_minimum_size():
 
 
 func set_columns(p_columns: int):
-	print("p_columns", p_columns)
+#	print("p_columns", p_columns)
 	columns = p_columns
 	minimum_size_changed()

@@ -100,6 +100,48 @@ __meta__ = {
 - sky > 10"
 }
 
+[node name="ZERO" type="Position2D" parent="."]
+z_index = 1000
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="__cross" type="ColorRect" parent="ZERO"]
+modulate = Color( 0.00784314, 1, 0, 1 )
+margin_left = -400.0
+margin_top = -16.0
+margin_right = 400.0
+margin_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ColorRect_2" type="ColorRect" parent="ZERO/__cross"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -16.0
+margin_top = -400.0
+margin_right = 16.0
+margin_bottom = 400.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EditorRectLabel" type="Label" parent="ZERO/__cross"]
+margin_left = 446.0
+margin_top = 48.0
+margin_right = 532.0
+margin_bottom = 96.0
+grow_horizontal = 2
+theme = ExtResource( 24 )
+text = "0,0"
+align = 1
+uppercase = true
+
 [node name="Background" type="Node2D" parent="."]
 z_index = -10
 
@@ -403,7 +445,9 @@ scale = Vector2( 2, 2 )
 texture = ExtResource( 21 )
 
 [node name="StartCameraPosition" type="Position2D" parent="Elements"]
-position = Vector2( 0, 135 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="EditorRectLabel" parent="Elements/StartCameraPosition" instance=ExtResource( 16 )]
 modulate = Color( 0, 0.905882, 0.886275, 1 )

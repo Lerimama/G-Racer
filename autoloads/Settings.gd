@@ -35,9 +35,9 @@ var slomo_fx_on: bool = true
 var easy_mode: bool = false
 var full_equip_mode: bool = false
 var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
-#var camera_zoom_range: Array = [1, 1.5]
-var camera_zoom_range: Vector2 = Vector2(1, 1.5)
+var camera_zoom_range: Vector2 = Vector2(1, 1.5) # vektor, da ga lahko množim
 var camera_shake_on: bool = true
+var camera_start_zoom: float = 5
 
 # že povezano v home
 var mono_view_mode: bool = true
@@ -90,7 +90,8 @@ func _ready() -> void:
 func _apply_debug_settings():
 
 #	game_levels = [Levs.GRAND_PRIX]
-	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
+#	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
+	game_levels = [Levs.QUICKY]
 	print("game_levels", game_levels)
 
 	camera_zoom_range = Vector2(2, 2.3)

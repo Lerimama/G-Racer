@@ -156,12 +156,14 @@ func set_game(level_index_add: int = 0):
 	# kamere
 	get_tree().call_group(Refs.group_player_cameras, "set_camera", game_level.camera_limits, game_level.camera_position_2d)
 	for camera in get_tree().get_nodes_in_group(Refs.group_player_cameras):
+		camera.zoom.x = Sets.camera_start_zoom
+		camera.zoom.y = Sets.camera_start_zoom
 		if Sets.mono_view_mode:
-			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, true)
+			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, true, Sets.camera_start_zoom)
 			if not camera.playing_field.is_connected( "body_exited_playing_field", game_tracker, "_on_player_exited_playing_field"):
 				camera.playing_field.connect( "body_exited_playing_field", game_tracker, "_on_player_exited_playing_field")
 		else:
-			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, false)
+			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, false, Sets.camera_start_zoom)
 	# senčke
 	get_tree().call_group(Refs.group_shadows, "update_shadow_parameters", self)
 
@@ -296,9 +298,6 @@ func _spawn_level(new_level_index:int, drivers_count: int):
 	# finish line povežem posebej, da ima posebej funkcijo
 	if new_level.finish_line.is_enabled:
 		new_level.finish_line.connect("reached_by", game_tracker, "_on_finish_crossed")
-
-	# novo v level profilu
-	level_profile["rank_by"] = new_level.level_rank_type
 
 	#	prints("3 ... _spawn_levele finished", level_profile)
 	game_level = new_level

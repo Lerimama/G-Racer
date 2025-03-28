@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://game/level/Level.tscn" type="PackedScene" id=1]
+[ext_resource path="res://game/levels/materiali/_podlage/track.jpg" type="Texture" id=2]
+
+[node name="LevelQuicky" instance=ExtResource( 1 )]
+level_type = 1
+
+[node name="TrackUp8" type="Sprite" parent="." index="0"]
+position = Vector2( -488, 720 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 2 )
+
+[node name="__cross" parent="ZERO" index="0"]
+margin_left = -1064.0
+margin_right = 1064.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="ColorRect_2" parent="ZERO/__cross" index="0"]
+margin_top = -896.0
+margin_bottom = 896.0

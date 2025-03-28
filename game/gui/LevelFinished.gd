@@ -39,12 +39,14 @@ func set_level_finished(game_manager: Game):
 		title.text = "GAME FINISHED"
 		title.modulate = Refs.color_green
 
-	var level_record: Array = level_data["level_profile"]["level_record"]
-
-	if not level_record[0] == 0:
-		var level_record_clock_time: String = Mets.get_clock_time_string(level_record[0])
-		level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(level_record[1])
-		level_record_label.show()
+	if "level_record" in level_data["level_profile"]:
+		var level_record: Array = level_data["level_profile"]["level_record"]
+		if not level_record[0] == 0:
+			var level_record_clock_time: String = Mets.get_clock_time_string(level_record[0])
+			level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(level_record[1])
+			level_record_label.show()
+		else:
+			level_record_label.hide()
 	else:
 		level_record_label.hide()
 

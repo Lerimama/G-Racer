@@ -50,7 +50,7 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 
 	# game stats
 	game_timer.stop_timer()
-	game_timer.reset_timer(level_profile["level_time_limit"])
+	game_timer.reset_timer(level_profile["level_time"])
 	game_timer.get_parent().get_parent().show()
 	level_record_label.get_parent().get_parent().hide()
 	for section in sections_holder.get_children():
@@ -72,18 +72,20 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 		_set_driver_statbox(viewed_driver, driver_index, viewed_drivers.size())
 
 	# level rekord
-	var level_record_value: int = level_profile["level_record"][0]
-	var level_record_owner: String = level_profile["level_record"][1]
-	if not level_record_value == 0:
-		if level_profile["rank_by"] == "TIME":
-			var level_record_clock_time: String = Mets.get_clock_time_string(level_record_value)
-			level_record_label.text = "RECORD TIME: " + level_record_clock_time + " by " + str(level_record_owner)
-			level_record_label.get_parent().get_parent().show()
-		elif level_profile["rank_by"] == "POINTS":
-			level_record_label.text = "RECORD POINTS: " + str(level_record_value) + " by " + str(level_record_owner)
-			level_record_label.get_parent().get_parent().show()
-		else:
-			level_record_label.get_parent().get_parent().hide()
+	if "level_record" in level_profile:
+		var level_record_value: int = level_profile["level_record"][0]
+		var level_record_owner: String = level_profile["level_record"][1]
+		if not level_record_value == 0:
+			if level_profile["rank_by"] == "TIME":
+				var level_record_clock_time: String = Mets.get_clock_time_string(level_record_value)
+				level_record_label.text = "RECORD TIME: " + level_record_clock_time + " by " + str(level_record_owner)
+				level_record_label.get_parent().get_parent().show()
+			elif level_profile["rank_by"] == "POINTS":
+				level_record_label.text = "RECORD POINTS: " + str(level_record_value) + " by " + str(level_record_owner)
+				level_record_label.get_parent().get_parent().show()
+	else:
+		level_record_label.get_parent().get_parent().hide()
+
 
 	# level name
 	level_name_label.text = level_profile["level_name"]
@@ -113,8 +115,11 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 	var one_life_mode: bool = false
 	if statbox_driver.driver_stats[Pros.STAT.LIFE] == 1 and not Sets.life_as_scalp:
 		one_life_mode = true
+	var statbox_rank_type: String = ""
+	if "rank_by" in level_profile:
+		statbox_rank_type = level_profile["rank_by"]
 	new_statbox.set_statbox_stats( \
-		level_profile["rank_by"],
+		statbox_rank_type,
 		level_profile["level_laps"],
 		level_profile["level_goals"].size(), # statbox sam opredeli ali upošteva finish line
 		all_statboxes_count,
@@ -191,7 +196,7 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
-	if Pros.start_driver_profiles[driver_id]["controller_type"] == -1 and Sets.ai_gets_record:
+	if "level_record" in level_profile and Pros.start_driver_profiles[driver_id]["controller_type"] == -1 and Sets.ai_gets_record:
 		if stat_key == Pros.STAT.BEST_LAP_TIME and not stat_value == 0:
 			var level_record_value = level_profile["level_record"][0]
 			if stat_value < level_record_value and not level_record_value == 0:

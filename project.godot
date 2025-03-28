@@ -9,6 +9,16 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Resource",
+"class": "AreaMapData",
+"language": "GDScript",
+"path": "res://addons/world_edtior/resource/AreaMapData.gd"
+}, {
+"base": "Resource",
+"class": "ChapterMapData",
+"language": "GDScript",
+"path": "res://addons/world_edtior/resource/ChapterMapData.gd"
+}, {
 "base": "ColorRect",
 "class": "ColorTile",
 "language": "GDScript",
@@ -43,6 +53,31 @@ _global_script_classes=[ {
 "class": "Level",
 "language": "GDScript",
 "path": "res://game/level/Level.gd"
+}, {
+"base": "Resource",
+"class": "LocalizationData",
+"language": "GDScript",
+"path": "res://addons/localization_editor/model/LocalizationData.gd"
+}, {
+"base": "Reference",
+"class": "LocalizationKeys",
+"language": "GDScript",
+"path": "res://localization/LocalizationKeys.gd"
+}, {
+"base": "Reference",
+"class": "LocalizationPlaceholders",
+"language": "GDScript",
+"path": "res://localization/LocalizationPlaceholders.gd"
+}, {
+"base": "Resource",
+"class": "LocalizationPlaceholdersData",
+"language": "GDScript",
+"path": "res://addons/localization_editor/model/LocalizationPlaceholdersData.gd"
+}, {
+"base": "Resource",
+"class": "LocalizationSave",
+"language": "GDScript",
+"path": "res://addons/localization_editor/model/LocalizationSave.gd"
 }, {
 "base": "Node",
 "class": "Operator",
@@ -103,6 +138,11 @@ _global_script_classes=[ {
 "class": "RMSmartShapeAnchor2D",
 "language": "GDScript",
 "path": "res://addons/rmsmartshape/RMSmartShapeAnchor2D.gd"
+}, {
+"base": "Resource",
+"class": "RoomMapConfig",
+"language": "GDScript",
+"path": "res://addons/world_edtior/resource/RoomMapConfig.gd"
 }, {
 "base": "Node",
 "class": "SS2D_Common_Functions",
@@ -244,12 +284,19 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://_zaloga ... ni v uporabi/Walker.gd"
 }, {
+"base": "Object",
+"class": "WorldEditorPropertyHelper",
+"language": "GDScript",
+"path": "res://addons/world_edtior/common/WorldEditorPropertyHelper.gd"
+}, {
 "base": "Control",
 "class": "________________",
 "language": "GDScript",
 "path": "res://autoloads/__________________.gd"
 } ]
 _global_script_class_icons={
+"AreaMapData": "",
+"ChapterMapData": "",
 "ColorTile": "",
 "Colorblindness": "res://addons/paulloz.colorblindness/colorblindness.svg",
 "Equipment": "",
@@ -257,6 +304,11 @@ _global_script_class_icons={
 "Game": "",
 "Gui": "",
 "Level": "",
+"LocalizationData": "",
+"LocalizationKeys": "",
+"LocalizationPlaceholders": "",
+"LocalizationPlaceholdersData": "",
+"LocalizationSave": "",
 "Operator": "",
 "Operator_nepovezan": "",
 "Palette": "",
@@ -269,6 +321,7 @@ _global_script_class_icons={
 "RMS2D_VertexPropertiesArray": "",
 "RMSmartShape2D": "res://addons/rmsmartshape/assets/LEGACY_shape.png",
 "RMSmartShapeAnchor2D": "res://addons/rmsmartshape/assets/LEGACY_shape_anchor.png",
+"RoomMapConfig": "",
 "SS2D_Common_Functions": "",
 "SS2D_Edge": "",
 "SS2D_IndexMap": "",
@@ -297,8 +350,23 @@ _global_script_class_icons={
 "Vehicle": "",
 "VersatileAtlasTexture": "res://addons/versatile_atlas/icon_x.svg",
 "Walker": "",
+"WorldEditorPropertyHelper": "",
 "________________": ""
 }
+
+[addons]
+
+instance_dock/scenes=[ {
+"name": "krneki",
+"scenes": [ {
+"scene": "res://Main.tscn"
+} ],
+"scroll": 0
+}, {
+"name": "ASAS",
+"scenes": [  ],
+"scroll": 0
+} ]
 
 [application]
 
@@ -313,6 +381,7 @@ config/icon="res://assets/icon.png"
 
 [autoload]
 
+LocalizationManager="*res://addons/localization_editor/LocalizationManager.gd"
 Sets="*res://autoloads/Settings.gd"
 Refs="*res://autoloads/References.gd"
 Levs="*res://autoloads/Levels.gd"
@@ -342,7 +411,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/Todo_Manager/plugin.cfg", "res://addons/color-palette/plugin.cfg", "res://addons/rmsmartshape/plugin.cfg", "res://addons/versatile_atlas/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/Todo_Manager/plugin.cfg", "res://addons/color-palette/plugin.cfg", "res://addons/color-template-editor/plugin.cfg", "res://addons/localization_editor/plugin.cfg", "res://addons/rmsmartshape/plugin.cfg", "res://addons/versatile_atlas/plugin.cfg" )
 
 [global]
 
@@ -618,6 +687,10 @@ buffering/agile_event_flushing=true
 2d_physics/layer_6="ammo"
 2d_physics/layer_7="enemies"
 2d_physics/layer_20="non_colliding"
+
+[locale]
+
+translations=PoolStringArray( "res://localization/localizations.en.translation", "res://localization/localizations.de.translation", "res://localization/localizations.ru.translation" )
 
 [logging]
 

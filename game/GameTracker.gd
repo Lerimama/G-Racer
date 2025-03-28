@@ -29,7 +29,7 @@ func _process(delta: float) -> void:
 	# ranking
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 
-		if drivers_in_game.size() > 1 and not game.level_profile["rank_by"] == "NONE":
+		if drivers_in_game.size() > 1 and "rank_by" in game.level_profile:
 			_update_ranking()
 
 		# camera leader
@@ -54,7 +54,7 @@ func _process(delta: float) -> void:
 
 func _update_ranking():
 	# najprej po poziciji znotraj kroga, potem po številu krogov
-	# Pros.RANK_BY.NODE ne kliče te funkcije
+	# če v slovarju ni "rank_by", se funkcija ne kliče
 
 	var unranked_drivers: Array = drivers_in_game.duplicate()
 	var drivers_ranked: Array = []

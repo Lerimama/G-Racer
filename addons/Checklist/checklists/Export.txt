@@ -1,0 +1,18 @@
+L|Release
+L|This is an example Checklist
+update changelog
+
+# this is not implemented yet
+#P|update version number|
+I|=1
+L|Exports
+E|Export All Release|f|all
+E|Export All Debug|true|all
+I|=2
+E|Desktop Release|f|Windows Desktop|Mac OSX|Linux/X11
+E|Desktop Debug|true|Windows Desktop|Mac OSX|Linux/X11
+E|Mobile Release|f|Android|IOS
+E|Mobile Debug|true|Android|IOS
+I|=0
+zip
+upload
