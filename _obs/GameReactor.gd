@@ -176,7 +176,7 @@ extends Node
 #					# all goals reached and finished
 #					else:
 #						game.game_sound.big_horn.play()
-#						reaching_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+#						reaching_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 #						reaching_driver.controller.on_goal_reached(reached_goal)
 #						drivers_finished.append(reaching_driver)
 #						reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
@@ -224,7 +224,7 @@ extends Node
 #				has_finished_level = true
 #			if has_finished_level:
 #				game.game_sound.big_horn.play()
-#				crossing_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+#				crossing_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 #				drivers_finished.append(crossing_driver)
 #				var drive_out_position: Vector2 = Vector2.ZERO
 #				if game_level.finish_line.is_enabled:
@@ -259,9 +259,9 @@ extends Node
 #		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
 #
 #	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
-#	game.final_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
+#	game.game_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
 #	# hide view
-#	game.gui.hud.get_parent().driver_huds_holder.unset_driver_hud(driver_vehicle.driver_id)
+#	game.gui.hud.get_parent().driver_huds.unset_driver_hud(driver_vehicle.driver_id)
 #
 #	#	if Sets.hide_view_on_player_deactivated:# and not Sets.mono_view_mode: # ne uporabljam, ker ne smem zbrisat original viewa
 #	#		var hide_view_time: float
@@ -269,7 +269,7 @@ extends Node
 #	#		if removed_game_view and game.game_views.views_with_drivers.size() > 1: # preverim, da ni zadnji view
 #	#			removed_game_view.queue_free()
 #	#			game.game_views.views_with_drivers.erase(removed_game_view)
-#	#			game.hud.driver_huds_holder.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
+#	#			game.hud.driver_huds.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
 #	#			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
 #
 #	_check_for_game_end()

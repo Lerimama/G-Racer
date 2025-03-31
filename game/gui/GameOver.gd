@@ -1,7 +1,6 @@
 extends Control
 
 
-var drivers_data: Dictionary = {}
 var level_data: Dictionary = {}
 
 onready var background: ColorRect = $Background
@@ -11,51 +10,44 @@ onready var level_record_label: Label = $LevelRecord
 onready var restart_btn: Button = $Menu/RestartBtn
 
 
-
 func _ready() -> void:
 
 	hide()
 
 
-func open(game_manager: Game):
 
-	level_data = game_manager.final_level_data
-	drivers_data = game_manager.final_drivers_data
-	var level_index: int = game_manager.level_index
-	var levels_count: int = game_manager.game_levels.size()
+func set_summary(game: Game):
 
-	# level or game finished
-	if game_manager.game_stage == game_manager.GAME_STAGE.FINISHED_FAIL:
-		_set_for_game_finished(false)
+	var level_index: int = game.level_index
+	var levels_count: int = game.game_levels.size()
+
+	# fai
+	if game.game_stage == game.GAME_STAGE.FINISHED_FAIL:
+		title.text = "TOURNAMENT OVER"
+		title.modulate = Refs.color_red
+	# success
 	else:
-		if level_index < levels_count - 1:
-			_set_for_level_finished(level_index, levels_count)
+		title.modulate = Refs.color_green
+		# zadnji
+		if level_index == levels_count - 1:
+			if restart_btn.is_connected("pressed", self, "_on_next_pressed"):
+				restart_btn.disconnect("pressed", self, "_on_next_pressed")
+			if not restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
+				restart_btn.connect("pressed", self, "_on_restart_game_pressed")
+			restart_btn.text = "RESTART TOURNAMENT"
+			title.text = "TOURNAMENT FINISHED"
 		else:
-			_set_for_game_finished(true)
+			if restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
+				restart_btn.disconnect("pressed", self, "_on_restart_game_pressed")
+			if not restart_btn.is_connected("pressed", self, "_on_next_pressed"):
+				restart_btn.connect("pressed", self, "_on_next_pressed")
+			restart_btn.text = "NEXT LEVEL"
+			title.text = "TOURNAMENT SUMMARY"
 
-	if "level_record" in level_data["level_profile"]:
-		var level_record: Array = level_data["level_profile"]["level_record"]
-		if not level_record[0] == 0:
-			var level_record_clock_time: String = Mets.get_clock_time_string(level_record[0])
-			level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(level_record[1])
-			level_record_label.show()
-		else:
-			level_record_label.hide()
-	else:
-		level_record_label.hide()
-
-	score_table.set_scorelist(drivers_data)
+	score_table.set_scoretable(game.game_drivers_data, true)
 
 	var background_fadein_transparency: float = 1
 
-	restart_btn.grab_focus()
-	print("get_focus_owner ", get_focus_owner())
-#	var fade_in = get_tree().create_tween()
-#	fade_in.tween_callback(self, "show")
-#	fade_in.tween_property(self, "modulate:a", 1, 1).from(0.0)
-#	fade_in.parallel().tween_property($Panel, "modulate:a", background_fadein_transparency, 0.5).set_delay(0.5) # a = cca 140
-	#	fade_in.tween_callback(self, "show_gameover_menu").set_delay(2)
-#	$Menu/RestartBtn.grab_focus()
 
 
 func _set_for_level_finished(level_index: int, levels_count: int):

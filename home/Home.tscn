@@ -33,11 +33,11 @@
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/screen_slide.wav" type="AudioStream" id=31]
 [ext_resource path="res://assets/sounds/nitro/nitro_win.wav" type="AudioStream" id=33]
 [ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=34]
-[ext_resource path="res://home/levels/Levels.gd" type="Script" id=35]
+[ext_resource path="res://home/levels/SetLevels.gd" type="Script" id=35]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/menu_fade.wav" type="AudioStream" id=36]
 [ext_resource path="res://home/levels/thumb_level_training.tres" type="Texture" id=37]
 [ext_resource path="res://home/levels/thumb_level_race.tres" type="Texture" id=38]
-[ext_resource path="res://home/drivers/Drivers.gd" type="Script" id=43]
+[ext_resource path="res://home/drivers/SetDrivers.gd" type="Script" id=43]
 [ext_resource path="res://assets/theme/fonts/button_big.tres" type="DynamicFont" id=44]
 
 [sub_resource type="Gradient" id=825]

@@ -38,7 +38,6 @@ func __stats(): pass # ---------------------------------------------------------
 
 enum STAT {
 		# driver
-		WINS,
 		LIFE,
 		HEALTH,
 		POINTS,
@@ -50,27 +49,54 @@ enum STAT {
 		LAP_COUNT,
 		GOALS_REACHED,
 		BEST_LAP_TIME,
-		LEVEL_TIME,
-		CURR_LAP_TIME,
+		LEVEL_FINISHED_TIME,
+		LAP_TIME,
+		# tournament
+		TOURNAMENT_WINS,
+		TOURNAMENT_POINTS,
 		}
+
+enum CAMPAIGN_STAT {
+	ALL_CASH, # int
+	HOLDING_RECORDS, # [level_name, record]
+	ALL_WINS, # [level_name, result]
+	LEVELS_FINISHED, # [level_name, result, rank]
+	HOLDING_GAS, # bencin na zalogi
+	VEHICLES,
+	}
 
 var start_driver_stats: Dictionary = {
 	# driver
-	STAT.WINS: [], # level index in game levels
 	STAT.LIFE: 0, # 0 = ni lajfa, 1 = 1 lajf, ni prikazan stat, n > 1 = normal, life as scalp
-	STAT.CASH: 0,
-	STAT.POINTS :0,
+	STAT.CASH: 0, # int
+	STAT.POINTS :0, # int
 	# vehicle
 	STAT.HEALTH: 1.0, # percetnage
-	STAT.GAS: 2000,
+	STAT.GAS: 2000.0, # float
 	# level (reset per level)
 	STAT.LEVEL_PROGRESS: 0.0, # percetnage
-	STAT.LEVEL_RANK: 0,
-	STAT.LEVEL_TIME: 0,
+	STAT.LEVEL_RANK: 0, # -1 ... disq, 0 ... in game, 1+ ... finished ... po tem se ravna predvsem gui
+	STAT.LEVEL_FINISHED_TIME: 0,
 	STAT.BEST_LAP_TIME: 0,
 	STAT.LAP_COUNT: [], # lap time
 	STAT.GOALS_REACHED: [], # goal names
-	STAT.CURR_LAP_TIME: 0,
+	STAT.LAP_TIME: 0,
+	}
+
+var driver_tournament_stats: Dictionary = {
+	STAT.TOURNAMENT_WINS: [], # level index in game levels
+	STAT.TOURNAMENT_POINTS: 0,
+	}
+
+# referenca
+var _game_drivers_data: Dictionary = {
+	#	"xavier": {
+	#		"driver_profile": {}
+	#		"driver_stats": {},
+	#		"torunament_stats": {},
+	#		"weapon_stats": {},
+	#		},
+	#	"john": ...
 	}
 
 func __drivers(): pass # ------------------------------------------------------------
@@ -157,8 +183,8 @@ var vehicle_profiles: Dictionary = {
 		"motion_manager_path": load("res://game/vehicle/MotionManager.gd"),
 		"height": 10,
 		"elevation": 7,
-		"gas_usage": -0.1, # per HSP?
-		"gas_usage_idle": -0.05, # per HSP?
+		"gas_usage": -0.005, # per HSP? ... pol ne rabš idle porabe?
+		"gas_usage_idle": -0.0005, # per HSP?
 		"gas_tank_size": 200, # liters
 
 		# neu
@@ -217,12 +243,7 @@ var ammo_profiles : Dictionary = {
 	}
 
 
-func __levels(): pass # ------------------------------------------------------------
-
-enum RANK_BY {NONE, TIME, POINTS} # level opredeli glede na vsebino in ga doda v svoj profile
-enum LEVELS {DEFAULT, TRAINING, STAFF, FIRST_DRIVE, FIRST_DRIVE_SHORT, SETUP
-	GRAND_PRIX
-} # to zaporedje upošteva zapordje home gumbov
+func __level_objects(): pass # ------------------------------------------------------------
 
 
 enum LEVEL_OBJECT {BRICK_GHOST, BRICK_BOUNCER, BRICK_MAGNET, BRICK_TARGET, FLATLIGHT, GOAL_PILLAR}
@@ -269,7 +290,6 @@ var level_object_profiles: Dictionary = {
 	}
 
 
-func __surfaces(): pass # ------------------------------------------------------------
 
 enum SURFACE {NONE, CONCRETE, NITRO, GRAVEL, HOLE, TRACKING}
 var surface_type_profiles: Dictionary = {
@@ -306,7 +326,7 @@ enum PICKABLE{ # enako kot na pickable
 	# stats
 	LIFE,
 	HEALTH,
-	POINTS,
+	GOAL,
 	GAS,
 	CASH,
 	# equipment
@@ -353,11 +373,7 @@ var pickable_profiles: Dictionary = {
 		"color": Refs.color_pickable_stat,
 		"value": 50,
 	},
-	PICKABLE.POINTS: {
-		"color": Refs.color_pickable_stat,
-		"value": 100,
-#		"driver_stat": STAT.POINTS,
-	},
+
 	# NO STAT ...instants
 	PICKABLE.SHIELD: {
 		"color": Refs.color_pickable_ammo,
@@ -370,5 +386,9 @@ var pickable_profiles: Dictionary = {
 	PICKABLE.RANDOM: { # nujno zadnji, ker ga izloči ob žrebanju
 		"color": Refs.color_pickable_random,
 		"value": 0, # nepomebno, ker random range je število ključev v tem slovarju
+	},
+	PICKABLE.GOAL: {
+		"color": Refs.color_pickable_stat,
+		"value": 100,
 	},
 	}

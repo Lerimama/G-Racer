@@ -5,7 +5,7 @@ signal views_are_set
 
 enum SPLITSCREEN_TILE {TWO_VER, THREE_LEFT, THREE_RIGHT, FOUR }
 
-var game_manager: Game # poda GM na ready
+#var game_manager: Game # poda GM na ready
 var views_with_drivers: Dictionary = {}
 var view_camera_path: String = "Viewport/GameCamera"
 

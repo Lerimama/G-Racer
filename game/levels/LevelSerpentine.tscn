@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://game/level/Level.tscn" type="PackedScene" id=1]
-[ext_resource path="res://game/levels/materiali/_podlage/serpentines.jpg" type="Texture" id=2]
 
 [node name="LevelSerpentine" instance=ExtResource( 1 )]
 level_type = 1
@@ -9,4 +8,3 @@ level_type = 1
 [node name="Serpentines" type="Sprite" parent="." index="16"]
 position = Vector2( 7304, -3568 )
 scale = Vector2( 10, 10 )
-texture = ExtResource( 2 )

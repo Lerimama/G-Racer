@@ -160,6 +160,7 @@ func _get_better_targets(current_target: Node2D):
 
 
 func _get_target_rank(unranked_target: Node2D):
+	# trivialno opredeljeno
 
 	var targets_rank: int = 0
 

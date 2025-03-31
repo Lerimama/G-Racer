@@ -4,14 +4,18 @@
 
 [resource]
 script = ExtResource( 1 )
-camera_zoom_range = [ 1, 1.5 ]
+time_game_heal_rate_factor = 0.01
+points_game_heal_rate_factor = 0.0
+camera_zoom_range = Vector2( 1, 1.5 )
 start_countdown = true
-countdown_start_limit = 5
+countdown_start_time = 3
+sudden_death_start_time = 20
 pickables_count_limit = 5
 pull_gas_penalty = -20.0
 drifting_mode = true
-life_is_scalp = true
+life_as_scalp = true
 ranking_cash_rewards = [ 5000, 3000, 1000 ]
+ai_gets_record = true
 game_shadows_rotation_deg = 45.0
 game_shadows_color = Color( 0, 0, 0, 1 )
 game_shadows_length_factor = 1.0

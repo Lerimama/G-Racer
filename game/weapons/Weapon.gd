@@ -92,5 +92,5 @@ func _shoot():
 func _change_load_count(add_load_count: int): # da se vedno apdejta tudi weapon stats
 
 	load_count += add_load_count
-	weapon_owner.weapon_stats[self] = load_count
+	weapon_owner.weapon_stats[name] = load_count
 

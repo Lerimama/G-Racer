@@ -9,7 +9,7 @@ enum PICKABLE{ # enako v profilih
 	# stats
 	LIFE,
 	HEALTH,
-	POINTS,
+	GOAL,
 	GAS,
 	CASH,
 	# equipment

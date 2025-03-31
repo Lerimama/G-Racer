@@ -52,7 +52,8 @@ var pickables_count_limit: int = 5
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
 var life_as_scalp: bool = true
-var ranking_cash_rewards: Array = [5000, 3000, 1000]
+var level_cash_rewards: Array = [5000, 3000, 1000, 500]
+var level_points_rewards: Array = [25, 20, 15, 10, 8, 5, 4, 3, 2, 1]
 
 # daytime params
 var game_shadows_rotation_deg: float = 45
@@ -73,13 +74,14 @@ var sudden_death_start_time: int = 20
 # ni v def game profilu
 var heal_rate_factor: float = 0
 
+
+
+
 # ON START -----------------------------------------------------------------------------------
 
 
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
-
-var def_game_settings_resource: Resource = preload("res://game/game_settings_def.tres")
 
 
 func _ready() -> void:
@@ -91,7 +93,8 @@ func _apply_debug_settings():
 
 #	game_levels = [Levs.GRAND_PRIX]
 #	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
-	game_levels = [Levs.QUICKY]
+	game_levels = [Levs.TESTER, Levs.TESTER, Levs.TESTER]
+#	game_levels = [Levs.QUICKY]
 	print("game_levels", game_levels)
 
 	camera_zoom_range = Vector2(2, 2.3)
@@ -127,7 +130,7 @@ func _apply_debug_settings():
 	var drivers_on_game_start: Array = ["JOU"]
 	drivers_on_game_start = [ "JOU", "MOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU"]
-#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
+	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]
 
 
@@ -147,16 +150,17 @@ func _apply_debug_settings():
 			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 		elif drivers_on_game_start.find(driver_id) == 2:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_green
 		elif drivers_on_game_start.find(driver_id) == 3:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
+			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 #			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.JP2
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_yellow
 
 
 func start_debug():
 
-	load_saved_game_settings(def_game_settings_resource) # _temp ... loas sevad game bo na game reload
 	_apply_debug_settings()
 	_set_game_settings_per_level()
 
@@ -178,30 +182,6 @@ func _set_game_settings_per_level(selected_level_index: int = 0):
 		# duel
 	pass
 
-
-func load_saved_game_settings(saved_game_settings: Resource):
-
-	ai_gets_record = saved_game_settings.ai_gets_record
-	health_effects = saved_game_settings.health_effects
-	time_game_heal_rate_factor = saved_game_settings.time_game_heal_rate_factor
-	points_game_heal_rate_factor = saved_game_settings.points_game_heal_rate_factor
-
-	sudden_death_start_time = saved_game_settings.sudden_death_start_time
-	camera_zoom_range = saved_game_settings.camera_zoom_range
-	start_countdown = saved_game_settings.start_countdown
-	countdown_start_time = saved_game_settings.countdown_start_time
-	pickables_count_limit = saved_game_settings.pickables_count_limit
-	pull_gas_penalty = saved_game_settings.pull_gas_penalty
-	drifting_mode = saved_game_settings.drifting_mode
-	life_as_scalp = saved_game_settings.life_as_scalp
-	ranking_cash_rewards = saved_game_settings.ranking_cash_rewards
-
-	# daytime params
-	game_shadows_rotation_deg = saved_game_settings.game_shadows_rotation_deg
-	game_shadows_color = saved_game_settings.game_shadows_color
-	game_shadows_length_factor = saved_game_settings.game_shadows_length_factor
-	game_shadows_alpha = saved_game_settings.game_shadows_alpha
-	game_shadows_direction = saved_game_settings.game_shadows_direction
 
 
 

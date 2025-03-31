@@ -1,11 +1,11 @@
 extends Control
 
 
-enum STATBOX_TYPE{BOX, BOX_MINIMAL, VER, VER_STRICT, VER_MINIMAL, HOR, MINIMAL}
+enum STATBOX_TYPE{BOX, BOX_MINIMAL, VER, VER_STRICT, VER_MINIMAL, MINIMAL}
 
 var level_record: Array = [0, ""]# [value, owner]
 var time_still_time: float = 1.5
-var statboxes_with_drivers: Dictionary = {} # statbox in njen driver
+var statboxes_with_driver_ids: Dictionary = {} # statbox in njen driver
 
 onready var sections_holder: HBoxContainer = $HudSections
 onready var left_section: VBoxContainer = $HudSections/Left
@@ -20,15 +20,15 @@ onready var game_timer: HBoxContainer = $HudSections/Center/Top/Timer/BoxContain
 onready var start_countdown: Control = $Popups/StartCountdown
 onready var FloatingTag: PackedScene = preload("res://game/gui/FloatingTag.tscn")
 
-onready var StatBox_Boxed: PackedScene = preload("res://game/gui/hud/StatBox_Boxed.tscn")
-onready var StatBox_Boxed_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Boxed_Minimal.tscn")
-onready var StatBox_Hor: PackedScene = preload("res://game/gui/hud/StatBox_Hor_temp.tscn")
-onready var StatBox_Ver: PackedScene = preload("res://game/gui/hud/StatBox_Ver.tscn")
-onready var StatBox_Ver_Strict: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Strict.tscn")
-onready var StatBox_Ver_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Ver_Minimal.tscn")
-onready var StatBox_Minimal: PackedScene = preload("res://game/gui/hud/StatBox_Minimal.tscn")
+onready var StatBox_Boxed: PackedScene = preload("res://game/gui/hud/statbox/StatBox.tscn")
+onready var StatBox_Boxed_Minimal: PackedScene = preload("res://game/gui/hud/statbox/StatBox_Boxed_Minimal.tscn")
+onready var StatBox_Ver: PackedScene = preload("res://game/gui/hud/statbox/StatBox_Ver.tscn")
+onready var StatBox_Ver_Strict: PackedScene = preload("res://game/gui/hud/statbox/StatBox_Ver_Strict.tscn")
+onready var StatBox_Ver_Minimal: PackedScene = preload("res://game/gui/hud/statbox/StatBox_Ver_Minimal.tscn")
+onready var StatBox_Minimal: PackedScene = preload("res://game/gui/hud/statbox/StatBox_Minimal.tscn")
 
 var level_profile: Dictionary = {} # za zapisovanje rekorda
+onready var driver_huds: Control = $"../DriverHuds"
 
 
 func _ready() -> void:
@@ -39,11 +39,11 @@ func _ready() -> void:
 			child.queue_free()
 
 
-func set_hud(game_manager: Game, drivers_on_start: Array):
+func set_hud(game: Game, drivers_on_start: Array):
 
-	level_profile = game_manager.level_profile
+	level_profile = game.level_profile
 
-	if level_profile["rank_by"] == "TIME":
+	if "rank_by" in level_profile and level_profile["rank_by"] == "TIME":
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
@@ -57,9 +57,9 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 		section.show()
 
 	# statboxes reset
-	for statbox in statboxes_with_drivers:
+	for statbox in statboxes_with_driver_ids:
 		statbox.queue_free()
-	statboxes_with_drivers.clear()
+	statboxes_with_driver_ids.clear()
 
 	# new statboxes
 	var viewed_drivers: Array = []
@@ -86,10 +86,22 @@ func set_hud(game_manager: Game, drivers_on_start: Array):
 	else:
 		level_record_label.get_parent().get_parent().hide()
 
-
 	# level name
 	level_name_label.text = level_profile["level_name"]
 
+
+func update_all_stats_display():
+#	return
+	# driver stats
+	for statbox in statboxes_with_driver_ids:
+		var statbox_driver: Vehicle
+		for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
+			if driver.driver_id == statboxes_with_driver_ids[statbox]:
+				statbox_driver = driver
+				break
+		if statbox_driver:
+			for stat in statbox_driver.driver_stats:
+				_on_driver_stat_changed(statboxes_with_driver_ids[statbox], stat, statbox_driver.driver_stats[stat])
 
 
 func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
@@ -103,7 +115,7 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 	else:
 		right_section.add_child(new_statbox)
 
-	statboxes_with_drivers[new_statbox] = statbox_driver.driver_id
+	statboxes_with_driver_ids[new_statbox] = statbox_driver.driver_id
 
 	# driver line
 	new_statbox.driver_name_label.text = str(statbox_driver.driver_id)
@@ -139,10 +151,6 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 			new_statbox.set_statbox_align(1, true)
 		else:
 			new_statbox.set_statbox_align(1)
-
-	# driver stats
-	for stat in statbox_driver.driver_stats:
-		_on_driver_stat_changed(statbox_driver.driver_id, stat, statbox_driver.driver_stats[stat])
 
 	new_statbox.show()
 
@@ -186,13 +194,12 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 			return StatBox_Ver_Strict
 		STATBOX_TYPE.VER_MINIMAL:
 			return StatBox_Ver_Minimal
-		STATBOX_TYPE.HOR:
-			return StatBox_Hor
 		STATBOX_TYPE.MINIMAL:
 			return StatBox_Minimal
 
 
 func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
+
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
@@ -211,120 +218,101 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 	else:
 		# opredelim statbox
 		var statbox_to_change: Control
-		if driver_id in statboxes_with_drivers.values():
-			var statbox: Control = statboxes_with_drivers.find_key(driver_id)
+		if driver_id in statboxes_with_driver_ids.values():
+			var statbox: Control = statboxes_with_driver_ids.find_key(driver_id)
 			if statbox != null: # find key lahko vrne null
 				statbox_to_change = statbox
-		if not statbox_to_change: # ai ga nima, statistiko pa vseeno pošilja
-			return
+
+#		if not statbox_to_change: # ai ga nima, statistiko pa vseeno pošilja
+#			return
 
 		# stat_to_change ... STAT key string
 		var current_key_index: int = Pros.STAT.values().find(stat_key)
 		var current_key: String = Pros.STAT.keys()[current_key_index]
-		var stat_to_change: Control = statbox_to_change.get(current_key)
+
+		var stat_to_change: Control = null # _temp rešitev kako ma ai hud statistiko
+		if statbox_to_change:
+			stat_to_change = statbox_to_change.get(current_key)
 
 		match stat_key:
-
 			# driver
 			Pros.STAT.LIFE:
-				stat_to_change.stat_value = [stat_value, 3]
+				if stat_to_change:
+					stat_to_change.stat_value = [stat_value, 3]
 			Pros.STAT.CASH:
-				stat_to_change.stat_value = stat_value
+				if stat_to_change:
+					stat_to_change.stat_value = stat_value
 			Pros.STAT.POINTS: # default
-				stat_to_change.stat_value = stat_value
-			Pros.STAT.WINS:
-				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-				#			stat_to_change.stat_value = [stat_value.size(), Sets.wins_needed]
-				stat_to_change.stat_value = stat_value.size()
-			# vehicle
+				if stat_to_change:
+					stat_to_change.stat_value = stat_value
+			# na driver hud
 			Pros.STAT.GAS:
-				stat_to_change.stat_value = stat_value
-			Pros.STAT.HEALTH: # ENERGY BAR
-				# 10 = 100 % v pseudo-bar
-				var curr_health_percent: int = round(stat_value * 10)
-				stat_to_change.stat_value = [curr_health_percent, 10]
-			# level
-			Pros.STAT.LEVEL_RANK:
-				stat_to_change.stat_value = stat_value
-			Pros.STAT.LEVEL_PROGRESS:
-				stat_to_change.progress_unit = stat_value
-			Pros.STAT.LEVEL_TIME: # on level finish
-				stat_to_change.stat_value = stat_value
-			Pros.STAT.GOALS_REACHED:
-				# progress bar
-				if statbox_to_change.use_level_progress_bar:
-					# če so goali, ni per frame apdejtanja iz tracking line
-					# ta statistika deluje samo, če level_goals niso prazni ... RACING_GOALS, BATTLE_GOALS
-					# RACING_GOAL ima finish_line enabled
-					# BATTLE_GOAL ima finish_line disabled
-					# RACING_GOALS brez goalov ima samo finish line ... pedena ga LAP_COUNT stat
-					var adapted_max_count: float = level_profile["level_goals"].size()
-					if level_profile["rank_by"] == "TIME":
-						adapted_max_count = level_profile["level_goals"].size() + 1
-					statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
-				# goal counter
-				stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
-			Pros.STAT.LAP_COUNT:
-				# progress bar za kroge je opazen samo, če ni "tracking progress per frame "
-				if statbox_to_change.use_level_progress_bar:
-					# če so goali, je krog celoten progress bar
-					if not level_profile["level_goals"].empty():
-						# reset za naslednji krog, če ni bi zadnji
-						if stat_value.size() < level_profile["level_laps"]:
-							yield(get_tree().create_timer(time_still_time), "timeout")
-							statbox_to_change.LEVEL_PROGRESS.progress_unit = 0
-					# če ni goalov, so krogi in ni zadnji krog
-					# en krog e tick, level finish pa je celoten progress bar
-					elif level_profile["level_laps"] > 1 and stat_value.size() < level_profile["level_laps"]:
-						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
-					# brez lapsov niti golaov
-					else:
-						statbox_to_change.LEVEL_PROGRESS.progress_unit = 1
-				# lap count counter
-				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
-				# lap time
-				var time_stat: Control = statbox_to_change.get("CURR_LAP_TIME")
-				if not stat_value.empty():
-					time_stat.stat_value = stat_value.back()
-					# stoječi prikaz časa kroga
-					if not time_stat.stat_value == 0:
-						var time_still_stat: Control = statbox_to_change.lap_time_still_display
-						time_still_stat.stat_value = time_stat.stat_value
-						time_stat.hide()
-						time_still_stat.show()
-						yield(get_tree().create_timer(time_still_time), "timeout")
-						time_still_stat.hide()
-						time_stat.show()
-			Pros.STAT.BEST_LAP_TIME:
+				driver_huds.driver_ids_with_driver_huds[driver_id].stat_gas = stat_value
+			Pros.STAT.HEALTH:
+				driver_huds.driver_ids_with_driver_huds[driver_id].stat_health = stat_value
+			Pros.STAT.BEST_LAP_TIME: # skupaj sta ker se zgodita na isti dogodek
+				# LAP_COUNT ... array časov,
+				# BEST_LAP_TIME ... čas
 				if stat_value == 0:
-					stat_to_change.stat_value = 0
-					stat_to_change.get_parent().get_parent().hide()
+					pass
 				else:
-					# prikazujem samo če so krogi, ker drugače je dovolj curr level time urca
-					if level_profile["level_laps"] > 1:
-						# statičen čas zapišem kot string
-						var stat_to_change_clock_time: String = Mets.get_clock_time_string(stat_value)
-						stat_to_change.stat_value = stat_to_change_clock_time
-						stat_to_change.get_parent().get_parent().show()
-						# obarvam stoječi prikaz časa kroga
-						statbox_to_change.lap_time_still_display.modulate = Refs.color_green
+					var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver_id]
+					var lap_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
+					driver_hud.display_hud_message(["PERSONAL BEST"], 0, Refs.color_green)
+			Pros.STAT.LEVEL_FINISHED_TIME: # on level finish
+				if stat_value > 0:
+					var level_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
+					var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver_id]
+					driver_hud.call_deferred("display_hud_message", ["LT " + level_clock_time])
+			# level
+			Pros.STAT.LEVEL_PROGRESS:
+				if stat_to_change:
 
-					else:
-						stat_to_change.get_parent().get_parent().hide()
+					stat_to_change.progress_unit = stat_value
+			Pros.STAT.LEVEL_RANK:
+				if stat_to_change:
+					stat_to_change.stat_value = stat_value
+			Pros.STAT.LAP_TIME: # za uro med krogom ... vsak frejm
+				if stat_to_change:
+					stat_to_change.stat_value = stat_value
+			Pros.STAT.LAP_COUNT: # skupaj sta ker se zgodita na isti dogodek
+				if stat_to_change:
+					# progress bar ... za kroge je opazen samo, če ni "tracking progress per frame "
+					if statbox_to_change.use_level_progress_bar:
+						# če so goali, je krog celoten progress bar
+						if not level_profile["level_goals"].empty():
+							# reset za naslednji krog, če ni bi zadnji
+							if stat_value.size() < level_profile["level_laps"]:
+								yield(get_tree().create_timer(time_still_time), "timeout")
+								statbox_to_change.LEVEL_PROGRESS.progress_unit = 0
+						# brez goalov ... so krogi in ni zadnji krog ... en krog je tick, level finish pa je celoten progress bar
+						elif level_profile["level_laps"] > 1 and stat_value.size() < level_profile["level_laps"]:
+							statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
+						else: # brez lapsov, brez goalov
+							statbox_to_change.LEVEL_PROGRESS.progress_unit = 1
+					# lap counter
+					stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
+					# driver hud - lap time
+					if not stat_value.empty():
+						var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver_id]
+						var lap_clock_time: String = Mets.get_clock_time_string(stat_value.back()) # array so časi vseh krogov
+						driver_hud.call_deferred("display_hud_message", [lap_clock_time]) # deffered, da je za morebitnim "BEST"
+			Pros.STAT.GOALS_REACHED:
+				if stat_to_change:
+					# progress bar
+					if statbox_to_change.use_level_progress_bar:
+						# če so goali, ni per frame apdejtanja iz tracking line
+						# ta statistika deluje samo, če level_goals niso prazni ... RACING_GOALS, BATTLE_GOALS
+						# RACING_GOAL ima finish_line enabled
+						# BATTLE_GOAL ima finish_line disabled
+						# RACING_GOALS brez goalov ima samo finish line ... pedena ga LAP_COUNT stat
+						var adapted_max_count: float = level_profile["level_goals"].size()
+						if level_profile["rank_by"] == "TIME":
+							adapted_max_count = level_profile["level_goals"].size() + 1
+						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
+					# goal counter
+					stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
 
-					# je tudi rekord levela?
-					if stat_value < level_record[0] and not level_record[0] == 0:
-						var new_level_record: Array = [stat_value, driver_id]
-						var level_record_clock_time: String = Mets.get_clock_time_string(new_level_record[0])
-						level_profile["level_record"] = new_level_record
-						level_record_label.text = "NEW RECORD " + level_record_clock_time + " by " + str(new_level_record[1])
-						level_record_label.get_parent().get_parent().show()
-						level_record_label.modulate = Refs.color_green
-						yield(get_tree().create_timer(time_still_time), "timeout")
-						level_record_label.modulate = Refs.color_hud_text
-
-			Pros.STAT.CURR_LAP_TIME: # za uro med krogom ... vsak frejm
-				stat_to_change.stat_value = stat_value
 			_:
 				#				stat_to_change.stat_value = stat_value
 				printerr("Neznana statistika na hudu: ", stat_to_change, ", ", stat_value)

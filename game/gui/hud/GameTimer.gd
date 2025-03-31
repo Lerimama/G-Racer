@@ -126,5 +126,6 @@ func unpause_timer():
 
 func stop_timer():
 
-	timer_state = TIMER_STATE.STOPPED
+	if not timer_state == TIMER_STATE.STOPPED: # ker lahko kličem s povsod ... če bo kakšna dodatna koda bo pomembno (tween recimo)
+		timer_state = TIMER_STATE.STOPPED
 	#	modulate = Refs.color_red

@@ -298,8 +298,8 @@ func _exit_tree() -> void:
 	if flight_fx and is_instance_valid(flight_fx):
 		flight_fx.stop_fx()
 	thrust_power = 0
-	if trail and not trail.in_decay:
-		trail.start_decay(trail.global_position) # _temp parametri so zarasi simple trejla, kompleksn jih ne upošteva
+#	if trail and not trail.is_queued_for_deletion() and is_instance_valid(trail) and not trail.in_decay:
+#		trail.start_decay(trail.global_position) # _temp parametri so zarasi simple trejla, kompleksn jih ne upošteva
 
 
 func _on_DetectArea_body_entered(body: Node) -> void:

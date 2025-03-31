@@ -2,6 +2,7 @@ extends Control
 
 
 var view_imitators_with_driver_ids: Dictionary = {} # imitatorja je dimenzijska kopija pripadajočega viewa
+var driver_ids_with_driver_huds: Dictionary = {}
 
 onready var view_imitator: Control = $ViewImitator # nikoli ga ne zbrišemm
 onready var DriverHud: PackedScene = preload("res://game/gui/DriverHud.tscn")
@@ -14,16 +15,16 @@ func _ready() -> void:
 		$ViewImitator/DriverHud.queue_free()
 
 
-func set_driver_huds(game_manager: Game, drivers_on_start: Array, mono_view_mode: bool):
+func set_driver_huds(game: Game, drivers_on_start: Array, mono_view_mode: bool):
 
-	var views_with_drivers: Dictionary = game_manager.game_views.views_with_drivers
+	var views_with_drivers: Dictionary = game.game_views.views_with_drivers
 
 	# reset, razen vzorčnega
 	for imitator in get_children():
 		if not imitator == get_child(0):
 			imitator.queue_free()
 	view_imitators_with_driver_ids.clear()
-
+	driver_ids_with_driver_huds.clear()
 
 	if mono_view_mode:
 		var imitated_view: ViewportContainer = views_with_drivers.keys()[0]
@@ -31,10 +32,10 @@ func set_driver_huds(game_manager: Game, drivers_on_start: Array, mono_view_mode
 			var new_driver_hud: Control = DriverHud.instance()
 			view_imitator.add_child(new_driver_hud)
 			if driver.is_in_group(Refs.group_ai):
-#			if driver.motion_manager.is_ai:
 				new_driver_hud.set_driver_hud(driver, imitated_view, true)
 			else:
 				new_driver_hud.set_driver_hud(driver, imitated_view)
+			driver_ids_with_driver_huds[driver.driver_id] = new_driver_hud
 		view_imitators_with_driver_ids[view_imitator] = views_with_drivers.values()[0] # view owner je 1. plejer
 
 	else:
@@ -50,27 +51,28 @@ func set_driver_huds(game_manager: Game, drivers_on_start: Array, mono_view_mode
 			# pripiši driverja
 			var driver_id: String = views_with_drivers[view]
 			var player_driver: Vehicle
-			for driver in game_manager.drivers_on_start:
+			for driver in game.drivers_on_start:
 				if driver.driver_id == driver_id:
 					player_driver = driver
 			new_driver_hud.set_driver_hud(player_driver, view)
+			driver_ids_with_driver_huds[player_driver.driver_id] = new_driver_hud
 
 			# v slovar
 			view_imitators_with_driver_ids[new_view_imitator] = driver_id
 			# ai huds
-			for ai_driver in game_manager.drivers_on_start:
+			for ai_driver in game.drivers_on_start:
 				if ai_driver.is_in_group(Refs.group_ai):
-#				if ai_driver.motion_manager.is_ai:
 					var new_ai_hud: Control = DriverHud.instance()
 					new_view_imitator.add_child(new_ai_hud)
 					new_ai_hud.set_driver_hud(ai_driver, view, true)
+					driver_ids_with_driver_huds[ai_driver.driver_id] = new_ai_hud
 
 	# aplciram game_views dimezije na imitatorja
 	_set_imitators_size(views_with_drivers)
 
 
 func unset_driver_hud(huds_driver_id: String):
-
+#	return
 	for imitator in view_imitators_with_driver_ids:
 		if huds_driver_id == view_imitators_with_driver_ids[imitator]:
 			for child in imitator.get_children():

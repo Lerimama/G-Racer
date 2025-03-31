@@ -87,7 +87,7 @@ func _process(delta: float) -> void:
 			zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor/1.5)
 		else:
 		# game zoom ... ko je enkrat znotraj mej ga klampam
-			prints ("zoom", zoom.x)
+			#			prints ("zoom", zoom.x)
 			zoom.x = lerp(zoom.x, camera_zoom_range.x, camera_zoom_lerp_factor) # za mehkobo prehodov
 			zoom.x = clamp(zoom.x, camera_zoom_range.x, camera_zoom_range.y)
 		zoom.y = zoom.x

@@ -44,10 +44,11 @@ func _process(delta: float) -> void:
 		yield(get_tree(), "idle_frame")
 
 		# per frame RACING stats
-		if game.level_profile["rank_by"] == "TIME":
+		if "rank_by" in game.level_profile and game.level_profile["rank_by"] == "TIME":
+#		if game.level_profile["rank_by"] == "TIME":
 			for driver in drivers_in_game:
-				if driver.is_active and not driver in drivers_finished: # neha pošiljati, ko prevozi cilj
-					driver.update_stat(Pros.STAT.CURR_LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
+#				if driver.is_active and not driver in drivers_finished: # neha pošiljati, ko prevozi cilj
+					driver.update_stat(Pros.STAT.LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
 					if game_level.tracking_line.is_enabled:
 						driver.update_stat(Pros.STAT.LEVEL_PROGRESS, driver.driver_tracker.unit_offset)
 
@@ -84,11 +85,10 @@ func _update_ranking():
 		drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
 
 	# update stats
-	var allready_finished_count: int = drivers_finished.size() # adaptacija ranka, ker so tisti v cilju neaktivni
 	var players_ranked: Array = []
 	for ranked_driver in drivers_ranked:
 		var prev_rank: int = ranked_driver.driver_stats[Pros.STAT.LEVEL_RANK]
-		var new_rank: int = drivers_ranked.find(ranked_driver) + 1 + allready_finished_count
+		var new_rank: int = drivers_ranked.find(ranked_driver) + 1 + drivers_finished.size() # adaptacija ranka, ker so tisti v cilju neaktivni
 		if not new_rank == prev_rank:
 			ranked_driver.update_stat(Pros.STAT.LEVEL_RANK, new_rank)
 		if ranked_driver.is_in_group(Refs.group_players):
@@ -108,7 +108,7 @@ func _check_for_level_finished():
 		# preverim, če kakšen plejer še dirka
 		var is_level_finished: bool = true
 		for player in get_tree().get_nodes_in_group(Refs.group_players):
-			if player.is_active and not player in drivers_finished:
+			if player.is_active: # drivers_in_game je tu prepočasen
 				is_level_finished = false
 				break
 
@@ -276,7 +276,7 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 				else:
 				# finish level
 					game.game_sound.big_horn.play()
-					reaching_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+					reaching_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 					drivers_finished.append(reaching_driver)
 					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 			else:
@@ -314,7 +314,7 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 			# cilj
 			if all_laps_finished:
 				game.game_sound.big_horn.play()
-				crossing_driver.update_stat(Pros.STAT.LEVEL_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
+				crossing_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.finish_line.is_enabled:
@@ -355,36 +355,26 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	if driver_vehicle in drivers_finished:
 		var finished_driver_rank: int = drivers_finished.size()
 		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = finished_driver_rank
-		# dodam zmago
-		if finished_driver_rank == 1: # zmaga
-			# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-			driver_vehicle.update_stat(Pros.STAT.WINS, game.level_index)
-			#			driver_vehicle.update_stat(Pros.STAT.WINS, 1) # temp WINS pozicija
-		# dodam cash nagrado
-		if not finished_driver_rank > Sets.ranking_cash_rewards.size() and not finished_driver_rank == -1:
-			driver_vehicle.update_stat(Pros.STAT.CASH, Sets.ranking_cash_rewards[finished_driver_rank - 1])
 	else:
 		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
 
-	game.final_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
-	game.final_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
+	print("deact")
+	print(driver_vehicle.driver_id)
+	print(game.game_drivers_data[driver_vehicle.driver_id])
+	game.game_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
+	game.game_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
 	# hide view
-	game.gui.hud.get_parent().driver_huds_holder.unset_driver_hud(driver_vehicle.driver_id)
-
-	#	if Sets.hide_view_on_player_deactivated:# and not Sets.mono_view_mode: # ne uporabljam, ker ne smem zbrisat original viewa
-	#		var hide_view_time: float
-	#		var removed_game_view: ViewportContainer = game.game_views.views_with_drivers.find_key(driver_vehicle)
-	#		if removed_game_view and game.game_views.views_with_drivers.size() > 1: # preverim, da ni zadnji view
-	#			removed_game_view.queue_free()
-	#			game.game_views.views_with_drivers.erase(removed_game_view)
-	#			game.hud.driver_huds_holder.remove_view_imitator(game.game_views.views_with_drivers) # odstranim imitatorja ... more bit za setanje game_views
-	#			game.set_game_views(game.game_views.views_with_drivers.size()) # setam preostale
+#	game.gui.hud.get_parent().driver_huds.unset_driver_hud(driver_vehicle.driver_id)
 
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 		_check_for_level_finished()
-	elif game.game_stage > game.GAME_STAGE.FINISHED_FAIL:
-		game.gui.call_deferred("_on_waiting_driver_finished", driver_vehicle, game.final_drivers_data)
+	elif game.game_stage >= game.GAME_STAGE.FINISHED_FAIL:
+		game.gui.call_deferred("_on_waiting_driver_finished", driver_vehicle.driver_id)
 
+
+	print()
+	print(game.game_drivers_data[driver_vehicle.driver_id])
+	print()
 
 # SORTERS ------------------------------------------------------------------------------------------------------------
 
@@ -409,17 +399,13 @@ func _sort_trackers_by_offset(driver_tracker_1: PathFollow2D, driver_tracker_2: 
 func _sort_drivers_by_goals_reached(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
 	# if TRUE, A before B
 
-	var driver_1_goals_reached_count: int = driver_1.driver_stats[Pros.STAT.GOALS_REACHED].size()
-	var driver_2_goals_reached_count: int = driver_2.driver_stats[Pros.STAT.GOALS_REACHED].size()
-	if driver_1_goals_reached_count > driver_2_goals_reached_count:
+	if driver_1.driver_stats[Pros.STAT.GOALS_REACHED].size() > driver_2.driver_stats[Pros.STAT.GOALS_REACHED].size():
 		return true
 	return false
 
 
 func _sort_drivers_by_points(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
 
-	var driver_1_points: int = driver_1.driver_stats[Pros.STAT.POINTS]
-	var driver_2_points: int = driver_2.driver_stats[Pros.STAT.POINTS]
-	if driver_1_points > driver_2_points:
+	if driver_1.driver_stats[Pros.STAT.POINTS] > driver_2.driver_stats[Pros.STAT.POINTS]:
 		return true
 	return false

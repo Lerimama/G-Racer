@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=2]
+[gd_scene load_steps=52 format=2]
 
 [ext_resource path="res://game/GameView.tscn" type="PackedScene" id=1]
 [ext_resource path="res://game/Game.gd" type="Script" id=2]
@@ -49,13 +49,6 @@
 [ext_resource path="res://assets/sounds/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=66]
 [ext_resource path="res://assets/sounds/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=68]
 
-[sub_resource type="StyleBoxFlat" id=18]
-draw_center = false
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-
 [sub_resource type="StyleBoxFlat" id=19]
 draw_center = false
 border_width_left = 4
@@ -73,7 +66,6 @@ random_pitch = 1.05
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 2 )
-main_signal_connecting_paths = [ NodePath("Gui") ]
 
 [node name="Reactor" type="Node" parent="."]
 
@@ -103,50 +95,6 @@ margin_right = 5130.0
 margin_left = 5140.0
 margin_right = 7700.0
 size_flags_vertical = 0
-
-[node name="__test_flow" type="HFlowContainer" parent="."]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_right = 2560.0
-margin_bottom = 1444.0
-rect_min_size = Vector2( 2560, 1440 )
-size_flags_horizontal = 0
-size_flags_vertical = 0
-
-[node name="Panel" type="Panel" parent="__test_flow"]
-margin_right = 888.0
-margin_bottom = 1000.0
-rect_min_size = Vector2( 500, 1000 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 18 )
-
-[node name="Panel2" type="Panel" parent="__test_flow"]
-margin_left = 892.0
-margin_right = 2560.0
-margin_bottom = 1000.0
-rect_min_size = Vector2( 1280, 500 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 18 )
-
-[node name="Panel3" type="Panel" parent="__test_flow"]
-margin_top = 1004.0
-margin_right = 2560.0
-margin_bottom = 1724.0
-rect_min_size = Vector2( 1280, 720 )
-size_flags_horizontal = 3
-custom_styles/panel = SubResource( 18 )
-
-[node name="Panel4" type="Panel" parent="__test_flow"]
-visible = false
-margin_top = 2422.0
-margin_right = 2560.0
-margin_bottom = 3142.0
-rect_min_size = Vector2( 1280, 720 )
-size_flags_horizontal = 3
-custom_styles/panel = SubResource( 18 )
 
 [node name="Gui" type="CanvasLayer" parent="."]
 script = ExtResource( 50 )
@@ -179,11 +127,6 @@ __meta__ = {
 "_edit_horizontal_guides_": [ 360.0 ],
 "_edit_vertical_guides_": [ 640.0, 0.0 ]
 }
-
-[node name="GameCover" type="ColorRect" parent="Gui"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color( 0, 0, 0, 1 )
 
 [node name="PauseGame" type="Control" parent="Gui"]
 pause_mode = 2
@@ -451,8 +394,15 @@ custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "camera shake"
 flat = true
 
+[node name="FinishedBackground" type="ColorRect" parent="Gui"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.196078, 0, 0.345098, 1 )
+
 [node name="LevelFinished" type="Control" parent="Gui"]
 pause_mode = 2
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 3 )
@@ -463,9 +413,10 @@ __meta__ = {
 
 [node name="Background" type="ColorRect" parent="Gui/LevelFinished"]
 visible = false
+modulate = Color( 1, 1, 1, 0.486275 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.784314 )
+color = Color( 0, 0, 0, 1 )
 
 [node name="Panel" type="Panel" parent="Gui/LevelFinished"]
 visible = false
@@ -537,7 +488,7 @@ mouse_default_cursor_shape = 2
 size_flags_vertical = 8
 text = "END LEVEL"
 
-[node name="GameOver" type="Control" parent="Gui"]
+[node name="GameSummary" type="Control" parent="Gui"]
 pause_mode = 2
 visible = false
 anchor_right = 1.0
@@ -548,19 +499,19 @@ __meta__ = {
 "_edit_vertical_guides_": [ 320.0, 1280.0 ]
 }
 
-[node name="Background" type="ColorRect" parent="Gui/GameOver"]
+[node name="Background" type="ColorRect" parent="Gui/GameSummary"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.784314 )
+color = Color( 0, 0, 0, 1 )
 
-[node name="Panel" type="Panel" parent="Gui/GameOver"]
+[node name="Panel" type="Panel" parent="Gui/GameSummary"]
 visible = false
 modulate = Color( 1, 1, 1, 0.941176 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Title" type="Label" parent="Gui/GameOver"]
+[node name="Title" type="Label" parent="Gui/GameSummary"]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -573,25 +524,7 @@ custom_fonts/font = ExtResource( 43 )
 text = "GAME OVER"
 align = 1
 
-[node name="LevelRecord" type="Label" parent="Gui/GameOver"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -297.5
-margin_top = 372.0
-margin_right = 297.5
-margin_bottom = 427.0
-grow_horizontal = 2
-rect_min_size = Vector2( 160, 55 )
-size_flags_horizontal = 8
-text = "Level record  000 by xxx"
-align = 1
-valign = 1
-uppercase = true
-__meta__ = {
-"_editor_description_": ""
-}
-
-[node name="ScoreTable" parent="Gui/GameOver" instance=ExtResource( 44 )]
+[node name="ScoreTable" parent="Gui/GameSummary" instance=ExtResource( 44 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -500.0
@@ -599,7 +532,7 @@ margin_top = 513.0
 margin_right = 502.0
 margin_bottom = 1137.0
 
-[node name="Menu" type="HBoxContainer" parent="Gui/GameOver"]
+[node name="Menu" type="HBoxContainer" parent="Gui/GameSummary"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -616,7 +549,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="QuitGameBtn" type="Button" parent="Gui/GameOver/Menu"]
+[node name="QuitGameBtn" type="Button" parent="Gui/GameSummary/Menu"]
 visible = false
 margin_right = 290.0
 margin_bottom = 58.0
@@ -625,14 +558,14 @@ mouse_default_cursor_shape = 2
 size_flags_vertical = 8
 text = "QUIT GAME"
 
-[node name="QuitBtn" type="Button" parent="Gui/GameOver/Menu"]
+[node name="QuitBtn" type="Button" parent="Gui/GameSummary/Menu"]
 margin_right = 127.0
 margin_bottom = 58.0
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
 text = "QUIT"
 
-[node name="RestartBtn" type="Button" parent="Gui/GameOver/Menu"]
+[node name="RestartBtn" type="Button" parent="Gui/GameSummary/Menu"]
 margin_left = 191.0
 margin_right = 415.0
 margin_bottom = 58.0
@@ -835,5 +768,5 @@ bus = "GameSfx"
 [connection signal="pressed" from="Gui/PauseGame/Menu/QuitBtn" to="Gui/PauseGame" method="_on_QuitBtn_pressed"]
 [connection signal="pressed" from="Gui/PauseGame/Menu/RestartBtn" to="Gui/PauseGame" method="_on_RestartBtn_pressed"]
 [connection signal="pressed" from="Gui/LevelFinished/Menu/FinishBtn" to="Gui/LevelFinished" method="_on_FinishBtn_pressed"]
-[connection signal="pressed" from="Gui/GameOver/Menu/QuitGameBtn" to="Gui/GameOver" method="_on_QuitGameBtn_pressed"]
-[connection signal="pressed" from="Gui/GameOver/Menu/QuitBtn" to="Gui/GameOver" method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="Gui/GameSummary/Menu/QuitGameBtn" to="Gui/GameSummary" method="_on_QuitGameBtn_pressed"]
+[connection signal="pressed" from="Gui/GameSummary/Menu/QuitBtn" to="Gui/GameSummary" method="_on_QuitBtn_pressed"]

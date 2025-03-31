@@ -5,9 +5,9 @@
 [ext_resource path="res://assets/theme/game_theme.tres" type="Theme" id=7]
 
 [node name="ScoreTable" type="VBoxContainer"]
-margin_left = -499.5
-margin_right = 499.5
-margin_bottom = 304.0
+margin_left = -501.0
+margin_right = 501.0
+margin_bottom = 776.0
 grow_horizontal = 2
 theme = ExtResource( 7 )
 custom_constants/separation = 16
@@ -22,16 +22,19 @@ size_flags_horizontal = 0
 margin_top = 80.0
 margin_right = 1002.0
 margin_bottom = 144.0
+size_flags_horizontal = 0
 
 [node name="ScoreLine_3" parent="." instance=ExtResource( 3 )]
 margin_top = 160.0
 margin_right = 1002.0
 margin_bottom = 224.0
+size_flags_horizontal = 0
 
 [node name="ScoreLine_4" parent="." instance=ExtResource( 3 )]
 margin_top = 240.0
 margin_right = 1002.0
 margin_bottom = 304.0
+size_flags_horizontal = 0
 
 [node name="ScoreLine_5" parent="." instance=ExtResource( 3 )]
 margin_top = 320.0
@@ -43,13 +46,16 @@ size_flags_horizontal = 0
 margin_top = 400.0
 margin_right = 1002.0
 margin_bottom = 464.0
+size_flags_horizontal = 0
 
 [node name="ScoreLine_7" parent="." instance=ExtResource( 3 )]
 margin_top = 480.0
 margin_right = 1002.0
 margin_bottom = 544.0
+size_flags_horizontal = 0
 
 [node name="ScoreLine_8" parent="." instance=ExtResource( 3 )]
 margin_top = 560.0
 margin_right = 1002.0
 margin_bottom = 624.0
+size_flags_horizontal = 0

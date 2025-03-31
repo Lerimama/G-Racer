@@ -96,7 +96,7 @@ func _input(event: InputEvent) -> void:
 			update_stat(Pros.STAT.HEALTH, -0.1)
 #
 	if Input.is_action_pressed("no3"): # race
-		if driver_id == "JOU":
+		if driver_id == "MOU":
 			update_stat(Pros.STAT.GAS, -100)
 #		update_stat(Pros.STAT.HEALTH, 0.1)
 #	if Input.is_action_pressed("no4"): # race
@@ -135,7 +135,8 @@ func _process(delta: float) -> void:
 	trail_source.update_trail(velocity.length())
 
 	if is_active:
-		if engines.engines_on: update_stat(Pros.STAT.GAS, gas_usage)
+		if engines.engines_on:
+			update_stat(Pros.STAT.GAS, gas_usage)
 		if driver_stats[Pros.STAT.HEALTH] < 1:
 			update_stat(Pros.STAT.HEALTH, heal_rate * Sets.heal_rate_factor)
 
@@ -270,14 +271,29 @@ func _set_equipment():
 	for weapon in weapons_holder.get_children():
 		if weapon in equip_positions.positions_equiped.values():
 			weapon.set_weapon(self)
-			if "load_count" in weapon: # če ma ammo ali več kosov ... ni mala
-				weapon_stats[weapon] = weapon.load_count
+			# triggering weapons
+			if "load_count" in weapon:
+				# drugi leveli, prenese iz weapon stats slovarja na orožje
+				if weapon.name in weapon_stats:
+					# nuliram zaradi setget
+					var _temp_load_count: int = weapon_stats[weapon.name]
+					# weapon_stats load count spreminja setget od weapona
+					weapon.load_count = - weapon.load_count
+					# pripišem
+					weapon.load_count = _temp_load_count
+					# weapon_stats se spremeni iz weapon setget
+				else:
+				# prvi level, vzame kar je seta na nodetu
+				# zapiše kategorijo in value v weapon stats
+					weapon_stats[weapon.name] = weapon.load_count
+				# uniq tipi
 				if not weapon.weapon_type in weapon_types_with_trigger_weapons:
 					weapon_types_with_trigger_weapons[weapon.weapon_type] = [weapon]
 				else:
 					weapon_types_with_trigger_weapons[weapon.weapon_type].append(weapon)
 			else:
-				weapon_stats[weapon] = 0
+			# mala, no trigger
+				weapon_stats[weapon.name] = 0
 		else:
 			weapon.hide()
 
@@ -381,11 +397,9 @@ func update_stat(stat_key: int, stat_value):
 						stat_value = damaged_gas_usage
 					# stat
 					driver_stats[stat_key] += stat_value
-					if driver_stats[Pros.STAT.GAS] <= 0:
-						driver_stats[Pros.STAT.GAS] = 0
+					driver_stats[stat_key] = clamp(driver_stats[stat_key], 0, gas_tank_size)
+					if driver_stats[Pros.STAT.GAS] == 0:
 						_die(true)
-					elif driver_stats[Pros.STAT.GAS] > gas_tank_size: # povečam max ... obstaja zaradi hud gas bar
-						gas_tank_size = driver_stats[Pros.STAT.GAS]
 			Pros.STAT.HEALTH:
 				driver_stats[stat_key] += stat_value # change_value je + ali -
 				driver_stats[Pros.STAT.HEALTH] = clamp(driver_stats[Pros.STAT.HEALTH], 0, 1) # kadar maxiram max heath lahko dodam samo 1 in je ok
@@ -396,16 +410,12 @@ func update_stat(stat_key: int, stat_value):
 				driver_stats[stat_key] += stat_value
 			Pros.STAT.GOALS_REACHED: # goal nodes names or duplicate?
 				driver_stats[stat_key].append(stat_value)
-			Pros.STAT.WINS: # level names
-				# curr/max ... popravi hud, veh update stats, veh spawn, veh deact
-				driver_stats[stat_key].append(stat_value)
-				#			driver_stats[stat_key] += stat_value
 			# level
 			Pros.STAT.LEVEL_PROGRESS:
 				driver_stats[stat_key] = stat_value
 			Pros.STAT.LEVEL_RANK:
 				driver_stats[stat_key] = stat_value
-			Pros.STAT.LEVEL_TIME: # na finished
+			Pros.STAT.LEVEL_FINISHED_TIME: # na finished
 				driver_stats[stat_key] = stat_value
 			Pros.STAT.LAP_COUNT:
 				# dobiš level time in odšteješ prev lap level time
@@ -418,11 +428,10 @@ func update_stat(stat_key: int, stat_value):
 					if lap_time < curr_best_lap_time or curr_best_lap_time == 0:
 						driver_stats[Pros.STAT.BEST_LAP_TIME] = lap_time
 						call_deferred("emit_signal", "stat_changed", driver_id, Pros.STAT.BEST_LAP_TIME, lap_time) # deferred da je za lap time signalom
-			Pros.STAT.CURR_LAP_TIME: # vsak frejm
+			Pros.STAT.LAP_TIME: # vsak frejm
 				var curr_game_time: float = stat_value
 				var lap_time: float = curr_game_time - prev_lap_level_time
 				driver_stats[stat_key] = lap_time
-
 			_: # default
 				if stat_key in driver_stats:
 					driver_stats[stat_key] += stat_value

@@ -2,7 +2,7 @@ extends SoundManager
 # variable so tukaj
 # funkcije so v SM
 
-var game_manager: Game # poda GM na ready
+var game: Game # poda GM na ready
 
 # SFX
 onready var big_horn: AudioStreamPlayer = $LevelSfx/BigHorn

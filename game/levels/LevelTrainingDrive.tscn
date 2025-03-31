@@ -25,7 +25,6 @@
 [ext_resource path="res://game/level/breakers/BreakerRigidConcrete.tscn" type="PackedScene" id=23]
 [ext_resource path="res://game/level/breakers/BreakerRigid.tscn" type="PackedScene" id=24]
 [ext_resource path="res://game/level/ground/surfaces/SurfaceGravel_SS2D.tscn" type="PackedScene" id=25]
-[ext_resource path="res://game/levels/materiali/_podlage/area.jpg" type="Texture" id=26]
 
 [sub_resource type="Resource" id=102]
 script = ExtResource( 2 )
@@ -2806,6 +2805,9 @@ _data = {
 "points": PoolVector2Array( 0, 0, 0, 0, -7, 64, 0, 0, 0, 0, -16, -3312 )
 }
 
+[sub_resource type="StreamTexture" id=311]
+load_path = "res://.import/area.jpg-7d586a45b728329ca0f1f3ddd4276ffa.stex"
+
 [node name="LevelStaff" instance=ExtResource( 1 )]
 __meta__ = {
 "_edit_horizontal_guides_": [ -64026.0 ],
@@ -3071,7 +3073,7 @@ __meta__ = {
 [node name="Area" type="Sprite" parent="." index="17"]
 position = Vector2( 5680, 296 )
 scale = Vector2( 2, 2 )
-texture = ExtResource( 26 )
+texture = SubResource( 311 )
 
 [editable path="Surfaces/StreetAsphalt"]
 [editable path="Surfaces/StreetConcrete"]

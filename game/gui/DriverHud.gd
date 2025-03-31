@@ -12,46 +12,38 @@ var always_open: bool = true
 var selector_open_time: float = 0
 var hide_on_empty: bool = false
 
-onready var selector: Control = $Selector
-onready var selector_timer: Timer = $SelectorTimer
-onready var rotation_label: Label = $RotationLabel
 onready var health_bar: Control = $HealthBar
 onready var health_bar_line: ColorRect = $HealthBar/Bar
 onready var gas_bar: Control = $GasBar
 onready var gas_bar_line: ColorRect = $GasBar/Bar
+onready var message_tag: Node2D = $MessageTag
+onready var selector: Control = $Selector
 onready var visibility_notifier: VisibilityNotifier2D = $VisibilityNotifier2D
+
+var stat_gas: float = 0 setget _change_stat_gas
+var stat_health: float = 0 setget _change_stat_health
 
 
 func _ready() -> void:
 
 	item_counter_template = Mets.remove_chidren_and_get_template(selector.get_children())
+	for child in message_tag.get_child(0).get_children():
+		child.queue_free()
 	hide()
 
 
 func _process(delta: float) -> void:
 
+
+#	$MessageTagPosition.position.x = rect_size.x / 2
+
 	# manage positions and rotation
 	if not is_instance_valid(hud_driver):
 		hide()
+		is_set =false
 
 	if is_set:
 		_update_hud_position()
-
-		# manage health bar
-		if health_bar.visible:
-			health_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STAT.HEALTH]
-			if health_bar_line.rect_scale.x <= 0.5:
-				health_bar_line.color = Refs.color_red
-			else:
-				health_bar_line.color = Refs.color_blue
-
-		# manage gas bar
-		if gas_bar.visible:
-			gas_bar_line.rect_scale.x = hud_driver.driver_stats[Pros.STAT.GAS] / hud_driver.gas_tank_size
-			if gas_bar_line.rect_scale.x <= 0.5:
-				gas_bar_line.color = Refs.color_red
-			else:
-				gas_bar_line.color = Refs.color_yellow
 
 		# items
 		if driver_is_ai:
@@ -107,6 +99,26 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 	show()
 
 
+func display_hud_message(messages: Array, tag_time: int = 2, message_color: Color = Color.white):
+
+	# pozicija
+	message_tag.position.x = rect_size.x/2
+
+	var new_message_labels: Array = []
+	for message in messages:
+		var new_label: Label = Label.new()
+		new_label.align = ALIGN_CENTER
+		new_label.text = message
+		new_label.modulate = message_color
+		message_tag.get_child(0).add_child(new_label)
+		new_message_labels.append(new_label)
+
+	if tag_time > 0:
+		yield(get_tree().create_timer(tag_time), "timeout")
+		for message_label in new_message_labels:
+			message_label.queue_free()
+
+
 func _update_hud_position():
 
 	# globalna pozicija
@@ -121,6 +133,33 @@ func _update_hud_position():
 		rect_position.x -= rect_size.x/2
 	else: # na širino selectorja
 		rect_position.x -= selector.rect_size.x/2
+
+
+# BARS ---------------------------------------------------------------------------------------
+
+
+func _change_stat_health(new_health: float):
+
+	stat_health = new_health
+	if health_bar.visible:
+		health_bar_line.rect_scale.x = stat_health
+		if health_bar_line.rect_scale.x <= 0.5:
+			health_bar_line.color = Refs.color_red
+		else:
+			health_bar_line.color = Refs.color_blue
+
+
+func _change_stat_gas(new_gas: float):
+
+	stat_gas = new_gas
+	if gas_bar.visible:
+		gas_bar_line.rect_scale.x = stat_gas / hud_driver.gas_tank_size
+		if gas_bar_line.rect_scale.x <= 0.5:
+			gas_bar_line.color = Refs.color_red
+		else:
+			gas_bar_line.color = Refs.color_yellow
+
+# ITEM COUNTER ---------------------------------------------------------------------------------------
 
 
 func _add_item_counter(new_item: Node2D):
@@ -154,7 +193,6 @@ func _on_item_selected(selected_index: int):
 
 			# izberem orožje
 			var new_selected_item: Control = counters_with_items.keys()[selected_index]
-#			selected_item = counters_with_items[new_selected_item]
 
 			# LNF
 			for counter in counters_with_items:
@@ -164,12 +202,8 @@ func _on_item_selected(selected_index: int):
 					counter.modulate.a = 0.32
 		# timer
 		if not always_open:
-			selector_timer.start(selector_open_time)
-
-
-func _on_SelectorTimer_timeout() -> void:
-
-	selector.hide()
+			yield(get_tree().create_timer(selector_open_time), "timeout")
+			selector.hide()
 
 
 func _on_VisibilityNotifier2D_screen_entered() -> void:

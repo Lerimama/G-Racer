@@ -5,10 +5,10 @@ func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
 
 	if Input.is_action_just_pressed("ui_cancel"):
 
-		var game_manager: Game = get_parent().game_manager
-		if game_manager:
-			if game_manager.game_stage == game_manager.GAME_STAGE.PLAYING or game_manager.game_stage == game_manager.GAME_STAGE.READY:
-				get_parent().game_manager.game_sound.screen_slide.play()
+		var game: Game = get_parent().game
+		if game:
+			if game.game_stage == game.GAME_STAGE.PLAYING or game.game_stage == game.GAME_STAGE.READY:
+				get_parent().game.game_sound.screen_slide.play()
 				if visible:
 					_on_PlayBtn_pressed()
 				else:
@@ -22,8 +22,8 @@ func _ready() -> void:
 
 func pause_game():
 
-	get_parent().game_manager.game_sound.game_music.stream_paused = true
-	get_parent().game_manager.game_sound.menu_music.play()
+	get_parent().game.game_sound.game_music.stream_paused = true
+	get_parent().game.game_sound.menu_music.play()
 
 	show()
 	get_tree().set_pause(true)
@@ -46,8 +46,8 @@ func play_on():
 	yield(fade_tween, "finished")
 	get_viewport().set_disable_input(false)
 
-	get_parent().game_manager.game_sound.menu_music.stop()
-	get_parent().game_manager.game_sound.game_music.stream_paused = false
+	get_parent().game.game_sound.menu_music.stop()
+	get_parent().game.game_sound.game_music.stream_paused = false
 
 	get_tree().set_pause(false)
 	hide()

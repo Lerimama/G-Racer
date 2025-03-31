@@ -383,8 +383,8 @@ config/icon="res://assets/icon.png"
 
 LocalizationManager="*res://addons/localization_editor/LocalizationManager.gd"
 Sets="*res://autoloads/Settings.gd"
-Refs="*res://autoloads/References.gd"
 Levs="*res://autoloads/Levels.gd"
+Refs="*res://autoloads/References.gd"
 Pros="*res://autoloads/Profiles.gd"
 Mets="*res://autoloads/Methods.gd"
 Buts="*res://autoloads/Buttons.gd"
@@ -411,7 +411,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/Todo_Manager/plugin.cfg", "res://addons/color-palette/plugin.cfg", "res://addons/color-template-editor/plugin.cfg", "res://addons/localization_editor/plugin.cfg", "res://addons/rmsmartshape/plugin.cfg", "res://addons/versatile_atlas/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/Todo_Manager/plugin.cfg", "res://addons/color-palette/plugin.cfg", "res://addons/color-template-editor/plugin.cfg", "res://addons/rmsmartshape/plugin.cfg", "res://addons/versatile_atlas/plugin.cfg" )
 
 [global]
 

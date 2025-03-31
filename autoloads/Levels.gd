@@ -17,12 +17,6 @@ enum LEVEL_TYPE {
 	}
 
 
-var battle_levels: Array = [
-	]
-
-var missions: Array = [
-	]
-
 func _ready() -> void:
 	# določeni stili levela ne rabijo določenih postavk
 	# tukaj jih nulirane, da ni kakega errorja
@@ -48,6 +42,8 @@ const TESTER: Dictionary = {
 	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
 	"level_time": 0, # secs
 	"level_laps": 0, # 0 in 1 je isto
+	"rank_by": "TIME"
+
 	# load on spawan, če je ranking
 	# "level_record": [0, ""],
 	# opredeli level ob spawnu
@@ -149,7 +145,7 @@ const THE_KNOT: Dictionary = { # agility in kanjon
 	"level_time": 0,
 	"level_laps": 0,
 	}
-const FINESS: Dictionary = {} # slow agility (intestate 76)
+const FINESS: Dictionary = { # slow agility (intestate 76)
 	"level_name": "FINESS",
 	"level_desc": "Level description ... ",
 	"level_scene": preload("res://game/levels/LevelFiness.tscn"),
@@ -160,8 +156,9 @@ const FINESS: Dictionary = {} # slow agility (intestate 76)
 
 
 func BATTLE(): pass
-
 # Battle (points, scalps)
+
+var battle_levels: Array = []
 const COLORS: Dictionary = {
 	"level_name": "DEMOLITION DERBY",
 	"level_desc": "Level description ... ",
@@ -193,7 +190,23 @@ const DERBY: Dictionary = {
 	"level_time": 0,
 	}
 
+
+func MISSIONS(): pass
 # Mission
-const GET_TO_CITY: Dictionary = {}
-const GAS_TRANSPORT: Dictionary = {}
+
+var missions: Array = []
+const TRAVEL: Dictionary = {
+	"level_name": "TRAVEL",
+	"level_desc": "Level description ... ",
+	"level_scene": preload("res://game/levels/LevelTravel.tscn"),
+	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+	"level_time": 0,
+	}
+const GAS_TRANSPORT: Dictionary = {
+	"level_name": "GAS TRANSPORT",
+	"level_desc": "Level description ... ",
+	"level_scene": preload("res://game/levels/LevelGasTransport.tscn"),
+	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+	"level_time": 0,
+	}
 const SCOUT: Dictionary = {} # i
