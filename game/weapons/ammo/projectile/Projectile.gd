@@ -200,9 +200,9 @@ func _on_contact_collision(body_state: Physics2DDirectBodyState):
 	var collision_global_normal: Vector2 = body_state.get_contact_local_normal(0) + Vector2.RIGHT.rotated(global_rotation)
 
 	if not contact_collider == weapon_owner: # sam sebe lahko ubiješ
-		_explode(body_state.get_contact_local_position(0), collision_global_normal)
 		if contact_collider.has_method("on_hit"):
 			contact_collider.on_hit(self, collision_global_position) # pošljem node z vsemi podatki in kolizijo
+		_explode(body_state.get_contact_local_position(0), collision_global_normal)
 
 
 func _dissarm():

@@ -3,4 +3,4 @@
 [ext_resource path="res://game/level/pickables/Pickable.tscn" type="PackedScene" id=1]
 
 [node name="PickableShield" instance=ExtResource( 1 )]
-pickable_key = 7
+pickable_key = 6

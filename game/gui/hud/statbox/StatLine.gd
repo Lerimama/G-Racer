@@ -78,6 +78,7 @@ func _ready() -> void:
 			stat_count_label.hide()
 			count_icons_holder.hide()
 		STAT_TYPE.ICONS:
+			count_icons_holder.show()
 			stat_time_label.hide()
 			stat_count_label.hide()
 			stat_icon.hide()

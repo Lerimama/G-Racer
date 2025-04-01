@@ -29,7 +29,7 @@ func set_gui(drivers_on_start: Array):
 	driver_huds.set_driver_huds(game, drivers_on_start, Sets.mono_view_mode)
 
 	# če je omejen čas, povežem s timerjem
-	if game.level_profile["level_time"] > 0:
+	if game.level_profile["level_time_limit"] > 0:
 		if not hud.game_timer.is_connected("time_is_up", game.game_tracker, "_on_game_time_is_up"):
 			hud.game_timer.connect("time_is_up", game.game_tracker, "_on_game_time_is_up")
 
@@ -54,11 +54,11 @@ func on_level_finished():
 #	get_viewport().set_disable_input(true)
 
 	# če je konec, ustavim čas ... moram pred ostalo kodo, da je natančno
-	var turn_off: = true
+	var level_ended: = true
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		if driver.is_active:
-			turn_off = false
-	if turn_off == true:
+			level_ended = false
+	if level_ended == true:
 		hud.game_timer.stop_timer()
 
 	#	print("drivers data")
@@ -103,7 +103,7 @@ func open_game_summary():
 		hud.game_timer.stop_timer()
 		yield(get_tree(), "idle_frame") # zazih
 		var final_level_data: Dictionary = game.game_drivers_data.duplicate()
-		level_finished.score_table.set_scoretable(final_level_data, false)
+		level_finished.score_table.set_scoretable(final_level_data, game.level_profile["rank_by"], false)
 		yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 		deactivating_unfinished_drivers = false
 
@@ -196,6 +196,6 @@ func _on_waiting_driver_finished(driver_id: String):
 		_reward_driver_for_level(driver_final_data)
 	else:
 		_reward_driver_for_level(driver_final_data)
-		level_finished.score_table.set_scoretable(game.game_drivers_data, false)
+		level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
 
 

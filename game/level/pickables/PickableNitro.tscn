@@ -27,7 +27,7 @@ margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
 [node name="PickableNitro" instance=ExtResource( 1 )]
-pickable_key = 6
+pickable_key = 5
 picked_sound_stream = ExtResource( 4 )
 
 [node name="Icon" parent="." index="2"]

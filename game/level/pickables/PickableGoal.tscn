@@ -7,7 +7,7 @@
 radius = 40.0
 
 [node name="PickableGoal" instance=ExtResource( 1 )]
-pickable_key = 5
+pickable_key = 2
 
 [node name="IconCirco" parent="." index="1"]
 visible = false

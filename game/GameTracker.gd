@@ -36,8 +36,7 @@ func _process(delta: float) -> void:
 		yield(get_tree(), "idle_frame")
 
 		# per frame RACING stats
-		if "rank_by" in game.level_profile and game.level_profile["rank_by"] == "TIME":
-#		if game.level_profile["rank_by"] == "TIME":
+		if game.level_profile["rank_by"] == Levs.RANK_BY.TIME:
 			for driver in ranked_drivers:
 				if is_instance_valid(driver): # kvejd for deletion je tukaj preveč selektiven
 #				if driver.is_active and not driver in drivers_finished: # neha pošiljati, ko prevozi cilj
@@ -53,29 +52,29 @@ func _update_ranking():
 	var unranked_drivers: Array = get_tree().get_nodes_in_group(Refs.group_drivers)
 	var drivers_ranked: Array = []
 
-	if game.level_profile["rank_by"] == "TIME":
-		# tracking
-		if game_level.tracking_line.is_enabled:
-			# najprej rangiram trackerje
-			var all_driver_trackers: Array = []
-			for unranked_driver in unranked_drivers:
-				all_driver_trackers.append(unranked_driver.driver_tracker)
-			all_driver_trackers.sort_custom(self, "_sort_trackers_by_offset")
-			# pol napolnim drivers_ranked glede na rankg trackerja
-			for driver_tracker in all_driver_trackers:
-				drivers_ranked.append(driver_tracker.tracking_target)
-		# goals
-		elif not game_level.level_goals.empty():
+	match game.level_profile["rank_by"]:
+		Levs.RANK_BY.TIME:
+			# tracking
+			if game_level.tracking_line.is_enabled:
+				# najprej rangiram trackerje
+				var all_driver_trackers: Array = []
+				for unranked_driver in unranked_drivers:
+					all_driver_trackers.append(unranked_driver.driver_tracker)
+				all_driver_trackers.sort_custom(self, "_sort_trackers_by_offset")
+				# pol napolnim drivers_ranked glede na rankg trackerja
+				for driver_tracker in all_driver_trackers:
+					drivers_ranked.append(driver_tracker.tracking_target)
+			# goals
+			elif not game_level.level_goals.empty():
+				drivers_ranked = unranked_drivers
+				drivers_ranked.sort_custom(self, "_sort_drivers_by_goals_reached")
+			# pol rangirane po trackerju rangiram po prevoženih krogih
+			if game.level_profile["level_lap_count"] > 1:
+				drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
+		Levs.RANK_BY.POINTS:
+			# rangiram po točkah
 			drivers_ranked = unranked_drivers
-			drivers_ranked.sort_custom(self, "_sort_drivers_by_goals_reached")
-		# pol rangirane po trackerju rangiram po prevoženih krogih
-		if game.level_profile["level_laps"] > 1:
-			drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
-
-	elif game.level_profile["rank_by"] == "POINTS":
-		# rangiram po točkah
-		drivers_ranked = unranked_drivers
-		drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
+			drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
 
 	# update stats
 	var players_ranked: Array = []
@@ -259,7 +258,7 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 			if all_goals_reached and not game_level.finish_line.is_enabled:
 				reaching_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
 				var all_laps_finished: bool = false
-				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_lap_count"]:
 					all_laps_finished = true
 				# goals reset for next lap
 				if not all_laps_finished:
@@ -270,7 +269,8 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					game.game_sound.big_horn.play()
 					reaching_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 					drivers_finished.append(reaching_driver)
-					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+#					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
+					reaching_driver.turn_off()
 			else:
 			# to next goal ali finish line
 				game.game_sound.little_horn.play()
@@ -301,7 +301,7 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 				# če so bili vsi cilji kvefrijani, ni več krogov ...
 				# možnost tega ni dobra praksa ... pazi pri postavljanju levelov
 				all_laps_finished = true
-			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_lap_count"]:
 				all_laps_finished = true
 			# cilj
 			if all_laps_finished:
@@ -311,7 +311,8 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.finish_line.is_enabled:
 					drive_out_position = game_level.finish_line.drive_out_position_2d.global_position
-				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
+#				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
+				crossing_driver.turn_off()
 			# nov krog
 			else:
 				game.game_sound.little_horn.play()
@@ -340,6 +341,7 @@ func _on_player_exited_playing_field(player_vehicle: Node) -> void:
 
 
 func _on_vehicle_deactivated(driver_vehicle: Vehicle):
+	print("deact", driver_vehicle)
 #	printt("deactivated", driver_vehicle)
 
 	# finale data za vse ki so še v igri

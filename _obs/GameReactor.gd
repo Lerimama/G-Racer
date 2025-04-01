@@ -166,7 +166,7 @@ extends Node
 #				var has_finished_level: bool = false
 #				# vsi krogi
 #				reaching_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
-#				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+#				if reaching_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_lap_count"]:
 #					has_finished_level = true
 #				if has_finished_level:
 #					# to finish
@@ -220,7 +220,7 @@ extends Node
 #			var has_finished_level: bool = false
 #			# če ni krogov je lap count da stat ve za prehod cilja
 #			crossing_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
-#			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_laps"]:
+#			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_lap_count"]:
 #				has_finished_level = true
 #			if has_finished_level:
 #				game.game_sound.big_horn.play()

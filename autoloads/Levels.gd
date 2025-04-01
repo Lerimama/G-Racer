@@ -16,197 +16,206 @@ enum LEVEL_TYPE {
 	MISSION, # goals
 	}
 
+enum RANK_BY {NONE, TIME, POINTS, SCALPS} # še ne uporabljam
+
+var training_levels: Array = [LEVEL.TRAINING_DRIVE, LEVEL.TRAINING_AGILITY, LEVEL.TRAINING_SHOOT]
+var racing_levels: Array = [LEVEL.QUICKY, LEVEL.SERPENTINE, LEVEL.THE_LOOP, LEVEL.GRAND_PRIX]
+var goal_levels: Array = [LEVEL.LIGHTS_ON, LEVEL.THE_KNOT, LEVEL.FINESS]
+var battle_levels: Array = [LEVEL.COLORS, LEVEL.YOUR_TARGETS, LEVEL.DEMOLITION_DERBY, LEVEL.DERBY]
+var mission_levels: Array = [LEVEL.TRAVEL, LEVEL.GAS_TRANSPORT, LEVEL.SCOUT]
+
 
 func _ready() -> void:
-	# določeni stili levela ne rabijo določenih postavk
-	# tukaj jih nulirane, da ni kakega errorja
+	# dodam postavke, ki si jih delijo
+	# določeni stili levela ne rabijo določenih postavk ... da ni potrebno preverjeati, če obstaja
 
-	for level in racing_levels:
-		if not "level_laps" in level:
-			level["level_laps"] = 0
-		level["rank_by"] = "TIME"
-		level["level_goals"] = []
 	for level in training_levels:
-		level["level_goals"] = []
-		level["level_time"] = 0
-		level["level_laps"] = 0
+		level_profiles[level]["rank_by"] = RANK_BY.NONE
+		level_profiles[level]["level_goals"] = []
+		level_profiles[level]["level_time_limit"] = 0
+		level_profiles[level]["level_lap_count"] = 0
+	for level in racing_levels:
+		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["rank_by"] = RANK_BY.TIME
+		if not "level_lap_count" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["level_lap_count"] = 0
+		level_profiles[level]["level_time_limit"] = 0
+		level_profiles[level]["level_goals"] = []
+	for level in goal_levels:
+		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["rank_by"] = RANK_BY.POINTS
+		if not "level_lap_count" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["level_lap_count"] = 0
+		level_profiles[level]["level_goals"] = []
 	for level in battle_levels:
-		level["level_goals"] = []
-		level["level_laps"] = 0
-
-
-const TESTER: Dictionary = {
-	"level_name": "Testing level",
-	"level_desc": "Za testiranje različnih značilnosti levelov.",
-	"level_scene": preload("res://game/levels/LevelTester.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0, # secs
-	"level_laps": 0, # 0 in 1 je isto
-	"rank_by": "TIME"
-
-	# load on spawan, če je ranking
-	# "level_record": [0, ""],
-	# opredeli level ob spawnu
-	# "level_goals": [],
-	# "rank_by": "TIME", "POINTS, ... "SCALPS", "CASH",
-	# "level_goals": [],
-	}
+		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["rank_by"] = RANK_BY.SCALPS
+		level_profiles[level]["level_lap_count"] = 0
+		level_profiles[level]["level_goals"] = []
+	for level in mission_levels:
+		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["rank_by"] = RANK_BY.NONE
+		if not "level_time_limit" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
+			level_profiles[level]["level_time_limit"] = 0
+		level_profiles[level]["level_lap_count"] = 0
+		level_profiles[level]["level_goals"] = []
 
 
 func TRENING(): pass
 # no damage, no gas, no time, no laps, no goals
 
-var training_levels: Array = [TRAINING_DRIVE, TRAINING_AGILITY, TRAINING_SHOOT]
-const TRAINING_DRIVE: Dictionary = {
-	"level_name": "TRAINING DRIVE",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTrainingDrive.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const TRAINING_AGILITY: Dictionary = {
-	"level_name": "TRAINING AGILITY",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTrainingAgility.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const TRAINING_SHOOT: Dictionary = {
-	"level_name": "TRAINING SHOOT",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTrainingShoot.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	}
-const TRAINING_BATTLE: Dictionary = {
-	"level_name": "TRAINING BATTLE",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTrainingBattle.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+enum LEVEL {
+	TESTER,
+	TRAINING_DRIVE, TRAINING_AGILITY, TRAINING_SHOOT, TRAINING_BATTLE, # free
+	QUICKY, SERPENTINE, THE_LOOP, GRAND_PRIX, # race, time
+	LIGHTS_ON, THE_KNOT, FINESS, # derby, goals
+	COLORS, YOUR_TARGETS, DEMOLITION_DERBY, DERBY # battle
+	TRAVEL, GAS_TRANSPORT, SCOUT # battle
 	}
 
 
-func REJSING(): pass
-# time, gas, no damage, no goals
+var level_profiles: Dictionary = {
 
-var racing_levels: Array = [QUICKY, SERPENTINE, THE_LOOP, GRAND_PRIX]
-const QUICKY: Dictionary = { # short simple
-	"level_name": "QUICKY",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelQuicky.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const SERPENTINE: Dictionary = { # long
-	"level_name": "SERPENTINE",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelSerpentine.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const THE_LOOP: Dictionary = { # short laps
-	"level_name": "THE_LOOP",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTheLoop.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const GRAND_PRIX: Dictionary = { # long laps
-	"level_name": "GRAND PRIX",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelGrandPrix.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 2,
-	}
+	LEVEL.TESTER: {
+		"level_name": "Testing level",
+		"level_desc": "Za testiranje različnih značilnosti levelov.",
+		"level_scene": preload("res://game/levels/LevelTester.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0, # secs
+		"level_lap_count": 0, # 0 in 1 je isto
+		"rank_by": RANK_BY.TIME,
+		# load on spawan, če je ranking
+		# "level_record": [0, ""],
+		# opredeli level ob spawnu
+		# "level_goals": [],
+		# "level_goals": [],
+		},
 
+	LEVEL.TRAINING_DRIVE: {
+		"level_name": "TRAINING DRIVE",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTrainingDrive.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 0,
+		},
+	LEVEL.TRAINING_AGILITY: {
+		"level_name": "TRAINING AGILITY",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTrainingAgility.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 0,
+		},
+	LEVEL.TRAINING_SHOOT: {
+		"level_name": "TRAINING SHOOT",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTrainingShoot.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		},
+	LEVEL.TRAINING_BATTLE: {
+		"level_name": "TRAINING BATTLE",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTrainingBattle.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		},
+	LEVEL.QUICKY: { # short simple
+		"level_name": "QUICKY",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelQuicky.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_lap_count": 0,
+		},
+	LEVEL.SERPENTINE: { # long
+		"level_name": "SERPENTINE",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelSerpentine.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_lap_count": 0,
+		},
+	LEVEL.THE_LOOP: { # short laps
+		"level_name": "THE_LOOP",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTheLoop.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_lap_count": 0,
+		},
+	LEVEL.GRAND_PRIX: { # long laps
+		"level_name": "GRAND PRIX",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelGrandPrix.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_lap_count": 2,
+		},
+	LEVEL.LIGHTS_ON: { # flags, lose all on bump
+		"level_name": "LIGHTS_ON",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelLightsOn.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 0,
+		},
+	LEVEL.THE_KNOT: { # agility in kanjon
+		"level_name": "THE_KNOT",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTheKnot.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 0,
+		},
+	LEVEL.FINESS: { # slow agility (intestate 76)
+		"level_name": "FINESS",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelFiness.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 0,
+		},
+	LEVEL.COLORS: {
+		"level_name": "DEMOLITION DERBY",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 2,
+		},
+	LEVEL.YOUR_TARGETS: {
+		"level_name": "DEMOLITION DERBY",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		"level_lap_count": 2,
+		},
+	LEVEL.DEMOLITION_DERBY: {
+		"level_name": "DEMOLITION DERBY",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		},
+	LEVEL.DERBY: {
+		"level_name": "DERBY",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelDerby.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		},
+	# missions
+	LEVEL.TRAVEL: {
+		"level_name": "TRAVEL",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelTravel.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		},
+	LEVEL.GAS_TRANSPORT: {
+		"level_name": "GAS TRANSPORT",
+		"level_desc": "Level description ... ",
+		"level_scene": preload("res://game/levels/LevelGasTransport.tscn"),
+		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
+		"level_time_limit": 0,
+		},
+	LEVEL.SCOUT: {},
 
-func GOULS(): pass
-# Racing Goals (time, points) ... da le prideš do konca z vsemi cilji
-
-var goals_levels: Array = [LIGHTS_ON, THE_KNOT, FINESS]
-const LIGHTS_ON: Dictionary = { # flags, lose all on bump
-	"level_name": "LIGHTS_ON",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelLightsOn.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const THE_KNOT: Dictionary = { # agility in kanjon
-	"level_name": "THE_KNOT",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTheKnot.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-const FINESS: Dictionary = { # slow agility (intestate 76)
-	"level_name": "FINESS",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelFiness.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 0,
-	}
-
-
-func BATTLE(): pass
-# Battle (points, scalps)
-
-var battle_levels: Array = []
-const COLORS: Dictionary = {
-	"level_name": "DEMOLITION DERBY",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 2,
-	}
-const YOUR_TARGETS: Dictionary = {
-	"level_name": "DEMOLITION DERBY",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	"level_laps": 2,
-	}
-const DEMOLITION_DERBY: Dictionary = {
-	"level_name": "DEMOLITION DERBY",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	}
-const DERBY: Dictionary = {
-	"level_name": "DERBY",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelDerby.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	}
-
-
-func MISSIONS(): pass
-# Mission
-
-var missions: Array = []
-const TRAVEL: Dictionary = {
-	"level_name": "TRAVEL",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelTravel.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	}
-const GAS_TRANSPORT: Dictionary = {
-	"level_name": "GAS TRANSPORT",
-	"level_desc": "Level description ... ",
-	"level_scene": preload("res://game/levels/LevelGasTransport.tscn"),
-	"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
-	"level_time": 0,
-	}
-const SCOUT: Dictionary = {} # i
+}

@@ -76,6 +76,7 @@ var is_viglvagl: bool = false
 #		is_rotating = false
 #		torque_on_vehicle = 0
 
+
 func _ready() -> void:
 
 	managed_vehicle = get_parent()
@@ -106,6 +107,12 @@ func _process(delta: float) -> void:
 
 
 func _motion_machine():
+#	if managed_vehicle.driver_id == "JOU":
+##		print("force_on_vehicle ", force_on_vehicle)
+##		print("force_on_vehicle ", managed_vehicle.collision_shape.disabled)
+#		prints("force_on_vehicle ", managed_vehicle.mass, managed_vehicle.linear_damp)
+#		prints("force_on_vehicle ", managed_vehicle.front_mass.applied_force)
+#		prints("force_on_vehicle ", managed_vehicle.rear_mass.applied_force)
 #	prints("motion", motion)
 	# vigl vagl brez vpliva na silo
 	#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
@@ -165,14 +172,14 @@ func _motion_machine():
 			else:
 				force_rotation = lerp_angle(force_rotation, - rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 				force_on_vehicle = Vector2.LEFT.rotated(force_rotation + global_rotation) * _accelarate_to_engine_power()
-		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT, MOTION.DISSABLED:
+		MOTION.DISSABLED, \
+		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT:
 			current_engine_power = lerp(current_engine_power, 0, accelarate_speed)
-			force_rotation = 0
+			#			force_rotation = 0 ... je že 0 zaradi rotation_dir
 			force_on_vehicle = Vector2.ZERO # OPT ... če ni, potem niha ... z vidika sile bi bilo bolj pravilno brez
 		MOTION.DISSARAY: # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
-			current_engine_power = 0
-			force_rotation = 0
-			force_on_vehicle = Vector2.ZERO
+			pass
+
 #	force_on_vehicle = Vector2.ZERO
 #	prints ("force_on_vehicle", force_on_vehicle)
 
@@ -204,9 +211,9 @@ func _accelarate_to_engine_power(to_engine_power: float = max_engine_power):
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 
-	if managed_vehicle.driver_id == "MOU":
-		current_engine_power /= 15
-#		current_engine_power = 0
+#	if managed_vehicle.driver_id == "MOU":
+#		current_engine_power /= 15
+##		current_engine_power = 0
 	return current_engine_power * Sets.world_hsp_power_factor
 
 
@@ -222,6 +229,8 @@ func _change_motion(new_motion):
 		MOTION.FWD_RIGHT, MOTION.REV_RIGHT, MOTION.IDLE_RIGHT:
 			rotation_dir = 1
 
+	# !!!!
+	# !!!! pobere iz profila
 	if vehicle_motion_profile:
 		vehicle_motion_profile._set_motion_parameters(managed_vehicle, motion)
 
@@ -264,9 +273,8 @@ func _change_motion(new_motion):
 				managed_vehicle.angular_damp = 3
 			MOTION.DISSABLED:
 				# kadar je na tleh, al pa mu igra ukaže
-				# ne spremeni nič ... setani ostanejo default parametri
 				# je zato, da driving ne deluje
-				pass
+				managed_vehicle.linear_damp = 3
 			MOTION.DISSARAY:
 				pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 
@@ -381,18 +389,18 @@ func drive_in(drive_in_position: Vector2, drive_in_rotation: float = 0, drive_in
 
 func drive_out(drive_out_position: Vector2, drive_out_time: float = 1):
 
-	managed_vehicle.is_active = false
+#	managed_vehicle.is_active = false
 
-	self.motion = MOTION.IDLE
-#	self.motion = MOTION.DISSABLED
+#	self.motion = MOTION.IDLE
+	self.motion = MOTION.DISSABLED
 
-#	force_rotation = 0
-#	force_on_vehicle = Vector2.ZERO
-#	_accelarate_to_engine_power(0)
-	managed_vehicle.collision_shape.set_deferred("disabled", true)
-#	yield(get_tree().create_timer(drive_out_time), "timeout")
-#	motion
-#	managed_vehicle.modulate.a = 0
+	force_rotation = 0
+	force_on_vehicle = Vector2.ZERO
+##	_accelarate_to_engine_power(0)
+#	managed_vehicle.collision_shape.set_deferred("disabled", true)
+##	yield(get_tree().create_timer(drive_out_time), "timeout")
+##	motion
+##	managed_vehicle.modulate.a = 0
 	managed_vehicle.turn_off()
 
 

@@ -20,6 +20,7 @@ __meta__ = {
 - sky > 10"
 }
 level_type = 1
+level_goals_paths = [ NodePath("Pickables/PickableCash") ]
 
 [node name="BackColor" parent="Ground" index="0"]
 margin_top = -68248.0

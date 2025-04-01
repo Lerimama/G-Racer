@@ -73,7 +73,8 @@ func _set_levels_menu() -> void: # tole gre na starša
 	var all_levels: Array = Levs.training_levels.duplicate()
 	all_levels.append_array(Levs.racing_levels)
 	all_levels.append_array(Levs.battle_levels)
-	all_levels.append_array(Levs.missions)
+	all_levels.append_array(Levs.goal_levels)
+	all_levels.append_array(Levs.mission_levels)
 
 	for level in all_levels: # po vrsti v LEVELS enum
 #	for level_value in Pros.LEVELS.values(): # po vrsti v LEVELS enum

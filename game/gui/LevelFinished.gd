@@ -51,7 +51,7 @@ func set_level_finished(game: Game):
 	else:
 		level_record_label.hide()
 
-	score_table.set_scoretable(drivers_data, false)
+	score_table.set_scoretable(drivers_data, game.level_profile["rank_by"], false)
 
 	var background_fadein_transparency: float = 1
 

@@ -43,14 +43,14 @@ func set_hud(game: Game, drivers_on_start: Array):
 
 	level_profile = game.level_profile
 
-	if "rank_by" in level_profile and level_profile["rank_by"] == "TIME":
+	if level_profile["rank_by"] == Levs.RANK_BY.TIME:
 		game_timer.hunds_mode = true
 	else:
 		game_timer.hunds_mode = false
 
 	# game stats
 	game_timer.stop_timer()
-	game_timer.reset_timer(level_profile["level_time"])
+	game_timer.reset_timer(level_profile["level_time_limit"])
 	game_timer.get_parent().get_parent().show()
 	level_record_label.get_parent().get_parent().hide()
 	for section in sections_holder.get_children():
@@ -76,11 +76,11 @@ func set_hud(game: Game, drivers_on_start: Array):
 		var level_record_value: int = level_profile["level_record"][0]
 		var level_record_owner: String = level_profile["level_record"][1]
 		if not level_record_value == 0:
-			if level_profile["rank_by"] == "TIME":
+			if level_profile["rank_by"] == Levs.RANK_BY.TIME:
 				var level_record_clock_time: String = Mets.get_clock_time_string(level_record_value)
 				level_record_label.text = "RECORD TIME: " + level_record_clock_time + " by " + str(level_record_owner)
 				level_record_label.get_parent().get_parent().show()
-			elif level_profile["rank_by"] == "POINTS":
+			elif level_profile["rank_by"] == Levs.RANK_BY.POINTS:
 				level_record_label.text = "RECORD POINTS: " + str(level_record_value) + " by " + str(level_record_owner)
 				level_record_label.get_parent().get_parent().show()
 	else:
@@ -115,12 +115,10 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 	new_statbox.statbox_color = statbox_driver.driver_profile["driver_color"]
 
 	# statbox
-#	if statbox_driver.driver_stats[Pros.STAT.SCALPS] == 1 and not Sets.life_as_scalp:
-#		one_life_mode = true
-	var statbox_rank_type: String = ""
-	if "rank_by" in level_profile:
-		statbox_rank_type = level_profile["rank_by"]
-	new_statbox.set_statbox_stats(statbox_rank_type, level_profile["level_laps"], level_profile["level_goals"].size(), all_statboxes_count)
+#	var statbox_rank_type: int = 0
+#	if "rank_by" in level_profile:
+#	statbox_rank_type = level_profile["rank_by"]
+	new_statbox.set_statbox_stats(level_profile["rank_by"], level_profile["level_lap_count"], level_profile["level_goals"].size(), all_statboxes_count)
 	# statbox sam opredeli ali upošteva finish line
 
 	# levo / desno
@@ -217,7 +215,7 @@ func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
 
 		match stat_key:
 			Pros.STAT.SCALPS:
-				stat_to_change.stat_value = [stat_value, 3]
+				stat_to_change.stat_value = stat_value.size()
 			Pros.STAT.CASH:
 				stat_to_change.stat_value = stat_value
 			Pros.STAT.POINTS:
@@ -234,16 +232,16 @@ func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
 					# če so goali, je krog celoten progress bar
 					if not level_profile["level_goals"].empty():
 						# reset za naslednji krog, če ni bi zadnji
-						if stat_value.size() < level_profile["level_laps"]:
+						if stat_value.size() < level_profile["level_lap_count"]:
 							yield(get_tree().create_timer(time_still_time), "timeout")
 							statbox_to_change.LEVEL_PROGRESS.progress_unit = 0
 					# brez goalov ... so krogi in ni zadnji krog ... en krog je tick, level finish pa je celoten progress bar
-					elif level_profile["level_laps"] > 1 and stat_value.size() < level_profile["level_laps"]:
-						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
+					elif level_profile["level_lap_count"] > 1 and stat_value.size() < level_profile["level_lap_count"]:
+						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_lap_count"])
 					else: # brez lapsov, brez goalov
 						statbox_to_change.LEVEL_PROGRESS.progress_unit = 1
 				# lap counter
-				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
+				stat_to_change.stat_value = [stat_value.size(), level_profile["level_lap_count"]]
 			Pros.STAT.GOALS_REACHED:
 				# progress bar
 				if statbox_to_change.use_level_progress_bar:
@@ -253,7 +251,7 @@ func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
 					# BATTLE_GOAL ima finish_line disabled
 					# RACING_GOALS brez goalov ima samo finish line ... pedena ga LAP_COUNT stat
 					var adapted_max_count: float = level_profile["level_goals"].size()
-					if level_profile["rank_by"] == "TIME":
+					if level_profile["rank_by"] == Levs.RANK_BY.TIME:
 						adapted_max_count = level_profile["level_goals"].size() + 1
 					statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
 				# goal counter

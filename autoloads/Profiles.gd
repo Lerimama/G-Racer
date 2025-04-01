@@ -67,7 +67,7 @@ enum CAMPAIGN_STAT {
 
 var start_driver_stats: Dictionary = {
 	# driver
-	STAT.SCALPS: 0,
+	STAT.SCALPS: [], # imena skalpov ... array resetiraj ob aplikaciji
 	STAT.CASH: 0, # int
 	STAT.POINTS :0, # int
 	# vehicle
@@ -78,8 +78,8 @@ var start_driver_stats: Dictionary = {
 	STAT.LEVEL_RANK: 0, # -1 ... disq, 0 ... in game, 1+ ... finished ... po tem se ravna predvsem gui
 	STAT.LEVEL_FINISHED_TIME: 0,
 	STAT.BEST_LAP_TIME: 0,
-	STAT.LAP_COUNT: [], # lap time
-	STAT.GOALS_REACHED: [], # goal names
+	STAT.LAP_COUNT: [], # lap times ... array resetiraj ob aplikaciji
+	STAT.GOALS_REACHED: [], # goal names ... array resetiraj ob aplikaciji
 	STAT.LAP_TIME: 0,
 	}
 
@@ -88,16 +88,17 @@ var driver_tournament_stats: Dictionary = {
 	STAT.TOURNAMENT_POINTS: 0,
 	}
 
-# referenca
-var _game_drivers_data: Dictionary = {
-	#	"xavier": {
-	#		"driver_profile": {}
-	#		"driver_stats": {},
-	#		"torunament_stats": {},
-	#		"weapon_stats": {},
-	#		},
-	#	"john": ...
+var referenca_game_drivers_data: Dictionary = {
+	"xavier": {
+		"vehicle_profile": {},
+		"driver_profile": {},
+		"tournament_stats": {}, # med igro se ne spreminja
+		"driver_stats": {}, # delni reset na level
+		"weapon_stats": {}, # napolne se ob prvem levelu
+		},
+	"john": {}
 	}
+
 
 func __drivers(): pass # ------------------------------------------------------------
 

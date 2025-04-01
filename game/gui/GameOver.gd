@@ -6,7 +6,6 @@ var level_data: Dictionary = {}
 onready var background: ColorRect = $Background
 onready var score_table: VBoxContainer = $ScoreTable
 onready var title: Label = $Title
-onready var level_record_label: Label = $LevelRecord
 onready var restart_btn: Button = $Menu/RestartBtn
 
 
@@ -44,7 +43,7 @@ func set_summary(game: Game):
 			restart_btn.text = "NEXT LEVEL"
 			title.text = "TOURNAMENT SUMMARY"
 
-	score_table.set_scoretable(game.game_drivers_data, true)
+	score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], true)
 
 	var background_fadein_transparency: float = 1
 

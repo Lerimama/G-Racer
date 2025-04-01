@@ -27,7 +27,7 @@ margin_color = Color( 1, 1, 1, 0 )
 repeat = false
 
 [node name="PickableLauncher" instance=ExtResource( 4 )]
-pickable_key = 10
+pickable_key = 9
 picked_sound_stream = ExtResource( 3 )
 
 [node name="Icon" parent="." index="2"]

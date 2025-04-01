@@ -1,28 +1,27 @@
 extends Resource
 
+export var Illll_VEHICLE_TYPE_PROPS_Illll: String
+export (float, 0, 50, 0.5) var height: float = 10
+export (float, 5, 20, 0.5) var driving_elevation: float = 7
+export (float, -1, 0, 0.05) var gas_usage: float =  -0.1 # per HSP?
+export (float, -0.1, 0, 0.01) var gas_usage_idle: float = -0.05 # per HSP?
+export (float, 0, 0.5) var gas_tank_size: float = 200 # liters
+export (float, 0, 1, 0.1) var heal_rate: float = 0.5
+export (float, 0, 1, 0.1) var health_effect_factor: float = 1
+export (float, 0, 0.5) var on_hit_disabled_time: float = 2
+export var group_equipment_by_type: bool = true
 
+export var Illll_MOTION_PARAMS_Illll: String
 export (float, 10, 1000, 0.5) var start_max_engine_power: float = 500
 export (float, 10, 1000, 0.5) var masa: float = 100
 export (float, -50, 50, 0.5) var ai_power_equlizer_addon: float = -10
 export (float, 100, 300, 0.5) var fast_start_power_addon: float = 200 # rabi driver
 export (float, 1, 2, 0.05) var max_engine_power_rotation_adapt: float = 1.1
-
-export (float, 0, 50, 0.5) var height: float = 10
-export (float, 0, 100, 0.5) var driving_elevation: float =  7
-export (float, -1, 0, 0.05) var gas_usage: float =  -0.1 # per HSP?
-export (float, -0.1, 0, 0.01) var gas_usage_idle: float = -0.05 # per HSP?
-export (float, 0, 0.5) var on_hit_disabled_time: float = 2
-export (float, 0, 0.5) var gas_tank_size: float = 200 # liters
-
-# neu
-export var group_equipment_by_type: bool = true
-export (float, 0, 1, 0.1) var heal_rate: float = 0.5
-export (float, 0, 1, 0.1) var health_effect_factor: float = 1
-
 # kasneje se tudi seta glede na opremo
 export var front_mass_bias: float = 0.5
 export var mass_manipulate_part: float = 0.5
 
+#export var elevation: float = 0
 
 func _set_default_parameters(managed_vehicle: Vehicle):
 
@@ -86,6 +85,10 @@ func _set_motion_parameters(vehicle: Vehicle, new_motion: int):
 			motion_manager.MOTION.IDLE_RIGHT:
 				motion_manager.rotation_motion = motion_manager.selected_idle_rotation
 				vehicle.angular_damp = 3
+			motion_manager.MOTION.DISSABLED:
+				# kadar je na tleh, al pa mu igra ukaže
+				# driving ne deluje
+				vehicle.linear_damp = 3
 			motion_manager.MOTION.DISSARAY:
 				pass # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 

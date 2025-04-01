@@ -32,10 +32,11 @@ onready var game_sound: Node = $Sound
 var game_levels: Array = []
 var game_drivers_data: Dictionary = {
 	#	"xavier": {
+	#		"vehicle_profile": {}
 	#		"driver_profile": {}
-	#		"torunament_stats": {},
-	#		"driver_stats": {}, # med igro ju ni
-	#		"weapon_stats": {}, # med igro ju ni
+	#		"tournament_stats": {}, # med igro se ne spreminja
+	#		"driver_stats": {}, # delni reset na level
+	#		"weapon_stats": {}, # napolne se ob prvem levelu
 	#		},
 	#	"john": ...
 	}
@@ -71,8 +72,6 @@ func _ready() -> void:
 	call_deferred("set_game")
 
 
-
-
 func set_game(level_index_add: int = 0):
 	# čez set_game gre tudi next level
 
@@ -92,48 +91,45 @@ func set_game(level_index_add: int = 0):
 	var drivers_on_start: Array = []
 	var level_start_positions: Dictionary = {}
 
-	# PRVI LEVEL
+	# PRVI LEVEL ... postavim driverjev game data
 	if level_index == 0:
-
 		level_start_positions = game_level.level_start_positions
-
 		for new_driver_id in Pros.start_driver_profiles:
 			# driver data - prvi setup
 			game_drivers_data[new_driver_id] = {}
-#	new_vehicle.vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
 			var vehicle_type: int = Pros.start_driver_profiles[new_driver_id]["vehicle_type"]
 			game_drivers_data[new_driver_id]["vehicle_profile"] = Pros.vehicle_profiles[vehicle_type].duplicate()
 			game_drivers_data[new_driver_id]["driver_profile"] = Pros.start_driver_profiles[new_driver_id].duplicate()
-
-			game_drivers_data[new_driver_id]["weapon_stats"] = {}
-			game_drivers_data[new_driver_id]["tournament_stats"] = Pros.driver_tournament_stats.duplicate()
 			game_drivers_data[new_driver_id]["driver_stats"] = Pros.start_driver_stats.duplicate()
-			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.LAP_COUNT] = [] # reset za unique
+			game_drivers_data[new_driver_id]["tournament_stats"] = Pros.driver_tournament_stats.duplicate()
+			game_drivers_data[new_driver_id]["weapon_stats"] = {}
+			# unique arrays
+			game_drivers_data[new_driver_id]["tournament_stats"][Pros.STAT.TOURNAMENT_WINS] = []
+			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.LAP_COUNT] = []
 			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.GOALS_REACHED] = []
+			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.SCALPS] = []
 
 			# spawn + zapis driver data v driverja
 			var profile_index: int = Pros.start_driver_profiles.keys().find(new_driver_id)
 			var new_driver: Vehicle = _spawn_vehicle(new_driver_id, level_start_positions[profile_index])
 			drivers_on_start.append(new_driver)
+
 	# DRUGI LEVELI
 	else:
+		# filter disq drivers
 		var starting_driver_ids: Array = []
 		for driver_id in game_drivers_data:
 			if not game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK] == -1:
 				starting_driver_ids.append(driver_id)
-		level_start_positions = game_level.level_start_positions
-
 		# spawn + zapis driver data v driverja
+		level_start_positions = game_level.level_start_positions
 		for driver_id in starting_driver_ids:
 			var new_driver: Vehicle = _spawn_vehicle(driver_id, level_start_positions[starting_driver_ids.find(driver_id)])
 			drivers_on_start.append(new_driver)
-
 		# reset stats ... na start_driver_stats
 		for driver in drivers_on_start:
-			# level stats
 			for stat in game_drivers_data[driver.driver_id]["driver_stats"]:
-#				if stat in [Pros.STAT.LEVEL_PROGRESS, Pros.STAT.BEST_LAP_TIME, Pros.STAT.LAP_TIME, Pros.STAT.LAP_COUNT, Pros.STAT.LEVEL_FINISHED_TIME, Pros.STAT.LEVEL_RANK]:
-				if not stat in [Pros.STAT.HEALTH, Pros.STAT.GAS, Pros.STAT.CASH, Pros.STAT.TOURNAMENT_WINS, Pros.STAT.TOURNAMENT_POINTS]:
+				if not stat in [Pros.STAT.HEALTH, Pros.STAT.GAS, Pros.STAT.CASH]:
 					game_drivers_data[driver.driver_id]["driver_stats"][stat] = Pros.start_driver_stats[stat]
 
 	yield(get_tree(), "idle_frame")
@@ -261,7 +257,7 @@ func _spawn_level(new_level_index:int, drivers_count: int):
 		game_level.set_physics_process(false)
 		game_level.queue_free()
 
-	level_profile = game_levels[new_level_index]
+	level_profile = Levs.level_profiles[game_levels[new_level_index]]
 
 	# spawn
 	var level_spawn_parent: Node = game_views.get_child(0).get_node("Viewport") # VP node
@@ -301,7 +297,6 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 
 	var vehicle_type: int = game_drivers_data[driver_id]["driver_profile"]["vehicle_type"]
 	var NewVehicleInstance: PackedScene = Pros.vehicle_profiles[vehicle_type][scene_name]
-#	var NewVehicleInstance: PackedScene = Pros.vehicle_profiles[vehicle_type][scene_name]
 	var new_vehicle = NewVehicleInstance.instance()
 
 	new_vehicle.modulate.a = 0 # za intro
@@ -309,16 +304,10 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 	new_vehicle.global_rotation = spawn_rotation# - deg2rad(90) # ob rotaciji 0 je default je obrnjen navzgor
 
 	new_vehicle.driver_id = driver_id
-#	new_vehicle.vehicle_profile = Pros.vehicle_profiles[vehicle_type].duplicate()
-#	new_vehicle.driver_profile = Pros.start_driver_profiles[driver_id].duplicate()
-#	new_vehicle.rank_by = level_profile["rank_by"] # se ga napolnil ob spawnu levela
-
 	new_vehicle.vehicle_profile = game_drivers_data[driver_id]["vehicle_profile"].duplicate()
 	new_vehicle.driver_profile = game_drivers_data[driver_id]["driver_profile"].duplicate()
 	new_vehicle.driver_stats = game_drivers_data[driver_id]["driver_stats"].duplicate()
 	new_vehicle.weapon_stats = game_drivers_data[driver_id]["weapon_stats"].duplicate()
-
-	new_vehicle.connect("vehicle_deactivated", game_tracker, "_on_vehicle_deactivated")
 
 	Refs.node_creation_parent.add_child(new_vehicle)
 
@@ -329,9 +318,7 @@ func _spawn_vehicle(driver_id: String, start_position: Array):
 	if game_level.tracking_line.is_enabled:
 		new_vehicle.driver_tracker = game_level.tracking_line.spawn_new_tracker(new_vehicle)
 
-	# connect
-#	new_vehicle.connect("stat_changed", gui.hud, "_on_stat_changed")
-#	new_vehicle.connect("vehicle_deactivated", game_tracker, "_on_vehicle_deactivated")
+	new_vehicle.connect("vehicle_deactivated", game_tracker, "_on_vehicle_deactivated")
 
 	return new_vehicle
 

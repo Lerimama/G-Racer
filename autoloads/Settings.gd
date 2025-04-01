@@ -93,7 +93,7 @@ func _apply_debug_settings():
 
 #	game_levels = [Levs.GRAND_PRIX]
 #	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
-	game_levels = [Levs.TESTER, Levs.TESTER, Levs.TESTER]
+	game_levels = [Levs.LEVEL.TESTER, Levs.LEVEL.TESTER, Levs.LEVEL.TESTER]
 #	game_levels = [Levs.QUICKY]
 #	print("game_levels", game_levels)
 
@@ -130,7 +130,7 @@ func _apply_debug_settings():
 	var drivers_on_game_start: Array = ["JOU"]
 	drivers_on_game_start = [ "JOU", "MOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU"]
-	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
+#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]
 
 

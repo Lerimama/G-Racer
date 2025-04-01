@@ -7,7 +7,6 @@ signal reached_by
 enum PICKABLE{ # enako v profilih
 	RANDOM,
 	# stats
-	SCALPS,
 	HEALTH,
 	GOAL,
 	GAS,
@@ -33,7 +32,6 @@ onready var detect_area: CollisionShape2D = $CollisionShape2D
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var picked_sound: AudioStreamPlayer = $Sounds/Picked
 onready var collision_shape: CollisionShape2D = $CollisionShape2D
-onready var label: Label = $Label
 
 
 func _ready() -> void:

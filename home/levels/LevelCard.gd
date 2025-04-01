@@ -48,7 +48,7 @@ func _ready() -> void:
 
 	# btn state
 	if not level_profile.empty():
-		laps_btn.text = "LAPS: %02d" % level_profile["level_laps"]
+		laps_btn.text = "LAPS: %02d" % level_profile["level_lap_count"]
 	if mirror_mode:
 		mirror_btn.text = "MIRROR: ON"
 	else:
@@ -80,11 +80,11 @@ func _on_LevelBtn_focus_exited() -> void:
 
 func _on_LapsBtn_pressed() -> void:
 
-	level_profile["level_laps"] += 1
+	level_profile["level_lap_count"] += 1
 
-	if level_profile["level_laps"] > level_laps_limit:
-		level_profile["level_laps"] = 0
-	laps_btn.text = "LAPS: %02d" % level_profile["level_laps"]
+	if level_profile["level_lap_count"] > level_laps_limit:
+		level_profile["level_lap_count"] = 0
+	laps_btn.text = "LAPS: %02d" % level_profile["level_lap_count"]
 
 
 func _on_MirrorBtn_pressed() -> void:
