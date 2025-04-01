@@ -70,15 +70,40 @@ func set_driver_huds(game: Game, drivers_on_start: Array, mono_view_mode: bool):
 	# aplciram game_views dimezije na imitatorja
 	_set_imitators_size(views_with_drivers)
 
+	for driver in drivers_on_start:
+		var driver_hud: Control = driver_ids_with_driver_huds[driver.driver_id]
+		if not driver.is_connected("stat_changed", self, "_on_stat_changed"):
+			driver.connect("stat_changed", self, "_on_stat_changed")
 
-func unset_driver_hud(huds_driver_id: String):
-#	return
-	for imitator in view_imitators_with_driver_ids:
-		if huds_driver_id == view_imitators_with_driver_ids[imitator]:
-			for child in imitator.get_children():
-				if "is_set" in child:
-					child.is_set = false
-					child.hide()
+
+func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
+	# stat value je že preračunana, končna vrednost
+
+	if driver_id in driver_ids_with_driver_huds: # zazih
+
+		var driver_hud_to_change: Control = driver_ids_with_driver_huds[driver_id]
+
+		match stat_key:
+			Pros.STAT.GAS:
+				driver_hud_to_change.stat_gas = stat_value
+			Pros.STAT.HEALTH:
+				driver_hud_to_change.stat_health = stat_value
+			Pros.STAT.BEST_LAP_TIME: # skupaj sta ker se zgodita na isti dogodek
+				if stat_value > 0:
+					var lap_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
+					driver_hud_to_change.display_hud_message(["PERSONAL BEST"], 0, Refs.color_green)
+			Pros.STAT.LEVEL_FINISHED_TIME: # on level finish
+				if stat_value > 0:
+					var level_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
+					driver_hud_to_change.call_deferred("display_hud_message", ["LT " + level_clock_time])
+			Pros.STAT.LAP_COUNT: # tudi na hudu
+				# driver hud - lap time
+				if not stat_value.empty():
+					var lap_clock_time: String = Mets.get_clock_time_string(stat_value.back()) # array so časi vseh krogov
+					# deffered, da je za morebitnim "BEST LAP KLICEM"
+					driver_hud_to_change.call_deferred("display_hud_message", [lap_clock_time])
+			_: pass # ostale so na hudu
+
 
 
 func remove_view_imitator(game_views: Dictionary): # GM na activity change ... ne uporabljam

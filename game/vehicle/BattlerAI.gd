@@ -178,7 +178,7 @@ func _get_target_rank(unranked_target: Node2D):
 				targets_rank = 5
 			Pros.PICKABLE.GUN, Pros.PICKABLE.LAUNCHER, Pros.PICKABLE.DROPPER:
 				targets_rank = 0
-			Pros.PICKABLE.HEALTH, Pros.PICKABLE.LIFE, Pros.PICKABLE.GAS:
+			Pros.PICKABLE.HEALTH, Pros.PICKABLE.SCALPS, Pros.PICKABLE.GAS:
 				targets_rank = 3
 			Pros.PICKABLE.NITRO, Pros.PICKABLE.RANDOM, Pros.LEVEL_OBJECT.GOAL_PILLAR:
 				targets_rank = 2

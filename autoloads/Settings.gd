@@ -51,7 +51,7 @@ var countdown_start_time: int = 3
 var pickables_count_limit: int = 5
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
-var life_as_scalp: bool = true
+var life_counts: bool = true
 var level_cash_rewards: Array = [5000, 3000, 1000, 500]
 var level_points_rewards: Array = [25, 20, 15, 10, 8, 5, 4, 3, 2, 1]
 
@@ -95,7 +95,7 @@ func _apply_debug_settings():
 #	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
 	game_levels = [Levs.TESTER, Levs.TESTER, Levs.TESTER]
 #	game_levels = [Levs.QUICKY]
-	print("game_levels", game_levels)
+#	print("game_levels", game_levels)
 
 	camera_zoom_range = Vector2(2, 2.3)
 	camera_zoom_range *= 1.1 # 2 plejers > 3
@@ -147,7 +147,7 @@ func _apply_debug_settings():
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_red
 			Pros.start_driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
-			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
+#			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 		elif drivers_on_game_start.find(driver_id) == 2:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
 			Pros.start_driver_profiles[driver_id]["controller_type"] = -1

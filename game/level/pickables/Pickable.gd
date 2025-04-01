@@ -7,7 +7,7 @@ signal reached_by
 enum PICKABLE{ # enako v profilih
 	RANDOM,
 	# stats
-	LIFE,
+	SCALPS,
 	HEALTH,
 	GOAL,
 	GAS,

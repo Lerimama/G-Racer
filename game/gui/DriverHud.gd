@@ -64,6 +64,22 @@ func _process(delta: float) -> void:
 					show()
 
 
+func _update_hud_position():
+
+	# globalna pozicija
+	rect_position = drivers_viewport.canvas_transform * hud_driver.global_position
+
+	# adaptacija na zoom
+	var offset_y: float = 200
+	rect_position.y += offset_y / drivers_viewport.get_node("GameCamera").zoom.y# + 50
+
+	# hor poravnava
+	if driver_is_ai: # na širino driver huda
+		rect_position.x -= rect_size.x/2
+	else: # na širino selectorja
+		rect_position.x -= selector.rect_size.x/2
+
+
 func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool = false):
 
 	hud_driver = driver_node
@@ -119,23 +135,8 @@ func display_hud_message(messages: Array, tag_time: int = 2, message_color: Colo
 			message_label.queue_free()
 
 
-func _update_hud_position():
 
-	# globalna pozicija
-	rect_position = drivers_viewport.canvas_transform * hud_driver.global_position
-
-	# adaptacija na zoom
-	var offset_y: float = 200
-	rect_position.y += offset_y / drivers_viewport.get_node("GameCamera").zoom.y# + 50
-
-	# hor poravnava
-	if driver_is_ai: # na širino driver huda
-		rect_position.x -= rect_size.x/2
-	else: # na širino selectorja
-		rect_position.x -= selector.rect_size.x/2
-
-
-# BARS ---------------------------------------------------------------------------------------
+# STATS ---------------------------------------------------------------------------------------
 
 
 func _change_stat_health(new_health: float):
@@ -159,7 +160,8 @@ func _change_stat_gas(new_gas: float):
 		else:
 			gas_bar_line.color = Refs.color_yellow
 
-# ITEM COUNTER ---------------------------------------------------------------------------------------
+
+# ITEMS ---------------------------------------------------------------------------------------
 
 
 func _add_item_counter(new_item: Node2D):

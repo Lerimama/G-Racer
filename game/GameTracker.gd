@@ -4,7 +4,6 @@ var game: Game # poda GM na ready
 var game_level: Level
 
 # drivers
-var drivers_in_game: Array # all valid and activated ki jih trackam, all ranked, tud non-actve
 var camera_leader: Node2D = null
 var drivers_finished: Array # driverji v cilju, predvsem za določanje ranka v cilju (ki ni isti kot med tekmo
 
@@ -20,22 +19,15 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 
-	# beleženje prisotnosti
-	drivers_in_game = []
-	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
-		if is_instance_valid(driver) and driver.is_active and not driver.is_queued_for_deletion():
-			drivers_in_game.append(driver)
-
 	# ranking
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 
-		if drivers_in_game.size() > 1 and "rank_by" in game.level_profile:
-			_update_ranking()
+		var ranked_drivers: Array = _update_ranking()
 
 		# camera leader
 		if Sets.mono_view_mode:
 			var new_camera_leader: Node2D = null
-			for driver in drivers_in_game:
+			for driver in ranked_drivers:
 				if driver.is_in_group(Refs.group_players):
 					new_camera_leader = driver
 					break
@@ -46,7 +38,8 @@ func _process(delta: float) -> void:
 		# per frame RACING stats
 		if "rank_by" in game.level_profile and game.level_profile["rank_by"] == "TIME":
 #		if game.level_profile["rank_by"] == "TIME":
-			for driver in drivers_in_game:
+			for driver in ranked_drivers:
+				if is_instance_valid(driver): # kvejd for deletion je tukaj preveč selektiven
 #				if driver.is_active and not driver in drivers_finished: # neha pošiljati, ko prevozi cilj
 					driver.update_stat(Pros.STAT.LAP_TIME, game.gui.hud.game_timer.game_time_hunds)
 					if game_level.tracking_line.is_enabled:
@@ -57,7 +50,7 @@ func _update_ranking():
 	# najprej po poziciji znotraj kroga, potem po številu krogov
 	# če v slovarju ni "rank_by", se funkcija ne kliče
 
-	var unranked_drivers: Array = drivers_in_game.duplicate()
+	var unranked_drivers: Array = get_tree().get_nodes_in_group(Refs.group_drivers)
 	var drivers_ranked: Array = []
 
 	if game.level_profile["rank_by"] == "TIME":
@@ -94,8 +87,7 @@ func _update_ranking():
 		if ranked_driver.is_in_group(Refs.group_players):
 			players_ranked.append(ranked_driver)
 
-	# drivers in game
-	drivers_in_game = drivers_ranked
+	return drivers_ranked
 
 
 func _check_for_level_finished():
@@ -108,7 +100,7 @@ func _check_for_level_finished():
 		# preverim, če kakšen plejer še dirka
 		var is_level_finished: bool = true
 		for player in get_tree().get_nodes_in_group(Refs.group_players):
-			if player.is_active: # drivers_in_game je tu prepočasen
+			if player.is_active:
 				is_level_finished = false
 				break
 
@@ -228,7 +220,7 @@ func apply_slomo(affector: Node2D, affectee: Node2D ):
 func _on_game_time_is_up():
 
 	# če je potekel čas je verjetno še kdo v igri
-	for driver in drivers_in_game:
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		driver.is_active = false
 
 	_check_for_level_finished()
@@ -336,9 +328,8 @@ func _on_goal_exiting_tree(exiting_goal: Node2D):
 
 	#	prints("goal exit", exiting_goal)
 	game_level.level_goals.erase(exiting_goal)
-	for driver in drivers_in_game:
-		if driver.is_in_group(Refs.group_ai):
-			driver.controller.goals_to_reach.erase(exiting_goal)
+	for ai_driver in get_tree().get_nodes_in_group(Refs.group_ai):
+		ai_driver.controller.goals_to_reach.erase(exiting_goal)
 	#	prints("level goals after", game_level.level_goals)
 
 
@@ -349,7 +340,7 @@ func _on_player_exited_playing_field(player_vehicle: Node) -> void:
 
 
 func _on_vehicle_deactivated(driver_vehicle: Vehicle):
-#	printt("deactivated", driver_vehicle, drivers_in_game.has(driver_vehicle))
+#	printt("deactivated", driver_vehicle)
 
 	# finale data za vse ki so še v igri
 	if driver_vehicle in drivers_finished:
@@ -358,23 +349,18 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	else:
 		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
 
-	print("deact")
-	print(driver_vehicle.driver_id)
-	print(game.game_drivers_data[driver_vehicle.driver_id])
+	game.game_drivers_data[driver_vehicle.driver_id]["vehicle_profile"] = driver_vehicle.vehicle_profile.duplicate()
 	game.game_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 	game.game_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
+
 	# hide view
-#	game.gui.hud.get_parent().driver_huds.unset_driver_hud(driver_vehicle.driver_id)
+	#	game.gui.hud.get_parent().driver_huds.unset_driver_hud(driver_vehicle.driver_id)
 
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 		_check_for_level_finished()
 	elif game.game_stage >= game.GAME_STAGE.FINISHED_FAIL:
 		game.gui.call_deferred("_on_waiting_driver_finished", driver_vehicle.driver_id)
 
-
-	print()
-	print(game.game_drivers_data[driver_vehicle.driver_id])
-	print()
 
 # SORTERS ------------------------------------------------------------------------------------------------------------
 

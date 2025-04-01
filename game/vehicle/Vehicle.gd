@@ -18,7 +18,7 @@ var driver_id
 var driver_profile: Dictionary
 var driver_stats: Dictionary
 var weapon_stats: Dictionary
-var def_vehicle_profile: Dictionary
+var vehicle_profile: Dictionary
 var vehicle_camera: Camera2D # spawner
 
 # iz vehicle profila
@@ -91,7 +91,7 @@ func _input(event: InputEvent) -> void:
 			print("after", body_state.get_angular_velocity())
 
 	if Input.is_action_pressed("no2"): # race
-#		update_stat(Pros.STAT.LIFE, 3)
+#		update_stat(Pros.STAT.SCALPS, 3)
 		if driver_id == "JOU":
 			update_stat(Pros.STAT.HEALTH, -0.1)
 #
@@ -121,7 +121,7 @@ func _ready() -> void:
 		vehicle_color = driver_profile["driver_color"] # driver barva ...
 
 	_load_vehicle_parameters()
-	motion_manager.set_script(def_vehicle_profile["motion_manager_path"])
+	motion_manager.set_script(vehicle_profile["motion_manager_path"])
 	_spawn_driver_controller()
 	_set_equipment()
 
@@ -167,6 +167,28 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void: # get state in 
 
 func _die(only_dissable: bool = false):
 
+	# bencin = 0
+	if only_dissable:
+		# samo ugasnem ... change activity kliče turn off
+		self.is_active = false
+	# health = 0
+	else:
+		collision_shape.set_deferred("disabled", true)
+		_explode()
+		if Sets.life_counts:
+			self.is_active = false
+			queue_free()
+		else:
+			turn_off()
+#			controller.set_process_input(false)
+			call_deferred("set_physics_process", false)
+			call_deferred("set_process", false)
+			yield(get_tree().create_timer(revive_time), "timeout")
+			_revive()
+
+
+func _die_old(only_dissable: bool = false):
+
 	if only_dissable:
 		self.is_active = false
 	else:
@@ -177,18 +199,17 @@ func _die(only_dissable: bool = false):
 			self.is_active = false
 			queue_free()
 		else:
-			# no life count
-			if Sets.life_as_scalp or driver_stats[Pros.STAT.LIFE] == -1: # -1 pomeni, da se ne šteje
+			if Sets.life_as_scalp or driver_stats[Pros.STAT.SCALPS] == -1: # -1 pomeni, da se ne šteje
 				turn_off()
 #				controller.set_process_input(false)
 				call_deferred("set_physics_process", false)
 				call_deferred("set_process", false)
 				yield(get_tree().create_timer(revive_time), "timeout")
 				_revive()
-			# life counts
 			else:
-				update_stat(Pros.STAT.LIFE, - 1)
-				if driver_stats[Pros.STAT.LIFE] > 0: # life je array current/max
+			# life counts
+				update_stat(Pros.STAT.SCALPS, - 1)
+				if driver_stats[Pros.STAT.SCALPS] > 0: # life je array current/max
 					turn_off()
 					controller.set_process_input(false)
 					call_deferred("set_physics_process", false)
@@ -327,14 +348,14 @@ func _save_vehicle_parameters(): # vsebinski, ne fizični
 		vehicle_motion_profile.fast_start_power_addon = motion_manager.fast_start_power_addon
 		vehicle_motion_profile.max_engine_power_rotation_adapt = motion_manager.max_engine_power_rotation_adapt
 	else:
-		def_vehicle_profile["health_effect_factor"] = health_effect_factor
-		def_vehicle_profile["heal_rate"] = heal_rate
-		def_vehicle_profile["on_hit_disabled_time"] = on_hit_disabled_time
-		def_vehicle_profile["height"] = height
-		def_vehicle_profile["driving_elevation"] = driving_elevation
-		def_vehicle_profile["gas_tank_size"] = gas_tank_size
-		def_vehicle_profile["gas_usage"] = gas_usage
-		def_vehicle_profile["gas_usage_idle"] = gas_usage_idle
+		vehicle_profile["health_effect_factor"] = health_effect_factor
+		vehicle_profile["heal_rate"] = heal_rate
+		vehicle_profile["on_hit_disabled_time"] = on_hit_disabled_time
+		vehicle_profile["height"] = height
+		vehicle_profile["driving_elevation"] = driving_elevation
+		vehicle_profile["gas_tank_size"] = gas_tank_size
+		vehicle_profile["gas_usage"] = gas_usage
+		vehicle_profile["gas_usage_idle"] = gas_usage_idle
 
 
 func _load_vehicle_parameters(): # vsebinski, ne fizični
@@ -349,14 +370,14 @@ func _load_vehicle_parameters(): # vsebinski, ne fizični
 		gas_usage = vehicle_motion_profile.gas_usage
 		gas_usage_idle = vehicle_motion_profile.gas_usage_idle
 	else:
-		health_effect_factor = def_vehicle_profile["health_effect_factor"]
-		heal_rate = def_vehicle_profile["heal_rate"]
-		on_hit_disabled_time = def_vehicle_profile["on_hit_disabled_time"]
-		height = def_vehicle_profile["height"]
-		driving_elevation = def_vehicle_profile["driving_elevation"]
-		gas_tank_size = def_vehicle_profile["gas_tank_size"]
-		gas_usage = def_vehicle_profile["gas_usage"]
-		gas_usage_idle = def_vehicle_profile["gas_usage_idle"]
+		health_effect_factor = vehicle_profile["health_effect_factor"]
+		heal_rate = vehicle_profile["heal_rate"]
+		on_hit_disabled_time = vehicle_profile["on_hit_disabled_time"]
+		height = vehicle_profile["height"]
+		driving_elevation = vehicle_profile["driving_elevation"]
+		gas_tank_size = vehicle_profile["gas_tank_size"]
+		gas_usage = vehicle_profile["gas_usage"]
+		gas_usage_idle = vehicle_profile["gas_usage_idle"]
 
 
 func _spawn_driver_controller():
@@ -406,7 +427,7 @@ func update_stat(stat_key: int, stat_value):
 				if driver_stats[Pros.STAT.HEALTH] == 0:
 					_die()
 			# driver
-			Pros.STAT.LIFE:
+			Pros.STAT.SCALPS:
 				driver_stats[stat_key] += stat_value
 			Pros.STAT.GOALS_REACHED: # goal nodes names or duplicate?
 				driver_stats[stat_key].append(stat_value)
@@ -456,11 +477,11 @@ func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 		if vehicle_camera:
 			vehicle_camera.shake_camera(hit_by)
 
-		if Sets.life_as_scalp and driver_stats[Pros.STAT.HEALTH] <= 0:
-			if "weapon_owner" in hit_by:
-				hit_by.weapon_owner.update_stat(Pros.STAT.LIFE, 1)
-			else: # ne sme prit do tega not gud
-				hit_by.update_stat(Pros.STAT.LIFE, 1)
+#		if Sets.life_as_scalp and driver_stats[Pros.STAT.HEALTH] <= 0:
+#			if "weapon_owner" in hit_by:
+#				hit_by.weapon_owner.update_stat(Pros.STAT.SCALPS, 1)
+#			else: # ne sme prit do tega not gud
+#				hit_by.update_stat(Pros.STAT.SCALPS, 1)
 
 
 	if driver_profile["controller_type"] == -1:

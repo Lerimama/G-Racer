@@ -22,15 +22,19 @@ func _ready() -> void:
 
 func set_gui(drivers_on_start: Array):
 
-	hud.set_hud(game, drivers_on_start)
 	waiting_drivers_finished = 0
 
+	# hud
+	hud.set_hud(game, drivers_on_start)
+	driver_huds.set_driver_huds(game, drivers_on_start, Sets.mono_view_mode)
+
+	# če je omejen čas, povežem s timerjem
 	if game.level_profile["level_time"] > 0:
 		if not hud.game_timer.is_connected("time_is_up", game.game_tracker, "_on_game_time_is_up"):
 			hud.game_timer.connect("time_is_up", game.game_tracker, "_on_game_time_is_up")
-	driver_huds.set_driver_huds(game, drivers_on_start, Sets.mono_view_mode)
 
-	hud.update_all_stats_display()
+#	driver_huds.set_driver_huds(game, drivers_on_start, Sets.mono_view_mode)
+	_update_all_stats_display()
 
 	# fejdin
 	var fade_tween = get_tree().create_tween()
@@ -50,25 +54,28 @@ func on_level_finished():
 #	get_viewport().set_disable_input(true)
 
 	# če je konec, ustavim čas ... moram pred ostalo kodo, da je natančno
-	if game.game_tracker.drivers_in_game.empty():
+	var turn_off: = true
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
+		if driver.is_active:
+			turn_off = false
+	if turn_off == true:
 		hud.game_timer.stop_timer()
 
-	print("drivers data")
-	print("")
+	#	print("drivers data")
+	#	print("")
 	# zapišem skor za nečakajoče
 	for driver_id in game.game_drivers_data:
 		var driver_rank: int = game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK]
 		if driver_rank > 0: # 0 ... še vozi, -1 ... disq
 			_reward_driver_for_level(game.game_drivers_data[driver_id])
-		print(driver_id)
-		print(game.game_drivers_data[driver_id])
-		print("")
+	#		print(driver_id)
+	#		print(game.game_drivers_data[driver_id])
+	#		print("")
 
 	level_finished.set_level_finished(game)
 
 	#	yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 
-	# pseudo fejdout
 	game_cover.show()
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(game_cover, "modulate:a", 0.5, 0.7).from(0.0)
@@ -84,30 +91,15 @@ func on_level_finished():
 	game.game_sound.menu_music.play()
 
 
-func _reward_driver_for_level(driver_data: Dictionary):
-
-	var driver_final_rank: int = driver_data["driver_stats"][Pros.STAT.LEVEL_RANK]
-
-	# win
-	if driver_final_rank == 1:
-		driver_data["tournament_stats"][Pros.STAT.TOURNAMENT_WINS].append(game.level_index)
-		# ček for rekord reward?
-
-	# cash
-	if not driver_final_rank > Sets.level_cash_rewards.size():
-		driver_data["driver_stats"][Pros.STAT.CASH] += Sets.level_cash_rewards[driver_final_rank - 1]
-	# points
-	if not driver_final_rank > Sets.level_cash_rewards.size():
-		driver_data["tournament_stats"][Pros.STAT.TOURNAMENT_POINTS] += Sets.level_points_rewards[driver_final_rank - 1]
-
-
 func open_game_summary():
 
 	# če niso vsi tekmovalci v cilju (igra še teče)
-	if not game.game_tracker.drivers_in_game.empty():
-		deactivating_unfinished_drivers = true
-		for driver in game.game_tracker.drivers_in_game:
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
+		if driver.is_active:
+			deactivating_unfinished_drivers = true # more bit pred deaktivacijo
 			driver.is_active = false
+
+	if deactivating_unfinished_drivers:
 		hud.game_timer.stop_timer()
 		yield(get_tree(), "idle_frame") # zazih
 		var final_level_data: Dictionary = game.game_drivers_data.duplicate()
@@ -115,7 +107,6 @@ func open_game_summary():
 		yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 		deactivating_unfinished_drivers = false
 
-	#	hud.hide() ... itak ga pokrije cover
 	game_summary.set_summary(game)
 
 	get_tree().set_pause(true) # proces, fp, input
@@ -154,6 +145,38 @@ func close_game(transition_to: int):
 		1:
 			get_tree().set_pause(false)
 			game.set_game(1)
+
+
+
+func _reward_driver_for_level(driver_data: Dictionary):
+
+	var driver_final_rank: int = driver_data["driver_stats"][Pros.STAT.LEVEL_RANK]
+
+	# win
+	if driver_final_rank == 1:
+		driver_data["tournament_stats"][Pros.STAT.TOURNAMENT_WINS].append(game.level_index)
+		# ček for rekord reward?
+
+	# cash
+	if not driver_final_rank > Sets.level_cash_rewards.size():
+		driver_data["driver_stats"][Pros.STAT.CASH] += Sets.level_cash_rewards[driver_final_rank - 1]
+	# points
+	if not driver_final_rank > Sets.level_cash_rewards.size():
+		driver_data["tournament_stats"][Pros.STAT.TOURNAMENT_POINTS] += Sets.level_points_rewards[driver_final_rank - 1]
+
+
+func _update_all_stats_display():
+
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
+		# hud
+		if driver.driver_id in hud.statboxes_with_driver_ids.values(): # ai nima svojga statboxa
+			for stat in driver.driver_stats:
+				hud._on_stat_changed(driver.driver_id, stat, driver.driver_stats[stat])
+		# driver huds
+		if driver.driver_id in driver_huds.driver_ids_with_driver_huds:
+			var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver.driver_id]
+			for stat in driver.driver_stats:
+				driver_huds._on_stat_changed(driver.driver_id, stat, driver.driver_stats[stat])
 
 
 func _on_waiting_driver_finished(driver_id: String):

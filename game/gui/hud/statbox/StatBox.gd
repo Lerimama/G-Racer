@@ -11,7 +11,7 @@ onready var driver_name_label: Label = $DriverId/BoxContainer/Name
 onready var driver_avatar: TextureRect = $DriverId/BoxContainer/Avatar
 
 # driver
-onready var LIFE: HBoxContainer = find_node("StatLife")
+onready var SCALPS: HBoxContainer = find_node("StatLife")
 onready var WINS: HBoxContainer = find_node("StatWins")
 onready var CASH: HBoxContainer = find_node("StatCash")
 onready var POINTS: HBoxContainer = find_node("StatPoints")
@@ -34,7 +34,7 @@ onready var LAP_TIME: HBoxContainer = find_node("StatLapTime")
 #onready var GAS: HBoxContainer = find_node("StatGas")
 
 onready var rank_by_points_stats: Array = [CASH, LEVEL_RANK, GOALS_REACHED,
-	LIFE,
+	SCALPS,
 	POINTS,
 	]
 onready var rank_by_time_stat: Array = [CASH, LEVEL_RANK, GOALS_REACHED,
@@ -53,7 +53,7 @@ func _ready() -> void:
 	pass
 
 
-func set_statbox_stats(rank_by: String, lap_count: int, goal_count: int, players_count: int, one_life_mode: bool): # kliče HUD
+func set_statbox_stats(rank_by: String, lap_count: int, goal_count: int, players_count: int): # kliče HUD
 
 	# reset
 	for stat_holder in get_children():
@@ -88,11 +88,11 @@ func set_statbox_stats(rank_by: String, lap_count: int, goal_count: int, players
 		else:
 			LEVEL_RANK.hide()
 	# en lajf ... ne kaže lajfa
-	if one_life_mode:
-		if get_node("Life") in get_children():
-			get_node("Life").hide()
-		else:
-			LIFE.hide()
+#	if one_life_mode:
+#		if get_node("Life") in get_children():
+#			get_node("Life").hide()
+#		else:
+#			SCALPS.hide()
 
 	# progress bar
 	var level_progress_container: MarginContainer = LEVEL_PROGRESS.get_parent().get_parent()

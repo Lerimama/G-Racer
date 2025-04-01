@@ -89,19 +89,10 @@ func set_hud(game: Game, drivers_on_start: Array):
 	# level name
 	level_name_label.text = level_profile["level_name"]
 
-
-func update_all_stats_display():
-#	return
-	# driver stats
-	for statbox in statboxes_with_driver_ids:
-		var statbox_driver: Vehicle
-		for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
-			if driver.driver_id == statboxes_with_driver_ids[statbox]:
-				statbox_driver = driver
-				break
-		if statbox_driver:
-			for stat in statbox_driver.driver_stats:
-				_on_driver_stat_changed(statboxes_with_driver_ids[statbox], stat, statbox_driver.driver_stats[stat])
+	# driver stats display
+	for driver in drivers_on_start:
+		if not driver.is_connected("stat_changed", self, "_on_stat_changed"):
+			driver.connect("stat_changed", self, "_on_stat_changed")
 
 
 func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statboxes_count: int):
@@ -124,19 +115,13 @@ func _set_driver_statbox(statbox_driver: Vehicle, statbox_index: int, all_statbo
 	new_statbox.statbox_color = statbox_driver.driver_profile["driver_color"]
 
 	# statbox
-	var one_life_mode: bool = false
-	if statbox_driver.driver_stats[Pros.STAT.LIFE] == 1 and not Sets.life_as_scalp:
-		one_life_mode = true
+#	if statbox_driver.driver_stats[Pros.STAT.SCALPS] == 1 and not Sets.life_as_scalp:
+#		one_life_mode = true
 	var statbox_rank_type: String = ""
 	if "rank_by" in level_profile:
 		statbox_rank_type = level_profile["rank_by"]
-	new_statbox.set_statbox_stats( \
-		statbox_rank_type,
-		level_profile["level_laps"],
-		level_profile["level_goals"].size(), # statbox sam opredeli ali upošteva finish line
-		all_statboxes_count,
-		one_life_mode
-		)
+	new_statbox.set_statbox_stats(statbox_rank_type, level_profile["level_laps"], level_profile["level_goals"].size(), all_statboxes_count)
+	# statbox sam opredeli ali upošteva finish line
 
 	# levo / desno
 	if statbox_index % 2 == 0:
@@ -198,11 +183,17 @@ func _get_statbox_by_type(statbox_index: int, all_statboxes_count: int):
 			return StatBox_Minimal
 
 
-func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
-
+func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
 	# stat value je že preračunana, končna vrednost
 	# tukaj se opredeli obliko zapisa
 
+	# opredelim statbox
+	var statbox_to_change: Control
+	if driver_id in statboxes_with_driver_ids.values():
+		var statbox: Control = statboxes_with_driver_ids.find_key(driver_id)
+		statbox_to_change = statbox
+
+	# ai record
 	if "level_record" in level_profile and Pros.start_driver_profiles[driver_id]["controller_type"] == -1 and Sets.ai_gets_record:
 		if stat_key == Pros.STAT.BEST_LAP_TIME and not stat_value == 0:
 			var level_record_value = level_profile["level_record"][0]
@@ -215,107 +206,63 @@ func _on_driver_stat_changed(driver_id: String, stat_key: int, stat_value):
 				level_record_label.modulate = Refs.color_green
 				yield(get_tree().create_timer(time_still_time), "timeout")
 				level_record_label.modulate = Refs.color_hud_text
-	else:
-		# opredelim statbox
-		var statbox_to_change: Control
-		if driver_id in statboxes_with_driver_ids.values():
-			var statbox: Control = statboxes_with_driver_ids.find_key(driver_id)
-			if statbox != null: # find key lahko vrne null
-				statbox_to_change = statbox
 
-#		if not statbox_to_change: # ai ga nima, statistiko pa vseeno pošilja
-#			return
+	# statbox owners ... players
+	elif statbox_to_change:
 
 		# stat_to_change ... STAT key string
 		var current_key_index: int = Pros.STAT.values().find(stat_key)
 		var current_key: String = Pros.STAT.keys()[current_key_index]
-
-		var stat_to_change: Control = null # _temp rešitev kako ma ai hud statistiko
-		if statbox_to_change:
-			stat_to_change = statbox_to_change.get(current_key)
+		var stat_to_change: Control = statbox_to_change.get(current_key)
 
 		match stat_key:
-			# driver
-			Pros.STAT.LIFE:
-				if stat_to_change:
-					stat_to_change.stat_value = [stat_value, 3]
+			Pros.STAT.SCALPS:
+				stat_to_change.stat_value = [stat_value, 3]
 			Pros.STAT.CASH:
-				if stat_to_change:
-					stat_to_change.stat_value = stat_value
-			Pros.STAT.POINTS: # default
-				if stat_to_change:
-					stat_to_change.stat_value = stat_value
-			# na driver hud
-			Pros.STAT.GAS:
-				driver_huds.driver_ids_with_driver_huds[driver_id].stat_gas = stat_value
-			Pros.STAT.HEALTH:
-				driver_huds.driver_ids_with_driver_huds[driver_id].stat_health = stat_value
-			Pros.STAT.BEST_LAP_TIME: # skupaj sta ker se zgodita na isti dogodek
-				# LAP_COUNT ... array časov,
-				# BEST_LAP_TIME ... čas
-				if stat_value == 0:
-					pass
-				else:
-					var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver_id]
-					var lap_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
-					driver_hud.display_hud_message(["PERSONAL BEST"], 0, Refs.color_green)
-			Pros.STAT.LEVEL_FINISHED_TIME: # on level finish
-				if stat_value > 0:
-					var level_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
-					var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver_id]
-					driver_hud.call_deferred("display_hud_message", ["LT " + level_clock_time])
-			# level
+				stat_to_change.stat_value = stat_value
+			Pros.STAT.POINTS:
+				stat_to_change.stat_value = stat_value
 			Pros.STAT.LEVEL_PROGRESS:
-				if stat_to_change:
-
-					stat_to_change.progress_unit = stat_value
+				stat_to_change.progress_unit = stat_value
 			Pros.STAT.LEVEL_RANK:
-				if stat_to_change:
-					stat_to_change.stat_value = stat_value
+				stat_to_change.stat_value = stat_value
 			Pros.STAT.LAP_TIME: # za uro med krogom ... vsak frejm
-				if stat_to_change:
-					stat_to_change.stat_value = stat_value
-			Pros.STAT.LAP_COUNT: # skupaj sta ker se zgodita na isti dogodek
-				if stat_to_change:
-					# progress bar ... za kroge je opazen samo, če ni "tracking progress per frame "
-					if statbox_to_change.use_level_progress_bar:
-						# če so goali, je krog celoten progress bar
-						if not level_profile["level_goals"].empty():
-							# reset za naslednji krog, če ni bi zadnji
-							if stat_value.size() < level_profile["level_laps"]:
-								yield(get_tree().create_timer(time_still_time), "timeout")
-								statbox_to_change.LEVEL_PROGRESS.progress_unit = 0
-						# brez goalov ... so krogi in ni zadnji krog ... en krog je tick, level finish pa je celoten progress bar
-						elif level_profile["level_laps"] > 1 and stat_value.size() < level_profile["level_laps"]:
-							statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
-						else: # brez lapsov, brez goalov
-							statbox_to_change.LEVEL_PROGRESS.progress_unit = 1
-					# lap counter
-					stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
-					# driver hud - lap time
-					if not stat_value.empty():
-						var driver_hud: Control = driver_huds.driver_ids_with_driver_huds[driver_id]
-						var lap_clock_time: String = Mets.get_clock_time_string(stat_value.back()) # array so časi vseh krogov
-						driver_hud.call_deferred("display_hud_message", [lap_clock_time]) # deffered, da je za morebitnim "BEST"
+				stat_to_change.stat_value = stat_value
+			Pros.STAT.LAP_COUNT: # tudi na driver hud za lap time
+				# progress bar ... za kroge je opazen samo, če ni "tracking progress per frame "
+				if statbox_to_change.use_level_progress_bar:
+					# če so goali, je krog celoten progress bar
+					if not level_profile["level_goals"].empty():
+						# reset za naslednji krog, če ni bi zadnji
+						if stat_value.size() < level_profile["level_laps"]:
+							yield(get_tree().create_timer(time_still_time), "timeout")
+							statbox_to_change.LEVEL_PROGRESS.progress_unit = 0
+					# brez goalov ... so krogi in ni zadnji krog ... en krog je tick, level finish pa je celoten progress bar
+					elif level_profile["level_laps"] > 1 and stat_value.size() < level_profile["level_laps"]:
+						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / float(level_profile["level_laps"])
+					else: # brez lapsov, brez goalov
+						statbox_to_change.LEVEL_PROGRESS.progress_unit = 1
+				# lap counter
+				stat_to_change.stat_value = [stat_value.size(), level_profile["level_laps"]]
 			Pros.STAT.GOALS_REACHED:
-				if stat_to_change:
-					# progress bar
-					if statbox_to_change.use_level_progress_bar:
-						# če so goali, ni per frame apdejtanja iz tracking line
-						# ta statistika deluje samo, če level_goals niso prazni ... RACING_GOALS, BATTLE_GOALS
-						# RACING_GOAL ima finish_line enabled
-						# BATTLE_GOAL ima finish_line disabled
-						# RACING_GOALS brez goalov ima samo finish line ... pedena ga LAP_COUNT stat
-						var adapted_max_count: float = level_profile["level_goals"].size()
-						if level_profile["rank_by"] == "TIME":
-							adapted_max_count = level_profile["level_goals"].size() + 1
-						statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
-					# goal counter
-					stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
-
+				# progress bar
+				if statbox_to_change.use_level_progress_bar:
+					# če so goali, ni per frame apdejtanja iz tracking line
+					# ta statistika deluje samo, če level_goals niso prazni ... RACING_GOALS, BATTLE_GOALS
+					# RACING_GOAL ima finish_line enabled
+					# BATTLE_GOAL ima finish_line disabled
+					# RACING_GOALS brez goalov ima samo finish line ... pedena ga LAP_COUNT stat
+					var adapted_max_count: float = level_profile["level_goals"].size()
+					if level_profile["rank_by"] == "TIME":
+						adapted_max_count = level_profile["level_goals"].size() + 1
+					statbox_to_change.LEVEL_PROGRESS.progress_unit = stat_value.size() / adapted_max_count
+				# goal counter
+				stat_to_change.stat_value = [stat_value.size(), level_profile["level_goals"].size()]
 			_:
+				# na driver hud ... Pros.STAT.GAS, Pros.STAT.HEALTH, Pros.STAT.BEST_LAP_TIME, Pros.STAT.LEVEL_FINISHED_TIME
 				#				stat_to_change.stat_value = stat_value
-				printerr("Neznana statistika na hudu: ", stat_to_change, ", ", stat_value)
+				#				printerr("Neznana statistika na hudu: ", stat_to_change, ", ", stat_value)
+				pass
 
 
 func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: bool = false):

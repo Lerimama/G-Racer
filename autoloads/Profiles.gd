@@ -37,24 +37,24 @@ func __stats(): pass # ---------------------------------------------------------
 #	PoolIntArray ... vedno
 
 enum STAT {
-		# driver
-		LIFE,
-		HEALTH,
-		POINTS,
-		GAS,
-		CASH,
-		# level (reset on level)
-		LEVEL_PROGRESS,
-		LEVEL_RANK,
-		LAP_COUNT,
-		GOALS_REACHED,
-		BEST_LAP_TIME,
-		LEVEL_FINISHED_TIME,
-		LAP_TIME,
-		# tournament
-		TOURNAMENT_WINS,
-		TOURNAMENT_POINTS,
-		}
+	# driver
+	SCALPS,
+	HEALTH,
+	POINTS,
+	GAS,
+	CASH,
+	# level (reset on level)
+	LEVEL_PROGRESS,
+	LEVEL_RANK,
+	LAP_COUNT,
+	GOALS_REACHED,
+	BEST_LAP_TIME,
+	LEVEL_FINISHED_TIME,
+	LAP_TIME,
+	# tournament
+	TOURNAMENT_WINS,
+	TOURNAMENT_POINTS,
+	}
 
 enum CAMPAIGN_STAT {
 	ALL_CASH, # int
@@ -67,7 +67,7 @@ enum CAMPAIGN_STAT {
 
 var start_driver_stats: Dictionary = {
 	# driver
-	STAT.LIFE: 0, # 0 = ni lajfa, 1 = 1 lajf, ni prikazan stat, n > 1 = normal, life as scalp
+	STAT.SCALPS: 0,
 	STAT.CASH: 0, # int
 	STAT.POINTS :0, # int
 	# vehicle
@@ -324,7 +324,7 @@ func __pickables(): pass # -----------------------------------------------------
 enum PICKABLE{ # enako kot na pickable
 	RANDOM,
 	# stats
-	LIFE,
+	SCALPS,
 	HEALTH,
 	GOAL,
 	GAS,
@@ -360,10 +360,6 @@ var pickable_profiles: Dictionary = {
 	PICKABLE.HEALTH: {
 		"color": Refs.color_pickable_stat,
 		"value": 0.3,
-	},
-	PICKABLE.LIFE: {
-		"color": Refs.color_pickable_stat,
-		"value": 1,
 	},
 	PICKABLE.GAS: {
 		"color": Refs.color_pickable_stat,

@@ -240,6 +240,7 @@ extends Node
 #	_pull_vehicle_on_field(player_vehicle)
 #
 #
+#
 #func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 #	printt("deactivated", driver_vehicle, game.game_tracker.drivers_in_game.has(driver_vehicle))
 #

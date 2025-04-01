@@ -307,7 +307,7 @@ func _set_rotation_parameters(is_reverse: bool = false):
 			max_engine_rotation_deg = 90
 		ROTATION_MOTION.SLIDE:
 			#				force_on_vehicle = Vector2.DOWN.rotated(managed_vehicle.rotation) * rotation_dir
-			#				linear_damp = managed_vehicle.def_vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
+			#				linear_damp = managed_vehicle.vehicle_profile["idle_lin_damp"] # da ne izgubi hitrosti
 			managed_vehicle.angular_damp = 5 # da se ne vrti, če zavija
 
 
