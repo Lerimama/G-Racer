@@ -16,7 +16,7 @@
 [ext_resource path="res://assets/sounds/nitro/nitro_start.wav" type="AudioStream" id=14]
 [ext_resource path="res://assets/sounds/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
 [ext_resource path="res://assets/sounds/level/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=16]
-[ext_resource path="res://game/gui/LevelFinished.gd" type="Script" id=17]
+[ext_resource path="res://_obs/LevelFinished.gd" type="Script" id=17]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/screen_slide.wav" type="AudioStream" id=20]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/menu_fade.wav" type="AudioStream" id=21]
 [ext_resource path="res://game/GameSound.gd" type="Script" id=22]
@@ -394,13 +394,18 @@ custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "camera shake"
 flat = true
 
-[node name="FinishedBackground" type="ColorRect" parent="Gui"]
-visible = false
+[node name="GameCover" type="ColorRect" parent="Gui"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.196078, 0, 0.345098, 1 )
 
-[node name="LevelFinished" type="Control" parent="Gui"]
+[node name="GameOver" type="Control" parent="Gui"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+script = ExtResource( 45 )
+
+[node name="LevelFinished" type="Control" parent="Gui/GameOver"]
 pause_mode = 2
 visible = false
 anchor_right = 1.0
@@ -411,20 +416,20 @@ __meta__ = {
 "_edit_vertical_guides_": [ 320.0, 1280.0 ]
 }
 
-[node name="Background" type="ColorRect" parent="Gui/LevelFinished"]
+[node name="Background" type="ColorRect" parent="Gui/GameOver/LevelFinished"]
 visible = false
 modulate = Color( 1, 1, 1, 0.486275 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="Panel" type="Panel" parent="Gui/LevelFinished"]
+[node name="Panel" type="Panel" parent="Gui/GameOver/LevelFinished"]
 visible = false
 modulate = Color( 1, 1, 1, 0.941176 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Title" type="Label" parent="Gui/LevelFinished"]
+[node name="Title" type="Label" parent="Gui/GameOver/LevelFinished"]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -437,7 +442,7 @@ custom_fonts/font = ExtResource( 43 )
 text = "GAME OVER"
 align = 1
 
-[node name="LevelRecord" type="Label" parent="Gui/LevelFinished"]
+[node name="LevelRecord" type="Label" parent="Gui/GameOver/LevelFinished"]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -297.5
@@ -455,7 +460,7 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="ScoreTable" parent="Gui/LevelFinished" instance=ExtResource( 44 )]
+[node name="ScoreTable" parent="Gui/GameOver/LevelFinished" instance=ExtResource( 44 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -500.0
@@ -463,55 +468,23 @@ margin_top = 513.0
 margin_right = 502.0
 margin_bottom = 1137.0
 
-[node name="Menu" type="HBoxContainer" parent="Gui/LevelFinished"]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -206.0
-margin_top = -207.0
-margin_right = 209.0
-margin_bottom = -149.0
-grow_horizontal = 2
-size_flags_horizontal = 4
-custom_constants/separation = 64
-alignment = 1
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="FinishBtn" type="Button" parent="Gui/LevelFinished/Menu"]
-margin_left = 67.0
-margin_right = 348.0
-margin_bottom = 58.0
-mouse_default_cursor_shape = 2
-size_flags_vertical = 8
-text = "END LEVEL"
-
-[node name="GameSummary" type="Control" parent="Gui"]
+[node name="GameSummary" type="Control" parent="Gui/GameOver"]
 pause_mode = 2
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 3 )
-script = ExtResource( 45 )
 __meta__ = {
 "_edit_vertical_guides_": [ 320.0, 1280.0 ]
 }
 
-[node name="Background" type="ColorRect" parent="Gui/GameSummary"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color( 0, 0, 0, 1 )
-
-[node name="Panel" type="Panel" parent="Gui/GameSummary"]
+[node name="Panel" type="Panel" parent="Gui/GameOver/GameSummary"]
 visible = false
 modulate = Color( 1, 1, 1, 0.941176 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Title" type="Label" parent="Gui/GameSummary"]
+[node name="Title" type="Label" parent="Gui/GameOver/GameSummary"]
 modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
 anchor_left = 0.5
 anchor_right = 0.5
@@ -524,7 +497,7 @@ custom_fonts/font = ExtResource( 43 )
 text = "GAME OVER"
 align = 1
 
-[node name="ScoreTable" parent="Gui/GameSummary" instance=ExtResource( 44 )]
+[node name="ScoreTable" parent="Gui/GameOver/GameSummary" instance=ExtResource( 44 )]
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -500.0
@@ -532,7 +505,8 @@ margin_top = 513.0
 margin_right = 502.0
 margin_bottom = 1137.0
 
-[node name="Menu" type="HBoxContainer" parent="Gui/GameSummary"]
+[node name="Menu" type="HBoxContainer" parent="Gui/GameOver"]
+visible = false
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -549,30 +523,28 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="QuitGameBtn" type="Button" parent="Gui/GameSummary/Menu"]
-visible = false
-margin_right = 290.0
+[node name="QuitBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_right = 372.0
 margin_bottom = 58.0
-focus_neighbour_left = NodePath("../RestartBtn")
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
-text = "QUIT GAME"
+text = "QUIT TO MENU"
 
-[node name="QuitBtn" type="Button" parent="Gui/GameSummary/Menu"]
-margin_right = 127.0
+[node name="FinishBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_left = 436.0
+margin_right = 868.0
 margin_bottom = 58.0
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
-text = "QUIT"
+text = "CONTINUE"
 
-[node name="RestartBtn" type="Button" parent="Gui/GameSummary/Menu"]
-margin_left = 191.0
-margin_right = 415.0
+[node name="RestartBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_left = 932.0
+margin_right = 1209.0
 margin_bottom = 58.0
-focus_neighbour_right = NodePath("../QuitGameBtn")
 mouse_default_cursor_shape = 2
 size_flags_vertical = 8
-text = "RESTART"
+text = "% RESTART"
 
 [node name="Sound" type="Node" parent="."]
 pause_mode = 2
@@ -767,6 +739,5 @@ bus = "GameSfx"
 [connection signal="pressed" from="Gui/PauseGame/Menu/PlayBtn" to="Gui/PauseGame" method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Gui/PauseGame/Menu/QuitBtn" to="Gui/PauseGame" method="_on_QuitBtn_pressed"]
 [connection signal="pressed" from="Gui/PauseGame/Menu/RestartBtn" to="Gui/PauseGame" method="_on_RestartBtn_pressed"]
-[connection signal="pressed" from="Gui/LevelFinished/Menu/FinishBtn" to="Gui/LevelFinished" method="_on_FinishBtn_pressed"]
-[connection signal="pressed" from="Gui/GameSummary/Menu/QuitGameBtn" to="Gui/GameSummary" method="_on_QuitGameBtn_pressed"]
-[connection signal="pressed" from="Gui/GameSummary/Menu/QuitBtn" to="Gui/GameSummary" method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="Gui/GameOver/Menu/QuitBtn" to="Gui" method="_on_QuitBtn_pressed"]
+[connection signal="pressed" from="Gui/GameOver/Menu/FinishBtn" to="Gui" method="_on_FinishBtn_pressed"]

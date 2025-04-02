@@ -211,7 +211,7 @@ func _accelarate_to_engine_power(to_engine_power: float = max_engine_power):
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 
-	if not managed_vehicle.driver_id == "JOU":
+	if not managed_vehicle.driver_id in ["JOU"]:
 		current_engine_power /= 15
 ##		current_engine_power = 0
 	return current_engine_power * Sets.world_hsp_power_factor

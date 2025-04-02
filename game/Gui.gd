@@ -8,16 +8,21 @@ var deactivating_unfinished_drivers: bool = false
 onready var hud: Control = $Hud
 onready var driver_huds: Control = $DriverHuds
 onready var pause_game: Control = $PauseGame
-onready var game_summary: Control = $GameSummary
-onready var game_cover: ColorRect = $FinishedBackground
-onready var level_finished: Control = $LevelFinished
+onready var game_summary: Control = $GameOver/GameSummary
+onready var level_finished: Control = $GameOver/LevelFinished
+onready var game_cover: ColorRect = $GameCover
+onready var game_over_menu: HBoxContainer = $GameOver/Menu
+onready var game_over: Control = $GameOver
 
 
 func _ready() -> void:
 
 	pause_game.hide()
-	game_summary.hide()
 	game_cover.show()
+	game_over.hide()
+	level_finished.hide()
+	game_summary.hide()
+	game_over_menu.hide()
 
 
 func set_gui(drivers_on_start: Array):
@@ -49,6 +54,7 @@ func on_game_start():
 
 func on_level_finished():
 
+
 	# da bo miš delovala
 #	game.set_process_input(false)
 #	get_viewport().set_disable_input(true)
@@ -56,6 +62,7 @@ func on_level_finished():
 
 	# če je konec, ustavim čas ... moram pred ostalo kodo, da je natančno
 	var level_ended: = true
+
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		if driver.is_active:
 			level_ended = false
@@ -83,16 +90,62 @@ func on_level_finished():
 				pass
 
 
-	level_finished.set_level_finished(game)
+#	level_finished.set_level_finished(game)
+	game_over.set_level_finished(game)
+
+	# set GO menu
+	## primeri
+	# če je level končan skrijem finished gumb
+	# če je edini level
+
+#	if level_ended:
+#		finish_btn.hide()
+#	else:
+#		finish_btn.show()
+
+	# single level
+
+	if Sets.game_levels.size() == 1:
+		# restart, quit, no summary > close game
+		quit_btn.text = "TO MAIN MENU"
+		restart_btn.text = "RESTART"
+		restart_btn.show()
+		summary_btn.hide()
+		restart_btn.disconnect("pressed", self, "_on_next_pressed")
+		if not restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
+			restart_btn.connect("pressed", self, "_on_restart_game_pressed")
+	# mid level
+	elif game.level_index < Sets.game_levels.size() - 1:
+		# quit, summary > quit tourunament, next_level
+		quit_btn.text = "QUIT TOURNAMENT"
+		restart_btn.text = "NEXT_LEVEL"
+		restart_btn.hide() # pokaže se na summary open
+		summary_btn.show()
+		restart_btn.disconnect("pressed", self, "_on_restart_game_pressed")
+		if not restart_btn.is_connected("pressed", self, "_on_next_pressed"):
+			restart_btn.connect("pressed", self, "_on_next_pressed")
+	# last level
+	else:
+		# quit, summary > quit, restart tourunament
+		quit_btn.text = "TO MAIN MENU"
+		restart_btn.text = "RESTART TOURNAMENT"
+		restart_btn.show()
+		summary_btn.show()
+		restart_btn.disconnect("pressed", self, "_on_next_pressed")
+		if not restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
+			restart_btn.connect("pressed", self, "_on_restart_game_pressed")
 
 	#	yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 
+	game_over.show()
 	game_cover.show()
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	fade_tween.tween_property(game_cover, "modulate:a", 0.5, 0.7).from(0.0)
-	fade_tween.tween_callback(level_finished.finish_btn, "grab_focus")
+	fade_tween.tween_property(game_cover, "modulate:a", 0.5, 0.5).from(0.0)
+	fade_tween.tween_callback(summary_btn, "grab_focus")
 	fade_tween.tween_callback(level_finished, "show")
-	fade_tween.tween_property(level_finished, "modulate:a", 1, 1).from(0.0)
+	fade_tween.parallel().tween_callback(game_over_menu, "show")
+	fade_tween.tween_property(level_finished, "modulate:a", 1, 0.7).from(0.0)
+	fade_tween.parallel().tween_property(game_over_menu, "modulate:a", 1, 1).from(0.0)
 	yield(fade_tween, "finished")
 
 	if game.game_sound.win_jingle.is_playing():
@@ -101,8 +154,24 @@ func on_level_finished():
 		yield(game.game_sound.win_jingle, "finished")
 	game.game_sound.menu_music.play()
 
+onready var quit_btn: Button = $GameOver/Menu/QuitBtn
+onready var summary_btn: Button = $GameOver/Menu/FinishBtn
+onready var restart_btn: Button = $GameOver/Menu/RestartBtn
 
-func open_game_summary():
+# level finished for player(s)
+#func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
+#
+#	if Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("ui_accept"):
+#		# _temp način, ker gumb sam ne dela dokler ne ustavim igre
+#		if summary_btn.visible and summary_btn.has_focus():
+##			yield(_finish_unfinished_drivers(), "completed")
+##			get_viewport().set_disable_input(true)
+##			game_over_menu.hide()
+##			_open_game_summary()
+#			_on_FinishBtn_pressed()
+
+
+func _finish_unfinished_drivers():
 
 	# če niso vsi tekmovalci v cilju (igra še teče)
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
@@ -119,28 +188,65 @@ func open_game_summary():
 					_reward_driver_for_level(game.game_drivers_data[driver_id])
 
 		var final_level_data: Dictionary = game.game_drivers_data.duplicate()
-		level_finished.score_table.set_scoretable(final_level_data, game.level_profile["rank_by"], false)
+		game_over.level_finished_score_table.set_scoretable(final_level_data, game.level_profile["rank_by"], false)
 		yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 		deactivating_unfinished_drivers = false
 
-	game_summary.set_summary(game)
 
-	get_tree().set_pause(true) # proces, fp, input
+func _open_game_summary():
+
+	summary_btn.hide()
+#	yield(_finish_unfinished_drivers(), "completed")
+
+	game_over.set_summary(game)
+
 #	print("get_focus_owner 2", game_summary.get_focus_owner())
-	get_viewport().set_disable_input(true)
+#	get_viewport().set_disable_input(true)
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+	# hide lvel finished
 	fade_tween.tween_property(level_finished, "modulate:a", 0, 0.5)
 	fade_tween.tween_callback(level_finished, "hide")
+	# set pause
+	# show summary, menu
 	fade_tween.tween_callback(game_summary, "show")
-	fade_tween.tween_callback(game_summary.restart_btn, "grab_focus")
+	fade_tween.tween_callback(game_over_menu, "show")
+	fade_tween.tween_callback(restart_btn, "show")
+	fade_tween.parallel().tween_callback(restart_btn, "grab_focus")
 	fade_tween.tween_property(game_summary, "modulate:a", 1, 0.5).from(0.0)
 	fade_tween.parallel().tween_property(game_cover, "modulate:a", 1, 0.5)
+	fade_tween.parallel().tween_property(game_over_menu, "modulate:a", 1, 0.5).from(0.0)
 	yield(fade_tween, "finished")
+	get_tree().set_pause(true) # proces, fp, input
 	get_viewport().set_disable_input(false)
 
 
+#func close_game_(transition_to: int):
+#
+#	hud.reset_hud()
+#	driver_huds.reset_driver_huds()
+#
+#	game.game_sound.fade_sounds(game.game_sound.menu_music)
+#
+#	get_viewport().set_disable_input(true)
+#	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
+#	fade_tween.tween_property(game_summary, "modulate:a", 0, 0.5)
+#	fade_tween.tween_property(game_cover, "modulate:a", 1, 0.3)
+#	yield(fade_tween, "finished")
+#	get_viewport().set_disable_input(false)
+#
+#	game_summary.hide()
+#
+#	match transition_to:
+#		-1:
+#			Refs.main_node.to_home()
+#		0:
+#			Refs.main_node.reload_game()
+#			#			game.set_game(0)
+#		1:
+#			get_tree().set_pause(false)
+#			game.set_game(1)
 
-func close_game(transition_to: int):
+func close_game():
 
 	hud.reset_hud()
 	driver_huds.reset_driver_huds()
@@ -155,16 +261,6 @@ func close_game(transition_to: int):
 	get_viewport().set_disable_input(false)
 
 	game_summary.hide()
-
-	match transition_to:
-		-1:
-			Refs.main_node.game_out()
-		0:
-			Refs.main_node.reload_game()
-			#			game.set_game(0)
-		1:
-			get_tree().set_pause(false)
-			game.set_game(1)
 
 
 
@@ -215,7 +311,7 @@ func _on_waiting_driver_finished(driver_id: String):
 				_reward_driver_for_level(driver_final_data)
 			else:
 				_reward_driver_for_level(driver_final_data)
-				level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+				game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
 
 		Levs.RANK_BY.POINTS:
 			#			if deactivating_unfinished_drivers:
@@ -223,14 +319,14 @@ func _on_waiting_driver_finished(driver_id: String):
 			#				driver_final_data[Pros.STAT.POINTS] += punish_driver_points
 			#			else:
 			# če spremenim točke, ponovno opredelim ranking vseh driverjev ... koda je spodaj
-			level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+			game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
 		Levs.RANK_BY.SCALPS:
 			#			if deactivating_unfinished_drivers:
 			#				var punish_driver_points: int = 50
 			#				driver_final_data[Pros.STAT.SCALPS] += punish_driver_points
 			#			else:
 			# če spremenim število, skalpov ponovno opredelim ranking vseh driverjev ... koda je spodaj
-			level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+			game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
 
 			# re-rank
 			#	var driver_points_arrays: Array = []
@@ -247,3 +343,44 @@ func _on_waiting_driver_finished(driver_id: String):
 			#		if driver_points_array_1[1] > driver_points_array_2[1]:
 			#			return true
 			#		return false
+
+
+func _on_QuitBtn_pressed() -> void:
+	prints ("kuit")
+
+	get_viewport().set_disable_input(true)
+	game_over_menu.hide()
+	yield(_finish_unfinished_drivers(), "completed")
+	yield(close_game(), "completed")
+	Refs.main_node.to_home()
+
+
+func _on_FinishBtn_pressed() -> void:
+
+	get_viewport().set_disable_input(true)
+	game_over_menu.hide()
+	yield(_finish_unfinished_drivers(), "completed")
+	_open_game_summary()
+
+
+func _on_next_level_pressed() -> void:
+	prints ("next")
+	get_viewport().set_disable_input(true)
+	game_over_menu.hide()
+	yield(_finish_unfinished_drivers(), "completed")
+	yield(close_game(), "completed")
+	game.set_game() # index add
+	prints ("completed")
+
+
+func _on_restart_game_pressed() -> void:
+
+	get_viewport().set_disable_input(true)
+	game_over_menu.hide()
+	yield(_finish_unfinished_drivers(), "completed")
+	yield(close_game(), "completed")
+	get_tree().set_pause(false)
+	if "r" in "restart_level":
+		game.set_game() # index add
+	else:
+		Refs.main_node.reload_game()

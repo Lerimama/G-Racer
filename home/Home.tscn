@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=2]
+[gd_scene load_steps=51 format=2]
 
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://home/drivers/DriverBox.tscn" type="PackedScene" id=2]
@@ -79,6 +79,10 @@ colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
 gradient = SubResource( 832 )
 fill_from = Vector2( 0.4875, 1 )
 fill_to = Vector2( 0.470833, 0 )
+
+[sub_resource type="StyleBoxFlat" id=834]
+draw_center = false
+border_width_bottom = 4
 
 [node name="Home" type="Node2D"]
 script = ExtResource( 6 )
@@ -535,47 +539,84 @@ custom_fonts/font = ExtResource( 44 )
 text = "Levels"
 uppercase = true
 
-[node name="SelectedLevels" type="Label" parent="Gui/Levels"]
+[node name="Label_2" type="Label" parent="Gui/Levels"]
 modulate = Color( 1, 1, 1, 0.52549 )
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -1077.0
-margin_top = 953.0
-margin_right = -774.0
-margin_bottom = 1001.0
-text = "Levels: "
+margin_left = 203.0
+margin_top = 249.0
+margin_right = 373.0
+margin_bottom = 297.0
+text = "Filter: "
 uppercase = true
 
-[node name="WinsLimitBtn" type="Button" parent="Gui/Levels"]
-anchor_left = 1.0
+[node name="LevelFilter" type="HBoxContainer" parent="Gui/Levels"]
 anchor_top = 1.0
-anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -1356.0
-margin_top = -334.0
-margin_right = -191.0
-margin_bottom = -276.0
+margin_left = 400.0
+margin_top = -1201.0
+margin_right = 1470.0
+margin_bottom = -1143.0
+custom_constants/separation = 48
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="FilterBtn" type="Button" parent="Gui/Levels/LevelFilter"]
+margin_right = 96.0
+margin_bottom = 58.0
 grow_horizontal = 0
-focus_neighbour_left = NodePath("../Menu/PlayBtn")
-focus_neighbour_right = NodePath("../Menu/PlayBtn")
-focus_neighbour_bottom = NodePath("../EasyModeBtn")
-text = "WINS: %d ... Single level tournament wins needed"
+focus_neighbour_left = NodePath("../FilterBtn_4")
+focus_neighbour_right = NodePath("../FilterBtn_1")
+custom_styles/pressed = SubResource( 834 )
+toggle_mode = true
+text = "ALL"
 align = 2
 
-[node name="EasyModeBtn" type="Button" parent="Gui/Levels"]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -1091.0
-margin_top = -247.0
-margin_right = -191.0
-margin_bottom = -189.0
+[node name="FilterBtn_1" type="Button" parent="Gui/Levels/LevelFilter"]
+margin_left = 144.0
+margin_right = 400.0
+margin_bottom = 58.0
 grow_horizontal = 0
-focus_neighbour_left = NodePath("../Menu/DriversBtn")
-focus_neighbour_right = NodePath("../Menu/DriversBtn")
-focus_neighbour_bottom = NodePath("../WinsLimitBtn")
-text = "EASY MODE ON ...all players advance"
+focus_neighbour_left = NodePath("../FilterBtn")
+focus_neighbour_right = NodePath("../FilterBtn_2")
+custom_styles/pressed = SubResource( 834 )
+toggle_mode = true
+text = "TRAINING"
+align = 2
+
+[node name="FilterBtn_2" type="Button" parent="Gui/Levels/LevelFilter"]
+margin_left = 448.0
+margin_right = 650.0
+margin_bottom = 58.0
+grow_horizontal = 0
+focus_neighbour_left = NodePath("../FilterBtn_1")
+focus_neighbour_right = NodePath("../FilterBtn_3")
+custom_styles/pressed = SubResource( 834 )
+toggle_mode = true
+text = "RACING"
+align = 2
+
+[node name="FilterBtn_3" type="Button" parent="Gui/Levels/LevelFilter"]
+margin_left = 698.0
+margin_right = 889.0
+margin_bottom = 58.0
+grow_horizontal = 0
+focus_neighbour_left = NodePath("../FilterBtn_2")
+focus_neighbour_right = NodePath("../FilterBtn_4")
+custom_styles/pressed = SubResource( 834 )
+toggle_mode = true
+text = "BATTLE"
+align = 2
+
+[node name="FilterBtn_4" type="Button" parent="Gui/Levels/LevelFilter"]
+margin_left = 937.0
+margin_right = 1070.0
+margin_bottom = 58.0
+grow_horizontal = 0
+focus_neighbour_left = NodePath("../FilterBtn_3")
+focus_neighbour_right = NodePath("../FilterBtn")
+custom_styles/pressed = SubResource( 834 )
+toggle_mode = true
+text = "MIŠN"
 align = 2
 
 [node name="LevelCards" type="HBoxContainer" parent="Gui/Levels"]
@@ -638,11 +679,40 @@ margin_bottom = 560.0
 [node name="TextureRect" parent="Gui/Levels/LevelCards/LevelCard_6" index="2"]
 texture = ExtResource( 14 )
 
+[node name="SelectedLevels" type="Label" parent="Gui/Levels"]
+modulate = Color( 1, 1, 1, 0.52549 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -1077.0
+margin_top = 953.0
+margin_right = -774.0
+margin_bottom = 1001.0
+text = "Levels: "
+uppercase = true
+
+[node name="EasyModeBtn" type="Button" parent="Gui/Levels"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -1091.0
+margin_top = -335.0
+margin_right = -191.0
+margin_bottom = -277.0
+grow_horizontal = 0
+focus_neighbour_left = NodePath("../Menu/DriversBtn")
+focus_neighbour_right = NodePath("../Menu/DriversBtn")
+focus_neighbour_bottom = NodePath("../LevelFilter/FilterBtn")
+text = "EASY MODE ON ...all players advance"
+align = 2
+
 [node name="Menu" type="VBoxContainer" parent="Gui/Levels"]
+anchor_top = 1.0
+anchor_bottom = 1.0
 margin_left = 199.0
-margin_top = 1082.0
+margin_top = -358.0
 margin_right = 652.0
-margin_bottom = 1376.0
+margin_bottom = -64.0
 custom_constants/separation = 0
 __meta__ = {
 "_edit_group_": true
@@ -652,8 +722,8 @@ __meta__ = {
 margin_right = 453.0
 margin_bottom = 86.0
 grow_horizontal = 2
-focus_neighbour_left = NodePath("../../WinsLimitBtn")
-focus_neighbour_right = NodePath("../../WinsLimitBtn")
+focus_neighbour_left = NodePath("../../EasyModeBtn")
+focus_neighbour_right = NodePath("../../EasyModeBtn")
 custom_colors/icon_color_focus = Color( 1, 1, 1, 1 )
 custom_fonts/font = ExtResource( 44 )
 text = "PLAY"
@@ -677,6 +747,7 @@ margin_right = 453.0
 margin_bottom = 252.0
 grow_horizontal = 2
 rect_min_size = Vector2( 0, 80 )
+focus_neighbour_left = NodePath("../../EasyModeBtn")
 focus_neighbour_bottom = NodePath("../PlayBtn")
 text = "BACK"
 align = 0
@@ -812,7 +883,6 @@ bus = "GuiSfx"
 [connection signal="pressed" from="Gui/Drivers/SubMenu/AddBtn" to="Gui/Drivers" method="_on_AddBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/SubMenu/DriversCountBtn" to="Gui/Drivers" method="_on_DriversCountBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/SubMenu/ViewModeBtn" to="Gui/Drivers" method="_on_ViewModeBtn_pressed"]
-[connection signal="pressed" from="Gui/Levels/WinsLimitBtn" to="Gui/Levels" method="_on_WinsLimit_pressed"]
 [connection signal="pressed" from="Gui/Levels/EasyModeBtn" to="Gui/Levels" method="_on_EasyModeBtn_pressed"]
 [connection signal="pressed" from="Gui/Levels/Menu/PlayBtn" to="Gui/Levels" method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="Gui/Levels/Menu/DriversBtn" to="Gui/Levels" method="_on_DriversBtn_pressed"]

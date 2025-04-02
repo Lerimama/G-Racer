@@ -29,7 +29,6 @@ onready var game_tracker: Node = $Tracker
 onready var game_views: Control = $GameViews
 onready var game_sound: Node = $Sound
 
-var game_levels: Array = []
 var game_drivers_data: Dictionary = {
 	#	"xavier": {
 	#		"vehicle_profile": {}
@@ -72,7 +71,8 @@ func _ready() -> void:
 	call_deferred("set_game")
 
 
-func set_game(level_index_add: int = 0):
+#func set_game(level_index_add: int = 0):
+func set_game():
 	# čez set_game gre tudi next level
 
 	self.game_stage = GAME_STAGE.SETTING_UP
@@ -82,8 +82,7 @@ func set_game(level_index_add: int = 0):
 	game_tracker.drivers_finished.clear()
 
 	# level
-	game_levels = Sets.game_levels
-	level_index += level_index_add
+#	level_index += level_index_add
 	yield(_spawn_level(level_index, Pros.start_driver_profiles.size()), "completed")
 	game_tracker.game_level = game_level
 
@@ -246,7 +245,54 @@ func _change_game_stage(new_game_stage: int):
 			#			AudioServer.set_bus_mute(bus_index, true)
 
 
-func _spawn_level(new_level_index:int, drivers_count: int):
+func _spawn_level(new_level_index: int, drivers_count: int):
+	# more bit index, če je level key, je problem, če se leveli ponavljajo
+
+	# curr level off
+#	if new_level_index > 0:
+#		if not game_sound.sfx_set_to_mute: # unmute sfx
+#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+#			AudioServer.set_bus_mute(bus_index, false)
+#	if game_level: # če level že obstaja, ga najprej moram zbrisat
+#		game_level.set_process(false)
+#		game_level.set_physics_process(false)
+#		game_level.queue_free()
+
+	level_profile = Levs.level_profiles[Sets.game_levels[new_level_index]]
+
+	# spawn
+	var level_spawn_parent: Node = game_views.get_child(0).get_node("Viewport") # VP node
+	var NewLevel: PackedScene = level_profile["level_scene"]
+	var new_level = NewLevel.instance()
+	level_spawn_parent.add_child(new_level)
+	level_spawn_parent.move_child(new_level, 0)
+
+	yield(new_level.set_level(drivers_count), "completed")
+
+	# setup
+
+	# če so goali je lahko med njimi finish line
+	level_profile["level_goals"] = []
+	for goal in new_level.level_goals:
+		if goal.has_signal("reached_by"):
+			if not goal == new_level.finish_line:
+				goal.connect("reached_by", game_tracker, "_on_goal_reached")
+				goal.connect("tree_exiting", game_tracker, "_on_goal_exiting_tree", [goal])
+				# dodam tudi finish line rabim max pri statsih
+				# za prepoznavanje ali je v uporabi ali ne je bolje da je notri ali ni
+				level_profile["level_goals"].append(goal.name)
+
+	# finish line povežem posebej, da ima posebej funkcijo
+	if new_level.finish_line.is_enabled:
+		new_level.finish_line.connect("reached_by", game_tracker, "_on_finish_crossed")
+
+	#	prints("3 ... _spawn_levele finished", level_profile)
+	game_level = new_level
+
+
+
+func _spawn_next_level(new_level_index:int, drivers_count: int):
+
 
 	# curr level off
 	if new_level_index > 0:
@@ -258,7 +304,7 @@ func _spawn_level(new_level_index:int, drivers_count: int):
 		game_level.set_physics_process(false)
 		game_level.queue_free()
 
-	level_profile = Levs.level_profiles[game_levels[new_level_index]]
+	level_profile = Levs.level_profiles[Sets.game_levels[new_level_index]]
 
 	# spawn
 	var level_spawn_parent: Node = game_views.get_child(0).get_node("Viewport") # VP node

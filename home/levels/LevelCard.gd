@@ -1,7 +1,6 @@
 extends Button
 
 
-var level_id: int
 var focus_offset: float = 0
 var start_position: Vector2 = Vector2.ZERO
 
@@ -25,34 +24,39 @@ var is_selected: bool = false setget _change_selected
 
 func _ready() -> void:
 
+
 	start_position = rect_position
 	unselected_display.show()
 	focused_display.hide()
 	selected_display.hide()
 	level_preview.hide()
 
-	if not level_profile.empty():
-		title = level_profile["level_name"]
-		thumb_texture = level_profile["level_thumb"]
-		description = level_profile["level_desc"]
+	if not level_profile.empty(): # naloadane debug nimajo profila
+#		prints ("%s level_profile" % level_profile["level_name"])
+#		prints (level_profile)
+#		prints (level_profile["level_lap_count"])
+		if not level_profile.empty():
+			title = level_profile["level_name"]
+			thumb_texture = level_profile["level_thumb"]
+			description = level_profile["level_desc"]
 
-	if title:
-		$Activated/Title.text = title
-		$Deactivated/Title.text = title
-	if description:
-		$Activated/Desc.text = description
-		$Deactivated/Desc.text = description
+		if title:
+			$Activated/Title.text = title
+			$Deactivated/Title.text = title
+		if description:
+			$Activated/Desc.text = description
+			$Deactivated/Desc.text = description
 
-	if thumb_texture:
-		$TextureRect.texture = thumb_texture
+		if thumb_texture:
+			$TextureRect.texture = thumb_texture
 
-	# btn state
-	if not level_profile.empty():
-		laps_btn.text = "LAPS: %02d" % level_profile["level_lap_count"]
-	if mirror_mode:
-		mirror_btn.text = "MIRROR: ON"
-	else:
-		mirror_btn.text = "MIRROR: OFF"
+		# btn state
+		if not level_profile.empty():
+			laps_btn.text = "LAPS: %02d" % level_profile["level_lap_count"]
+		if mirror_mode:
+			mirror_btn.text = "MIRROR: ON"
+		else:
+			mirror_btn.text = "MIRROR: OFF"
 
 
 func _change_selected(new_is_selected: bool):

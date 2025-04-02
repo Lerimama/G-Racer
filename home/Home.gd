@@ -20,9 +20,9 @@ func _ready() -> void:
 	home_sound.menu_music.play()
 
 
-func open_from_game():
-
-	modulate = Color.black
+#func open_from_game():
+#
+#	modulate = Color.black
 
 
 func play_game():
@@ -51,7 +51,8 @@ func play_game():
 	home_sound.fade_sounds(home_sound.nitro_intro, 3)
 	yield(home_sound.nitro_intro, "finished")
 
-	Refs.main_node.call_deferred("home_out")
+#	Refs.main_node.call_deferred("home_out")
+	Refs.main_node.call_deferred("to_game")
 
 
 func to_main_menu():

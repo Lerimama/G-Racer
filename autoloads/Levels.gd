@@ -12,11 +12,11 @@ enum _referenca_LEVEL_TYPE {
 
 enum RANK_BY {NONE, TIME, POINTS, SCALPS} # še ne uporabljam
 
-var training_levels: Array = [LEVEL.TRAINING_DRIVE, LEVEL.TRAINING_AGILITY, LEVEL.TRAINING_SHOOT]
+var training_levels: Array = [LEVEL.TRAINING_DRIVE, LEVEL.TRAINING_AGILITY, LEVEL.TRAINING_SHOOT, LEVEL.TRAINING_BATTLE]
 var racing_levels: Array = [LEVEL.QUICKY, LEVEL.SERPENTINE, LEVEL.THE_LOOP, LEVEL.GRAND_PRIX]
 var goal_levels: Array = [LEVEL.LIGHTS_ON, LEVEL.THE_KNOT, LEVEL.FINESS]
 var battle_levels: Array = [LEVEL.COLORS, LEVEL.YOUR_TARGETS, LEVEL.DEMOLITION_DERBY, LEVEL.DERBY]
-var mission_levels: Array = [LEVEL.TRAVEL, LEVEL.GAS_TRANSPORT, LEVEL.SCOUT]
+var mission_levels: Array = [LEVEL.TRAVEL, LEVEL.GAS_TRANSPORT]
 
 
 func _ready() -> void:
@@ -28,6 +28,8 @@ func _ready() -> void:
 		level_profiles[level]["level_goals"] = []
 		level_profiles[level]["level_time_limit"] = 0
 		level_profiles[level]["level_lap_count"] = 0
+#		prints ("t level",level)
+#		print(level_profiles[level])
 	for level in racing_levels:
 		# z goali nima krogov
 		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
@@ -36,6 +38,8 @@ func _ready() -> void:
 			level_profiles[level]["level_lap_count"] = 0
 		level_profiles[level]["level_time_limit"] = 0
 		level_profiles[level]["level_goals"] = []
+#		prints ("r level",level)
+#		print(level_profiles[level])
 	for level in goal_levels:
 		# goali nimajo krogov
 		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
@@ -66,7 +70,7 @@ enum LEVEL {
 	QUICKY, SERPENTINE, THE_LOOP, GRAND_PRIX, # race, time
 	LIGHTS_ON, THE_KNOT, FINESS, # derby, goals
 	COLORS, YOUR_TARGETS, DEMOLITION_DERBY, DERBY # battle
-	TRAVEL, GAS_TRANSPORT, SCOUT # battle
+	TRAVEL, GAS_TRANSPORT, # SCOUT # battle
 	}
 
 
@@ -212,6 +216,4 @@ var level_profiles: Dictionary = {
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
 		"level_time_limit": 0,
 		},
-	LEVEL.SCOUT: {},
-
 }

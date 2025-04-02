@@ -41,7 +41,6 @@ var camera_start_zoom: float = 5
 
 # že povezano v home
 var mono_view_mode: bool = true
-var wins_needed: int = 5 # kdo pride prej do tega števila zmag
 
 
 # PER LEVEL STYLE --------------------------------------------------------------------------------------------
@@ -121,11 +120,6 @@ func _apply_debug_settings():
 #	health_effects = [HEALTH_EFFECTS.POWER, HEALTH_EFFECTS.GAS, HEALTH_EFFECTS.MOTION]
 #	health_effects = [HEALTH_EFFECTS.MOTION]
 	health_effects = []
-	# max wins is level count
-	var max_wins_is_level_count: bool = true
-	if max_wins_is_level_count:
-		wins_needed = game_levels.size()
-
 
 	var drivers_on_game_start: Array = ["JOU"]
 #	drivers_on_game_start = [ "JOU", "MOU"]
@@ -147,7 +141,7 @@ func _apply_debug_settings():
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_red
 			Pros.start_driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
-#			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
+			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 		elif drivers_on_game_start.find(driver_id) == 2:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
 			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
@@ -164,8 +158,8 @@ func start_debug():
 	_apply_debug_settings()
 	_set_game_settings_per_level()
 
-#	Refs.main_node._home_in()
-	Refs.main_node._game_in()
+#	Refs.main_node.to_home()
+	Refs.main_node.to_game()
 
 
 

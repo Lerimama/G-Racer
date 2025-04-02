@@ -4,6 +4,7 @@ extends Control
 var is_open: bool = false
 var focused_level_btn_index: int = 0 # da vem levo/desno
 var selected_level_btns: Array = [] # referenca za game_levels on play()
+var level_keys_with_cards: Dictionary = {}
 
 onready var home: Node = $"../.."
 onready var level_cards: HBoxContainer = $LevelCards
@@ -13,8 +14,6 @@ onready var selected_levels_label: Label = $SelectedLevels
 onready var LevelCard: PackedScene = preload("res://home/levels/LevelCard.tscn")
 
 # neu
-onready var wins_limit_btn: Button = $WinsLimitBtn
-var wins_needed_limit: int = 5
 onready var easy_mode_btn: Button = $EasyModeBtn
 onready var play_btn: Button = $Menu/PlayBtn
 var easy_mode: bool = false
@@ -37,12 +36,6 @@ func _ready() -> void:
 		easy_mode_btn.text = "EASY MODE ON    ... all players advance"
 	else:
 		easy_mode_btn.text = "EASY MODE OFF ... only qualified advance"
-	if selected_level_btns.size() == 1:
-		wins_limit_btn.text = "WINS NEEDED: %d    ... Single level tournament wins needed" % Sets.wins_needed
-		wins_limit_btn.disabled = false
-	else:
-		wins_limit_btn.text = "WINS NEEDED only in single level mode"
-		wins_limit_btn.disabled = true
 
 
 func open(focus_btn_index: int = focused_level_btn_index):
@@ -76,26 +69,74 @@ func _set_levels_menu() -> void: # tole gre na starša
 	all_levels.append_array(Levs.goal_levels)
 	all_levels.append_array(Levs.mission_levels)
 
-	for level in all_levels: # po vrsti v LEVELS enum
-#	for level_value in Pros.LEVELS.values(): # po vrsti v LEVELS enum
+	for level in Levs.level_profiles: # po vrsti v LEVELS enum
 
-		var new_level_btn: Button = LevelCard.instance()
-#		new_level_btn.level_profile = Pros.level_profiles[level_value]
-		new_level_btn.level_profile = Levs.level_profiles[level]
-		level_cards.add_child(new_level_btn)
+		var new_level_card: Button = LevelCard.instance()
+		new_level_card.level_profile = Levs.level_profiles[level]
+		level_cards.add_child(new_level_card)
 
-		new_level_btn.connect("pressed", self, "_on_level_btn_pressed", [new_level_btn])
-		new_level_btn.connect("focus_entered", self, "_on_level_btn_focused", [new_level_btn])
+		level_keys_with_cards[level] = new_level_card
+
+		new_level_card.connect("pressed", self, "_on_level_btn_pressed", [new_level_card])
+		new_level_card.connect("focus_entered", self, "_on_level_btn_focused", [new_level_card])
 
 		var level_value_index: int = all_levels.find(level)
-#		var level_value_index: int = Pros.LEVELS.values().find(level_value)
 		if level_value_index in Sets.game_levels:
-			new_level_btn.is_selected = true
-			selected_level_btns.append(new_level_btn)
+			new_level_card.is_selected = true
+			selected_level_btns.append(new_level_card)
 			# lista
-			selected_levels_label.text += new_level_btn.level_profile["level_name"]
+			selected_levels_label.text += new_level_card.level_profile["level_name"]
 			if level_value_index < selected_level_btns.size() - 1:
 				selected_levels_label.text += " . "
+
+	for filter_btn in level_filter.get_children():
+		if not filter_btn.is_connected("toggled", self, "_on_filter_btn_toggled"):
+			filter_btn.connect("toggled", self, "_on_filter_btn_toggled", [filter_btn])
+
+
+func _on_filter_btn_toggled(pressed: bool, pressed_filter_btn: Button):
+
+	# odtoglam ostale
+	for btn in  level_filter.get_children():
+		print("sadas")
+		if not btn == pressed_filter_btn:
+			btn.set_pressed_no_signal(false)
+
+	var pressed_btn_index: int = level_filter.get_children().find(pressed_filter_btn)
+	print("DScsdc")
+	for level_card in level_keys_with_cards.values():
+		match pressed_btn_index:
+			0: # all
+				level_card.show()
+			1: # racing
+				var level_key: int = level_keys_with_cards.find_key(level_card)
+				if level_key in Levs.racing_levels:
+					level_card.show()
+				else:
+					level_card.hide()
+			2: # goals
+				var level_key: int = level_keys_with_cards.find_key(level_card)
+				if level_key in Levs.goal_levels:
+					level_card.show()
+				else:
+					level_card.hide()
+			3: # battle
+				var level_key: int = level_keys_with_cards.find_key(level_card)
+				if level_key in Levs.battle_levels:
+					level_card.show()
+				else:
+					level_card.hide()
+			4: # missions
+				var level_key: int = level_keys_with_cards.find_key(level_card)
+				if level_key in Levs.mission_levels:
+					level_card.show()
+				else:
+					level_card.hide()
+
+
+
+
+onready var level_filter: HBoxContainer = $LevelFilter
 
 
 func _on_level_btn_pressed(btn: Button):
@@ -117,7 +158,6 @@ func _on_level_btn_pressed(btn: Button):
 	# izberi prvega, če ni izbran noben
 	if selected_level_btns.empty():
 		_on_level_btn_pressed(level_cards.get_child(0))
-		_on_level_btn_focused(level_cards.get_child(0))
 		var slide_to_start_tween = get_tree().create_tween()
 		slide_to_start_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
 
@@ -155,16 +195,6 @@ func _on_DriversBtn_pressed() -> void:
 
 	close() # zaenkrat more bit tukej
 	home._on_PlayersBtn_pressed()
-
-
-func _on_WinsLimit_pressed() -> void:
-
-	Sets.wins_needed += 1
-
-	if Sets.wins_needed > wins_needed_limit:
-		Sets.wins_needed = 0
-
-	wins_limit_btn.text = "WINS NEEDED: %d    ... Single level tournament wins needed" % Sets.wins_needed
 
 
 func _on_EasyModeBtn_pressed() -> void:

@@ -100,7 +100,7 @@ func save_selected_game_data(game_parameter = null): # parameter je lahko ime ig
 			TYPE_STRING: # game started ... save and update
 				# select games btnz
 				# select sweeper level btns
-				# restart main reload > pred game_in
+				# restart main reload > pred to_game
 				if not game_tracking:
 					game_tracking = true
 					 # reset

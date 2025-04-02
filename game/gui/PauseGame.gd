@@ -63,11 +63,9 @@ func _on_PlayBtn_pressed() -> void:
 
 func _on_RestartBtn_pressed() -> void:
 
-	get_parent().close_game(0)
+	Refs.main_node.reload_game()
 
 
 func _on_QuitBtn_pressed() -> void:
 
-	get_parent().close_game(-1)
-
-
+	Refs.main_node.to_home()
