@@ -53,6 +53,7 @@ func on_level_finished():
 #	game.set_process_input(false)
 #	get_viewport().set_disable_input(true)
 
+
 	# če je konec, ustavim čas ... moram pred ostalo kodo, da je natančno
 	var level_ended: = true
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
@@ -61,16 +62,26 @@ func on_level_finished():
 	if level_ended == true:
 		hud.game_timer.stop_timer()
 
-	#	print("drivers data")
-	#	print("")
-	# zapišem skor za nečakajoče
-	for driver_id in game.game_drivers_data:
-		var driver_rank: int = game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK]
-		if driver_rank > 0: # 0 ... še vozi, -1 ... disq
-			_reward_driver_for_level(game.game_drivers_data[driver_id])
-	#		print(driver_id)
-	#		print(game.game_drivers_data[driver_id])
-	#		print("")
+	match game.level_profile["rank_by"]:
+		Levs.RANK_BY.TIME:
+			# zapišem uvrščene driverje, čakane ai, disq driverje
+			# nagradim uvrščene
+			for driver_id in game.game_drivers_data:
+				var driver_rank: int = game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK]
+				if driver_rank > 0: # 0 ... še vozi, -1 ... disq
+					_reward_driver_for_level(game.game_drivers_data[driver_id])
+		Levs.RANK_BY.POINTS:
+			# vsi driverji, čakani ai
+			# ranking po točkah nima veze s časom prihoda končanja naloge ...
+			# razvrstitev (tudi že uvrščenih) je jasna šele po končanju vseh
+			# nagradim šele, ko so vsi uvrščeniuvrščene in disejblane (disq tukaaj ni)
+			# zapišem skor za uvrščene
+			for driver_id in game.game_drivers_data:
+				#				var driver_rank: int = game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK]
+				#				if driver_rank > 0: # 0 ... še vozi, -1 ... disq
+				#					_reward_driver_for_level(game.game_drivers_data[driver_id])
+				pass
+
 
 	level_finished.set_level_finished(game)
 
@@ -102,6 +113,11 @@ func open_game_summary():
 	if deactivating_unfinished_drivers:
 		hud.game_timer.stop_timer()
 		yield(get_tree(), "idle_frame") # zazih
+		match game.level_profile["rank_by"]:
+			Levs.RANK_BY.POINTS, Levs.RANK_BY.SCALPS: # vrstni red je znan šele ko so vsi v cilju
+				for driver_id in game.game_drivers_data:
+					_reward_driver_for_level(game.game_drivers_data[driver_id])
+
 		var final_level_data: Dictionary = game.game_drivers_data.duplicate()
 		level_finished.score_table.set_scoretable(final_level_data, game.level_profile["rank_by"], false)
 		yield(get_tree().create_timer(Sets.get_it_time), "timeout")
@@ -123,7 +139,11 @@ func open_game_summary():
 	get_viewport().set_disable_input(false)
 
 
+
 func close_game(transition_to: int):
+
+	hud.reset_hud()
+	driver_huds.reset_driver_huds()
 
 	game.game_sound.fade_sounds(game.game_sound.menu_music)
 
@@ -156,7 +176,6 @@ func _reward_driver_for_level(driver_data: Dictionary):
 	if driver_final_rank == 1:
 		driver_data["tournament_stats"][Pros.STAT.TOURNAMENT_WINS].append(game.level_index)
 		# ček for rekord reward?
-
 	# cash
 	if not driver_final_rank > Sets.level_cash_rewards.size():
 		driver_data["driver_stats"][Pros.STAT.CASH] += Sets.level_cash_rewards[driver_final_rank - 1]
@@ -183,19 +202,48 @@ func _on_waiting_driver_finished(driver_id: String):
 
 	var driver_final_data: Dictionary = game.game_drivers_data[driver_id]
 
-	if deactivating_unfinished_drivers:
-		waiting_drivers_finished += 1
+	match game.level_profile["rank_by"]:
+		Levs.RANK_BY.TIME:
+			if deactivating_unfinished_drivers:
+				waiting_drivers_finished += 1 # za rank
+				var new_rank: int = game.game_tracker.drivers_finished.size() + waiting_drivers_finished
+				var new_drivers_level_time: int = hud.game_timer.game_time_hunds
+				var punish_time: int = new_drivers_level_time / 2
+				new_drivers_level_time += punish_time * new_rank
+				driver_final_data.driver_stats[Pros.STAT.LEVEL_RANK] = new_rank
+				driver_final_data.driver_stats[Pros.STAT.LEVEL_FINISHED_TIME] = new_drivers_level_time
+				_reward_driver_for_level(driver_final_data)
+			else:
+				_reward_driver_for_level(driver_final_data)
+				level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
 
-		var new_rank: int = game.game_tracker.drivers_finished.size() + waiting_drivers_finished
-		var new_drivers_level_time: int = hud.game_timer.game_time_hunds
-		var punish_time: int = new_drivers_level_time / 2
-		new_drivers_level_time += punish_time * new_rank
+		Levs.RANK_BY.POINTS:
+			#			if deactivating_unfinished_drivers:
+			#				var punish_driver_points: int = 50
+			#				driver_final_data[Pros.STAT.POINTS] += punish_driver_points
+			#			else:
+			# če spremenim točke, ponovno opredelim ranking vseh driverjev ... koda je spodaj
+			level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+		Levs.RANK_BY.SCALPS:
+			#			if deactivating_unfinished_drivers:
+			#				var punish_driver_points: int = 50
+			#				driver_final_data[Pros.STAT.SCALPS] += punish_driver_points
+			#			else:
+			# če spremenim število, skalpov ponovno opredelim ranking vseh driverjev ... koda je spodaj
+			level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
 
-		driver_final_data.driver_stats[Pros.STAT.LEVEL_RANK] = new_rank
-		driver_final_data.driver_stats[Pros.STAT.LEVEL_FINISHED_TIME] = new_drivers_level_time
-		_reward_driver_for_level(driver_final_data)
-	else:
-		_reward_driver_for_level(driver_final_data)
-		level_finished.score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
-
-
+			# re-rank
+			#	var driver_points_arrays: Array = []
+			#	for driver_id in game.game_drivers_data:
+			#		driver_points_arrays.append([driver_id, game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.POINTS]])
+			#	driver_points_arrays.sort_custom(self, "_sort_arrays_on_points")
+			#	for driver_array in driver_points_arrays:
+			#		var driver_rank: int = driver_points_arrays.find(driver_array) + 1
+			#		var driver_array_id: int = driver_array[0]
+			#		game.game_drivers_data[driver_array_id]["driver_stats"][Pros.STAT.LEVEL_RANK] = driver_rank
+			#
+			#	func _sort_arrays_on_points(driver_points_array_1: Array, driver_points_array_2: Array):
+			#
+			#		if driver_points_array_1[1] > driver_points_array_2[1]:
+			#			return true
+			#		return false

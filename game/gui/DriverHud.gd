@@ -22,6 +22,7 @@ onready var visibility_notifier: VisibilityNotifier2D = $VisibilityNotifier2D
 
 var stat_gas: float = 0 setget _change_stat_gas
 var stat_health: float = 0 setget _change_stat_health
+var offset_y: float = 200 # odmik od centra vehikla
 
 
 func _ready() -> void:
@@ -33,9 +34,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-
-
-#	$MessageTagPosition.position.x = rect_size.x / 2
 
 	# manage positions and rotation
 	if not is_instance_valid(hud_driver):
@@ -69,9 +67,8 @@ func _update_hud_position():
 	# globalna pozicija
 	rect_position = drivers_viewport.canvas_transform * hud_driver.global_position
 
-	# adaptacija na zoom
-	var offset_y: float = 200
-	rect_position.y += offset_y / drivers_viewport.get_node("GameCamera").zoom.y# + 50
+	# y offset ... adaptacija na zoom
+	rect_position.y += offset_y / drivers_viewport.get_node("GameCamera").zoom.y
 
 	# hor poravnava
 	if driver_is_ai: # na širino driver huda
@@ -116,10 +113,20 @@ func set_driver_hud(driver_node: Vehicle, view: ViewportContainer, for_ai: bool 
 
 
 func display_hud_message(messages: Array, tag_time: int = 2, message_color: Color = Color.white):
+	# 0 tag time pomeni permanentno
+
+	if not message_tag.visible:
+		message_tag.show()
 
 	# pozicija
 	message_tag.position.x = rect_size.x/2
+	# y_offset je zrcalen driver_hud poziciji  ...
+	# y_offset podvojim, ker štejem od driver_hud pozicije
+	var additional_y_offset: float = -24
+	offset_y -= additional_y_offset
+	message_tag.position.y = - 2 * offset_y / drivers_viewport.get_node("GameCamera").zoom.y
 
+	# label spawn
 	var new_message_labels: Array = []
 	for message in messages:
 		var new_label: Label = Label.new()
@@ -129,11 +136,13 @@ func display_hud_message(messages: Array, tag_time: int = 2, message_color: Colo
 		message_tag.get_child(0).add_child(new_label)
 		new_message_labels.append(new_label)
 
+	# kvefri timer
 	if tag_time > 0:
 		yield(get_tree().create_timer(tag_time), "timeout")
 		for message_label in new_message_labels:
 			message_label.queue_free()
-
+		if message_tag.get_children().empty():
+			message_tag.hide()
 
 
 # STATS ---------------------------------------------------------------------------------------

@@ -1,19 +1,13 @@
 extends Node
 
 # samo referenca
-enum LEVEL_TYPE {
-	# seta on level ... export var
-	# uporablja smamo level, da ve kaj ugasnit in prižgat
-	# lahko bi "bolje", a tako je bolj jasno katere oblike so mogoče
-	FREE_RIDE,
-	# rank_by time
-	RACING_TRACK, # start-line > race-track > finish-line
-	RACING_GOALS, # start-line > goals > finish-line
-	# rank_by points
-	BATTLE_GOALS, # start-positions > goals
-	BATTLE_SCALPS, # start-positions
-	# no ranking
-	MISSION, # goals
+enum _referenca_LEVEL_TYPE {
+	FREE_RIDE, # none rank, no time limit
+	RACING_TRACK, # time rank, laps, no damage / elements: start line + tracking line + finish line
+	RACING_GOALS, # time rank, no laps, no damage / elements: start line + goals + finish line
+	BATTLE_GOALS, # points rank, no laps, damage / elements: goals
+	BATTLE_SCALPS, # scalps rank, no laps, damage, / elements: drivers
+	MISSION, # none rank, time limit / elements: drivers
 	}
 
 enum RANK_BY {NONE, TIME, POINTS, SCALPS} # še ne uporabljam
@@ -35,6 +29,7 @@ func _ready() -> void:
 		level_profiles[level]["level_time_limit"] = 0
 		level_profiles[level]["level_lap_count"] = 0
 	for level in racing_levels:
+		# z goali nima krogov
 		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
 			level_profiles[level]["rank_by"] = RANK_BY.TIME
 		if not "level_lap_count" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
@@ -42,6 +37,7 @@ func _ready() -> void:
 		level_profiles[level]["level_time_limit"] = 0
 		level_profiles[level]["level_goals"] = []
 	for level in goal_levels:
+		# goali nimajo krogov
 		if not "rank_by" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu
 			level_profiles[level]["rank_by"] = RANK_BY.POINTS
 		if not "level_lap_count" in level_profiles[level]: # če je kaj drugega je opredeljeno v profilu

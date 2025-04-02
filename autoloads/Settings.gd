@@ -128,9 +128,9 @@ func _apply_debug_settings():
 
 
 	var drivers_on_game_start: Array = ["JOU"]
-	drivers_on_game_start = [ "JOU", "MOU"]
+#	drivers_on_game_start = [ "JOU", "MOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU"]
-#	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
+	drivers_on_game_start = [ "JOU", "MOU", "ROU", "SOU"]
 #	drivers_on_game_start = [ "JOU", "MOU", "ROU", "heh", "OU", "MO", "RO", "he"]
 
 

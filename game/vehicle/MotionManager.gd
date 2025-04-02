@@ -175,7 +175,7 @@ func _motion_machine():
 		MOTION.DISSABLED, \
 		MOTION.IDLE, MOTION.IDLE_LEFT, MOTION.IDLE_RIGHT:
 			current_engine_power = lerp(current_engine_power, 0, accelarate_speed)
-			#			force_rotation = 0 ... je že 0 zaradi rotation_dir
+			force_rotation = 0
 			force_on_vehicle = Vector2.ZERO # OPT ... če ni, potem niha ... z vidika sile bi bilo bolj pravilno brez
 		MOTION.DISSARAY: # luzes all control ... prekine ga lahko samo zunanji elementa ali reštart
 			pass
@@ -211,8 +211,8 @@ func _accelarate_to_engine_power(to_engine_power: float = max_engine_power):
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 
-#	if managed_vehicle.driver_id == "MOU":
-#		current_engine_power /= 15
+	if not managed_vehicle.driver_id == "JOU":
+		current_engine_power /= 15
 ##		current_engine_power = 0
 	return current_engine_power * Sets.world_hsp_power_factor
 
@@ -222,15 +222,16 @@ func _change_motion(new_motion):
 	motion = new_motion
 
 	match motion: # edini rotation_dir setter
-		MOTION.FWD, MOTION.REV, MOTION.IDLE, MOTION.DISSABLED:
+		MOTION.DISSABLED, \
+		MOTION.IDLE, MOTION.FWD, MOTION.REV:
 			rotation_dir = 0
-		MOTION.FWD_LEFT, MOTION.REV_LEFT, MOTION.IDLE_LEFT:
+		MOTION.IDLE_LEFT, MOTION.FWD_LEFT, MOTION.REV_LEFT:
 			rotation_dir = -1
-		MOTION.FWD_RIGHT, MOTION.REV_RIGHT, MOTION.IDLE_RIGHT:
+		MOTION.IDLE_RIGHT, MOTION.FWD_RIGHT, MOTION.REV_RIGHT:
 			rotation_dir = 1
 
 	# !!!!
-	# !!!! pobere iz profila
+	# !!!! pazi, settingse pobere iz profila
 	if vehicle_motion_profile:
 		vehicle_motion_profile._set_motion_parameters(managed_vehicle, motion)
 

@@ -88,7 +88,7 @@ var driver_tournament_stats: Dictionary = {
 	STAT.TOURNAMENT_POINTS: 0,
 	}
 
-var referenca_game_drivers_data: Dictionary = {
+var _referenca_game_drivers_data: Dictionary = {
 	"xavier": {
 		"vehicle_profile": {},
 		"driver_profile": {},

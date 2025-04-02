@@ -177,3 +177,5 @@ func _update_scorelines_for_level(drivers_data: Dictionary, rank_by: int):
 					updated_scoreline.get_node(stat_label_path).text = "RWD $0"
 					updated_scorelines_count += 1
 
+
+#func _rank_scorelines

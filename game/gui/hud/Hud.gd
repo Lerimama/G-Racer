@@ -56,7 +56,7 @@ func set_hud(game: Game, drivers_on_start: Array):
 	for section in sections_holder.get_children():
 		section.show()
 
-	# statboxes reset
+	# statboxes reset ... če je pravilno ugasnjen je to odveč
 	for statbox in statboxes_with_driver_ids:
 		statbox.queue_free()
 	statboxes_with_driver_ids.clear()
@@ -64,8 +64,7 @@ func set_hud(game: Game, drivers_on_start: Array):
 	# new statboxes
 	var viewed_drivers: Array = []
 	for driver in drivers_on_start:
-		if not driver.is_in_group(Refs.group_ai):
-#		if not driver.motion_manager.is_ai:
+		if driver.is_in_group(Refs.group_players):
 			viewed_drivers.append(driver)
 	for viewed_driver in viewed_drivers:
 		var driver_index: int = viewed_drivers.find(viewed_driver)
@@ -279,3 +278,20 @@ func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: boo
 		new_floating_tag.modulate = Refs.color_green
 	else:
 		new_floating_tag.modulate = Refs.color_red
+
+
+
+func reset_hud():
+
+	for section in sections_holder.get_children():
+		section.hide()
+
+	# statboxes reset
+	for statbox in statboxes_with_driver_ids:
+		statbox.queue_free()
+	statboxes_with_driver_ids.clear()
+
+	# driver stats dignal verjetno ni več konektan, če so driverji kvefrijani
+	#	for driver in drivers_on_start:
+	#		if not driver.is_connected("stat_changed", self, "_on_stat_changed"):
+	#			driver.connect("stat_changed", self, "_on_stat_changed")

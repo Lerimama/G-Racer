@@ -2,17 +2,13 @@ extends Node2D
 class_name Level
 
 
-enum LEVEL_TYPE { # enako v profilih
-	FREE_RIDE,
-	# rank_by time
-	RACING_TRACK, # start-line > race-track > finish-line
-	RACING_GOALS, # start-line > goals > finish-line
-#	RACING_FREE, # start-line > finish-line
-	# rank_by points
-	BATTLE_GOALS, # start-positions > goals
-	BATTLE_SCALPS, # start-positions
-	# no ranking
-	MISSION, # goals
+enum LEVEL_TYPE {
+	FREE_RIDE, # none rank, no time limit
+	RACING_TRACK, # time rank, laps, no damage / elements: start line + tracking line + finish line
+	RACING_GOALS, # time rank, no laps, no damage / elements: start line + goals + finish line
+	BATTLE_GOALS, # points rank, no laps, damage / elements: goals
+	BATTLE_SCALPS, # scalps rank, no laps, damage, / elements: drivers
+	MISSION, # none rank, time limit / elements: drivers
 	}
 export (LEVEL_TYPE) var level_type: int = LEVEL_TYPE.FREE_RIDE
 
@@ -54,26 +50,27 @@ func set_level(drivers_count: int):
 	match level_type:
 
 		LEVEL_TYPE.FREE_RIDE:
+			# no ranking, neomejen čas
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false
 			level_goals.clear()
 			available_pickable_positions = level_navigation.get_navigation_points()
 			_spawn_random_pickables()
-
 		LEVEL_TYPE.RACING_TRACK:
+			# time rank, start line + tracking line + finish line
 			start_line.is_enabled = true
 			tracking_line.is_enabled = true
 			finish_line.is_enabled = true
 			level_goals.clear()
-
 		LEVEL_TYPE.RACING_GOALS:
+			# time rank, no laps, start line + goals + finish line
 			start_line.is_enabled = true
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = true
 			_set_level_goals()
-
 		LEVEL_TYPE.BATTLE_GOALS:
+			# time rank, no laps, start line + goals + finish line
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false

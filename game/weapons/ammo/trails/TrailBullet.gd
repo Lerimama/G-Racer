@@ -25,7 +25,7 @@ func start_decay(current_bullet_position, at_pos: =  -1): # kličem iz parenta
 		add_point(current_bullet_position, at_pos)
 		for p in get_point_count():
 			# remove points
-			if get_point_count() > 0:
+			if get_point_count() > 1: # 1 zato, da 100% dojame konec
 				yield(get_tree().create_timer(remove_point_interval / get_point_count()), "timeout")
 				remove_point(0)
 			else:
@@ -42,9 +42,3 @@ func add_points(current_bullet_position, at_pos: =  -1): # same arguments kot v 
 		remove_point(0) # odstranimo prvo narejeno piklo (tisto, ki je najbolj stara)
 
 	add_point(current_bullet_position, at_pos)
-
-
-func _on_Decay_tween_all_completed() -> void:
-#	print ("KUFRI - Bullet trail")
-#	queue_free()
-	pass

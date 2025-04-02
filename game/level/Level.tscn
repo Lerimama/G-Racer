@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://addons/versatile_atlas/resource.gd" type="Script" id=1]
 [ext_resource path="res://game/level/elements/LevelStart.gd" type="Script" id=2]
@@ -19,7 +19,6 @@
 [ext_resource path="res://game/level/elements/DriverTracker.gd" type="Script" id=18]
 [ext_resource path="res://assets/turn_curves.png" type="Texture" id=20]
 [ext_resource path="res://assets/textures/fx/cross.png" type="Texture" id=21]
-[ext_resource path="res://_obs/nitro_music.mp3" type="AudioStream" id=22]
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=23]
 [ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=24]
 [ext_resource path="res://game/level/elements/StartLights.tscn" type="PackedScene" id=25]
@@ -555,10 +554,6 @@ shape = SubResource( 13458 )
 disabled = true
 
 [node name="Sounds" type="Node" parent="."]
-
-[node name="NitroMusic" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 22 )
-bus = "GameMusic"
 
 [node name="WorldEnvironment" parent="." instance=ExtResource( 27 )]
 

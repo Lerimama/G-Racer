@@ -4,7 +4,7 @@ extends Control
 var view_imitators_with_driver_ids: Dictionary = {} # imitatorja je dimenzijska kopija pripadajočega viewa
 var driver_ids_with_driver_huds: Dictionary = {}
 
-onready var view_imitator: Control = $ViewImitator # nikoli ga ne zbrišemm
+onready var def_view_imitator: Control = $ViewImitator # nikoli ga ne zbrišemm
 onready var DriverHud: PackedScene = preload("res://game/gui/DriverHud.tscn")
 
 
@@ -30,18 +30,18 @@ func set_driver_huds(game: Game, drivers_on_start: Array, mono_view_mode: bool):
 		var imitated_view: ViewportContainer = views_with_drivers.keys()[0]
 		for driver in drivers_on_start:
 			var new_driver_hud: Control = DriverHud.instance()
-			view_imitator.add_child(new_driver_hud)
+			def_view_imitator.add_child(new_driver_hud)
 			if driver.is_in_group(Refs.group_ai):
 				new_driver_hud.set_driver_hud(driver, imitated_view, true)
 			else:
 				new_driver_hud.set_driver_hud(driver, imitated_view)
 			driver_ids_with_driver_huds[driver.driver_id] = new_driver_hud
-		view_imitators_with_driver_ids[view_imitator] = views_with_drivers.values()[0] # view owner je 1. plejer
+		view_imitators_with_driver_ids[def_view_imitator] = views_with_drivers.values()[0] # view owner je 1. plejer
 
 	else:
 		for view in views_with_drivers:
 			# spawn imitatoraja
-			var new_view_imitator: Control = view_imitator.duplicate()
+			var new_view_imitator: Control = def_view_imitator.duplicate()
 			add_child(new_view_imitator)
 
 			# spawn hud
@@ -91,7 +91,7 @@ func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
 			Pros.STAT.BEST_LAP_TIME: # skupaj sta ker se zgodita na isti dogodek
 				if stat_value > 0:
 					var lap_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
-					driver_hud_to_change.display_hud_message(["PERSONAL BEST"], 0, Refs.color_green)
+					driver_hud_to_change.display_hud_message(["PERSONAL BEST"], 2, Refs.color_green)
 			Pros.STAT.LEVEL_FINISHED_TIME: # on level finish
 				if stat_value > 0:
 					var level_clock_time: String = Mets.get_clock_time_string(stat_value) # array so časi vseh krogov
@@ -103,7 +103,6 @@ func _on_stat_changed(driver_id: String, stat_key: int, stat_value):
 					# deffered, da je za morebitnim "BEST LAP KLICEM"
 					driver_hud_to_change.call_deferred("display_hud_message", [lap_clock_time])
 			_: pass # ostale so na hudu
-
 
 
 func remove_view_imitator(game_views: Dictionary): # GM na activity change ... ne uporabljam
@@ -137,3 +136,18 @@ func _set_imitators_size(game_views: Dictionary):
 			var view_imitator_to_set: Control = view_imitators_with_driver_ids.find_key(driver_id)
 			view_imitator_to_set.rect_size = view.rect_size
 			view_imitator_to_set.rect_position = view.rect_position
+
+
+func reset_driver_huds():
+
+	for imitator in view_imitators_with_driver_ids:
+		# def_imitator ... zbrišem njegove otroke razen roba
+		if imitator == def_view_imitator:
+			for child in imitator.get_children():
+				if not child == imitator.get_child(0):
+					print("out", child)
+					child.queue_free()
+		else:	# ostale ... kvefrijam
+			imitator.queue_free()
+	view_imitators_with_driver_ids.clear()
+	driver_ids_with_driver_huds.clear()

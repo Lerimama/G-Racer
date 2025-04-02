@@ -112,28 +112,26 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 
-	misile_time += delta
-
-	# homing vklop
-	if homming_mode and misile_time > homming_delay:
-		if detect_area.monitoring == false:
-			detect_area.set_deferred("monitoring", true)
-
-	if trail:
-		trail.add_points(trail_position.global_position)
-
-	#	if use_vision_for_collision:
-	vision_ray.force_raycast_update()
-	if vision_ray.get_collider():
-		_on_vision_collision()
-
 	if is_enabled:
+		#	if use_vision_for_collision:
+		vision_ray.force_raycast_update()
+		if vision_ray.get_collider():
+			_on_vision_collision()
+
+		# homming vklop
+		misile_time += delta
+		if homming_mode and misile_time > homming_delay:
+			if detect_area.monitoring == false:
+				detect_area.set_deferred("monitoring", true)
+		# trail
+		if trail:
+			trail.add_points(trail_position.global_position)
 
 		# pospeševanje
 		if misile_time < lifetime or lifetime == 0:
 			var accelaration_tween = get_tree().create_tween()
 			accelaration_tween.tween_property(self ,"thrust_power", max_thrust_power * thrust_power_to_spawner_factor, acceleration_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-		# bremzanje, če life ni ničs
+		# bremzanje
 		elif not lifetime == 0:
 			var min_thrust_power: float = max_thrust_power / 10 * thrust_power_to_spawner_factor
 			var decelaration_tween = get_tree().create_tween()
@@ -141,7 +139,7 @@ func _physics_process(delta: float) -> void:
 			yield(decelaration_tween, "finished")
 			_dissarm()
 
-		# sledenje
+		# homming
 		if not is_instance_valid(detect_target):
 			detect_target = null
 		if detect_target:
@@ -153,7 +151,7 @@ func _physics_process(delta: float) -> void:
 			#			else:
 			#				detect_area.set_deferred("monitoring", true)
 
-		# off screen
+		# off screen sound
 		if is_out_of_screen:
 			var distance_from_origin: float = (global_position - modify_intensity_origin).length()
 			var fx_zero_intensity_distance: float = Sets.fx_zero_intensity_distance
@@ -202,7 +200,8 @@ func _on_contact_collision(body_state: Physics2DDirectBodyState):
 	if not contact_collider == weapon_owner: # sam sebe lahko ubiješ
 		if contact_collider.has_method("on_hit"):
 			contact_collider.on_hit(self, collision_global_position) # pošljem node z vsemi podatki in kolizijo
-		_explode(body_state.get_contact_local_position(0), collision_global_normal)
+#		_explode(body_state.get_contact_local_position(0), collision_global_normal)
+		call_deferred("_explode", body_state.get_contact_local_position(0), collision_global_normal)
 
 
 func _dissarm():
@@ -220,7 +219,7 @@ func _dissarm():
 	_spawn_and_start_fx(DissarmFx, true, Refs.node_creation_parent)
 	queue_free()
 
-	if trail and not trail.in_decay:
+	if trail:
 		trail.start_decay(global_position) # _temp parametri so zarasi simple trejla, kompleksn jih ne upošteva
 
 
@@ -234,8 +233,9 @@ func _explode(collision_position: Vector2, collision_normal: Vector2 = Vector2.Z
 	else:
 		_spawn_and_start_fx(HitFx, true, Refs.node_creation_parent, collision_position, deg2rad(180) + collision_normal.angle()) # 180 dodatek omogča, da ni na vertikalah naroben kot
 
-	if trail and not trail.in_decay:
-		trail.start_decay(collision_position)
+	# ne rabim, ker je itak znotraj projektila
+	#	if trail:
+	#		trail.start_decay(collision_position)
 
 	thrust_power = 0
 	queue_free()
@@ -290,18 +290,6 @@ func _change_projectile_profile(new_projectile_profile: Resource):
 	icon_texture = projectile_profile.icon_texture
 
 
-func _exit_tree() -> void:
-	# zazih uasnem vse, kar ne sme ostati
-
-	if detect_fx and is_instance_valid(detect_fx):
-		detect_fx.stop_fx()
-	if flight_fx and is_instance_valid(flight_fx):
-		flight_fx.stop_fx()
-	thrust_power = 0
-#	if trail and not trail.is_queued_for_deletion() and is_instance_valid(trail) and not trail.in_decay:
-#		trail.start_decay(trail.global_position) # _temp parametri so zarasi simple trejla, kompleksn jih ne upošteva
-
-
 func _on_DetectArea_body_entered(body: Node) -> void:
 
 	if body.is_in_group(Refs.group_drivers) and body != weapon_owner:
@@ -325,13 +313,6 @@ func _on_ShapeArea_body_exited(body: Node) -> void:
 		shape_area.set_deferred("monitoring", false)
 
 
-func on_out_of_playing_field():
-
-	if trail and not trail.in_decay:
-		trail.start_decay(global_position) # _temp parametri so zarasi simple trejla, kompleksn jih ne upošteva
-	queue_free()
-
-
 func _on_VisibilityNotifier2D_screen_exited() -> void:
 
 	is_out_of_screen = true
@@ -345,5 +326,20 @@ func _on_VisibilityNotifier2D_screen_exited() -> void:
 
 func _on_VisibilityNotifier2D_screen_entered() -> void:
 
-#	flight_fx.fx_intensity = 1
+	#	flight_fx.fx_intensity = 1
 	is_out_of_screen = false
+
+
+func _on_Projectile_tree_exiting() -> void:
+	# zazih uasnem vse, kar ne sme ostati
+
+	is_enabled = false
+
+	thrust_power = 0
+	if detect_fx and is_instance_valid(detect_fx):
+		detect_fx.stop_fx()
+	if flight_fx and is_instance_valid(flight_fx):
+		flight_fx.stop_fx()
+
+	if trail:
+		trail.start_decay(trail_position.global_position)

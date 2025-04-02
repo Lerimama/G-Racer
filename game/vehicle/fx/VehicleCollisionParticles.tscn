@@ -26,5 +26,3 @@ initial_velocity = 20.0
 initial_velocity_random = 0.55
 color_ramp = SubResource( 2 )
 script = ExtResource( 1 )
-
-[connection signal="tree_exiting" from="." to="." method="_on_BoltCollisionParticles_tree_exiting"]

@@ -9,7 +9,7 @@ onready var home: Node = $"../.."
 onready var level_cards: HBoxContainer = $LevelCards
 onready var def_level_menu_position: Vector2 = level_cards.rect_position
 onready var selected_levels_label: Label = $SelectedLevels
-onready var wins_limit_label: Label = $WinsLimit
+#onready var wins_limit_label: Label = $WinsLimit
 onready var LevelCard: PackedScene = preload("res://home/levels/LevelCard.tscn")
 
 # neu
@@ -81,7 +81,7 @@ func _set_levels_menu() -> void: # tole gre na starša
 
 		var new_level_btn: Button = LevelCard.instance()
 #		new_level_btn.level_profile = Pros.level_profiles[level_value]
-		new_level_btn.level_profile = level
+		new_level_btn.level_profile = Levs.level_profiles[level]
 		level_cards.add_child(new_level_btn)
 
 		new_level_btn.connect("pressed", self, "_on_level_btn_pressed", [new_level_btn])

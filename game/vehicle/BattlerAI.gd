@@ -172,7 +172,7 @@ func _get_target_rank(unranked_target: Node2D):
 				targets_rank = 3
 	elif "pickable_key" in unranked_target:
 		match unranked_target.pickable_key:
-			Pros.PICKABLE.CASH, Pros.PICKABLE.POINTS:
+			Pros.PICKABLE.CASH:
 				targets_rank = 10
 			Pros.PICKABLE.SHIELD:
 				targets_rank = 5

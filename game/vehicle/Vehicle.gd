@@ -76,22 +76,16 @@ onready var collision_sound: AudioStreamPlayer = $Sounds/Collision
 var weapon_types_with_trigger_weapons: Dictionary = {}
 # debug ... da lahko testiram med igro
 onready var _alt_resource: Resource = load("res://game/vehicle/profiles/profile_vehicle_def.tres")
-
-func _change_vehicle_color(new_color: Color):
-
-	vehicle_color = new_color
-	shape_poly.color = driver_profile["driver_color"]
+onready var scale_rect: Panel = $ScaleRect # kadar rabim mere vehikla
 
 
 func _change_vehicle_motion_profile(new_profile: Resource): # debug setget. da lahko testiram med igro
 	# ne dela ... neka malenkost
 
-	prints ("chaneg_motion_profile", new_profile, vehicle_motion_profile)
 	vehicle_motion_profile = new_profile
 	if motion_manager:
 		motion_manager.vehicle_motion_profile = vehicle_motion_profile
 		_load_vehicle_parameters()
-	prints (vehicle_motion_profile)
 
 
 func _input(event: InputEvent) -> void:
@@ -128,12 +122,13 @@ func _ready() -> void:
 	add_to_group(Refs.group_vehicles)
 	add_to_group(Refs.group_drivers) # more bit tukaj, da ga najde
 
-	z_as_relative = false
-	z_index = Pros.z_indexes["vehicles"]
-
+	# hide elements
+	scale_rect.hide()
 	equip_positions.hide()
 	near_radius = get_node("NearArea/CollisionShape2D").shape.radius # za pullanje
 
+	z_as_relative = false
+	z_index = Pros.z_indexes["vehicles"]
 	self.vehicle_color = driver_profile["driver_color"] # driver barva ...
 
 	_load_vehicle_parameters()
@@ -236,6 +231,7 @@ func turn_off():
 
 	trail_source.decay() # zazih
 	engines.stop_engines()
+	self.is_active = false
 
 	motion_manager.motion = motion_manager.MOTION.DISSABLED
 
@@ -243,7 +239,7 @@ func turn_off():
 	turn_tween.tween_property(self, "elevation", 0, 1).set_ease(Tween.EASE_IN_OUT)
 	yield(turn_tween, "finished")
 	turned_on = false
-	self.is_active = false
+#	self.is_active = false
 
 
 func _change_activity(new_is_active: bool):
@@ -463,28 +459,28 @@ func update_stat(stat_key: int, stat_value):
 
 func on_hit(hit_by: Node2D, hit_global_position: Vector2):
 
-	if not is_shielded:
-		# stats
-		update_stat(Pros.STAT.HEALTH, - hit_by.hit_damage)
-		if driver_stats[Pros.STAT.HEALTH] <= 0:
+	if is_active:
+		if not is_shielded:
+			# stats
+			update_stat(Pros.STAT.HEALTH, - hit_by.hit_damage)
+			if driver_stats[Pros.STAT.HEALTH] <= 0:
+				if "weapon_owner" in hit_by:
+					hit_by.weapon_owner.update_stat(Pros.STAT.SCALPS, 1)
+				else: # ne sme prit do tega not gud
+					print ("hit by brez ownerja: ", hit_by)
+			# efekt
+			if "hit_inertia" in hit_by:
+				var local_hit_position: Vector2 = hit_global_position - position
+				var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
+				apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
+			if vehicle_camera:
+				vehicle_camera.shake_camera(hit_by)
+		# ai reakcija
+		if driver_profile["controller_type"] == -1:
 			if "weapon_owner" in hit_by:
-				hit_by.weapon_owner.update_stat(Pros.STAT.SCALPS, 1)
+				controller.react_on_hit(hit_by.weapon_owner)
 			else: # ne sme prit do tega not gud
 				print ("hit by brez ownerja: ", hit_by)
-		# efekt
-		if "hit_inertia" in hit_by:
-			var local_hit_position: Vector2 = hit_global_position - position
-			var hitter_rot_vector: Vector2 = Vector2.RIGHT.rotated(hit_by.global_rotation)
-			apply_impulse(local_hit_position, hitter_rot_vector * hit_by.hit_inertia) # OPT misile impulse knockback ... ne deluje?
-		if vehicle_camera:
-			vehicle_camera.shake_camera(hit_by)
-
-	# reakcija
-	if driver_profile["controller_type"] == -1:
-		if "weapon_owner" in hit_by:
-			controller.react_on_hit(hit_by.weapon_owner)
-		else: # ne sme prit do tega not gud
-			print ("hit by brez ownerja: ", hit_by)
 
 
 func on_item_picked(pickable_key: int):
@@ -608,6 +604,12 @@ func _drawing_trail_controls(delta: float):
 	if Input.is_action_just_released("T"):
 		debug_trail_time = 0
 		debug_trail = null
+
+
+func _change_vehicle_color(new_color: Color):
+
+	vehicle_color = new_color
+	shape_poly.color = driver_profile["driver_color"]
 
 
 # SIGNALI ------------------------------------------------------------------------------------------------

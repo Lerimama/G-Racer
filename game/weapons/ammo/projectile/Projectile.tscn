@@ -97,6 +97,7 @@ __meta__ = {
 position = Vector2( -0.5, 1.19209e-07 )
 scale = Vector2( 1.45, 0.7 )
 
+[connection signal="tree_exiting" from="." to="." method="_on_Projectile_tree_exiting"]
 [connection signal="body_exited" from="ShapeArea" to="." method="_on_ShapeArea_body_exited"]
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
 [connection signal="body_exited" from="DetectArea" to="." method="_on_DetectArea_body_exited"]

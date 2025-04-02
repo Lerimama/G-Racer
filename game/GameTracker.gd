@@ -49,9 +49,12 @@ func _update_ranking():
 	# najprej po poziciji znotraj kroga, potem po številu krogov
 	# če v slovarju ni "rank_by", se funkcija ne kliče
 
-	var unranked_drivers: Array = get_tree().get_nodes_in_group(Refs.group_drivers)
-	var drivers_ranked: Array = []
+	var unranked_drivers: Array = get_tree().get_nodes_in_group(Refs.group_drivers)#.duplicate()
+	#	for driver in unranked_drivers:
+	#		if driver in drivers_finished:
+	#			unranked_drivers.erase(driver)
 
+	var drivers_ranked: Array = []
 	match game.level_profile["rank_by"]:
 		Levs.RANK_BY.TIME:
 			# tracking
@@ -64,7 +67,7 @@ func _update_ranking():
 				# pol napolnim drivers_ranked glede na rankg trackerja
 				for driver_tracker in all_driver_trackers:
 					drivers_ranked.append(driver_tracker.tracking_target)
-			# goals
+			# goals ... a rabm?
 			elif not game_level.level_goals.empty():
 				drivers_ranked = unranked_drivers
 				drivers_ranked.sort_custom(self, "_sort_drivers_by_goals_reached")
@@ -72,9 +75,11 @@ func _update_ranking():
 			if game.level_profile["level_lap_count"] > 1:
 				drivers_ranked.sort_custom(self, "_sort_drivers_by_laps")
 		Levs.RANK_BY.POINTS:
-			# rangiram po točkah
 			drivers_ranked = unranked_drivers
 			drivers_ranked.sort_custom(self, "_sort_drivers_by_points")
+		Levs.RANK_BY.SCALPS:
+			drivers_ranked = unranked_drivers
+			drivers_ranked.sort_custom(self, "_sort_drivers_by_scalps")
 
 	# update stats
 	var players_ranked: Array = []
@@ -269,7 +274,6 @@ func _on_goal_reached(reached_goal: Node, reaching_driver: Vehicle): # level pov
 					game.game_sound.big_horn.play()
 					reaching_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 					drivers_finished.append(reaching_driver)
-#					reaching_driver.motion_manager.drive_out(Vector2.ZERO) # ga tudi deaktivira
 					reaching_driver.turn_off()
 			else:
 			# to next goal ali finish line
@@ -281,10 +285,9 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 
 	if game.game_stage >= game.GAME_STAGE.PLAYING:# >= da ai lahko pride v cilj po igri
 
-		# LAP
+		# LAP?
 		var has_lap_conditions: bool = false
-		if crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED].size() >= game_level.level_goals.size(): # lahko ji ima več ker se goali lahko kvefrijajo
-			# če ni igra z goali je 0 == 0 => true
+		if crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED].size() >= game_level.level_goals.size():
 			has_lap_conditions = true
 		if game_level.tracking_line.is_enabled:
 			if game_level.tracking_line.checkpoints_count == 0:
@@ -292,32 +295,22 @@ func _on_finish_crossed(finish_line: Node2D, crossing_driver: Vehicle): # sprož
 			elif crossing_driver.driver_tracker.all_checkpoints_reached:
 				has_lap_conditions = true
 
+		# FINISH?
 		if has_lap_conditions:
+			# lap stat
 			crossing_driver.update_stat(Pros.STAT.LAP_COUNT, game.gui.hud.game_timer.game_time_hunds)
-
-			# FINISH
-			var all_laps_finished: bool = false
-			if game_level.level_type == game_level.LEVEL_TYPE.RACING_GOALS and game_level.level_goals.empty():
-				# če so bili vsi cilji kvefrijani, ni več krogov ...
-				# možnost tega ni dobra praksa ... pazi pri postavljanju levelov
-				all_laps_finished = true
+			# cilj ali nov krog?
 			if crossing_driver.driver_stats[Pros.STAT.LAP_COUNT].size() >= game.level_profile["level_lap_count"]:
-				all_laps_finished = true
-			# cilj
-			if all_laps_finished:
 				game.game_sound.big_horn.play()
 				crossing_driver.update_stat(Pros.STAT.LEVEL_FINISHED_TIME, game.gui.hud.game_timer.game_time_hunds) # more bit pred drive out
 				drivers_finished.append(crossing_driver)
 				var drive_out_position: Vector2 = Vector2.ZERO
 				if game_level.finish_line.is_enabled:
 					drive_out_position = game_level.finish_line.drive_out_position_2d.global_position
-#				crossing_driver.motion_manager.drive_out(drive_out_position) # ga tudi deaktivira
 				crossing_driver.turn_off()
-			# nov krog
 			else:
 				game.game_sound.little_horn.play()
-				# restirajo za nov krog
-				crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED] = []
+				crossing_driver.driver_stats[Pros.STAT.GOALS_REACHED] = [] # reset za nov krog
 				crossing_driver.driver_tracker.checked_checkpoints.clear()
 
 
@@ -340,16 +333,25 @@ func _on_player_exited_playing_field(player_vehicle: Node) -> void:
 	_pull_vehicle_on_field(player_vehicle)
 
 
+func _sort_driver_arrays_desc(driver_array_1: Array, driver_array_2: Array): # [driver_id, POINTS ali SCALPs]
+
+	if driver_array_1[1] > driver_array_2[1]:
+		return true
+	return false
+
+
 func _on_vehicle_deactivated(driver_vehicle: Vehicle):
-	print("deact", driver_vehicle)
 #	printt("deactivated", driver_vehicle)
 
-	# finale data za vse ki so še v igri
-	if driver_vehicle in drivers_finished:
-		var finished_driver_rank: int = drivers_finished.size()
-		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = finished_driver_rank
-	else:
-		driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
+	if game.level_profile["rank_by"] == Levs.RANK_BY.TIME:
+		if driver_vehicle in drivers_finished:
+			# final rank je število že končanih + 1
+			# rank iz igre ne deluje zato preverjam število prej končanih driverjev
+			var finished_driver_rank: int = drivers_finished.size()
+			driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = finished_driver_rank
+		else:
+			# disq rank
+			driver_vehicle.driver_stats[Pros.STAT.LEVEL_RANK] = -1
 
 	game.game_drivers_data[driver_vehicle.driver_id]["vehicle_profile"] = driver_vehicle.vehicle_profile.duplicate()
 	game.game_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
@@ -395,5 +397,12 @@ func _sort_drivers_by_goals_reached(driver_1: Vehicle, driver_2: Vehicle):# desc
 func _sort_drivers_by_points(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
 
 	if driver_1.driver_stats[Pros.STAT.POINTS] > driver_2.driver_stats[Pros.STAT.POINTS]:
+		return true
+	return false
+
+
+func _sort_drivers_by_scalps(driver_1: Vehicle, driver_2: Vehicle):# desc ... TRUE = A before B
+
+	if driver_1.driver_stats[Pros.STAT.SCALPS] > driver_2.driver_stats[Pros.STAT.SCALPS]:
 		return true
 	return false

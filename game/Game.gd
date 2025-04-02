@@ -171,11 +171,12 @@ func _game_intro(starting_drivers: Array, driver_start_positions: Dictionary):
 			player.vehicle_camera.follow_target = player
 
 	# pokažem sceno
-	var fade_time: float = 1
-	var setup_delay: float = 0 # delay, da se kamera naštima
-	var fade_tween = get_tree().create_tween()
-	fade_tween.tween_property(self, "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
-	yield(fade_tween, "finished")
+	#	var fade_time: float = 1
+	#	var setup_delay: float = 0 # delay, da se kamera naštima
+	#	var fade_tween = get_tree().create_tween()
+	#	fade_tween.tween_property(self, "modulate", Color.white, fade_time).from(Color.black).set_delay(setup_delay)
+	#	yield(fade_tween, "finished")
+	modulate = Color.white
 
 	# drivers drive-in
 	var drive_in_time: float = 2
