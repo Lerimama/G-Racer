@@ -348,7 +348,6 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	game.game_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 	game.game_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
 
-#	Sets.new_game_drivers_data = game.game_drivers_data.duplicate()
 	# hide view
 	#	game.gui.hud.get_parent().driver_huds.unset_driver_hud(driver_vehicle.driver_id)
 

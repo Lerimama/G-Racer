@@ -82,7 +82,7 @@ var heal_rate_factor: float = 0
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
 
-var new_game_drivers_data: Dictionary = {
+var current_game_drivers_data: Dictionary = {
 	#	"xavier": {
 	#		"vehicle_profile": {}
 	#		"driver_profile": {}
@@ -168,6 +168,7 @@ func _apply_debug_settings():
 func start_debug():
 
 	_apply_debug_settings()
+	_set_drivers_game_data()
 	_set_game_settings_per_level()
 
 #	Refs.main_node.to_home()
@@ -176,19 +177,23 @@ func start_debug():
 
 
 func _set_game_settings_per_level(selected_level_index: int = 0):
-
 	pass
-#	for new_driver_id in Pros.start_driver_profiles:
-#		# driver data - prvi setup
-#		new_game_drivers_data[new_driver_id] = {}
-#		var vehicle_type: int = Pros.start_driver_profiles[new_driver_id]["vehicle_type"]
-#		new_game_drivers_data[new_driver_id]["vehicle_profile"] = Pros.vehicle_profiles[vehicle_type].duplicate()
-#		new_game_drivers_data[new_driver_id]["driver_profile"] = Pros.start_driver_profiles[new_driver_id].duplicate()
-#		new_game_drivers_data[new_driver_id]["driver_stats"] = Pros.start_driver_stats.duplicate()
-#		new_game_drivers_data[new_driver_id]["tournament_stats"] = Pros.driver_tournament_stats.duplicate()
-#		new_game_drivers_data[new_driver_id]["weapon_stats"] = {}
-#		# unique arrays
-#		new_game_drivers_data[new_driver_id]["tournament_stats"][Pros.STAT.TOURNAMENT_WINS] = []
-#		new_game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.LAP_COUNT] = []
-#		new_game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.GOALS_REACHED] = []
-#		new_game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.SCALPS] = []
+
+func _set_drivers_game_data():
+	# za shranjevanje game data med leveli
+	# ker v igri ta slovar ni dupliciran, je vedno apdejtan z zadnjim game data
+
+	for driver_id in Pros.start_driver_profiles:
+		# driver data - prvi setup
+		current_game_drivers_data[driver_id] = {}
+		var vehicle_type: int = Pros.start_driver_profiles[driver_id]["vehicle_type"]
+		current_game_drivers_data[driver_id]["vehicle_profile"] = Pros.vehicle_profiles[vehicle_type].duplicate()
+		current_game_drivers_data[driver_id]["driver_profile"] = Pros.start_driver_profiles[driver_id].duplicate()
+		current_game_drivers_data[driver_id]["driver_stats"] = Pros.start_driver_stats.duplicate()
+		current_game_drivers_data[driver_id]["tournament_stats"] = Pros.driver_tournament_stats.duplicate()
+		current_game_drivers_data[driver_id]["weapon_stats"] = {}
+		# unique arrays
+		current_game_drivers_data[driver_id]["tournament_stats"][Pros.STAT.TOURNAMENT_WINS] = []
+		current_game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LAP_COUNT] = []
+		current_game_drivers_data[driver_id]["driver_stats"][Pros.STAT.GOALS_REACHED] = []
+		current_game_drivers_data[driver_id]["driver_stats"][Pros.STAT.SCALPS] = []

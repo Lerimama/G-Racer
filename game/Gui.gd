@@ -208,11 +208,10 @@ func _open_game_summary():
 
 #	print("get_focus_owner 2", game_summary.get_focus_owner())
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
-	# hide lvel finished
+	# out level finished
 	fade_tween.tween_property(level_finished, "modulate:a", 0, 0.5)
 	fade_tween.tween_callback(level_finished, "hide")
-	# set pause
-	# show summary, menu
+	# in summary, menu
 	fade_tween.tween_callback(game_summary, "show")
 	fade_tween.tween_callback(game_over_menu, "show")
 	fade_tween.tween_callback(next_restart_btn, "show")
@@ -227,13 +226,9 @@ func _open_game_summary():
 
 func close_game():
 
-	get_viewport().set_disable_input(true)
-
-	hud.reset_hud()
-	driver_huds.reset_driver_huds()
-
 	game.game_sound.fade_sounds(game.game_sound.menu_music)
 
+	get_viewport().set_disable_input(true)
 	var fade_tween = get_tree().create_tween().set_pause_mode(SceneTreeTween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(game_summary, "modulate:a", 0, 0.5)
 	fade_tween.tween_property(game_cover, "modulate:a", 1, 0.3)

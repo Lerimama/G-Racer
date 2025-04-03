@@ -136,18 +136,3 @@ func _set_imitators_size(game_views: Dictionary):
 			var view_imitator_to_set: Control = view_imitators_with_driver_ids.find_key(driver_id)
 			view_imitator_to_set.rect_size = view.rect_size
 			view_imitator_to_set.rect_position = view.rect_position
-
-
-func reset_driver_huds():
-
-	for imitator in view_imitators_with_driver_ids:
-		# def_imitator ... zbrišem njegove otroke razen roba
-		if imitator == def_view_imitator:
-			for child in imitator.get_children():
-				if not child == imitator.get_child(0):
-					print("out", child)
-					child.queue_free()
-		else:	# ostale ... kvefrijam
-			imitator.queue_free()
-	view_imitators_with_driver_ids.clear()
-	driver_ids_with_driver_huds.clear()

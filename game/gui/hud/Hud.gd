@@ -278,20 +278,3 @@ func spawn_driver_floating_tag(tag_owner: Node2D, lap_time: float, best_lap: boo
 		new_floating_tag.modulate = Refs.color_green
 	else:
 		new_floating_tag.modulate = Refs.color_red
-
-
-
-func reset_hud():
-
-	for section in sections_holder.get_children():
-		section.hide()
-
-	# statboxes reset
-	for statbox in statboxes_with_driver_ids:
-		statbox.queue_free()
-	statboxes_with_driver_ids.clear()
-
-	# driver stats dignal verjetno ni več konektan, če so driverji kvefrijani
-	#	for driver in drivers_on_start:
-	#		if not driver.is_connected("stat_changed", self, "_on_stat_changed"):
-	#			driver.connect("stat_changed", self, "_on_stat_changed")
