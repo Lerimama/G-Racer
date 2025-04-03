@@ -6,13 +6,14 @@ signal game_stage_changed(game_manager)
 
 #enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, FINISHED_FAIL}
 enum GAME_STAGE {SETTING_UP, READY, PLAYING, FINISHED_FAIL, FINISHED_SUCCESS}
-var game_stage: int = 0 setget _change_game_stage
+var game_stage: int = GAME_STAGE.SETTING_UP # setget _change_game_stage
 
 var fast_start_window_on: bool = false # driver ga čekira in reagira
 
 # level
 var game_level: Level
 var level_profile: Dictionary # set_level seta iz profilov
+#var level_index: int = -1
 var level_index: int = 0
 
 # shadows
@@ -68,21 +69,123 @@ func _ready() -> void:
 	game_tracker.game = self
 	game_sound.game = self
 
-	call_deferred("set_game")
 
-
-#func set_game(level_index_add: int = 0):
-func set_game():
+func set_game(new_level_index: int): # kliče main po spawnu
 	# čez set_game gre tudi next level
 
-	self.game_stage = GAME_STAGE.SETTING_UP
-
+	game_stage = GAME_STAGE.SETTING_UP
+	game_sound.intro_jingle.play()
+	if not game_views.is_connected("views_are_set", self, "_on_views_are_set"):
+		game_views.connect("views_are_set", self, "_on_views_are_set")
 	# reset
 	game_views.reset_views()
 	game_tracker.drivers_finished.clear()
 
 	# level
-#	level_index += level_index_add
+	level_index = new_level_index
+	yield(_spawn_level(level_index, Pros.start_driver_profiles.size()), "completed")
+	game_tracker.game_level = game_level
+
+	# drivers
+	var drivers_on_start: Array = []
+	var level_start_positions: Dictionary = {}
+
+	# PRVI LEVEL ... postavim driverjev game data
+	if level_index == 0:
+		level_start_positions = game_level.level_start_positions
+		for new_driver_id in Pros.start_driver_profiles:
+			# driver data - prvi setup
+			game_drivers_data[new_driver_id] = {}
+			var vehicle_type: int = Pros.start_driver_profiles[new_driver_id]["vehicle_type"]
+			game_drivers_data[new_driver_id]["vehicle_profile"] = Pros.vehicle_profiles[vehicle_type].duplicate()
+			game_drivers_data[new_driver_id]["driver_profile"] = Pros.start_driver_profiles[new_driver_id].duplicate()
+			game_drivers_data[new_driver_id]["driver_stats"] = Pros.start_driver_stats.duplicate()
+			game_drivers_data[new_driver_id]["tournament_stats"] = Pros.driver_tournament_stats.duplicate()
+			game_drivers_data[new_driver_id]["weapon_stats"] = {}
+			# unique arrays
+			game_drivers_data[new_driver_id]["tournament_stats"][Pros.STAT.TOURNAMENT_WINS] = []
+			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.LAP_COUNT] = []
+			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.GOALS_REACHED] = []
+			game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.SCALPS] = []
+
+			# spawn + zapis driver data v driverja
+			var profile_index: int = Pros.start_driver_profiles.keys().find(new_driver_id)
+			var new_driver: Vehicle = _spawn_vehicle(new_driver_id, level_start_positions[profile_index])
+			drivers_on_start.append(new_driver)
+
+		Sets.new_game_drivers_data = game_drivers_data#.duplicate()
+
+	# DRUGI LEVELI
+	else:
+		game_drivers_data = Sets.new_game_drivers_data#.duplicate()
+
+		# filter disq drivers
+		var starting_driver_ids: Array = []
+		for driver_id in game_drivers_data:
+			if not game_drivers_data[driver_id]["driver_stats"][Pros.STAT.LEVEL_RANK] == -1:
+				starting_driver_ids.append(driver_id)
+		# spawn + zapis driver data v driverja
+		level_start_positions = game_level.level_start_positions
+		for driver_id in starting_driver_ids:
+			var new_driver: Vehicle = _spawn_vehicle(driver_id, level_start_positions[starting_driver_ids.find(driver_id)])
+			drivers_on_start.append(new_driver)
+		# reset stats ... na start_driver_stats
+		for driver in drivers_on_start:
+			for stat in game_drivers_data[driver.driver_id]["driver_stats"]:
+				if not stat in [Pros.STAT.HEALTH, Pros.STAT.GAS, Pros.STAT.CASH]:
+					game_drivers_data[driver.driver_id]["driver_stats"][stat] = Pros.start_driver_stats[stat]
+
+	for dr in game_drivers_data:
+		if dr == "JOU":
+
+			prints("index:", level_index)
+			prints("jou wins:", game_drivers_data[dr]["tournament_stats"][Pros.STAT.TOURNAMENT_WINS])
+			prints("jou cash:", game_drivers_data[dr]["driver_stats"][Pros.STAT.CASH])
+
+	yield(get_tree(), "idle_frame")
+
+	# game views
+	var drivers_with_views: Array = []
+	for driver in drivers_on_start:
+		if driver.is_in_group(Refs.group_players):
+			drivers_with_views.append(driver)
+	game_views.set_game_views(drivers_with_views, Sets.mono_view_mode)
+
+	# kamere
+	get_tree().call_group(Refs.group_player_cameras, "set_camera", game_level.camera_limits, game_level.camera_position_2d)
+	for camera in get_tree().get_nodes_in_group(Refs.group_player_cameras):
+		camera.zoom.x = Sets.camera_start_zoom
+		camera.zoom.y = Sets.camera_start_zoom
+		if Sets.mono_view_mode:
+			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, true, Sets.camera_start_zoom)
+			if not camera.playing_field.is_connected( "body_exited_playing_field", game_tracker, "_on_player_exited_playing_field"):
+				camera.playing_field.connect( "body_exited_playing_field", game_tracker, "_on_player_exited_playing_field")
+		else:
+			camera.set_camera(game_level.camera_limits, game_level.camera_position_2d, false, Sets.camera_start_zoom)
+	# senčke
+	get_tree().call_group(Refs.group_shadows, "update_shadow_parameters", self)
+
+	# gui
+	gui.set_gui(drivers_on_start)
+
+	_game_intro(drivers_on_start, level_start_positions)
+
+
+
+func set_game_multilevel():
+	# čez set_game gre tudi next level
+
+#	self.game_stage = GAME_STAGE.SETTING_UP
+	game_stage = GAME_STAGE.SETTING_UP
+	game_sound.intro_jingle.play()
+	if not game_views.is_connected("views_are_set", self, "_on_views_are_set"):
+		game_views.connect("views_are_set", self, "_on_views_are_set")
+	# reset
+	game_views.reset_views()
+	game_tracker.drivers_finished.clear()
+
+	# level
+	level_index += 1 # na vsak klic znotraj ene igre gre en level višje
 	yield(_spawn_level(level_index, Pros.start_driver_profiles.size()), "completed")
 	game_tracker.game_level = game_level
 
@@ -162,8 +265,11 @@ func set_game():
 
 func _game_intro(starting_drivers: Array, driver_start_positions: Dictionary):
 
-	self.game_stage = GAME_STAGE.READY
-
+#	self.game_stage = GAME_STAGE.READY
+	game_stage = GAME_STAGE.READY
+	if not game_sound.intro_jingle.is_playing(): # _temp
+		game_sound.intro_jingle.play()
+	Refs.ultimate_popup.hide() # skrijem pregame
 	# camera targets
 	if not Sets.mono_view_mode:
 		for player in get_tree().get_nodes_in_group(Refs.group_players):
@@ -201,62 +307,56 @@ func _start_game():
 		var semaphore_lights_count: int = 3
 		yield(get_tree().create_timer(semaphore_lights_count), "timeout") # neodvisen od countdown signala
 
-	self.game_stage = GAME_STAGE.PLAYING
+#	self.game_stage = GAME_STAGE.PLAYING
+	game_stage = GAME_STAGE.PLAYING
+	if game_sound.intro_jingle.is_playing(): # če je pavza pred začetkom igre ... ob zapiranju zapleja gejm musko
+		game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
+	gui.on_game_start()
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
+		driver.controller.on_game_start(game_level)
 
 
-func _change_game_stage(new_game_stage: int):
-#	print("GAME_STAGE: ", GAME_STAGE.keys()[new_game_stage])
+func end_game():
 
-	game_stage = new_game_stage
+	# preverjam success ... če je vsaj en plejer med finished
 
-	match game_stage:
+	game_stage = GAME_STAGE.FINISHED_FAIL
+#	game_stage = GAME_STAGE.FINISHED_SUCCESS
+	for driver in game_tracker.drivers_finished:
+		if driver in get_tree().get_nodes_in_group(Refs.group_players):
+			game_stage = GAME_STAGE.FINISHED_SUCCESS
 
-		GAME_STAGE.SETTING_UP:
-			game_sound.intro_jingle.play()
-			if not game_views.is_connected("views_are_set", self, "_on_views_are_set"):
-				game_views.connect("views_are_set", self, "_on_views_are_set")
+	if game_stage == GAME_STAGE.FINISHED_SUCCESS:
+		game_sound.fade_sounds(game_sound.game_music, game_sound.win_jingle)
+	else:
+		game_sound.fade_sounds(game_sound.game_music, game_sound.lose_jingle)
 
-		GAME_STAGE.READY:
-			if not game_sound.intro_jingle.is_playing(): # _temp
-				game_sound.intro_jingle.play()
-			Refs.ultimate_popup.hide() # skrijem pregame
+	gui.on_level_finished()
 
-		GAME_STAGE.PLAYING: # samo kar ni samo na štartu
-			if game_sound.intro_jingle.is_playing(): # če je pavza pred začetkom igre ... ob zapiranju zapleja gejm musko
-				game_sound.fade_sounds(game_sound.intro_jingle, game_sound.game_music)
-			gui.on_game_start()
-			for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
-				driver.controller.on_game_start(game_level)
-
-		GAME_STAGE.FINISHED_SUCCESS, GAME_STAGE.FINISHED_FAIL:
-			if game_stage == GAME_STAGE.FINISHED_SUCCESS:
-				game_sound.fade_sounds(game_sound.game_music, game_sound.win_jingle)
-			else:
-				game_sound.fade_sounds(game_sound.game_music, game_sound.lose_jingle)
-#			final_level_data["level_profile"] = level_profile
-			gui.on_level_finished()
-			# ustavi elemente
-				# best lap stats reset
-				# looping sounds stop
-				# navigacija AI
-				# kvefri elementov, ki so v areni
-			get_tree().set_group(Refs.group_player_cameras, "follow_target", null)
-			#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
-			#			AudioServer.set_bus_mute(bus_index, true)
+	# ustavi elemente
+		# best lap stats reset
+		# looping sounds stop
+		# navigacija AI
+		# kvefri elementov, ki so v areni
+	get_tree().set_group(Refs.group_player_cameras, "follow_target", null)
+	game_tracker._update_camera_leader(null)
+	#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+	#			AudioServer.set_bus_mute(bus_index, true)
 
 
+var different_level
 func _spawn_level(new_level_index: int, drivers_count: int):
 	# more bit index, če je level key, je problem, če se leveli ponavljajo
 
 	# curr level off
-#	if new_level_index > 0:
-#		if not game_sound.sfx_set_to_mute: # unmute sfx
-#			var bus_index: int = AudioServer.get_bus_index("GameSfx")
-#			AudioServer.set_bus_mute(bus_index, false)
-#	if game_level: # če level že obstaja, ga najprej moram zbrisat
-#		game_level.set_process(false)
-#		game_level.set_physics_process(false)
-#		game_level.queue_free()
+	if new_level_index > 0:
+		if not game_sound.sfx_set_to_mute: # unmute sfx
+			var bus_index: int = AudioServer.get_bus_index("GameSfx")
+			AudioServer.set_bus_mute(bus_index, false)
+	if game_level: # če level že obstaja, ga najprej moram zbrisat
+		game_level.set_process(false)
+		game_level.set_physics_process(false)
+		game_level.queue_free()
 
 	level_profile = Levs.level_profiles[Sets.game_levels[new_level_index]]
 

@@ -94,7 +94,7 @@ func _update_ranking():
 	return drivers_ranked
 
 
-func _check_for_level_finished():
+func _check_for_game_end():
 	# igre je konec, ko so v cilju vsi plejerji, ki so še aktivni
 	# SUCCES je, če je vsaj en plejer v cilju
 	# FAIL je če ni nobenega
@@ -110,16 +110,7 @@ func _check_for_level_finished():
 
 		# preverim succes, če je konec
 		if is_level_finished:
-			_update_camera_leader(null)
-			var is_successful: bool = false
-			for player in get_tree().get_nodes_in_group(Refs.group_players):
-				if player in drivers_finished:
-					is_successful = true
-					break
-			if is_successful:
-				game.game_stage = game.GAME_STAGE.FINISHED_SUCCESS
-			else:
-				game.game_stage = game.GAME_STAGE.FINISHED_FAIL
+			game.end_game()
 
 
 # REAKT ------------------------------------------------------------------------------------------------------
@@ -227,7 +218,7 @@ func _on_game_time_is_up():
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		driver.is_active = false
 
-	_check_for_level_finished()
+	_check_for_game_end()
 
 
 func _on_fx_finished(finished_fx: Node): # Node, ker je lahko audio
@@ -357,11 +348,14 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	game.game_drivers_data[driver_vehicle.driver_id]["driver_stats"] = driver_vehicle.driver_stats.duplicate()
 	game.game_drivers_data[driver_vehicle.driver_id]["weapon_stats"] = driver_vehicle.weapon_stats.duplicate()
 
+#	Sets.new_game_drivers_data = game.game_drivers_data.duplicate()
 	# hide view
 	#	game.gui.hud.get_parent().driver_huds.unset_driver_hud(driver_vehicle.driver_id)
 
+	# player deactivated
 	if game.game_stage == game.GAME_STAGE.PLAYING:
-		_check_for_level_finished()
+		_check_for_game_end()
+	# ai deactivated after game end
 	elif game.game_stage >= game.GAME_STAGE.FINISHED_FAIL:
 		game.gui.call_deferred("_on_waiting_driver_finished", driver_vehicle.driver_id)
 

@@ -104,13 +104,13 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_pressed("no2"): # race
 		if driver_id == "JOU":
-			update_stat(Pros.STAT.SCALPS, "SOSED")
-#			update_stat(Pros.STAT.HEALTH, -0.1)
+			Sets.life_counts = true
+#			update_stat(Pros.STAT.SCALPS, "SOSED")
+			update_stat(Pros.STAT.HEALTH, -0.1)
 #
 	if Input.is_action_pressed("no3"): # race
-		if driver_id == "MOU":
+		if driver_id == "JOU":
 			update_stat(Pros.STAT.GAS, -100)
-#		update_stat(Pros.STAT.HEALTH, 0.1)
 #	if Input.is_action_pressed("no4"): # race
 #	if Input.is_action_pressed("no5"): # race
 #		update_stat(Pros.STAT.GAS, 100)

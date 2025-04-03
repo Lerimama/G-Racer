@@ -18,7 +18,7 @@ func set_level_finished(game: Game):
 
 	# level or game finished
 	if game.game_stage == game.GAME_STAGE.FINISHED_FAIL:
-		level_finished_title.text = "LEVEL OVER"
+		level_finished_title.text = "GAME OVER"
 		level_finished_title.modulate = Refs.color_red
 	else:
 		level_finished_title.text = "LEVEL FINISHED"

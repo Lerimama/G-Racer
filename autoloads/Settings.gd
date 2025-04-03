@@ -50,7 +50,7 @@ var countdown_start_time: int = 3
 var pickables_count_limit: int = 5
 var pull_gas_penalty: float = -20
 var drifting_mode: bool = true # drift ali tilt?
-var life_counts: bool = true
+var life_counts: bool = false
 var level_cash_rewards: Array = [5000, 3000, 1000, 500]
 var level_points_rewards: Array = [25, 20, 15, 10, 8, 5, 4, 3, 2, 1]
 
@@ -82,6 +82,16 @@ var heal_rate_factor: float = 0
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
 
+var new_game_drivers_data: Dictionary = {
+	#	"xavier": {
+	#		"vehicle_profile": {}
+	#		"driver_profile": {}
+	#		"tournament_stats": {}, # med igro se ne spreminja
+	#		"driver_stats": {}, # delni reset na level
+	#		"weapon_stats": {}, # napolne se ob prvem levelu
+	#		},
+	#	"john": ...
+	}
 
 func _ready() -> void:
 
@@ -92,7 +102,9 @@ func _apply_debug_settings():
 
 #	game_levels = [Levs.GRAND_PRIX]
 #	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
-	game_levels = [Levs.LEVEL.TESTER, Levs.LEVEL.TESTER, Levs.LEVEL.TESTER]
+#	game_levels = [Levs.LEVEL.TESTER, Levs.LEVEL.TESTER, Levs.LEVEL.TESTER]
+	game_levels = [Levs.LEVEL.TESTER, Levs.LEVEL.TESTER]
+#	game_levels = [Levs.LEVEL.TESTER]
 #	game_levels = [Levs.QUICKY]
 #	print("game_levels", game_levels)
 
@@ -165,17 +177,18 @@ func start_debug():
 
 func _set_game_settings_per_level(selected_level_index: int = 0):
 
-	# kliče GM pred spawnanjem levela
-	# namen je predvsem, da se lahko spreminjajo game settingsi glede na level
-	var current_level: int = -1 #game_levels[selected_level_index]
-
-
-	# debug
-#	match current_level:
-		# racing
-		# duel
 	pass
-
-
-
-
+#	for new_driver_id in Pros.start_driver_profiles:
+#		# driver data - prvi setup
+#		new_game_drivers_data[new_driver_id] = {}
+#		var vehicle_type: int = Pros.start_driver_profiles[new_driver_id]["vehicle_type"]
+#		new_game_drivers_data[new_driver_id]["vehicle_profile"] = Pros.vehicle_profiles[vehicle_type].duplicate()
+#		new_game_drivers_data[new_driver_id]["driver_profile"] = Pros.start_driver_profiles[new_driver_id].duplicate()
+#		new_game_drivers_data[new_driver_id]["driver_stats"] = Pros.start_driver_stats.duplicate()
+#		new_game_drivers_data[new_driver_id]["tournament_stats"] = Pros.driver_tournament_stats.duplicate()
+#		new_game_drivers_data[new_driver_id]["weapon_stats"] = {}
+#		# unique arrays
+#		new_game_drivers_data[new_driver_id]["tournament_stats"][Pros.STAT.TOURNAMENT_WINS] = []
+#		new_game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.LAP_COUNT] = []
+#		new_game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.GOALS_REACHED] = []
+#		new_game_drivers_data[new_driver_id]["driver_stats"][Pros.STAT.SCALPS] = []
