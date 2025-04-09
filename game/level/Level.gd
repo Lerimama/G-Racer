@@ -75,7 +75,6 @@ func set_level(drivers_count: int):
 			tracking_line.is_enabled = false
 			finish_line.is_enabled = false
 			_set_level_goals()
-
 		LEVEL_TYPE.BATTLE_SCALPS:
 			start_line.is_enabled = false
 			tracking_line.is_enabled = false
@@ -95,9 +94,6 @@ func set_level(drivers_count: int):
 	# camera
 	if camera_limits_path:
 		camera_limits = get_node(camera_limits_path)
-		for edge_rect in camera_limits:
-			var edge_collision: CollisionShape2D = edge_rect.get_child(0).get_child(0)
-			edge_collision.disabled = false # def je disabled
 
 	_set_level_objects()
 	_set_to_level_size()

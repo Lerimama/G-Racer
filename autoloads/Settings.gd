@@ -33,24 +33,24 @@ var game_mode: int = GAME_MODE.SINGLE
 
 var slomo_fx_on: bool = true
 var easy_mode: bool = false
-var full_equip_mode: bool = false
-var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
 var camera_zoom_range: Vector2 = Vector2(1, 1.5) # vektor, da ga lahko množim
 var camera_shake_on: bool = true
 var camera_start_zoom: float = 5
+var countdown_start_time: int = 3
 
 # že povezano v home
 var mono_view_mode: bool = true
 
 
-# PER LEVEL STYLE --------------------------------------------------------------------------------------------
+# PER LEVEL TYPE --------------------------------------------------------------------------------------------
 
-var start_countdown: bool = true
-var countdown_start_time: int = 3
 var pickables_count_limit: int = 5
-var pull_gas_penalty: float = -20
+var pull_gas_penalty: float = -0.2
 var drifting_mode: bool = true # drift ali tilt?
 var life_counts: bool = false
+var sudden_death_mode: bool = false # vklopljen, če čas ni omejen
+var sudden_death_start_time: int = 20
+
 var level_cash_rewards: Array = [5000, 3000, 1000, 500]
 var level_points_rewards: Array = [25, 20, 15, 10, 8, 5, 4, 3, 2, 1]
 
@@ -62,18 +62,15 @@ var game_shadows_alpha: float = 0.4 # odvisna od moči svetlobe
 var game_shadows_direction: Vector2 = Vector2(800,0) # odvisna od moči svetlobe
 
 # neu
-enum HEALTH_EFFECTS {MOTION, POWER, GAS} # kot v settings profilu
+enum DAMAGE_EFFECTS {MOTION, POWER, GAS} # kot v settings profilu
 var health_effects: Array = []
 
 #var health_effects_performance: bool = true
 var time_game_heal_rate_factor: float = 0.01 # 0, če nočeš vpliva, 1 je kot da ni damiđa da ma vehicle lahko med 0 in 1
 var points_game_heal_rate_factor: float = 0 # na ta način, ker lahko obstaja (kot nagrada?)
 var ai_gets_record: bool = true
-var sudden_death_start_time: int = 20
 # ni v def game profilu
 var heal_rate_factor: float = 0
-
-
 
 
 # ON START -----------------------------------------------------------------------------------
@@ -81,7 +78,6 @@ var heal_rate_factor: float = 0
 
 var new_game_settings: Dictionary # duplikat originala, ki mu spremenim setingse glede na level
 var game_levels: Array = []
-
 var current_game_drivers_data: Dictionary = {
 	#	"xavier": {
 	#		"vehicle_profile": {}
@@ -92,6 +88,7 @@ var current_game_drivers_data: Dictionary = {
 	#		},
 	#	"john": ...
 	}
+
 
 func _ready() -> void:
 
@@ -104,13 +101,14 @@ func _apply_debug_settings():
 #	game_levels = [Levs.TESTER, Levs.GRAND_PRIX]
 #	game_levels = [Levs.LEVEL.TESTER, Levs.LEVEL.TESTER, Levs.LEVEL.TESTER]
 	game_levels = [Levs.LEVEL.TESTER, Levs.LEVEL.TESTER]
-#	game_levels = [Levs.LEVEL.TESTER]
+	game_levels = [Levs.LEVEL.TESTER]
+	game_levels = [Levs.LEVEL.QUICKY]
 #	game_levels = [Levs.QUICKY]
 #	print("game_levels", game_levels)
 
 	camera_zoom_range = Vector2(2, 2.3)
 	camera_zoom_range *= 1.1 # 2 plejers > 3
-#	camera_zoom_range *= 2 #  3 + plejers > 3
+	camera_zoom_range *= 2 #  3 + plejers > 3
 #	camera_zoom_range *= 5
 #	camera_zoom_range *= 0.7
 #	camera_zoom_range *= 4
@@ -120,17 +118,17 @@ func _apply_debug_settings():
 	game_shadows_rotation_deg = 45
 
 	# obratne vrednosti
-	start_countdown = false
-	easy_mode = true
+#	start_countdown = false
+	easy_mode = true # ne učinkuje
 	camera_shake_on = false
 	slomo_fx_on = false
 #	full_equip_mode = true
-#	mono_view_mode = false
+	mono_view_mode = false
 #	hide_view_on_player_deactivated = true
 #	heal_rate_factor = time_game_heal_rate_factor # 0.01
 	heal_rate_factor = points_game_heal_rate_factor # 0
-#	health_effects = [HEALTH_EFFECTS.POWER, HEALTH_EFFECTS.GAS, HEALTH_EFFECTS.MOTION]
-#	health_effects = [HEALTH_EFFECTS.MOTION]
+#	health_effects = [DAMAGE_EFFECTS.POWER, DAMAGE_EFFECTS.GAS, DAMAGE_EFFECTS.MOTION]
+#	health_effects = [DAMAGE_EFFECTS.MOTION]
 	health_effects = []
 
 	var drivers_on_game_start: Array = ["JOU"]
@@ -153,7 +151,7 @@ func _apply_debug_settings():
 			Pros.start_driver_profiles[driver_id]["driver_color"] = Refs.color_red
 			Pros.start_driver_profiles[driver_id]["driver_avatar"] = preload("res://home/drivers/avatar_marty.tres")
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.WASD
-			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
+#			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
 		elif drivers_on_game_start.find(driver_id) == 2:
 			Pros.start_driver_profiles[driver_id]["controller_type"] = Pros.CONTROLLER_TYPE.ARROWS
 			Pros.start_driver_profiles[driver_id]["controller_type"] = -1
@@ -167,17 +165,52 @@ func _apply_debug_settings():
 
 func start_debug():
 
-	_apply_debug_settings()
+#	set_level_settings(0)
+
+	Refs.main_node.to_home()
+#	_apply_debug_settings()
+#	Refs.main_node.to_game()
+
+
+func apply_settings(level_index: int):
+
+	var selected_level_key: int = game_levels[level_index]
+
 	_set_drivers_game_data()
-	_set_game_settings_per_level()
 
-#	Refs.main_node.to_home()
-	Refs.main_node.to_game()
+	# mono_view_mode ... zaenkrat ga plejer ... testiraj battle
+	if selected_level_key in Levs.training_levels:
+		life_counts = false
+		health_effects = []
+		heal_rate_factor = 0
+		sudden_death_mode = false
+	elif selected_level_key in Levs.racing_levels:
+		life_counts = false
+		health_effects = [DAMAGE_EFFECTS.POWER]
+		heal_rate_factor = time_game_heal_rate_factor
+		sudden_death_mode = false
+		#		pickables_count_limit = 10
+	elif selected_level_key in Levs.battle_levels:
+		health_effects = []
+		life_counts = false
+		heal_rate_factor = 0
+		sudden_death_mode = true
+		sudden_death_start_time = 60
+		#		pickables_count_limit = 10
+	elif selected_level_key in Levs.mission_levels:
+		health_effects = []
+		life_counts = true
+		mono_view_mode = false
+		heal_rate_factor = 0
+		sudden_death_mode = false
+
+#	var level_group
+#
+#	var level_id game_levels
+#	match level_group:
 
 
 
-func _set_game_settings_per_level(selected_level_index: int = 0):
-	pass
 
 func _set_drivers_game_data():
 	# za shranjevanje game data med leveli

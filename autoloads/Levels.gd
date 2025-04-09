@@ -84,6 +84,7 @@ var level_profiles: Dictionary = {
 		"level_time_limit": 0, # secs
 		"level_lap_count": 0, # 0 in 1 je isto
 		"rank_by": RANK_BY.TIME,
+		"done": 0,
 		# load on spawan, če je ranking
 		# "level_record": [0, ""],
 		# opredeli level ob spawnu
@@ -125,6 +126,7 @@ var level_profiles: Dictionary = {
 		"level_scene": preload("res://game/levels/LevelQuicky.tscn"),
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
 		"level_lap_count": 0,
+		"done": 0,
 		},
 	LEVEL.SERPENTINE: { # long
 		"level_name": "SERPENTINE",
@@ -134,7 +136,7 @@ var level_profiles: Dictionary = {
 		"level_lap_count": 0,
 		},
 	LEVEL.THE_LOOP: { # short laps
-		"level_name": "THE_LOOP",
+		"level_name": "THE LOOP",
 		"level_desc": "Level description ... ",
 		"level_scene": preload("res://game/levels/LevelTheLoop.tscn"),
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
@@ -148,7 +150,7 @@ var level_profiles: Dictionary = {
 		"level_lap_count": 2,
 		},
 	LEVEL.LIGHTS_ON: { # flags, lose all on bump
-		"level_name": "LIGHTS_ON",
+		"level_name": "LIGHTS ON",
 		"level_desc": "Level description ... ",
 		"level_scene": preload("res://game/levels/LevelLightsOn.tscn"),
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
@@ -156,7 +158,7 @@ var level_profiles: Dictionary = {
 		"level_lap_count": 0,
 		},
 	LEVEL.THE_KNOT: { # agility in kanjon
-		"level_name": "THE_KNOT",
+		"level_name": "THE KNOT",
 		"level_desc": "Level description ... ",
 		"level_scene": preload("res://game/levels/LevelTheKnot.tscn"),
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
@@ -172,7 +174,7 @@ var level_profiles: Dictionary = {
 		"level_lap_count": 0,
 		},
 	LEVEL.COLORS: {
-		"level_name": "DEMOLITION DERBY",
+		"level_name": "COLORS",
 		"level_desc": "Level description ... ",
 		"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),
@@ -180,7 +182,7 @@ var level_profiles: Dictionary = {
 		"level_lap_count": 2,
 		},
 	LEVEL.YOUR_TARGETS: {
-		"level_name": "DEMOLITION DERBY",
+		"level_name": "YOUR TARGETS",
 		"level_desc": "Level description ... ",
 		"level_scene": preload("res://game/levels/LevelDemolitionDerby.tscn"),
 		"level_thumb": preload("res://game/levels/thumbs/thumb_level_default.tres"),

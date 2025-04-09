@@ -405,7 +405,7 @@ func update_stat(stat_key: int, stat_value):
 			Pros.STAT.GAS:
 				if is_in_group(Refs.group_players) or Sets.ai_gas_on:
 					# dmg fx
-					if Sets.HEALTH_EFFECTS.GAS in Sets.health_effects:
+					if Sets.DAMAGE_EFFECTS.GAS in Sets.health_effects:
 						var damage_effect_scale: float = health_effect_factor * (1 - driver_stats[Pros.STAT.HEALTH])
 						var damaged_gas_usage: float = stat_value + stat_value * damage_effect_scale
 						stat_value = damaged_gas_usage

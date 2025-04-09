@@ -5,6 +5,59 @@ var _helper_nodes: Array = []
 var helper_nodes_prefix: String = "__"
 
 
+
+func take_screenshot(from_viewport: Viewport = get_viewport(), save_name: String = "screenshot" , save_dir: String = "res://"):
+
+	var img = from_viewport.get_texture().get_data()
+	img.flip_y()
+	var save_path: String = save_dir + save_name + ".png"
+	img.save_png(save_path)
+
+
+func capture_rect_image(to_rect: Control):
+# Attach this script to a ReferenceRect node and press the space bar to capture an image of the area defined by the ReferenceRect. This method captures an image beyond the viewport by extending the camera's borders to encapsulate the desired area.
+
+	var camera = Camera2D.new()
+	camera.anchor_mode = Camera2D.ANCHOR_MODE_FIXED_TOP_LEFT
+	camera.current = true
+	to_rect.add_child(camera)
+
+	get_tree().set_paused(true)
+	yield(get_tree(), "idle_frame")
+
+	var viewport_size = get_viewport().size
+	var image = Image.new()
+	image.create(to_rect.rect_size.x, to_rect.rect_size.y, false, Image.FORMAT_RGBAH)
+
+	camera.position = Vector2.ZERO
+	while camera.position.y < to_rect.rect_size.y:
+		while camera.position.x < to_rect.rect_size.x:
+			yield(get_tree(), "idle_frame")
+			var segment = get_viewport().get_texture().get_data()
+			segment.flip_y()
+			image.blit_rect(segment, Rect2(Vector2.ZERO, segment.get_size()), camera.position)
+			camera.position.x += viewport_size.x
+		camera.position.x = 0
+		camera.position.y += viewport_size.y
+
+	image.save_png("res://rect_screenshot.png")
+	get_tree().set_paused(false)
+	camera.queue_free()
+
+
+func _snap_picture_to_texture(to_rect: Control):
+# Alternatively, if you want to take a screenshot of the entire viewport and save it directly to a texture, you can use the following code:
+
+	var viewport = get_viewport()
+	var texture = viewport.get_texture()
+	var imgtex = ImageTexture.new()
+	imgtex.create_from_image(texture.get_image().duplicate())
+	to_rect.texture = imgtex
+
+
+# ---------------------------------------------------------------------------------------------------------------------------
+
+
 func hide_helper_nodes(delete_it: bool = false):
 
 	get_all_nodes_in_node(helper_nodes_prefix)
@@ -55,7 +108,6 @@ func get_clock_time_string(hundreds_to_split: int): # cele stotinke ali ne cele 
 		hundreds = 0
 
 	# return [minutes, seconds, hundreds]
-#	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + ":" + "%02d" % hundreds
 	var time_on_clock: String = "%02d" % minutes + ":" + "%02d" % seconds + "." + "%02d" % hundreds
 
 	return time_on_clock

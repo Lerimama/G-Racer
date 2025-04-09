@@ -1,0 +1,717 @@
+[gd_scene load_steps=49 format=2]
+
+[ext_resource path="res://game/Game.gd" type="Script" id=2]
+[ext_resource path="res://assets/theme/home_theme.tres" type="Theme" id=3]
+[ext_resource path="res://assets/sounds/nitro/nitro_music.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/burst/burst.wav" type="AudioStream" id=5]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_2.wav" type="AudioStream" id=6]
+[ext_resource path="res://game/gui/PauseGame.gd" type="Script" id=7]
+[ext_resource path="res://game/gui/hud/Hud.tscn" type="PackedScene" id=8]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_3.wav" type="AudioStream" id=9]
+[ext_resource path="res://game/gui/DriverHuds.gd" type="Script" id=10]
+[ext_resource path="res://assets/sounds/music/moose.mp3" type="AudioStream" id=11]
+[ext_resource path="res://game/gui/DriverHud.tscn" type="PackedScene" id=12]
+[ext_resource path="res://assets/sounds/nitro/nitro_start.wav" type="AudioStream" id=14]
+[ext_resource path="res://assets/sounds/music/Ludum Dare 28 - Track 1_loop.wav" type="AudioStream" id=15]
+[ext_resource path="res://assets/sounds/level/race_start_beep___f1-starting-lights-sound-download_audio_best.wav" type="AudioStream" id=16]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/screen_slide.wav" type="AudioStream" id=20]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/menu_fade.wav" type="AudioStream" id=21]
+[ext_resource path="res://game/GameSound.gd" type="Script" id=22]
+[ext_resource path="res://game/GameTracker.gd" type="Script" id=26]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/events/win_jingle_270528__littlerobotsoundfactory__jingle_win_00.wav" type="AudioStream" id=29]
+[ext_resource path="res://assets/sounds/hits_collisions/hit_stray_v2.wav" type="AudioStream" id=31]
+[ext_resource path="res://assets/sounds/level/finish_horn_217138__lonemonk__1964-chrysler-horn-honk-short.wav" type="AudioStream" id=34]
+[ext_resource path="res://assets/sounds/level/burst_cocking_short.wav" type="AudioStream" id=35]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/btn_confirm_NFF-home-switch-on.wav" type="AudioStream" id=36]
+[ext_resource path="res://assets/sounds/level/teleport_loop_v2.wav" type="AudioStream" id=37]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/btn_focus_change.wav" type="AudioStream" id=38]
+[ext_resource path="res://assets/sounds/level/burst_uncocking.wav" type="AudioStream" id=39]
+[ext_resource path="res://assets/sounds/level/teleport_in_v2.wav" type="AudioStream" id=40]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/skills/skill_cling.wav" type="AudioStream" id=41]
+[ext_resource path="res://assets/sounds/level/teleport_out_v2.wav" type="AudioStream" id=42]
+[ext_resource path="res://assets/theme/fonts/black_slanted_L.tres" type="DynamicFont" id=43]
+[ext_resource path="res://game/gui/ScoreTable.tscn" type="PackedScene" id=44]
+[ext_resource path="res://game/gui/GameOver.gd" type="Script" id=45]
+[ext_resource path="res://assets/sounds/gui/countdown-a.ogg" type="AudioStream" id=46]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_5.wav" type="AudioStream" id=47]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/btn_cancel_NFF-home-switch-off.wav" type="AudioStream" id=48]
+[ext_resource path="res://assets/sounds/nitro/nitro_level_lose.wav" type="AudioStream" id=49]
+[ext_resource path="res://game/Gui.gd" type="Script" id=50]
+[ext_resource path="res://assets/sounds/nitro/nitro_game_intro.wav" type="AudioStream" id=51]
+[ext_resource path="res://assets/sounds/nitro/nitro_menu.wav" type="AudioStream" id=52]
+[ext_resource path="res://assets/sounds/nitro/nitro_win.wav" type="AudioStream" id=54]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_1.wav" type="AudioStream" id=60]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/gui/key_4.wav" type="AudioStream" id=61]
+[ext_resource path="res://assets/sounds/_zaloga/_pa/events/loose_jingle_GAMEOVER.wav" type="AudioStream" id=65]
+[ext_resource path="res://assets/sounds/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=66]
+[ext_resource path="res://assets/sounds/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=68]
+
+[sub_resource type="StyleBoxFlat" id=19]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 1, 0.964706, 0.878431, 1 )
+
+[sub_resource type="AudioStreamRandomPitch" id=15]
+audio_stream = ExtResource( 31 )
+
+[sub_resource type="AudioStreamRandomPitch" id=17]
+audio_stream = ExtResource( 5 )
+random_pitch = 1.05
+
+[node name="Game" type="Node2D"]
+pause_mode = 1
+script = ExtResource( 2 )
+
+[node name="Reactor" type="Node" parent="."]
+
+[node name="Tracker" type="Node" parent="."]
+script = ExtResource( 26 )
+
+[node name="Gui" type="CanvasLayer" parent="."]
+pause_mode = 2
+script = ExtResource( 50 )
+
+[node name="DriverHuds" type="Control" parent="Gui"]
+margin_right = 2560.0
+margin_bottom = 1440.0
+script = ExtResource( 10 )
+
+[node name="ViewImitator" type="Control" parent="Gui/DriverHuds"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+
+[node name="Edge" type="Panel" parent="Gui/DriverHuds/ViewImitator"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 19 )
+
+[node name="DriverHud" parent="Gui/DriverHuds/ViewImitator" instance=ExtResource( 12 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_top = -105.0
+margin_bottom = 105.0
+
+[node name="Hud" parent="Gui" instance=ExtResource( 8 )]
+__meta__ = {
+"_edit_horizontal_guides_": [ 360.0 ],
+"_edit_vertical_guides_": [ 640.0, 0.0 ]
+}
+
+[node name="PauseGame" type="Control" parent="Gui"]
+pause_mode = 2
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 488.0 ],
+"_edit_vertical_guides_": [ 64.0, 576.0 ]
+}
+
+[node name="Background" type="ColorRect" parent="Gui/PauseGame"]
+modulate = Color( 1, 1, 1, 0.823529 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="Panel" type="Panel" parent="Gui/PauseGame"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Menu" type="VBoxContainer" parent="Gui/PauseGame"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -310.0
+margin_top = -128.0
+margin_right = 310.0
+margin_bottom = 128.0
+grow_horizontal = 2
+rect_min_size = Vector2( 0, 34 )
+size_flags_horizontal = 4
+custom_constants/separation = 56
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayBtn" type="Button" parent="Gui/PauseGame/Menu"]
+margin_right = 620.0
+margin_bottom = 58.0
+focus_neighbour_left = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 5
+size_flags_vertical = 8
+text = "RESUME"
+
+[node name="QuitBtn" type="Button" parent="Gui/PauseGame/Menu"]
+margin_top = 114.0
+margin_right = 620.0
+margin_bottom = 172.0
+focus_neighbour_right = NodePath("../RestartBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 5
+size_flags_vertical = 8
+text = "QUIT"
+
+[node name="RestartBtn" type="Button" parent="Gui/PauseGame/Menu"]
+margin_top = 228.0
+margin_right = 620.0
+margin_bottom = 286.0
+focus_neighbour_left = NodePath("../QuitBtn")
+focus_neighbour_right = NodePath("../PlayBtn")
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 5
+size_flags_vertical = 8
+text = "RESTART"
+
+[node name="Control" type="Control" parent="Gui/PauseGame"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -640.0
+margin_top = -352.0
+margin_right = 640.0
+margin_bottom = 368.0
+
+[node name="Title" type="Label" parent="Gui/PauseGame/Control"]
+margin_left = 64.0
+margin_top = 24.0
+margin_right = 213.0
+margin_bottom = 91.0
+size_flags_horizontal = 3
+text = "Rules"
+
+[node name="text" type="Label" parent="Gui/PauseGame/Control"]
+margin_left = 64.0
+margin_top = 136.0
+margin_right = 376.0
+margin_bottom = 343.0
+rect_min_size = Vector2( 192, 0 )
+size_flags_vertical = 0
+text = "If you're looking for a term that refers specifically to the non-gameplay elements of a game."
+autowrap = true
+
+[node name="Title2" type="Label" parent="Gui/PauseGame/Control"]
+margin_left = 504.0
+margin_top = 24.0
+margin_right = 737.0
+margin_bottom = 91.0
+size_flags_horizontal = 3
+text = "Controls"
+
+[node name="Controller" type="Control" parent="Gui/PauseGame/Control"]
+margin_left = 512.0
+margin_top = 138.0
+margin_right = 720.0
+margin_bottom = 528.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Controller" type="Label" parent="Gui/PauseGame/Control/Controller"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -2.0
+margin_bottom = -513.0
+size_flags_vertical = 0
+text = "Tipkovnica 1"
+autowrap = true
+
+[node name="Text" type="Label" parent="Gui/PauseGame/Control/Controller"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 48.0
+margin_bottom = -337.0
+size_flags_vertical = 0
+text = "F ... naprej
+B ... nazaj
+< ... levo
+> ... desno"
+autowrap = true
+
+[node name="Text2" type="Label" parent="Gui/PauseGame/Control/Controller"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 238.0
+margin_bottom = -186.0
+size_flags_vertical = 0
+text = "CTRL ... metk
+SH ... sledilka
+ALT ... mina"
+autowrap = true
+
+[node name="Controller2" type="Control" parent="Gui/PauseGame/Control"]
+margin_left = 760.0
+margin_top = 138.0
+margin_right = 1000.0
+margin_bottom = 520.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Controller" type="Label" parent="Gui/PauseGame/Control/Controller2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = -215.0
+size_flags_vertical = 0
+text = "Tipkovnica 2"
+autowrap = true
+
+[node name="Text" type="Label" parent="Gui/PauseGame/Control/Controller2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 48.0
+margin_bottom = -24.0
+size_flags_vertical = 0
+text = "W ... naprej
+S ... nazaj
+A ... levo
+D ... desno"
+autowrap = true
+
+[node name="Text2" type="Label" parent="Gui/PauseGame/Control/Controller2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 240.0
+margin_bottom = 109.0
+size_flags_vertical = 0
+text = "V ... metk
+g ... sledilka
+SP ... mina"
+autowrap = true
+
+[node name="Controller3" type="Control" parent="Gui/PauseGame/Control"]
+margin_left = 1016.0
+margin_top = 138.0
+margin_right = 1208.0
+margin_bottom = 512.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Controller" type="Label" parent="Gui/PauseGame/Control/Controller3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = -335.0
+size_flags_vertical = 0
+text = "JoyPad"
+autowrap = true
+
+[node name="Text" type="Label" parent="Gui/PauseGame/Control/Controller3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 48.0
+margin_bottom = -152.0
+size_flags_vertical = 0
+text = "A ... naprej
+v ... nazaj
+< ... levo
+> ... desno"
+autowrap = true
+
+[node name="Text2" type="Label" parent="Gui/PauseGame/Control/Controller3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 240.0
+margin_right = 8.0
+margin_bottom = 88.0
+size_flags_vertical = 0
+text = "2 ... metk
+3 ... sledilka
+1 ... mina"
+autowrap = true
+
+[node name="Title3" type="Label" parent="Gui/PauseGame/Control"]
+margin_left = 64.0
+margin_top = 432.0
+margin_right = 328.0
+margin_bottom = 499.0
+size_flags_horizontal = 3
+text = "Settings"
+
+[node name="CheckBox2" type="CheckBox" parent="Gui/PauseGame/Control"]
+margin_left = 40.0
+margin_top = 512.0
+margin_right = 231.0
+margin_bottom = 542.0
+size_flags_vertical = 4
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "in-game muzka"
+
+[node name="CheckBox3" type="CheckBox" parent="Gui/PauseGame/Control"]
+margin_left = 40.0
+margin_top = 550.0
+margin_right = 231.0
+margin_bottom = 580.0
+size_flags_vertical = 4
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "in-game fx"
+
+[node name="CheckBox4" type="CheckBox" parent="Gui/PauseGame/Control"]
+margin_left = 40.0
+margin_top = 588.0
+margin_right = 231.0
+margin_bottom = 618.0
+size_flags_vertical = 4
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "camera shake"
+flat = true
+
+[node name="GameCover" type="ColorRect" parent="Gui"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.196078, 0, 0.345098, 1 )
+
+[node name="GameOver" type="Control" parent="Gui"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+script = ExtResource( 45 )
+
+[node name="LevelFinished" type="Control" parent="Gui/GameOver"]
+pause_mode = 2
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+__meta__ = {
+"_edit_vertical_guides_": [ 320.0, 1280.0 ]
+}
+
+[node name="Background" type="ColorRect" parent="Gui/GameOver/LevelFinished"]
+visible = false
+modulate = Color( 1, 1, 1, 0.486275 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="Panel" type="Panel" parent="Gui/GameOver/LevelFinished"]
+visible = false
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="Gui/GameOver/LevelFinished"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -760.0
+margin_top = 144.0
+margin_right = 760.0
+margin_bottom = 362.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 43 )
+text = "GAME OVER"
+align = 1
+
+[node name="LevelRecord" type="Label" parent="Gui/GameOver/LevelFinished"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -297.5
+margin_top = 372.0
+margin_right = 297.5
+margin_bottom = 427.0
+grow_horizontal = 2
+rect_min_size = Vector2( 160, 55 )
+size_flags_horizontal = 8
+text = "Level record  000 by xxx"
+align = 1
+valign = 1
+uppercase = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="ScoreTable" parent="Gui/GameOver/LevelFinished" instance=ExtResource( 44 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -500.0
+margin_top = 513.0
+margin_right = 502.0
+margin_bottom = 1137.0
+
+[node name="GameSummary" type="Control" parent="Gui/GameOver"]
+pause_mode = 2
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+__meta__ = {
+"_edit_vertical_guides_": [ 320.0, 1280.0 ]
+}
+
+[node name="Panel" type="Panel" parent="Gui/GameOver/GameSummary"]
+visible = false
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="Gui/GameOver/GameSummary"]
+modulate = Color( 0.952941, 0.356863, 0.498039, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -760.0
+margin_top = 144.0
+margin_right = 760.0
+margin_bottom = 362.0
+grow_horizontal = 2
+custom_fonts/font = ExtResource( 43 )
+text = "GAME OVER"
+align = 1
+
+[node name="ScoreTable" parent="Gui/GameOver/GameSummary" instance=ExtResource( 44 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -500.0
+margin_top = 513.0
+margin_right = 502.0
+margin_bottom = 1137.0
+
+[node name="Menu" type="HBoxContainer" parent="Gui/GameOver"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -206.0
+margin_top = -207.0
+margin_right = 209.0
+margin_bottom = -149.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+custom_constants/separation = 64
+alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="QuitBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_right = 372.0
+margin_bottom = 58.0
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "QUIT TO MENU"
+
+[node name="ContinueBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_left = 436.0
+margin_right = 868.0
+margin_bottom = 58.0
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "CONTINUE"
+
+[node name="NextRestartBtn" type="Button" parent="Gui/GameOver/Menu"]
+margin_left = 932.0
+margin_right = 1209.0
+margin_bottom = 58.0
+mouse_default_cursor_shape = 2
+size_flags_vertical = 8
+text = "% RESTART"
+
+[node name="Sound" type="Node" parent="."]
+pause_mode = 2
+script = ExtResource( 22 )
+
+[node name="Music" type="Node2D" parent="Sound"]
+
+[node name="Track" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 11 )
+volume_db = -8.98
+bus = "GameMusic"
+
+[node name="Track_2" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 66 )
+bus = "GameMusic"
+
+[node name="Track_3" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 68 )
+bus = "GameMusic"
+
+[node name="Track_4" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 15 )
+bus = "GameMusic"
+
+[node name="Nitro" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 4 )
+bus = "GameMusic"
+
+[node name="NitroMenu" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 52 )
+volume_db = -10.0
+bus = "GameMusic"
+
+[node name="NitroWin" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 54 )
+bus = "GameMusic"
+
+[node name="NitroLose" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 49 )
+bus = "GameMusic"
+
+[node name="NitroIntro" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 51 )
+bus = "GameMusic"
+
+[node name="NitroStart" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 14 )
+bus = "GameMusic"
+
+[node name="Win" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 29 )
+volume_db = -15.0
+bus = "GameMusic"
+
+[node name="Loose" type="AudioStreamPlayer" parent="Sound/Music"]
+stream = ExtResource( 65 )
+volume_db = -5.0
+bus = "GameMusic"
+
+[node name="GuiSfx" type="Node2D" parent="Sound"]
+
+[node name="Inputs" type="Node2D" parent="Sound/GuiSfx"]
+
+[node name="Typing" type="Node2D" parent="Sound/GuiSfx/Inputs"]
+
+[node name="Key1" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 60 )
+volume_db = -15.0
+pitch_scale = 0.6
+bus = "GameSfx"
+
+[node name="Key2" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 6 )
+volume_db = -15.0
+pitch_scale = 0.6
+bus = "GameSfx"
+
+[node name="Key3" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 9 )
+volume_db = -15.0
+pitch_scale = 0.6
+bus = "GameSfx"
+
+[node name="Key4" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 61 )
+volume_db = -15.0
+pitch_scale = 0.6
+bus = "GameSfx"
+
+[node name="Key5" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs/Typing"]
+stream = ExtResource( 47 )
+volume_db = -15.0
+pitch_scale = 0.6
+bus = "GameSfx"
+
+[node name="BtnFocus" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs"]
+stream = ExtResource( 38 )
+volume_db = -20.0
+pitch_scale = 0.7
+bus = "GameSfx"
+
+[node name="BtnConfirm" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs"]
+stream = ExtResource( 36 )
+volume_db = -20.0
+bus = "GameSfx"
+
+[node name="BtnCancel" type="AudioStreamPlayer" parent="Sound/GuiSfx/Inputs"]
+stream = ExtResource( 48 )
+volume_db = -20.0
+bus = "GameSfx"
+
+[node name="Events" type="Node2D" parent="Sound/GuiSfx"]
+
+[node name="StartCoundownA" type="AudioStreamPlayer" parent="Sound/GuiSfx/Events"]
+stream = ExtResource( 46 )
+volume_db = -25.0
+bus = "GameSfx"
+
+[node name="StartCoundownB" type="AudioStreamPlayer" parent="Sound/GuiSfx/Events"]
+stream = ExtResource( 16 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="MenuFade" type="AudioStreamPlayer" parent="Sound/GuiSfx"]
+stream = ExtResource( 21 )
+volume_db = -15.0
+pitch_scale = 0.93
+bus = "GameSfx"
+
+[node name="ScreenSlide" type="AudioStreamPlayer" parent="Sound/GuiSfx"]
+stream = ExtResource( 20 )
+pitch_scale = 0.9
+bus = "GameSfx"
+
+[node name="Sfx" type="Node" parent="Sound"]
+
+[node name="LevelSfx" type="Node" parent="Sound"]
+
+[node name="Nitro" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 35 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="DeNitro" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 39 )
+volume_db = -15.0
+bus = "GameSfx"
+
+[node name="MagnetIn" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 40 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetLoop" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 37 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="MagnetOut" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 42 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[node name="BigHorn" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 34 )
+volume_db = 5.0
+pitch_scale = 0.8
+bus = "GameSfx"
+
+[node name="LittleHorn" type="AudioStreamPlayer" parent="Sound/LevelSfx"]
+stream = ExtResource( 34 )
+bus = "GameSfx"
+
+[node name="Hits" type="Node" parent="Sound"]
+
+[node name="HitBullet" type="AudioStreamPlayer" parent="Sound/Hits"]
+stream = SubResource( 15 )
+volume_db = -10.0
+pitch_scale = 0.9
+bus = "GameSfx"
+
+[node name="HitBulletBrick" type="AudioStreamPlayer" parent="Sound/Hits"]
+stream = ExtResource( 41 )
+volume_db = 11.513
+bus = "GameSfx"
+
+[node name="HitMisile" type="AudioStreamPlayer" parent="Sound/Hits"]
+stream = SubResource( 17 )
+volume_db = -10.0
+bus = "GameSfx"
+
+[connection signal="pressed" from="Gui/PauseGame/Menu/QuitBtn" to="Gui/PauseGame" method="_on_QuitBtn_pressed" flags=6]
+[connection signal="pressed" from="Gui/PauseGame/Menu/RestartBtn" to="Gui/PauseGame" method="_on_RestartBtn_pressed" flags=6]
+[connection signal="pressed" from="Gui/GameOver/Menu/QuitBtn" to="Gui" method="_on_QuitBtn_pressed" flags=6]

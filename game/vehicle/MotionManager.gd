@@ -115,7 +115,7 @@ func _motion_machine():
 #		prints("force_on_vehicle ", managed_vehicle.rear_mass.applied_force)
 #	prints("motion", motion)
 	# vigl vagl brez vpliva na silo
-	#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+	#	if Sets.DAMAGE_EFFECTS.MOTION in Sets.health_effects:
 	#		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 	#		if damage_effect_scale > 0:
 	#			var vigl_limit: float = deg2rad(10)
@@ -149,7 +149,7 @@ func _motion_machine():
 					force_rotation = lerp_angle(force_rotation, rotation_dir * deg2rad(max_engine_rotation_deg), engine_rotation_speed)
 					force_rotation -= angle_diff
 					# vigl vagl z vplivom na silo
-					#				if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+					#				if Sets.DAMAGE_EFFECTS.MOTION in Sets.health_effects:
 					#					var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 					#					if damage_effect_scale > 0:
 					#						var vigl_limit: float = deg2rad(10)
@@ -184,7 +184,7 @@ func _motion_machine():
 #	prints ("force_on_vehicle", force_on_vehicle)
 
 
-#	if Sets.HEALTH_EFFECTS.MOTION in Sets.health_effects:
+#	if Sets.DAMAGE_EFFECTS.MOTION in Sets.health_effects:
 #		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 #		if damage_effect_scale > 0:
 #			_drive_vigl_vagl(damage_effect_scale)
@@ -205,14 +205,14 @@ func _accelarate_to_engine_power(to_engine_power: float = max_engine_power):
 		engine_power_percentage = current_engine_power / to_engine_power
 
 	# dmg fx
-	if Sets.HEALTH_EFFECTS.POWER in Sets.health_effects:
+	if Sets.DAMAGE_EFFECTS.POWER in Sets.health_effects:
 		var adapt_factor: float = 0.001
 		var damage_effect_scale: float = managed_vehicle.health_effect_factor * (1 - managed_vehicle.driver_stats[Pros.STAT.HEALTH])
 		var damaged_engine_power: float = current_engine_power - current_engine_power * damage_effect_scale * adapt_factor
 		current_engine_power = damaged_engine_power
 
-	if not managed_vehicle.driver_id in ["JOU"]:
-		current_engine_power /= 15
+#	if not managed_vehicle.driver_id in ["JOU"]:
+#		current_engine_power /= 15
 ##		current_engine_power = 0
 	return current_engine_power * Sets.world_hsp_power_factor
 

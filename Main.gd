@@ -23,9 +23,9 @@ func _ready() -> void:
 
 	if OS.is_debug_build():
 		Sets.start_debug()
-	else:
-		to_home()
-	#	to_game()
+		return
+
+	to_home()
 
 
 func to_home():
@@ -56,17 +56,16 @@ func to_game():
 	if home_scene:
 		get_tree().set_pause(true)
 		get_viewport().set_disable_input(true)
-		call_deferred("free", home_scene)
+		home_scene.queue_free()
 		yield(home_scene, "tree_exited")
 		home_scene = null
+		get_tree().set_pause(false)
 
 	# spawn game
 	var NewScene = ResourceLoader.load(game_scene_path)
 	var new_scene = NewScene.instance()
 	add_child(new_scene) # direct child of root
 	game_scene = new_scene
-
-#	.set_game(to_level_index)
 
 	game_scene.call_deferred("set_game", 0)
 

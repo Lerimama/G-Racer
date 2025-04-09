@@ -5,7 +5,7 @@ class_name Game
 signal game_stage_changed(game_manager)
 
 #enum GAME_STAGE {SETTING_UP, READY, PLAYING, END_SUCCESS, FINISHED_FAIL}
-enum GAME_STAGE {SETTING_UP, READY, PLAYING, FINISHED_FAIL, FINISHED_SUCCESS}
+enum GAME_STAGE {SETTING_UP, READY, PLAYING, FINISHED_SUCCESS, FINISHED_FAIL}
 var game_stage: int = GAME_STAGE.SETTING_UP # setget _change_game_stage
 
 var fast_start_window_on: bool = false # driver ga čekira in reagira
@@ -73,6 +73,7 @@ func set_game(new_level_index: int): # kliče main po spawnu
 
 	game_stage = GAME_STAGE.SETTING_UP
 
+	Sets.apply_settings(new_level_index)
 	game_sound.intro_jingle.play()
 
 	if not game_views.is_connected("views_are_set", self, "_on_views_are_set"):
@@ -117,11 +118,24 @@ func set_game(new_level_index: int): # kliče main po spawnu
 	yield(get_tree(), "idle_frame")
 
 	# game views
+
 	var drivers_with_views: Array = []
 	for driver in drivers_on_start:
 		if driver.is_in_group(Refs.group_players):
 			drivers_with_views.append(driver)
 	game_views.set_game_views(drivers_with_views, Sets.mono_view_mode)
+
+#	var views_with_drivers: Dictionary = {}
+#	var view_camera_path: String = "Viewport/GameCamera"
+#	var main_game_view: ViewportContainer = $GameViews/GameView
+##	onready var GameView: PackedScene = preload("res://game/GameView.tscn")
+#	game_views.views_with_drivers[game_views.main_game_view] = drivers_with_views[0].driver_id
+#	for driver in drivers_with_views:
+#		driver.vehicle_camera = main_game_view.get_node(view_camera_path)
+#	emit_signal("views_are_set")
+
+
+
 
 	# kamere
 	get_tree().call_group(Refs.group_player_cameras, "set_camera", game_level.camera_limits, game_level.camera_position_2d)

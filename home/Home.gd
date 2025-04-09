@@ -6,12 +6,19 @@ var home_screen: int = HOME_SCREEN.MAIN
 
 onready var animation_player: AnimationPlayer = $AnimationPlayer
 onready var main_menu: VBoxContainer = $Gui/MainMenu
-onready var drivers: Control = $Gui/Drivers
-onready var levels: Control = $Gui/Levels
+onready var drivers_setup: Control = $Gui/Drivers
+onready var levels_setup: Control = $Gui/Levels
 onready var play_btn: Button = $Gui/MainMenu/PlayBtn
 onready var focus_btn: Button = play_btn
 
 onready var home_sound: Node = $Sounds
+
+func _input(event: InputEvent) -> void:
+
+
+	if Input.is_action_just_pressed("no1"):
+#		capture_rect_image(ccontrol)
+		Mets.take_screenshot()
 
 
 func _ready() -> void:
@@ -20,25 +27,18 @@ func _ready() -> void:
 	home_sound.menu_music.play()
 
 
-#func open_from_game():
-#
-#	modulate = Color.black
-
-
 func play_game():
-
-	# apply game settings
 
 	# drivers
 	Pros.start_driver_profiles = {}
-	for driver_box in drivers.activated_driver_boxes:
+	for driver_box in drivers_setup.activated_driver_boxes:
 		var driver_id: String = driver_box.driver_profile["driver_name_id"]
 		Pros.start_driver_profiles[driver_id] = driver_box.driver_profile # .duplicate()
 
 	# levels
-	for level_btn in levels.level_cards.get_children():
-		if level_btn in levels.selected_level_btns:
-			var all_levels_level_value: int = levels.level_cards.get_children().find(level_btn)
+	for level_btn in levels_setup.level_cards.get_children():
+		if level_btn in levels_setup.selected_level_cards:
+			var all_levels_level_value: int = levels_setup.level_cards.get_children().find(level_btn)
 			Sets.game_levels.append(all_levels_level_value)
 
 	Refs.ultimate_popup.open_popup()
@@ -51,7 +51,6 @@ func play_game():
 	home_sound.fade_sounds(home_sound.nitro_intro, 3)
 	yield(home_sound.nitro_intro, "finished")
 
-#	Refs.main_node.call_deferred("home_out")
 	Refs.main_node.call_deferred("to_game")
 
 
@@ -69,6 +68,7 @@ func to_main_menu():
 
 
 func _on_PlayBtn_pressed() -> void:
+	# oneshot
 
 	play_game()
 
@@ -77,18 +77,18 @@ func _on_LevelsBtn_pressed() -> void:
 
 	home_sound.menu_transition.play()
 	home_screen = HOME_SCREEN.LEVELS
-	levels.open()
+	levels_setup.open()
 	main_menu.hide()
-
-
-func _on_QuitBtn_pressed() -> void:
-
-	get_tree().quit()
 
 
 func _on_PlayersBtn_pressed() -> void:
 
 	home_sound.menu_transition.play()
 	home_screen = HOME_SCREEN.PREGAME
-	drivers.open()
+	drivers_setup.open()
 	main_menu.hide()
+
+
+func _on_QuitBtn_pressed() -> void:
+
+	get_tree().quit()

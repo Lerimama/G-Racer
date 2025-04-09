@@ -2,21 +2,22 @@ extends Control
 
 
 var is_open: bool = false
-var focused_level_btn_index: int = 0 # da vem levo/desno
-var selected_level_btns: Array = [] # referenca za game_levels on play()
+var focused_level_card_index: int = 0 # da vem levo/desno
+var selected_level_cards: Array = [] # referenca za game_levels on play()
 var level_keys_with_cards: Dictionary = {}
+var visible_level_cards: Array = [] # za filter in adaptacijo skrolanja
 
 onready var home: Node = $"../.."
 onready var level_cards: HBoxContainer = $LevelCards
 onready var def_level_menu_position: Vector2 = level_cards.rect_position
 onready var selected_levels_label: Label = $SelectedLevels
-#onready var wins_limit_label: Label = $WinsLimit
 onready var LevelCard: PackedScene = preload("res://home/levels/LevelCard.tscn")
 
 # neu
 onready var easy_mode_btn: Button = $EasyModeBtn
 onready var play_btn: Button = $Menu/PlayBtn
 var easy_mode: bool = false
+onready var level_filter: HBoxContainer = $LevelFilter
 
 
 func _input(event: InputEvent) -> void:
@@ -38,11 +39,10 @@ func _ready() -> void:
 		easy_mode_btn.text = "EASY MODE OFF ... only qualified advance"
 
 
-func open(focus_btn_index: int = focused_level_btn_index):
+func open():
 
 	# empty data prevent ... lahko bi tudi auto prvi level select
-	play_btn.grab_focus()
-
+	level_cards.get_child(0).grab_focus()
 	is_open = true
 	show()
 
@@ -63,7 +63,9 @@ func _set_levels_menu() -> void: # tole gre na starša
 	selected_levels_label.text = "SELECTED LEVELS: > "
 
 	# spawn btns
-	var all_levels: Array = Levs.training_levels.duplicate()
+	var all_levels: Array = []
+	all_levels.append(Levs.LEVEL.TESTER)
+	all_levels.append_array(Levs.training_levels)
 	all_levels.append_array(Levs.racing_levels)
 	all_levels.append_array(Levs.battle_levels)
 	all_levels.append_array(Levs.goal_levels)
@@ -76,6 +78,7 @@ func _set_levels_menu() -> void: # tole gre na starša
 		level_cards.add_child(new_level_card)
 
 		level_keys_with_cards[level] = new_level_card
+		visible_level_cards.append(level_cards)
 
 		new_level_card.connect("pressed", self, "_on_level_btn_pressed", [new_level_card])
 		new_level_card.connect("focus_entered", self, "_on_level_btn_focused", [new_level_card])
@@ -83,40 +86,56 @@ func _set_levels_menu() -> void: # tole gre na starša
 		var level_value_index: int = all_levels.find(level)
 		if level_value_index in Sets.game_levels:
 			new_level_card.is_selected = true
-			selected_level_btns.append(new_level_card)
+			selected_level_cards.append(new_level_card)
 			# lista
 			selected_levels_label.text += new_level_card.level_profile["level_name"]
-			if level_value_index < selected_level_btns.size() - 1:
+			if level_value_index < selected_level_cards.size() - 1:
 				selected_levels_label.text += " . "
+
+		if "done" in Levs.level_profiles[level]:
+			new_level_card._enabled_panel.show()
+		else:
+			new_level_card._enabled_panel.hide()
+
 
 	for filter_btn in level_filter.get_children():
 		if not filter_btn.is_connected("toggled", self, "_on_filter_btn_toggled"):
 			filter_btn.connect("toggled", self, "_on_filter_btn_toggled", [filter_btn])
 
+	level_filter.get_child(0).text += " (%d)" % all_levels.size()
+	level_filter.get_child(1).text += " (%d)" % Levs.training_levels.size()
+	level_filter.get_child(2).text += " (%d)" % (Levs.racing_levels.size() + Levs.goal_levels.size())
+	level_filter.get_child(3).text += " (%d)" % Levs.battle_levels.size()
+	level_filter.get_child(4).text += " (%d)" % Levs.mission_levels.size()
+#	_on_filter_btn_toggled(true, level_filter.get_child(0))
+
+
+# SIGNALI ------------------------------------------------------------------------------
+
 
 func _on_filter_btn_toggled(pressed: bool, pressed_filter_btn: Button):
 
+	visible_level_cards.clear()
+
 	# odtoglam ostale
 	for btn in  level_filter.get_children():
-		print("sadas")
 		if not btn == pressed_filter_btn:
 			btn.set_pressed_no_signal(false)
 
 	var pressed_btn_index: int = level_filter.get_children().find(pressed_filter_btn)
-	print("DScsdc")
 	for level_card in level_keys_with_cards.values():
 		match pressed_btn_index:
 			0: # all
 				level_card.show()
-			1: # racing
+			1: # training
 				var level_key: int = level_keys_with_cards.find_key(level_card)
-				if level_key in Levs.racing_levels:
+				if level_key in Levs.training_levels:
 					level_card.show()
 				else:
 					level_card.hide()
-			2: # goals
+			2: # racing + goals
 				var level_key: int = level_keys_with_cards.find_key(level_card)
-				if level_key in Levs.goal_levels:
+				if level_key in Levs.racing_levels or level_key in Levs.goal_levels:
 					level_card.show()
 				else:
 					level_card.hide()
@@ -133,33 +152,41 @@ func _on_filter_btn_toggled(pressed: bool, pressed_filter_btn: Button):
 				else:
 					level_card.hide()
 
+	for card in level_cards.get_children():
+		if card.visible:
+			visible_level_cards.append(card)
 
 
+func _on_level_btn_pressed(pressed_card: Button):
 
-onready var level_filter: HBoxContainer = $LevelFilter
-
-
-func _on_level_btn_pressed(btn: Button):
-
-	if btn in selected_level_btns:
-		selected_level_btns.erase(btn)
-		btn.is_selected = false
+	# toggle pressed
+	if pressed_card in selected_level_cards:
+		selected_level_cards.erase(pressed_card)
+		pressed_card.is_selected = false
 	else:
-		selected_level_btns.append(btn)
-		btn.is_selected = true
+		if not pressed_card in selected_level_cards:
+			selected_level_cards.append(pressed_card)
+		pressed_card.is_selected = true
 
-	# lista
+	# lista levelov
 	selected_levels_label.text = "SELECTED LEVELS > "
-	for selected_btn in selected_level_btns:
+	for selected_btn in selected_level_cards:
 		selected_levels_label.text += selected_btn.level_profile["level_name"]
-		if selected_level_btns.find(selected_btn) < selected_level_btns.size() - 1:
+		if selected_level_cards.find(selected_btn) < selected_level_cards.size() - 1:
 			selected_levels_label.text += " . "
 
 	# izberi prvega, če ni izbran noben
-	if selected_level_btns.empty():
+	if selected_level_cards.empty():
 		_on_level_btn_pressed(level_cards.get_child(0))
 		var slide_to_start_tween = get_tree().create_tween()
 		slide_to_start_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+		if not pressed_card in selected_level_cards:
+			selected_level_cards.append(pressed_card)
+	# ime play gumba
+	if selected_level_cards.size() == 1:
+		play_btn.text = "PLAY"
+	else:
+		play_btn.text = "PLAY TOURNAMENT"
 
 
 func _on_level_btn_focused(btn: Button):
@@ -167,17 +194,41 @@ func _on_level_btn_focused(btn: Button):
 	btn.focused_display.show()
 	btn.level_preview.show()
 
-	# levo/desno premikam, če je index večji od limite in ni zadnji
-	var slide_on_index: int = 3
-	var new_focused_btn_index: int = level_cards.get_children().find(btn)
-	var right_edge_margin_adapt: int = 136
-
-	if new_focused_btn_index >= slide_on_index and new_focused_btn_index < level_cards.get_child_count() - 1:
-		if new_focused_btn_index == slide_on_index:
-			right_edge_margin_adapt = 0
-		var slide_distance: float = (new_focused_btn_index - slide_on_index) * (btn.rect_size.x + level_cards.get_constant("hseparation"))
+	# slide
+	var sliding_on_card_index: int = 3
+	var next_focused_card_index: int = visible_level_cards.find(btn)
+	var right_edge_margin: int = 136
+	var scroll_time: float = 0.32
+	# slajdam, če je next_card večji od limite in ni zadnji
+	if next_focused_card_index >= sliding_on_card_index and next_focused_card_index < visible_level_cards.size() - 1:
+		# edge margin glede na ali je zadnji ali ne
+		if next_focused_card_index == sliding_on_card_index:
+			right_edge_margin = 0
+		# slide
+		var slide_distance: float = (next_focused_card_index - sliding_on_card_index) * (btn.rect_size.x + level_cards.get_constant("hseparation"))
 		var slide_tween = get_tree().create_tween()
-		slide_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x - slide_distance - right_edge_margin_adapt, 0.32).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+		slide_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x - slide_distance - right_edge_margin,scroll_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+
+
+#func _on_level_btn_focused_old(btn: Button):
+#
+#	btn.focused_display.show()
+#	btn.level_preview.show()
+#
+#	# slide
+#	var sliding_on_card_index: int = 3
+#	var next_focused_card_index: int = level_cards.get_children().find(btn)
+#	var right_edge_margin: int = 136
+#	var scroll_time: float = 0.32
+#	# slajdam, če je next_card večji od limite in ni zadnji
+#	if next_focused_card_index >= sliding_on_card_index and next_focused_card_index < level_cards.get_child_count() - 1:
+#		# edge margin glede na ali je zadnji ali ne
+#		if next_focused_card_index == sliding_on_card_index:
+#			right_edge_margin = 0
+#		# slide
+#		var slide_distance: float = (next_focused_card_index - sliding_on_card_index) * (btn.rect_size.x + level_cards.get_constant("hseparation"))
+#		var slide_tween = get_tree().create_tween()
+#		slide_tween.tween_property(level_cards, "rect_position:x", def_level_menu_position.x - slide_distance - right_edge_margin,scroll_time).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
 
 
 func _on_BackBtn_pressed() -> void:
@@ -186,6 +237,7 @@ func _on_BackBtn_pressed() -> void:
 
 
 func _on_PlayBtn_pressed() -> void:
+	# oneshot
 
 	home.play_game()
 

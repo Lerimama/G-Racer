@@ -21,6 +21,8 @@ onready var mirror_btn: Button = $MirrorBtn
 onready var level_preview: ColorRect = $LevelPreview
 
 var is_selected: bool = false setget _change_selected
+onready var _enabled_panel: Panel = $_enabled_panel
+
 
 func _ready() -> void:
 

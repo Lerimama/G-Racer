@@ -5,6 +5,6 @@
 [node name="LevelSlalom" instance=ExtResource( 1 )]
 level_type = 2
 
-[node name="ScatteredIslands-Burning-Mana-22X16" type="Sprite" parent="." index="15"]
+[node name="_undi" type="Sprite" parent="." index="0"]
 position = Vector2( -16, 352 )
 scale = Vector2( 1.5, 1.5 )

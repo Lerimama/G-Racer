@@ -100,7 +100,7 @@ func _on_AddBtn_pressed() -> void:
 
 
 func _on_PlayBtn_pressed() -> void:
-
+	# oneshot
 	home.play_game()
 
 

@@ -21,7 +21,7 @@ func _ready() -> void:
 func _select_battle_state():
 	# tip izbranega orožja je izbrani battle state
 
-	# flter on empty
+	# flter not empty
 	var not_empty_equipment: Array = []
 	for weapon_type in vehicle.weapon_types_with_trigger_weapons:
 		for weapon in vehicle.weapon_types_with_trigger_weapons[weapon_type]:
@@ -29,7 +29,7 @@ func _select_battle_state():
 				if not weapon.weapon_type == weapon.WEAPON_TYPE.DROPPER: # _temp ... mine AI trenutno ne uporablja
 					not_empty_equipment.append(weapon)
 
-	# filter on loaded
+	# filter loaded
 	var loaded_equipment: Array = []
 	for weapon in not_empty_equipment:
 		if weapon.weapon_reloaded:
@@ -46,9 +46,6 @@ func _select_battle_state():
 
 
 func use_selected_item():
-
-	# debug ... battle stat setter
-	battle_state = BATTLE_STATE.GUN
 
 	_select_battle_state()
 
@@ -99,23 +96,18 @@ func shoot(new_battle_state: int = battle_state, shoot_till_stop_call: bool = fa
 		if BATTLE_STATE.NONE:
 			is_shooting = false
 		else:
+			use_selected_item()
 			match battle_state:
 				BATTLE_STATE.GUN:
-					use_selected_item()
 					pass
 				BATTLE_STATE.TURRET:
-					use_selected_item()
 					pass
 				BATTLE_STATE.LAUNCHER:
-					use_selected_item()
 					pass
 				BATTLE_STATE.DROPPER:
-					use_selected_item()
 					pass
 				BATTLE_STATE.MALA:
-					use_selected_item()
 					pass
-
 			if shoot_till_stop_call:
 				is_shooting = true
 

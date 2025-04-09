@@ -51,7 +51,7 @@ func set_driver_huds(game: Game, drivers_on_start: Array, mono_view_mode: bool):
 			# pripiši driverja
 			var driver_id: String = views_with_drivers[view]
 			var player_driver: Vehicle
-			for driver in game.drivers_on_start:
+			for driver in drivers_on_start:
 				if driver.driver_id == driver_id:
 					player_driver = driver
 			new_driver_hud.set_driver_hud(player_driver, view)
@@ -60,7 +60,7 @@ func set_driver_huds(game: Game, drivers_on_start: Array, mono_view_mode: bool):
 			# v slovar
 			view_imitators_with_driver_ids[new_view_imitator] = driver_id
 			# ai huds
-			for ai_driver in game.drivers_on_start:
+			for ai_driver in drivers_on_start:
 				if ai_driver.is_in_group(Refs.group_ai):
 					var new_ai_hud: Control = DriverHud.instance()
 					new_view_imitator.add_child(new_ai_hud)

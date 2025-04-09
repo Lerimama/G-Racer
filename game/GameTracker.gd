@@ -355,7 +355,7 @@ func _on_vehicle_deactivated(driver_vehicle: Vehicle):
 	if game.game_stage == game.GAME_STAGE.PLAYING:
 		_check_for_game_end()
 	# ai deactivated after game end
-	elif game.game_stage >= game.GAME_STAGE.FINISHED_FAIL:
+	elif game.game_stage >= game.GAME_STAGE.FINISHED_SUCCESS:
 		game.gui.call_deferred("_on_waiting_driver_finished", driver_vehicle.driver_id)
 
 

@@ -2,8 +2,8 @@ extends CanvasLayer
 class_name Gui
 
 var game: Game
-var waiting_drivers_finished: int = 0
-var deactivating_unfinished_drivers: bool = false
+var finished_waited_drivers_count: int = 0
+var finishing_waited_drivers: bool = false
 
 onready var hud: Control = $Hud
 onready var driver_huds: Control = $DriverHuds
@@ -32,24 +32,18 @@ func _ready() -> void:
 
 func set_gui(drivers_on_start: Array):
 
-	waiting_drivers_finished = 0
-
-	# hud
 	hud.set_hud(game, drivers_on_start)
 	driver_huds.set_driver_huds(game, drivers_on_start, Sets.mono_view_mode)
 
-	# če je omejen čas, povežem s timerjem
 	if game.level_profile["level_time_limit"] > 0:
-#		if not hud.game_timer.is_connected("time_is_up", game.game_tracker, "_on_game_time_is_up"):
 		hud.game_timer.connect("time_is_up", game.game_tracker, "_on_game_time_is_up", CONNECT_ONESHOT)
 
-#	driver_huds.set_driver_huds(game, drivers_on_start, Sets.mono_view_mode)
 	_update_all_stats_display()
 
-	# fejdin
 	var fade_tween = get_tree().create_tween()
 	fade_tween.tween_property(game_cover, "modulate:a", 0, 0.7).from(1.0)
 	yield(fade_tween, "finished")
+
 	game_cover.hide()
 
 
@@ -57,6 +51,7 @@ func on_game_start():
 
 	print("start")
 	hud.game_timer.start_timer()
+
 
 func on_level_finished():
 
@@ -68,10 +63,10 @@ func on_level_finished():
 
 	# če je konec, ustavim čas ... moram pred ostalo kodo, da je natančno
 	var level_ended: = true
-
 	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
 		if driver.is_active:
 			level_ended = false
+
 	if level_ended == true:
 		hud.game_timer.stop_timer()
 
@@ -112,6 +107,7 @@ func on_level_finished():
 		next_restart_btn.hide() # ... pokaže se na summary open
 		if not continue_btn.is_connected("pressed", self, "_on_continue_btn_pressed"):
 			continue_btn.connect("pressed", self, "_on_continue_btn_pressed", [], CONNECT_ONESHOT)
+		continue_btn.grab_focus()
 
 	#	yield(get_tree().create_timer(Sets.get_it_time), "timeout")
 
@@ -128,53 +124,12 @@ func on_level_finished():
 		next_restart_btn.grab_focus()
 	else:
 		continue_btn.grab_focus()
-#	next_restart_btn.hide() # ... pokaže se na summary open
-
-	prints("FO",game_over.get_focus_owner())
+	prints("GO fokus",game_over.get_focus_owner())
 	if game.game_sound.win_jingle.is_playing():
 		yield(game.game_sound.win_jingle, "finished")
 	elif game.game_sound.lose_jingle.is_playing():
 		yield(game.game_sound.win_jingle, "finished")
 	game.game_sound.menu_music.play()
-
-
-
-# level finished for player(s)
-#func _input(event: InputEvent) -> void: # temp tukej, ker GM ne procesira
-#
-#	if Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("ui_accept"):
-#		# _temp način, ker gumb sam ne dela dokler ne ustavim igre
-#		if continue_btn.visible and continue_btn.has_focus():
-##			yield(_finish_unfinished_drivers(), "completed")
-##			get_viewport().set_disable_input(true)
-##			game_over_menu.hide()
-##			_open_game_summary()
-#			_on_FinishBtn_pressed()
-
-
-func _finish_unfinished_drivers():
-
-	get_viewport().set_disable_input(true)
-
-	# če niso vsi tekmovalci v cilju (igra še teče)
-	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
-		if driver.is_active:
-			deactivating_unfinished_drivers = true # more bit pred deaktivacijo
-			driver.is_active = false
-
-	yield(get_tree(), "idle_frame") # za yield
-
-	if deactivating_unfinished_drivers:
-		hud.game_timer.stop_timer()
-		match game.level_profile["rank_by"]:
-			Levs.RANK_BY.POINTS, Levs.RANK_BY.SCALPS: # vrstni red je znan šele ko so vsi v cilju
-				for driver_id in game.game_drivers_data:
-					_reward_driver_for_level(game.game_drivers_data[driver_id])
-
-		var final_level_data: Dictionary = game.game_drivers_data.duplicate()
-		game_over.level_finished_score_table.set_scoretable(final_level_data, game.level_profile["rank_by"], false)
-		yield(get_tree().create_timer(Sets.get_it_time), "timeout")
-		deactivating_unfinished_drivers = false
 
 
 func _open_game_summary():
@@ -185,16 +140,24 @@ func _open_game_summary():
 	continue_btn.hide()
 	next_restart_btn.show()
 
-	# mid level
-	if game.level_index < Sets.game_levels.size() - 1:
+	# last level
+	if game.level_index == Sets.game_levels.size() - 1:
+		quit_btn.text = "TO MAIN MENU"
+		next_restart_btn.text = "RESTART TOURNAMENT"
+		if next_restart_btn.is_connected("pressed", self, "_on_next_level_pressed"):
+			next_restart_btn.disconnect("pressed", self, "_on_next_level_pressed")
+		if not next_restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
+			next_restart_btn.connect("pressed", self, "_on_restart_game_pressed", [], CONNECT_ONESHOT)
+	# mid level fail
+	elif game.game_stage == game.GAME_STAGE.FINISHED_SUCCESS:
 		quit_btn.text = "QUIT TOURNAMENT"
 		next_restart_btn.text = "NEXT LEVEL"
 		if next_restart_btn.is_connected("pressed", self, "_on_restart_game_pressed"):
 			next_restart_btn.disconnect("pressed", self, "_on_restart_game_pressed")
 		if not next_restart_btn.is_connected("pressed", self, "_on_next_level_pressed"):
 			next_restart_btn.connect("pressed", self, "_on_next_level_pressed", [], CONNECT_ONESHOT)
-	# last level
-	else:
+	# mid level success
+	elif game.game_stage == game.GAME_STAGE.FINISHED_FAIL:
 		quit_btn.text = "TO MAIN MENU"
 		next_restart_btn.text = "RESTART TOURNAMENT"
 		if next_restart_btn.is_connected("pressed", self, "_on_next_level_pressed"):
@@ -239,6 +202,84 @@ func close_game():
 	game_summary.hide()
 
 
+# HELPERS ------------------------------------------------------------------------------------------
+
+
+func _finish_unfinished_drivers():
+
+	get_viewport().set_disable_input(true)
+
+	# če niso vsi tekmovalci v cilju (igra še teče)
+	for driver in get_tree().get_nodes_in_group(Refs.group_drivers):
+		if driver.is_active:
+			finishing_waited_drivers = true # more bit pred deaktivacijo
+			driver.is_active = false
+
+	yield(get_tree(), "idle_frame") # za yield
+
+	if finishing_waited_drivers:
+		hud.game_timer.stop_timer()
+		match game.level_profile["rank_by"]:
+			Levs.RANK_BY.POINTS, Levs.RANK_BY.SCALPS: # vrstni red je znan šele ko so vsi v cilju
+				for driver_id in game.game_drivers_data:
+					_reward_driver_for_level(game.game_drivers_data[driver_id])
+
+		var final_level_data: Dictionary = game.game_drivers_data.duplicate()
+		game_over.level_finished_score_table.set_scoretable(final_level_data, game.level_profile["rank_by"], false)
+		yield(get_tree().create_timer(Sets.get_it_time), "timeout")
+		finishing_waited_drivers = false
+
+
+func _on_waiting_driver_finished(driver_id: String):
+
+	var driver_final_data: Dictionary = game.game_drivers_data[driver_id]
+
+	match game.level_profile["rank_by"]:
+		Levs.RANK_BY.TIME:
+			if finishing_waited_drivers:
+				finished_waited_drivers_count += 1 # za rank
+				var new_rank: int = game.game_tracker.drivers_finished.size() + finished_waited_drivers_count
+				var new_drivers_level_time: int = hud.game_timer.game_time_hunds
+				var punish_time: int = new_drivers_level_time / 2
+				new_drivers_level_time += punish_time * new_rank
+				driver_final_data.driver_stats[Pros.STAT.LEVEL_RANK] = new_rank
+				driver_final_data.driver_stats[Pros.STAT.LEVEL_FINISHED_TIME] = new_drivers_level_time
+				_reward_driver_for_level(driver_final_data)
+			else:
+				_reward_driver_for_level(driver_final_data)
+				game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+
+		Levs.RANK_BY.POINTS:
+			#			if finishing_waited_drivers:
+			#				var punish_driver_points: int = 50
+			#				driver_final_data[Pros.STAT.POINTS] += punish_driver_points
+			#			else:
+			# če spremenim točke, ponovno opredelim ranking vseh driverjev ... koda je spodaj
+			game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+		Levs.RANK_BY.SCALPS:
+			#			if finishing_waited_drivers:
+			#				var punish_driver_points: int = 50
+			#				driver_final_data[Pros.STAT.SCALPS] += punish_driver_points
+			#			else:
+			# če spremenim število, skalpov ponovno opredelim ranking vseh driverjev ... koda je spodaj
+			game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
+
+			# re-rank
+			#	var driver_points_arrays: Array = []
+			#	for driver_id in game.game_drivers_data:
+			#		driver_points_arrays.append([driver_id, game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.POINTS]])
+			#	driver_points_arrays.sort_custom(self, "_sort_arrays_on_points")
+			#	for driver_array in driver_points_arrays:
+			#		var driver_rank: int = driver_points_arrays.find(driver_array) + 1
+			#		var driver_array_id: int = driver_array[0]
+			#		game.game_drivers_data[driver_array_id]["driver_stats"][Pros.STAT.LEVEL_RANK] = driver_rank
+			#
+			#	func _sort_arrays_on_points(driver_points_array_1: Array, driver_points_array_2: Array):
+			#
+			#		if driver_points_array_1[1] > driver_points_array_2[1]:
+			#			return true
+			#		return false
+
 
 func _reward_driver_for_level(driver_data: Dictionary):
 
@@ -270,55 +311,7 @@ func _update_all_stats_display():
 				driver_huds._on_stat_changed(driver.driver_id, stat, driver.driver_stats[stat])
 
 
-func _on_waiting_driver_finished(driver_id: String):
-
-	var driver_final_data: Dictionary = game.game_drivers_data[driver_id]
-
-	match game.level_profile["rank_by"]:
-		Levs.RANK_BY.TIME:
-			if deactivating_unfinished_drivers:
-				waiting_drivers_finished += 1 # za rank
-				var new_rank: int = game.game_tracker.drivers_finished.size() + waiting_drivers_finished
-				var new_drivers_level_time: int = hud.game_timer.game_time_hunds
-				var punish_time: int = new_drivers_level_time / 2
-				new_drivers_level_time += punish_time * new_rank
-				driver_final_data.driver_stats[Pros.STAT.LEVEL_RANK] = new_rank
-				driver_final_data.driver_stats[Pros.STAT.LEVEL_FINISHED_TIME] = new_drivers_level_time
-				_reward_driver_for_level(driver_final_data)
-			else:
-				_reward_driver_for_level(driver_final_data)
-				game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
-
-		Levs.RANK_BY.POINTS:
-			#			if deactivating_unfinished_drivers:
-			#				var punish_driver_points: int = 50
-			#				driver_final_data[Pros.STAT.POINTS] += punish_driver_points
-			#			else:
-			# če spremenim točke, ponovno opredelim ranking vseh driverjev ... koda je spodaj
-			game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
-		Levs.RANK_BY.SCALPS:
-			#			if deactivating_unfinished_drivers:
-			#				var punish_driver_points: int = 50
-			#				driver_final_data[Pros.STAT.SCALPS] += punish_driver_points
-			#			else:
-			# če spremenim število, skalpov ponovno opredelim ranking vseh driverjev ... koda je spodaj
-			game_over.level_finished_score_table.set_scoretable(game.game_drivers_data, game.level_profile["rank_by"], false)
-
-			# re-rank
-			#	var driver_points_arrays: Array = []
-			#	for driver_id in game.game_drivers_data:
-			#		driver_points_arrays.append([driver_id, game.game_drivers_data[driver_id]["driver_stats"][Pros.STAT.POINTS]])
-			#	driver_points_arrays.sort_custom(self, "_sort_arrays_on_points")
-			#	for driver_array in driver_points_arrays:
-			#		var driver_rank: int = driver_points_arrays.find(driver_array) + 1
-			#		var driver_array_id: int = driver_array[0]
-			#		game.game_drivers_data[driver_array_id]["driver_stats"][Pros.STAT.LEVEL_RANK] = driver_rank
-			#
-			#	func _sort_arrays_on_points(driver_points_array_1: Array, driver_points_array_2: Array):
-			#
-			#		if driver_points_array_1[1] > driver_points_array_2[1]:
-			#			return true
-			#		return false
+# MENU --------------------------------------------------------------------------------------------
 
 
 func _on_QuitBtn_pressed() -> void:

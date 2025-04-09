@@ -64,7 +64,7 @@ margin_color = Color( 1, 0, 0, 0 )
 repeat = true
 
 [sub_resource type="RectangleShape2D" id=2923]
-extents = Vector2( 512, 24 )
+extents = Vector2( 748.125, 24 )
 
 [sub_resource type="Curve2D" id=13454]
 _data = {
@@ -403,6 +403,7 @@ stretch_mode = 2
 shape = SubResource( 2923 )
 
 [node name="DriveOutPosition" type="Position2D" parent="Elements/FinishLine"]
+visible = false
 position = Vector2( 0, -1024 )
 __meta__ = {
 "_edit_group_": true
@@ -480,6 +481,7 @@ margin_bottom = 160.0
 rect_min_size = Vector2( 320, 320 )
 
 [node name="VerEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeL"]
+visible = false
 position = Vector2( -300, 160 )
 __meta__ = {
 "_edit_group_": true
@@ -499,6 +501,7 @@ margin_bottom = 320.0
 rect_min_size = Vector2( 320, 320 )
 
 [node name="HorEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeT"]
+visible = false
 position = Vector2( 168, -246 )
 collision_layer = 0
 collision_mask = 16
@@ -521,6 +524,7 @@ margin_bottom = 160.0
 rect_min_size = Vector2( 320, 320 )
 
 [node name="VerEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeR"]
+visible = false
 position = Vector2( 620, 160 )
 __meta__ = {
 "_edit_group_": true
@@ -542,6 +546,7 @@ margin_right = 160.0
 rect_min_size = Vector2( 320, 320 )
 
 [node name="HorEdgeBody" type="StaticBody2D" parent="CameraLimits/EdgeB"]
+visible = false
 position = Vector2( 166, 566 )
 collision_layer = 0
 collision_mask = 16

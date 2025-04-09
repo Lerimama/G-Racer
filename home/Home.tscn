@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=2]
+[gd_scene load_steps=52 format=2]
 
 [ext_resource path="res://assets/theme/fonts/TTNorms/TTNorms-BlackItalic.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://home/drivers/DriverBox.tscn" type="PackedScene" id=2]
@@ -31,12 +31,14 @@
 [ext_resource path="res://assets/sounds/music/Patreon Goal Reward Loops - Track 08_loop.wav" type="AudioStream" id=29]
 [ext_resource path="res://assets/sounds/music/457363__3m4__trap-beat-2.mp3" type="AudioStream" id=30]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/screen_slide.wav" type="AudioStream" id=31]
+[ext_resource path="res://home/levels/stone_road_background.jpg" type="Texture" id=32]
 [ext_resource path="res://assets/sounds/nitro/nitro_win.wav" type="AudioStream" id=33]
 [ext_resource path="res://common/shaders/desaturate_texture.gdshader" type="Shader" id=34]
 [ext_resource path="res://home/levels/SetLevels.gd" type="Script" id=35]
 [ext_resource path="res://assets/sounds/_zaloga/_pa/gui/menu_fade.wav" type="AudioStream" id=36]
 [ext_resource path="res://home/levels/thumb_level_training.tres" type="Texture" id=37]
 [ext_resource path="res://home/levels/thumb_level_race.tres" type="Texture" id=38]
+[ext_resource path="res://home/levels/drivers_background_2.jpg" type="Texture" id=39]
 [ext_resource path="res://home/drivers/SetDrivers.gd" type="Script" id=43]
 [ext_resource path="res://assets/theme/fonts/button_big.tres" type="DynamicFont" id=44]
 
@@ -56,7 +58,7 @@ font_data = ExtResource( 1 )
 size = 504
 font_data = ExtResource( 1 )
 
-[sub_resource type="ShaderMaterial" id=824]
+[sub_resource type="ShaderMaterial" id=831]
 shader = ExtResource( 34 )
 shader_param/saturation = 1.0
 
@@ -67,10 +69,6 @@ colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
 gradient = SubResource( 815 )
 fill_from = Vector2( 0.4875, 1 )
 fill_to = Vector2( 0.470833, 0 )
-
-[sub_resource type="ShaderMaterial" id=831]
-shader = ExtResource( 34 )
-shader_param/saturation = 1.0
 
 [sub_resource type="Gradient" id=832]
 colors = PoolColorArray( 0, 0, 0, 1, 0, 0, 0, 0.584314 )
@@ -321,16 +319,18 @@ __meta__ = {
 }
 
 [node name="TextureRect" type="TextureRect" parent="Gui/Drivers"]
-material = SubResource( 824 )
+material = SubResource( 831 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -4056.0
-margin_top = -1960.0
-margin_right = -4056.0
-margin_bottom = -1960.0
-rect_scale = Vector2( 4, 4 )
-texture = ExtResource( 4 )
+margin_left = -81.0
+margin_top = -104.0
+margin_right = 846.0
+margin_bottom = 296.0
+texture = ExtResource( 39 )
 expand = true
+__meta__ = {
+"_editor_description_": ""
+}
 
 [node name="ColorRect" type="ColorRect" parent="Gui/Drivers"]
 visible = false
@@ -494,6 +494,7 @@ text = "VIEW MODE: MONO"
 align = 2
 
 [node name="Levels" type="Control" parent="Gui"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_clip_content = true
@@ -501,16 +502,13 @@ theme = ExtResource( 3 )
 script = ExtResource( 35 )
 
 [node name="TextureRect" type="TextureRect" parent="Gui/Levels"]
-visible = false
 material = SubResource( 831 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -4056.0
-margin_top = -1960.0
-margin_right = -4056.0
-margin_bottom = -1960.0
-rect_scale = Vector2( 4, 4 )
-texture = ExtResource( 4 )
+margin_left = -648.0
+margin_right = 3.0
+margin_bottom = 968.0
+texture = ExtResource( 32 )
 expand = true
 
 [node name="ColorRect" type="ColorRect" parent="Gui/Levels"]
@@ -877,14 +875,14 @@ bus = "GuiSfx"
 [connection signal="pressed" from="Gui/MainMenu/PlayersBtn" to="." method="_on_PlayersBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/LevelsBtn" to="." method="_on_LevelsBtn_pressed"]
 [connection signal="pressed" from="Gui/MainMenu/QuitBtn" to="." method="_on_QuitBtn_pressed"]
-[connection signal="pressed" from="Gui/Drivers/Menu/PlayBtn" to="Gui/Drivers" method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Gui/Drivers/Menu/PlayBtn" to="Gui/Drivers" method="_on_PlayBtn_pressed" flags=6]
 [connection signal="pressed" from="Gui/Drivers/Menu/LevelsBtn" to="Gui/Drivers" method="_on_LevelsBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/Menu/BackBtn" to="Gui/Drivers" method="_on_BackBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/SubMenu/AddBtn" to="Gui/Drivers" method="_on_AddBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/SubMenu/DriversCountBtn" to="Gui/Drivers" method="_on_DriversCountBtn_pressed"]
 [connection signal="pressed" from="Gui/Drivers/SubMenu/ViewModeBtn" to="Gui/Drivers" method="_on_ViewModeBtn_pressed"]
 [connection signal="pressed" from="Gui/Levels/EasyModeBtn" to="Gui/Levels" method="_on_EasyModeBtn_pressed"]
-[connection signal="pressed" from="Gui/Levels/Menu/PlayBtn" to="Gui/Levels" method="_on_PlayBtn_pressed"]
+[connection signal="pressed" from="Gui/Levels/Menu/PlayBtn" to="Gui/Levels" method="_on_PlayBtn_pressed" flags=6]
 [connection signal="pressed" from="Gui/Levels/Menu/DriversBtn" to="Gui/Levels" method="_on_DriversBtn_pressed"]
 [connection signal="pressed" from="Gui/Levels/Menu/BackBtn" to="Gui/Levels" method="_on_BackBtn_pressed"]
 
